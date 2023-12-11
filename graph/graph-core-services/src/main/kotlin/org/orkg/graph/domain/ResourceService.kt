@@ -81,8 +81,30 @@ class ResourceService(
     override fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): Resource? =
         repository.findByIdAndClasses(id, classes)
 
-    override fun findAll(pageable: Pageable): Page<Resource> =
-        repository.findAll(pageable)
+    override fun findAll(
+        pageable: Pageable,
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?
+    ): Page<Resource> =
+        repository.findAll(
+            pageable = pageable,
+            label = label,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            includeClasses = includeClasses,
+            excludeClasses = excludeClasses,
+            observatoryId = observatoryId,
+            organizationId = organizationId
+        )
 
     override fun findById(id: ThingId): Optional<Resource> =
         repository.findById(id)

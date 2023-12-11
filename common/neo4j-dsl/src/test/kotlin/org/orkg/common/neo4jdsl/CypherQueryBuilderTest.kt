@@ -14,6 +14,7 @@ import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Functions.count
+import org.neo4j.cypherdsl.core.Statement
 import org.neo4j.driver.summary.ResultSummary
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -38,9 +39,9 @@ class CypherQueryBuilderTest {
     }
 
     class SimpleQueryCache : QueryCache {
-        private val cache: MutableMap<Any, String> = mutableMapOf()
+        private val cache: MutableMap<Any, Statement> = mutableMapOf()
 
-        override fun getOrPut(key: Any, valueSupplier: () -> String): String =
+        override fun getOrPut(key: Any, valueSupplier: () -> Statement): Statement =
             cache.getOrPut(key, valueSupplier)
 
         val size: Int get() = cache.size
@@ -136,7 +137,7 @@ class CypherQueryBuilderTest {
             .fetchAs(String::class)
             .fetch(PageRequest.of(0, 5))
 
-        verify(exactly = 1) { neo4jClient.query("MATCH (node) RETURN node.label SKIP \$sdnSkip LIMIT \$sdnLimit") }
+        verify(exactly = 1) { neo4jClient.query("MATCH (node) RETURN node.label SKIP \$skip LIMIT \$limit") }
         verify(exactly = 1) { neo4jClient.query("MATCH (node) RETURN count(node)") }
         verify(exactly = 2) { unboundRunnableSpec.bindAll(any()) }
         verify(exactly = 1) { runnableSpec.fetchAs(String::class.java) }
@@ -169,7 +170,7 @@ class CypherQueryBuilderTest {
             .fetchAs(String::class)
             .fetch(PageRequest.of(0, 5, sort))
 
-        verify(exactly = 1) { neo4jClient.query("MATCH (node) RETURN node.label ORDER BY property1 ASC, property2 DESC SKIP \$sdnSkip LIMIT \$sdnLimit") }
+        verify(exactly = 1) { neo4jClient.query("MATCH (node) RETURN node.label ORDER BY property1 ASC, property2 DESC SKIP \$skip LIMIT \$limit") }
         verify(exactly = 1) { neo4jClient.query("MATCH (node) RETURN count(node)") }
         verify(exactly = 2) { unboundRunnableSpec.bindAll(any()) }
         verify(exactly = 1) { runnableSpec.fetchAs(String::class.java) }

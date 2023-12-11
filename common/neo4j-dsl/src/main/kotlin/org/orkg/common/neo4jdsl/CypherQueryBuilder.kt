@@ -21,10 +21,15 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
 
 interface QueryCache {
-    fun getOrPut(key: Any, valueSupplier: () -> String): String
+    fun getOrPut(key: Any, valueSupplier: () -> Statement): Statement
+
+    object Uncached : QueryCache {
+        override fun getOrPut(key: Any, valueSupplier: () -> Statement): Statement =
+            valueSupplier()
+    }
 }
 
-class CypherQueryBuilder(
+data class CypherQueryBuilder(
     private val neo4jClient: Neo4jClient,
     private val queryCache: QueryCache = DefaultQueryCache
 ) {
@@ -38,9 +43,9 @@ class CypherQueryBuilder(
 
     companion object {
         private object DefaultQueryCache : QueryCache {
-            private val cache: MutableMap<Any, String> = mutableMapOf()
+            private val cache: MutableMap<Any, Statement> = mutableMapOf()
 
-            override fun getOrPut(key: Any, valueSupplier: () -> String): String =
+            override fun getOrPut(key: Any, valueSupplier: () -> Statement): Statement =
                 cache.getOrPut(key, valueSupplier)
         }
     }
@@ -122,7 +127,7 @@ class SingleQueryBuilderImpl {
             MappedByBuilderAndFetch(neo4jClient, queryCache, query, parameters, targetClass)
 
         override fun run(): ResultSummary =
-            neo4jClient.query(queryCache.getOrPut(query) { query().build().cypher })
+            neo4jClient.query(queryCache.getOrPut(query) { query().build() }.cypher)
                 .bindAll(parameters)
                 .run()
     }
@@ -150,7 +155,7 @@ class SingleQueryBuilderImpl {
         private val mappingFunction: ((TypeSystem, Record) -> R)? = null
     ) : SingleQueryBuilder.ExposesFetch<R> {
         override fun fetch(): Neo4jClient.RecordFetchSpec<R> =
-            neo4jClient.query(queryCache.getOrPut(query) { query().build().cypher })
+            neo4jClient.query(queryCache.getOrPut(query) { query().build() }.cypher)
                 .bindAll(parameters)
                 .fetchAs(targetClass.java)
                 .let { if (mappingFunction != null) it.mappedBy(mappingFunction) else it }
@@ -189,7 +194,7 @@ object PagedQueryBuilder {
     }
 
     interface ExposesPagedFetch<T> {
-        fun fetch(pageable: Pageable): Page<T>
+        fun fetch(pageable: Pageable, appendSort: Boolean = true): Page<T>
     }
 
     interface ExposesPagedMappedByAndFetch<T : Any> : ExposesPagedMappedBy<T>, ExposesPagedFetch<T>
@@ -284,16 +289,15 @@ class PagedQueryBuilderImpl {
                 neo4jClient, queryCache, commonQuery, query, countQuery, parameters, targetClass, mappingFunction
             )
 
-        override fun fetch(pageable: Pageable): Page<R> {
+        override fun fetch(pageable: Pageable, appendSort: Boolean): Page<R> {
             val contentQuery = queryCache.getOrPut(commonQuery to query) {
                 query(commonQuery())
-                    .skip(parameter("sdnSkip"))
-                    .limit(parameter("sdnLimit"))
+                    .skip(parameter("skip"))
+                    .limit(parameter("limit"))
                     .build()
-                    .cypher
             }
-            val content = neo4jClient.query(contentQuery.sortedWith(pageable.sort))
-                .bindAll(parameters + ("sdnSkip" to pageable.offset) + ("sdnLimit" to pageable.pageSize))
+            val content = neo4jClient.query(if (appendSort) contentQuery.cypher.sortedWith(pageable.sort) else contentQuery.cypher)
+                .bindAll(parameters + ("skip" to pageable.offset) + ("limit" to pageable.pageSize) + contentQuery.parameters)
                 .fetchAs(targetClass.java)
                 .let { if (mappingFunction != null) it.mappedBy(mappingFunction) else it }
                 .all()
@@ -301,10 +305,9 @@ class PagedQueryBuilderImpl {
             val countQuery = queryCache.getOrPut(commonQuery to countQuery) {
                 countQuery(commonQuery())
                     .build()
-                    .cypher
             }
-            val count = neo4jClient.query(countQuery)
-                .bindAll(parameters)
+            val count = neo4jClient.query(countQuery.cypher)
+                .bindAll(parameters + countQuery.parameters)
                 .fetchAs(Long::class.java)
                 .one()
                 .orElse(0)

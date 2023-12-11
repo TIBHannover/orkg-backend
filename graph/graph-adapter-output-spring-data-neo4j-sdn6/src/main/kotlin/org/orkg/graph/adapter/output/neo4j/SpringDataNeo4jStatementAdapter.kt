@@ -491,7 +491,7 @@ class SpringDataNeo4jStatementAdapter(
                     .with(startNode(rel).`as`("sub"), rel.`as`("rel"), endNode(rel).`as`("obj"))
                     .orderBy(rel.property("created_at").descending())
                     .returningWithSortableFields("rel", "sub", "obj")
-                    .orderBy(sort)
+                    .orderBy(sort.toSortItems())
             }
             .withParameters(
                 "id" to id.value,

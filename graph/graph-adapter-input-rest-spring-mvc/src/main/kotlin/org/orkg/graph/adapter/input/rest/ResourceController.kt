@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.forkhandles.values.ofOrNull
+import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -28,6 +29,8 @@ import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -62,32 +65,31 @@ class ResourceController(
         service.findById(id).mapToResourceRepresentation().orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping("/")
-    fun findByLabel(
+    fun findAll(
         @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
+        @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
+        @RequestParam("created_by", required = false) createdBy: ContributorId?,
+        @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
+        @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
         @RequestParam("include", required = false, defaultValue = "") includeClasses: Set<ThingId>,
         @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Set<ThingId>,
+        @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
+        @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
         pageable: Pageable
     ): Page<ResourceRepresentation> =
-        when {
-            excludeClasses.isNotEmpty() || includeClasses.isNotEmpty() -> when (string) {
-                null -> service.findAllIncludingAndExcludingClasses(
-                    includeClasses,
-                    excludeClasses,
-                    pageable
-                )
-                else -> service.findAllIncludingAndExcludingClassesByLabel(
-                    includeClasses,
-                    excludeClasses,
-                    SearchString.of(string, exactMatch),
-                    pageable
-                )
-            }
-            else -> when (string) {
-                null -> service.findAll(pageable)
-                else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
-            }
-        }.mapToResourceRepresentation()
+        service.findAll(
+            pageable = pageable,
+            label = string?.let { SearchString.of(string, exactMatch) },
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            includeClasses = includeClasses,
+            excludeClasses = excludeClasses,
+            observatoryId = observatoryId,
+            organizationId = organizationId
+        ).mapToResourceRepresentation()
 
     @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])

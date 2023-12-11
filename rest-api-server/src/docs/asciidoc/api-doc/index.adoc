@@ -207,7 +207,7 @@ They can appear in the subject or object position in <<Statements,statements>>.
 
 A `GET` request lists all resources:
 
-operation::resource-controller-integration-test-index[snippets='request-parameters,curl-request,http-response']
+operation::resources-get-paged[snippets='request-parameters,curl-request']
 
 TIP: {pagination_note}
 

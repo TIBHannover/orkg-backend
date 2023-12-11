@@ -13,6 +13,7 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 
 private val paperClass = ThingId("Paper")
 private val paperDeletedClass = ThingId("PaperDeleted")
@@ -48,6 +49,58 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
 
     override fun findById(id: ThingId) =
         Optional.ofNullable(entities[id])
+
+    override fun findAll(pageable: Pageable): Page<Resource> =
+        findAll(
+            pageable = pageable,
+            label = null,
+            visibility = null,
+            createdBy = null,
+            createdAtStart = null,
+            createdAtEnd = null,
+            includeClasses = emptySet(),
+            excludeClasses = emptySet(),
+            observatoryId = null,
+            organizationId = null
+        )
+
+    override fun findAll(
+        pageable: Pageable,
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?
+    ): Page<Resource> =
+        findAllFilteredAndPaged(
+            pageable = pageable,
+            comparator = if (label != null) {
+                compareBy { it.label.length }
+            } else {
+                pageable.withDefaultSort { Sort.by("created_at") }.sort.resourceComparator
+            },
+            predicate = {
+                (label == null || it.label.matches(label))
+                    && (visibility == null || when (visibility) {
+                        VisibilityFilter.ALL_LISTED -> it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED
+                        VisibilityFilter.UNLISTED -> it.visibility == Visibility.UNLISTED
+                        VisibilityFilter.FEATURED -> it.visibility == Visibility.FEATURED
+                        VisibilityFilter.NON_FEATURED -> it.visibility == Visibility.DEFAULT
+                        VisibilityFilter.DELETED -> it.visibility == Visibility.DELETED
+                    })
+                    && (createdBy == null || it.createdBy == createdBy)
+                    && (createdAtStart == null || it.createdAt >= createdAtStart)
+                    && (createdAtEnd == null || it.createdAt <= createdAtEnd)
+                    && (includeClasses.isEmpty() || includeClasses.all { `class` -> `class` in it.classes })
+                    && (excludeClasses.isEmpty() || excludeClasses.none { `class` -> `class` in it.classes })
+                    && (observatoryId == null || it.observatoryId == observatoryId)
+                    && (organizationId == null || it.organizationId == organizationId)
+            }
+        )
 
     override fun findAllPapersByLabel(label: String) =
         entities.values.filter { it.label.equals(label, ignoreCase = true) && paperClass in it.classes && paperDeletedClass !in it.classes}
@@ -187,28 +240,5 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
     ): Page<Resource> = findAllFilteredAndPaged(pageable) {
         (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && it.observatoryId == id
             && it.classes.any { `class` -> `class` in classes }
-    }
-
-    override fun findAllWithFilters(
-        classes: Set<ThingId>,
-        visibility: VisibilityFilter?,
-        organizationId: OrganizationId?,
-        observatoryId: ObservatoryId?,
-        createdBy: ContributorId?,
-        createdAt: OffsetDateTime?,
-        pageable: Pageable
-    ): Page<Resource> = findAllFilteredAndPaged(pageable, pageable.sort.resourceComparator) {
-         (classes.isEmpty() || it.classes.containsAll(classes))
-             && (visibility == null || when (visibility) {
-                 VisibilityFilter.ALL_LISTED -> it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED
-                 VisibilityFilter.UNLISTED -> it.visibility == Visibility.UNLISTED
-                 VisibilityFilter.FEATURED -> it.visibility == Visibility.FEATURED
-                 VisibilityFilter.NON_FEATURED -> it.visibility == Visibility.DEFAULT
-                 VisibilityFilter.DELETED -> it.visibility == Visibility.DELETED
-             })
-             && (organizationId == null || organizationId == it.organizationId)
-             && (observatoryId == null || observatoryId == it.observatoryId)
-             && (createdBy == null || createdBy == it.createdBy)
-             && (createdAt == null || createdAt == it.createdAt)
     }
 }

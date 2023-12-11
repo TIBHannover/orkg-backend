@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.output.inmemory
 
 import org.orkg.graph.output.EntityRepository
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -10,16 +11,16 @@ abstract class InMemoryRepository<ID, T>(
 ) : EntityRepository<T, ID> {
     protected val entities: MutableMap<ID, T> = mutableMapOf()
 
-    override fun findAll(pageable: Pageable) =
+    override fun findAll(pageable: Pageable): Page<T> =
         findAllFilteredAndPaged(pageable) { true }
 
-    override fun exists(id: ID) = entities.contains(id)
+    override fun exists(id: ID): Boolean = entities.contains(id)
 
     protected fun findAllFilteredAndPaged(
         pageable: Pageable,
         comparator: Comparator<T> = defaultComparator,
         predicate: (T) -> Boolean
-    ) = entities.values
+    ): Page<T> = entities.values
         .filter(predicate)
         .sortedWith(comparator)
         .paged(pageable)

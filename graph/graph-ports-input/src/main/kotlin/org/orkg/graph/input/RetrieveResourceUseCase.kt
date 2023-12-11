@@ -1,5 +1,6 @@
 package org.orkg.graph.input
 
+import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -16,8 +17,19 @@ interface RetrieveResourceUseCase {
     fun exists(id: ThingId): Boolean
     fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): Resource?
 
+    fun findAll(
+        pageable: Pageable,
+        label: SearchString? = null,
+        visibility: VisibilityFilter? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        includeClasses: Set<ThingId> = emptySet(),
+        excludeClasses: Set<ThingId> = emptySet(),
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+    ): Page<Resource>
     // Legacy methods:
-    fun findAll(pageable: Pageable): Page<Resource>
     fun findAllByClass(pageable: Pageable, id: ThingId): Page<Resource>
     fun findAllByClassAndCreatedBy(pageable: Pageable, id: ThingId, createdBy: ContributorId): Page<Resource>
     fun findAllByClassAndLabel(id: ThingId, label: SearchString, pageable: Pageable): Page<Resource>

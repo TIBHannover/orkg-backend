@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.auth.input.AuthUseCase
-import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.LegacyPaperUseCases
 import org.orkg.createClass
@@ -33,7 +32,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.context.TestPropertySource
@@ -86,70 +84,6 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
         assertThat(literalService.findAll(tempPageable)).hasSize(0)
-    }
-
-    @Test
-    fun index() {
-        service.createResource(label = "research contribution")
-        service.createResource(label = "programming language")
-        mockMvc
-            .perform(getRequestTo("/api/resources/"))
-            .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    pageableRequestParameters(),
-                    pageOfDetailedResourcesResponseFields()
-                )
-            )
-    }
-
-    @Test
-    fun lookup() {
-        service.createResource(label = "research contribution")
-        service.createResource(label = "programming language")
-        service.createResource(label = "research topic")
-
-        mockMvc
-            .perform(getRequestTo("/api/resources/?q=research"))
-            .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    requestParameters(
-                        parameterWithName("q")
-                            .description("A search term that must be contained in the label"),
-                        parameterWithName("exact")
-                            .description("Whether it is an exact string lookup or just containment")
-                            .optional()
-                    ),
-                    pageOfDetailedResourcesResponseFields()
-                )
-            )
-    }
-
-    @Test
-    fun lookupWithSpecialChars() {
-        service.createResource(label = "research contribution")
-        service.createResource(label = "programming language (PL)")
-        service.createResource(label = "research topic")
-
-        mockMvc
-            .perform(getRequestTo("/api/resources/?q=PL)"))
-            .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    requestParameters(
-                        parameterWithName("q")
-                            .description("A search term that must be contained in the label"),
-                        parameterWithName("exact")
-                            .description("Whether it is an exact string lookup or just containment")
-                            .optional()
-                    ),
-                    pageOfDetailedResourcesResponseFields()
-                )
-            )
     }
 
     @Test
@@ -290,87 +224,6 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(putRequestWithBody("/api/resources/$resource", update))
-            .andExpect(status().isBadRequest)
-    }
-
-    @Test
-    @WithMockUser
-    fun excludeByClass() {
-        val id = classService.createClass(label = "research contribution")
-        service.createResource(classes = setOf(id.value), label = "Contribution 1")
-        service.createResource(label = "Contribution 2")
-        service.createResource(label = "Contribution 3")
-        val id2 = classService.createClass(label = "research contribution")
-        service.createResource(classes = setOf(id2.value), label = "Paper Contribution 1")
-        mockMvc
-            .perform(
-                getRequestTo("/api/resources/?q=Contribution&exclude=$id,$id2")
-            )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
-            .andDo(
-                document(
-                    snippet,
-                    pageableRequestParameters(
-                        parameterWithName("q")
-                            .description("A search term that must be contained in the label"),
-                        parameterWithName("exact")
-                            .description("Whether it is an exact string lookup or just containment")
-                            .optional(),
-                        parameterWithName("exclude")
-                            .description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
-                            .optional(),
-                        parameterWithName("include")
-                            .description("List of classes to include e.g Paper,C0,Contribution (default: not provided)")
-                            .optional()
-                    ),
-                    pageOfDetailedResourcesResponseFields()
-                )
-            )
-    }
-
-    @Test
-    fun includeByClass() {
-        val id = classService.createClass(label = "research contribution")
-        service.createResource(classes = setOf(id.value), label = "Contribution 1")
-        service.createResource(label = "Contribution 2")
-        service.createResource(label = "Contribution 3")
-        val id2 = classService.createClass(label = "research contribution")
-        service.createResource(classes = setOf(id2.value), label = "Paper Contribution 1")
-
-        mockMvc
-            .perform(
-                getRequestTo("/api/resources/?q=Contribution&include=$id")
-            )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andDo(
-                document(
-                    snippet,
-                    pageableRequestParameters(
-                        parameterWithName("q")
-                            .description("A search term that must be contained in the label"),
-                        parameterWithName("exact")
-                            .description("Whether it is an exact string lookup or just containment")
-                            .optional(),
-                        parameterWithName("exclude")
-                            .description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
-                            .optional(),
-                        parameterWithName("include")
-                            .description("List of classes to include e.g Paper,C0,Contribution (default: not provided)")
-                            .optional()
-                    ),
-                    pageOfDetailedResourcesResponseFields()
-                )
-            )
-    }
-
-    @Test
-    fun includeAndExcludeByClassError() {
-        mockMvc
-            .perform(
-                getRequestTo("/api/resources/?q=Contribution&include=Error,NoError&exclude=Error")
-            )
             .andExpect(status().isBadRequest)
     }
 
@@ -546,11 +399,6 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         return templatedResource
     }
 
-    fun createTestUser(): ContributorId {
-        userService.registerUser("abc@gmail.com", "123456", "Test user")
-        return ContributorId(userService.findByEmail("abc@gmail.com").get().id)
-    }
-
     companion object RestDoc {
         fun resourceResponseFields() = listOf(
             fieldWithPath("id").description("The resource ID"),
@@ -571,13 +419,6 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
             fieldWithPath("unlisted").description("Unlisted Value").optional().ignored(),
             fieldWithPath("formatted_label").description("The formatted label of the resource if available").optional()
         )
-
-        fun listOfResourcesResponseFields(): ResponseFieldsSnippet =
-            responseFields(
-                fieldWithPath("[]").description("A list of resources")
-            )
-                .andWithPrefix("[].", resourceResponseFields())
-                .andWithPrefix("")
 
         fun pageOfDetailedResourcesResponseFields(): ResponseFieldsSnippet {
             return responseFields(pageableDetailedFieldParameters())

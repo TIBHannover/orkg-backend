@@ -1,14 +1,27 @@
 package org.orkg.graph.adapter.output.neo4j
 
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
+import org.neo4j.cypherdsl.core.Condition
+import org.neo4j.cypherdsl.core.Conditions
+import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.call
+import org.neo4j.cypherdsl.core.Cypher.literalOf
+import org.neo4j.cypherdsl.core.Cypher.match
+import org.neo4j.cypherdsl.core.Cypher.name
+import org.neo4j.cypherdsl.core.Cypher.node
+import org.neo4j.cypherdsl.core.Functions.labels
+import org.neo4j.cypherdsl.core.Functions.size
+import org.neo4j.cypherdsl.core.Functions.toLower
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.appendOrderByOptimizations
-import org.orkg.common.neo4jdsl.sortedWith
+import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
+import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
+import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResource
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResourceIdGenerator
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResourceRepository
@@ -24,13 +37,14 @@ import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 const val RESOURCE_ID_TO_RESOURCE_CACHE = "resource-id-to-resource"
 const val RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE = "resource-id-to-resource-exists"
+private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_resource_on_label"
 
 @Component
 @CacheConfig(cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
@@ -82,73 +96,18 @@ class SpringDataNeo4jResourceAdapter(
     }
 
     override fun findAll(pageable: Pageable): Page<Resource> =
-        findAllWithFilters(pageable = pageable)
-
-    override fun findAllWithFilters(
-        classes: Set<ThingId>,
-        visibility: VisibilityFilter?,
-        organizationId: OrganizationId?,
-        observatoryId: ObservatoryId?,
-        createdBy: ContributorId?,
-        createdAt: OffsetDateTime?,
-        pageable: Pageable
-    ): Page<Resource> {
-        val where = buildString {
-            if (visibility != null) {
-                if (visibility == VisibilityFilter.ALL_LISTED) {
-                    append(""" AND (n.visibility = "DEFAULT" OR n.visibility = "FEATURED")""")
-                } else {
-                    append(" AND n.visibility = ${'$'}visibility")
-                }
-            }
-            if (organizationId != null) {
-                append(" AND n.organization_id = ${'$'}organizationId")
-            }
-            if (observatoryId != null) {
-                append(" AND n.observatory_id = ${'$'}observatoryId")
-            }
-            if (createdBy != null) {
-                append(" AND n.created_by = ${'$'}createdBy")
-            }
-            if (createdAt != null) {
-                append(" AND n.created_at = ${'$'}createdAt")
-            }
-            appendOrderByOptimizations(pageable, createdAt, createdBy)
-        }.replaceFirst(" AND", "WHERE")
-
-        val classLabels = classes.joinToString(separator = "") { ":`$it`" }
-        val query = """
-            MATCH (n:Resource$classLabels) $where
-            RETURN n, n.id AS id, n.label AS label, n.created_by AS created_by, n.created_at AS created_at
-            SKIP ${'$'}skip LIMIT ${'$'}limit""".sortedWith(pageable.sort).trimIndent()
-        val countQuery = """
-            MATCH (n:Resource$classLabels) $where
-            RETURN COUNT(n)""".trimIndent()
-        val parameters = mapOf(
-            "visibility" to when (visibility) {
-                VisibilityFilter.UNLISTED -> Visibility.UNLISTED
-                VisibilityFilter.FEATURED -> Visibility.FEATURED
-                VisibilityFilter.NON_FEATURED -> Visibility.DEFAULT
-                VisibilityFilter.DELETED -> Visibility.DELETED
-                else -> null
-            }?.name,
-            "organizationId" to organizationId?.value?.toString(),
-            "observatoryId" to observatoryId?.value?.toString(),
-            "createdBy" to createdBy?.value?.toString(),
-            "createdAt" to createdAt?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+        findAll(
+            pageable = pageable,
+            label = null,
+            visibility = null,
+            createdBy = null,
+            createdAtStart = null,
+            createdAtEnd = null,
+            includeClasses = emptySet(),
+            excludeClasses = emptySet(),
+            observatoryId = null,
+            organizationId = null
         )
-        val elements = neo4jClient.query(query)
-            .bindAll(parameters + mapOf("skip" to pageable.offset, "limit" to pageable.pageSize))
-            .fetchAs(Resource::class.java)
-            .mappedBy(ResourceMapper("n"))
-            .all()
-        val count = neo4jClient.query(countQuery)
-            .bindAll(parameters)
-            .fetchAs(Long::class.java)
-            .one()
-            .orElse(0)
-        return PageImpl(elements.toList(), pageable, count)
-    }
 
     @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
     override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
@@ -156,6 +115,89 @@ class SpringDataNeo4jResourceAdapter(
     @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE])
     override fun findById(id: ThingId): Optional<Resource> =
         neo4jRepository.findById(id).map(Neo4jResource::toResource)
+
+    override fun findAll(
+        pageable: Pageable,
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?
+    ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
+        .withCommonQuery {
+            val node = node("Resource", includeClasses.map { it.value }).named("node")
+            val match = label?.let { searchString ->
+                val labelCondition = includeClasses.toCondition {
+                    anonParameter(includeClasses.map { it.value }).includesAll(labels(node))
+                }
+                when (searchString) {
+                    is ExactSearchString -> {
+                        call("db.index.fulltext.queryNodes")
+                            .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                            .yield("node")
+                            .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))).and(labelCondition))
+                            .with(node)
+                    }
+                    is FuzzySearchString -> {
+                        call("db.index.fulltext.queryNodes")
+                            .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                            .yield("node", "score")
+                            .where(size(node.property("label")).gte(anonParameter(searchString.input.length)).and(labelCondition))
+                            .with(node, name("score"))
+                    }
+                }
+            } ?: match(node).with(node)
+            match.where(
+                visibility.toCondition { filter ->
+                    filter.targets.map { node.property("visibility").eq(literalOf<String>(it.name)) }
+                        .reduceOrNull(Condition::or) ?: Conditions.noCondition()
+                },
+                createdBy.toCondition { node.property("created_by").eq(anonParameter(it.value.toString())) },
+                createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
+                createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
+                excludeClasses.toCondition { labels(node).includesAny(anonParameter(it.map { id -> id.value })).not() },
+                observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
+                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) }
+            )
+        }
+        .withQuery { commonQuery ->
+            val node = name("node")
+            val score = if (label != null && label is FuzzySearchString) name("score") else null
+            val variables = listOfNotNull(node, score)
+            val pageableWithDefaultSort = pageable.withDefaultSort { Sort.by("created_at") }
+            commonQuery
+                .with(variables) // "with" is required because cypher dsl reorders "orderBy" and "where" clauses sometimes, decreasing performance
+                .where(
+                    orderByOptimizations(
+                        node = node,
+                        sort = pageableWithDefaultSort.sort,
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                    )
+                )
+                .with(variables)
+                .orderBy(
+                    if (score != null) {
+                        listOf(
+                            size(node.property("label")).ascending(),
+                            score.descending(),
+                            node.property("created_at").ascending()
+                        )
+                    } else {
+                        pageableWithDefaultSort.sort.toSortItems(
+                            node = node,
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                        )
+                    }
+                )
+                .returning(node)
+        }
+        .countOver("node")
+        .mappedBy(ResourceMapper("node"))
+        .fetch(pageable, false)
 
     override fun findAllPapersByLabel(label: String): Iterable<Resource> =
         neo4jRepository.findAllPapersByLabel(label).map(Neo4jResource::toResource)

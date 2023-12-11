@@ -6,12 +6,16 @@ import java.time.format.DateTimeFormatter
 import java.util.function.BiFunction
 import java.util.stream.Collectors
 import org.jetbrains.annotations.Contract
+import org.neo4j.cypherdsl.core.Condition
+import org.neo4j.cypherdsl.core.Conditions
+import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.FunctionInvocation
 import org.neo4j.cypherdsl.core.Functions
 import org.neo4j.cypherdsl.core.ResultStatement
+import org.neo4j.cypherdsl.core.SortItem
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
 import org.neo4j.driver.Record
@@ -19,10 +23,12 @@ import org.neo4j.driver.Value
 import org.neo4j.driver.types.MapAccessor
 import org.neo4j.driver.types.Node
 import org.neo4j.driver.types.TypeSystem
+import org.springframework.data.domain.PageRequest
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
@@ -191,16 +197,51 @@ internal fun problemNode() = node("Problem", "Resource")
 internal fun contributionNode() = node("Contribution", "Resource")
 
 internal fun StatementBuilder.TerminalExposesOrderBy.build(pageable: Pageable): ResultStatement =
-    orderBy(pageable.sort).skip(pageable.offset).limit(pageable.pageSize).build()
+    orderBy(pageable.sort.toSortItems()).skip(pageable.offset).limit(pageable.pageSize).build()
 
-internal fun StatementBuilder.TerminalExposesOrderBy.orderBy(sort: Sort): StatementBuilder.OngoingMatchAndReturnWithOrder =
-    orderBy(sort.get().map {
-        var expression: Expression = name(it.property)
-        if (it.isIgnoreCase) {
+internal fun Sort.toSortItems(
+    node: Expression? = null,
+    vararg knownProperties: String
+): kotlin.collections.List<SortItem> =
+    map { sort ->
+        if (knownProperties.isNotEmpty() && sort.property !in knownProperties) {
+            throw UnknownSortingProperty(sort.property)
+        }
+        var expression: Expression = node?.let { node.property(sort.property) } ?: name(sort.property)
+        if (sort.isIgnoreCase) {
             expression = Functions.toLower(expression)
         }
-        when (it.direction) {
+        when (sort.direction) {
             Sort.Direction.DESC -> expression.descending()
             else -> expression.ascending()
         }
-    }.collect(Collectors.toList()))
+    }.toList()
+
+internal inline fun <T> T?.toCondition(mapper: (T) -> Condition): Condition =
+    this?.let(mapper) ?: Conditions.noCondition()
+
+internal inline fun <T : Collection<*>> T.toCondition(mapper: (T) -> Condition): Condition =
+    if (isEmpty()) Conditions.noCondition() else mapper(this)
+
+internal fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
+    vararg conditions: Condition
+): StatementBuilder.OrderableOngoingReadingAndWithWithWhere =
+    where(conditions.reduceOrNull(Condition::and) ?: Conditions.noCondition())
+
+internal fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
+    conditions: kotlin.collections.List<Condition>
+): StatementBuilder.OrderableOngoingReadingAndWithWithWhere =
+    where(conditions.reduceOrNull(Condition::and) ?: Conditions.noCondition())
+
+internal inline fun Pageable.withDefaultSort(sort: () -> Sort): Pageable =
+    if (this.sort.isSorted) this else PageRequest.of(pageNumber, pageSize, sort())
+
+internal fun orderByOptimizations(
+    node: Expression,
+    sort: Sort,
+    vararg properties: String
+): kotlin.collections.List<Condition> {
+    val sortProperties = sort.map { it.property }
+    return properties.filter { it in sortProperties }
+        .map { node.property(it).isNotNull }
+}

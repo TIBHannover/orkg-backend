@@ -22,6 +22,18 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     fun deleteById(id: ThingId)
     fun deleteAll()
     fun findById(id: ThingId): Optional<Resource>
+    fun findAll(
+        pageable: Pageable,
+        label: SearchString? = null,
+        visibility: VisibilityFilter? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        includeClasses: Set<ThingId> = emptySet(),
+        excludeClasses: Set<ThingId> = emptySet(),
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+    ): Page<Resource>
     fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Resource>
     fun findAllByClass(`class`: ThingId, pageable: Pageable): Page<Resource>
     fun findAllByClassAndCreatedBy(`class`: ThingId, createdBy: ContributorId, pageable: Pageable): Page<Resource>
@@ -62,14 +74,4 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
 
     fun findAllByClassInAndVisibilityAndObservatoryId(classes: Set<ThingId>, visibility: Visibility, id: ObservatoryId, pageable: Pageable): Page<Resource>
     fun findAllListedByClassInAndObservatoryId(classes: Set<ThingId>, id: ObservatoryId, pageable: Pageable): Page<Resource>
-
-    fun findAllWithFilters(
-        classes: Set<ThingId> = emptySet(),
-        visibility: VisibilityFilter? = null,
-        organizationId: OrganizationId? = null,
-        observatoryId: ObservatoryId? = null,
-        createdBy: ContributorId? = null,
-        createdAt: OffsetDateTime? = null,
-        pageable: Pageable
-    ): Page<Resource>
 }

@@ -1,5 +1,6 @@
 package org.orkg
 
+import java.time.OffsetDateTime
 import java.util.stream.Stream
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -8,8 +9,14 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
+import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
+import org.orkg.common.ThingId
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceService
+import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
@@ -96,7 +103,18 @@ class CorsTest {
             statementRepository,
             classRepository
         ) {
-            override fun findAll(pageable: Pageable): Page<Resource> = Page.empty(pageable)
+            override fun findAll(
+                pageable: Pageable,
+                label: SearchString?,
+                visibility: VisibilityFilter?,
+                createdBy: ContributorId?,
+                createdAtStart: OffsetDateTime?,
+                createdAtEnd: OffsetDateTime?,
+                includeClasses: Set<ThingId>,
+                excludeClasses: Set<ThingId>,
+                observatoryId: ObservatoryId?,
+                organizationId: OrganizationId?
+            ): Page<Resource> = Page.empty(pageable)
         }
     }
 }

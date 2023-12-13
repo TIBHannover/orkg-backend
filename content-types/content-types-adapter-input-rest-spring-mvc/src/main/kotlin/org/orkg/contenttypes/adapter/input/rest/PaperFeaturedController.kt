@@ -3,7 +3,6 @@ package org.orkg.contenttypes.adapter.input.rest
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.GetPaperFlagQuery
 import org.orkg.contenttypes.input.LoadPaperPort
-import org.orkg.graph.adapter.input.rest.BaseController
 import org.orkg.graph.domain.Resource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 class PaperFeaturedController(
     private val port: LoadPaperPort,
     private val query: GetPaperFlagQuery
-) : BaseController() {
+) {
 
     @GetMapping("/api/papers/{id}/metadata/featured")
     fun getFeaturedFlag(@PathVariable id: ThingId): Boolean? = query.getFeaturedPaperFlag(id)

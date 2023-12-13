@@ -27,6 +27,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectVisualization
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
@@ -43,7 +44,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -251,7 +251,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     @DisplayName("Given a create visualization request, when service succeeds, it creates and returns the visualization")
     fun create() {
         val id = ThingId("R123")
@@ -295,7 +295,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create visualization request, when service reports only one organization allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneOrganizationAllowed()
         every { visualizationService.create(any()) } throws exception
@@ -313,7 +313,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create visualization request, when service reports only one observatory allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneObservatoryAllowed()
         every { visualizationService.create(any()) } throws exception
@@ -331,7 +331,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create visualization request, when service reports author not found, then status is 404 NOT FOUND`() {
         val exception = AuthorNotFound(ThingId("R123"))
         every { visualizationService.create(any()) } throws exception
@@ -349,7 +349,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create visualization request, when service reports ambiguous author, then status is 400 BAD REQUEST`() {
         val exception = AmbiguousAuthor(
             Author(

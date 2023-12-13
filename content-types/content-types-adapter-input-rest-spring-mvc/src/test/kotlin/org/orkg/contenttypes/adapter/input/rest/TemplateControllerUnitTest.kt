@@ -20,7 +20,6 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.OrganizationNotFound
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
 import org.orkg.contenttypes.domain.InvalidCardinality
 import org.orkg.contenttypes.domain.InvalidMaxCount
 import org.orkg.contenttypes.domain.InvalidMinCount
@@ -28,6 +27,7 @@ import org.orkg.contenttypes.domain.InvalidRegexPattern
 import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.TemplateNotFound
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ExactSearchString
@@ -37,6 +37,7 @@ import org.orkg.graph.domain.ResearchProblemNotFound
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplate
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -52,7 +53,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -221,7 +221,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     @DisplayName("Given a template request, when service succeeds, it creates and returns the template")
     fun create() {
         val id = ThingId("R123")
@@ -268,7 +268,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports target class, or datatype or class range not found, then status is 404 NOT FOUND`() {
         val exception = ClassNotFound.withThingId(ThingId("invalid"))
         every { templateService.create(any()) } throws exception
@@ -286,7 +286,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports template already exists for class, then status is 400 BAD REQUEST`() {
         val exception = TemplateAlreadyExistsForClass(ThingId("R123"), ThingId("R456"))
         every { templateService.create(any()) } throws exception
@@ -304,7 +304,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports related research field not found, then status is 404 NOT FOUND`() {
         val exception = ResearchFieldNotFound(ThingId("R22"))
         every { templateService.create(any()) } throws exception
@@ -322,7 +322,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports related research problem not found, then status is 404 NOT FOUND`() {
         val exception = ResearchProblemNotFound(ThingId("R22"))
         every { templateService.create(any()) } throws exception
@@ -340,7 +340,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports related predicate not found, then status is 404 NOT FOUND`() {
         val exception = PredicateNotFound(ThingId("R22"))
         every { templateService.create(any()) } throws exception
@@ -358,7 +358,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports invalid min count, then status is 400 BAD REQUEST`() {
         val exception = InvalidMinCount(-1)
         every { templateService.create(any()) } throws exception
@@ -376,7 +376,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports invalid max count, then status is 400 BAD REQUEST`() {
         val exception = InvalidMaxCount(-1)
         every { templateService.create(any()) } throws exception
@@ -394,7 +394,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports invalid cardinality, then status is 400 BAD REQUEST`() {
         val exception = InvalidCardinality(5, 1)
         every { templateService.create(any()) } throws exception
@@ -412,7 +412,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports invalid pattern, then status is 400 BAD REQUEST`() {
         val exception = InvalidRegexPattern("\\", Exception("Invalid regex pattern"))
         every { templateService.create(any()) } throws exception
@@ -430,7 +430,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports path predicate not found, then status is 404 NOT FOUND`() {
         val exception = PredicateNotFound("P123")
         every { templateService.create(any()) } throws exception
@@ -448,7 +448,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports organization not found, then status is 404 NOT FOUND`() {
         val exception = OrganizationNotFound(OrganizationId(UUID.randomUUID()))
         every { templateService.create(any()) } throws exception
@@ -466,7 +466,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template request, when service reports observatory not found, then status is 404 NOT FOUND`() {
         val exception = ObservatoryNotFound(ObservatoryId(UUID.randomUUID()))
         every { templateService.create(any()) } throws exception
@@ -484,7 +484,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     @DisplayName("Given a template property request, when service succeeds, it creates the template property")
     fun createProperty() {
         val templateId = ThingId("R3541")
@@ -521,7 +521,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template property request, when service reports datatype or class range not found, then status is 404 NOT FOUND`(
         request: TemplateController.CreateTemplatePropertyRequest
     ) {
@@ -543,7 +543,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template property request, when service reports invalid min count, then status is 400 BAD REQUEST`(
         request: TemplateController.CreateTemplatePropertyRequest
     ) {
@@ -565,7 +565,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template property request, when service reports invalid max count, then status is 400 BAD REQUEST`(
         request: TemplateController.CreateTemplatePropertyRequest
     ) {
@@ -587,7 +587,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template property request, when service reports invalid cardinality, then status is 400 BAD REQUEST`(
         request: TemplateController.CreateTemplatePropertyRequest
     ) {
@@ -609,7 +609,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template property request, when service reports invalid pattern, then status is 400 BAD REQUEST`(
         request: TemplateController.CreateTemplatePropertyRequest
     ) {
@@ -631,7 +631,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template property request, when service reports path predicate not found, then status is 404 NOT FOUND`(
         request: TemplateController.CreateTemplatePropertyRequest
     ) {
@@ -653,7 +653,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a template property request, when service reports template is closed, then status is 400 BAD REQUEST`(
         request: TemplateController.CreateTemplatePropertyRequest
     ) {

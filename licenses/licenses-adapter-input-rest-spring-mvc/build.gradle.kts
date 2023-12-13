@@ -35,7 +35,6 @@ dependencies {
     implementation(project(":licenses:licenses-ports-input"))
     implementation(project(":licenses:licenses-core-model"))
     implementation(project(":licenses:licenses-core-services"))
-    implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // TODO: break dependency
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.data:spring-data-commons")

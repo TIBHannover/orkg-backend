@@ -9,6 +9,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeCurator
 import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.contributorId
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
@@ -37,6 +38,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -58,7 +61,7 @@ class ResourceController(
     override val statementService: StatementUseCases,
     override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
-) : BaseController(), ResourceRepresentationAdapter {
+) : ResourceRepresentationAdapter {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ThingId): ResourceRepresentation =
@@ -95,12 +98,12 @@ class ResourceController(
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody resource: CreateResourceRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<ResourceRepresentation> {
         Label.ofOrNull(resource.label) ?: throw InvalidLabel()
         if (resource.id != null && service.findById(resource.id).isPresent) throw ResourceAlreadyExists(resource.id)
-        val userId = authenticatedUserId()
-        val contributor = contributorService.findById(ContributorId(userId))
+        val contributor = contributorService.findById(currentUser.contributorId())
         var observatoryId = ObservatoryId.createUnknownObservatory()
         var organizationId = OrganizationId.createUnknownOrganization()
         if (!contributor.isEmpty) {
@@ -114,7 +117,7 @@ class ResourceController(
                     label = resource.label,
                     classes = resource.classes,
                     extractionMethod = resource.extractionMethod,
-                    contributorId = ContributorId(userId),
+                    contributorId = currentUser.contributorId(),
                     observatoryId = observatoryId,
                     organizationId = organizationId,
                 )
@@ -222,8 +225,8 @@ class ResourceController(
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorizeCurator
-    fun markUnlisted(@PathVariable id: ThingId) {
-        service.markAsUnlisted(id, ContributorId(authenticatedUserId()))
+    fun markUnlisted(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails) {
+        service.markAsUnlisted(id, currentUser.contributorId())
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")

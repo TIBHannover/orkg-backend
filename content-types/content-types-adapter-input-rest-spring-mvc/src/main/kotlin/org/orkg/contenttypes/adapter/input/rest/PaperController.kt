@@ -9,6 +9,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.contributorId
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContributionRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
@@ -17,7 +18,6 @@ import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.UpdatePaperUseCase
-import org.orkg.graph.adapter.input.rest.BaseController
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.VisibilityFilter
@@ -27,6 +27,8 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -43,7 +45,7 @@ const val PAPER_JSON_V2 = "application/vnd.orkg.paper.v2+json"
 @RequestMapping("/api/papers", produces = [PAPER_JSON_V2])
 class PaperController(
     private val service: PaperUseCases
-) : BaseController(), PaperRepresentationAdapter, ContributionRepresentationAdapter {
+) : PaperRepresentationAdapter, ContributionRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(
         @PathVariable id: ThingId
@@ -90,9 +92,10 @@ class PaperController(
     @PostMapping(consumes = [PAPER_JSON_V2])
     fun create(
         @RequestBody @Valid request: CreatePaperRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<PaperRepresentation> {
-        val userId = ContributorId(authenticatedUserId())
+        val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
         val location = uriComponentsBuilder
             .path("api/papers/{id}")
@@ -106,9 +109,10 @@ class PaperController(
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: UpdatePaperRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<PaperRepresentation> {
-        val userId = ContributorId(authenticatedUserId())
+        val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
         val location = uriComponentsBuilder
             .path("api/papers/{id}")
@@ -122,9 +126,10 @@ class PaperController(
     fun createContribution(
         @PathVariable("id") paperId: ThingId,
         @RequestBody @Valid request: CreateContributionRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<ContributionRepresentation> {
-        val userId = ContributorId(authenticatedUserId())
+        val userId = currentUser.contributorId()
         val id = service.createContribution(request.toCreateCommand(userId, paperId))
         val location = uriComponentsBuilder
             .path("api/contributions/{id}")
@@ -138,9 +143,10 @@ class PaperController(
     fun publish(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: PublishRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<Any> {
-        val contributorId = ContributorId(authenticatedUserId())
+        val contributorId = currentUser.contributorId()
         service.publish(id, contributorId, request.subject, request.description)
         val location = uriComponentsBuilder
             .path("api/papers/{id}")

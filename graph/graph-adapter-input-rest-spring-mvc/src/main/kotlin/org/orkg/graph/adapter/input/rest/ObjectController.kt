@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.contributorId
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ResourceNotFound
@@ -13,6 +14,8 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -29,15 +32,16 @@ class ObjectController(
     override val statementService: StatementUseCases,
     override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService,
-) : BaseController(), ResourceRepresentationAdapter {
+) : ResourceRepresentationAdapter {
 
     @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody obj: CreateObjectRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<ResourceRepresentation> {
-        val id = objectService.createObject(obj, null, authenticatedUserId())
+        val id = objectService.createObject(obj, null, currentUser.contributorId().value)
         val location = uriComponentsBuilder
             .path("api/objects/")
             .buildAndExpand(id)
@@ -50,12 +54,13 @@ class ObjectController(
     fun add(
         @PathVariable id: ThingId,
         @RequestBody obj: CreateObjectRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<ResourceRepresentation> {
         resourceService
             .findById(id)
             .orElseThrow { ResourceNotFound.withId(id) }
-        objectService.createObject(obj, id, authenticatedUserId())
+        objectService.createObject(obj, id, currentUser.contributorId().value)
         val location = uriComponentsBuilder
             .path("api/objects/")
             .buildAndExpand(id)

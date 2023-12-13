@@ -464,7 +464,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     @DisplayName("Given a paper create request, when service succeeds, it creates and returns the paper")
     fun create() {
         val id = ThingId("R123")
@@ -533,7 +533,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports only one research field allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneResearchFieldAllowed()
         every { paperService.create(any()) } throws exception
@@ -551,7 +551,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports only one organization allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneOrganizationAllowed()
         every { paperService.create(any()) } throws exception
@@ -569,7 +569,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports only one observatory allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneObservatoryAllowed()
         every { paperService.create(any()) } throws exception
@@ -587,7 +587,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports thing not defined, then status is 400 BAD REQUEST`() {
         val exception = ThingNotDefined("R123")
         every { paperService.create(any()) } throws exception
@@ -605,7 +605,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports author not found, then status is 404 NOT FOUND`() {
         val exception = AuthorNotFound(ThingId("R123"))
         every { paperService.create(any()) } throws exception
@@ -623,7 +623,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports duplicate temp ids, then status is 400 BAD REQUEST`() {
         val exception = DuplicateTempIds(mapOf("#temp1" to 2))
         every { paperService.create(any()) } throws exception
@@ -641,7 +641,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports invalid temp id, then status is 400 BAD REQUEST`() {
         val exception = InvalidTempId("invalid")
         every { paperService.create(any()) } throws exception
@@ -659,7 +659,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports paper already exists with title, then status is 400 BAD REQUEST`() {
         val exception = PaperAlreadyExists.withTitle("paper title")
         every { paperService.create(any()) } throws exception
@@ -677,7 +677,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports paper already exists with identifier, then status is 400 BAD REQUEST`() {
         val exception = PaperAlreadyExists.withIdentifier("paper title")
         every { paperService.create(any()) } throws exception
@@ -695,7 +695,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports ambiguous author, then status is 400 BAD REQUEST`() {
         val exception = AmbiguousAuthor(
             Author(
@@ -719,7 +719,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports thing id is not a class, then status is 400 BAD REQUEST`() {
         val exception = ThingIsNotAClass(ThingId("R123"))
         every { paperService.create(any()) } throws exception
@@ -737,7 +737,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports thing id is not a predicate, then status is 400 BAD REQUEST`() {
         val exception = ThingIsNotAPredicate("R123")
         every { paperService.create(any()) } throws exception
@@ -755,7 +755,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports invalid statement subject, then status is 400 BAD REQUEST`() {
         val exception = InvalidStatementSubject("R123")
         every { paperService.create(any()) } throws exception
@@ -773,7 +773,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports thing not found, then status is 404 NOT FOUND`() {
         val exception = ThingNotFound("R123")
         every { paperService.create(any()) } throws exception
@@ -791,7 +791,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper create request, when service reports empty contributions, then status is 400 BAD REQUEST`() {
         val exception = EmptyContribution(0)
         every { paperService.create(any()) } throws exception
@@ -809,7 +809,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     @DisplayName("Given a paper update request, when service succeeds, it updates the paper")
     fun update() {
         val id = ThingId("R123")
@@ -859,7 +859,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
     
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper update request, when service reports paper already exists with title, then status is 400 BAD REQUEST`() {
         val id = ThingId("R123")
         val exception = PaperAlreadyExists.withTitle("paper title")
@@ -879,7 +879,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper update request, when service reports paper already exists with identifier, then status is 400 BAD REQUEST`() {
         val id = ThingId("R123")
         val exception = PaperAlreadyExists.withIdentifier("paper title")
@@ -899,7 +899,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper update request, when service reports ambiguous author, then status is 400 BAD REQUEST`() {
         val id = ThingId("R123")
         val exception = AmbiguousAuthor(
@@ -925,7 +925,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper update request, when service reports author not found, then status is 404 NOT FOUND`() {
         val id = ThingId("R123")
         val exception = AuthorNotFound(ThingId("R123"))
@@ -945,7 +945,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper update request, when service reports only one research field allowed, then status is 400 BAD REQUEST`() {
         val id = ThingId("R123")
         val exception = OnlyOneResearchFieldAllowed()
@@ -965,7 +965,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper update request, when service reports only one organization allowed, then status is 400 BAD REQUEST`() {
         val id = ThingId("R123")
         val exception = OnlyOneOrganizationAllowed()
@@ -985,7 +985,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper update request, when service reports only one observatory allowed, then status is 400 BAD REQUEST`() {
         val id = ThingId("R123")
         val exception = OnlyOneObservatoryAllowed()
@@ -1005,7 +1005,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a paper update request, when service reports paper not found, then status is 404 NOT FOUND`() {
         val id = ThingId("R123")
         val exception = PaperNotFound(id)
@@ -1025,7 +1025,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     @DisplayName("Given a contribution request, when service succeeds, it creates and returns the contribution")
     fun createContribution() {
         val paperId = ThingId("R3541")
@@ -1072,7 +1072,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a contribution request, when service reports invalid temp id, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = InvalidTempId("invalid")
@@ -1091,7 +1091,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a contribution request, when service reports duplicate temp ids, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = DuplicateTempIds(mapOf("#temp1" to 2))
@@ -1110,7 +1110,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a contribution request, when service reports paper not found, then status is 404 NOT FOUND`() {
         val paperId = ThingId("R123")
         val exception = PaperNotFound(ThingId("R123"))
@@ -1129,7 +1129,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a contribution request, when service reports thing not defined, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = ThingNotDefined("R123")
@@ -1148,7 +1148,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a contribution request, when service reports thing not found, then status is 404 NOT FOUND`() {
         val paperId = ThingId("R123")
         val exception = ThingNotFound("R123")
@@ -1167,7 +1167,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a contribution request, when service reports thing id is not a class, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = ThingIsNotAClass(ThingId("R123"))
@@ -1186,7 +1186,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a contribution request, when service reports thing id is not a predicate, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = ThingIsNotAPredicate("R123")
@@ -1205,7 +1205,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a contribution request, when service reports invalid statement subject, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = InvalidStatementSubject("R123")
@@ -1224,7 +1224,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a contribution request, when service reports empty contribution, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = EmptyContribution()

@@ -571,7 +571,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     @DisplayName("Given a create comparison request, when service succeeds, it creates and returns the comparison")
     fun create() {
         val id = ThingId("R123")
@@ -619,7 +619,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create comparison request, when service reports too few contributions, then status is 400 BAD REQUEST`() {
         val exception = RequiresAtLeastTwoContributions()
         every { comparisonService.create(any()) } throws exception
@@ -637,7 +637,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create comparison request, when service reports contribution not found, then status is 404 NOT FOUND`() {
         val exception = ContributionNotFound(ThingId("R123"))
         every { comparisonService.create(any()) } throws exception
@@ -655,7 +655,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create comparison request, when service reports only one research field allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneResearchFieldAllowed()
         every { comparisonService.create(any()) } throws exception
@@ -673,7 +673,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create comparison request, when service reports research field is missing, then status is 404 NOT FOUND`() {
         val exception = ResearchFieldNotFound(ThingId("R123"))
         every { comparisonService.create(any()) } throws exception
@@ -691,7 +691,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create comparison request, when service reports only one organization allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneOrganizationAllowed()
         every { comparisonService.create(any()) } throws exception
@@ -709,7 +709,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create comparison request, when service reports only one observatory allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneObservatoryAllowed()
         every { comparisonService.create(any()) } throws exception
@@ -727,7 +727,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create comparison request, when service reports author not found, then status is 404 NOT FOUND`() {
         val exception = AuthorNotFound(ThingId("R123"))
         every { comparisonService.create(any()) } throws exception
@@ -745,7 +745,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
     
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a create comparison request, when service reports ambiguous author, then status is 400 BAD REQUEST`() {
         val exception = AmbiguousAuthor(
             Author(
@@ -769,7 +769,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     @DisplayName("Given a comparison related resource request, when service succeeds, it creates and returns the comparison related resource")
     fun createComparisonRelatedResource() {
         val id = ThingId("R123")
@@ -805,7 +805,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a comparison related resource request, when service reports missing comparison, then status is 404 NOT FOUND`() {
         val comparisonId = ThingId("R100")
         val exception = ComparisonNotFound(comparisonId)
@@ -824,7 +824,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     @DisplayName("Given a comparison related figure request, when service succeeds, it creates and returns the comparison related figure")
     fun createComparisonRelatedFigure() {
         val id = ThingId("R123")
@@ -859,7 +859,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given a comparison related figure request, when service reports missing comparison, then status is 404 NOT FOUND`() {
         val comparisonId = ThingId("R100")
         val exception = ComparisonNotFound(comparisonId)

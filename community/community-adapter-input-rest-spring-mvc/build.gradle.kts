@@ -45,13 +45,13 @@ dependencies {
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-services"))
-    implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":identity-management:idm-ports-input")) // in legacy controller, TODO: break dependency
     implementation(project(":media-storage:media-storage-core-model"))
     implementation(project(":media-storage:media-storage-ports-input"))
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.data:spring-data-commons")
+    implementation("org.springframework.security:spring-security-core")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(libs.jackson.core)

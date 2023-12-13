@@ -9,19 +9,21 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.contributorId
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.VisualizationRepresentationAdapter
 import org.orkg.contenttypes.domain.VisualizationNotFound
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
 import org.orkg.contenttypes.input.VisualizationUseCases
-import org.orkg.graph.adapter.input.rest.BaseController
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.*
+import org.springframework.http.ResponseEntity.created
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -37,7 +39,7 @@ const val VISUALIZATION_JSON_V2 = "application/vnd.orkg.visualization.v2+json"
 @RequestMapping("/api/visualizations", produces = [MediaType.APPLICATION_JSON_VALUE])
 class VisualizationController(
     private val service: VisualizationUseCases
-) : BaseController(), VisualizationRepresentationAdapter {
+) : VisualizationRepresentationAdapter {
 
     @GetMapping("/{id}", produces = [VISUALIZATION_JSON_V2])
     fun findById(
@@ -78,9 +80,10 @@ class VisualizationController(
     @PostMapping(consumes = [VISUALIZATION_JSON_V2], produces = [VISUALIZATION_JSON_V2])
     fun create(
         @RequestBody @Valid request: CreateVisualizationRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<Any> {
-        val userId = ContributorId(authenticatedUserId())
+        val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
         val location = uriComponentsBuilder
             .path("api/visualizations/{id}")

@@ -1,10 +1,10 @@
 package org.orkg.graph.adapter.input.rest
 
 import dev.forkhandles.values.ofOrNull
-import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeCurator
 import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
@@ -20,6 +20,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -35,7 +37,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/predicates/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PredicateController(
     private val service: PredicateUseCases
-) : BaseController(), PredicateRepresentationAdapter {
+) : PredicateRepresentationAdapter {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ThingId): PredicateRepresentation =
@@ -56,14 +58,14 @@ class PredicateController(
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody predicate: CreatePredicateRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<PredicateRepresentation> {
         Label.ofOrNull(predicate.label) ?: throw InvalidLabel()
         if (predicate.id != null && service.findById(predicate.id).isPresent) throw PredicateAlreadyExists(predicate.id)
-        val userId = authenticatedUserId()
         val id = service.create(
             CreatePredicateUseCase.CreateCommand(
-                contributorId = ContributorId(userId),
+                contributorId = currentUser.contributorId(),
                 id = predicate.id?.value,
                 label = predicate.label,
             )

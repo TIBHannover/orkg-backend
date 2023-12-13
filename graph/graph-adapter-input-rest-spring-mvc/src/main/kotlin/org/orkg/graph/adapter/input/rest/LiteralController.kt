@@ -2,9 +2,9 @@ package org.orkg.graph.adapter.input.rest
 
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
-import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.LiteralRepresentationAdapter
 import org.orkg.graph.domain.LiteralNotFound
 import org.orkg.graph.domain.PropertyIsBlank
@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -31,7 +33,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/literals/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class LiteralController(
     private val service: LiteralUseCases
-) : BaseController(), LiteralRepresentationAdapter {
+) : LiteralRepresentationAdapter {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ThingId): LiteralRepresentation =
@@ -54,12 +56,12 @@ class LiteralController(
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody @Valid literal: LiteralCreateRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<LiteralRepresentation> {
-        val userId = authenticatedUserId()
         val id = service.create(
             CreateCommand(
-                contributorId = ContributorId(userId),
+                contributorId = currentUser.contributorId(),
                 label = literal.label,
                 datatype = literal.datatype
             )

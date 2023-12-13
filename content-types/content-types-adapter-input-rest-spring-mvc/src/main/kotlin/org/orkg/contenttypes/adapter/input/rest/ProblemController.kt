@@ -3,11 +3,11 @@ package org.orkg.contenttypes.adapter.input.rest
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.contributorId
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.contenttypes.input.RetrieveAuthorUseCase
 import org.orkg.contenttypes.input.RetrieveResearchProblemUseCase
 import org.orkg.featureflags.output.FeatureFlagService
-import org.orkg.graph.adapter.input.rest.BaseController
 import org.orkg.graph.adapter.input.rest.mapping.AuthorRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.FieldPerProblemRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
@@ -25,6 +25,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -44,7 +46,7 @@ class ProblemController(
     override val statementService: StatementUseCases,
     override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService,
-) : BaseController(), ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
+) : ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
 
     @GetMapping("/{problemId}/fields")
     fun getFieldPerProblem(@PathVariable problemId: ThingId): Iterable<FieldWithFreqRepresentation> {
@@ -131,8 +133,8 @@ class ProblemController(
     @PutMapping("/{id}/metadata/unlisted")
     @PreAuthorizeCurator
     @ResponseStatus(HttpStatus.OK)
-    fun markUnlisted(@PathVariable id: ThingId) {
-        resourceService.markAsUnlisted(id, ContributorId(authenticatedUserId()))
+    fun markUnlisted(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails) {
+        resourceService.markAsUnlisted(id, currentUser.contributorId())
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")

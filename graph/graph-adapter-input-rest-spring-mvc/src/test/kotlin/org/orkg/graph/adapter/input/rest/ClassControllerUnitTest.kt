@@ -29,9 +29,11 @@ import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
 import org.orkg.graph.input.UpdateNotAllowed
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createClass
+import org.orkg.testing.annotations.TestWithMockUser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
@@ -101,6 +103,7 @@ internal class ClassControllerUnitTest {
         }
 
         @Test
+        @TestWithMockUser
         @DisplayName("Then creating a new class with the same URI should return `400 Bad Request`")
         fun postShouldReturnError() {
             every { classService.findByURI(any()) } returns Optional.of(mockReply())

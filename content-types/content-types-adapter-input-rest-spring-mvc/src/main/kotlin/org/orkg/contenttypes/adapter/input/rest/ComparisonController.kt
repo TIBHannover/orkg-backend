@@ -9,6 +9,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.contributorId
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRelatedFigureRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRelatedResourceRepresentationAdapter
@@ -18,14 +19,16 @@ import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase
-import org.orkg.graph.adapter.input.rest.BaseController
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.*
+import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.noContent
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -41,7 +44,7 @@ const val COMPARISON_JSON_V2 = "application/vnd.orkg.comparison.v2+json"
 @RequestMapping("/api/comparisons", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ComparisonController(
     private val service: ComparisonUseCases
-) : BaseController(), ComparisonRepresentationAdapter, ComparisonRelatedResourceRepresentationAdapter,
+) : ComparisonRepresentationAdapter, ComparisonRelatedResourceRepresentationAdapter,
     ComparisonRelatedFigureRepresentationAdapter {
 
     @GetMapping("/{id}", produces = [COMPARISON_JSON_V2])
@@ -81,13 +84,15 @@ class ComparisonController(
         service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
             .mapToComparisonRepresentation()
 
+
     @PreAuthorizeUser
     @PostMapping(consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun create(
         @RequestBody @Valid request: CreateComparisonRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<Any> {
-        val userId = ContributorId(authenticatedUserId())
+        val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
         val location = uriComponentsBuilder
             .path("api/comparisons/{id}")
@@ -118,9 +123,10 @@ class ComparisonController(
     fun create(
         @PathVariable("comparisonId") comparisonId: ThingId,
         @RequestBody @Valid request: CreateComparisonRelatedResourceRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<Any> {
-        val userId = ContributorId(authenticatedUserId())
+        val userId = currentUser.contributorId()
         val id = service.createComparisonRelatedResource(request.toCreateCommand(comparisonId, userId))
         val location = uriComponentsBuilder
             .path("api/comparisons/{comparisonId}/related-resources/{id}")
@@ -151,9 +157,10 @@ class ComparisonController(
     fun create(
         @PathVariable("comparisonId") comparisonId: ThingId,
         @RequestBody @Valid request: CreateComparisonRelatedFigureRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<Any> {
-        val userId = ContributorId(authenticatedUserId())
+        val userId = currentUser.contributorId()
         val id = service.createComparisonRelatedFigure(request.toCreateCommand(comparisonId, userId))
         val location = uriComponentsBuilder
             .path("api/comparisons/{comparisonId}/related-figures/{id}")
@@ -167,9 +174,10 @@ class ComparisonController(
     fun publish(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: PublishRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<Any> {
-        val contributorId = ContributorId(authenticatedUserId())
+        val contributorId = currentUser.contributorId()
         service.publish(id, contributorId, request.subject, request.description)
         val location = uriComponentsBuilder
             .path("api/comparisons/{id}")

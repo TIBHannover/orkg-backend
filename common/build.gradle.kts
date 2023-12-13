@@ -18,7 +18,7 @@ dependencies {
     implementation("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework.data:spring-data-neo4j") // for UncategorizedNeo4jException
-    implementation("org.springframework.security:spring-security-core") // for AccessDeniedException
+    implementation("org.springframework.security:spring-security-core") // for AccessDeniedException, UserDetails
     implementation("org.springframework:spring-webmvc")
 
     implementation(libs.jackson.databind)

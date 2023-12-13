@@ -1,8 +1,8 @@
 package org.orkg.graph.adapter.input.rest
 
-import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.contributorId
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.BundleRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
@@ -23,6 +23,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -40,7 +42,7 @@ class StatementController(
     override val statementService: StatementUseCases,
     override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
-) : BaseController(), StatementRepresentationAdapter, BundleRepresentationAdapter {
+) : StatementRepresentationAdapter, BundleRepresentationAdapter {
 
     @GetMapping("/")
     fun findAll(
@@ -119,11 +121,11 @@ class StatementController(
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody statement: CreateStatement,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<StatementRepresentation> {
-        val userId = authenticatedUserId()
         val id = statementService.create(
-            ContributorId(userId),
+            currentUser.contributorId(),
             statement.subjectId,
             statement.predicateId,
             statement.objectId

@@ -3,7 +3,6 @@ package org.orkg.contenttypes.adapter.input.rest
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ResearchFieldHierarchyUseCases
 import org.orkg.featureflags.output.FeatureFlagService
-import org.orkg.graph.adapter.input.rest.BaseController
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldHierarchyEntryRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldWithChildCountRepresentationAdapter
 import org.orkg.graph.input.ResearchFieldHierarchyEntryRepresentation
@@ -26,7 +25,7 @@ class ResearchFieldHierarchyController(
     override val statementService: StatementUseCases,
     override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
-) : BaseController(), ResearchFieldHierarchyEntryRepresentationAdapter,
+) : ResearchFieldHierarchyEntryRepresentationAdapter,
     ResearchFieldWithChildCountRepresentationAdapter {
 
     @GetMapping("/{id}/children")

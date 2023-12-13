@@ -14,6 +14,7 @@ import org.apache.tomcat.util.http.fileupload.IOUtils
 import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId
 import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.contributorId
 import org.orkg.community.adapter.input.rest.mapping.ObservatoryRepresentationAdapter
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.InvalidImageEncoding
@@ -26,7 +27,6 @@ import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.community.input.UpdateOrganizationUseCases
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.graph.adapter.input.rest.BaseController
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.mediastorage.domain.ImageData
 import org.orkg.mediastorage.domain.InvalidImageData
@@ -38,6 +38,8 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -60,7 +62,7 @@ class OrganizationController(
     private val imageService: ImageUseCases,
     override val resourceRepository: ResourceUseCases,
     private val organizationRepository: OrganizationRepository,
-) : BaseController(), ObservatoryRepresentationAdapter {
+) : ObservatoryRepresentationAdapter {
 
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
@@ -123,11 +125,12 @@ class OrganizationController(
     fun updateOrganization(
         @PathVariable id: OrganizationId,
         @RequestPart("properties", required = false) @Valid request: UpdateOrganizationRequest?,
-        @RequestPart("logo", required = false) logo: MultipartFile?
+        @RequestPart("logo", required = false) logo: MultipartFile?,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<Any> {
-        val userId = authenticatedUserId()
+        val contributorId = currentUser.contributorId()
         service.update(
-            ContributorId(userId), UpdateOrganizationUseCases.UpdateOrganizationRequest(
+            contributorId, UpdateOrganizationUseCases.UpdateOrganizationRequest(
             id = id,
             name = request?.name,
             url = request?.url,
@@ -189,12 +192,12 @@ class OrganizationController(
     fun updateOrganizationLogo(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid submittedLogo: UpdateRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<Any> {
-        val userId = authenticatedUserId()
         val organization = service.findById(id).orElseThrow { OrganizationNotFound(id) }
         val image = EncodedImage(submittedLogo.value).decodeBase64()
-        service.updateLogo(id, image, ContributorId(userId))
+        service.updateLogo(id, image, currentUser.contributorId())
         val location = uriComponentsBuilder
             .path("api/organizations/{id}/logo")
             .buildAndExpand(id)

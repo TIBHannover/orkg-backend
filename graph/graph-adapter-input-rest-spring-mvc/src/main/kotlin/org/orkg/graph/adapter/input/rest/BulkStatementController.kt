@@ -29,7 +29,7 @@ class BulkStatementController(
     override val statementService: StatementUseCases,
     override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
-) : BaseController(), StatementRepresentationAdapter {
+) : StatementRepresentationAdapter {
 
     @GetMapping("/subjects")
     fun findBySubjects(

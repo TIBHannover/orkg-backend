@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.ChildClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ClassHierarchyEntryRepresentationAdapter
 import org.orkg.graph.domain.EmptyChildIds
@@ -18,6 +19,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -32,7 +35,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/classes", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ClassHierarchyController(
     private val service: ClassHierarchyUseCases
-) : BaseController(), ClassHierarchyEntryRepresentationAdapter, ChildClassRepresentationAdapter {
+) : ClassHierarchyEntryRepresentationAdapter, ChildClassRepresentationAdapter {
 
     @GetMapping("/{id}/children")
     fun findChildren(
@@ -63,9 +66,10 @@ class ClassHierarchyController(
     fun postParentRelation(
         @PathVariable id: ThingId,
         @RequestBody request: CreateParentRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<Any> {
-        createRelations(request.parentId, setOf(id), false)
+        createRelations(request.parentId, setOf(id), false, currentUser.contributorId())
         val location = uriComponentsBuilder
             .path("api/classes/{id}/parent")
             .buildAndExpand(id)
@@ -91,9 +95,10 @@ class ClassHierarchyController(
     fun postChildrenRelation(
         @PathVariable id: ThingId,
         @RequestBody request: CreateChildrenRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<Any> {
-        createRelations(id, request.childIds, true)
+        createRelations(id, request.childIds, true, currentUser.contributorId())
         val location = uriComponentsBuilder
             .path("api/classes/{id}/children")
             .buildAndExpand(id)
@@ -106,9 +111,10 @@ class ClassHierarchyController(
     fun patchChildrenRelation(
         @PathVariable id: ThingId,
         @RequestBody request: CreateChildrenRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails,
     ): ResponseEntity<Any> {
-        createRelations(id, request.childIds, false)
+        createRelations(id, request.childIds, false, currentUser.contributorId())
         val location = uriComponentsBuilder
             .path("api/classes/{id}/children")
             .buildAndExpand(id)
@@ -116,10 +122,9 @@ class ClassHierarchyController(
         return ok().location(location).build()
     }
 
-    private fun createRelations(parentId: ThingId, childIds: Set<ThingId>, checkIfParentIsLeaf: Boolean) {
+    private fun createRelations(parentId: ThingId, childIds: Set<ThingId>, checkIfParentIsLeaf: Boolean, contributorId: ContributorId) {
         if (childIds.isEmpty()) throw EmptyChildIds()
-        val userId = authenticatedUserId()
-        service.create(ContributorId(userId), parentId, childIds, checkIfParentIsLeaf)
+        service.create(contributorId, parentId, childIds, checkIfParentIsLeaf)
     }
 
     @GetMapping("/{id}/count")

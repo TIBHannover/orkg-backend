@@ -37,7 +37,7 @@ dependencies {
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-ports-input"))
     implementation(project(":graph:graph-ports-output"))
-    implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // TODO: break dependency
+    implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // for representation adapters, TODO: break dependency
     implementation(project(":feature-flags:feature-flags-ports"))
 
     implementation("org.springframework:spring-context")

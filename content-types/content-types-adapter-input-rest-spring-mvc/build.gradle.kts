@@ -20,7 +20,7 @@ dependencies {
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-ports-input"))
     implementation(project(":graph:graph-ports-output"))
-    implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // for BaseController, TODO: break dependency
+    implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // for representation adapters, TODO: break dependency
     implementation(project(":community:community-core-model"))
     implementation(project(":community:community-ports-input"))
     implementation(project(":feature-flags:feature-flags-ports"))
@@ -29,6 +29,7 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation(libs.jackson.core)
     implementation(libs.forkhandles.values4k)
+    implementation("org.springframework.security:spring-security-core")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 

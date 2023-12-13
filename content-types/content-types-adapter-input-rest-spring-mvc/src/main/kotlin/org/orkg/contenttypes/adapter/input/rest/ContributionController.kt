@@ -4,7 +4,6 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContributionRepresentationAdapter
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.input.ContributionUseCases
-import org.orkg.graph.adapter.input.rest.BaseController
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
@@ -19,7 +18,7 @@ const val CONTRIBUTION_JSON_V2 = "application/vnd.orkg.contribution.v2+json"
 @RequestMapping("/api/contributions", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ContributionController(
     private val service: ContributionUseCases
-) : BaseController(), ContributionRepresentationAdapter {
+) : ContributionRepresentationAdapter {
     @GetMapping("/{id}", produces = [CONTRIBUTION_JSON_V2])
     fun findById(
         @PathVariable id: ThingId

@@ -6,10 +6,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.time.Instant
 import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -24,6 +21,7 @@ import org.orkg.graph.testing.fixtures.createList
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 
@@ -31,9 +29,7 @@ class ListServiceUnitTests {
 
     private val repository: ListRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
-    private val fixedTime = OffsetDateTime.of(2023, 5, 9, 14, 51, 25, 12345, ZoneOffset.ofHours(1))
-    private val staticClock = java.time.Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
-    private val service = ListService(repository, thingRepository, staticClock)
+    private val service = ListService(repository, thingRepository, fixedClock)
 
     @Test
     fun `given a list is created, when valid inputs are provided, it returns success`() {
@@ -132,7 +128,7 @@ class ListServiceUnitTests {
                     id = command.id!!,
                     label = command.label,
                     elements = command.elements,
-                    createdAt = OffsetDateTime.now(staticClock),
+                    createdAt = OffsetDateTime.now(fixedClock),
                     createdBy = ContributorId.createUnknownContributor()
                 ),
                 ContributorId.createUnknownContributor()

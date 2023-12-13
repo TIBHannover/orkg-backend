@@ -11,6 +11,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.MarkAsVerifiedUseCase
+import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -24,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@ContextConfiguration(classes = [PaperVerificationCommandController::class, ExceptionHandler::class])
+@ContextConfiguration(classes = [PaperVerificationCommandController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [PaperVerificationCommandController::class])
 @DisplayName("Given a Resource")
 internal class PaperVerificationControllerTest {

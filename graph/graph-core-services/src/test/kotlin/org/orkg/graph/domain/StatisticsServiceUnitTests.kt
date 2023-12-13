@@ -17,6 +17,7 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatsRepository
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.fixedClock
 
 class StatisticsServiceUnitTests {
 
@@ -31,7 +32,8 @@ class StatisticsServiceUnitTests {
         contributorRepository,
         observatoryRepository,
         organizationRepository,
-        resourceRepository
+        resourceRepository,
+        fixedClock,
     )
 
     @BeforeEach

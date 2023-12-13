@@ -15,6 +15,7 @@ import org.orkg.graph.domain.ObservatoryStats
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.ResearchFieldStats
 import org.orkg.graph.input.RetrieveStatisticsUseCase
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
@@ -30,7 +31,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [StatsController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [StatsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [StatsController::class])
 @DisplayName("Given a Stats controller")
 @UsesMocking

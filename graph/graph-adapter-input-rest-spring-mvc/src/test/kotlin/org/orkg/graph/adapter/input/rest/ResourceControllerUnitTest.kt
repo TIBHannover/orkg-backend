@@ -5,6 +5,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.verify
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE_TIME
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
@@ -33,12 +34,14 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -54,7 +57,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [ResourceController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [ResourceController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ResourceController::class])
 @DisplayName("Given a Resource controller")
 internal class ResourceControllerUnitTest : RestDocsTest("resources") {
@@ -77,6 +80,9 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var flags: FeatureFlagService
+
+    @Autowired
+    private lateinit var clock: Clock
 
     @Test
     fun `Given the contributors are requested, when service succeeds, then status is 200 OK and contributors are returned`() {
@@ -117,8 +123,8 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     fun `Given a timeline is requested, when service succeeds, then status is 200 OK and timeline is returned`() {
         val id = ThingId("R123")
         val resourceContributors = listOf(
-            UUID.randomUUID() to OffsetDateTime.now(),
-            UUID.randomUUID() to OffsetDateTime.now()
+            UUID.randomUUID() to OffsetDateTime.now(clock),
+            UUID.randomUUID() to OffsetDateTime.now(clock)
         ).map {
             ResourceContributor(it.first.toString(), it.second.format(ISO_DATE_TIME))
         }
@@ -164,7 +170,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             Contributor(
                 id = ContributorId(UUID.randomUUID()),
                 name = "irrelevant",
-                joinedAt = OffsetDateTime.now()
+                joinedAt = OffsetDateTime.now(clock)
             )
         )
         every { resourceService.create(any<CreateCommand>()) } throws exception
@@ -246,8 +252,8 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         val exact = true
         val visibility = VisibilityFilter.ALL_LISTED
         val createdBy = ContributorId(UUID.randomUUID())
-        val createdAtStart = OffsetDateTime.now().minusHours(1)
-        val createdAtEnd = OffsetDateTime.now().plusHours(1)
+        val createdAtStart = OffsetDateTime.now(clock).minusHours(1)
+        val createdAtEnd = OffsetDateTime.now(clock).plusHours(1)
         val includeClasses = setOf(ThingId("Include1"), ThingId("Include2"))
         val excludeClasses = setOf(ThingId("Exclude1"), ThingId("Exclude2"))
         val observatoryId = ObservatoryId(UUID.randomUUID())

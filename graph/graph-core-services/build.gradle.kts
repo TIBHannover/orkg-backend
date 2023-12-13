@@ -52,6 +52,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter()
             dependencies {
+                implementation(testFixtures(project(":testing:spring"))) // for fixedClock
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(project(":media-storage:media-storage-core-model"))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))

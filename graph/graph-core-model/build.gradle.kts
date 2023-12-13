@@ -39,7 +39,6 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter()
             dependencies {
-                //implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(libs.assertj.core)
                 implementation(libs.contractual)
             }

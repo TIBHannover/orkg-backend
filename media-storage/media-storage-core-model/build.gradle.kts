@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.javax.activation)
 
 
+    testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(project(":graph:graph-ports-input"))
     testFixturesImplementation(project(":community:community-ports-input"))

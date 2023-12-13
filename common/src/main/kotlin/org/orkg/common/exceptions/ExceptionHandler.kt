@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
+import java.time.Clock
 import java.time.OffsetDateTime
 import javax.servlet.http.HttpServletRequest
 import org.neo4j.driver.exceptions.Neo4jException
@@ -27,7 +28,7 @@ import org.springframework.web.util.ContentCachingRequestWrapper
 import org.springframework.web.util.WebUtils
 
 @ControllerAdvice
-class ExceptionHandler : ResponseEntityExceptionHandler() {
+class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandler() {
     override fun handleMethodArgumentNotValid(
         ex: MethodArgumentNotValidException,
         headers: HttpHeaders,
@@ -52,6 +53,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
                     error = BAD_REQUEST.reasonPhrase,
                     message = """Unknown field "${cause.fieldPath}".""",
                     path = request.requestURI,
+                    timestamp = OffsetDateTime.now(clock),
                 )
                 ResponseEntity(payload, BAD_REQUEST)
             }
@@ -61,6 +63,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
                     error = BAD_REQUEST.reasonPhrase,
                     message = """Field "${cause.fieldPath}" is either missing, "null", of invalid type, or contains "null" values.""",
                     path = request.requestURI,
+                    timestamp = OffsetDateTime.now(clock),
                 )
                 ResponseEntity(payload, BAD_REQUEST)
             }
@@ -70,6 +73,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
                     error = BAD_REQUEST.reasonPhrase,
                     message = cause.originalMessage,
                     path = request.requestURI,
+                    timestamp = OffsetDateTime.now(clock),
                 )
                 ResponseEntity(payload, BAD_REQUEST)
             }
@@ -89,7 +93,8 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         val payload = ErrorResponse(
             status = status.value(),
             error = status.reasonPhrase,
-            path = request.requestURI
+            path = request.requestURI,
+            timestamp = OffsetDateTime.now(clock)
         )
         return ResponseEntity(payload, status)
     }
@@ -134,7 +139,8 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             status = ex.status.value(),
             error = ex.status.reasonPhrase,
             path = request.requestURI,
-            message = ex.message
+            message = ex.message,
+            timestamp = OffsetDateTime.now(clock),
         )
         return ResponseEntity(payload, ex.status)
     }
@@ -152,7 +158,8 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             status = BAD_REQUEST.value(),
             error = BAD_REQUEST.reasonPhrase,
             path = request.requestURI,
-            message = ex.rootCause?.message
+            message = ex.rootCause?.message,
+            timestamp = OffsetDateTime.now(clock),
         )
         return ResponseEntity(payload, BAD_REQUEST)
     }
@@ -167,6 +174,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             status = INTERNAL_SERVER_ERROR.value(),
             error = INTERNAL_SERVER_ERROR.reasonPhrase,
             path = request.requestURI,
+            timestamp = OffsetDateTime.now(clock)
         )
         return ResponseEntity(payload, INTERNAL_SERVER_ERROR)
     }
@@ -180,6 +188,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             status = FORBIDDEN.value(),
             error = FORBIDDEN.reasonPhrase,
             path = request.requestURI,
+            timestamp = OffsetDateTime.now(clock),
         )
         return ResponseEntity(payload, FORBIDDEN)
     }
@@ -194,7 +203,8 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             status = BAD_REQUEST.value(),
             error = BAD_REQUEST.reasonPhrase,
             errors = errors,
-            path = path
+            path = path,
+            timestamp = OffsetDateTime.now(clock),
         )
         return ResponseEntity.badRequest().body(payload)
     }
@@ -209,7 +219,8 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             status = FORBIDDEN.value(),
             error = FORBIDDEN.reasonPhrase,
             errors = errors,
-            path = path
+            path = path,
+            timestamp = OffsetDateTime.now(clock),
         )
         return ResponseEntity(payload, FORBIDDEN)
     }
@@ -242,7 +253,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         val status: Int,
         val error: String,
         val path: String,
-        val timestamp: OffsetDateTime = OffsetDateTime.now()
+        val timestamp: OffsetDateTime,
     )
 
     /**
@@ -260,7 +271,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         val status: Int,
         val error: String,
         val path: String,
-        val timestamp: OffsetDateTime = OffsetDateTime.now(),
+        val timestamp: OffsetDateTime,
         val errors: List<FieldValidationError>
     )
 
@@ -268,7 +279,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         val status: Int,
         val error: String,
         val path: String,
-        val timestamp: OffsetDateTime = OffsetDateTime.now(),
+        val timestamp: OffsetDateTime,
         val message: String?
     )
 }

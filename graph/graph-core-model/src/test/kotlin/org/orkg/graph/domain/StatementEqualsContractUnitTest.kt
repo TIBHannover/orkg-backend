@@ -17,7 +17,7 @@ internal class StatementEqualsContractUnitTest : EqualsContract<GeneralStatement
     private val equalID = "SOME_ID"
     private val differentID = "Sanother_id"
 
-    private val timeStamp = OffsetDateTime.now().toString()
+    private val timeStamp = "2023-11-30T09:25:14.049085776+01:00"
     private val contributorUUID = UUID.randomUUID()
 
     private val subjectResource = createResource(id = ThingId("R1234"))
@@ -58,7 +58,7 @@ internal class StatementEqualsContractUnitTest : EqualsContract<GeneralStatement
 internal class NastyBugOnStatementEqualsContractUnitTest : EqualsContract<GeneralStatement> {
     private val differentID = "Sanother_id"
 
-    private val timeStamp = OffsetDateTime.now().toString()
+    private val timeStamp = "2023-11-30T09:25:14.049085776+01:00"
 
     // Values take from failing test
     private val subjectResource = Resource(

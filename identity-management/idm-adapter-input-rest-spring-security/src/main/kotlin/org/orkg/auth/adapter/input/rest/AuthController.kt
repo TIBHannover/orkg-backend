@@ -1,6 +1,8 @@
 package org.orkg.auth.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.Clock
+import java.time.OffsetDateTime
 import javax.validation.Valid
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -25,7 +27,8 @@ import org.springframework.web.context.request.WebRequest
 @RestController
 @RequestMapping("/api/auth", produces = [MediaType.APPLICATION_JSON_VALUE])
 class AuthController(
-    private val userService: AuthUseCase
+    private val userService: AuthUseCase,
+    private val clock: Clock,
 ) {
     @PostMapping("/register", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(OK)
@@ -71,13 +74,14 @@ class AuthController(
     @ExceptionHandler(UserRegistrationException::class)
     fun handleUserRegistrationException(
         ex: UserRegistrationException,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         val payload = org.orkg.common.exceptions.ExceptionHandler.MessageErrorResponse(
             status = ex.status.value(),
             error = ex.status.reasonPhrase,
             path = request.requestURI,
-            message = ex.message
+            message = ex.message,
+            timestamp = OffsetDateTime.now(clock)
         )
         return ResponseEntity(payload, ex.status)
     }

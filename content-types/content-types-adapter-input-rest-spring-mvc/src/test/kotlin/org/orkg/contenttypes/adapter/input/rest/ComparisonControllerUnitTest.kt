@@ -37,6 +37,7 @@ import org.orkg.graph.domain.DOIServiceUnavailable
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparison
 import org.orkg.testing.andExpectComparisonRelatedFigure
@@ -69,7 +70,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [ComparisonController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [ComparisonController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ComparisonController::class])
 @DisplayName("Given a Comparison controller")
 internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {

@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.jackson.core)
     implementation(libs.forkhandles.values4k)
 
+    testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(project(":graph:graph-core-model"))
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))

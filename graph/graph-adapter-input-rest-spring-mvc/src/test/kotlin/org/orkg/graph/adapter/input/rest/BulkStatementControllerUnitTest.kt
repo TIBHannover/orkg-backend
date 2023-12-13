@@ -23,6 +23,7 @@ import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.UsesMocking
@@ -42,7 +43,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [BulkStatementController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class])
+@ContextConfiguration(classes = [BulkStatementController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [BulkStatementController::class])
 @UsesMocking
 internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements") {

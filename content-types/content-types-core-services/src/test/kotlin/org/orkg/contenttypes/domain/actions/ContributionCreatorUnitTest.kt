@@ -36,6 +36,7 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.fixedClock
 
 class ContributionCreatorUnitTest {
     private val statementRepository: StatementRepository = mockk()
@@ -708,7 +709,7 @@ class ContributionCreatorUnitTest {
             subject = createResource(ThingId("R1000")),
             predicate = createPredicate(ThingId("R2000")),
             `object` = createLiteral(ThingId("R3000")),
-            createdAt = OffsetDateTime.now()
+            createdAt = OffsetDateTime.now(fixedClock)
         )
 
         every {

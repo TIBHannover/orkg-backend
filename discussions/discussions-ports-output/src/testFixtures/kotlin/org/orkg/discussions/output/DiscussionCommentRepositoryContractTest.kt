@@ -4,6 +4,7 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -17,6 +18,7 @@ import org.springframework.data.domain.PageRequest
 
 abstract class DiscussionCommentRepositoryContractTest {
     abstract val repository: DiscussionCommentRepository
+    abstract val clock: Clock
 
     @Test
     fun `successfully save and load a comment`() {
@@ -25,7 +27,7 @@ abstract class DiscussionCommentRepositoryContractTest {
             topic = ThingId("C1234"),
             message = "Some comment",
             createdBy = ContributorId(UUID.randomUUID()),
-            createdAt = OffsetDateTime.now().truncatedTo(ChronoUnit.MILLIS) // There seems to be limitation in Postgres.
+            createdAt = OffsetDateTime.now(clock).truncatedTo(ChronoUnit.MILLIS) // There seems to be limitation in Postgres.
         )
         repository.save(comment)
 
@@ -60,7 +62,7 @@ abstract class DiscussionCommentRepositoryContractTest {
             topic = ThingId("C1234"),
             message = "Some comment",
             createdBy = ContributorId(UUID.randomUUID()),
-            createdAt = OffsetDateTime.now()
+            createdAt = OffsetDateTime.now(clock)
         )
         repository.save(comment)
         repository.findById(comment.id).isPresent shouldBe true
@@ -78,7 +80,7 @@ abstract class DiscussionCommentRepositoryContractTest {
                 topic = ThingId("C1234"),
                 message = "Some comment $it",
                 createdBy = ContributorId(UUID.randomUUID()),
-                createdAt = OffsetDateTime.now().plusHours(it.toLong())
+                createdAt = OffsetDateTime.now(clock).plusHours(it.toLong())
             )
         }.plus(
             DiscussionComment(
@@ -86,7 +88,7 @@ abstract class DiscussionCommentRepositoryContractTest {
                 topic = ThingId("C1235"),
                 message = "Some comment",
                 createdBy = ContributorId(UUID.randomUUID()),
-                createdAt = OffsetDateTime.now()
+                createdAt = OffsetDateTime.now(clock)
             )
         )
         comments.forEach(repository::save)

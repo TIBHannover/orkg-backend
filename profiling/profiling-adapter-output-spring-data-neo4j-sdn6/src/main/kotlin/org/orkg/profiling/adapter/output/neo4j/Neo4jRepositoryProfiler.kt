@@ -1,5 +1,6 @@
 package org.orkg.profiling.adapter.output.neo4j
 
+import java.time.Clock
 import kotlin.reflect.KFunction
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
@@ -35,9 +36,10 @@ import org.springframework.stereotype.Component
 class Neo4jRepositoryProfiler(
     context: ConfigurableApplicationContext,
     resultWriterFactory: ProfilingResultWriterFactory,
+    clock: Clock,
     valueGenerators: List<ValueGenerator<*>>,
     private val neo4jClient: Neo4jClient
-) : RepositoryProfiler(context, resultWriterFactory, valueGenerators) {
+) : RepositoryProfiler(context, resultWriterFactory, clock, valueGenerators) {
 
     override fun clearQueryCache() {
         neo4jClient.query("CALL db.clearQueryCaches()").run()

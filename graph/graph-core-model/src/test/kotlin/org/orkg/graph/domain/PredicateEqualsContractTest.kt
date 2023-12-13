@@ -12,7 +12,7 @@ internal class PredicateEqualsContractTest : EqualsContract<Predicate> {
     private val equalID = "SOME_ID"
     private val differentID = "another_id"
 
-    private val timeStamp = OffsetDateTime.now().toString()
+    private val timeStamp = "2023-11-30T09:25:14.049085776+01:00"
     private val contributorUUID = UUID.randomUUID()
 
     override fun getInstance(): Predicate = Predicate(

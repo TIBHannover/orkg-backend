@@ -22,6 +22,7 @@ import org.orkg.graph.input.ClassHierarchyUseCases
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createClass
+import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -39,7 +40,7 @@ import org.springframework.web.context.WebApplicationContext
 
 private const val CONTRIBUTOR_ID = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4"
 
-@ContextConfiguration(classes = [ClassHierarchyController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [ClassHierarchyController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ClassHierarchyController::class])
 @DisplayName("Given a Class controller")
 internal class ClassHierarchyControllerUnitTest {

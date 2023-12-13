@@ -15,11 +15,12 @@ import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createLiteral
+import org.orkg.testing.fixedClock
 
 class LiteralServiceUnitTest : DescribeSpec({
     val literalRepository: LiteralRepository = mockk()
     val statementRepository: StatementRepository = mockk()
-    val service = LiteralService(literalRepository, statementRepository)
+    val service = LiteralService(literalRepository, statementRepository, fixedClock)
 
     beforeTest {
         clearAllMocks()

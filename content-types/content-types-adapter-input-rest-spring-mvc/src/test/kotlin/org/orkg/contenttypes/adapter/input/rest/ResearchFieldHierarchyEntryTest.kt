@@ -12,6 +12,7 @@ import org.orkg.graph.input.ResearchFieldHierarchyEntryRepresentation
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectResearchFieldHierarchyEntry
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [FakeResearchFieldHierarchyEntryController::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [FakeResearchFieldHierarchyEntryController::class, CommonJacksonModule::class, FixedClockConfig::class])
 internal class ResearchFieldHierarchyEntryTest : RestDocsTest("research-fields") {
     @Test
     fun researchFieldHierarchyEntry() {

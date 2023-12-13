@@ -41,6 +41,7 @@ import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -1321,7 +1322,7 @@ fun <
     describe("finding a timeline") {
         context("by resource id") {
             val resource = fabricator.random<Resource>().copy(
-                createdAt = OffsetDateTime.now()
+                createdAt = OffsetDateTime.now(fixedClock)
             )
 
             setOf("ResearchField", "ResearchProblem", "Paper").forEach {

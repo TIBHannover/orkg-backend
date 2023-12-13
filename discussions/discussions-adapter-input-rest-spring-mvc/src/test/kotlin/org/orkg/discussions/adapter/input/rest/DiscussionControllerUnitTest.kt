@@ -6,6 +6,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.security.Principal
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
@@ -28,6 +29,7 @@ import org.orkg.discussions.domain.Unauthorized
 import org.orkg.discussions.input.CreateDiscussionCommentUseCase
 import org.orkg.discussions.input.DiscussionUseCases
 import org.orkg.graph.domain.UserNotFound
+import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -44,7 +46,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@ContextConfiguration(classes = [DiscussionController::class, ExceptionHandler::class, CommonJacksonModule::class, DiscussionsJacksonModule::class])
+@ContextConfiguration(classes = [DiscussionController::class, ExceptionHandler::class, CommonJacksonModule::class, DiscussionsJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [DiscussionController::class])
 @DisplayName("Given a Discussion controller")
 internal class DiscussionControllerUnitTest {
@@ -63,6 +65,9 @@ internal class DiscussionControllerUnitTest {
     @MockkBean
     private lateinit var contributorRepository: ContributorRepository
 
+    @Autowired
+    private lateinit var clock: Clock
+
     @BeforeEach
     fun setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
@@ -78,7 +83,7 @@ internal class DiscussionControllerUnitTest {
             topic = topic,
             message = "Some comment",
             createdBy = contributor.id,
-            createdAt = OffsetDateTime.now()
+            createdAt = OffsetDateTime.now(clock)
         )
         val createCommand = CreateDiscussionCommentUseCase.CreateCommand(
             topic = topic,
@@ -233,7 +238,7 @@ internal class DiscussionControllerUnitTest {
             topic = topic,
             message = "Some comment",
             createdBy = ContributorId(UUID.randomUUID()),
-            createdAt = OffsetDateTime.now()
+            createdAt = OffsetDateTime.now(clock)
         )
 
         every { discussionService.findByTopicAndCommentId(topic, id) } returns Optional.of(comment)
@@ -270,7 +275,7 @@ internal class DiscussionControllerUnitTest {
             topic = topic,
             message = "Some comment",
             createdBy = ContributorId(UUID.randomUUID()),
-            createdAt = OffsetDateTime.now()
+            createdAt = OffsetDateTime.now(clock)
         )
         val page = PageImpl(
             listOf(comment),

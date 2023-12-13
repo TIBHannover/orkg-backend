@@ -14,6 +14,7 @@ import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 
 fun <
@@ -51,7 +52,7 @@ fun <
         ClassSubclassRelation(
             classRepository.findById(childId).get(),
             classRepository.findById(parentId).get(),
-            OffsetDateTime.now()
+            OffsetDateTime.now(fixedClock)
         )
 
     //      1     4

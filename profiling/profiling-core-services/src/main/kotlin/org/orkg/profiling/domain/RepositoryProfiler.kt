@@ -1,6 +1,7 @@
 package org.orkg.profiling.domain
 
 import java.io.File
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random
@@ -22,7 +23,8 @@ private const val repetitions = 3
 abstract class RepositoryProfiler(
     private val context: ConfigurableApplicationContext,
     private val resultWriterFactory: ProfilingResultWriterFactory,
-    valueGenerators: List<ValueGenerator<*>>
+    private val clock: Clock,
+    valueGenerators: List<ValueGenerator<*>>,
 ) : ApplicationRunner {
 
     private val logger = LoggerFactory.getLogger(this::class.java.name)
@@ -34,7 +36,7 @@ abstract class RepositoryProfiler(
     override fun run(args: ApplicationArguments?) {
         val functionMap = repositories.functionsToProfile()
         val repositoryCount = functionMap.keys.size
-        val outputFile = File(OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) + ".csv")
+        val outputFile = File(OffsetDateTime.now(clock).format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) + ".csv")
         resultWriterFactory(outputFile).use { writer ->
             logger.info("Profiling $repositoryCount repositories with ${functionMap.values.flatten().size} functions")
             val repositories =  functionMap.entries.toList().sortedBy { it.key.simpleName }

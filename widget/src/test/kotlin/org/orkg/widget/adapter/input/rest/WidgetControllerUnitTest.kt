@@ -11,6 +11,7 @@ import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.input.ResolveDOIUseCase
 import org.orkg.graph.testing.asciidoc.Asciidoc
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -28,7 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 /** An example DOI. Will resolve to the DOI handbook. */
 const val EXAMPLE_DOI = "10.1000/182"
 
-@ContextConfiguration(classes = [WidgetController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [WidgetController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [WidgetController::class])
 @UsesMocking
 class WidgetControllerUnitTest : RestDocsTest("widget") {

@@ -22,6 +22,7 @@ import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResearchFieldHierarchyEntry
 import org.orkg.testing.andExpectResource
@@ -37,7 +38,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [ResearchFieldHierarchyController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [ResearchFieldHierarchyController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ResearchFieldHierarchyController::class])
 @DisplayName("Given a ResearchField controller")
 internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research-fields") {

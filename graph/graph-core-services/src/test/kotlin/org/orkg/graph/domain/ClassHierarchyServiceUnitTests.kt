@@ -13,6 +13,7 @@ import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.testing.fixtures.createClass
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 
@@ -20,7 +21,7 @@ class ClassHierarchyServiceUnitTests {
     private val repository: ClassHierarchyRepository = mockk()
     private val relationRepository: ClassRelationRepository = mockk()
     private val classRepository: ClassRepository = mockk()
-    private val service = ClassHierarchyService(repository, relationRepository, classRepository)
+    private val service = ClassHierarchyService(repository, relationRepository, classRepository, fixedClock)
 
     @Test
     fun `given a class relation is created, when the parent id and child id are identical, then an exception is thrown`() {

@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
@@ -32,7 +33,8 @@ private val reservedClassIds = setOf(
 class ResourceService(
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
-    private val classRepository: ClassRepository
+    private val classRepository: ClassRepository,
+    private val clock: Clock,
 ) : ResourceUseCases {
     @Transactional(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
@@ -47,7 +49,7 @@ class ResourceService(
             label = command.label,
             classes = command.classes,
             extractionMethod = command.extractionMethod,
-            createdAt = OffsetDateTime.now(),
+            createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId ?: ContributorId.createUnknownContributor(),
             observatoryId = command.observatoryId ?: ObservatoryId.createUnknownObservatory(),
             organizationId = command.organizationId ?: OrganizationId.createUnknownOrganization()

@@ -7,6 +7,7 @@ import dev.forkhandles.result4k.Success
 import io.mockk.every
 import io.mockk.verify
 import java.net.URI
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.junit.jupiter.api.BeforeEach
@@ -29,11 +30,11 @@ import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
 import org.orkg.graph.input.UpdateNotAllowed
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createClass
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.TestWithMockUser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
@@ -51,7 +52,7 @@ import org.orkg.graph.input.InvalidLabel as InvalidLabelProblem
 internal const val INVALID_LABEL = "invalid\nlabel"
 internal const val INVALID_URI = "invalid\nuri"
 
-@ContextConfiguration(classes = [ClassController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [ClassController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ClassController::class])
 @DisplayName("Given a Class controller")
 internal class ClassControllerUnitTest {
@@ -82,6 +83,9 @@ internal class ClassControllerUnitTest {
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var flags: FeatureFlagService
+
+    @Autowired
+    private lateinit var clock: Clock
 
     @BeforeEach
     fun setup() {
@@ -398,7 +402,7 @@ internal class ClassControllerUnitTest {
     private fun mockReply() = Class(
         id = ThingId("C1"),
         label = "test class",
-        createdAt = OffsetDateTime.now(),
+        createdAt = OffsetDateTime.now(clock),
         uri = URI.create("http://example.org/exists")
     )
 }

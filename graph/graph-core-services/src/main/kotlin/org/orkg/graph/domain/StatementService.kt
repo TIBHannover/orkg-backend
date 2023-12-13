@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
@@ -24,6 +25,7 @@ class StatementService(
     private val predicateService: PredicateRepository,
     private val statementRepository: StatementRepository,
     private val literalRepository: LiteralRepository,
+    private val clock: Clock,
 ) : StatementUseCases {
 
     override fun findAll(pagination: Pageable): Page<GeneralStatement> =
@@ -89,7 +91,7 @@ class StatementService(
             predicate = foundPredicate,
             `object` = foundObject,
             createdBy = userId,
-            createdAt = OffsetDateTime.now(),
+            createdAt = OffsetDateTime.now(clock),
         )
         statementRepository.save(newStatement)
         return id
@@ -119,7 +121,7 @@ class StatementService(
             subject = foundSubject,
             `object` = foundObject,
             createdBy = userId,
-            createdAt = OffsetDateTime.now(),
+            createdAt = OffsetDateTime.now(clock),
         )
         statementRepository.save(statement)
     }

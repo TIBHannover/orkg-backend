@@ -21,6 +21,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.testing.fixedClock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
@@ -101,7 +102,8 @@ class CorsTest {
         fun resourceService(): ResourceUseCases = object : ResourceService(
             repository,
             statementRepository,
-            classRepository
+            classRepository,
+            fixedClock,
         ) {
             override fun findAll(
                 pageable: Pageable,

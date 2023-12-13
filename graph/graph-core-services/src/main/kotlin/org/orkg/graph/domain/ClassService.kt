@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class ClassService(
     private val repository: ClassRepository,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : ClassUseCases {
     override fun create(command: CreateClassUseCase.CreateCommand): ThingId {
         val id = if (command.id != null) ThingId(command.id!!) else repository.nextIdentity()
@@ -120,7 +120,7 @@ class ClassService(
                         id = id,
                         label = label,
                         uri = uri,
-                        createdAt = OffsetDateTime.now(),
+                        createdAt = OffsetDateTime.now(clock),
                         createdBy = ContributorId.createUnknownContributor()
                     )
                 )
@@ -134,7 +134,7 @@ class ClassService(
                         id = id,
                         label = label,
                         uri = uri,
-                        createdAt = OffsetDateTime.now(),
+                        createdAt = OffsetDateTime.now(clock),
                         createdBy = ContributorId.createUnknownContributor()
                     )
                 )

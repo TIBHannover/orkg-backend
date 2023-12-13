@@ -2,6 +2,7 @@ package org.orkg.community.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.hamcrest.Matchers
@@ -11,6 +12,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.community.domain.Contributor
 import org.orkg.community.input.RetrieveContributorUseCase
+import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -27,7 +29,7 @@ import org.springframework.web.context.WebApplicationContext
 // If nanosecond part is rounded to zero, the last digit is removed. Fun bug. -----vvv
 private const val ISO_8601_PATTERN = """^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{1,8}\d?([+-]\d{2}:\d{2}|Z)$"""
 
-@ContextConfiguration(classes = [ContributorController::class, ExceptionHandler::class])
+@ContextConfiguration(classes = [ContributorController::class, ExceptionHandler::class, FixedClockConfig::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ContributorController::class])
 class ContributorControllerTest {
 
@@ -42,6 +44,9 @@ class ContributorControllerTest {
 
     @MockkBean
     private lateinit var retrieveContributor: RetrieveContributorUseCase
+
+    @Autowired
+    private lateinit var clock: Clock
 
     @BeforeEach
     fun setup() {
@@ -65,7 +70,7 @@ class ContributorControllerTest {
             Contributor(
                 id,
                 "Some Name",
-                OffsetDateTime.now()
+                OffsetDateTime.now(clock)
             )
         )
 

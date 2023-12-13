@@ -11,6 +11,7 @@ import org.orkg.graph.domain.ClassSubclassRelation
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 
 fun <
@@ -37,7 +38,7 @@ fun <
             repository.save(ClassSubclassRelation(
                 child,
                 parent,
-                OffsetDateTime.now(),
+                OffsetDateTime.now(fixedClock),
                 ContributorId(UUID.randomUUID())
             ))
             val result = hierarchyRepository.findParent(child.id)
@@ -59,13 +60,13 @@ fun <
                     ClassSubclassRelation(
                         childOfRoot,
                         root,
-                        OffsetDateTime.now(),
+                        OffsetDateTime.now(fixedClock),
                         ContributorId(UUID.randomUUID())
                     ),
                     ClassSubclassRelation(
                         childOfChild,
                         childOfRoot,
-                        OffsetDateTime.now(),
+                        OffsetDateTime.now(fixedClock),
                         ContributorId(UUID.randomUUID())
                     )
                 )
@@ -89,7 +90,7 @@ fun <
                 repository.save(ClassSubclassRelation(
                     child,
                     parent,
-                    OffsetDateTime.now(),
+                    OffsetDateTime.now(fixedClock),
                     ContributorId(UUID.randomUUID())
                 ))
                 val precondition = hierarchyRepository.findParent(child.id)
@@ -114,7 +115,7 @@ fun <
             val relation = ClassSubclassRelation(
                 child,
                 parent,
-                OffsetDateTime.now(),
+                OffsetDateTime.now(fixedClock),
                 ContributorId(UUID.randomUUID())
             )
             repository.save(relation)

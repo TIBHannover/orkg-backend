@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
@@ -18,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional
 class ClassHierarchyService(
     private val repository: ClassHierarchyRepository,
     private val relationRepository: ClassRelationRepository,
-    private val classRepository: ClassRepository
+    private val classRepository: ClassRepository,
+    private val clock: Clock
 ) : ClassHierarchyUseCases {
     override fun create(userId: ContributorId, parentId: ThingId, childIds: Set<ThingId>, checkIfParentIsLeaf: Boolean) {
         val parent = classRepository.findById(parentId)
@@ -38,7 +40,7 @@ class ClassHierarchyService(
             val classRelation = ClassSubclassRelation(
                 child,
                 parent,
-                OffsetDateTime.now(),
+                OffsetDateTime.now(clock),
                 userId
             )
             classRelations.add(classRelation)

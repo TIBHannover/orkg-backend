@@ -18,6 +18,7 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
@@ -29,7 +30,7 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [VocabController::class, RdfConfiguration::class, ExceptionHandler::class, RDFService::class])
+@ContextConfiguration(classes = [VocabController::class, RdfConfiguration::class, ExceptionHandler::class, RDFService::class, FixedClockConfig::class])
 @WebMvcTest(VocabController::class)
 @DisplayName("Vocab Controller")
 class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {

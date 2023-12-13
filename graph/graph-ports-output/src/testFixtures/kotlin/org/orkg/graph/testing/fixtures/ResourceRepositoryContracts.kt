@@ -23,6 +23,7 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.ResourceRepository
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
@@ -864,7 +865,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 val expectedCount = 3
                 val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
                     resource.copy(
-                        createdAt = OffsetDateTime.now().minusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong())
                     )
                 }
                 resources.forEach(repository::save)
@@ -897,7 +898,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 val expectedCount = 3
                 val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
                     resource.copy(
-                        createdAt = OffsetDateTime.now().plusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())
                     )
                 }
                 resources.forEach(repository::save)

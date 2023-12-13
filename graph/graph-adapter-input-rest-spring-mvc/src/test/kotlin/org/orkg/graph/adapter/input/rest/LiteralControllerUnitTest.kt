@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.*
@@ -29,6 +30,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.withCustomMappings
 import org.orkg.graph.testing.fixtures.withLiteralIds
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
@@ -36,6 +38,7 @@ import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -51,7 +54,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [LiteralController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class])
+@ContextConfiguration(classes = [LiteralController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LiteralController::class])
 @DisplayName("Given a Literal controller")
 @UsesMocking
@@ -59,6 +62,9 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
 
     @MockkBean
     private lateinit var literalService: LiteralUseCases
+
+    @Autowired
+    private lateinit var clock: Clock
 
     @Test
     @DisplayName("correctly serializes an existing literal")
@@ -122,7 +128,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             id = ThingId("L1"),
             label = literal.label,
             datatype = literal.datatype,
-            createdAt = OffsetDateTime.now(),
+            createdAt = OffsetDateTime.now(clock),
             createdBy = ContributorId(MockUserId.USER)
         )
         val command = CreateCommand(
@@ -237,13 +243,13 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             id = ThingId("L1"),
             label = literal.label,
             datatype = literal.datatype,
-            createdAt = OffsetDateTime.now(),
-            createdBy = ContributorId(MockUserId.USER)
+            createdAt = OffsetDateTime.now(clock),
+            createdBy = ContributorId(MockUserId.USER),
         )
         val command = CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = literal.label,
-            datatype = literal.datatype
+            datatype = literal.datatype,
         )
         every { literalService.findById(any()) } returns Optional.of(mockResult)
         every { literalService.create(command) } returns mockResult.id
@@ -286,7 +292,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             id = ThingId("L1"),
             label = "irrelevant",
             datatype = "irrelevant",
-            createdAt = OffsetDateTime.now()
+            createdAt = OffsetDateTime.now(clock)
         )
     }
 }

@@ -13,7 +13,7 @@ internal class ClassEqualsContractTest : EqualsContract<Class> {
     private val equalID = "SOME_ID"
     private val differentID = "another_id"
 
-    private val timeStamp = OffsetDateTime.now().toString()
+    private val timeStamp = "2023-11-30T09:25:14.049085776+01:00"
     private val contributorUUID = UUID.randomUUID()
     private val uri = "https://example.org/foo/bar?param=value"
 

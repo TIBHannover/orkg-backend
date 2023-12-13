@@ -22,6 +22,7 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.withCustomMappings
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 
 fun <
@@ -115,7 +116,7 @@ fun <
                     subject = paper,
                     predicate = contPredicate,
                     `object` = cont,
-                    createdAt = OffsetDateTime.now(),
+                    createdAt = OffsetDateTime.now(fixedClock),
                     createdBy = ContributorId("34da5516-7901-4b0d-94c5-b062082e11a7")
                 )
             )
@@ -127,7 +128,7 @@ fun <
                         subject = paper,
                         predicate = yearPredicate,
                         `object` = year,
-                        createdAt = OffsetDateTime.now(),
+                        createdAt = OffsetDateTime.now(fixedClock),
                         createdBy = ContributorId("34da5516-7901-4b0d-94c5-b062082e11a7")
                     )
                 )

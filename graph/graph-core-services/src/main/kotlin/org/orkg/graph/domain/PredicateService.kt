@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 class PredicateService(
     private val repository: PredicateRepository,
     private val statementRepository: StatementRepository,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : PredicateUseCases {
     @Transactional(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
@@ -84,7 +84,7 @@ class PredicateService(
                 label = label,
                 id = id,
                 createdBy = ContributorId.createUnknownContributor(),
-                createdAt = OffsetDateTime.now()
+                createdAt = OffsetDateTime.now(clock)
             )
             repository.save(p)
         }

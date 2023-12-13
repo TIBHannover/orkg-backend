@@ -4,10 +4,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Instant
 import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -18,14 +15,13 @@ import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
+import org.orkg.testing.fixedClock
 
 class PredicateServiceUnitTest {
 
     private val repository: PredicateRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
-    private val fixedTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
-    private val staticClock = java.time.Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
-    private val service = PredicateService(repository, statementRepository, staticClock)
+    private val service = PredicateService(repository, statementRepository, fixedClock)
 
     @Test
     fun `given a predicate is created, when no id is given, then it gets an id from the repository`() {
@@ -80,7 +76,7 @@ class PredicateServiceUnitTest {
                 Predicate(
                     id = mockPredicateId,
                     label = "irrelevant",
-                    createdAt = OffsetDateTime.now(staticClock),
+                    createdAt = OffsetDateTime.now(fixedClock),
                     createdBy = ContributorId(UUID(0, 0)),
                 )
             )
@@ -101,7 +97,7 @@ class PredicateServiceUnitTest {
                 Predicate(
                     id = mockPredicateId,
                     label = "irrelevant",
-                    createdAt = OffsetDateTime.now(staticClock),
+                    createdAt = OffsetDateTime.now(fixedClock),
                     createdBy = randomContributorId,
                 )
             )

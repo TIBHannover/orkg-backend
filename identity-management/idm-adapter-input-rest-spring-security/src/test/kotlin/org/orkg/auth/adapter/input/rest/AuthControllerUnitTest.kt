@@ -1,6 +1,7 @@
 package org.orkg.auth.adapter.input.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.time.Clock
 import java.time.LocalDateTime
 import java.util.*
 import org.junit.jupiter.api.BeforeEach
@@ -14,6 +15,7 @@ import org.orkg.auth.domain.Role
 import org.orkg.auth.domain.User
 import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.exceptions.ExceptionHandler
+import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -27,7 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup
 import org.springframework.web.context.WebApplicationContext
 
-@ContextConfiguration(classes = [AuthController::class, ExceptionHandler::class])
+@ContextConfiguration(classes = [AuthController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [AuthController::class])
 class AuthControllerUnitTest {
 
@@ -45,6 +47,9 @@ class AuthControllerUnitTest {
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockBean
     private lateinit var userDetailsService: UserDetailsService
+
+    @Autowired
+    private lateinit var clock: Clock
 
     @BeforeEach
     fun setup() {
@@ -230,7 +235,7 @@ class AuthControllerUnitTest {
         displayName = "J. Doe",
         password = "!invalid, not a hash",
         enabled = true,
-        createdAt = LocalDateTime.now(),
+        createdAt = LocalDateTime.now(clock),
         roles = setOf(Role("ROLE_USER")),
         organizationId = null,
         observatoryId = null,

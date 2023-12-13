@@ -4,6 +4,7 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.configuration.CommonSpringConfig
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [ExceptionHandler::class, ExceptionHandlerTest.TestController::class, CommonSpringConfig::class])
+@ContextConfiguration(classes = [ExceptionHandler::class, ExceptionHandlerTest.TestController::class, CommonSpringConfig::class, FixedClockConfig::class])
 internal class ExceptionHandlerTest : RestDocsTest("errors") {
     @Test
     fun simpleMessageException() {

@@ -1,5 +1,6 @@
 package org.orkg
 
+import java.time.Clock
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
@@ -37,7 +38,8 @@ class ListMigrationRunner(
     private val predicateService: PredicateService,
     private val statementRepository: StatementRepository,
     private val predicateRepository: PredicateRepository,
-    private val neo4jClient: Neo4jClient
+    private val neo4jClient: Neo4jClient,
+    private val clock: Clock,
 ) : ApplicationRunner {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
@@ -115,7 +117,7 @@ class ListMigrationRunner(
                 id = listId,
                 label = label,
                 elements = objects,
-                createdAt = OffsetDateTime.now(),
+                createdAt = OffsetDateTime.now(clock),
                 createdBy = UNKNOWN_CONTRIBUTOR
             ),
             UNKNOWN_CONTRIBUTOR
@@ -128,7 +130,7 @@ class ListMigrationRunner(
                 predicate = newPredicate,
                 `object` = resourceRepository.findById(listId).get(),
                 createdBy = UNKNOWN_CONTRIBUTOR,
-                createdAt = OffsetDateTime.now()
+                createdAt = OffsetDateTime.now(clock)
             )
         )
     }
@@ -169,7 +171,7 @@ class ListMigrationRunner(
                         label = "Entries",
                         elements = entries,
                         createdBy = (sectionStatement.`object` as Resource).createdBy,
-                        createdAt = OffsetDateTime.now()
+                        createdAt = OffsetDateTime.now(clock)
                     ),
                     (sectionStatement.`object` as Resource).createdBy
                 )
@@ -185,7 +187,7 @@ class ListMigrationRunner(
                 label = "Sections",
                 elements = sections,
                 createdBy = UNKNOWN_CONTRIBUTOR,
-                createdAt = OffsetDateTime.now()
+                createdAt = OffsetDateTime.now(clock)
             ),
             UNKNOWN_CONTRIBUTOR
         )
@@ -197,7 +199,7 @@ class ListMigrationRunner(
                 predicate = newPredicate,
                 `object` = resourceRepository.findById(listId).get(),
                 createdBy = UNKNOWN_CONTRIBUTOR,
-                createdAt = OffsetDateTime.now()
+                createdAt = OffsetDateTime.now(clock)
             )
         )
     }

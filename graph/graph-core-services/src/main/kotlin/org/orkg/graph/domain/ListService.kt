@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 class ListService(
     private val repository: ListRepository,
     private val thingRepository: ThingRepository,
-    private val clock: Clock = Clock.systemDefaultZone(),
+    private val clock: Clock,
 ) : ListUseCases {
     override fun create(command: CreateListUseCase.CreateCommand): ThingId {
         val label = Label.ofOrNull(command.label)?.value

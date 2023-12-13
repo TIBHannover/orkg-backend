@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import java.time.Clock
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.collections.List
@@ -26,7 +27,8 @@ class StatisticsService(
     private val contributorRepository: ContributorRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository,
-    private val resourceRepository: ResourceRepository
+    private val resourceRepository: ResourceRepository,
+    private val clock: Clock,
 ) : RetrieveStatisticsUseCase {
     override fun getStats(extra: List<String>?): Stats {
         val metadata = statsRepository.getGraphMetaData()
@@ -156,7 +158,7 @@ class StatisticsService(
 
     private fun calculateStartDate(daysAgo: Long): String =
         if (daysAgo > 0) {
-            LocalDate.now().minusDays(daysAgo)
+            LocalDate.now(clock).minusDays(daysAgo)
         } else {
             // Setting the all-time date to 2010-01-01. This date value is set to retrieve all the contributions from
             // ORKG. It is assumed that no contributions pre-date the hard-coded date.

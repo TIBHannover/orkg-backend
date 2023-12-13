@@ -12,6 +12,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyContribution
 import org.orkg.contenttypes.input.ContributionUseCases
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectContribution
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.pageOf
@@ -30,7 +31,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [ContributionController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [ContributionController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ContributionController::class])
 @DisplayName("Given a Contribution controller")
 internal class ContributionControllerUnitTest : RestDocsTest("contributions") {

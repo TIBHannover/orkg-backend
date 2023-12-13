@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import java.net.URI
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ThingId
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 class LiteralService(
     private val repository: LiteralRepository,
     private val statementRepository: StatementRepository,
+    private val clock: Clock,
 ) : LiteralUseCases {
     override fun create(command: CreateLiteralUseCase.CreateCommand): ThingId {
         if (command.label.length > MAX_LABEL_LENGTH) {
@@ -35,7 +37,7 @@ class LiteralService(
             id = id,
             datatype = command.datatype,
             createdBy = command.contributorId,
-            createdAt = OffsetDateTime.now(),
+            createdAt = OffsetDateTime.now(clock),
         )
         repository.save(literal)
         return id

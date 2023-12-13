@@ -21,6 +21,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
@@ -30,7 +31,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [DOIController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [DOIController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [DOIController::class])
 @DisplayName("Given a DOI controller")
 @UsesMocking

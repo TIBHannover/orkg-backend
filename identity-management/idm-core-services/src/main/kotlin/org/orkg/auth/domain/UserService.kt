@@ -1,5 +1,6 @@
 package org.orkg.auth.domain
 
+import java.time.Clock
 import java.time.LocalDateTime
 import java.util.*
 import org.orkg.auth.input.AuthUseCase
@@ -14,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional
 class UserService(
     private val repository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val roleRepository: RoleRepository
+    private val roleRepository: RoleRepository,
+    private val clock: Clock,
 ) : AuthUseCase {
     override fun findByEmail(email: String): Optional<User> {
         return repository.findByEmailIgnoreCase(email)
@@ -32,7 +34,7 @@ class UserService(
             displayName = aDisplayName ?: "Anonymous user",
             enabled = true,
             roles = role,
-            createdAt = LocalDateTime.now(),
+            createdAt = LocalDateTime.now(clock),
             observatoryId = null,
             organizationId = null,
         )

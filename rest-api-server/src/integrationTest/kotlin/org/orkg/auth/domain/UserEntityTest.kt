@@ -1,5 +1,7 @@
 package org.orkg.auth.domain
 
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.persistence.PersistenceException
 import org.assertj.core.api.Assertions.assertThat
@@ -63,5 +65,6 @@ class UserEntityTest {
             this.id = id
             this.email = email
             password = "\$2a\$10\$iwPkZ6bLr35Q9xJ5bzuGIuFdzZK8WE.xiRUMTMzPEmtmioOh8ybQe" // password = "test"
+            created = LocalDateTime.parse("2023-11-30T09:25:14.049085776").truncatedTo(ChronoUnit.MILLIS)
         }
 }

@@ -25,6 +25,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyVisualization
 import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectVisualization
 import org.orkg.testing.annotations.TestWithMockUser
@@ -50,7 +51,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [VisualizationController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [VisualizationController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [VisualizationController::class])
 @DisplayName("Given a Visualization controller")
 internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") {

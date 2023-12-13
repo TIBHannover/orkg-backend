@@ -35,6 +35,7 @@ import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.ResearchProblemNotFound
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplate
 import org.orkg.testing.annotations.TestWithMockUser
@@ -59,7 +60,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [TemplateController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [TemplateController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [TemplateController::class])
 @DisplayName("Given a Template controller")
 internal class TemplateControllerUnitTest : RestDocsTest("templates") {

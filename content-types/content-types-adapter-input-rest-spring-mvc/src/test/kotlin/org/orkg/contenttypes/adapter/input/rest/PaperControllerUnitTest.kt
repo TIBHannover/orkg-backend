@@ -54,6 +54,7 @@ import org.orkg.graph.domain.DOIServiceUnavailable
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPaper
@@ -86,7 +87,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [PaperController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [PaperController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [PaperController::class])
 @DisplayName("Given a Paper controller")
 internal class PaperControllerUnitTest : RestDocsTest("papers") {
@@ -343,7 +344,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @DisplayName("Given a paper, when contributors are fetched, then status 200 OK and contributors are returned")
     fun getContributors() {
         val id = ThingId("R8186")
-        val contributors = listOf(ContributorId(UUID.randomUUID()))
+        val contributors = listOf(ContributorId(UUID.fromString("0a56acb7-cd97-4277-9c9b-9b3089bde45f")))
         every { paperService.findAllContributorsByPaperId(id, any()) } returns PageImpl(contributors, PageRequest.of(0, 5), 1)
 
         documentedGetRequestTo("/api/papers/{id}/contributors", id)

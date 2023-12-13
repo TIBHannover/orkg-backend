@@ -28,6 +28,7 @@ import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -46,7 +47,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@ContextConfiguration(classes = [ObservatoryController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [ObservatoryController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ObservatoryController::class])
 @DisplayName("Given an Observatory controller")
 internal class ObservatoryControllerUnitTest {

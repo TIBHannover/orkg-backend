@@ -16,6 +16,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -26,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@ContextConfiguration(classes = [ObservatoryResourceController::class, ExceptionHandler::class])
+@ContextConfiguration(classes = [ObservatoryResourceController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ObservatoryResourceController::class])
 @DisplayName("Given an ObservatoryResourceController controller")
 internal class ObservatoryResourceControllerUnitTest {

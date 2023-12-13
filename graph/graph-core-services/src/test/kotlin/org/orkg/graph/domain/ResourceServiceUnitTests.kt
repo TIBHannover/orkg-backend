@@ -23,6 +23,7 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 
@@ -35,7 +36,8 @@ class ResourceServiceUnitTests {
     private val service = ResourceService(
         repository,
         statementRepository,
-        classRepository
+        classRepository,
+        fixedClock,
     )
 
     @BeforeEach

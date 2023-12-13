@@ -26,6 +26,7 @@ import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Sort
 
@@ -39,7 +40,8 @@ class StatementServiceUnitTest : DescribeSpec({
         thingRepository,
         predicateService = mockk(),
         statementRepository,
-        literalRepository
+        literalRepository,
+        fixedClock,
     )
 
     afterEach {
@@ -118,7 +120,7 @@ class StatementServiceUnitTest : DescribeSpec({
                     predicate = createPredicate(Predicates.hasListElement),
                     `object` = createResource(),
                     createdBy = ContributorId(UUID.randomUUID()),
-                    createdAt = OffsetDateTime.now()
+                    createdAt = OffsetDateTime.now(fixedClock)
                 )
 
                 every { statementRepository.findByStatementId(id) } returns Optional.of(existingStatement)
@@ -148,7 +150,7 @@ class StatementServiceUnitTest : DescribeSpec({
                     predicate = createPredicate(),
                     `object` = createResource(),
                     createdBy = ContributorId(UUID.randomUUID()),
-                    createdAt = OffsetDateTime.now()
+                    createdAt = OffsetDateTime.now(fixedClock)
                 )
                 val list = createResource(
                     id = listId,

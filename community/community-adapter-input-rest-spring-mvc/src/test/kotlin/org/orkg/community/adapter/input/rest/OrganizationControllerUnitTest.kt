@@ -7,6 +7,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import javax.activation.MimeType
@@ -40,6 +41,7 @@ import org.orkg.mediastorage.testing.fixtures.loadEncodedImage
 import org.orkg.mediastorage.testing.fixtures.loadImage
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.TestWithMockUser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -48,7 +50,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
@@ -62,7 +63,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@ContextConfiguration(classes = [OrganizationController::class, ExceptionHandler::class, CommonJacksonModule::class])
+@ContextConfiguration(classes = [OrganizationController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [OrganizationController::class])
 @DisplayName("Given an Organization controller")
 internal class OrganizationControllerUnitTest {
@@ -97,6 +98,8 @@ internal class OrganizationControllerUnitTest {
     @MockkBean
     private lateinit var organizationRepository: OrganizationRepository
 
+    @Autowired
+    private lateinit var clock: Clock
 
     @BeforeEach
     fun setup() {
@@ -152,7 +155,7 @@ internal class OrganizationControllerUnitTest {
             data = ImageData("irrelevant".toByteArray()),
             mimeType = MimeType(),
             createdBy = contributor,
-            createdAt = OffsetDateTime.now()
+            createdAt = OffsetDateTime.now(clock)
         )
 
         every { organizationService.findById(id) } returns Optional.of(organization)

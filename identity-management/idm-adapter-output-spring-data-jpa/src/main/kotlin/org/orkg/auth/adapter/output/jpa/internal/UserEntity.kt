@@ -15,6 +15,7 @@ import javax.persistence.Table
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
+import kotlin.properties.Delegates
 import org.orkg.auth.domain.User
 
 @Entity
@@ -39,7 +40,7 @@ class UserEntity {
     var enabled: Boolean = false
 
     @NotNull
-    var created: LocalDateTime = LocalDateTime.now()
+    var created: LocalDateTime? = null
 
     @Column(name = "organization_id")
     var organizationId: UUID? = null
@@ -67,7 +68,7 @@ class UserEntity {
         displayName = this.displayName!!,
         password = password!!,
         enabled = this.enabled,
-        createdAt = this.created,
+        createdAt = this.created!!,
         roles = this.roles.map(RoleEntity::toRole).toSet(),
         organizationId = this.organizationId,
         observatoryId = this.observatoryId,

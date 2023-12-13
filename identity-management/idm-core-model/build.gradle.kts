@@ -16,4 +16,6 @@ dependencies {
     implementation(project(":common")) // for exceptions
 
     implementation(libs.jackson.databind)
+
+    testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
 }

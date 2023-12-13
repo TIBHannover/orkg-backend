@@ -6,10 +6,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.net.URI
-import java.time.Instant
 import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -26,13 +23,12 @@ import org.orkg.graph.input.UpdateNotAllowed
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
+import org.orkg.testing.fixedClock
 
 class ClassServiceTests {
 
     private val repository: ClassRepository = mockk()
-    private val fixedTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
-    private val staticClock = java.time.Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
-    private val service = ClassService(repository, staticClock)
+    private val service = ClassService(repository, fixedClock)
 
     @Test
     fun `given a class is created, when no id is given, then it gets an id from the repository`() {
@@ -88,7 +84,7 @@ class ClassServiceTests {
                     id = mockClassId,
                     label = "irrelevant",
                     uri = null,
-                    createdAt = OffsetDateTime.now(staticClock),
+                    createdAt = OffsetDateTime.now(fixedClock),
                     createdBy = ContributorId(UUID(0, 0)),
                 )
             )
@@ -110,7 +106,7 @@ class ClassServiceTests {
                     id = mockClassId,
                     label = "irrelevant",
                     uri = null,
-                    createdAt = OffsetDateTime.now(staticClock),
+                    createdAt = OffsetDateTime.now(fixedClock),
                     createdBy = randomContributorId,
                 )
             )

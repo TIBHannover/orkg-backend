@@ -6,6 +6,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added a new endpoint for updating papers.
+  (See: [!716](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/716))
+- Added new endpoints for fetching templates and template properties.
+  (See: [!683](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/683))
+- Added new endpoints for creating templates and template properties.
+  (See: [!684](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/684))
+- Added a new endpoint for creating visualizations.
+  (See: [!677](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/677))
+- The endpoint `/api/resources/` now supports additional filtering parameters (`visibility`, `created_by`, `created_at_start`, `created_at_end`, `observatory_id`, `organization_id`).
+  (Closes [#351](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/351),
+  See: [!694](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/694))
+- Added new metadata field for paper content-type: `unlisted_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+- Added new metadata fields for contribution content-type: `extraction_method`, `created_at`, `created_by`, `unlisted_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+- Added new metadata field for comparison content-type: `unlisted_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+- Added new metadata fields for comparison related resource content-type: `created_at`, `created_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+- Added new metadata fields for comparison related figure content-type: `created_at`, `created_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+- Added new metadata field for visualization content-type: `unlisted_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+
+### Changed
+- All endpoints with write access to the graph now require authentication.
+  (See: [!706](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/706),
+  [!709](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/709))
+- The endpoint `/api/resources/` now throws an error when queried with invalid sorting parameters.
+  (See: [!694](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/694))
+
+### Fixed
+- All content-type endpoints now return status `201 CREATED` instead of `204 NO CONTENT`, as per documentation.
+  (See: [!724](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/724))
+- Domain constraints are now properly enforced across all endpoints.
+  (Closes [#524](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/524),
+  See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688),
+  [!713](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/713),
+  [!714](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/714),
+  [!699](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/699))
+- Fixed contributor attribution for publishing endpoints.
+  (See: [!711](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/711))
+- Fixed error responses being empty in some cases.
+  (See: [!704](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/704))
+- Fixed identifiers having no contributor id set when using content-type endpoints.
+  (See: [!721](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/721))
+- Fixed incorrect predicate used when referring a comparison to a research field, using content-type endpoints.
+  (See: [!715](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/715))
+- Fixed missing sorting parameters for `/api/papers/` (legacy).
+  (See: [!703](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/703))
 
 ## [0.42.0] - 2023-11-22
 ### Added

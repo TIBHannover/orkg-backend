@@ -1,6 +1,5 @@
 package org.orkg.mediastorage.adapter.output.jpa
 
-import org.orkg.auth.adapter.output.jpa.configuration.AuthJpaConfiguration
 import org.orkg.mediastorage.adapter.output.jpa.configuration.MediaStorageJpaConfiguration
 import org.orkg.mediastorage.output.ImageRepository
 import org.orkg.mediastorage.testing.fixtures.ImageRepositoryContractTest
@@ -15,7 +14,6 @@ import org.springframework.test.context.TestConstructor
 @ContextConfiguration(
     classes = [
         SpringJpaPostgresImageAdapter::class,
-        AuthJpaConfiguration::class,
         MediaStorageJpaConfiguration::class
     ],
     initializers = [PostgresContainerInitializer::class]

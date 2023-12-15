@@ -14,11 +14,14 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.discussions.domain.DiscussionComment
 import org.orkg.discussions.domain.DiscussionCommentId
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 
 abstract class DiscussionCommentRepositoryContractTest {
     abstract val repository: DiscussionCommentRepository
-    abstract val clock: Clock
+
+    @Autowired
+    private lateinit var clock: Clock
 
     @Test
     fun `successfully save and load a comment`() {

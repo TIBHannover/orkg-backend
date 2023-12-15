@@ -29,7 +29,7 @@ import org.springframework.web.context.WebApplicationContext
 // If nanosecond part is rounded to zero, the last digit is removed. Fun bug. -----vvv
 private const val ISO_8601_PATTERN = """^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{1,8}\d?([+-]\d{2}:\d{2}|Z)$"""
 
-@ContextConfiguration(classes = [ContributorController::class, ExceptionHandler::class, FixedClockConfig::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ContributorController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ContributorController::class])
 class ContributorControllerTest {
 

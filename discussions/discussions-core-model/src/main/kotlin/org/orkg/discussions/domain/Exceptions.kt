@@ -12,6 +12,3 @@ class CommentNotFound(id: DiscussionCommentId) :
 
 class InvalidContent :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Invalid message contents.""")
-
-class Unauthorized :
-    SimpleMessageException(HttpStatus.UNAUTHORIZED, """Unauthorized.""")

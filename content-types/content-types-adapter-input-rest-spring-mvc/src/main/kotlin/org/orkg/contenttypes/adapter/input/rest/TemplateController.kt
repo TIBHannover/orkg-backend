@@ -80,7 +80,7 @@ class TemplateController(
     fun create(
         @RequestBody @Valid request: CreateTemplateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
@@ -97,7 +97,7 @@ class TemplateController(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: CreateTemplatePropertyRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.createTemplateProperty(request.toCreateCommand(userId, id))

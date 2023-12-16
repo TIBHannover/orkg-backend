@@ -23,7 +23,7 @@ class PaperUnlistedCommandController(
     @PutMapping("/{id}/metadata/unlisted")
     @PreAuthorizeCurator
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun markUnlisted(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails) {
+    fun markUnlisted(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails?) {
         service.markAsUnlisted(id, currentUser.contributorId())
     }
 

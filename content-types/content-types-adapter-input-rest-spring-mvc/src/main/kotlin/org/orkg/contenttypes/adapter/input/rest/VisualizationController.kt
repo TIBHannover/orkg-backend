@@ -81,7 +81,7 @@ class VisualizationController(
     fun create(
         @RequestBody @Valid request: CreateVisualizationRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))

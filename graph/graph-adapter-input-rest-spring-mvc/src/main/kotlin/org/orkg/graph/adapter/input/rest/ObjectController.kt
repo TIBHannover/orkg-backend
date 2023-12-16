@@ -39,7 +39,7 @@ class ObjectController(
     fun add(
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<ResourceRepresentation> {
         val id = objectService.createObject(obj, null, currentUser.contributorId().value)
         val location = uriComponentsBuilder
@@ -55,7 +55,7 @@ class ObjectController(
         @PathVariable id: ThingId,
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<ResourceRepresentation> {
         resourceService
             .findById(id)

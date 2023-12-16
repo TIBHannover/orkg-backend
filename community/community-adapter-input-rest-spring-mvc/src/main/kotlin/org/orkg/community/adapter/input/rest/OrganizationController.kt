@@ -126,7 +126,7 @@ class OrganizationController(
         @PathVariable id: OrganizationId,
         @RequestPart("properties", required = false) @Valid request: UpdateOrganizationRequest?,
         @RequestPart("logo", required = false) logo: MultipartFile?,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
         service.update(
@@ -193,7 +193,7 @@ class OrganizationController(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid submittedLogo: UpdateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val organization = service.findById(id).orElseThrow { OrganizationNotFound(id) }
         val image = EncodedImage(submittedLogo.value).decodeBase64()

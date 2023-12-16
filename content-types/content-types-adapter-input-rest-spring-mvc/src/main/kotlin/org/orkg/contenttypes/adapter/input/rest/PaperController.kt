@@ -93,7 +93,7 @@ class PaperController(
     fun create(
         @RequestBody @Valid request: CreatePaperRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<PaperRepresentation> {
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
@@ -110,7 +110,7 @@ class PaperController(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: UpdatePaperRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<PaperRepresentation> {
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
@@ -127,7 +127,7 @@ class PaperController(
         @PathVariable("id") paperId: ThingId,
         @RequestBody @Valid request: CreateContributionRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<ContributionRepresentation> {
         val userId = currentUser.contributorId()
         val id = service.createContribution(request.toCreateCommand(userId, paperId))
@@ -144,7 +144,7 @@ class PaperController(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: PublishRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
         service.publish(id, contributorId, request.subject, request.description)

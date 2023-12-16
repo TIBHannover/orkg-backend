@@ -57,7 +57,7 @@ class LiteralController(
     fun add(
         @RequestBody @Valid literal: LiteralCreateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<LiteralRepresentation> {
         val id = service.create(
             CreateCommand(

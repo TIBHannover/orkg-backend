@@ -15,6 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.exceptions.Unauthorized
 import org.orkg.community.output.AdminRepository
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor

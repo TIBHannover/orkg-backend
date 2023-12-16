@@ -25,7 +25,7 @@ import org.orkg.discussions.domain.DiscussionComment
 import org.orkg.discussions.domain.DiscussionCommentId
 import org.orkg.discussions.domain.InvalidContent
 import org.orkg.discussions.domain.TopicNotFound
-import org.orkg.discussions.domain.Unauthorized
+import org.orkg.common.exceptions.Unauthorized
 import org.orkg.discussions.input.CreateDiscussionCommentUseCase
 import org.orkg.discussions.input.DiscussionUseCases
 import org.orkg.graph.domain.UserNotFound

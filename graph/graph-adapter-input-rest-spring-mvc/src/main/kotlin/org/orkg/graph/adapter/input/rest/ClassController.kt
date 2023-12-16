@@ -118,7 +118,7 @@ class ClassController(
     fun add(
         @RequestBody `class`: CreateClassRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<ClassRepresentation> {
         Label.ofOrNull(`class`.label) ?: throw InvalidLabel()
         if (`class`.id != null && service.findById(`class`.id).isPresent) throw ClassAlreadyExists(`class`.id.value)

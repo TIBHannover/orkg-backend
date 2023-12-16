@@ -90,7 +90,7 @@ class ComparisonController(
     fun create(
         @RequestBody @Valid request: CreateComparisonRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
@@ -124,7 +124,7 @@ class ComparisonController(
         @PathVariable("comparisonId") comparisonId: ThingId,
         @RequestBody @Valid request: CreateComparisonRelatedResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.createComparisonRelatedResource(request.toCreateCommand(comparisonId, userId))
@@ -158,7 +158,7 @@ class ComparisonController(
         @PathVariable("comparisonId") comparisonId: ThingId,
         @RequestBody @Valid request: CreateComparisonRelatedFigureRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.createComparisonRelatedFigure(request.toCreateCommand(comparisonId, userId))
@@ -175,7 +175,7 @@ class ComparisonController(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: PublishRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
         service.publish(id, contributorId, request.subject, request.description)

@@ -44,7 +44,7 @@ class LegacyPaperController(
         @RequestBody paper: LegacyCreatePaperUseCase.LegacyCreatePaperRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         @RequestParam("mergeIfExists", required = false, defaultValue = "false") mergeIfExists: Boolean,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<ResourceRepresentation> {
         val id = service.addPaperContent(paper, mergeIfExists, currentUser.contributorId().value)
         val location = uriComponentsBuilder

@@ -6,6 +6,7 @@ import java.util.*
 import java.util.regex.Pattern
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.exceptions.Unauthorized
 import org.orkg.community.output.AdminRepository
 import org.orkg.community.output.ContributorRepository
 import org.orkg.discussions.input.CreateDiscussionCommentUseCase

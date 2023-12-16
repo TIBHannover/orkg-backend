@@ -59,7 +59,7 @@ class PredicateController(
     fun add(
         @RequestBody predicate: CreatePredicateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<PredicateRepresentation> {
         Label.ofOrNull(predicate.label) ?: throw InvalidLabel()
         if (predicate.id != null && service.findById(predicate.id).isPresent) throw PredicateAlreadyExists(predicate.id)

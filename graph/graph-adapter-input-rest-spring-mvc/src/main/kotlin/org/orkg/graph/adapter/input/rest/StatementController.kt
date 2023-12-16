@@ -122,7 +122,7 @@ class StatementController(
     fun add(
         @RequestBody statement: CreateStatement,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<StatementRepresentation> {
         val id = statementService.create(
             currentUser.contributorId(),

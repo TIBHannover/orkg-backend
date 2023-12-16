@@ -99,7 +99,7 @@ class ResourceController(
     fun add(
         @RequestBody resource: CreateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<ResourceRepresentation> {
         Label.ofOrNull(resource.label) ?: throw InvalidLabel()
         if (resource.id != null && service.findById(resource.id).isPresent) throw ResourceAlreadyExists(resource.id)
@@ -225,7 +225,7 @@ class ResourceController(
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorizeCurator
-    fun markUnlisted(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails) {
+    fun markUnlisted(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails?) {
         service.markAsUnlisted(id, currentUser.contributorId())
     }
 

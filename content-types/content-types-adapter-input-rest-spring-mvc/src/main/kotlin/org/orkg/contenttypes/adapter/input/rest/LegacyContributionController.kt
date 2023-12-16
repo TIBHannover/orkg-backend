@@ -59,7 +59,7 @@ class LegacyContributionController(
     @PutMapping("/{id}/metadata/unlisted")
     @PreAuthorizeCurator
     @ResponseStatus(HttpStatus.OK)
-    fun markUnlisted(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails) {
+    fun markUnlisted(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails?) {
         resourceService.markAsUnlisted(id, currentUser.contributorId())
     }
 

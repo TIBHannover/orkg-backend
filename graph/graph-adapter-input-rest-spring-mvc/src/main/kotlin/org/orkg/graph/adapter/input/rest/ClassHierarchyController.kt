@@ -67,7 +67,7 @@ class ClassHierarchyController(
         @PathVariable id: ThingId,
         @RequestBody request: CreateParentRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         createRelations(request.parentId, setOf(id), false, currentUser.contributorId())
         val location = uriComponentsBuilder
@@ -96,7 +96,7 @@ class ClassHierarchyController(
         @PathVariable id: ThingId,
         @RequestBody request: CreateChildrenRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         createRelations(id, request.childIds, true, currentUser.contributorId())
         val location = uriComponentsBuilder
@@ -112,7 +112,7 @@ class ClassHierarchyController(
         @PathVariable id: ThingId,
         @RequestBody request: CreateChildrenRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         createRelations(id, request.childIds, false, currentUser.contributorId())
         val location = uriComponentsBuilder

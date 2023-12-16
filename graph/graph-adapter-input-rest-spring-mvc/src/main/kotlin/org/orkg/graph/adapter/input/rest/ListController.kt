@@ -54,7 +54,7 @@ class ListController(
     fun add(
         @RequestBody request: CreateListRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<ListRepresentation> {
         val id = service.create(request.toCreateCommand(currentUser.contributorId()))
         val location = uriComponentsBuilder.path("api/lists/{id}")

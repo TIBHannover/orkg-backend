@@ -281,7 +281,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    fun `aggregate problems that belong to multiple RFs when fetching summary`() {
+    fun aggregateProblemsThatBelongToMultipleResearchFieldsWhenFetchingSummary() {
         val field1 = resourceService.createResource(setOf("ResearchField"), label = "Field #1 with a problem #1")
         val field2 = resourceService.createResource(setOf("ResearchField"), label = "Field #2 with a problem #1")
 

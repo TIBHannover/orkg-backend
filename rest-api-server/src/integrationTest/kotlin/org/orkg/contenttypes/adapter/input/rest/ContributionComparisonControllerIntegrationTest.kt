@@ -102,7 +102,7 @@ class ContributionComparisonControllerIntegrationTest : RestDocumentationBaseTes
     }
 
     @Test
-    fun `passing less than two IDs should raise an error`() {
+    fun passingLessThanTwoIDsShouldRaiseAnError() {
         val cont1 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1")
 
         val paper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")

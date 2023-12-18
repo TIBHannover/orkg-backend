@@ -65,7 +65,7 @@ abstract class RestDocumentationBaseTest {
             )
             .alwaysDo<DefaultMockMvcBuilder>(
                 document(
-                    "{class-name}-{method-name}",
+                    snippet,
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint())
                 )

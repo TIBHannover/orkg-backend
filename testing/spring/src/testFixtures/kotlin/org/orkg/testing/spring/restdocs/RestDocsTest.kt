@@ -37,12 +37,14 @@ abstract class RestDocsTest(private val prefix: String) {
 
     protected lateinit var mockMvc: MockMvc
 
+    val identifier = "$prefix-{method-name}"
+
     @BeforeEach
     fun setup(
         restDocumentation: RestDocumentationContextProvider
     ) {
         documentationHandler = document(
-            "$prefix-{method-name}",
+            identifier,
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
         )

@@ -174,7 +174,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
 
     @Test
     @TestWithMockUser
-    fun `shouldn't merge if DOI is empty`() {
+    fun shouldNotMergeIfDoiIsEmpty() {
         val originalPaper = createDummyPaperObject(doi = "")
 
         val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
@@ -220,7 +220,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
 
     @Test
     @TestWithMockUser
-    fun `merge papers that exists on title`() {
+    fun mergePapersThatExistsOnTitle() {
         val originalPaper = createDummyPaperObject()
 
         val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
@@ -266,7 +266,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
 
     @Test
     @TestWithMockUser
-    fun `merge papers that exists on doi`() {
+    fun mergePapersThatExistsOnDoi() {
         val originalPaper = createDummyPaperObject()
 
         val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
@@ -312,7 +312,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
 
     @Test
     @TestWithMockUser
-    fun `merge papers if both title and DOI exist`() {
+    fun mergePapersIfBothTitleAndDoiExist() {
         val originalPaper = createDummyPaperObject()
 
         val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
@@ -358,7 +358,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
 
     @Test
     @TestWithMockUser
-    fun `when research field is blank, 400 BAD REQUEST is returned`() {
+    fun whenResearchFieldIsBlank400BadRequestIsReturned() {
         val paperWithNoResearchField = mapOf(
             "paper" to mapOf(
                 "title" to "long title here",
@@ -378,7 +378,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     @Tag("regression")
     @Tag("issue:292")
     @TestWithMockUser
-    fun `creating a paper twice works as expected`() {
+    fun creatingAPaperTwiceWorksAsExpected() {
         resourceService.createResource(
             id = "R106",
             classes = setOf("ResearchField"),
@@ -399,7 +399,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    fun `fetch papers related to a particular resource`() {
+    fun fetchPapersRelatedToAParticularResource() {
         val predicate1 = predicateService.create("Predicate 1").id
         val predicate2 = predicateService.create("Predicate 2").id
 

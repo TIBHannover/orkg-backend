@@ -18,6 +18,7 @@ import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
+import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.graph.domain.ExtractionMethod
@@ -149,7 +150,7 @@ class PaperController(
         @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
-        service.publish(id, contributorId, request.subject, request.description)
+        service.publish(request.toPublishCommand(id, contributorId))
         val location = uriComponentsBuilder
             .path("api/papers/{id}")
             .buildAndExpand(id)
@@ -356,6 +357,18 @@ class PaperController(
         @field:NotBlank
         val subject: String,
         @field:NotBlank
-        val description: String
-    )
+        val description: String,
+        @field:Valid
+        @field:Size(min = 1)
+        val authors: List<AuthorDTO>
+    ) {
+        fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishPaperUseCase.PublishCommand =
+            PublishPaperUseCase.PublishCommand(
+                id = id,
+                contributorId = contributorId,
+                subject = subject,
+                description = description,
+                authors = authors.map { it.toAuthor() }
+            )
+    }
 }

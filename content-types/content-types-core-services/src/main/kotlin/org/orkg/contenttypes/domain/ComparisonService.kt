@@ -23,6 +23,7 @@ import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedFigureCommand
 import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedResourceCommand
+import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.RetrieveComparisonContributionsUseCase
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.output.ContributionComparisonRepository
@@ -71,7 +72,7 @@ class ComparisonService(
 ) : ComparisonUseCases, RetrieveComparisonContributionsUseCase {
     override fun findById(id: ThingId): Optional<Comparison> =
         resourceRepository.findById(id)
-            .filter { it is Resource && Classes.comparison in it.classes }
+            .filter { Classes.comparison in it.classes }
             .map { it.toComparison() }
 
     override fun findAll(pageable: Pageable): Page<Comparison> =
@@ -242,19 +243,21 @@ class ComparisonService(
         return figureId
     }
 
-    override fun publish(id: ThingId, contributorId: ContributorId, subject: String, description: String) {
-        val comparison = findById(id).orElseThrow { ComparisonNotFound(id) }
+    override fun publish(command: PublishComparisonUseCase.PublishCommand) {
+        val comparison = resourceRepository.findById(command.id)
+            .filter { Classes.comparison in it.classes }
+            .orElseThrow { ComparisonNotFound(command.id) }
         publishingService.publish(
             PublishingService.PublishCommand(
-                id = id,
-                title = comparison.title,
-                contributorId = contributorId,
-                subject = subject,
-                description = description,
-                url = URI.create("$comparisonPublishBaseUri/").resolve(id.value),
-                creators = comparison.authors,
+                id = comparison.id,
+                title = comparison.label,
+                contributorId = command.contributorId,
+                subject = command.subject,
+                description = command.description,
+                url = URI.create("$comparisonPublishBaseUri/").resolve(comparison.id.value),
+                creators = command.authors,
                 resourceType = Classes.comparison,
-                relatedIdentifiers = statementRepository.findAllDOIsRelatedToComparison(id).toList()
+                relatedIdentifiers = statementRepository.findAllDOIsRelatedToComparison(comparison.id).toList()
             )
         )
     }

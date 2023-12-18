@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
@@ -29,10 +30,10 @@ import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
-import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedFigure
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedResource
+import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.graph.domain.DOIServiceUnavailable
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResearchFieldNotFound
@@ -62,7 +63,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -488,13 +488,16 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @DisplayName("Given a comparison, when publishing, then status 204 NO CONTENT")
     fun publish() {
         val id = ThingId("R123")
+        val subject = "comparison subject"
+        val description = "comparison description"
+        val authors = listOf(Author("Author 1"))
         val request = mapOf(
-            "subject" to "comparison subject",
-            "description" to "comparison description"
+            "subject" to subject,
+            "description" to description,
+            "authors" to authors
         )
-        val contributorId = ContributorId(MockUserId.USER)
 
-        every { comparisonService.publish(id, contributorId, any(), any()) } just runs
+        every { comparisonService.publish(any()) } just runs
 
         documentedPostRequestTo("/api/comparisons/{id}/publish", id)
             .content(request)
@@ -510,27 +513,51 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     ),
                     requestFields(
                         fieldWithPath("subject").description("The subject of the comparison."),
-                        fieldWithPath("description").description("The description of the comparison.")
+                        fieldWithPath("description").description("The description of the comparison."),
+                        fieldWithPath("authors").description("The list of authors that originally contributed to the comparison."),
+                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
+                        fieldWithPath("authors[].identifiers.orcid").type("String").description("The ORCID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                     )
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { comparisonService.publish(id, contributorId, any(), any()) }
+        verify(exactly = 1) {
+            comparisonService.publish(
+                withArg {
+                    it.id shouldBe id
+                    it.contributorId shouldBe ContributorId(MockUserId.USER)
+                    it.description shouldBe description
+                    it.subject shouldBe subject
+                    it.authors shouldBe authors
+                }
+            )
+        }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a comparison, when publishing but service reports missing comparison, then status is 404 NOT FOUND`() {
         val id = ThingId("R123")
+        val subject = "comparison subject"
+        val description = "comparison description"
+        val authors = listOf(Author("Author 1"))
         val request = mapOf(
-            "subject" to "comparison subject",
-            "description" to "comparison description"
+            "subject" to subject,
+            "description" to description,
+            "authors" to authors
         )
-        val contributorId = ContributorId(MockUserId.USER)
         val exception = ComparisonNotFound(id)
 
-        every { comparisonService.publish(id, contributorId, any(), any()) } throws exception
+        every { comparisonService.publish(any()) } throws exception
 
         post("/api/comparisons/$id/publish")
             .content(request)
@@ -542,21 +569,34 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpect(jsonPath("$.path").value("/api/comparisons/$id/publish"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { comparisonService.publish(id, contributorId, any(), any()) }
+        verify(exactly = 1) {
+            comparisonService.publish(
+                withArg {
+                    it.id shouldBe id
+                    it.contributorId shouldBe ContributorId(MockUserId.USER)
+                    it.description shouldBe description
+                    it.subject shouldBe subject
+                    it.authors shouldBe authors
+                }
+            )
+        }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a comparison, when publishing but service reports doi service unavailable, then status is 503 SERVICE UNAVAILABLE`() {
         val id = ThingId("R123")
+        val subject = "comparison subject"
+        val description = "comparison description"
+        val authors = listOf(Author("Author 1"))
         val request = mapOf(
-            "subject" to "comparison subject",
-            "description" to "comparison description"
+            "subject" to subject,
+            "description" to description,
+            "authors" to authors
         )
-        val contributorId = ContributorId(MockUserId.USER)
         val exception = DOIServiceUnavailable(500, "Internal error")
 
-        every { comparisonService.publish(id, contributorId, any(), any()) } throws exception
+        every { comparisonService.publish(any()) } throws exception
 
         post("/api/comparisons/$id/publish")
             .content(request)
@@ -568,7 +608,17 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpect(jsonPath("$.path").value("/api/comparisons/$id/publish"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { comparisonService.publish(id, contributorId, any(), any()) }
+        verify(exactly = 1) {
+            comparisonService.publish(
+                withArg {
+                    it.id shouldBe id
+                    it.contributorId shouldBe ContributorId(MockUserId.USER)
+                    it.description shouldBe description
+                    it.subject shouldBe subject
+                    it.authors shouldBe authors
+                }
+            )
+        }
     }
 
     @Test

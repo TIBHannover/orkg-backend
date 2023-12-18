@@ -42,6 +42,7 @@ import org.orkg.contenttypes.domain.actions.paper.PaperTempIdValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperTitleValidator
 import org.orkg.contenttypes.input.PaperUseCases
+import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -174,17 +175,18 @@ class PaperService(
         steps.execute(command, UpdatePaperState())
     }
 
-    override fun publish(id: ThingId, contributorId: ContributorId, subject: String, description: String) {
-        val paper = findById(id).orElseThrow { PaperNotFound(id) }
+    override fun publish(command: PublishPaperUseCase.PublishCommand) {
+        val paper = resourceRepository.findPaperById(command.id)
+            .orElseThrow { PaperNotFound(command.id) }
         publishingService.publish(
             PublishingService.PublishCommand(
-                id = id,
-                title = paper.title,
-                contributorId = contributorId,
-                subject = subject,
-                description = description,
-                url = URI.create("$paperPublishBaseUri/").resolve(id.value),
-                creators = paper.authors,
+                id = paper.id,
+                title = paper.label,
+                contributorId = command.contributorId,
+                subject = command.subject,
+                description = command.description,
+                url = URI.create("$paperPublishBaseUri/").resolve(paper.id.value),
+                creators = command.authors,
                 resourceType = Classes.paper,
                 relatedIdentifiers = emptyList()
             )

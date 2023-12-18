@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -381,13 +382,16 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @DisplayName("Given a paper, when publishing, then status 204 NO CONTENT")
     fun publish() {
         val id = ThingId("R123")
+        val subject = "paper subject"
+        val description = "paper description"
+        val authors = listOf(Author("Author 1"))
         val request = mapOf(
-            "subject" to "paper subject",
-            "description" to "paper description"
+            "subject" to subject,
+            "description" to description,
+            "authors" to authors
         )
-        val contributorId = ContributorId(MockUserId.USER)
 
-        every { paperService.publish(id, contributorId, any(), any()) } just runs
+        every { paperService.publish(any()) } just runs
 
         documentedPostRequestTo("/api/papers/{id}/publish", id)
             .content(request)
@@ -403,27 +407,51 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                     ),
                     requestFields(
                         fieldWithPath("subject").description("The subject of the paper."),
-                        fieldWithPath("description").description("The description of the paper.")
+                        fieldWithPath("description").description("The description of the paper."),
+                        fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
+                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
+                        fieldWithPath("authors[].identifiers.orcid").type("String").description("The ORCID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                     )
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { paperService.publish(id, contributorId, any(), any()) }
+        verify(exactly = 1) {
+            paperService.publish(
+                withArg {
+                    it.id shouldBe id
+                    it.contributorId shouldBe ContributorId(MockUserId.USER)
+                    it.description shouldBe description
+                    it.subject shouldBe subject
+                    it.authors shouldBe authors
+                }
+            )
+        }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper, when publishing but service reports missing paper, then status is 404 NOT FOUND`() {
         val id = ThingId("R123")
+        val subject = "paper subject"
+        val description = "paper description"
+        val authors = listOf(Author("Author 1"))
         val request = mapOf(
-            "subject" to "paper subject",
-            "description" to "paper description"
+            "subject" to subject,
+            "description" to description,
+            "authors" to authors
         )
-        val contributorId = ContributorId(MockUserId.USER)
         val exception = PaperNotFound(id)
 
-        every { paperService.publish(id, contributorId, any(), any()) } throws exception
+        every { paperService.publish(any()) } throws exception
 
         post("/api/papers/$id/publish")
             .accept(MediaType.APPLICATION_JSON)
@@ -435,21 +463,34 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$id/publish"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.publish(id, contributorId, any(), any()) }
+        verify(exactly = 1) {
+            paperService.publish(
+                withArg {
+                    it.id shouldBe id
+                    it.contributorId shouldBe ContributorId(MockUserId.USER)
+                    it.description shouldBe description
+                    it.subject shouldBe subject
+                    it.authors shouldBe authors
+                }
+            )
+        }
     }
 
     @Test
     @TestWithMockUser
     fun `Given a paper, when publishing but service reports doi service unavailable, then status is 503 SERVICE UNAVAILABLE`() {
         val id = ThingId("R123")
+        val subject = "paper subject"
+        val description = "paper description"
+        val authors = listOf(Author("Author 1"))
         val request = mapOf(
-            "subject" to "paper subject",
-            "description" to "paper description"
+            "subject" to subject,
+            "description" to description,
+            "authors" to authors
         )
-        val contributorId = ContributorId(MockUserId.USER)
         val exception = DOIServiceUnavailable(500, "Internal error")
 
-        every { paperService.publish(id, contributorId, any(), any()) } throws exception
+        every { paperService.publish(any()) } throws exception
 
         post("/api/papers/$id/publish")
             .accept(MediaType.APPLICATION_JSON)
@@ -461,7 +502,17 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$id/publish"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.publish(id, contributorId, any(), any()) }
+        verify(exactly = 1) {
+            paperService.publish(
+                withArg {
+                    it.id shouldBe id
+                    it.contributorId shouldBe ContributorId(MockUserId.USER)
+                    it.description shouldBe description
+                    it.subject shouldBe subject
+                    it.authors shouldBe authors
+                }
+            )
+        }
     }
 
     @Test

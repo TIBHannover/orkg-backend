@@ -23,6 +23,7 @@ import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.identifiers.DOI
+import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -290,63 +291,38 @@ class PaperServiceUnitTests {
         val paper = createResource()
         val subject = "Paper subject"
         val description = "Fancy paper description"
-        val resourceAuthorId = ThingId("R132564")
-        val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
-        val resourceAuthor = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
-        val bundleConfiguration = BundleConfiguration(
-            minLevel = null,
-            maxLevel = 3,
-            blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
-            whitelist = emptyList()
-        )
         val contributorId = ContributorId(UUID.randomUUID())
+        val authors = listOf(
+            Author(
+                id = null,
+                name = "Author 1",
+                identifiers = emptyMap(),
+                homepage = null
+            ),
+            Author(
+                id = ThingId("R132564"),
+                name = "Author 2",
+                identifiers = mapOf(
+                    "orcid" to "0000-1111-2222-3333"
+                ),
+                homepage = URI.create("https://example.org")
+            )
+        )
 
         every { resourceRepository.findPaperById(paper.id) } returns Optional.of(paper)
-        every {
-            statementRepository.fetchAsBundle(
-                id = paper.id,
-                configuration = bundleConfiguration,
-                sort = Sort.unsorted()
-            )
-        } returns pageOf(
-            createStatement(
-                subject = paper,
-                predicate = createPredicate(Predicates.hasAuthors),
-                `object` = authorList
-            ),
-            createStatement(
-                subject = authorList,
-                predicate = createPredicate(Predicates.hasListElement),
-                `object` = createLiteral(label = "Author 1")
-            ),
-            createStatement(
-                subject = authorList,
-                predicate = createPredicate(Predicates.hasListElement),
-                `object` = resourceAuthor
-            ),
-            createStatement(
-                subject = resourceAuthor,
-                predicate = createPredicate(Predicates.hasORCID),
-                `object` = createLiteral(label = "0000-1111-2222-3333")
-            ),
-            createStatement(
-                subject = resourceAuthor,
-                predicate = createPredicate(Predicates.hasWebsite),
-                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
-            )
-        )
         every { publishingService.publish(any()) } returns DOI.of("10.1234/56789")
 
-        service.publish(paper.id, contributorId, subject, description)
+        service.publish(
+            PublishPaperUseCase.PublishCommand(
+                id = paper.id,
+                contributorId = contributorId,
+                subject = subject,
+                description = description,
+                authors = authors
+            )
+        )
 
         verify(exactly = 1) { resourceRepository.findPaperById(paper.id) }
-        verify(exactly = 1) {
-            statementRepository.fetchAsBundle(
-                id = paper.id,
-                configuration = bundleConfiguration,
-                sort = Sort.unsorted()
-            )
-        }
         verify(exactly = 1) {
             publishingService.publish(
                 withArg {
@@ -356,22 +332,7 @@ class PaperServiceUnitTests {
                     it.subject shouldBe subject
                     it.description shouldBe description
                     it.url shouldBe URI.create("https://orkg.org/paper/${paper.id}")
-                    it.creators shouldBe listOf(
-                        Author(
-                            id = null,
-                            name = "Author 1",
-                            identifiers = emptyMap(),
-                            homepage = null
-                        ),
-                        Author(
-                            id = resourceAuthorId,
-                            name = "Author 2",
-                            identifiers = mapOf(
-                                "orcid" to "0000-1111-2222-3333"
-                            ),
-                            homepage = URI.create("https://example.org")
-                        )
-                    )
+                    it.creators shouldBe authors
                     it.resourceType shouldBe Classes.paper
                     it.relatedIdentifiers shouldBe emptyList()
                 }
@@ -387,7 +348,15 @@ class PaperServiceUnitTests {
         every { resourceRepository.findPaperById(id) } returns Optional.empty()
 
         shouldThrow<PaperNotFound> {
-            service.publish(id, contributorId, "Paper subject", "Fancy paper description")
+            service.publish(
+                PublishPaperUseCase.PublishCommand(
+                    id = id,
+                    contributorId = contributorId,
+                    subject = "Paper subject",
+                    description = "Fancy paper description",
+                    authors = emptyList()
+                )
+            )
         }
 
         verify(exactly = 1) { resourceRepository.findPaperById(id) }

@@ -19,6 +19,7 @@ import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase
+import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
@@ -178,7 +179,7 @@ class ComparisonController(
         @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
-        service.publish(id, contributorId, request.subject, request.description)
+        service.publish(request.toPublishCommand(id, contributorId))
         val location = uriComponentsBuilder
             .path("api/comparisons/{id}")
             .buildAndExpand(id)
@@ -264,6 +265,18 @@ class ComparisonController(
         @field:NotBlank
         val subject: String,
         @field:NotBlank
-        val description: String
-    )
+        val description: String,
+        @field:Valid
+        @field:Size(min = 1)
+        val authors: List<AuthorDTO>
+    ) {
+        fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishComparisonUseCase.PublishCommand =
+            PublishComparisonUseCase.PublishCommand(
+                id = id,
+                contributorId = contributorId,
+                subject = subject,
+                description = description,
+                authors = authors.map { it.toAuthor() }
+            )
+    }
 }

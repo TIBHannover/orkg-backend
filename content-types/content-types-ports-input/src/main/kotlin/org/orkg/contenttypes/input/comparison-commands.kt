@@ -45,5 +45,13 @@ interface CreateComparisonUseCase {
 }
 
 interface PublishComparisonUseCase {
-    fun publish(id: ThingId, contributorId: ContributorId, subject: String, description: String)
+    fun publish(command: PublishCommand)
+
+    data class PublishCommand(
+        val id: ThingId,
+        val contributorId: ContributorId,
+        val subject: String,
+        val description: String,
+        val authors: List<Author>
+    )
 }

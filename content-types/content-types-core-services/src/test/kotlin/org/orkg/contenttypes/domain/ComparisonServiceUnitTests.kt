@@ -15,12 +15,12 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.CreateComparisonUseCase
+import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -272,80 +272,42 @@ class ComparisonServiceUnitTests {
             organizationId = OrganizationId(UUID.randomUUID()),
             observatoryId = ObservatoryId(UUID.randomUUID())
         )
-        val resourceAuthorId = ThingId("R132564")
-        val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
-        val resourceAuthor = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
         val relatedDoi = "10.1472/58369"
         val contributorId = ContributorId(UUID.randomUUID())
-        val bundleConfiguration = BundleConfiguration(
-            minLevel = null,
-            maxLevel = 3,
-            blacklist = listOf(
-                Classes.researchField,
-                Classes.contribution,
-                Classes.visualization,
-                Classes.comparisonRelatedFigure,
-                Classes.comparisonRelatedResource
+        val subject = "Research Field 1"
+        val description = "comparison description"
+        val authors = listOf(
+            Author(
+                id = null,
+                name = "Author 1",
+                identifiers = emptyMap(),
+                homepage = null
             ),
-            whitelist = emptyList()
+            Author(
+                id = ThingId("R132564"),
+                name = "Author 2",
+                identifiers = mapOf(
+                    "orcid" to "0000-1111-2222-3333"
+                ),
+                homepage = URI.create("https://example.org")
+            )
         )
 
         every { resourceRepository.findById(comparison.id) } returns Optional.of(comparison)
-        every {
-            statementRepository.fetchAsBundle(
-                id = comparison.id,
-                configuration = bundleConfiguration,
-                sort = Sort.unsorted()
-            )
-        } returns pageOf(
-            createStatement(
-                subject = comparison,
-                predicate = createPredicate(Predicates.hasAuthors),
-                `object` = authorList
-            ),
-            createStatement(
-                subject = comparison,
-                predicate = createPredicate(Predicates.comparesContribution),
-                `object` = createResource(
-                    classes = setOf(Classes.contribution),
-                    label = "Contribution",
-                    id = ThingId("Contribution")
-                )
-            ),
-            createStatement(
-                subject = authorList,
-                predicate = createPredicate(Predicates.hasListElement),
-                `object` = createLiteral(label = "Author 1")
-            ),
-            createStatement(
-                subject = authorList,
-                predicate = createPredicate(Predicates.hasListElement),
-                `object` = resourceAuthor
-            ),
-            createStatement(
-                subject = resourceAuthor,
-                predicate = createPredicate(Predicates.hasORCID),
-                `object` = createLiteral(label = "0000-1111-2222-3333")
-            ),
-            createStatement(
-                subject = resourceAuthor,
-                predicate = createPredicate(Predicates.hasWebsite),
-                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
-            )
-        )
         every { statementRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf(relatedDoi)
         every { publishingService.publish(any()) } returns DOI.of("10.1234/56789")
 
-        service.publish(comparison.id, contributorId, "Research Field 1", "comparison description")
+        service.publish(
+            PublishComparisonUseCase.PublishCommand(
+                id = comparison.id,
+                contributorId = contributorId,
+                subject = subject,
+                description = description,
+                authors = authors
+            )
+        )
 
         verify(exactly = 1) { resourceRepository.findById(comparison.id) }
-        verify(exactly = 1) {
-            statementRepository.fetchAsBundle(
-                id = comparison.id,
-                configuration = bundleConfiguration,
-                sort = Sort.unsorted()
-            )
-        }
         verify(exactly = 1) { statementRepository.findAllDOIsRelatedToComparison(comparison.id) }
         verify(exactly = 1) {
             publishingService.publish(
@@ -356,22 +318,7 @@ class ComparisonServiceUnitTests {
                     it.subject shouldBe "Research Field 1"
                     it.description shouldBe "comparison description"
                     it.url shouldBe URI.create("https://orkg.org/comparison/${comparison.id}")
-                    it.creators shouldBe listOf(
-                        Author(
-                            id = null,
-                            name = "Author 1",
-                            identifiers = emptyMap(),
-                            homepage = null
-                        ),
-                        Author(
-                            id = resourceAuthorId,
-                            name = "Author 2",
-                            identifiers = mapOf(
-                                "orcid" to "0000-1111-2222-3333"
-                            ),
-                            homepage = URI.create("https://example.org")
-                        )
-                    )
+                    it.creators shouldBe authors
                     it.resourceType shouldBe Classes.comparison
                     it.relatedIdentifiers shouldBe listOf(relatedDoi)
                 }
@@ -383,10 +330,38 @@ class ComparisonServiceUnitTests {
     fun `Given a comparison, when publishing but service reports missing paper, it throws an exception`() {
         val id = ThingId("Missing")
         val contributorId = ContributorId(UUID.randomUUID())
+        val subject = "Research Field 1"
+        val description = "comparison description"
+        val authors = listOf(
+            Author(
+                id = null,
+                name = "Author 1",
+                identifiers = emptyMap(),
+                homepage = null
+            ),
+            Author(
+                id = ThingId("R132564"),
+                name = "Author 2",
+                identifiers = mapOf(
+                    "orcid" to "0000-1111-2222-3333"
+                ),
+                homepage = URI.create("https://example.org")
+            )
+        )
 
         every { resourceRepository.findById(id) } returns Optional.empty()
 
-        shouldThrow<ComparisonNotFound> { service.publish(id, contributorId, "Comparison subject", "Fancy comparison description") }
+        shouldThrow<ComparisonNotFound> {
+            service.publish(
+                PublishComparisonUseCase.PublishCommand(
+                    id = id,
+                    contributorId = contributorId,
+                    subject = subject,
+                    description = description,
+                    authors = authors
+                )
+            )
+        }
 
         verify(exactly = 1) { resourceRepository.findById(id) }
     }

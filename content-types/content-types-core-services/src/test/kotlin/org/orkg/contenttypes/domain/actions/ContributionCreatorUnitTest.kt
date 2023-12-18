@@ -16,7 +16,9 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
+import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
@@ -76,7 +78,7 @@ class ContributionCreatorUnitTest {
     fun `Given paper contents, when a newly defined resource is valid, it gets created`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val resourceDefinition = CreatePaperUseCase.CreateCommand.ResourceDefinition(
+        val resourceDefinition = ThingDefinitions.ResourceDefinition(
             label = "MOTO",
             classes = setOf(ThingId("R2000"))
         )
@@ -101,7 +103,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
         )
@@ -123,7 +126,7 @@ class ContributionCreatorUnitTest {
     fun `Given paper contents, when a newly defined resource is not validated, it does not get created`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val resourceDefinition = CreatePaperUseCase.CreateCommand.ResourceDefinition(
+        val resourceDefinition = ThingDefinitions.ResourceDefinition(
             label = "MOTO",
             classes = setOf(ThingId("R2000"))
         )
@@ -141,7 +144,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
         )
@@ -153,7 +157,7 @@ class ContributionCreatorUnitTest {
     fun `Given paper contents, when a newly defined literal is valid, it gets created`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val literalDefinition = CreatePaperUseCase.CreateCommand.LiteralDefinition(
+        val literalDefinition = ThingDefinitions.LiteralDefinition(
             label = "1.0",
             dataType = Literals.XSD.INT.prefixedUri
         )
@@ -178,7 +182,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
         )
@@ -200,7 +205,7 @@ class ContributionCreatorUnitTest {
     fun `Given paper contents, when a newly defined literal is not validated, it does not get created`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val literalDefinition = CreatePaperUseCase.CreateCommand.LiteralDefinition(
+        val literalDefinition = ThingDefinitions.LiteralDefinition(
             label = "1.0",
             dataType = Literals.XSD.INT.prefixedUri
         )
@@ -215,7 +220,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
         )
@@ -227,7 +233,7 @@ class ContributionCreatorUnitTest {
     fun `Given paper contents, when a newly defined predicate is valid, it gets created`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val predicateDefinition = CreatePaperUseCase.CreateCommand.PredicateDefinition(
+        val predicateDefinition = ThingDefinitions.PredicateDefinition(
             label = "MOTO"
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
@@ -250,7 +256,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
         )
@@ -271,7 +278,7 @@ class ContributionCreatorUnitTest {
     fun `Given paper contents, when a newly defined predicate with description is valid, it gets created`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val predicateDefinition = CreatePaperUseCase.CreateCommand.PredicateDefinition(
+        val predicateDefinition = ThingDefinitions.PredicateDefinition(
             label = "MOTO",
             description = "Result"
         )
@@ -313,7 +320,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
         )
@@ -350,7 +358,7 @@ class ContributionCreatorUnitTest {
     fun `Given paper contents, when a newly defined predicate is not validated, it does not get created`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val predicateDefinition = CreatePaperUseCase.CreateCommand.PredicateDefinition(
+        val predicateDefinition = ThingDefinitions.PredicateDefinition(
             label = "MOTO"
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
@@ -364,7 +372,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
         )
@@ -376,7 +385,7 @@ class ContributionCreatorUnitTest {
     fun `Given paper contents, when a newly defined list is valid, it gets created`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val listDefinition = CreatePaperUseCase.CreateCommand.ListDefinition(
+        val listDefinition = ThingDefinitions.ListDefinition(
             label = "MOTO",
             elements = listOf("R2000")
         )
@@ -410,7 +419,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
         )
@@ -440,7 +450,7 @@ class ContributionCreatorUnitTest {
     fun `Given paper contents, when a newly defined list is not validated, it does not get created`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val listDefinition = CreatePaperUseCase.CreateCommand.ListDefinition(
+        val listDefinition = ThingDefinitions.ListDefinition(
             label = "MOTO",
             elements = listOf("R2000")
         )
@@ -458,7 +468,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
         )
@@ -470,7 +481,7 @@ class ContributionCreatorUnitTest {
     fun `Given paper contents, when creating new contributions, it returns success`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val contributionDefinition = CreatePaperUseCase.CreateCommand.Contribution(
+        val contributionDefinition = ContributionDefinition(
             label = "MOTO",
             statements = emptyMap()
         )
@@ -502,7 +513,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
         )
@@ -533,14 +545,14 @@ class ContributionCreatorUnitTest {
     fun `Given paper contents, when creating new statements with temp ids, it returns success`() {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
-        val resourceDefinition = CreatePaperUseCase.CreateCommand.ResourceDefinition(
+        val resourceDefinition = ThingDefinitions.ResourceDefinition(
             label = "Subject",
             classes = setOf(ThingId("R2000"))
         )
-        val predicateDefinition = CreatePaperUseCase.CreateCommand.PredicateDefinition(
+        val predicateDefinition = ThingDefinitions.PredicateDefinition(
             label = "hasValue"
         )
-        val literalDefinition = CreatePaperUseCase.CreateCommand.LiteralDefinition(
+        val literalDefinition = ThingDefinitions.LiteralDefinition(
             label = "1.0",
             dataType = Literals.XSD.INT.prefixedUri
         )
@@ -599,7 +611,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = mapOf(
                 "#temp1" to Either.left("#temp1"),
                 "#temp2" to Either.left("#temp2"),
@@ -674,7 +687,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = emptyMap(),
             bakedStatements = setOf(BakedStatement("R1000", "R2000", "R3000")),
         )
@@ -724,7 +738,8 @@ class ContributionCreatorUnitTest {
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
-            contents = contents,
+            thingDefinitions = contents,
+            contributionDefinitions = contents.contributions,
             validatedIds = emptyMap(),
             bakedStatements = setOf(BakedStatement("R1000", "R2000", "R3000")),
         )

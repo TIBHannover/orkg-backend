@@ -19,7 +19,8 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
-import org.orkg.contenttypes.input.CreatePaperUseCase
+import org.orkg.contenttypes.input.ContributionDefinition
+import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
@@ -70,14 +71,14 @@ class ContributionContentsCreatorUnitTest {
     @Test
     fun `Given a contribution create command, when creating its contents, it returns success`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val temp1 = CreatePaperUseCase.CreateCommand.PredicateDefinition(
+        val temp1 = ThingDefinitions.PredicateDefinition(
             label = "hasResult"
         )
-        val contributionDefinition = CreatePaperUseCase.CreateCommand.Contribution(
+        val contributionDefinition = ContributionDefinition(
             label = "Contribution 1",
             statements = mapOf(
                 "#temp1" to listOf(
-                    CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003")
+                    ContributionDefinition.StatementObjectDefinition("R3003")
                 )
             )
         )

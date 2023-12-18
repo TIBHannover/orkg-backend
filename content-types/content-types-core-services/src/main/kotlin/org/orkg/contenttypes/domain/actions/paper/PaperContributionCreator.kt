@@ -26,12 +26,13 @@ class PaperContributionCreator(
     listService = listService
 ), CreatePaperAction {
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
-        if (command.contents != null) {
+        command.contents?.let {
             create(
                 paperId = state.paperId!!,
                 contributorId = command.contributorId,
                 extractionMethod = command.extractionMethod,
-                contents = command.contents!!,
+                thingDefinitions = it,
+                contributionDefinitions = it.contributions,
                 validatedIds = state.validatedIds,
                 bakedStatements = state.bakedStatements
             )

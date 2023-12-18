@@ -10,7 +10,9 @@ class PaperContributionValidator(thingRepository: ThingRepository) : Contributio
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
         val bakedStatements: MutableSet<BakedStatement> = mutableSetOf()
         val validatedIds = state.validatedIds.toMutableMap()
-        validate(bakedStatements, validatedIds, state.tempIds, command.contents)
+        command.contents?.let {
+            validate(bakedStatements, validatedIds, state.tempIds, it, it.contributions)
+        }
         return state.copy(bakedStatements = bakedStatements, validatedIds = validatedIds)
     }
 }

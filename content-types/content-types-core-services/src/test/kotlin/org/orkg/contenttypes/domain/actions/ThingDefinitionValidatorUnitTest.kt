@@ -14,6 +14,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.input.CreatePaperUseCase
+import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -38,7 +39,7 @@ class ThingDefinitionValidatorUnitTest {
     fun `Given paper contents, when specified class id for resource is not resolvable, it throws an exception`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to CreatePaperUseCase.CreateCommand.ResourceDefinition(
+                "#temp1" to ThingDefinitions.ResourceDefinition(
                     label = "MOTO",
                     classes = setOf(ThingId("R2000"))
                 )
@@ -52,7 +53,7 @@ class ThingDefinitionValidatorUnitTest {
 
         assertThrows<ThingNotFound> {
             thingDefinitionValidator.validateIdsInDefinitions(
-                contents = contents,
+                thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )
@@ -65,7 +66,7 @@ class ThingDefinitionValidatorUnitTest {
     fun `Given paper contents, when specified class id for resource does not resolve to a class, it throws an exception`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to CreatePaperUseCase.CreateCommand.ResourceDefinition(
+                "#temp1" to ThingDefinitions.ResourceDefinition(
                     label = "MOTO",
                     classes = setOf(ThingId("R2000"))
                 )
@@ -80,7 +81,7 @@ class ThingDefinitionValidatorUnitTest {
 
         assertThrows<ThingIsNotAClass> {
             thingDefinitionValidator.validateIdsInDefinitions(
-                contents = contents,
+                thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
             )

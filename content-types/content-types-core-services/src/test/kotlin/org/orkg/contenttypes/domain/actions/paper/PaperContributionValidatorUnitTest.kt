@@ -18,6 +18,7 @@ import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.CreatePaperState
+import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Predicates
@@ -153,7 +154,7 @@ class PaperContributionValidatorUnitTest {
         val command = dummyCreatePaperCommand().copy(
             contents = CreatePaperUseCase.CreateCommand.PaperContents(
                 contributions = listOf(
-                    CreatePaperUseCase.CreateCommand.Contribution(
+                    ContributionDefinition(
                         label = "Contribution",
                         statements = emptyMap()
                     )

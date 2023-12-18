@@ -12,7 +12,7 @@ class ContributionContentsValidator(
     override operator fun invoke(command: CreateContributionCommand, state: ContributionState): ContributionState {
         val bakedStatements: MutableSet<BakedStatement> = mutableSetOf()
         val validatedIds = state.validatedIds.toMutableMap()
-        validate(bakedStatements, validatedIds, state.tempIds, command)
+        validate(bakedStatements, validatedIds, state.tempIds, command, listOf(command.contribution))
         return state.copy(bakedStatements = bakedStatements, validatedIds = validatedIds)
     }
 }

@@ -16,7 +16,9 @@ import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.CreatePaperState
+import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
+import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
@@ -68,15 +70,15 @@ class PaperContributionCreatorUnitTest {
 
     @Test
     fun `Given a paper create command, when creating its contents, it returns success`() {
-        val temp1 = CreatePaperUseCase.CreateCommand.PredicateDefinition(
+        val temp1 = ThingDefinitions.PredicateDefinition(
             label = "hasResult"
         )
-        val contributionDefinition = CreatePaperUseCase.CreateCommand.Contribution(
+        val contributionDefinition = ContributionDefinition(
             label = "Contribution 1",
             classes = setOf(ThingId("C123")),
             statements = mapOf(
                 "#temp1" to listOf(
-                    CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003")
+                    ContributionDefinition.StatementObjectDefinition("R3003")
                 )
             )
         )

@@ -17,7 +17,7 @@ import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
-import org.orkg.contenttypes.input.CreatePaperUseCase
+import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateContributionCommand
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
@@ -71,11 +71,11 @@ class ContributionThingDefinitionValidatorUnitTest {
             literals = emptyMap(),
             predicates = emptyMap(),
             lists = emptyMap(),
-            contribution = CreatePaperUseCase.CreateCommand.Contribution(
+            contribution = ContributionDefinition(
                 label = "Contribution 1",
                 statements = mapOf(
                     Predicates.hasResearchProblem.value to listOf(
-                        CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003")
+                        ContributionDefinition.StatementObjectDefinition("R3003")
                     )
                 )
             )

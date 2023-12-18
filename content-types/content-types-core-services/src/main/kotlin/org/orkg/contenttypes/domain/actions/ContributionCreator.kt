@@ -3,7 +3,9 @@ package org.orkg.contenttypes.domain.actions
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
+import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
@@ -33,12 +35,13 @@ abstract class ContributionCreator(
         paperId: ThingId,
         contributorId: ContributorId,
         extractionMethod: ExtractionMethod,
-        contents: CreatePaperUseCase.CreateCommand.PaperContents,
+        thingDefinitions: ThingDefinitions,
+        contributionDefinitions: List<ContributionDefinition>,
         validatedIds: Map<String, Either<String, Thing>>,
         bakedStatements: Set<BakedStatement>
     ): List<ThingId> {
         val lookup = mutableMapOf<String, ThingId>()
-        contents.resources.forEach {
+        thingDefinitions.resources.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
                 lookup[it.key] = resourceService.create(
                     CreateResourceUseCase.CreateCommand(
@@ -49,7 +52,7 @@ abstract class ContributionCreator(
                 )
             }
         }
-        contents.literals.forEach {
+        thingDefinitions.literals.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
                 lookup[it.key] = literalService.create(
                     CreateCommand(
@@ -60,7 +63,7 @@ abstract class ContributionCreator(
                 )
             }
         }
-        contents.predicates.forEach {
+        thingDefinitions.predicates.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
                 val predicate = predicateService.create(
                     CreatePredicateUseCase.CreateCommand(
@@ -85,7 +88,7 @@ abstract class ContributionCreator(
                 }
             }
         }
-        val lists = contents.lists.filter { it.key.isTempId && it.key in validatedIds }
+        val lists = thingDefinitions.lists.filter { it.key.isTempId && it.key in validatedIds }
         // create all lists without contents first, so other lists can reference them
         lists.forEach {
             lookup[it.key] = listService.create(
@@ -104,7 +107,7 @@ abstract class ContributionCreator(
                 )
             )
         }
-        val contributions = contents.contributions.mapIndexed { index, contribution ->
+        val contributions = contributionDefinitions.mapIndexed { index, contribution ->
             val contributionId = resourceService.create(
                 CreateResourceUseCase.CreateCommand(
                     label = contribution.label,

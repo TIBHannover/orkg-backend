@@ -7,8 +7,11 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.PublicationInfo
+import org.orkg.contenttypes.input.ThingDefinitions.ListDefinition
+import org.orkg.contenttypes.input.ThingDefinitions.LiteralDefinition
+import org.orkg.contenttypes.input.ThingDefinitions.PredicateDefinition
+import org.orkg.contenttypes.input.ThingDefinitions.ResourceDefinition
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.Literals
 import org.orkg.graph.input.CreateObjectUseCase
 
 interface CreatePaperUseCase {
@@ -26,60 +29,14 @@ interface CreatePaperUseCase {
         val contents: PaperContents?,
         val extractionMethod: ExtractionMethod
     ) {
-        open class PaperContents(
-            val resources: Map<String, ResourceDefinition> = emptyMap(),
-            val literals: Map<String, LiteralDefinition> = emptyMap(),
-            val predicates: Map<String, PredicateDefinition> = emptyMap(),
-            val lists: Map<String, ListDefinition> = emptyMap(),
-            val contributions: List<Contribution>
-        )
-
-        data class ResourceDefinition(
-            val label: String,
-            val classes: Set<ThingId> = emptySet()
-        )
-
-        data class LiteralDefinition(
-            val label: String,
-            val dataType: String = Literals.XSD.STRING.prefixedUri
-        )
-
-        data class PredicateDefinition(
-            val label: String,
-            val description: String? = null
-        )
-
-        data class ListDefinition(
-            val label: String,
-            val elements: List<String> = emptyList()
-        )
-
-        data class Contribution(
-            val label: String,
-            val classes: Set<ThingId> = emptySet(),
-            val statements: Map<String, List<StatementObjectDefinition>>
-        )
-
-        data class StatementObjectDefinition(
-            val id: String,
-            val statements: Map<String, List<StatementObjectDefinition>>? = null
-        )
+        data class PaperContents(
+            override val resources: Map<String, ResourceDefinition> = emptyMap(),
+            override val literals: Map<String, LiteralDefinition> = emptyMap(),
+            override val predicates: Map<String, PredicateDefinition> = emptyMap(),
+            override val lists: Map<String, ListDefinition> = emptyMap(),
+            val contributions: List<ContributionDefinition>
+        ) : ThingDefinitions
     }
-}
-
-interface CreateContributionUseCase {
-    fun createContribution(command: CreateCommand): ThingId
-
-    class CreateCommand(
-        val contributorId: ContributorId,
-        val paperId: ThingId,
-        val extractionMethod: ExtractionMethod,
-        resources: Map<String, CreatePaperUseCase.CreateCommand.ResourceDefinition> = emptyMap(),
-        literals: Map<String, CreatePaperUseCase.CreateCommand.LiteralDefinition> = emptyMap(),
-        predicates: Map<String, CreatePaperUseCase.CreateCommand.PredicateDefinition> = emptyMap(),
-        lists: Map<String, CreatePaperUseCase.CreateCommand.ListDefinition> = emptyMap(),
-        contribution: CreatePaperUseCase.CreateCommand.Contribution
-    ) : CreatePaperUseCase.CreateCommand.PaperContents(resources, literals, predicates, lists, listOf(contribution))
 }
 
 interface UpdatePaperUseCase {

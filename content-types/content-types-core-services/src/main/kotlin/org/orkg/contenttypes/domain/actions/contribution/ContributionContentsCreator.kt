@@ -31,7 +31,8 @@ class ContributionContentsCreator(
                 paperId = command.paperId,
                 contributorId = command.contributorId,
                 extractionMethod = command.extractionMethod,
-                contents = command,
+                thingDefinitions = command,
+                contributionDefinitions = listOf(command.contribution),
                 validatedIds = state.validatedIds,
                 bakedStatements = state.bakedStatements
             ).single()

@@ -3,8 +3,9 @@ package org.orkg.contenttypes.input.testing.fixtures
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreateContributionUseCase
-import org.orkg.contenttypes.input.CreatePaperUseCase
+import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -14,44 +15,44 @@ fun dummyCreateContributionCommand() = CreateContributionUseCase.CreateCommand(
     paperId = ThingId("R123"),
     extractionMethod = ExtractionMethod.MANUAL,
     resources = mapOf(
-        "#temp1" to CreatePaperUseCase.CreateCommand.ResourceDefinition(
+        "#temp1" to ThingDefinitions.ResourceDefinition(
             label = "MOTO",
             classes = setOf(ThingId("R2000"))
         )
     ),
     literals = mapOf(
-        "#temp2" to CreatePaperUseCase.CreateCommand.LiteralDefinition(
+        "#temp2" to ThingDefinitions.LiteralDefinition(
             label = "0.1",
             dataType = Literals.XSD.DECIMAL.prefixedUri
         )
     ),
     predicates = mapOf(
-        "#temp3" to CreatePaperUseCase.CreateCommand.PredicateDefinition(
+        "#temp3" to ThingDefinitions.PredicateDefinition(
             label = "hasResult",
             description = "has result"
         ),
-        "#temp4" to CreatePaperUseCase.CreateCommand.PredicateDefinition(
+        "#temp4" to ThingDefinitions.PredicateDefinition(
             label = "hasLiteral"
         )
     ),
-    contribution = CreatePaperUseCase.CreateCommand.Contribution(
+    contribution = ContributionDefinition(
         label = "Contribution 1",
         classes = setOf(ThingId("C123")),
         statements = mapOf(
             Predicates.hasResearchProblem.value to listOf(
-                CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003")
+                ContributionDefinition.StatementObjectDefinition("R3003")
             ),
             Predicates.hasEvaluation.value to listOf(
-                CreatePaperUseCase.CreateCommand.StatementObjectDefinition("#temp1"),
-                CreatePaperUseCase.CreateCommand.StatementObjectDefinition(
+                ContributionDefinition.StatementObjectDefinition("#temp1"),
+                ContributionDefinition.StatementObjectDefinition(
                     id = "R3004",
                     statements = mapOf(
                         "#temp3" to listOf(
-                            CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003"),
-                            CreatePaperUseCase.CreateCommand.StatementObjectDefinition("#temp2")
+                            ContributionDefinition.StatementObjectDefinition("R3003"),
+                            ContributionDefinition.StatementObjectDefinition("#temp2")
                         ),
                         "#temp4" to listOf(
-                            CreatePaperUseCase.CreateCommand.StatementObjectDefinition("#temp1")
+                            ContributionDefinition.StatementObjectDefinition("#temp1")
                         )
                     )
                 )

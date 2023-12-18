@@ -5,8 +5,10 @@ import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.InvalidStatementSubject
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
+import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase.CreateCommand.PaperContents
-import org.orkg.contenttypes.input.CreatePaperUseCase.CreateCommand.StatementObjectDefinition
+import org.orkg.contenttypes.input.ContributionDefinition.StatementObjectDefinition
+import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
@@ -20,11 +22,12 @@ abstract class ContributionValidator(
         bakedStatements: MutableSet<BakedStatement>,
         validatedIds: MutableMap<String, Either<String, Thing>>,
         tempIds: Set<String>,
-        contents: PaperContents?
+        thingDefinitions: ThingDefinitions,
+        contributionDefinitions: List<ContributionDefinition>
     ) {
-        contents?.contributions?.forEachIndexed { index, contribution ->
+        contributionDefinitions.forEachIndexed { index, contribution ->
             if (contribution.statements.isEmpty()) {
-                if (contents.contributions.size == 1) {
+                if (contributionDefinitions.size == 1) {
                     throw EmptyContribution()
                 } else {
                     throw EmptyContribution(index)
@@ -41,7 +44,8 @@ abstract class ContributionValidator(
                 subject = "^$index",
                 definitions = contribution.statements,
                 tempIds = tempIds,
-                contents = contents,
+                thingDefinitions = thingDefinitions,
+                contributionDefinitions = contributionDefinitions,
                 validatedIds = validatedIds,
                 destination = bakedStatements
             )
@@ -52,14 +56,15 @@ abstract class ContributionValidator(
         subject: String,
         definitions: Map<String, List<StatementObjectDefinition>>,
         tempIds: Set<String>,
-        contents: PaperContents,
+        thingDefinitions: ThingDefinitions,
+        contributionDefinitions: List<ContributionDefinition>,
         validatedIds: MutableMap<String, Either<String, Thing>>,
         destination: MutableSet<BakedStatement>
     ) {
         definitions.forEach {
             val validatedPredicate = validateId(it.key, tempIds, validatedIds)
             validatedPredicate.onLeft { tempId ->
-                if (tempId !in contents.predicates.keys) {
+                if (tempId !in thingDefinitions.predicates.keys) {
                     throw ThingIsNotAPredicate(tempId)
                 }
             }
@@ -75,7 +80,7 @@ abstract class ContributionValidator(
                 destination += BakedStatement(subject, validatedPredicate.id, validatedObject.id)
                 if (`object`.statements != null) {
                     validatedObject.onLeft { tempId ->
-                        if (tempId in contents.literals.keys) {
+                        if (tempId in thingDefinitions.literals.keys) {
                             throw InvalidStatementSubject(validatedObject.id)
                         }
                     }
@@ -84,7 +89,15 @@ abstract class ContributionValidator(
                             throw InvalidStatementSubject(validatedObject.id)
                         }
                     }
-                    bakeStatements(validatedObject.id, `object`.statements!!, tempIds, contents, validatedIds, destination)
+                    bakeStatements(
+                        subject = validatedObject.id,
+                        definitions = `object`.statements!!,
+                        tempIds = tempIds,
+                        thingDefinitions = thingDefinitions,
+                        contributionDefinitions = contributionDefinitions,
+                        validatedIds = validatedIds,
+                        destination = destination
+                    )
                 }
             }
         }

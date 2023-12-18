@@ -14,9 +14,11 @@ import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContributionRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
 import org.orkg.contenttypes.domain.PaperNotFound
+import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
+import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
@@ -203,8 +205,8 @@ class PaperController(
             val label: String,
             val classes: Set<ThingId>?
         ) {
-            fun toCreateCommand(): CreatePaperUseCase.CreateCommand.ResourceDefinition =
-                CreatePaperUseCase.CreateCommand.ResourceDefinition(
+            fun toCreateCommand(): ThingDefinitions.ResourceDefinition =
+                ThingDefinitions.ResourceDefinition(
                     label = label,
                     classes = classes.orEmpty()
                 )
@@ -216,8 +218,8 @@ class PaperController(
             @JsonProperty("data_type")
             val dataType: String?
         ) {
-            fun toCreateCommand(): CreatePaperUseCase.CreateCommand.LiteralDefinition =
-                CreatePaperUseCase.CreateCommand.LiteralDefinition(
+            fun toCreateCommand(): ThingDefinitions.LiteralDefinition =
+                ThingDefinitions.LiteralDefinition(
                     label = label,
                     dataType = dataType ?: Literals.XSD.STRING.prefixedUri
                 )
@@ -229,8 +231,8 @@ class PaperController(
             @field:NotBlank
             val description: String?
         ) {
-            fun toCreateCommand(): CreatePaperUseCase.CreateCommand.PredicateDefinition =
-                CreatePaperUseCase.CreateCommand.PredicateDefinition(
+            fun toCreateCommand(): ThingDefinitions.PredicateDefinition =
+                ThingDefinitions.PredicateDefinition(
                     label = label,
                     description = description
                 )
@@ -241,8 +243,8 @@ class PaperController(
             val label: String,
             val elements: List<String>
         ) {
-            fun toCreateCommand(): CreatePaperUseCase.CreateCommand.ListDefinition =
-                CreatePaperUseCase.CreateCommand.ListDefinition(
+            fun toCreateCommand(): ThingDefinitions.ListDefinition =
+                ThingDefinitions.ListDefinition(
                     label = label,
                     elements = elements
                 )
@@ -256,8 +258,8 @@ class PaperController(
             @field:Size(min = 1)
             val statements: Map<String, List<StatementObjectDefinitionDTO>>
         ) {
-            fun toCreateCommand(): CreatePaperUseCase.CreateCommand.Contribution =
-                CreatePaperUseCase.CreateCommand.Contribution(
+            fun toCreateCommand(): ContributionDefinition =
+                ContributionDefinition(
                     label = label,
                     classes = classes.orEmpty(),
                     statements = statements.mapValues { it.value.map { statement -> statement.toCreateCommand() } }
@@ -270,8 +272,8 @@ class PaperController(
             @field:Size(min = 1)
             val statements: Map<String, List<StatementObjectDefinitionDTO>>?
         ) {
-            fun toCreateCommand(): CreatePaperUseCase.CreateCommand.StatementObjectDefinition =
-                CreatePaperUseCase.CreateCommand.StatementObjectDefinition(
+            fun toCreateCommand(): ContributionDefinition.StatementObjectDefinition =
+                ContributionDefinition.StatementObjectDefinition(
                     id = id,
                     statements = statements?.mapValues { it.value.map { statement -> statement.toCreateCommand() } }
                 )

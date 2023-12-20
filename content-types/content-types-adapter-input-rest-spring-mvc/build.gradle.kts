@@ -40,6 +40,7 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
                 implementation(project(":community:community-ports-input"))
                 implementation("org.springframework.boot:spring-boot-starter-test")

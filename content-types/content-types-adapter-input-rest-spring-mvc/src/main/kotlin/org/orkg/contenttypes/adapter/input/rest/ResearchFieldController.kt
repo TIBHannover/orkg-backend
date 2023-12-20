@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController
  * research field ID
  */
 @RestController
-@RequestMapping("/api/research-fields/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/research-fields", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ResearchFieldController(
     private val service: RetrieveResearchFieldUseCase,
     private val resourceService: ResourceUseCases,
@@ -241,7 +241,7 @@ class ResearchFieldController(
      * Gets entities based on the provided classes including sub fields
      *
      */
-    @GetMapping("/{id}/subfields/")
+    @GetMapping("/{id}/subfields")
     fun getEntitiesBasedOnClassesIncludingSubFields(
         @PathVariable id: ThingId,
         @RequestParam("featured", required = false, defaultValue = "false")

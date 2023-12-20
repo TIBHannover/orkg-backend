@@ -33,6 +33,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.FormattedLabelRepository
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
@@ -41,11 +42,14 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
@@ -83,6 +87,41 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
 
     @Autowired
     private lateinit var clock: Clock
+
+    @Test
+    fun getSingle() {
+        val resource = createResource()
+        every { resourceService.findById(any()) } returns Optional.of(resource)
+        every { statementService.countStatementsAboutResource(resource.id) } returns 23
+        every { flags.isFormattedLabelsEnabled() } returns false
+
+        documentedGetRequestTo("/api/resources/{id}", resource.id)
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectResource()
+            .andDo(
+                documentationHandler.document(
+                    responseFields(
+                        // The order here determines the order in the generated table. More relevant items should be up.
+                        fieldWithPath("id").description("The identifier of the resource."),
+                        fieldWithPath("label").description("The label of the resource. It is intended to be read by humans and should be used for displaying the resource."),
+                        fieldWithPath("formatted_label").description("The formatted label of the resource.").ignored(),
+                        fieldWithPath("classes").description("The set of classes of which this resources is an instance of."),
+                        fieldWithPath("shared").description("The number of statements that have this resource in their object position."),
+                        fieldWithPath("featured").description("Determine if the resource is featured. Defaults to `false`."),
+                        fieldWithPath("unlisted").description("Determine if the resource is unlisted. Defaults to `false`."),
+                        fieldWithPath("verified").description("Determine if the resource is verified. Defaults to `false`."),
+                        fieldWithPath("extraction_method").description("Determines how the resource was created. Can be one of $allowedExtractionMethodValues."),
+                        fieldWithPath("observatory_id").description("The UUID of the observatory to which this resource belongs."),
+                        fieldWithPath("organization_id").description("The UUID of the organization to which this resource belongs."),
+                        timestampFieldWithPath("created_at", "the resource was created"),
+                        fieldWithPath("created_by").description("The UUID of the user or service who created this resource."),
+                        fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value `resource`."),
+                    )
+                )
+            )
+    }
 
     @Test
     fun `Given the contributors are requested, when service succeeds, then status is 200 OK and contributors are returned`() {

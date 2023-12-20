@@ -32,6 +32,7 @@ dependencies {
     testFixturesImplementation(libs.forkhandles.fabrikate4k)
     testFixturesImplementation(libs.forkhandles.values4k)
     testFixturesImplementation(libs.javax.activation) // Javax Mimetype
+    testFixturesImplementation(libs.spring.restdocs)
 }
 
 testing {

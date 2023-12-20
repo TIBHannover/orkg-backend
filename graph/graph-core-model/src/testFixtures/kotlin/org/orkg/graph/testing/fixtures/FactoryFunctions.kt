@@ -7,6 +7,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.List
@@ -91,3 +92,16 @@ fun createList(
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-01T16:33:19.156943+01:00"),
     createdBy: ContributorId = ContributorId.createUnknownContributor(),
 ) = List(id, label, elements, createdAt, createdBy)
+
+fun createPaperResource(
+    id: ThingId = ThingId("Paper1"),
+    title: String = "Some title",
+) = createResource(id = id, label = title, classes = setOf(Classes.paper))
+
+fun createComparisonResource(
+    id: ThingId = ThingId("Comparison1"),
+) = createResource(id = id, classes = setOf(Classes.comparison))
+
+fun createVisualizationResource(
+    id: ThingId = ThingId("Visualization1"),
+) = createResource(id = id, classes = setOf(Classes.visualization))

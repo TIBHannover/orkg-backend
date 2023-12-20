@@ -1,5 +1,6 @@
 package org.orkg
 
+import com.ninjasquad.springmockk.MockkBean
 import java.time.OffsetDateTime
 import java.util.stream.Stream
 import org.junit.jupiter.api.BeforeEach
@@ -13,6 +14,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.output.CuratorRepository
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceService
 import org.orkg.graph.domain.SearchString
@@ -54,6 +56,9 @@ class CorsTest {
 
     @Autowired
     private lateinit var classRepository: ClassRepository
+
+    @MockkBean
+    private lateinit var curatorRepository: CuratorRepository
 
     @BeforeEach
     fun setup() {
@@ -103,6 +108,7 @@ class CorsTest {
             repository,
             statementRepository,
             classRepository,
+            curatorRepository,
             fixedClock,
         ) {
             override fun findAll(

@@ -117,6 +117,7 @@ testing {
                 implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter
                 implementation(project(":community:community-core-model"))
                 implementation(project(":community:community-ports-input"))
+                implementation(project(":community:community-ports-output")) // for CuratorRepository
                 implementation(project(":discussions:discussions-adapter-output-spring-data-jpa"))
                 implementation(project(":media-storage:media-storage-core-model"))
                 implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))

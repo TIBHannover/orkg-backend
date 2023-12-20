@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.auth.input.AuthUseCase
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.LegacyPaperUseCases
 import org.orkg.createClass
@@ -21,6 +22,7 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
+import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
@@ -243,7 +245,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceSuccess() {
-        val id = service.createResource(label = "bye bye")
+        val id = service.createResource(label = "bye bye", userId = ContributorId(MockUserId.ADMIN))
 
         mockMvc
             .perform(deleteRequest("/api/resources/$id"))

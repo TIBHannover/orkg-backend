@@ -54,6 +54,7 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":testing:spring"))) // for fixedClock
                 implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(testFixtures(project(":community:community-core-model")))
                 implementation(project(":media-storage:media-storage-core-model"))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))
                 implementation(project(":media-storage:media-storage-ports-input"))

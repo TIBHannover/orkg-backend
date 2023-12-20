@@ -3,6 +3,10 @@ package org.orkg.common.annotations
 import kotlin.annotation.AnnotationRetention.*
 import org.springframework.security.access.prepost.PreAuthorize
 
+@Retention(RUNTIME)
+@PreAuthorize("isAuthenticated()")
+annotation class RequireLogin
+
 // TODO: Change when role was introduced
 @Retention(RUNTIME)
 @PreAuthorize("hasAuthority('ROLE_ADMIN')")

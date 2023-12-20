@@ -7,6 +7,9 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.exceptions.Unauthorized
+import org.orkg.community.output.ContributorRepository
+import org.orkg.community.output.CuratorRepository
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -34,6 +37,7 @@ class ResourceService(
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val classRepository: ClassRepository,
+    private val curatorRepository: CuratorRepository,
     private val clock: Clock,
 ) : ResourceUseCases {
     @Transactional(readOnly = true)
@@ -244,11 +248,15 @@ class ResourceService(
         repository.save(found)
     }
 
-    override fun delete(id: ThingId) {
+    override fun delete(id: ThingId, contributorId: ContributorId) {
         val resource = repository.findById(id).orElseThrow { ResourceNotFound.withId(id) }
 
         if (statementRepository.checkIfResourceHasStatements(resource.id))
             throw ResourceUsedInStatement(resource.id)
+
+        if (!resource.isOwnedBy(contributorId)) {
+            curatorRepository.findById(contributorId) ?: throw NeitherOwnerNorCurator(contributorId)
+        }
 
         repository.deleteById(resource.id)
     }

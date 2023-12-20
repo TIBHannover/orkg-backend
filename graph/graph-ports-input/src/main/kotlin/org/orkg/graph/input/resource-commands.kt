@@ -46,7 +46,7 @@ interface UpdateResourceUseCase {
 
 interface DeleteResourceUseCase {
     // legacy methods:
-    fun delete(id: ThingId)
+    fun delete(id: ThingId, contributorId: ContributorId)
     fun removeAll()
 }
 

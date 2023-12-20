@@ -14,9 +14,12 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.output.CuratorRepository
+import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.ClassRepository
@@ -32,11 +35,13 @@ class ResourceServiceUnitTests {
     private val repository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val classRepository: ClassRepository = mockk()
+    private val curatorRepository: CuratorRepository = mockk()
 
     private val service = ResourceService(
         repository,
         statementRepository,
         classRepository,
+        curatorRepository,
         fixedClock,
     )
 
@@ -115,12 +120,13 @@ class ResourceServiceUnitTests {
     @Test
     fun `given a resource is being deleted, when it is still used in a statement, an appropriate error is thrown`() {
         val mockResource = createResource()
+        val couldBeAnyone = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
 
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
         every { statementRepository.checkIfResourceHasStatements(mockResource.id) } returns true
 
         shouldThrow<ResourceUsedInStatement> {
-            service.delete(mockResource.id)
+            service.delete(mockResource.id, couldBeAnyone)
         }
 
         verify(exactly = 1) { repository.findById(mockResource.id) }
@@ -128,18 +134,59 @@ class ResourceServiceUnitTests {
     }
 
     @Test
-    fun `given a resource is being deleted, when it is not used in a statement, it gets deleted`() {
-        val mockResource = createResource()
+    fun `given a resource is being deleted, when it is not used in a statement, and it is owned by the user, it gets deleted`() {
+        val theOwningContributorId = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
+        val theOwningContributor = createContributor(id = theOwningContributorId)
+        val mockResource = createResource(createdBy = theOwningContributorId)
 
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
         every { statementRepository.checkIfResourceHasStatements(mockResource.id) } returns false
+        every { curatorRepository.findById(theOwningContributorId) } returns theOwningContributor
         every { repository.deleteById(mockResource.id) } returns Unit
 
-        service.delete(mockResource.id)
+        service.delete(mockResource.id, theOwningContributorId)
 
         verify(exactly = 1) { repository.findById(mockResource.id) }
         verify(exactly = 1) { statementRepository.checkIfResourceHasStatements(mockResource.id) }
         verify(exactly = 1) { repository.deleteById(mockResource.id) }
+    }
+
+    @Test
+    fun `given a resource is being deleted, when it is not used in a statement, and it is not owned by the user, but the user is a curator, it gets deleted`() {
+        val theOwningContributorId = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
+        val aCurator = createContributor(id = ContributorId("645fabd1-9952-41f8-9239-627ee67c1940"))
+        val mockResource = createResource(createdBy = theOwningContributorId)
+
+        every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
+        every { statementRepository.checkIfResourceHasStatements(mockResource.id) } returns false
+        every { curatorRepository.findById(aCurator.id) } returns aCurator
+        every { repository.deleteById(mockResource.id) } returns Unit
+
+        service.delete(mockResource.id, aCurator.id)
+
+        verify(exactly = 1) { repository.findById(mockResource.id) }
+        verify(exactly = 1) { statementRepository.checkIfResourceHasStatements(mockResource.id) }
+        verify(exactly = 1) { repository.deleteById(mockResource.id) }
+    }
+
+    @Test
+    fun `given a resource is being deleted, when it is not used in a statement, and it is not owned by the user, and the user is not a curator, it gets deleted`() {
+        val theOwningContributorId = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
+        val loggedInUserId = ContributorId("89b13df4-22ae-4685-bed0-4bb1f1873c78")
+        val mockResource = createResource(createdBy = theOwningContributorId)
+
+        every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
+        every { statementRepository.checkIfResourceHasStatements(mockResource.id) } returns false
+        every { curatorRepository.findById(loggedInUserId) } returns null
+        every { repository.deleteById(mockResource.id) } returns Unit
+
+        shouldThrow<NeitherOwnerNorCurator> {
+            service.delete(mockResource.id, loggedInUserId)
+        }
+
+        verify(exactly = 1) { repository.findById(mockResource.id) }
+        verify(exactly = 1) { statementRepository.checkIfResourceHasStatements(mockResource.id) }
+        verify(exactly = 0) { repository.deleteById(mockResource.id) }
     }
 
     @Test

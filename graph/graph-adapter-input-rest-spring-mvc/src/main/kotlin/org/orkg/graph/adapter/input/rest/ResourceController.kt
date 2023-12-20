@@ -9,6 +9,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeCurator
 import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
@@ -181,9 +182,9 @@ class ResourceController(
         service.findTimelineByResourceId(id, pageable)
 
     @DeleteMapping("/{id}")
-    @PreAuthorizeCurator
-    fun delete(@PathVariable id: ThingId): ResponseEntity<Unit> {
-        service.delete(id)
+    @RequireLogin
+    fun delete(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails?): ResponseEntity<Unit> {
+        service.delete(id, currentUser.contributorId())
         return ResponseEntity.noContent().build()
     }
 

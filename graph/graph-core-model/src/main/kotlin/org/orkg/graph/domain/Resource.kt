@@ -23,4 +23,6 @@ data class Resource(
         get() = classes intersect PUBLISHABLE_CLASSES
 
     fun hasPublishableClasses(): Boolean = publishableClasses.isNotEmpty()
+
+    fun isOwnedBy(contributorId: ContributorId): Boolean = createdBy == contributorId
 }

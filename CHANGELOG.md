@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.44.0] - 2023-12-20
+### Fixed
+- Users can again delete resources which they created.
+  (Closes: [#535](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/535))
+- All container tests are run again.
+  (Closes: [#532](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/532))
+### Added
+- Documentation for all endpoints related to research fields was added.
+  (Closes: [#531](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/531))
+- Author information can be added when publishing a paper or comparison.
+  (See: [!738](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/738))
+
 ## [0.43.0] - 2023-12-13
 ### Added
 - Added a new endpoint for updating papers.
@@ -600,7 +612,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.43.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.44.0...master
+[0.44.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.44.0
 [0.43.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.43.0
 [0.42.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.42.0
 [0.41.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.41.0

@@ -8,7 +8,7 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 
 group = "org.orkg"
-version = "0.43.0"
+version = "0.44.0"
 
 val springSecurityOAuthVersion = "2.5.2"
 

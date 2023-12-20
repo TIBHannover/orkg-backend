@@ -4,6 +4,7 @@
 plugins {
     id("org.orkg.kotlin-conventions")
     id("org.orkg.neo4j-conventions")
+    id("org.orkg.container-testing-conventions")
     alias(libs.plugins.spring.boot) apply false
     kotlin("plugin.spring")
     alias(libs.plugins.spotless)
@@ -16,12 +17,7 @@ val neo4jMigrations: Configuration by configurations.creating {
 
 testing {
     suites {
-        val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
-        }
-        val containerTest by registering(JvmTestSuite::class) {
-            testType.set(TestSuiteType.FUNCTIONAL_TEST)
-            useJUnitJupiter()
+        val containerTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
@@ -29,7 +25,6 @@ testing {
                 implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for SDN adapters, TODO: refactor?
                 implementation(project(":graph:graph-core-services"))
                 implementation(project(":graph:graph-ports-output"))
-                implementation(project(":migrations:liquibase"))
                 implementation(project(":migrations:neo4j-migrations"))
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
 
@@ -46,13 +41,6 @@ testing {
                     exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
                 }
                 implementation("org.springframework.data:spring-data-neo4j:6.3.16")
-            }
-            targets {
-                all {
-                    testTask.configure {
-                        shouldRunAfter(test)
-                    }
-                }
             }
         }
     }
@@ -86,8 +74,4 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-cache")
 
     neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
-}
-
-tasks.named("check") {
-    dependsOn(testing.suites.named("containerTest"))
 }

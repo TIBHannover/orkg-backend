@@ -40,6 +40,7 @@ testing {
                     // exclude(module = "mockito-core") // TODO: uncomment when migrated to MockK
                 }
                 implementation(libs.spring.restdocs)
+                implementation(libs.assertj.core)
             }
         }
     }

@@ -1,5 +1,6 @@
 plugins {
     id("org.orkg.kotlin-conventions")
+    id("org.orkg.container-testing-conventions")
     kotlin("plugin.spring")
     alias(libs.plugins.spotless)
 }
@@ -22,16 +23,10 @@ dependencies {
 
 testing {
     suites {
-        val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
-        }
-        val containerTest by registering(JvmTestSuite::class) {
-            testType.set(TestSuiteType.FUNCTIONAL_TEST)
-            useJUnitJupiter()
+        val containerTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project())
                 implementation(libs.kotest.extensions.spring)
-                implementation(libs.spring.boot.starter.neo4j.migrations)
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":media-storage:media-storage-ports-output")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -42,13 +37,10 @@ testing {
                 implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.springframework.data:spring-data-jpa")
-            }
-            targets {
-                all {
-                    testTask.configure {
-                        shouldRunAfter(test)
-                    }
-                }
+                runtimeOnly(libs.postgres.driver)
+                runtimeOnly(libs.liquibase)
+                implementation(project(":migrations:liquibase"))
+                implementation("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
             }
         }
     }

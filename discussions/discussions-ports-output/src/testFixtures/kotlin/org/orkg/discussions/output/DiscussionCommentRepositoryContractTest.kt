@@ -41,7 +41,7 @@ abstract class DiscussionCommentRepositoryContractTest {
             it.topic shouldBe comment.topic
             it.message shouldBe comment.message
             it.createdBy shouldBe comment.createdBy
-            it.createdAt shouldBe comment.createdAt
+            it.createdAt.isEqual(comment.createdAt) shouldBe true
         }
     }
 

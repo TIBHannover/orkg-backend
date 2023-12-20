@@ -14,7 +14,6 @@ class PostgresContainerInitializer : ApplicationContextInitializer<ConfigurableA
 
     companion object {
         val postgresContainer: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:$POSTGRES_VERSION"))
-            .withReuse(true)
     }
 
     override fun initialize(applicationContext: ConfigurableApplicationContext) {

@@ -73,6 +73,7 @@ object Classes {
     val propertyShape = ThingId("PropertyShape")
     val researchField = ThingId("ResearchField")
     val review = ThingId("SmartReview")
+    val reviewPublished = ThingId("SmartReviewPublished")
     val venue = ThingId("Venue")
     val visualization = ThingId("Visualization")
 }

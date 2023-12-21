@@ -82,10 +82,10 @@ abstract class PublicationInfoCreator(
         subjectId: ThingId,
         publishedIn: String
     ) {
-        val venueId = resourceRepository.findAllByClassAndLabel(
-            Classes.venue,
-            SearchString.of(publishedIn, exactMatch = true),
-            PageRequests.SINGLE
+        val venueId = resourceRepository.findAll(
+            includeClasses = setOf(Classes.venue),
+            label = SearchString.of(publishedIn, exactMatch = true),
+            pageable = PageRequests.SINGLE
         ).content.singleOrNull()?.id ?: resourceService.create(
             CreateResourceUseCase.CreateCommand(
                 label = publishedIn,

@@ -6,8 +6,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.orkg.common.ThingId
 import org.orkg.graph.domain.ClassService
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicateService
 import org.orkg.graph.domain.ResourceService
 import org.orkg.graph.domain.StatementService
@@ -63,8 +63,10 @@ class ExampleDataTest {
     @Test
     fun `research fields are typed correctly`() {
         assertThat(
-            resourceService.findAllByClass(PageRequest.of(0, 10), ThingId("ResearchField"))
-                .all { ThingId("ResearchField") in it.classes }
+            resourceService.findAll(
+                includeClasses = setOf(Classes.researchField),
+                pageable = PageRequest.of(0, 10)
+            ).all { Classes.researchField in it.classes }
         )
     }
 }

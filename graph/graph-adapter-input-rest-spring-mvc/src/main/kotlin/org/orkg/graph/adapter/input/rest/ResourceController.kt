@@ -190,11 +190,11 @@ class ResourceController(
 
     @GetMapping("/metadata/featured", params = ["featured=true"])
     fun getFeaturedResources(pageable: Pageable) =
-        service.findAllByVisibility(VisibilityFilter.FEATURED, pageable)
+        service.findAll(visibility = VisibilityFilter.FEATURED, pageable = pageable)
 
     @GetMapping("/metadata/featured", params = ["featured=false"])
     fun getNonFeaturedResources(pageable: Pageable) =
-        service.findAllByVisibility(VisibilityFilter.NON_FEATURED, pageable)
+        service.findAll(visibility = VisibilityFilter.NON_FEATURED, pageable = pageable)
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
@@ -217,11 +217,11 @@ class ResourceController(
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
     fun getUnlistedResources(pageable: Pageable) =
-        service.findAllByVisibility(VisibilityFilter.UNLISTED, pageable)
+        service.findAll(visibility = VisibilityFilter.UNLISTED, pageable = pageable)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=false"])
     fun getListedResources(pageable: Pageable) =
-        service.findAllByVisibility(VisibilityFilter.ALL_LISTED, pageable)
+        service.findAll(visibility = VisibilityFilter.ALL_LISTED, pageable = pageable)
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)

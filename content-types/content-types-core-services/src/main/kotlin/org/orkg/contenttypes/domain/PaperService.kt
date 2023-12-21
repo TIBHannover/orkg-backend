@@ -49,7 +49,6 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -88,7 +87,7 @@ class PaperService(
             .map { it.toPaper() }
 
     override fun findAll(pageable: Pageable): Page<Paper> =
-        resourceRepository.findAllByClass(Classes.paper, pageable)
+        resourceRepository.findAll(includeClasses = setOf(Classes.paper), pageable = pageable)
             .pmap { it.toPaper() }
 
     override fun findAllByDOI(doi: String, pageable: Pageable): Page<Paper> =
@@ -96,17 +95,18 @@ class PaperService(
             .pmap { it.toPaper() }
 
     override fun findAllByTitle(title: String, pageable: Pageable): Page<Paper> =
-        resourceRepository.findAllByClassAndLabel(Classes.paper, SearchString.of(title, exactMatch = true), pageable)
-            .pmap { it.toPaper() }
+        resourceRepository.findAll(
+            includeClasses = setOf(Classes.paper),
+            label = SearchString.of(title, exactMatch = true),
+            pageable = pageable
+        ).pmap { it.toPaper() }
 
     override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<Paper> =
-        when (visibility) {
-            VisibilityFilter.ALL_LISTED -> resourceRepository.findAllListedByClass(Classes.paper, pageable)
-            VisibilityFilter.NON_FEATURED -> resourceRepository.findAllByClassAndVisibility(Classes.paper, Visibility.DEFAULT, pageable)
-            VisibilityFilter.UNLISTED -> resourceRepository.findAllByClassAndVisibility(Classes.paper, Visibility.UNLISTED, pageable)
-            VisibilityFilter.FEATURED -> resourceRepository.findAllByClassAndVisibility(Classes.paper, Visibility.FEATURED, pageable)
-            VisibilityFilter.DELETED -> resourceRepository.findAllByClassAndVisibility(Classes.paper, Visibility.DELETED, pageable)
-        }.pmap { it.toPaper() }
+        resourceRepository.findAll(
+            includeClasses = setOf(Classes.paper),
+            visibility = visibility,
+            pageable = pageable
+        ).pmap { it.toPaper() }
 
     override fun findAllByResearchFieldAndVisibility(
         researchFieldId: ThingId,
@@ -118,8 +118,11 @@ class PaperService(
             .pmap { it.toPaper() }
 
     override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<Paper> =
-        resourceRepository.findAllByClassAndCreatedBy(Classes.paper, contributorId, pageable)
-            .pmap { it.toPaper() }
+        resourceRepository.findAll(
+            includeClasses = setOf(Classes.paper),
+            createdBy = contributorId,
+            pageable = pageable
+        ).pmap { it.toPaper() }
 
     override fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId> =
         resourceRepository.findPaperById(id)

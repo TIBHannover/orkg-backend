@@ -224,9 +224,9 @@ class PaperPublicationInfoCreatorUnitTest {
         val venueResource = createResource(label = venue)
 
         every {
-            resourceRepository.findAllByClassAndLabel(
-                `class` = Classes.venue,
-                labelSearchString = any(),
+            resourceRepository.findAll(
+                includeClasses = setOf(Classes.venue),
+                label = any(),
                 pageable = PageRequests.SINGLE
             )
         } returns pageOf(venueResource)
@@ -250,13 +250,13 @@ class PaperPublicationInfoCreatorUnitTest {
         }
 
         verify(exactly = 1) {
-            resourceRepository.findAllByClassAndLabel(
-                Classes.venue,
-                withArg {
+            resourceRepository.findAll(
+                includeClasses = setOf(Classes.venue),
+                label = withArg {
                     it.shouldBeInstanceOf<ExactSearchString>()
                     it.input shouldBeEqualIgnoringCase venue
                 },
-                PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) {
@@ -292,10 +292,10 @@ class PaperPublicationInfoCreatorUnitTest {
         val venueId = ThingId("R456")
 
         every {
-            resourceRepository.findAllByClassAndLabel(
-                Classes.venue,
-                any(),
-                PageRequests.SINGLE
+            resourceRepository.findAll(
+                includeClasses = setOf(Classes.venue),
+                label = any(),
+                pageable = PageRequests.SINGLE
             )
         } returns Page.empty()
         every { resourceService.create(resourceCreateCommand) } returns venueId
@@ -319,13 +319,13 @@ class PaperPublicationInfoCreatorUnitTest {
         }
 
         verify(exactly = 1) {
-            resourceRepository.findAllByClassAndLabel(
-                Classes.venue,
-                withArg {
+            resourceRepository.findAll(
+                includeClasses = setOf(Classes.venue),
+                label = withArg {
                     it.shouldBeInstanceOf<ExactSearchString>()
                     it.input shouldBeEqualIgnoringCase venue
                 },
-                PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { resourceService.create(resourceCreateCommand) }

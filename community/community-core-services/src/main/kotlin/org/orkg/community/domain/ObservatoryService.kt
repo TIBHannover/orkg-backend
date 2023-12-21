@@ -88,8 +88,9 @@ class ObservatoryService(
     }
 
     override fun changeResearchField(id: ObservatoryId, researchFieldId: ThingId) {
-        val researchField = resourceRepository.findByIdAndClasses(researchFieldId, setOf(ThingId("ResearchField")))
-            ?: throw ResearchFieldNotFound(researchFieldId)
+        val researchField = resourceRepository.findById(researchFieldId)
+            .filter { Classes.researchField in it.classes }
+            .orElseThrow { ResearchFieldNotFound(researchFieldId) }
         val observatory = postgresObservatoryRepository.findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
             .copy(researchField = researchField.id)

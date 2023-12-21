@@ -3,6 +3,7 @@ package org.orkg.graph.adapter.input.rest
 import org.orkg.common.OrganizationId
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -26,7 +27,11 @@ class OrganizationResourceController(
 
     @GetMapping("{id}/comparisons")
     fun findComparisonsByOrganizationId(@PathVariable id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
-        resourceService.findAllComparisonsByOrganizationId(id, pageable).mapToResourceRepresentation()
+        resourceService.findAll(
+            includeClasses = setOf(Classes.comparison),
+            organizationId = id,
+            pageable = pageable
+        ).mapToResourceRepresentation()
 
     @GetMapping("{id}/problems")
     fun findProblemsByOrganizationId(@PathVariable id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =

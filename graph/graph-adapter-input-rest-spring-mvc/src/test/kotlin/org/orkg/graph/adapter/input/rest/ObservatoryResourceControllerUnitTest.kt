@@ -12,11 +12,13 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.pageOf
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -70,13 +72,23 @@ internal class ObservatoryResourceControllerUnitTest {
             classes = setOf(ThingId("Paper"))
         )
         every {
-            resourceService.findAllPapersByObservatoryId(id, any())
-        } returns PageImpl(listOf(paperResource))
+            resourceService.findAll(
+                includeClasses = setOf(Classes.paper),
+                observatoryId = id,
+                pageable = any()
+            )
+        } returns pageOf(paperResource)
 
         mockMvc.perform(get("/api/observatories/$id/papers"))
             .andExpect(status().isOk)
 
-        verify(exactly = 1) { resourceService.findAllPapersByObservatoryId(id, any()) }
+        verify(exactly = 1) {
+            resourceService.findAll(
+                includeClasses = setOf(Classes.paper),
+                observatoryId = id,
+                pageable = any()
+            )
+        }
     }
 
     @Test
@@ -87,13 +99,23 @@ internal class ObservatoryResourceControllerUnitTest {
             classes = setOf(ThingId("Comparison"))
         )
         every {
-            resourceService.findAllComparisonsByObservatoryId(id, any())
-        } returns PageImpl(listOf(comparisonResource))
+            resourceService.findAll(
+                includeClasses = setOf(Classes.comparison),
+                observatoryId = id,
+                pageable = any()
+            )
+        } returns pageOf(comparisonResource)
 
         mockMvc.perform(get("/api/observatories/$id/comparisons"))
             .andExpect(status().isOk)
 
-        verify(exactly = 1) { resourceService.findAllComparisonsByObservatoryId(id, any()) }
+        verify(exactly = 1) {
+            resourceService.findAll(
+                includeClasses = setOf(Classes.comparison),
+                observatoryId = id,
+                pageable = any()
+            )
+        }
     }
 
     @Test

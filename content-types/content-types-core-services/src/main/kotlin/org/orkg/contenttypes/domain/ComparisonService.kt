@@ -84,8 +84,11 @@ class ComparisonService(
             .pmap { it.toComparison() }
 
     override fun findAllByTitle(title: String, pageable: Pageable): Page<Comparison> =
-        resourceRepository.findAllByClassAndLabel(Classes.comparison, SearchString.of(title, exactMatch = true), pageable)
-            .pmap { it.toComparison() }
+        resourceRepository.findAll(
+            includeClasses = setOf(Classes.comparison),
+            label = SearchString.of(title, exactMatch = true),
+            pageable = pageable
+        ).pmap { it.toComparison() }
 
     override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<Comparison> =
         when (visibility) {
@@ -128,8 +131,11 @@ class ComparisonService(
             .pmap { it.toComparison() }
 
     override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<Comparison> =
-        resourceRepository.findAllByClassAndCreatedBy(Classes.comparison, contributorId, pageable)
-            .pmap { it.toComparison() }
+        resourceRepository.findAll(
+            includeClasses = setOf(Classes.comparison),
+            createdBy = contributorId,
+            pageable = pageable
+        ).pmap { it.toComparison() }
 
     override fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
         repository.findContributionsDetailsById(ids, pageable)

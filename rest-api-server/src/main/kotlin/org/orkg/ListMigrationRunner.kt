@@ -217,10 +217,16 @@ class ListMigrationRunner(
 
     private fun forEachResource(classId: ThingId, consumer: (Resource) -> Unit) {
         logger.info("Migrating resources of class $classId...")
-        var page = resourceRepository.findAllByClass(classId, PageRequest.of(0, chunkSize))
+        var page = resourceRepository.findAll(
+            includeClasses = setOf(classId),
+            pageable = PageRequest.of(0, chunkSize)
+        )
         page.content.forEach(consumer)
         while (page.hasNext()) {
-            page = resourceRepository.findAllByClass(classId, PageRequest.of(page.number + 1, chunkSize))
+            page = resourceRepository.findAll(
+                includeClasses = setOf(classId),
+                pageable = PageRequest.of(page.number + 1, chunkSize)
+            )
             page.content.forEach(consumer)
         }
         logger.info("Migration of resources of class $classId complete")

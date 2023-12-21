@@ -92,13 +92,13 @@ internal class ResolveDOIServiceSpec : DescribeSpec({
     }
     describe("title is provided, but DOI is not") {
         describe("a resource with this title is not found") {
-            every { resourceUseCases.findByTitle("some title") } returns Optional.empty()
+            every { resourceUseCases.findPaperByTitle("some title") } returns Optional.empty()
 
             it("should throw") {
                 shouldThrowExactly<ResourceNotFound> {
                     service.resolveDOI(null, "some title")
                 }
-                verify(exactly = 1) { resourceUseCases.findByTitle("some title") }
+                verify(exactly = 1) { resourceUseCases.findPaperByTitle("some title") }
             }
         }
         describe("a resource with this title is found") {

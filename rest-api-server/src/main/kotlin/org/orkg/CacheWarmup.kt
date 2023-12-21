@@ -3,6 +3,7 @@ package org.orkg
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.PredicateUseCases
@@ -85,31 +86,46 @@ class CacheWarmup(
     }
 
     private fun warmupComparisonsList() {
-        resourceService.findAllByClass(PageRequest.of(0, 15), ThingId("Comparison")).forEach {
+        resourceService.findAll(
+            includeClasses = setOf(Classes.comparison),
+            pageable = PageRequest.of(0, 15)
+        ).forEach {
             fetchComparison(it.id)
         }
     }
 
     private fun warmupPaperList() {
-        resourceService.findAllByClass(PageRequest.of(0, 25), ThingId("Paper")).forEach {
+        resourceService.findAll(
+            includeClasses = setOf(Classes.paper),
+            pageable = PageRequest.of(0, 25)
+        ).forEach {
             statementService.findAllBySubject(it.id, PageRequest.of(0, 9999))
         }
     }
 
     private fun warmupVisualizationsList() {
-        resourceService.findAllByClass(PageRequest.of(0, 10), ThingId("Visualization")).forEach {
+        resourceService.findAll(
+            includeClasses = setOf(Classes.visualization),
+            pageable = PageRequest.of(0, 10)
+        ).forEach {
             fetchVisualization(it.id)
         }
     }
 
     private fun warmupReviewsList() {
-        resourceService.findAllByClass(PageRequest.of(0, 25), ThingId("SmartReviewPublished")).forEach {
+        resourceService.findAll(
+            includeClasses = setOf(ThingId("SmartReviewPublished")),
+            pageable = PageRequest.of(0, 25)
+        ).forEach {
             fetchAssociatedPapers(it.id)
         }
     }
 
     private fun warmupListsList() {
-        resourceService.findAllByClass(PageRequest.of(0, 25), ThingId("LiteratureListPublished")).forEach {
+        resourceService.findAll(
+            includeClasses = setOf(ThingId("LiteratureListPublished")),
+            pageable = PageRequest.of(0, 25)
+        ).forEach {
             fetchAssociatedPapers(it.id)
         }
     }

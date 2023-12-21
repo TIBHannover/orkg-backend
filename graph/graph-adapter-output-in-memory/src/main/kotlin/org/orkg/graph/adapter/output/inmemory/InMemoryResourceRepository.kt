@@ -17,15 +17,11 @@ import org.springframework.data.domain.Sort
 
 private val paperClass = ThingId("Paper")
 private val paperDeletedClass = ThingId("PaperDeleted")
-private val comparisonClass = ThingId("Comparison")
 private val unknownUUID = UUID(0, 0)
 
 class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
     compareBy(Resource::createdAt)
 ), ResourceRepository {
-    override fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): Resource? =
-        entities[id]?.takeIf { it.classes.any {`class` -> `class` in classes } }
-
     override fun nextIdentity(): ThingId {
         var count = entities.size.toLong()
         var id = ThingId("R$count")
@@ -105,73 +101,8 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
     override fun findAllPapersByLabel(label: String) =
         entities.values.filter { it.label.equals(label, ignoreCase = true) && paperClass in it.classes && paperDeletedClass !in it.classes}
 
-    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable) =
-        entities.values
-            .filter { it.label.matches(labelSearchString) }
-            .sortedWith(compareBy { it.label.length })
-            .paged(pageable)
-
-    override fun findAllByClass(`class`: ThingId, pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { `class` in it.classes }
-
-    override fun findAllByClassAndCreatedBy(
-        `class`: ThingId,
-        createdBy: ContributorId,
-        pageable: Pageable
-    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
-        it.createdBy == createdBy && `class` in it.classes
-    }
-
-    override fun findAllByClassAndLabel(
-        `class`: ThingId,
-        labelSearchString: SearchString,
-        pageable: Pageable
-    ): Page<Resource> = entities.values
-        .filter { it.label.matches(labelSearchString) && `class` in it.classes }
-        .sortedWith(compareBy { it.label.length })
-        .paged(pageable)
-
-    override fun findAllByClassAndLabelAndCreatedBy(
-        `class`: ThingId,
-        labelSearchString: SearchString,
-        createdBy: ContributorId,
-        pageable: Pageable
-    ): Page<Resource> = entities.values
-        .filter { it.createdBy == createdBy && it.label.matches(labelSearchString) && `class` in it.classes }
-        .sortedWith(compareBy { it.label.length })
-        .paged(pageable)
-
-    override fun findAllIncludingAndExcludingClasses(
-        includeClasses: Set<ThingId>,
-        excludeClasses: Set<ThingId>,
-        pageable: Pageable
-    ) = findAllFilteredAndPaged(pageable) {
-        it.classes.containsAll(includeClasses) && it.classes.none { id ->
-            id in excludeClasses
-        }
-    }
-
-    override fun findAllIncludingAndExcludingClassesByLabel(
-        includeClasses: Set<ThingId>,
-        excludeClasses: Set<ThingId>,
-        labelSearchString: SearchString,
-        pageable: Pageable
-    ): Page<Resource> = entities.values
-        .filter {
-            it.label.matches(labelSearchString) && it.classes.containsAll(includeClasses) && it.classes.none { id ->
-                id in excludeClasses
-            }
-        }
-        .sortedWith(compareBy { it.label.length })
-        .paged(pageable)
-
     override fun findPaperByLabel(label: String) =
         Optional.ofNullable(entities.values.firstOrNull { it.label.equals(label, ignoreCase = true) && paperClass in it.classes })
-
-    override fun findAllByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId, pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) {
-            `class` in it.classes && it.observatoryId == id
-        }
 
     // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
     override fun findPaperById(id: ThingId) =
@@ -190,24 +121,6 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
             .filter { it.value != unknownUUID }
             .sortedBy { it.value.toString() }
             .paged(pageable)
-
-    // TODO: Create a method with a generic class parameter
-    override fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) {
-            comparisonClass in it.classes && it.organizationId == id
-        }
-
-    override fun findAllByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { it.visibility == visibility }
-
-    override fun findAllListed(pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED }
-
-    override fun findAllByClassAndVisibility(classId: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { it.visibility == visibility && classId in it.classes }
-
-    override fun findAllListedByClass(classId: ThingId, pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && classId in it.classes }
 
     override fun findAllByClassInAndVisibility(
         classes: Set<ThingId>,

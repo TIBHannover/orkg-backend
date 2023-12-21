@@ -7,6 +7,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.RankingService
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
@@ -24,7 +25,6 @@ import org.springframework.stereotype.Component
 
 private val hasDoi = ThingId("P26")
 private val hasContribution = ThingId("P31")
-private val paperClass = ThingId("Paper")
 
 @Component
 @Profile("production")
@@ -67,7 +67,10 @@ class PaperRanker(
         workers: Int,
         block: (Resource, Score) -> Unit
     ): CompletableFuture<Void> {
-        val total = resourceRepository.findAllByClass(paperClass, PageRequest.of(0, 1)).totalElements
+        val total = resourceRepository.findAll(
+            includeClasses = setOf(Classes.paper),
+            pageable = PageRequest.of(0, 1)
+        ).totalElements
         logger.info("Total papers: $total")
         val papersPerWorker = total / workers
         val workerThreads = (0 until workers).map { worker ->
@@ -114,9 +117,9 @@ class PaperRanker(
     private fun forEachPaper(start: Long, end: Long, action: (Resource) -> Unit) {
         var skip = start
         while (skip < end) {
-            resourceRepository.findAllByClass(
-                paperClass,
-                PageRequest.of(
+            resourceRepository.findAll(
+                includeClasses = setOf(Classes.paper),
+                pageable = PageRequest.of(
                     (skip / chunkSize!!).toInt(),
                     chunkSize.coerceAtMost((end - skip).toInt()),
                     Sort.by(Order.asc("id"))

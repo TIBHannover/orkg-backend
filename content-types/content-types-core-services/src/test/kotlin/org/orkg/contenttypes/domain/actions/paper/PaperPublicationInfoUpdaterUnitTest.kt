@@ -688,10 +688,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         val venueId = ThingId("R456")
 
         every {
-            resourceRepository.findAllByClassAndLabel(
-                Classes.venue,
-                any(),
-                PageRequests.SINGLE
+            resourceRepository.findAll(
+                includeClasses = setOf(Classes.venue),
+                label = any(),
+                pageable = PageRequests.SINGLE
             )
         } returns Page.empty()
         every { resourceService.create(resourceCreateCommand) } returns venueId
@@ -712,13 +712,13 @@ class PaperPublicationInfoUpdaterUnitTest {
         }
 
         verify(exactly = 1) {
-            resourceRepository.findAllByClassAndLabel(
-                Classes.venue,
-                withArg {
+            resourceRepository.findAll(
+                includeClasses = setOf(Classes.venue),
+                label = withArg {
                     it.shouldBeInstanceOf<ExactSearchString>()
                     it.input shouldBeEqualIgnoringCase venue
                 },
-                PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { resourceService.create(resourceCreateCommand) }
@@ -760,9 +760,9 @@ class PaperPublicationInfoUpdaterUnitTest {
         )
 
         every {
-            resourceRepository.findAllByClassAndLabel(
-                `class` = Classes.venue,
-                labelSearchString = any(),
+            resourceRepository.findAll(
+                includeClasses = setOf(Classes.venue),
+                label = any(),
                 pageable = PageRequests.SINGLE
             )
         } returns pageOf(venueResource)
@@ -791,13 +791,13 @@ class PaperPublicationInfoUpdaterUnitTest {
         }
 
         verify(exactly = 1) {
-            resourceRepository.findAllByClassAndLabel(
-                Classes.venue,
-                withArg {
+            resourceRepository.findAll(
+                includeClasses = setOf(Classes.venue),
+                label = withArg {
                     it.shouldBeInstanceOf<ExactSearchString>()
                     it.input shouldBeEqualIgnoringCase venue
                 },
-                PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) {

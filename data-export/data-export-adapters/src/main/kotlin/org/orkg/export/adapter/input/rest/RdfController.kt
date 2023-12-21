@@ -8,9 +8,9 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.ThingRepresentation
 import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -56,7 +56,7 @@ class RdfController(
                 "class" -> classRepository.findAllByLabel(labelSearchString, pageable)
                     .mapToClassRepresentation()
 
-                else -> resourceRepository.findAllByLabel(labelSearchString, pageable)
+                else -> resourceRepository.findAll(label = labelSearchString, pageable = pageable)
                     .mapToResourceRepresentation()
             }
         } else when (type) {

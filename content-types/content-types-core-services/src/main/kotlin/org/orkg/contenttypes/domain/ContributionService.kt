@@ -23,7 +23,7 @@ class ContributionService(
             .map { it.toContribution() }
 
     override fun findAll(pageable: Pageable): Page<Contribution> =
-        resourceRepository.findAllByClass(Classes.contribution, pageable)
+        resourceRepository.findAll(includeClasses = setOf(Classes.contribution), pageable = pageable)
             .pmap { it.toContribution() }
 
     private fun Resource.toContribution(): Contribution {

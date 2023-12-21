@@ -83,22 +83,12 @@ class ClassController(
         @RequestParam("creator", required = false) creator: ContributorId?,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
-        return if (creator != null) {
-            when (string) {
-                null -> resourceService.findAllByClassAndCreatedBy(pageable, id, creator)
-                else -> resourceService.findAllByClassAndLabelAndCreatedBy(
-                    id = id,
-                    label = SearchString.of(string, exactMatch),
-                    createdBy = creator,
-                    pageable = pageable
-                )
-            }
-        } else {
-            when (string) {
-                null -> resourceService.findAllByClass(pageable, id)
-                else -> resourceService.findAllByClassAndLabel(id, SearchString.of(string, exactMatch), pageable)
-            }
-        }.mapToResourceRepresentation()
+        return resourceService.findAll(
+            includeClasses = setOf(id),
+            label = string?.let { SearchString.of(it, exactMatch) },
+            createdBy = creator,
+            pageable = pageable
+        ).mapToResourceRepresentation()
     }
 
     @GetMapping("/")

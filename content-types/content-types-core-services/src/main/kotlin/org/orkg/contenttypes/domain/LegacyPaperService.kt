@@ -123,7 +123,7 @@ class LegacyPaperService(
                 .filter { Classes.paper in it.classes }
             if (byDOI.isPresent) return byDOI.get().id
         }
-        val byTitle = resourceService.findAllByTitle(request.paper.title)
+        val byTitle = resourceService.findAllPapersByTitle(request.paper.title)
         if (byTitle.count() > 0) return byTitle.first().id
         return createNewPaperWithMetadata(userId, request)
     }
@@ -229,9 +229,9 @@ class LegacyPaperService(
     ) {
         val venuePredicate = predicateService.findById(Predicates.hasVenue).get().id
         // Check if resource exists
-        val venueResource = resourceRepository.findAllByClassAndLabel(
-            `class` = Classes.venue,
-            labelSearchString = SearchString.of(venue, exactMatch = true),
+        val venueResource = resourceRepository.findAll(
+            includeClasses = setOf(Classes.venue),
+            label = SearchString.of(venue, exactMatch = true),
             pageable = PageRequest.of(0, 1)
         ).singleOrNull() ?: run {
             val resourceId = resourceService.create(

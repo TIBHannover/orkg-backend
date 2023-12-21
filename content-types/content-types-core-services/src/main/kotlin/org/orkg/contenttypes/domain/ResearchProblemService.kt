@@ -29,7 +29,7 @@ class ResearchProblemService(
     private val researchProblemQueries: FindResearchProblemQuery,
 ) : RetrieveResearchProblemUseCase {
     override fun findById(id: ThingId): Optional<Resource> =
-        Optional.ofNullable(resourceService.findByIdAndClasses(id, setOf(Classes.problem)))
+        resourceService.findById(id).filter { Classes.problem in it.classes }
 
     override fun findFieldsPerProblem(problemId: ThingId): List<FieldWithFreq> {
         return researchProblemRepository.findResearchFieldsPerProblem(problemId).map {

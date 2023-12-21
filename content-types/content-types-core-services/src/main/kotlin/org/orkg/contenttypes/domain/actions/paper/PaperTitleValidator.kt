@@ -9,7 +9,7 @@ class PaperTitleValidator(
     private val resourceService: ResourceUseCases
 ) : CreatePaperAction {
     override fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
-        val resource = resourceService.findAllByTitle(command.title).firstOrNull()
+        val resource = resourceService.findAllPapersByTitle(command.title).firstOrNull()
         if (resource != null) {
             throw PaperAlreadyExists.withTitle(resource.label)
         }

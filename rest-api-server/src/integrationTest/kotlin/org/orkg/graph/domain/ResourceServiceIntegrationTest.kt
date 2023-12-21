@@ -46,7 +46,7 @@ class ResourceServiceIntegrationTest {
         val label = "a label with whitespace"
         service.create(label)
 
-        val result = service.findAllByLabel(
+        val result = service.findAll(
             label = SearchString.of(label, exactMatch = true),
             pageable = PageRequest.of(0, 10)
         )
@@ -61,7 +61,7 @@ class ResourceServiceIntegrationTest {
         val label = "a label with whitespace"
         service.create(label)
 
-        val result = service.findAllByLabel(
+        val result = service.findAll(
             label = SearchString.of("  $label\t ", exactMatch = true),
             pageable = PageRequest.of(0, 10)
         )
@@ -76,7 +76,7 @@ class ResourceServiceIntegrationTest {
         val label = "a label with whitespace"
         service.create(label)
 
-        val result = service.findAllByLabel(
+        val result = service.findAll(
             label = SearchString.of("label with", exactMatch = false),
             pageable = PageRequest.of(0, 10)
         )
@@ -91,7 +91,7 @@ class ResourceServiceIntegrationTest {
         val label = "a label with whitespace"
         service.create(label)
 
-        val result = service.findAllByLabel(
+        val result = service.findAll(
             label = SearchString.of("label \t  with", exactMatch = false),
             pageable = PageRequest.of(0, 10)
         )
@@ -106,7 +106,7 @@ class ResourceServiceIntegrationTest {
         val label = "one two  three   four"
         service.create(label)
 
-        val result = service.findAllByLabel(
+        val result = service.findAll(
             label = SearchString.of("one two three four", exactMatch = false),
             pageable = PageRequest.of(0, 10)
         )
@@ -135,7 +135,7 @@ class ResourceServiceIntegrationTest {
         service.create("first")
         service.create("second")
 
-        val result = service.findAllByLabel(
+        val result = service.findAll(
             label = SearchString.of("not in the list", exactMatch = true),
             pageable = pagination
         )
@@ -152,7 +152,7 @@ class ResourceServiceIntegrationTest {
         service.create("yet another")
         val pagination = PageRequest.of(0, 10)
 
-        val result = service.findAllByLabel(
+        val result = service.findAll(
             label = SearchString.of("same", exactMatch = true),
             pageable = pagination
         )
@@ -165,7 +165,7 @@ class ResourceServiceIntegrationTest {
     fun shouldNotReturnResourceContainingSubstring() {
         val pagination = PageRequest.of(0, 10)
         service.create("this is part of the test")
-        assertThat(service.findAllByLabel(SearchString.of("part", exactMatch = true), pagination)).isEmpty()
+        assertThat(service.findAll(label = SearchString.of("part", exactMatch = true), pageable = pagination)).isEmpty()
     }
 
     @Test
@@ -176,7 +176,7 @@ class ResourceServiceIntegrationTest {
         service.create("part at the beginning")
         service.create("something else")
         val pagination = PageRequest.of(0, 10)
-        val result = service.findAllByLabel(
+        val result = service.findAll(
             label = SearchString.of("part", exactMatch = false),
             pageable = pagination
         )
@@ -199,7 +199,7 @@ class ResourceServiceIntegrationTest {
     @DisplayName("should allow regex special chars in resource label")
     fun shouldAllowRegexSpecialCharsInLabel() {
         val res = service.create("C\$razy LAb(el. he*r?").id
-        val found = service.findAllByLabel(
+        val found = service.findAll(
             label = SearchString.of("LAb(el.", exactMatch = false),
             pageable = PageRequest.of(1, 10)
         )
@@ -222,8 +222,8 @@ class ResourceServiceIntegrationTest {
         assertThat(service.findAll(PageRequest.of(0, 10_000)).totalElements).isEqualTo(5)
 
         val page = PageRequest.of(0, 10)
-        val found = service.findAllByClassAndLabel(
-            id = researchProblemClass,
+        val found = service.findAll(
+            includeClasses = setOf(researchProblemClass),
             label = SearchString.of("Testing the Darwin", exactMatch = false),
             pageable = page
         ).map(Resource::id)

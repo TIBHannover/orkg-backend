@@ -4,6 +4,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
@@ -32,14 +33,22 @@ class ObservatoryResourceController(
         @PathVariable id: ObservatoryId,
         pageable: Pageable
     ): Page<ResourceRepresentation> =
-        resourceService.findAllPapersByObservatoryId(id, pageable).mapToResourceRepresentation()
+        resourceService.findAll(
+            includeClasses = setOf(Classes.paper),
+            observatoryId = id,
+            pageable = pageable
+        ).mapToResourceRepresentation()
 
     @GetMapping("{id}/comparisons")
     fun findAllComparisonsByObservatoryId(
         @PathVariable id: ObservatoryId,
         pageable: Pageable
     ): Page<ResourceRepresentation> =
-        resourceService.findAllComparisonsByObservatoryId(id, pageable).mapToResourceRepresentation()
+        resourceService.findAll(
+            includeClasses = setOf(Classes.comparison),
+            observatoryId = id,
+            pageable = pageable
+        ).mapToResourceRepresentation()
 
     @GetMapping("{id}/problems")
     fun findAllProblemsByObservatoryId(

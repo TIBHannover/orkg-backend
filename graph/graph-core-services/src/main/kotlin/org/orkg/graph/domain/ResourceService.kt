@@ -21,8 +21,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-private val paperClass = ThingId("Paper")
-private val comparisonClass = ThingId("Comparison")
 private val reservedClassIds = setOf(
     ThingId("Literal"),
     ThingId("Class"),
@@ -84,9 +82,6 @@ class ResourceService(
         )
             .let { findById(it).get() }
 
-    override fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): Resource? =
-        repository.findByIdAndClasses(id, classes)
-
     override fun findAll(
         pageable: Pageable,
         label: SearchString?,
@@ -115,92 +110,15 @@ class ResourceService(
     override fun findById(id: ThingId): Optional<Resource> =
         repository.findById(id)
 
-    override fun findAllByLabel(label: SearchString, pageable: Pageable): Page<Resource> =
-        repository.findAllByLabel(label, pageable)
-
-    override fun findAllByClass(pageable: Pageable, id: ThingId): Page<Resource> =
-        repository.findAllByClass(id, pageable)
-
-    override fun findAllByClassAndCreatedBy(
-        pageable: Pageable,
-        id: ThingId,
-        createdBy: ContributorId
-    ): Page<Resource> =
-        repository.findAllByClassAndCreatedBy(id, createdBy, pageable)
-
-    override fun findAllByClassAndLabel(id: ThingId, label: SearchString, pageable: Pageable): Page<Resource> =
-        repository.findAllByClassAndLabel(id, label, pageable)
-
-    override fun findAllByClassAndLabelAndCreatedBy(
-        id: ThingId,
-        label: SearchString,
-        createdBy: ContributorId,
-        pageable: Pageable
-    ): Page<Resource> =
-        repository.findAllByClassAndLabelAndCreatedBy(
-            id,
-            label,
-            createdBy,
-            pageable
-        )
-
-    override fun findAllIncludingAndExcludingClasses(
-        includeClasses: Set<ThingId>,
-        excludeClasses: Set<ThingId>,
-        pageable: Pageable
-    ): Page<Resource> {
-        validateClassFilter(includeClasses, excludeClasses)
-        return repository.findAllIncludingAndExcludingClasses(includeClasses, excludeClasses, pageable)
-    }
-
-    override fun findAllIncludingAndExcludingClassesByLabel(
-        includeClasses: Set<ThingId>,
-        excludeClasses: Set<ThingId>,
-        label: SearchString,
-        pageable: Pageable
-    ): Page<Resource> {
-        validateClassFilter(includeClasses, excludeClasses)
-        return repository.findAllIncludingAndExcludingClassesByLabel(
-            includeClasses,
-            excludeClasses,
-            label,
-            pageable
-        )
-    }
-
     override fun findByDOI(doi: String): Optional<Resource> =
         statementRepository.findByDOI(doi)
             .filter(Resource::hasPublishableClasses)
 
-    fun validateClassFilter(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>) {
-        for (includedClass in includeClasses)
-            if (includedClass in excludeClasses)
-                throw InvalidClassFilter(includedClass)
-    }
-
-    override fun findByTitle(title: String): Optional<Resource> =
+    override fun findPaperByTitle(title: String): Optional<Resource> =
         repository.findPaperByLabel(title)
 
-    override fun findAllByTitle(title: String?): Iterable<Resource> =
+    override fun findAllPapersByTitle(title: String?): Iterable<Resource> =
         repository.findAllPapersByLabel(title!!)
-
-    override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<Resource> =
-        when (visibility) {
-            VisibilityFilter.ALL_LISTED -> repository.findAllListed(pageable)
-            VisibilityFilter.UNLISTED -> repository.findAllByVisibility(Visibility.UNLISTED, pageable)
-            VisibilityFilter.FEATURED -> repository.findAllByVisibility(Visibility.FEATURED, pageable)
-            VisibilityFilter.NON_FEATURED -> repository.findAllByVisibility(Visibility.DEFAULT, pageable)
-            VisibilityFilter.DELETED -> repository.findAllByVisibility(Visibility.DELETED, pageable)
-        }
-
-    override fun findAllPapersByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
-        repository.findAllByClassAndObservatoryId(paperClass, id, pageable)
-
-    override fun findAllComparisonsByObservatoryId(
-        id: ObservatoryId,
-        pageable: Pageable
-    ): Page<Resource> =
-        repository.findAllByClassAndObservatoryId(comparisonClass, id, pageable)
 
     override fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         statementRepository.findProblemsByObservatoryId(id, pageable)
@@ -275,7 +193,7 @@ class ResourceService(
             VisibilityFilter.NON_FEATURED -> repository.findAllByClassInAndVisibility(classes, Visibility.DEFAULT, pageable)
             VisibilityFilter.DELETED -> repository.findAllByClassInAndVisibility(classes, Visibility.DELETED, pageable)
         }
-        else -> findAllByVisibility(visibility, pageable)
+        else -> findAll(visibility = visibility, pageable = pageable)
     }
 
     override fun findAllContributorIds(pageable: Pageable) = repository.findAllContributorIds(pageable)
@@ -333,9 +251,6 @@ class ResourceService(
         repository.findById(id)
             .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
             .orElseThrow { ResourceNotFound.withId(id) }
-
-    override fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        repository.findAllComparisonsByOrganizationId(id, pageable)
 
     override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         statementRepository.findAllProblemsByOrganizationId(id, pageable)

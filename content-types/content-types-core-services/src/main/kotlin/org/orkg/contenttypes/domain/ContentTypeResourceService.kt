@@ -2,14 +2,11 @@ package org.orkg.contenttypes.domain
 
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ContentTypeResourcesUseCase
-import org.orkg.contenttypes.output.ComparisonRepository
-import org.orkg.contenttypes.output.ContributionRepository
-import org.orkg.contenttypes.output.SmartReviewRepository
-import org.orkg.contenttypes.output.VisualizationRepository
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -19,10 +16,6 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class ContentTypeResourceService(
-    private val comparisonRepository: ComparisonRepository,
-    private val contributionRepository: ContributionRepository,
-    private val visualizationRepository: VisualizationRepository,
-    private val smartReviewRepository: SmartReviewRepository,
     private val repository: ResourceRepository
 ) : ContentTypeResourcesUseCase {
     override fun loadVerifiedPapers(pageable: Pageable): Page<Resource> =
@@ -36,16 +29,32 @@ class ContentTypeResourceService(
             .map { it.verified }
             .orElseThrow { ResourceNotFound.withId(id) }
     override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> =
-        repository.findAllByClassAndVisibility(Classes.paper, Visibility.FEATURED, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.paper),
+            visibility = VisibilityFilter.FEATURED,
+            pageable = pageable
+        )
 
     override fun loadNonFeaturedPapers(pageable: Pageable): Page<Resource> =
-        repository.findAllByClassAndVisibility(Classes.paper, Visibility.DEFAULT, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.paper),
+            visibility = VisibilityFilter.NON_FEATURED,
+            pageable = pageable
+        )
 
     override fun loadUnlistedPapers(pageable: Pageable): Page<Resource> =
-        repository.findAllByClassAndVisibility(Classes.paper, Visibility.UNLISTED, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.paper),
+            visibility = VisibilityFilter.UNLISTED,
+            pageable = pageable
+        )
 
     override fun loadListedPapers(pageable: Pageable): Page<Resource> =
-        repository.findAllListedByClass(Classes.paper, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.paper),
+            visibility = VisibilityFilter.ALL_LISTED,
+            pageable = pageable
+        )
 
     override fun getFeaturedPaperFlag(id: ThingId): Boolean =
         repository.findPaperById(id)
@@ -58,90 +67,162 @@ class ContentTypeResourceService(
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun loadFeaturedComparisons(pageable: Pageable): Page<Resource> =
-        comparisonRepository.findAllComparisonsByVisibility(Visibility.FEATURED, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.comparison),
+            visibility = VisibilityFilter.FEATURED,
+            pageable = pageable
+        )
 
     override fun loadNonFeaturedComparisons(pageable: Pageable): Page<Resource> =
-        comparisonRepository.findAllComparisonsByVisibility(Visibility.DEFAULT, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.comparison),
+            visibility = VisibilityFilter.NON_FEATURED,
+            pageable = pageable
+        )
 
     override fun loadUnlistedComparisons(pageable: Pageable): Page<Resource> =
-        comparisonRepository.findAllComparisonsByVisibility(Visibility.UNLISTED, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.comparison),
+            visibility = VisibilityFilter.UNLISTED,
+            pageable = pageable
+        )
 
     override fun loadListedComparisons(pageable: Pageable): Page<Resource> =
-        comparisonRepository.findAllListedComparisons(pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.comparison),
+            visibility = VisibilityFilter.ALL_LISTED,
+            pageable = pageable
+        )
 
     override fun loadFeaturedContributions(pageable: Pageable): Page<Resource> =
-        contributionRepository.findAllContributionsByVisibility(Visibility.FEATURED, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.contribution),
+            visibility = VisibilityFilter.FEATURED,
+            pageable = pageable
+        )
 
     override fun loadNonFeaturedContributions(pageable: Pageable): Page<Resource> =
-        contributionRepository.findAllContributionsByVisibility(Visibility.DEFAULT, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.contribution),
+            visibility = VisibilityFilter.NON_FEATURED,
+            pageable = pageable
+        )
 
     override fun loadUnlistedContributions(pageable: Pageable): Page<Resource> =
-        contributionRepository.findAllContributionsByVisibility(Visibility.UNLISTED, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.contribution),
+            visibility = VisibilityFilter.UNLISTED,
+            pageable = pageable
+        )
 
     override fun loadListedContributions(pageable: Pageable): Page<Resource> =
-        contributionRepository.findAllListedContributions(pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.contribution),
+            visibility = VisibilityFilter.ALL_LISTED,
+            pageable = pageable
+        )
 
     override fun loadFeaturedVisualizations(pageable: Pageable): Page<Resource> =
-        visualizationRepository.findAllVisualizationsByVisibility(Visibility.FEATURED, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.visualization),
+            visibility = VisibilityFilter.FEATURED,
+            pageable = pageable
+        )
 
     override fun loadNonFeaturedVisualizations(pageable: Pageable): Page<Resource> =
-        visualizationRepository.findAllVisualizationsByVisibility(Visibility.DEFAULT, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.visualization),
+            visibility = VisibilityFilter.NON_FEATURED,
+            pageable = pageable
+        )
 
     override fun loadUnlistedVisualizations(pageable: Pageable): Page<Resource> =
-        visualizationRepository.findAllVisualizationsByVisibility(Visibility.UNLISTED, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.visualization),
+            visibility = VisibilityFilter.UNLISTED,
+            pageable = pageable
+        )
 
     override fun loadListedVisualizations(pageable: Pageable): Page<Resource> =
-        visualizationRepository.findAllListedVisualizations(pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.visualization),
+            visibility = VisibilityFilter.ALL_LISTED,
+            pageable = pageable
+        )
 
     override fun loadFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
-        smartReviewRepository.findAllSmartReviewsByVisibility(Visibility.FEATURED, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.reviewPublished),
+            visibility = VisibilityFilter.FEATURED,
+            pageable = pageable
+        )
 
     override fun loadNonFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
-        smartReviewRepository.findAllSmartReviewsByVisibility(Visibility.DEFAULT, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.reviewPublished),
+            visibility = VisibilityFilter.NON_FEATURED,
+            pageable = pageable
+        )
 
     override fun loadUnlistedSmartReviews(pageable: Pageable): Page<Resource> =
-        smartReviewRepository.findAllSmartReviewsByVisibility(Visibility.UNLISTED, pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.reviewPublished),
+            visibility = VisibilityFilter.UNLISTED,
+            pageable = pageable
+        )
 
     override fun loadListedSmartReviews(pageable: Pageable): Page<Resource> =
-        smartReviewRepository.findAllListedSmartReviews(pageable)
+        repository.findAll(
+            includeClasses = setOf(Classes.reviewPublished),
+            visibility = VisibilityFilter.ALL_LISTED,
+            pageable = pageable
+        )
 
     override fun getFeaturedContributionFlag(id: ThingId): Boolean =
-        contributionRepository.findContributionByResourceId(id)
+        repository.findById(id)
+            .filter { Classes.contribution in it.classes }
             .map { it.visibility == Visibility.FEATURED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun getUnlistedContributionFlag(id: ThingId): Boolean =
-        contributionRepository.findContributionByResourceId(id)
+        repository.findById(id)
+            .filter { Classes.contribution in it.classes }
             .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun getFeaturedComparisonFlag(id: ThingId): Boolean =
-        comparisonRepository.findComparisonByResourceId(id)
+        repository.findById(id)
+            .filter { Classes.comparison in it.classes }
             .map { it.visibility == Visibility.FEATURED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun getUnlistedComparisonFlag(id: ThingId): Boolean =
-        comparisonRepository.findComparisonByResourceId(id)
+        repository.findById(id)
+            .filter { Classes.comparison in it.classes }
             .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun getFeaturedVisualizationFlag(id: ThingId): Boolean =
-        visualizationRepository.findVisualizationByResourceId(id)
+        repository.findById(id)
+            .filter { Classes.visualization in it.classes }
             .map { it.visibility == Visibility.FEATURED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun getUnlistedVisualizationFlag(id: ThingId): Boolean =
-        visualizationRepository.findVisualizationByResourceId(id)
+        repository.findById(id)
+            .filter { Classes.visualization in it.classes }
             .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun getFeaturedSmartReviewFlag(id: ThingId): Boolean =
-        smartReviewRepository.findSmartReviewByResourceId(id)
+        repository.findById(id)
+            .filter { Classes.reviewPublished in it.classes }
             .map { it.visibility == Visibility.FEATURED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun getUnlistedSmartReviewFlag(id: ThingId): Boolean =
-        smartReviewRepository.findSmartReviewByResourceId(id)
+        repository.findById(id)
+            .filter { Classes.reviewPublished in it.classes }
             .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
             .orElseThrow { ResourceNotFound.withId(id) }
 }

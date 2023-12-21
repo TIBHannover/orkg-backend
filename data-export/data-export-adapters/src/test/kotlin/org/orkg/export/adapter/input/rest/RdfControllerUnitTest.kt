@@ -21,6 +21,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.UsesMocking
+import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -78,9 +79,15 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
     fun testFilterResources() {
         val someId = ThingId("R1234")
         // TODO: Search strings are not comparable, so they cannot be used here.
-        every { resourceRepository.findAllByLabel(any<FuzzySearchString>(), any<Pageable>()) } returns PageImpl(
-            listOf(createResource(id = someId, label = "Resource 1234"))
+        every {
+            resourceRepository.findAll(
+                label = any<FuzzySearchString>(),
+                pageable = any<Pageable>()
+            )
+        } returns pageOf(
+            createResource(id = someId, label = "Resource 1234")
         )
+
         every { statementService.countStatementsAboutResources(setOf(someId)) } returns mapOf(someId to 5L)
         every { featureFlagService.isFormattedLabelsEnabled() } returns false
 

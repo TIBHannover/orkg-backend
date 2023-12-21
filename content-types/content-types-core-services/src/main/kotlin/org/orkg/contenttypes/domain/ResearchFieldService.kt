@@ -29,7 +29,7 @@ class ResearchFieldService(
 ) : RetrieveResearchFieldUseCase {
 
     override fun findById(id: ThingId): Optional<Resource> =
-        Optional.ofNullable(resourceService.findByIdAndClasses(id, setOf(Classes.researchField)))
+        resourceService.findById(id).filter { Classes.researchField in it.classes }
 
     override fun getResearchProblemsOfField(
         id: ThingId,

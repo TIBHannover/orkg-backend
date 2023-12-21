@@ -85,8 +85,14 @@ class ThingIdValueGenerator(
         if (classId == null) {
             resourceRepository.findAll(PageRequest.of(nextInt(resourceCount), 1)).first().id
         } else {
-            val count = resourceRepository.findAllByClass(classId, PageRequest.of(0, 1)).totalElements.toInt()
-            resourceRepository.findAllByClass(classId, PageRequest.of(nextInt(count), 1)).first().id
+            val count = resourceRepository.findAll(
+                includeClasses = setOf(classId),
+                pageable = PageRequest.of(0, 1)
+            ).totalElements.toInt()
+            resourceRepository.findAll(
+                includeClasses = setOf(classId),
+                pageable = PageRequest.of(nextInt(count), 1)
+            ).first().id
         }
 }
 

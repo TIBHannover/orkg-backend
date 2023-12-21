@@ -41,7 +41,7 @@ class PaperTitleValidatorUnitTest {
         val command = dummyCreatePaperCommand()
         val state = CreatePaperState()
 
-        every { resourceService.findAllByTitle(command.title) } returns Page.empty()
+        every { resourceService.findAllPapersByTitle(command.title) } returns Page.empty()
 
         val result = paperTitleValidator(command, state)
 
@@ -53,7 +53,7 @@ class PaperTitleValidatorUnitTest {
             it.paperId shouldBe null
         }
 
-        verify(exactly = 1) { resourceService.findAllByTitle(command.title) }
+        verify(exactly = 1) { resourceService.findAllPapersByTitle(command.title) }
     }
 
     @Test
@@ -63,10 +63,10 @@ class PaperTitleValidatorUnitTest {
         val paper = createResource(label = command.title)
         val expected = PaperAlreadyExists.withTitle(paper.label)
 
-        every { resourceService.findAllByTitle(command.title) } returns pageOf(paper)
+        every { resourceService.findAllPapersByTitle(command.title) } returns pageOf(paper)
 
         assertThrows<PaperAlreadyExists> { paperTitleValidator(command, state) }.message shouldBe expected.message
 
-        verify(exactly = 1) { resourceService.findAllByTitle(command.title) }
+        verify(exactly = 1) { resourceService.findAllPapersByTitle(command.title) }
     }
 }

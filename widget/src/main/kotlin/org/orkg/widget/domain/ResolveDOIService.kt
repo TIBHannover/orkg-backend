@@ -20,7 +20,7 @@ class ResolveDOIService(
             throw TooManyParameters.requiresExactlyOneOf("doi", "title")
         val resource = when {
             doi != null -> service.findByDOI(doi).orElseThrow { ResourceNotFound.withDOI(doi) }
-            title != null -> service.findByTitle(title).orElseThrow { ResourceNotFound.withLabel(title) }
+            title != null -> service.findPaperByTitle(title).orElseThrow { ResourceNotFound.withLabel(title) }
             else -> throw MissingParameter.requiresAtLeastOneOf("doi", "title")
         }
         val totalStatements =

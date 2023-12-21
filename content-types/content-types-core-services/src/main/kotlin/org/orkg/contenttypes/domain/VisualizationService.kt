@@ -21,7 +21,6 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -55,21 +54,22 @@ class VisualizationService(
             .map { it.toVisualization() }
 
     override fun findAll(pageable: Pageable): Page<Visualization> =
-        resourceRepository.findAllByClass(Classes.visualization, pageable)
+        resourceRepository.findAll(includeClasses = setOf(Classes.visualization), pageable = pageable)
             .pmap { it.toVisualization() }
 
     override fun findAllByTitle(title: String, pageable: Pageable): Page<Visualization> =
-        resourceRepository.findAllByClassAndLabel(Classes.visualization, SearchString.of(title, exactMatch = true), pageable)
-            .pmap { it.toVisualization() }
+        resourceRepository.findAll(
+            includeClasses = setOf(Classes.visualization),
+            label = SearchString.of(title, exactMatch = true),
+            pageable = pageable
+        ).pmap { it.toVisualization() }
 
     override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<Visualization> =
-        when (visibility) {
-            VisibilityFilter.ALL_LISTED -> resourceRepository.findAllListedByClass(Classes.visualization, pageable)
-            VisibilityFilter.NON_FEATURED -> resourceRepository.findAllByClassAndVisibility(Classes.visualization, Visibility.DEFAULT, pageable)
-            VisibilityFilter.UNLISTED -> resourceRepository.findAllByClassAndVisibility(Classes.visualization, Visibility.UNLISTED, pageable)
-            VisibilityFilter.FEATURED -> resourceRepository.findAllByClassAndVisibility(Classes.visualization, Visibility.FEATURED, pageable)
-            VisibilityFilter.DELETED -> resourceRepository.findAllByClassAndVisibility(Classes.visualization, Visibility.DELETED, pageable)
-        }.pmap { it.toVisualization() }
+        resourceRepository.findAll(
+            includeClasses = setOf(Classes.visualization),
+            visibility = visibility,
+            pageable = pageable
+        ).pmap { it.toVisualization() }
 
     override fun findAllByResearchFieldAndVisibility(
         researchFieldId: ThingId,
@@ -93,8 +93,11 @@ class VisualizationService(
     }
 
     override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<Visualization> =
-        resourceRepository.findAllByClassAndCreatedBy(Classes.visualization, contributorId, pageable)
-            .pmap { it.toVisualization() }
+        resourceRepository.findAll(
+            includeClasses = setOf(Classes.visualization),
+            createdBy = contributorId,
+            pageable = pageable
+        ).pmap { it.toVisualization() }
 
     private fun Resource.toVisualization(): Visualization {
         val statements = statementRepository.fetchAsBundle(

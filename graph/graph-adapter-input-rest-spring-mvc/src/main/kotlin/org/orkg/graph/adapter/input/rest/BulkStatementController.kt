@@ -3,6 +3,7 @@ package org.orkg.graph.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.contenttypes.domain.pmap
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.StatementId
@@ -36,7 +37,7 @@ class BulkStatementController(
         @RequestParam("ids") resourceIds: List<ThingId>,
         pageable: Pageable
     ): List<BulkGetStatementsResponse> =
-        resourceIds.map {
+        resourceIds.pmap {
             BulkGetStatementsResponse(
                 id = it,
                 statements = statementService.findAllBySubject(it, pageable).mapToStatementRepresentation()
@@ -48,7 +49,7 @@ class BulkStatementController(
         @RequestParam("ids") resourceIds: List<ThingId>,
         pageable: Pageable
     ): List<BulkGetStatementsResponse> =
-        resourceIds.map {
+        resourceIds.pmap {
             BulkGetStatementsResponse(
                 id = it,
                 statements = statementService.findAllByObject(it, pageable).mapToStatementRepresentation()

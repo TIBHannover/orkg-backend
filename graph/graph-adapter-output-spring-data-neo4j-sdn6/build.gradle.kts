@@ -2,13 +2,9 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.neo4j-conventions")
-    id("org.orkg.container-testing-conventions")
-    id("java-test-fixtures")
-    alias(libs.plugins.spring.boot) apply false
-    kotlin("plugin.spring")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
+    id("org.orkg.gradle.spring-library")
+    id("org.orkg.gradle.kotlin-library-with-container-tests")
 }
 
 val neo4jMigrations: Configuration by configurations.creating {
@@ -62,8 +58,6 @@ testing {
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     implementation(project(":graph:graph-ports-output"))
 
     implementation(project(":common"))

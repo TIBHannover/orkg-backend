@@ -1,13 +1,9 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("java-test-fixtures")
-    id("org.orkg.jackson-conventions")
-    kotlin("plugin.spring")
-    id("org.orkg.neo4j-conventions")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
+    id("org.orkg.gradle.spring-library")
 }
 
 dependencies {
-    api(platform(project(":platform")))
     implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-services"))

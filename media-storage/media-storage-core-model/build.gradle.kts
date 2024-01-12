@@ -1,13 +1,8 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.jackson-conventions")
-    `java-test-fixtures`
-    kotlin("plugin.spring")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {
-    api(platform(project(":platform")))
 
     implementation(project(":common"))
 
@@ -16,7 +11,6 @@ dependencies {
 
     implementation(libs.jackson.databind)
     implementation(libs.javax.activation)
-
 
     testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
     testFixturesImplementation(project(":common"))

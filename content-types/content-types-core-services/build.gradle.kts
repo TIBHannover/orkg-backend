@@ -2,17 +2,11 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.neo4j-conventions")
-    id("java-test-fixtures")
-    id("org.orkg.jackson-conventions")
-    kotlin("plugin.spring")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
+    id("org.orkg.gradle.spring-library")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     api(project(":content-types:content-types-ports-input"))
     api(project(":content-types:content-types-ports-output"))
 

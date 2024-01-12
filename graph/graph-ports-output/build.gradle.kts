@@ -1,14 +1,8 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("java-test-fixtures")
-    id("org.orkg.jackson-conventions")
-    alias(libs.plugins.spotless)
-    id("org.orkg.neo4j-conventions") // to obtain version of spring-data commons. TODO: remove after upgrade
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     api(project(":graph:graph-core-model"))
 
     implementation(project(":common"))
@@ -24,7 +18,7 @@ dependencies {
     testFixturesImplementation(project(":content-types:content-types-core-model"))
 
     // for PageRequests object
-    testFixturesImplementation("org.springframework.data:spring-data-commons:2.7.16")
+    testFixturesImplementation("org.springframework.data:spring-data-commons")
     testFixturesImplementation(libs.kotest.runner)
     testFixturesImplementation(libs.forkhandles.fabrikate4k)
 }

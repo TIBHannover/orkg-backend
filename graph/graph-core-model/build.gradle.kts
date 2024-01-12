@@ -1,14 +1,8 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.jackson-conventions")
-    `java-test-fixtures`
-    alias(libs.plugins.spotless)
-    id("org.orkg.neo4j-conventions") // to obtain version of spring-data commons. TODO: remove after upgrade
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     implementation(project(":common"))
 
     implementation(libs.jackson.core) // TODO

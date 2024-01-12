@@ -2,16 +2,10 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.jackson-conventions")
-    id("org.orkg.neo4j-conventions")
-    alias(libs.plugins.spotless)
-    kotlin("plugin.spring")
+    id("org.orkg.gradle.spring-library")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
 

@@ -2,15 +2,10 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.neo4j-conventions")
-    id("org.orkg.jackson-conventions")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.kotlin-library")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     api(project(":community:community-core-model"))
 
     implementation(project(":common"))

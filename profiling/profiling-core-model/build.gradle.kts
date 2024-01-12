@@ -2,14 +2,10 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    alias(libs.plugins.spotless)
-    kotlin("plugin.spring")
-    id("org.orkg.neo4j-conventions")
+    id("org.orkg.gradle.spring-library")
 }
 
 dependencies {
-    api(platform(project(":platform")))
     implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-services"))

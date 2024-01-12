@@ -1,12 +1,8 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    kotlin("plugin.spring")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.spring-library")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     compileOnly(project(":feature-flags:feature-flags-ports"))
 
     implementation("org.springframework:spring-context")

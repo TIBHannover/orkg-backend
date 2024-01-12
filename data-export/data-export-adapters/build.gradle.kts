@@ -1,10 +1,5 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.spring-restdocs-producer")
-    id("org.orkg.neo4j-conventions")
-    id("org.orkg.jackson-conventions")
-    alias(libs.plugins.spring.boot) apply false
-    kotlin("plugin.spring")
+    id("org.orkg.gradle.input-adapter-spring-web")
 }
 
 testing {
@@ -29,8 +24,6 @@ testing {
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     implementation(project(":common"))
     implementation(project(":data-export:data-export-core"))
     implementation(project(":data-export:data-export-ports-input"))

@@ -2,17 +2,10 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.neo4j-conventions")
-    id("org.orkg.spring-restdocs-producer")
-    id("org.orkg.jackson-conventions")
-    kotlin("plugin.spring")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.input-adapter-spring-web")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     api("org.springframework:spring-web")
 
     implementation("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
@@ -31,7 +24,6 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter()
             dependencies {
-                //implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(project(":common:serialization"))
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {

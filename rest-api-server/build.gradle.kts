@@ -1,48 +1,29 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
-import org.orkg.gradle.withSnippets
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
-import java.time.Instant
-import java.time.format.DateTimeFormatter
 
-group = "org.orkg"
 version = "0.44.0"
 
 val springSecurityOAuthVersion = "2.5.2"
 
-val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
-val dockerImageTag: String? by project
-
 // Support downloading JavaDoc artifacts by enabling it via Gradle properties
 val downloadJavadoc: String? by project
 
+fun withSnippets(path: String): Map<String, String> = mapOf("path" to path, "configuration" to "restdocs")
+
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.neo4j-conventions")
-    id("org.orkg.jackson-conventions")
-    kotlin("kapt")
-    kotlin("plugin.spring")
-    kotlin("plugin.jpa")
+    id("org.orkg.gradle.spring-boot-application")
     id("idea")
     id("jacoco-report-aggregation")
-    alias(libs.plugins.spring.boot)
+    id("org.orkg.gradle.asciidoctor")
+    id("org.orkg.gradle.docker-image")
 
-    id("org.jetbrains.dokka") version "0.10.1"
-    id("org.asciidoctor.jvm.convert") version "3.3.2"
-    id("org.asciidoctor.jvm.gems") version "3.3.2"
-    id("com.google.cloud.tools.jib") version "3.1.1"
     // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
     // It was used only occasionally for debugging, and can be re-enabled again later (if needed).
     // id("org.barfuin.gradle.taskinfo") version "1.2.0"
     id("com.diffplug.spotless")
-}
-
-allOpen {
-    annotation("javax.persistence.Entity")
-    annotation("javax.persistence.MappedSuperclass")
-    annotation("javax.persistence.Embeddable")
 }
 
 val restdocs: Configuration by configurations.creating {
@@ -59,8 +40,6 @@ val neo4jMigrations: Configuration by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
-
-val asciidoctor by configurations.creating
 
 val runtimeClasspath by configurations.getting {
     extendsFrom(liquibase)
@@ -162,13 +141,10 @@ val jar by tasks.getting(Jar::class) {
 }
 
 dependencies {
-    // Platform alignment for ORKG components
-    api(platform(project(":platform")))
     testApi(enforcedPlatform(libs.junit5.bom))
-    "integrationTestApi"(platform(project(":platform")))
     "integrationTestApi"(enforcedPlatform(libs.junit5.bom))
 
-    kapt(platform(project(":platform")))
+    kapt(platform("org.orkg:platform"))
 
     // Upgrade for security reasons. Can be removed after Spring upgrade.
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
@@ -268,6 +244,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
     implementation(libs.bundles.jaxb)
+    implementation(libs.javax.activation)
     implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations
     // File uploads
     implementation("commons-fileupload:commons-fileupload:1.5")
@@ -361,13 +338,6 @@ tasks {
         finalizedBy("bootRun")
     }
 
-    named("dokka", org.jetbrains.dokka.gradle.DokkaTask::class).configure {
-        outputFormat = "html"
-        configuration {
-            includes = listOf("packages.md")
-        }
-    }
-
     withType<JacocoReport>().configureEach {
         reports {
             html.required.set(true)
@@ -457,53 +427,6 @@ tasks {
                 include("references/*.adoc")
             }
         )
-    }
-}
-
-jib {
-    val baseImageName = "gcr.io/distroless/java17"
-    from.image = baseImageName
-    to.image = containerRegistryLocation
-    container {
-        val customLabels = mutableMapOf(
-            // Standardized tags by OCI
-            "org.opencontainers.image.vendor" to "Open Research Knowledge Graph (ORKG) <info@orkg.org>",
-            "org.opencontainers.image.authors" to listOf(
-                "Manuel Prinz <manuel.prinz@tib.eu>",
-                "Marcel Konrad <marcel.konrad@tib.eu>",
-            ).joinToString(", "),
-            "org.opencontainers.image.created" to DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
-            "org.opencontainers.image.source" to "https://gitlab.com/TIBHannover/orkg/orkg-backend",
-            "org.opencontainers.image.base.name" to baseImageName,
-            // "org.opencontainers.image.base.digest" to "",
-        )
-        if (System.getenv("GITLAB_CI") == "true") {
-            customLabels += "org.opencontainers.image.revision" to System.getenv("CI_COMMIT_SHA")
-            if (System.getenv("CI_COMMIT_TAG") != null) {
-                customLabels += "org.opencontainers.image.version" to System.getenv("CI_COMMIT_TAG")
-            }
-            customLabels += "org.orkg.component.rest-api.ci-build" to System.getenv("CI_PIPELINE_URL")
-            // Overwrite key in CI builds with pipeline information
-            customLabels += "org.opencontainers.image.created" to System.getenv("CI_PIPELINE_CREATED_AT")
-        }
-        labels.putAll(customLabels)
-    }
-}
-
-spotless {
-    kotlin {
-        ktlint().userData(
-            // TODO: This should be moved to .editorconfig once the Gradle plug-in supports that.
-            mapOf(
-                "ij_kotlin_code_style_defaults" to "KOTLIN_OFFICIAL",
-                // Disable some rules to keep the changes minimal
-                "disabled_rules" to "no-wildcard-imports,filename,import-ordering,indent",
-                "ij_kotlin_imports_layout" to "*,^",
-            )
-        )
-    }
-    kotlinGradle {
-        ktlint()
     }
 }
 

@@ -1,8 +1,6 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.container-testing-conventions")
-    kotlin("plugin.spring")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.spring-library")
+    id("org.orkg.gradle.kotlin-library-with-container-tests")
 }
 
 val liquibase: Configuration by configurations.creating {
@@ -15,8 +13,6 @@ val implementation: Configuration by configurations.getting {
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     implementation(project(":discussions:discussions-ports-output"))
 
     implementation(project(":common"))

@@ -1,6 +1,12 @@
+pluginManagement {
+    includeBuild("gradle/meta-plugins")
+}
+plugins {
+    id("org.orkg.gradle.settings")
+}
+
 rootProject.name = "orkg-backend"
 
-include("platform")
 include(
     "common",
     "common:serialization",
@@ -90,10 +96,3 @@ include(
 )
 include("widget")
 include("rest-api-server")
-
-// Declare default repository settings for all sub-projects.
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-    }
-}

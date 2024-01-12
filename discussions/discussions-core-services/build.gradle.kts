@@ -1,14 +1,8 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.neo4j-conventions")
-    id("org.orkg.jackson-conventions")
-    kotlin("plugin.spring")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.spring-library")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     api(project(":discussions:discussions-ports-input"))
     api(project(":discussions:discussions-ports-output"))
 

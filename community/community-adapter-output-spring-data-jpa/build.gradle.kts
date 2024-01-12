@@ -2,15 +2,11 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.container-testing-conventions")
-    kotlin("plugin.spring")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.spring-library")
+    id("org.orkg.gradle.kotlin-library-with-container-tests")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     implementation(project(":community:community-ports-output"))
 
     implementation(project(":identity-management:idm-ports-output")) // for UserRepository, TODO: break dependency

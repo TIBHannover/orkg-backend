@@ -1,13 +1,8 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.jackson-conventions")
-    alias(libs.plugins.spotless)
-    id("org.orkg.neo4j-conventions") // to obtain version of spring-data commons. TODO: remove after upgrade
+    id("org.orkg.gradle.kotlin-library")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     api(project(":graph:graph-core-model"))
 
     implementation(project(":common"))

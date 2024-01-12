@@ -1,13 +1,8 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.jackson-conventions")
-    kotlin("plugin.spring")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.spring-library")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     implementation(project(":media-storage:media-storage-ports-input"))
     implementation(project(":media-storage:media-storage-ports-output"))
 

@@ -1,13 +1,9 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.container-testing-conventions")
-    kotlin("plugin.spring")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.spring-library")
+    id("org.orkg.gradle.kotlin-library-with-container-tests")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     implementation(project(":media-storage:media-storage-core-model"))
     implementation(project(":media-storage:media-storage-ports-output"))
 

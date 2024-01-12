@@ -2,12 +2,7 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.neo4j-conventions")
-    id("org.orkg.jackson-conventions")
-    //id("org.orkg.spring-restdocs-producer")
-    alias(libs.plugins.spring.boot) apply false
-    kotlin("plugin.spring")
+    id("org.orkg.gradle.input-adapter-spring-web")
 }
 
 testing {
@@ -32,8 +27,6 @@ testing {
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     implementation(project(":identity-management:idm-ports-input"))
 
     implementation(project(":common")) // for exceptions

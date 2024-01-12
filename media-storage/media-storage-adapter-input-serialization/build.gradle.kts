@@ -1,12 +1,8 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.jackson-conventions")
-    kotlin("plugin.spring")
+    id("org.orkg.gradle.input-adapter-spring-web")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     implementation(project(":common")) // for exception
     implementation(project(":media-storage:media-storage-core-model"))
 

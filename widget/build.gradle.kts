@@ -1,15 +1,10 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.spring-restdocs-producer")
-    id("org.orkg.jackson-conventions")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.input-adapter-spring-web")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
     implementation(project(":common"))
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-core-model"))

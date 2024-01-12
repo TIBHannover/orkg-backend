@@ -1,12 +1,8 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.jackson-conventions")
-    kotlin("plugin.spring")
-    id("org.orkg.neo4j-conventions")
+    id("org.orkg.gradle.spring-library")
 }
 
 dependencies {
-    api(platform(project(":platform")))
     implementation(project(":common"))
     implementation(project(":licenses:licenses-ports-input"))
     implementation(project(":licenses:licenses-core-model"))

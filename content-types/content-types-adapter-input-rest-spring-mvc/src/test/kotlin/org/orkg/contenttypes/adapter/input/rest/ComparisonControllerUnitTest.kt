@@ -187,7 +187,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     requestParameters(
                         parameterWithName("research_field").description("Optional filter for research field id.").optional(),
                         parameterWithName("title").description("Optional filter for the title of the comparison. Uses exact matching.").optional(),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "listed", "featured", "unlisted" or "deleted".""").optional(),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),
                         parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the comparison.").optional(),
                         parameterWithName("research_field").description("Optional filter for research field id.").optional(),
                         parameterWithName("include_subfields").description("Optional flag for whether subfields are included in the search or not.").optional(),
@@ -794,7 +794,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
 
         verify(exactly = 1) { comparisonService.create(any()) }
     }
-    
+
     @Test
     @TestWithMockUser
     fun `Given a create comparison request, when service reports ambiguous author, then status is 400 BAD REQUEST`() {

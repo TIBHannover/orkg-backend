@@ -142,7 +142,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
                 documentationHandler.document(
                     requestParameters(
                         parameterWithName("title").description("Optional filter for the title of the visualization. Uses exact matching.").optional(),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "listed", "featured", "unlisted" or "deleted".""").optional(),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),
                         parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the visualization.").optional(),
                         parameterWithName("research_field").description("Optional filter for research field id.").optional(),
                         parameterWithName("include_subfields").description("Optional flag for whether subfields are included in the search or not.").optional(),

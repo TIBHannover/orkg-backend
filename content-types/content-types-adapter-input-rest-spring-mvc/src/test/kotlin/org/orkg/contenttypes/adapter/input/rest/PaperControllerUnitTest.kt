@@ -79,7 +79,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithP
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -208,7 +207,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                     requestParameters(
                         parameterWithName("research_field").description("Optional filter for research field id.").optional(),
                         parameterWithName("title").description("Optional filter for the title of the paper. Uses exact matching.").optional(),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "listed", "featured", "unlisted" or "deleted".""").optional(),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),
                         parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created this paper.").optional(),
                         parameterWithName("research_field").description("Optional filter for research field id.").optional(),
                         parameterWithName("include_subfields").description("Optional flag for whether subfields are included in the search or not.").optional(),
@@ -909,7 +908,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
         verify(exactly = 1) { paperService.update(any()) }
     }
-    
+
     @Test
     @TestWithMockUser
     fun `Given a paper update request, when service reports paper already exists with title, then status is 400 BAD REQUEST`() {

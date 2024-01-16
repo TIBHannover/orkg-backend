@@ -263,7 +263,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
                         parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
-                        parameterWithName("visibility").description("""Filter for visibility. Either of "listed", "featured", "unlisted" or "deleted". (optional)""").optional(),
+                        parameterWithName("visibility").description("""Filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED". (optional)""").optional(),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created this paper. (optional)").optional(),
                         parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)").optional(),
                         parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)").optional(),

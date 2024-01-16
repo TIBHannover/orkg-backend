@@ -172,7 +172,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                     requestParameters(
                         parameterWithName("q").description("Optional filter for the template label.").optional(),
                         parameterWithName("exact").description("Optional flag for whether label matching should be exact. (default: false)").optional(),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "listed", "featured", "unlisted" or "deleted".""").optional(),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),
                         parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the template.").optional(),
                         parameterWithName("research_field").description("Optional filter for related research field id.").optional(),
                         parameterWithName("research_problem").description("Optional filter for related research problem id.").optional(),

@@ -7,7 +7,6 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.verify
-import java.security.Principal
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -35,12 +34,14 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.security.test.context.support.WithAnonymousUser
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -178,14 +179,23 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     inner class UserLoggedIn {
         @Test
         @TestWithMockUser
-        fun `when deleting a statement by id and service reports success, then status is 204 NO CONTENT`() {
+        @DisplayName("when deleting a statement by id and service reports success, then status is 204 NO CONTENT")
+        fun deleteById_isNoContent() {
             val id = StatementId("S1")
 
             every { statementService.delete(id) } just Runs
 
-            delete("/api/statements/{id}", id)
+            documentedDeleteRequestTo("/api/statements/{id}", id)
                 .perform()
                 .andExpect(status().isNoContent)
+                .andDo(
+                    documentationHandler.document(
+                        pathParameters(
+                            parameterWithName("id").description("The identifier of the statement to delete.")
+                        )
+                    )
+                )
+                .andDo(generateDefaultDocSnippets())
 
             verify(exactly = 1) { statementService.delete(id) }
         }
@@ -257,7 +267,4 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .contentType(MediaType.APPLICATION_JSON)
             .characterEncoding("UTF-8")
             .content(objectMapper.writeValueAsString(body))
-
-    private fun MockMvc.delete(uriTemplate: String, principal: Principal) =
-        perform(delete(uriTemplate).principal(principal))
 }

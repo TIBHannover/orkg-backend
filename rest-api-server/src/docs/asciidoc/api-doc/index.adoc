@@ -150,7 +150,7 @@ Delete a statement by providing the ID of the statement via a `DELETE` call:
 
 The response will be `204 No Content` when successful.
 
-operation::statements-delete-literal-statement_is-no-content[snippets='curl-request,http-response']
+operation::statements-delete-by-id_is-no-content[snippets='curl-request,http-response']
 
 [[statements-fetch]]
 === Fetching a statement
@@ -246,16 +246,6 @@ operation::resource-controller-integration-test-edit[snippets='request-fields,cu
 A `GET` request provides information about a resource.
 
 operation::resource-controller-integration-test-fetch[snippets='curl-request,http-response']
-
-[[resources-lookup]]
-=== Lookup a resource by label
-
-Resources can be looked up by label by providing a search fragment.
-
-operation::resource-controller-integration-test-lookup[snippets='request-parameters,curl-request,http-response']
-
-TIP: {pagination_note}
-
 
 [[resources-delete]]
 === Delete a resource

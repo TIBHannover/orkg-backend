@@ -246,7 +246,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     }
 
     @Test
-    @DisplayName("Given several resources, when they are fetched, then status is 200 OK and resources are returned")
+    @DisplayName("Given several resources, when filtering by no parameters, then status is 200 OK and resources are returned")
     fun getPaged() {
         every { resourceService.findAll(any()) } returns pageOf(createResource())
         every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
@@ -258,22 +258,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectResource("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    requestParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
-                        parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)").optional(),
-                        parameterWithName("visibility").description("""Filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED". (optional)""").optional(),
-                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this paper. (optional)").optional(),
-                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)").optional(),
-                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)").optional(),
-                        parameterWithName("include").description("Filter for a set of classes that the resource must have. (optional)").optional(),
-                        parameterWithName("exclude").description("Filter for a set of classes that the resource must not have. (optional)").optional(),
-                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").optional(),
-                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").optional()
-                    )
-                )
-            )
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { resourceService.findAll(any()) }
@@ -282,7 +266,8 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     }
 
     @Test
-    fun `Given several resources, when filtering by several parameters, then status is 200 OK and resources are returned`() {
+    @DisplayName("Given several resources, when they are fetched with all possible filtering parameters, then status is 200 OK and resources are returned")
+    fun getPagedWithParameters() {
         every { resourceService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
         every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
@@ -298,33 +283,39 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val organizationId = OrganizationId(UUID.randomUUID())
 
-        get("/api/resources/" +
-            "?q={label}" +
-            "&exact={exact}" +
-            "&visibility={visibility}" +
-            "&created_by={created_by}" +
-            "&created_at_start={created_at_start}" +
-            "&created_at_end={created_at_end}" +
-            "&include={include}" +
-            "&exclude={exclude}" +
-            "&observatory_id={observatoryId}" +
-            "&organization_id={organizationId}",
-            label,
-            exact,
-            visibility,
-            createdBy,
-            createdAtStart.format(ISO_OFFSET_DATE_TIME),
-            createdAtEnd.format(ISO_OFFSET_DATE_TIME),
-            includeClasses.joinToString(separator = ","),
-            excludeClasses.joinToString(separator = ","),
-            observatoryId,
-            organizationId
-        )
+        documentedGetRequestTo("/api/resources/")
+            .param("q", label)
+            .param("exact", exact.toString())
+            .param("visibility", visibility.toString())
+            .param("created_by", createdBy.value.toString())
+            .param("created_at_start", createdAtStart.format(ISO_OFFSET_DATE_TIME))
+            .param("created_at_end", createdAtEnd.format(ISO_OFFSET_DATE_TIME))
+            .param("include", includeClasses.joinToString(separator = ","))
+            .param("exclude", excludeClasses.joinToString(separator = ","))
+            .param("observatory_id", observatoryId.value.toString())
+            .param("organization_id", organizationId.value.toString())
             .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectResource("$.content[*]")
+            .andDo(
+                documentationHandler.document(
+                    requestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
+                        parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
+                        parameterWithName("visibility").description("""Filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED". (optional)"""),
+                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this paper. (optional)"),
+                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)"),
+                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)"),
+                        parameterWithName("include").description("A comma-separated set of classes that the resource must have. (optional)"),
+                        parameterWithName("exclude").description("A comma-separated set of classes that the resource must not have. (optional)"),
+                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)"),
+                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
             resourceService.findAll(

@@ -207,7 +207,11 @@ They can appear in the subject or object position in <<Statements,statements>>.
 
 A `GET` request lists all resources:
 
-operation::resources-get-paged[snippets='request-parameters,curl-request']
+operation::resources-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::resources-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 TIP: {pagination_note}
 

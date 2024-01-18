@@ -105,7 +105,7 @@ private const val dummyComparisonDataCiteJson = """
         {
           "relatedIdentifier": "https://doi.org/test/doi",
           "relatedIdentifierType": "DOI",
-          "relationType": "References"
+          "relationType": "IsVariantFormOf"
         }
       ],
       "rightsList": [

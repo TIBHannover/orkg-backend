@@ -70,7 +70,7 @@ data class DataCiteJson(
     data class RelatedIdentifier(
         val relatedIdentifier: String,
         val relatedIdentifierType: String,
-        val relationType: String = "References"
+        val relationType: String = "IsVariantFormOf"
     ) {
         companion object {
             fun fromDOI(doi: String): RelatedIdentifier =

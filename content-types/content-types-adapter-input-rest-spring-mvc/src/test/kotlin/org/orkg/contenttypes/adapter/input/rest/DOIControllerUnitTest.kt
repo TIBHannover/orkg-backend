@@ -16,14 +16,11 @@ import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.UsesMocking
-import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -47,9 +44,6 @@ internal class DOIControllerUnitTest : RestDocsTest("dois") {
     private lateinit var resourceRepository: ResourceRepository
 
     @MockkBean
-    private lateinit var statementService: StatementUseCases
-
-    @MockkBean
     private lateinit var literalService: LiteralUseCases
 
     @Test
@@ -61,7 +55,6 @@ internal class DOIControllerUnitTest : RestDocsTest("dois") {
         val doi = DOI.of("$prefix/$resourceId")
 
         every { resourceRepository.findById(resourceId) } returns Optional.of(resource)
-        every { statementService.findAllBySubjectAndPredicate(resourceId, Predicates.hasDOI, any()) } returns pageOf()
         every { dataciteConfiguration.doiPrefix } returns prefix
         every { doiService.register(any()) } returns doi
         every { literalService.findDOIByContributionId(ThingId("R696002")) } returns Optional.empty()
@@ -99,7 +92,6 @@ internal class DOIControllerUnitTest : RestDocsTest("dois") {
             .andExpect(jsonPath("$.doi").value(doi.value))
 
         verify(exactly = 1) { resourceRepository.findById(resourceId) }
-        verify(exactly = 1) { statementService.findAllBySubjectAndPredicate(resourceId, Predicates.hasDOI, any()) }
         verify(exactly = 1) { dataciteConfiguration.doiPrefix }
         verify(exactly = 1) {
             doiService.register(

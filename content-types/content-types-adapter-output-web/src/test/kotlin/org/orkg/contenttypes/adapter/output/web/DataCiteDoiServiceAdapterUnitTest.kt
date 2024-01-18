@@ -193,7 +193,7 @@ private const val dataCiteRequestJson = """
         {
           "relatedIdentifier": "https://doi.org/10.48366/r609337",
           "relatedIdentifierType": "DOI",
-          "relationType": "References"
+          "relationType": "IsVariantFormOf"
         }
       ],
       "rightsList": [

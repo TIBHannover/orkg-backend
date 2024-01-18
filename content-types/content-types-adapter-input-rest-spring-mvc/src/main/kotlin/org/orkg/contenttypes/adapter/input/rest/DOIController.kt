@@ -4,18 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URI
 import javax.validation.Valid
 import javax.validation.constraints.Size
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
-import org.orkg.contenttypes.domain.DoiAlreadyRegistered
 import org.orkg.contenttypes.domain.UnpublishableThing
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
@@ -36,7 +32,6 @@ class DOIController(
     private val doiService: DoiService,
     private val dataciteConfiguration: DataCiteConfiguration,
     private val resourceRepository: ResourceRepository,
-    private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases
 ) {
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -45,10 +40,6 @@ class DOIController(
             .orElseThrow { ResourceNotFound.withId(request.resourceId) }
         if (resource.classes.intersect(publishableClasses).isEmpty()) {
             throw UnpublishableThing(request.resourceId)
-        }
-        val hasDoiStatements = statementService.findAllBySubjectAndPredicate(request.resourceId, Predicates.hasDOI, PageRequests.SINGLE)
-        if (!hasDoiStatements.isEmpty) {
-            throw DoiAlreadyRegistered(request.resourceId)
         }
         val doi = "${dataciteConfiguration.doiPrefix}/${request.resourceId}"
         doiService.register(

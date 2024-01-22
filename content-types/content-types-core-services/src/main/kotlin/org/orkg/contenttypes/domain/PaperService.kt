@@ -1,8 +1,11 @@
 package org.orkg.contenttypes.domain
 
 import java.net.URI
+import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -43,7 +46,7 @@ import org.orkg.contenttypes.domain.actions.paper.PaperThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperTitleValidator
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.PublishPaperUseCase
-import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -76,9 +79,9 @@ class PaperService(
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
-    private val researchFieldService: RetrieveResearchFieldUseCase,
     private val listService: ListUseCases,
     private val publishingService: PublishingService,
+    private val paperRepository: PaperRepository,
     @Value("\${orkg.publishing.base-url.paper}")
     private val paperPublishBaseUri: String = "http://localhost/paper/"
 ) : PaperUseCases {
@@ -86,42 +89,33 @@ class PaperService(
         resourceRepository.findPaperById(id)
             .map { it.toPaper() }
 
-    override fun findAll(pageable: Pageable): Page<Paper> =
-        resourceRepository.findAll(includeClasses = setOf(Classes.paper), pageable = pageable)
-            .pmap { it.toPaper() }
-
-    override fun findAllByDOI(doi: String, pageable: Pageable): Page<Paper> =
-        statementRepository.findAllBySubjectClassAndDOI(Classes.paper, doi, pageable)
-            .pmap { it.toPaper() }
-
-    override fun findAllByTitle(title: String, pageable: Pageable): Page<Paper> =
-        resourceRepository.findAll(
-            includeClasses = setOf(Classes.paper),
-            label = SearchString.of(title, exactMatch = true),
-            pageable = pageable
-        ).pmap { it.toPaper() }
-
-    override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<Paper> =
-        resourceRepository.findAll(
-            includeClasses = setOf(Classes.paper),
-            visibility = visibility,
-            pageable = pageable
-        ).pmap { it.toPaper() }
-
-    override fun findAllByResearchFieldAndVisibility(
-        researchFieldId: ThingId,
-        visibility: VisibilityFilter,
-        includeSubfields: Boolean,
-        pageable: Pageable
+    override fun findAll(
+        pageable: Pageable,
+        label: SearchString?,
+        doi: String?,
+        visibility: VisibilityFilter?,
+        verified: Boolean?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean
     ): Page<Paper> =
-        researchFieldService.findAllPapersByResearchField(researchFieldId, visibility, includeSubfields, pageable)
-            .pmap { it.toPaper() }
-
-    override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<Paper> =
-        resourceRepository.findAll(
-            includeClasses = setOf(Classes.paper),
-            createdBy = contributorId,
-            pageable = pageable
+        paperRepository.findAll(
+            pageable = pageable,
+            label = label,
+            doi = doi,
+            visibility = visibility,
+            verified = verified,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields
         ).pmap { it.toPaper() }
 
     override fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId> =

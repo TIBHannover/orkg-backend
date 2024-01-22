@@ -24,7 +24,7 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.PublishPaperUseCase
-import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
@@ -55,9 +55,9 @@ class PaperServiceUnitTests {
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val predicateService: PredicateUseCases = mockk()
-    private val researchFieldService: RetrieveResearchFieldUseCase = mockk()
     private val listService: ListUseCases = mockk()
     private val publishingService: PublishingService = mockk()
+    private val paperRepository: PaperRepository = mockk()
 
     private val service = PaperService(
         resourceRepository = resourceRepository,
@@ -69,9 +69,9 @@ class PaperServiceUnitTests {
         statementService = statementService,
         literalService = literalService,
         predicateService = predicateService,
-        researchFieldService = researchFieldService,
         listService = listService,
         publishingService = publishingService,
+        paperRepository = paperRepository,
         paperPublishBaseUri = "https://orkg.org/paper/"
     )
 
@@ -93,7 +93,8 @@ class PaperServiceUnitTests {
             literalService,
             predicateService,
             listService,
-            publishingService
+            publishingService,
+            paperRepository
         )
     }
 

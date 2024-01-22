@@ -4,16 +4,17 @@ import java.net.URI
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.function.BiFunction
-import java.util.stream.Collectors
 import org.jetbrains.annotations.Contract
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Conditions
-import org.neo4j.cypherdsl.core.Cypher.literalOf
+import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.FunctionInvocation
 import org.neo4j.cypherdsl.core.Functions
+import org.neo4j.cypherdsl.core.IdentifiableElement
+import org.neo4j.cypherdsl.core.PatternElement
 import org.neo4j.cypherdsl.core.ResultStatement
 import org.neo4j.cypherdsl.core.SortItem
 import org.neo4j.cypherdsl.core.StatementBuilder
@@ -23,7 +24,6 @@ import org.neo4j.driver.Value
 import org.neo4j.driver.types.MapAccessor
 import org.neo4j.driver.types.Node
 import org.neo4j.driver.types.TypeSystem
-import org.springframework.data.domain.PageRequest
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -41,6 +41,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.output.PredicateRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
@@ -65,7 +66,7 @@ data class StatementMapper(
         `object`: SymbolicName
     ) : this(predicateRepository, subject.value, relation.value, `object`.value)
 
-    override fun apply(typeSystem: TypeSystem, record: Record) : GeneralStatement {
+    override fun apply(typeSystem: TypeSystem, record: Record): GeneralStatement {
         val relation = record[relation]
         return GeneralStatement(
             id = StatementId(relation["statement_id"].asString()),
@@ -199,7 +200,7 @@ internal fun contributionNode() = node("Contribution", "Resource")
 internal fun StatementBuilder.TerminalExposesOrderBy.build(pageable: Pageable): ResultStatement =
     orderBy(pageable.sort.toSortItems()).skip(pageable.offset).limit(pageable.pageSize).build()
 
-internal fun Sort.toSortItems(
+fun Sort.toSortItems(
     node: Expression? = null,
     vararg knownProperties: String
 ): kotlin.collections.List<SortItem> =
@@ -217,26 +218,55 @@ internal fun Sort.toSortItems(
         }
     }.toList()
 
-internal inline fun <T> T?.toCondition(mapper: (T) -> Condition): Condition =
+inline fun <T> T?.toCondition(mapper: (T) -> Condition): Condition =
     this?.let(mapper) ?: Conditions.noCondition()
 
-internal inline fun <T : Collection<*>> T.toCondition(mapper: (T) -> Condition): Condition =
+inline fun <T : Collection<*>> T.toCondition(mapper: (T) -> Condition): Condition =
     if (isEmpty()) Conditions.noCondition() else mapper(this)
 
-internal fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
+fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
     vararg conditions: Condition
 ): StatementBuilder.OrderableOngoingReadingAndWithWithWhere =
     where(conditions.reduceOrNull(Condition::and) ?: Conditions.noCondition())
 
-internal fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
+fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
     conditions: kotlin.collections.List<Condition>
 ): StatementBuilder.OrderableOngoingReadingAndWithWithWhere =
     where(conditions.reduceOrNull(Condition::and) ?: Conditions.noCondition())
 
-internal inline fun Pageable.withDefaultSort(sort: () -> Sort): Pageable =
+fun StatementBuilder.OrderableOngoingReadingAndWithWithWhere.matchPatternsNotNull(
+    vararg patternElement: PatternElement?
+): StatementBuilder.OngoingReading {
+    val patterns = patternElement.filterNotNull()
+    if (patterns.isEmpty()) {
+        return this
+    }
+    return match(patterns)
+}
+
+fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere?.call(
+    function: String,
+    arguments: Array<Expression>,
+    yieldItems: Array<String>,
+    condition: Condition,
+    vararg variables: IdentifiableElement?
+): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
+    this?.let {
+        call(function)
+            .withArgs(*arguments)
+            .yield(*yieldItems)
+            .where(condition)
+            .with(*variables.filterNotNull().toTypedArray())
+    } ?: call(function)
+            .withArgs(*arguments)
+            .yield(*yieldItems)
+            .where(condition)
+            .with(*variables.filterNotNull().toTypedArray())
+
+inline fun Pageable.withDefaultSort(sort: () -> Sort): Pageable =
     if (this.sort.isSorted) this else PageRequest.of(pageNumber, pageSize, sort())
 
-internal fun orderByOptimizations(
+fun orderByOptimizations(
     node: Expression,
     sort: Sort,
     vararg properties: String
@@ -245,3 +275,6 @@ internal fun orderByOptimizations(
     return properties.filter { it in sortProperties }
         .map { node.property(it).isNotNull }
 }
+
+fun node(label: ThingId, vararg additionalLabels: ThingId) =
+    node(label.value, additionalLabels.map { it.value })

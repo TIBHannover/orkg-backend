@@ -2,6 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -9,9 +10,10 @@ import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import org.hamcrest.Matchers.endsWith
-import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -21,7 +23,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.common.exceptions.TooManyParameters
+import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreateContributionRequest
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest
@@ -52,6 +54,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.graph.domain.DOIServiceUnavailable
+import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.VisibilityFilter
@@ -60,6 +63,8 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPaper
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.fixedClock
+import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
@@ -192,10 +197,57 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @Test
     @DisplayName("Given several papers, when they are fetched, then status is 200 OK and papers are returned")
     fun getPaged() {
-        val papers = listOf(createDummyPaper())
-        every { paperService.findAll(any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
+        every {
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        } returns pageOf(createDummyPaper())
 
         documentedGetRequestTo("/api/papers")
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectPaper("$.content[*]")
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        }
+    }
+
+    @Test
+    @DisplayName("Given several papers, when filtering by several parameters, then status is 200 OK and papers are returned")
+    fun getPagedWithParameters() {
+        every {
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        } returns pageOf(createDummyPaper())
+
+        val title = "label"
+        val exact = true
+        val doi = "10.456/8764"
+        val visibility = VisibilityFilter.ALL_LISTED
+        val verified = true
+        val createdBy = ContributorId(UUID.randomUUID())
+        val createdAtStart = OffsetDateTime.now(fixedClock).minusHours(1)
+        val createdAtEnd = OffsetDateTime.now(fixedClock).plusHours(1)
+        val observatoryId = ObservatoryId(UUID.randomUUID())
+        val organizationId = OrganizationId(UUID.randomUUID())
+        val researchFieldId = ThingId("R456")
+        val includeSubfields = true
+
+        documentedGetRequestTo("/api/papers")
+            .param("title", title)
+            .param("exact", exact.toString())
+            .param("doi", doi)
+            .param("visibility", visibility.name)
+            .param("verified", verified.toString())
+            .param("created_by", createdBy.value.toString())
+            .param("created_at_start", createdAtStart.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("created_at_end", createdAtEnd.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("observatory_id", observatoryId.value.toString())
+            .param("organization_id", organizationId.value.toString())
+            .param("research_field", researchFieldId.value)
+            .param("include_subfields", includeSubfields.toString())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -205,138 +257,60 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andDo(
                 documentationHandler.document(
                     requestParameters(
-                        parameterWithName("research_field").description("Optional filter for research field id.").optional(),
-                        parameterWithName("title").description("Optional filter for the title of the paper. Uses exact matching.").optional(),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),
-                        parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created this paper.").optional(),
-                        parameterWithName("research_field").description("Optional filter for research field id.").optional(),
-                        parameterWithName("include_subfields").description("Optional flag for whether subfields are included in the search or not.").optional(),
+                        parameterWithName("title").description("A search term that must be contained in the title of the paper. (optional)"),
+                        parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)"),
+                        parameterWithName("doi").description("Filter for the DOI of the paper. (optional)"),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED"."""),
+                        parameterWithName("verified").description("Filter for the verified flag of the paper. (optional)"),
+                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this paper. (optional)"),
+                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)"),
+                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)"),
+                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)"),
+                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)"),
+                        parameterWithName("research_field").description("Filter for research field id. (optional)"),
+                        parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
                     )
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { paperService.findAll(any()) }
-    }
-
-    @Test
-    fun `Given several papers, when they are fetched by doi, then status is 200 OK and papers are returned`() {
-        val papers = listOf(createDummyPaper())
-        val doi = papers.first().identifiers["doi"]!!
-        every { paperService.findAllByDOI(doi, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
-
-        get("/api/papers?doi=$doi")
-            .accept(PAPER_JSON_V2)
-            .contentType(PAPER_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
-
-        verify(exactly = 1) { paperService.findAllByDOI(doi, any()) }
-    }
-
-    @Test
-    fun `Given several papers, when they are fetched by title, then status is 200 OK and papers are returned`() {
-        val papers = listOf(createDummyPaper())
-        val title = papers.first().title
-        every { paperService.findAllByTitle(title, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
-
-        get("/api/papers?title=$title")
-            .accept(PAPER_JSON_V2)
-            .contentType(PAPER_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
-
-        verify(exactly = 1) { paperService.findAllByTitle(title, any()) }
-    }
-
-    @Test
-    fun `Given several papers, when they are fetched by visibility, then status is 200 OK and papers are returned`() {
-        val papers = listOf(createDummyPaper())
-        val visibility = VisibilityFilter.ALL_LISTED
-        every { paperService.findAllByVisibility(visibility, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
-
-        get("/api/papers?visibility=$visibility")
-            .accept(PAPER_JSON_V2)
-            .contentType(PAPER_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
-
-        verify(exactly = 1) { paperService.findAllByVisibility(visibility, any()) }
-    }
-
-    @Test
-    fun `Given several papers, when they are fetched by contributor id, then status is 200 OK and papers are returned`() {
-        val papers = listOf(createDummyPaper())
-        val contributorId = papers.first().createdBy
-        every { paperService.findAllByContributor(contributorId, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
-
-        get("/api/papers?created_by=$contributorId")
-            .accept(PAPER_JSON_V2)
-            .contentType(PAPER_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
-
-        verify(exactly = 1) { paperService.findAllByContributor(contributorId, any()) }
-    }
-
-    @Test
-    fun `Given several papers, when they are fetched but multiple query parameters are given, then status is 400 BAD REQUEST`() {
-        val papers = listOf(createDummyPaper())
-        val title = papers.first().title
-        val contributorId = papers.first().createdBy
-        val exception = TooManyParameters.atMostOneOf("doi", "title", "visibility", "created_by")
-
-        get("/api/papers?title=$title&created_by=$contributorId")
-            .accept(PAPER_JSON_V2)
-            .contentType(PAPER_JSON_V2)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers"))
-            .andExpect(jsonPath("$.message").value(exception.message))
-    }
-
-    @Test
-    fun `Given several papers, when they are fetched by visibility and research field id, then status is 200 OK and papers are returned`() {
-        val papers = listOf(createDummyPaper())
-        val researchFieldId = papers.first().researchFields.first().id
-        every {
-            paperService.findAllByResearchFieldAndVisibility(
-                researchFieldId = researchFieldId,
-                visibility = VisibilityFilter.ALL_LISTED,
-                includeSubfields = true,
-                pageable = any()
+        verify(exactly = 1) {
+            paperService.findAll(
+                pageable = any(),
+                label = withArg {
+                    it.shouldBeInstanceOf<ExactSearchString>().input shouldBe title
+                },
+                doi = doi,
+                visibility = visibility,
+                verified = verified,
+                createdBy = createdBy,
+                createdAtStart = createdAtStart,
+                createdAtEnd = createdAtEnd,
+                observatoryId = observatoryId,
+                organizationId = organizationId,
+                researchField = researchFieldId,
+                includeSubfields = includeSubfields
             )
-        } returns PageImpl(papers, PageRequest.of(0, 5), 1)
+        }
+    }
 
-        get("/api/papers?research_field=$researchFieldId&visibility=ALL_LISTED&include_subfields=true")
-            .accept(PAPER_JSON_V2)
-            .contentType(PAPER_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
+    @Test
+    fun `Given several papers, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
+        val exception = UnknownSortingProperty("unknown")
+        every {
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        } throws exception
+
+        mockMvc.perform(get("/api/papers?sort=unknown"))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/papers"))
 
         verify(exactly = 1) {
-            paperService.findAllByResearchFieldAndVisibility(
-                researchFieldId = researchFieldId,
-                visibility = VisibilityFilter.ALL_LISTED,
-                includeSubfields = true,
-                pageable = any()
-            )
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 

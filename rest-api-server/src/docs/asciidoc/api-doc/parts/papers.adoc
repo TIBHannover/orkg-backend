@@ -23,15 +23,12 @@ operation::papers-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-NOTE: Not all request parameters can be used in combination with others.
-      Only `visibility`, `research_field` and optionally `include_subfields` can be used together.
-
-operation::papers-get-paged[snippets='request-parameters']
+operation::papers-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 [[papers-contributors]]
 === Fetching contributors for a paper
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributors>> ids.
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributor>> ids.
 
 operation::papers-get-contributors[snippets='curl-request']
 

@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.OffsetDateTime
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
@@ -10,7 +11,6 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
-import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContributionRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
 import org.orkg.contenttypes.domain.PaperNotFound
@@ -23,9 +23,12 @@ import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -64,32 +67,34 @@ class PaperController(
 
     @GetMapping
     fun findAll(
-        @RequestParam("doi", required = false) doi: String?,
         @RequestParam("title", required = false) title: String?,
+        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
+        @RequestParam("doi", required = false) doi: String?,
         @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
+        @RequestParam("verified", required = false) verified: Boolean?,
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
-        pageable: Pageable
-    ): Page<PaperRepresentation> {
-        if (setOf(doi, title, visibility, createdBy).size > 2)
-            throw TooManyParameters.atMostOneOf("doi", "title", "visibility", "created_by")
-        return when {
-            doi != null -> service.findAllByDOI(doi, pageable)
-            title != null -> service.findAllByTitle(title, pageable)
-            visibility != null -> service.findAllByVisibility(visibility, pageable)
-            createdBy != null -> service.findAllByContributor(createdBy, pageable)
-            else -> service.findAll(pageable)
-        }.mapToPaperRepresentation()
-    }
-
-    @GetMapping(params = ["visibility", "research_field"])
-    fun findAll(
-        @RequestParam("visibility") visibility: VisibilityFilter,
-        @RequestParam("research_field") researchField: ThingId,
+        @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
+        @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
+        @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
+        @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
+        @RequestParam("research_field", required = false) researchField: ThingId?,
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
         pageable: Pageable
     ): Page<PaperRepresentation> =
-        service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
-            .mapToPaperRepresentation()
+        service.findAll(
+            pageable = pageable,
+            doi = doi,
+            label = title?.let { SearchString.of(title, exactMatch) },
+            visibility = visibility,
+            verified = verified,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields
+        ).mapToPaperRepresentation()
 
     @PreAuthorizeUser
     @PostMapping(consumes = [PAPER_JSON_V2])
@@ -178,7 +183,6 @@ class PaperController(
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
-
         data class PaperContentsDTO(
             @field:Valid
             val resources: Map<String, ResourceDefinitionDTO>?,

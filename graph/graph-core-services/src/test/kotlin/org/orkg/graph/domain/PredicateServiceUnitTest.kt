@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -37,19 +38,32 @@ class PredicateServiceUnitTest {
     @Test
     fun `given a predicate is created, when an id is given, then it does not get a new id`() {
         val mockPredicateId = ThingId("P1")
+        every { repository.findById(mockPredicateId) } returns Optional.empty()
         every { repository.save(any()) } returns Unit
 
-        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", id = mockPredicateId.value))
+        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", id = mockPredicateId))
 
+        verify(exactly = 1) { repository.findById(mockPredicateId) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.id shouldBe mockPredicateId
+                }
+            )
+        }
         verify(exactly = 0) { repository.nextIdentity() }
     }
 
     @Test
-    fun `given a predicate is created, when the id is invalid, then an exception is thrown`() {
-        val exception = assertThrows<IllegalArgumentException> {
-            service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", id = "!invalid"))
+    fun `given a predicate is created, when an id is taken, then it throws an exception`() {
+        val id = ThingId("P1")
+        every { repository.findById(id) } returns Optional.of(createPredicate(id))
+
+        assertThrows<PredicateAlreadyExists> {
+            service.create(CreatePredicateUseCase.CreateCommand(id = id, label = "irrelevant"))
         }
-        assertThat(exception.message).isEqualTo("Must only contain alphanumeric characters, dashes and underscores")
+
+        verify(exactly = 1) { repository.findById(id) }
     }
 
     @Test
@@ -57,10 +71,10 @@ class PredicateServiceUnitTest {
         val mockPredicateId = ThingId("P1")
         every { repository.nextIdentity() } returns mockPredicateId
 
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows<InvalidLabel> {
             service.create(CreatePredicateUseCase.CreateCommand(label = " \t "))
         }
-        assertThat(exception.message).isEqualTo("Invalid label:  \t ")
+        assertThat(exception.message).isEqualTo("A label must not be blank or contain newlines and must be at most 8164 characters long.")
     }
 
     @Test

@@ -92,7 +92,7 @@ class VisualizationControllerIntegrationTest : RestDocumentationBaseTest() {
             Predicates.hasWebsite,
             Predicates.description,
             Predicates.hasListElement
-        ).forEach { predicateService.createPredicate(label = it.value, id = it.value) }
+        ).forEach { predicateService.createPredicate(it) }
 
         classService.createClasses("Visualization", "Contribution", "Problem", "ResearchField", "Author", "Venue", "Result")
 

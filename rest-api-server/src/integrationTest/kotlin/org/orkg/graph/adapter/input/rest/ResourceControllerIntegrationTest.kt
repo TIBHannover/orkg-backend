@@ -16,6 +16,7 @@ import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -357,24 +358,24 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         )
         val throwAwayClass = classService.createClass(label = "Templated Class")
         val templateLabelPredicate = predicateService.createPredicate(
-            id = "TemplateLabelFormat",
+            id = Predicates.templateLabelFormat,
             label = "Template label format"
         )
         val targetClassPredicate = predicateService.createPredicate(
-            id = "sh:targetClass",
+            id = Predicates.shTargetClass,
             label = "target class"
         )
         val propertyPredicate = predicateService.createPredicate(
-            id = "sh:property",
+            id = Predicates.shProperty,
             label = "property"
         )
         val propertyShapeClass = classService.createClass(
             id = "PropertyShape",
             label = "Property shape"
         )
-        val throwAwayProperty = predicateService.create("Temp property")
+        val throwAwayProperty = predicateService.createPredicate(label = "Temp property")
         val pathPredicate = predicateService.createPredicate(
-            id = "sh:path",
+            id = Predicates.shPath,
             label = "path"
         )
         // create the template
@@ -382,7 +383,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
             classes = setOf(nodeShapeClass.value),
             label = "Throw-way template"
         )
-        val labelFormat = literalService.createLiteral(label = "xx{${throwAwayProperty.id}}xx")
+        val labelFormat = literalService.createLiteral(label = "xx{$throwAwayProperty}xx")
         statementService.create(template, templateLabelPredicate, labelFormat)
         statementService.create(template, targetClassPredicate, throwAwayClass)
         val templateComponent = service.createResource(
@@ -390,14 +391,14 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
             label = "component 1"
         )
         statementService.create(template, propertyPredicate, templateComponent)
-        statementService.create(templateComponent, pathPredicate, throwAwayProperty.id)
+        statementService.create(templateComponent, pathPredicate, throwAwayProperty)
         // Create resource and type it
         val templatedResource = service.createResource(
             classes = setOf(throwAwayClass.value),
             label = "Fancy resource"
         )
         val someValue = literalService.createLiteral(label = value)
-        statementService.create(templatedResource, throwAwayProperty.id, someValue)
+        statementService.create(templatedResource, throwAwayProperty, someValue)
         return templatedResource
     }
 

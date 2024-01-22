@@ -68,10 +68,10 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
         classService.removeAll()
 
         classService.createClasses("Problem", "Contribution", "Author", "Paper")
-        predicateService.createPredicate(id = "P32", label = "addresses")
-        predicateService.createPredicate(id = "hasAuthors", label = "Has Authors")
-        predicateService.createPredicate(id = "P31", label = "Has Contribution")
-        predicateService.createPredicate(id = Predicates.hasListElement.value, label = "has list element")
+        predicateService.createPredicate(Predicates.hasResearchProblem)
+        predicateService.createPredicate(Predicates.hasAuthors)
+        predicateService.createPredicate(Predicates.hasContribution)
+        predicateService.createPredicate(Predicates.hasListElement)
     }
 
     @Test

@@ -17,7 +17,6 @@ import org.orkg.createClasses
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createPredicate
-import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.createUser
 import org.orkg.graph.domain.Classes
@@ -102,8 +101,10 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             Predicates.templateLabelFormat,
             Predicates.templateOfPredicate,
             Predicates.templateOfResearchField,
-            Predicates.templateOfResearchProblem
-        ).forEach { predicateService.createPredicate(label = it.value, id = it.value) }
+            Predicates.templateOfResearchProblem,
+            Predicates.hasResearchProblem,
+            ThingId("P24") // field
+        ).forEach { predicateService.createPredicate(it) }
 
         classService.createClasses(Classes.nodeShape.value, Classes.propertyShape.value, "Problem", "ResearchField")
 
@@ -116,8 +117,6 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
         // Example specific entities
 
         classService.createClasses("C123", "C25", "C28")
-
-        predicateService.createPredicates("P24", "P32")
 
         resourceService.createResource(id = "R15", classes = setOf(Classes.problem.value))
 

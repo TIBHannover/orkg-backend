@@ -65,11 +65,11 @@ class LegacyComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
         classService.createClasses("Author", "Paper", "Contribution", "Comparison")
 
         // Init predicates
-        predicateService.createPredicate("Has Authors", id = "hasAuthors")
-        predicateService.createPredicate("Has Contribution", id = "P31")
-        predicateService.createPredicate("Compares Contribution", id = "compareContribution")
-        predicateService.createPredicate("publication year", id = "P29")
-        predicateService.createPredicate("has list element", id = Predicates.hasListElement.value)
+        predicateService.createPredicate(Predicates.hasAuthors)
+        predicateService.createPredicate(Predicates.hasContribution)
+        predicateService.createPredicate(Predicates.comparesContribution)
+        predicateService.createPredicate(Predicates.yearPublished)
+        predicateService.createPredicate(Predicates.hasListElement)
     }
 
     @Test

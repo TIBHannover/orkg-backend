@@ -14,6 +14,7 @@ import org.orkg.graph.input.CreateObjectUseCase
 import org.orkg.graph.input.CreateObjectUseCase.CreateObjectRequest
 import org.orkg.graph.input.CreateObjectUseCase.ObjectStatement
 import org.orkg.graph.input.CreateObjectUseCase.TempResource
+import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -65,7 +66,12 @@ class ObjectService(
         if (request.hasTempPredicates()) {
             request.predicates!!.forEach {
                 val surrogateId = it[it.keys.first()]!!
-                val predicateId = predicateService.create(userId, it.keys.first()).id
+                val predicateId = predicateService.create(
+                    CreatePredicateUseCase.CreateCommand(
+                        label = it.keys.first(),
+                        contributorId = userId
+                    )
+                )
                 predicates[surrogateId] = predicateId
             }
         }

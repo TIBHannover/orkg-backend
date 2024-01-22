@@ -8,8 +8,8 @@ import org.orkg.createClass
 import org.orkg.createClasses
 import org.orkg.createLiteral
 import org.orkg.createPredicate
-import org.orkg.createPredicates
 import org.orkg.createResource
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -68,10 +68,9 @@ class StatsControllerTest : RestDocumentationBaseTest() {
         resourceService.createResource(classes = setOf("Paper"), label = "Paper 222")
         resourceService.createResource(classes = setOf("Paper"), label = "Paper 432")
 
-        predicateService.createPredicates(
-            "P32" to "has research problem",
-            "P31" to "has contribution"
-        )
+        predicateService.createPredicate(Predicates.hasResearchProblem)
+        predicateService.createPredicate(Predicates.hasContribution)
+
         predicateService.createPredicate(label = "DOI")
         predicateService.createPredicate(label = "yields")
         literalService.createLiteral(label = "Springer")

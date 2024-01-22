@@ -97,7 +97,7 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
             Predicates.hasWebsite,
             Predicates.description,
             Predicates.hasListElement
-        ).forEach { predicateService.createPredicate(label = it.value, id = it.value) }
+        ).forEach { predicateService.createPredicate(it) }
 
         classService.createClasses("Comparison", "Contribution", "Problem", "ResearchField", "Author", "Venue", "Result")
 

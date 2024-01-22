@@ -72,6 +72,14 @@ fun ResultActions.andExpectResource(path: String = "$"): ResultActions = this
 //    .andExpect(jsonPath("$path.formatted_label", `is`(notNullValue())))
 //    .andExpect(jsonPath("$path.unlisted_by", `is`(notNullValue())))
 
+fun ResultActions.andExpectPredicate(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.description").hasJsonPath())
+    .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
+    .andExpect(jsonPath("$path._class").value("predicate"))
+
 fun ResultActions.andExpectComparison(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.title", `is`(notNullValue())))

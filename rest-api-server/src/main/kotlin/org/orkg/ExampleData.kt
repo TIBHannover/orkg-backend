@@ -55,9 +55,9 @@ class ExampleData(
         //
         // Predicates
         //
-        val addresses = predicateService.create("addresses").id
-        val yields = predicateService.create("yields").id
-        val employs = predicateService.create("employs").id
+        val addresses = predicateService.create("addresses")
+        val yields = predicateService.create("yields")
+        val employs = predicateService.create("employs")
 
         //
         // Statements
@@ -115,7 +115,7 @@ class ExampleData(
         predicateService.create("approach")
         predicateService.create("evaluation")
         predicateService.create("implementation")
-        val subfieldPredicate = predicateService.create("has subfield").id
+        val subfieldPredicate = predicateService.create("has subfield")
 
         //
         // Class
@@ -157,6 +157,9 @@ class ExampleData(
             }
         }
     }
+
+    private fun CreatePredicateUseCase.create(label: String): ThingId =
+        create(CreatePredicateUseCase.CreateCommand(label = label))
 
     private fun statementsPresent() =
         statementService.totalNumberOfStatements() > 0

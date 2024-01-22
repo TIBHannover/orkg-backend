@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank
 import org.orkg.common.ThingId
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreatePredicateUseCase
+import org.orkg.graph.input.PredicateUseCases
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationArguments
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component
 @Profile("development", "docker")
 class DataInitializer(
     private val classService: ClassUseCases,
-    private val predicateService: CreatePredicateUseCase
+    private val predicateService: PredicateUseCases
 ) : ApplicationRunner {
 
     private val logger = LoggerFactory.getLogger(this::class.java.name)
@@ -65,10 +66,16 @@ class DataInitializer(
      * Create Predicates
      */
     private fun createPredicates(predicateList: List<CreatePredicatesCommand>) {
-        predicateList.forEach { createPredicateCommand ->
-            predicateService.createIfNotExists(
-                ThingId(createPredicateCommand.id),
-                createPredicateCommand.label)
+        predicateList.forEach { (id, label) ->
+            val thingId = ThingId(id)
+            if (predicateService.findById(thingId).isEmpty) {
+                predicateService.create(
+                    CreatePredicateUseCase.CreateCommand(
+                        id = thingId,
+                        label = label
+                    )
+                )
+            }
         }
     }
 }

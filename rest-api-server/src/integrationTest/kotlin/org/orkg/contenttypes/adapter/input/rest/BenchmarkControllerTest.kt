@@ -14,9 +14,9 @@ import org.orkg.createClass
 import org.orkg.createClasses
 import org.orkg.createLiteral
 import org.orkg.createPredicate
-import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -74,23 +74,23 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
 
-        predicateService.createPredicates(
-            "P30" to "Has research field",
-            "P31" to "Has contribution",
-            "P32" to "Has research problem",
-            "P36" to "Has sub-field",
-            labelsAndClasses.benchmarkPredicate to "Has benchmark",
-            labelsAndClasses.datasetPredicate to "Has dataset",
-            labelsAndClasses.sourceCodePredicate to "Has code",
-            labelsAndClasses.modelPredicate to "Has model",
-            labelsAndClasses.metricPredicate to "Has metric",
-            labelsAndClasses.quantityValuePredicate to "Has quantity value", // legacy: HAS_VALUE
-            labelsAndClasses.quantityPredicate to "Has evaluation"
-        )
+        predicateService.createPredicate(Predicates.hasResearchField)
+        predicateService.createPredicate(Predicates.hasContribution)
+        predicateService.createPredicate(Predicates.hasResearchProblem)
+        predicateService.createPredicate(Predicates.hasSubfield)
+
+        listOf(
+            labelsAndClasses.benchmarkPredicate,
+            labelsAndClasses.datasetPredicate,
+            labelsAndClasses.sourceCodePredicate,
+            labelsAndClasses.modelPredicate,
+            labelsAndClasses.metricPredicate,
+            labelsAndClasses.quantityValuePredicate,
+            labelsAndClasses.quantityPredicate,
+            labelsAndClasses.numericValuePredicate
+        ).forEach { predicateService.createPredicate(ThingId(it)) }
 
         classService.createClasses("Paper", "Problem", "ResearchField", "Contribution")
-
-        predicateService.createPredicate(id = labelsAndClasses.numericValuePredicate, label = "Has numeric value")
 
         classService.createClass(
             label = "Quantity",

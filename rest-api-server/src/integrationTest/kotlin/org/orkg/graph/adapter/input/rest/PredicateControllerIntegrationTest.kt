@@ -11,7 +11,6 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
-import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -32,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Predicate Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class PredicateControllerTest : RestDocumentationBaseTest() {
+class PredicateControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var service: PredicateUseCases
@@ -123,46 +122,6 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
                     listOfPredicatesResponseFields3()
-                )
-            )
-    }
-
-    @Test
-    @TestWithMockUser
-    fun add() {
-        val resource = mapOf("label" to "knows")
-
-        mockMvc
-            .perform(postRequestWithBody("/api/predicates/", resource))
-            .andExpect(status().isCreated)
-            .andDo(
-                document(
-                    snippet,
-                    requestFields(
-                        fieldWithPath("label").description("The predicate label")
-                    ),
-                    createdResponseHeaders(),
-                    responseFields(predicateResponseFields())
-                )
-            )
-    }
-
-    @Test
-    @TestWithMockUser
-    fun addExistingId() {
-        service.createPredicate(id = "dummy", label = "foo")
-        val duplicatePredicate = mapOf("id" to "dummy", "label" to "bar")
-
-        mockMvc
-            .perform(postRequestWithBody("/api/predicates/", duplicatePredicate))
-            .andExpect(status().isBadRequest)
-            .andDo(
-                document(
-                    snippet,
-                    requestFields(
-                        fieldWithPath("id").description("The predicate id"),
-                        fieldWithPath("label").description("The predicate label")
-                    )
                 )
             )
     }

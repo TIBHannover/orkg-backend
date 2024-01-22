@@ -292,11 +292,11 @@ The predicate can be retrieved by following the URI in the `Location` header fie
 
 NOTE: The response body contains the created predicate for convenience. This might be subject to change.
 
-operation::predicate-controller-test-add[snippets='request-fields,curl-request,http-response']
+operation::predicates-create[snippets='request-fields,curl-request,http-response']
 
 The response body consists of the following fields:
 
-operation::predicate-controller-test-add[snippets='response-fields']
+operation::predicates-create[snippets='response-fields']
 
 [[predicates-edit]]
 === Editing a predicate

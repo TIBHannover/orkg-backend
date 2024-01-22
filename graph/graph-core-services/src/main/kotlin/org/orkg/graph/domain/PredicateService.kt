@@ -27,35 +27,17 @@ class PredicateService(
     override fun exists(id: ThingId): Boolean = repository.exists(id)
 
     override fun create(command: CreatePredicateUseCase.CreateCommand): ThingId {
-        val id = if (command.id != null) ThingId(command.id!!) else repository.nextIdentity()
+        val id = command.id
+            ?.also { id -> repository.findById(id).ifPresent { throw PredicateAlreadyExists(id) } }
+            ?: repository.nextIdentity()
         val predicate = Predicate(
             id = id,
-            label = Label.ofOrNull(command.label)?.value
-                ?: throw IllegalArgumentException("Invalid label: ${command.label}"),
+            label = Label.ofOrNull(command.label)?.value ?: throw InvalidLabel(),
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId ?: ContributorId.createUnknownContributor()
         )
         repository.save(predicate)
         return id
-    }
-
-    override fun create(label: String): Predicate {
-        val newThingId = create(
-            CreatePredicateUseCase.CreateCommand(
-                label = label
-            )
-        )
-        return repository.findById(newThingId).get()
-    }
-
-    override fun create(userId: ContributorId, label: String): Predicate {
-        val newThingId = create(
-            CreatePredicateUseCase.CreateCommand(
-                label = label,
-                contributorId = userId
-            )
-        )
-        return repository.findById(newThingId).get()
     }
 
     override fun findAll(pageable: Pageable): Page<Predicate> =
@@ -74,20 +56,6 @@ class PredicateService(
         found = found.copy(label = command.label)
 
         repository.save(found)
-    }
-
-    override fun createIfNotExists(id: ThingId, label: String) {
-        val oPredicate = repository.findById(id)
-
-        if (oPredicate.isEmpty) {
-            val p = Predicate(
-                label = label,
-                id = id,
-                createdBy = ContributorId.createUnknownContributor(),
-                createdAt = OffsetDateTime.now(clock)
-            )
-            repository.save(p)
-        }
     }
 
     override fun delete(predicateId: ThingId) {

@@ -43,21 +43,17 @@ fun CreateClassUseCase.createClass(
 
 // Predicates
 
-fun CreatePredicateUseCase.createPredicates(vararg predicates: Pair<String, String>) =
-    predicates.forEach {
-        createPredicate(label = it.second, id = it.first)
-    }
-
-fun CreatePredicateUseCase.createPredicates(vararg predicates: String) =
-    predicates.forEach {
-        createPredicate(label = it, id = it)
-    }
-
 fun CreatePredicateUseCase.createPredicate(
-    label: String,
-    id: String? = null
-): ThingId =
-    this.create(CreatePredicateUseCase.CreateCommand(label, id, ContributorId.createUnknownContributor()))
+    id: ThingId? = null,
+    label: String? = null,
+    contributorId: ContributorId? = null,
+): ThingId = create(
+    CreatePredicateUseCase.CreateCommand(
+        id = id,
+        label = label ?: "label",
+        contributorId = contributorId ?: ContributorId.createUnknownContributor()
+    )
+)
 
 // Resources
 

@@ -85,22 +85,20 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
         assertThat(organizationService.listOrganizations()).hasSize(0)
         assertThat(organizationService.listConferences()).hasSize(0)
 
-        listOf(
-            Predicates.hasDOI,
-            Predicates.hasAuthors,
-            Predicates.monthPublished,
-            Predicates.yearPublished,
-            Predicates.hasResearchField,
-            Predicates.hasContribution,
-            Predicates.hasURL,
-            Predicates.hasResearchProblem,
-            Predicates.hasEvaluation,
-            Predicates.hasORCID,
-            Predicates.hasVenue,
-            Predicates.hasWebsite,
-            Predicates.description,
-            Predicates.hasListElement
-        ).forEach { predicateService.createPredicate(label = it.value, id = it.value) }
+        predicateService.createPredicate(Predicates.hasDOI)
+        predicateService.createPredicate(Predicates.hasAuthors)
+        predicateService.createPredicate(Predicates.monthPublished)
+        predicateService.createPredicate(Predicates.yearPublished)
+        predicateService.createPredicate(Predicates.hasResearchField)
+        predicateService.createPredicate(Predicates.hasContribution)
+        predicateService.createPredicate(Predicates.hasURL)
+        predicateService.createPredicate(Predicates.hasResearchProblem)
+        predicateService.createPredicate(Predicates.hasEvaluation)
+        predicateService.createPredicate(Predicates.hasORCID)
+        predicateService.createPredicate(Predicates.hasVenue)
+        predicateService.createPredicate(Predicates.hasWebsite)
+        predicateService.createPredicate(Predicates.description)
+        predicateService.createPredicate(Predicates.hasListElement)
 
         classService.createClasses("Paper", "Contribution", "Problem", "ResearchField", "Author", "Venue", "Result")
 

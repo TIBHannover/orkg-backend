@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.createClasses
 import org.orkg.createLiteral
-import org.orkg.createPredicates
+import org.orkg.createPredicate
 import org.orkg.createResource
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -61,10 +62,8 @@ class ContributionComparisonControllerIntegrationTest : RestDocumentationBaseTes
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
 
-        predicateService.createPredicates(
-            "P29" to "publication year",
-            "P31" to "Has contribution",
-        )
+        predicateService.createPredicate(Predicates.yearPublished)
+        predicateService.createPredicate(Predicates.hasContribution)
 
         classService.createClasses("Paper", "Contribution")
     }

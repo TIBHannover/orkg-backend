@@ -209,7 +209,7 @@ class ListMigrationRunner(
             val predicateId = predicateService.create(
                 CreatePredicateUseCase.CreateCommand(
                     label = label,
-                    id = id.value
+                    id = id
                 )
             )
             predicateRepository.findById(predicateId).get()

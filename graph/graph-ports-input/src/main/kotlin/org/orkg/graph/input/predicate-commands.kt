@@ -2,19 +2,13 @@ package org.orkg.graph.input
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.graph.domain.Predicate
 
 interface CreatePredicateUseCase {
     fun create(command: CreateCommand): ThingId
 
-    // legacy methods:
-    fun create(label: String): Predicate
-    fun create(userId: ContributorId, label: String): Predicate
-    fun createIfNotExists(id: ThingId, label: String)
-
     data class CreateCommand(
+        val id: ThingId? = null,
         val label: String,
-        val id: String? = null,
         val contributorId: ContributorId? = null
     )
 }

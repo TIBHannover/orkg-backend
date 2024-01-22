@@ -1,14 +1,10 @@
 package org.orkg.graph.adapter.input.rest
 
-import dev.forkhandles.values.ofOrNull
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeCurator
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
-import org.orkg.graph.domain.InvalidLabel
-import org.orkg.graph.domain.Label
-import org.orkg.graph.domain.PredicateAlreadyExists
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreatePredicateUseCase
@@ -61,18 +57,17 @@ class PredicateController(
         uriComponentsBuilder: UriComponentsBuilder,
         @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<PredicateRepresentation> {
-        Label.ofOrNull(predicate.label) ?: throw InvalidLabel()
-        if (predicate.id != null && service.findById(predicate.id).isPresent) throw PredicateAlreadyExists(predicate.id)
         val id = service.create(
             CreatePredicateUseCase.CreateCommand(
                 contributorId = currentUser.contributorId(),
-                id = predicate.id?.value,
+                id = predicate.id,
                 label = predicate.label,
             )
         )
-
-        val location = uriComponentsBuilder.path("api/predicates/{id}").buildAndExpand(id).toUri()
-
+        val location = uriComponentsBuilder
+            .path("api/predicates/{id}")
+            .buildAndExpand(id)
+            .toUri()
         return created(location).body(service.findById(id).mapToPredicateRepresentation().get())
     }
 
@@ -98,13 +93,13 @@ class PredicateController(
         return ResponseEntity.noContent().build()
     }
 
+    data class CreatePredicateRequest(
+        val id: ThingId?,
+        val label: String
+    )
+
     data class ReplacePredicateRequest(
         val label: String,
         val description: String? = null,
     )
 }
-
-data class CreatePredicateRequest(
-    val id: ThingId?,
-    val label: String
-)

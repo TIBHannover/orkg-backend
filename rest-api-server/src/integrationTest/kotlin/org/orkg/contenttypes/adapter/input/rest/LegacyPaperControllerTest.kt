@@ -14,7 +14,7 @@ import org.orkg.contenttypes.input.LegacyCreatePaperUseCase.LegacyCreatePaperReq
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase.PaperDefinition
 import org.orkg.contenttypes.input.LegacyPaperUseCases
 import org.orkg.createClasses
-import org.orkg.createPredicates
+import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
@@ -74,20 +74,18 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
 
-        predicateService.createPredicates(
-            "P26" to "Has DOI",
-            "hasAuthors" to "Has Authors",
-            "P28" to "Has publication month",
-            "P29" to "Has publication year",
-            "P30" to "Has Research field",
-            "P31" to "Has contribution",
-            "P32" to "Has research problem",
-            "HAS_EVALUATION" to "Has evaluation",
-            "url" to "Has url",
-            "HAS_ORCID" to "Has ORCID",
-            "HAS_VENUE" to "Has Venue",
-            Predicates.hasListElement.value to "has list element"
-        )
+        predicateService.createPredicate(Predicates.hasDOI)
+        predicateService.createPredicate(Predicates.hasAuthors)
+        predicateService.createPredicate(Predicates.monthPublished)
+        predicateService.createPredicate(Predicates.yearPublished)
+        predicateService.createPredicate(Predicates.hasResearchField)
+        predicateService.createPredicate(Predicates.hasContribution)
+        predicateService.createPredicate(Predicates.hasResearchProblem)
+        predicateService.createPredicate(Predicates.hasEvaluation)
+        predicateService.createPredicate(Predicates.hasURL)
+        predicateService.createPredicate(Predicates.hasORCID)
+        predicateService.createPredicate(Predicates.hasVenue)
+        predicateService.createPredicate(Predicates.hasListElement)
 
         classService.createClasses("Paper", "Contribution", "Problem", "ResearchField", "Author", "Venue")
 
@@ -400,8 +398,8 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetchPapersRelatedToAParticularResource() {
-        val predicate1 = predicateService.create("Predicate 1").id
-        val predicate2 = predicateService.create("Predicate 2").id
+        val predicate1 = predicateService.createPredicate(label = "Predicate 1")
+        val predicate2 = predicateService.createPredicate(label = "Predicate 2")
 
         val relatedPaper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")
         val relatedPaper2 = resourceService.createResource(setOf("Paper"), label = "Paper 2")

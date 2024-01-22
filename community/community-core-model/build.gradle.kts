@@ -16,7 +16,6 @@ dependencies {
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(project(":identity-management:idm-core-model"))
     testFixturesImplementation(project(":media-storage:media-storage-core-model"))
-    testFixturesImplementation(project(":community:community-adapter-output-spring-data-jpa"))
 }
 
 testing {

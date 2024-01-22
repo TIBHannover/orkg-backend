@@ -476,8 +476,8 @@ class PaperPublicationInfoUpdaterUnitTest {
             )
         }
     }
-    
-    @Test
+
+@Test
     fun `Given a paper update command, when updating publication year with a new value, it replaces the old statement`() {
         val paper = createDummyPaper().copy(
             publicationInfo = PublicationInfo(
@@ -571,8 +571,8 @@ class PaperPublicationInfoUpdaterUnitTest {
             )
         }
     }
-    
-    @Test
+
+@Test
     fun `Given a paper update command, when updating publication venue with the same value, it does nothing`() {
         val publicationInfo = PublicationInfo(
             publishedMonth = null,

@@ -25,7 +25,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
     override fun nextIdentity(): ThingId {
         var count = entities.size.toLong()
         var id = ThingId("R$count")
-        while(id in entities) {
+        while (id in entities) {
             id = ThingId("R${++count}")
         }
         return id
@@ -80,26 +80,26 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
                 pageable.withDefaultSort { Sort.by("created_at") }.sort.resourceComparator
             },
             predicate = {
-                (label == null || it.label.matches(label))
-                    && (visibility == null || when (visibility) {
+                (label == null || it.label.matches(label)) &&
+                    (visibility == null || when (visibility) {
                         VisibilityFilter.ALL_LISTED -> it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED
                         VisibilityFilter.UNLISTED -> it.visibility == Visibility.UNLISTED
                         VisibilityFilter.FEATURED -> it.visibility == Visibility.FEATURED
                         VisibilityFilter.NON_FEATURED -> it.visibility == Visibility.DEFAULT
                         VisibilityFilter.DELETED -> it.visibility == Visibility.DELETED
-                    })
-                    && (createdBy == null || it.createdBy == createdBy)
-                    && (createdAtStart == null || it.createdAt >= createdAtStart)
-                    && (createdAtEnd == null || it.createdAt <= createdAtEnd)
-                    && (includeClasses.isEmpty() || includeClasses.all { `class` -> `class` in it.classes })
-                    && (excludeClasses.isEmpty() || excludeClasses.none { `class` -> `class` in it.classes })
-                    && (observatoryId == null || it.observatoryId == observatoryId)
-                    && (organizationId == null || it.organizationId == organizationId)
+                    }) &&
+                    (createdBy == null || it.createdBy == createdBy) &&
+                    (createdAtStart == null || it.createdAt >= createdAtStart) &&
+                    (createdAtEnd == null || it.createdAt <= createdAtEnd) &&
+                    (includeClasses.isEmpty() || includeClasses.all { `class` -> `class` in it.classes }) &&
+                    (excludeClasses.isEmpty() || excludeClasses.none { `class` -> `class` in it.classes }) &&
+                    (observatoryId == null || it.observatoryId == observatoryId) &&
+                    (organizationId == null || it.organizationId == organizationId)
             }
         )
 
     override fun findAllPapersByLabel(label: String) =
-        entities.values.filter { it.label.equals(label, ignoreCase = true) && paperClass in it.classes && paperDeletedClass !in it.classes}
+        entities.values.filter { it.label.equals(label, ignoreCase = true) && paperClass in it.classes && paperDeletedClass !in it.classes }
 
     override fun findPaperByLabel(label: String) =
         Optional.ofNullable(entities.values.firstOrNull { it.label.equals(label, ignoreCase = true) && paperClass in it.classes })
@@ -112,7 +112,6 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
 
     override fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Resource> =
         findAllFilteredAndPaged(pageable) { (it.verified ?: false) == verified && paperClass in it.classes }
-
 
     override fun findAllContributorIds(pageable: Pageable) =
         entities.values
@@ -151,7 +150,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         id: ObservatoryId,
         pageable: Pageable
     ): Page<Resource> = findAllFilteredAndPaged(pageable) {
-        (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && it.observatoryId == id
-            && it.classes.any { `class` -> `class` in classes }
+        (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && it.observatoryId == id &&
+            it.classes.any { `class` -> `class` in classes }
     }
 }

@@ -5,7 +5,6 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.adapter.output.jpa.internal.OrganizationEntity
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.Observatory
 import org.orkg.community.domain.Organization
@@ -38,20 +37,6 @@ fun createOrganization(
     type: OrganizationType = OrganizationType.GENERAL,
     logoId: ImageId? = null
 ) = Organization(id, name, createdBy, homepage, observatories, displayId, type, logoId)
-
-/**
- * This method should only be used for mocking purposes, as does not return a valid database entity.
- */
-fun Organization.toOrganizationEntity(): OrganizationEntity =
-    OrganizationEntity().also {
-        it.id = id!!.value
-        it.name = name
-        it.createdBy = createdBy?.value
-        it.url = homepage
-        it.displayId = displayId
-        it.type = type
-        it.logoId = logoId?.value
-    }
 
 fun createObservatory(
     organizationIds: Set<OrganizationId> = emptySet(),

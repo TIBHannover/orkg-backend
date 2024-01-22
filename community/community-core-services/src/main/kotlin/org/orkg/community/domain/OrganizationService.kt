@@ -3,10 +3,9 @@ package org.orkg.community.domain
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId
-import org.orkg.community.adapter.output.jpa.internal.OrganizationEntity
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.community.input.UpdateOrganizationUseCases
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.mediastorage.domain.Image
 import org.orkg.mediastorage.domain.ImageId
 import org.orkg.mediastorage.input.CreateImageUseCase
@@ -17,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class OrganizationService(
-    private val postgresOrganizationRepository: PostgresOrganizationRepository,
+    private val postgresOrganizationRepository: OrganizationRepository,
     private val imageService: ImageUseCases
 ) : OrganizationUseCases {
     override fun create(
@@ -30,74 +29,64 @@ class OrganizationService(
         logoId: ImageId?
     ): OrganizationId {
         val organizationId = id ?: OrganizationId(UUID.randomUUID())
-        val newOrganization = OrganizationEntity().apply {
-            this.id = organizationId.value
-            name = organizationName
-            this.createdBy = createdBy.value
-            this.url = url
-            this.displayId = displayId
-            this.type = type
-            this.logoId = logoId?.value
-        }
+        val newOrganization = Organization(
+            id = organizationId,
+            name = organizationName,
+            createdBy = createdBy,
+            homepage = url,
+            displayId = displayId,
+            type = type,
+            logoId = logoId,
+        )
         postgresOrganizationRepository.save(newOrganization)
         return organizationId
     }
 
-    override fun listOrganizations(): List<Organization> {
-        return postgresOrganizationRepository
-            .findByType(OrganizationType.GENERAL)
-            .map(OrganizationEntity::toOrganization)
-    }
+    override fun listOrganizations(): List<Organization> =
+        postgresOrganizationRepository.findByType(OrganizationType.GENERAL)
 
     override fun listConferences(): List<Organization> =
-        postgresOrganizationRepository
-            .findByType(OrganizationType.CONFERENCE)
-            .map(OrganizationEntity::toOrganization)
+        postgresOrganizationRepository.findByType(OrganizationType.CONFERENCE)
 
     override fun findById(id: OrganizationId): Optional<Organization> =
-        postgresOrganizationRepository
-            .findById(id.value)
-            .map(OrganizationEntity::toOrganization)
+        postgresOrganizationRepository.findById(id)
 
     override fun findByName(name: String): Optional<Organization> =
-        postgresOrganizationRepository
-            .findByName(name)
-            .map(OrganizationEntity::toOrganization)
+        postgresOrganizationRepository.findByName(name)
 
     override fun findByDisplayId(name: String): Optional<Organization> =
-        postgresOrganizationRepository
-            .findByDisplayId(name)
-            .map(OrganizationEntity::toOrganization)
+        postgresOrganizationRepository.findByDisplayId(name)
 
     override fun updateOrganization(organization: Organization) {
-        val entity = postgresOrganizationRepository.findById(organization.id!!.value).get()
+        val found = postgresOrganizationRepository.findById(organization.id!!)
+            .orElseThrow { OrganizationNotFound(organization.id!!) }
 
-        if (organization.name != entity.name)
-            entity.name = organization.name
+        if (organization.name != found.name)
+            found.name = organization.name
 
-        if (organization.homepage != entity.url)
-            entity.url = organization.homepage
+        if (organization.homepage != found.homepage)
+            found.homepage = organization.homepage
 
-        if (organization.type != entity.type)
-            entity.type = organization.type
+        if (organization.type != found.type)
+            found.type = organization.type
 
-        postgresOrganizationRepository.save(entity)
+        postgresOrganizationRepository.save(found)
     }
 
     override fun removeAll() = postgresOrganizationRepository.deleteAll()
 
     override fun findLogo(id: OrganizationId): Optional<Image> {
-        val organization = postgresOrganizationRepository.findById(id.value)
+        val organization = postgresOrganizationRepository.findById(id)
             .orElseThrow { OrganizationNotFound(id) }
-        return if (organization.logoId != null) imageService.find(ImageId(organization.logoId!!))
+        return if (organization.logoId != null) imageService.find(ImageId(organization.logoId!!.value))
         else Optional.empty()
     }
 
     override fun updateLogo(id: OrganizationId, image: UpdateOrganizationUseCases.RawImage, contributor: ContributorId?) {
-        val organization = postgresOrganizationRepository.findById(id.value)
+        val organization = postgresOrganizationRepository.findById(id)
             .orElseThrow { OrganizationNotFound(id) }
         val command = CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributor)
-        organization.logoId = imageService.create(command).value
+        organization.logoId = imageService.create(command)
         postgresOrganizationRepository.save(organization)
     }
 
@@ -105,11 +94,11 @@ class OrganizationService(
         contributorId: ContributorId,
         command: UpdateOrganizationUseCases.UpdateOrganizationRequest
     ) {
-        val organization = postgresOrganizationRepository.findById(command.id.value)
+        val organization = postgresOrganizationRepository.findById(command.id)
             .orElseThrow { OrganizationNotFound(command.id) }
             .apply {
                 name = command.name ?: name
-                url = command.url ?: url
+                homepage = command.url ?: homepage
                 type = command.type ?: type
                 if (command.logo != null) {
                     logoId = imageService.create(
@@ -118,7 +107,7 @@ class OrganizationService(
                             command.logo!!.mimeType,
                             contributorId
                         )
-                    ).value
+                    )
                 }
             }
         postgresOrganizationRepository.save(organization)

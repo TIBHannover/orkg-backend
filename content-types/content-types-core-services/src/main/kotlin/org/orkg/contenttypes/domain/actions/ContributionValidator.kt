@@ -6,7 +6,6 @@ import org.orkg.contenttypes.domain.InvalidStatementSubject
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
 import org.orkg.contenttypes.input.ContributionDefinition
-import org.orkg.contenttypes.input.CreatePaperUseCase.CreateCommand.PaperContents
 import org.orkg.contenttypes.input.ContributionDefinition.StatementObjectDefinition
 import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.Class

@@ -23,9 +23,9 @@ class PostgresContainerInitializer : ApplicationContextInitializer<ConfigurableA
 
     private fun PostgreSQLContainer<*>.settings() = listOf(
         "spring.datasource.url=${getJdbcUrl()}",
-        "spring.datasource.username=${username}",
-        "spring.datasource.password=${password}",
-        "spring.datasource.driver-class-name=${driverClassName}",
+        "spring.datasource.username=$username",
+        "spring.datasource.password=$password",
+        "spring.datasource.driver-class-name=$driverClassName",
         "spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect",
         "spring.jpa.hibernate.ddl-auto=validate",
         "spring.jpa.show-sql=true",

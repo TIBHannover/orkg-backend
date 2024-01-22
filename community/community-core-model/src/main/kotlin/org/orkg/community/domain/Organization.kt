@@ -26,7 +26,7 @@ data class Organization(
     var type: OrganizationType?,
 
     @JsonIgnore
-    val logoId: ImageId?
+    var logoId: ImageId?
 )
 
 enum class OrganizationType {

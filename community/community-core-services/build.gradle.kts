@@ -9,18 +9,14 @@ dependencies {
     api(project(":community:community-ports-input"))
     api(project(":community:community-ports-output"))
 
-    implementation(project(":community:community-adapter-output-spring-data-jpa")) // for entities, TODO: break dependency
-
     implementation(project(":common"))
     implementation(project(":identity-management:idm-ports-output")) // for UserRepository, TODO: break dependency
-    implementation(project(":graph:graph-core-model"))
+    implementation(project(":graph:graph-core-model")) // for ResearchFields
     implementation(project(":graph:graph-ports-output"))
     implementation(project(":media-storage:media-storage-ports-input"))
     implementation(project(":media-storage:media-storage-core-model"))
 
     implementation("org.springframework:spring-context")
-
-    implementation("org.springframework.data:spring-data-jpa") // because of adapter, TODO: break dependency
 }
 
 testing {

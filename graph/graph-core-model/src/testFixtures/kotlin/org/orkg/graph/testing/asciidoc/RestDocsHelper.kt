@@ -5,7 +5,6 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 
-
 val allowedExtractionMethodValues =
     ExtractionMethod.values().sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
 

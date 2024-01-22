@@ -12,16 +12,14 @@ import org.orkg.auth.testing.fixtures.createUser
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.adapter.output.jpa.internal.OrganizationEntity
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.domain.Observatory
-import org.orkg.community.domain.Organization
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.springframework.data.domain.PageRequest
 
 interface ObservatoryRepositoryContractTest {
     val repository: ObservatoryRepository
-    val organizationRepository: PostgresOrganizationRepository
+    val organizationRepository: OrganizationRepository
     val userRepository: UserRepository
 
     @Test
@@ -195,7 +193,7 @@ interface ObservatoryRepositoryContractTest {
         return observatory
     }
 
-    private fun PostgresOrganizationRepository.createOrganization(): OrganizationId {
+    private fun OrganizationRepository.createOrganization(): OrganizationId {
         val organizationId = OrganizationId(UUID.randomUUID())
         val organization = org.orkg.community.testing.fixtures.createOrganization().copy(
             id = organizationId,
@@ -205,20 +203,9 @@ interface ObservatoryRepositoryContractTest {
         if (userRepository.findById(createdBy).isEmpty) {
             userRepository.save(createUser(createdBy))
         }
-        this.save(toOrganizationEntity(organization))
+        this.save(organization)
         return organizationId
     }
-
-    private fun PostgresOrganizationRepository.toOrganizationEntity(organization: Organization): OrganizationEntity =
-        findById(organization.id!!.value).orElse(OrganizationEntity()).apply {
-            id = organization.id!!.value
-            name = organization.name
-            createdBy = organization.createdBy?.value
-            url = organization.homepage
-            displayId = organization.displayId
-            type = organization.type
-            logoId = organization.logoId?.value
-        }
 
     fun cleanUpAfterEach()
 

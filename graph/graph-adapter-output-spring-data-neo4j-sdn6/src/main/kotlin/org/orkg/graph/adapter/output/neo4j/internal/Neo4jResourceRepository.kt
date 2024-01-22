@@ -1,9 +1,7 @@
 package org.orkg.graph.adapter.output.neo4j.internal
 
 import java.util.*
-import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
-import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Visibility
 import org.springframework.data.domain.Page

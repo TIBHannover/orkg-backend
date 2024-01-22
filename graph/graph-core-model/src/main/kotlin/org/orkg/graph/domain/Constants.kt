@@ -84,7 +84,7 @@ object Literals {
         INT("integer"),
         DECIMAL("decimal"),
         DATE("date"),
-        BOOLEAN ("boolean"),
+        BOOLEAN("boolean"),
         FLOAT("float"),
         URI("anyURI");
 

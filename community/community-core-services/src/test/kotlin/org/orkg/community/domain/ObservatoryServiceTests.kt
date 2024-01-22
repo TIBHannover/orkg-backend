@@ -8,11 +8,11 @@ import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.adapter.output.jpa.internal.OrganizationEntity
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.input.CreateObservatoryUseCase
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.createObservatory
+import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.springframework.data.domain.Page
@@ -22,7 +22,7 @@ import org.springframework.data.domain.PageRequest
 class ObservatoryServiceTests {
 
     private val repository: ObservatoryRepository = mockk()
-    private val organizationRepository: PostgresOrganizationRepository = mockk()
+    private val organizationRepository: OrganizationRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
     private val service = ObservatoryService(repository, organizationRepository, resourceRepository)
@@ -38,8 +38,8 @@ class ObservatoryServiceTests {
 
         every { repository.save(observatory) } returns Unit
         every { resourceRepository.findById(observatory.researchField!!) } returns Optional.of(researchField)
-        every { organizationRepository.findById(organizationId.value) } returns Optional.of(
-            OrganizationEntity(organizationId.value)
+        every { organizationRepository.findById(organizationId) } returns Optional.of(
+            createOrganization(id = organizationId)
         )
 
         service.create(
@@ -61,7 +61,7 @@ class ObservatoryServiceTests {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
         val oId = OrganizationId(UUID.randomUUID())
         every { repository.save(any()) } returns Unit
-        every { organizationRepository.findById(oId.value) } returns Optional.empty()
+        every { organizationRepository.findById(oId) } returns Optional.empty()
 
         shouldThrow<OrganizationNotFound> {
             service.create(

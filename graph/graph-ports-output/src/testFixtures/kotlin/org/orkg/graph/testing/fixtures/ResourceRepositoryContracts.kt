@@ -74,7 +74,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
 
     describe("requesting a new identity") {
         context("returns a valid id") {
-            it("that is not blank")  {
+            it("that is not blank") {
                 repository.nextIdentity().value shouldNotMatch """\s+"""
             }
             it("that is prefixed with 'R'") {
@@ -138,7 +138,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                     resources.forEach(repository::save)
 
                     val expected = resources.filter {
-                        it.visibility == visibility && classes.any { `class`-> `class` in it.classes }
+                        it.visibility == visibility && classes.any { `class` -> `class` in it.classes }
                     }
                     expected.size shouldBe 3
                     val result = repository.findAllByClassInAndVisibility(classes, visibility, PageRequest.of(0, 5))
@@ -175,8 +175,8 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             resources.forEach(repository::save)
 
             val expected = resources.filter {
-                (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED)
-                    && classes.any { `class`-> `class` in it.classes }
+                (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) &&
+                    classes.any { `class` -> `class` in it.classes }
             }
             expected.size shouldBe 6
             val result = repository.findAllListedByClassIn(classes, PageRequest.of(0, 10))
@@ -220,7 +220,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                     resources.forEach(repository::save)
 
                     val expected = resources.filter {
-                        it.visibility == visibility && it.observatoryId == observatoryId && it.classes.any {`class`->
+                        it.visibility == visibility && it.observatoryId == observatoryId && it.classes.any { `class` ->
                             `class` in classes
                         }
                     }
@@ -271,8 +271,8 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             resources.forEach(repository::save)
 
             val expected = resources.filter {
-                (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED)
-                    && it.observatoryId == observatoryId && it.classes.any {`class`->
+                (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) &&
+                    it.observatoryId == observatoryId && it.classes.any { `class` ->
                         `class` in classes
                     }
             }

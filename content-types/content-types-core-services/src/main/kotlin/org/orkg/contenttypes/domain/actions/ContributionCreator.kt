@@ -4,11 +4,9 @@ import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ContributionDefinition
-import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.input.CreateListUseCase

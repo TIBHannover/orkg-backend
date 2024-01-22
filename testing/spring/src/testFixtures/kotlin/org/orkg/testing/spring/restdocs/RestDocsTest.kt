@@ -25,7 +25,6 @@ import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-
 @ExtendWith(RestDocumentationExtension::class)
 @TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
 abstract class RestDocsTest(private val prefix: String) {
@@ -61,7 +60,7 @@ abstract class RestDocsTest(private val prefix: String) {
                 documentationConfiguration(restDocumentation)
                     .uris().withScheme("https").withHost("incubating.orkg.org").withPort(443)
             )
-            //.alwaysDo<DefaultMockMvcBuilder>(documentationHandler)
+            // .alwaysDo<DefaultMockMvcBuilder>(documentationHandler)
             .build()
     }
 

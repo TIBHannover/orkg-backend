@@ -4,10 +4,10 @@ import java.util.*
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.input.CreateObservatoryUseCase
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.output.ResourceRepository
@@ -20,13 +20,13 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class ObservatoryService(
     private val postgresObservatoryRepository: ObservatoryRepository,
-    private val postgresOrganizationRepository: PostgresOrganizationRepository,
+    private val postgresOrganizationRepository: OrganizationRepository,
     private val resourceRepository: ResourceRepository
 ) : ObservatoryUseCases {
     override fun create(command: CreateObservatoryUseCase.CreateCommand): ObservatoryId {
         val id = command.id ?: ObservatoryId(UUID.randomUUID())
         val organization = postgresOrganizationRepository
-            .findById(command.organizationId.value)
+            .findById(command.organizationId)
             .orElseThrow { OrganizationNotFound(command.organizationId) }
         val researchField = resourceRepository.findById(command.researchField)
             .filter { resource -> Classes.researchField in resource.classes }
@@ -36,7 +36,7 @@ class ObservatoryService(
             name = command.name,
             description = command.description,
             researchField = researchField.id,
-            organizationIds = mutableSetOf(OrganizationId(organization.id!!)),
+            organizationIds = mutableSetOf(organization.id!!),
             displayId = command.displayId
         )
         postgresObservatoryRepository.save(observatory)
@@ -98,7 +98,7 @@ class ObservatoryService(
     }
 
     override fun addOrganization(id: ObservatoryId, organizationId: OrganizationId) {
-        postgresOrganizationRepository.findById(organizationId.value)
+        postgresOrganizationRepository.findById(organizationId)
             .orElseThrow { OrganizationNotFound(organizationId) }
         val observatory = postgresObservatoryRepository.findById(id)
             .map { it.copy(organizationIds = it.organizationIds + organizationId) }

@@ -7,8 +7,6 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.Unauthorized
-import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.CuratorRepository
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases

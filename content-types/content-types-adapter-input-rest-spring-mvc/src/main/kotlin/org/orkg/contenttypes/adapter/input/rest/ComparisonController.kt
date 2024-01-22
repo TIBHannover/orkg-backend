@@ -85,7 +85,6 @@ class ComparisonController(
         service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
             .mapToComparisonRepresentation()
 
-
     @PreAuthorizeUser
     @PostMapping(consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun create(

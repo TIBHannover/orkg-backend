@@ -1,14 +1,14 @@
 package org.orkg.community.adapter.output.jpa
 
+import org.orkg.auth.adapter.output.jpa.JpaUserAdapter
 import org.orkg.auth.adapter.output.jpa.configuration.AuthJpaConfiguration
 import org.orkg.auth.output.UserRepository
 import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaConfiguration
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.ObservatoryRepositoryContractTest
 import org.orkg.testing.PostgresContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ContextConfiguration
@@ -30,22 +30,18 @@ class PostgresObservatoryContractTests : ObservatoryRepositoryContractTest {
     @Autowired
     private lateinit var adapter: SpringJpaPostgresObservatoryAdapter
 
-    // TODO: Replace with adapter
     @Autowired
-    private lateinit var organizationAdapter: PostgresOrganizationRepository
+    private lateinit var organizationAdapter: SpringJpaPostgresOrganizationAdapter
 
     @Autowired
-    @Qualifier("jpaUserAdapter")
-    private lateinit var userAdapter: UserRepository
+    private lateinit var userAdapter: JpaUserAdapter
 
     override val repository: ObservatoryRepository
         get() = adapter
 
-    // TODO: Replace with adapter
-    override val organizationRepository: PostgresOrganizationRepository
+    override val organizationRepository: OrganizationRepository
         get() = organizationAdapter
 
-    // TODO: Replace with adapter
     override val userRepository: UserRepository
         get() = userAdapter
 

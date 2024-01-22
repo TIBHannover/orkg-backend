@@ -22,7 +22,6 @@ import org.orkg.graph.input.RetrieveResourceUseCase
 import org.orkg.graph.input.RetrieveStatementUseCase
 import org.orkg.graph.testing.fixtures.createResource
 
-
 internal class ResolveDOIServiceSpec : DescribeSpec({
     val resourceUseCases: RetrieveResourceUseCase = mockk()
     val statementUseCases: RetrieveStatementUseCase = mockk()
@@ -128,7 +127,6 @@ internal class ResolveDOIServiceSpec : DescribeSpec({
         }
     }
 })
-
 
 // TODO: Why does it also display the failed messages for successful tests? Bug?
 internal fun widgetInfo(id: ThingId, doi: String?, title: String, numberOfStatements: Long, publishedClass: String) =

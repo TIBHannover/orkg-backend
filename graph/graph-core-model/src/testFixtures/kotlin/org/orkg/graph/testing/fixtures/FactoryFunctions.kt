@@ -34,7 +34,8 @@ fun createResource(
     organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
     visibility: Visibility = Visibility.DEFAULT,
     verified: Boolean? = null,
-    unlistedBy: ContributorId? = null
+    unlistedBy: ContributorId? = null,
+    modifiable: Boolean = true,
 ) = Resource(
     id = id,
     label = label,
@@ -46,7 +47,8 @@ fun createResource(
     organizationId = organizationId,
     visibility = visibility,
     verified = verified,
-    unlistedBy = unlistedBy
+    unlistedBy = unlistedBy,
+    modifiable = modifiable
 )
 
 fun createClass(

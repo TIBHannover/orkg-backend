@@ -17,7 +17,8 @@ data class Resource(
     val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
     val visibility: Visibility = Visibility.DEFAULT,
     val verified: Boolean? = null,
-    val unlistedBy: ContributorId? = null
+    val unlistedBy: ContributorId? = null,
+    val modifiable: Boolean = true
 ) : Thing {
     val publishableClasses: Set<ThingId>
         get() = classes intersect PUBLISHABLE_CLASSES

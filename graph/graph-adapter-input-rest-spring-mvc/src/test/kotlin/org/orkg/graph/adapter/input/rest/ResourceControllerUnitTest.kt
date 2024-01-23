@@ -117,6 +117,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                         fieldWithPath("organization_id").description("The UUID of the organization to which this resource belongs."),
                         timestampFieldWithPath("created_at", "the resource was created"),
                         fieldWithPath("created_by").description("The UUID of the user or service who created this resource."),
+                        fieldWithPath("modifiable").description("Whether this resource can be modified."),
                         fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value `resource`."),
                     )
                 )

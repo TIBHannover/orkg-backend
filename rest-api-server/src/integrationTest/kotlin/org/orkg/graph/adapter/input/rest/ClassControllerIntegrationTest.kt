@@ -421,7 +421,8 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         fieldWithPath("visibility").description("Visibility").optional().ignored(),
         fieldWithPath("verified").description("Verified").optional().ignored(),
         fieldWithPath("featured").description("Featured").optional().ignored(),
-        fieldWithPath("unlisted").description("Unlisted").optional().ignored()
+        fieldWithPath("unlisted").description("Unlisted").optional().ignored(),
+        fieldWithPath("modifiable").description("Whether this resource can be modified.").optional().ignored(),
     )
 
     fun classListDetailedResponseFields(): ResponseFieldsSnippet =

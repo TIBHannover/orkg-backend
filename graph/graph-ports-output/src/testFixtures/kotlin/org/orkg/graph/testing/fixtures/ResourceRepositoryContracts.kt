@@ -58,6 +58,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 it.visibility shouldBe expected.visibility
                 it.verified shouldBe expected.verified
                 it.unlistedBy shouldBe expected.unlistedBy
+                it.modifiable shouldBe expected.modifiable
             }
         }
         it("updates an already existing resource") {

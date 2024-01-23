@@ -190,6 +190,20 @@ class ResourceServiceUnitTests {
     }
 
     @Test
+    fun `given a resource is being deleted, when resource is unmodifiable, an appropriate error is thrown`() {
+        val mockResource = createResource(modifiable = false)
+        val loggedInUser = ContributorId("89b13df4-22ae-4685-bed0-4bb1f1873c78")
+
+        every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
+
+        shouldThrow<ResourceNotModifiable> {
+            service.delete(mockResource.id, loggedInUser)
+        }
+
+        verify(exactly = 1) { repository.findById(mockResource.id) }
+    }
+
+    @Test
     fun `given a resource is being created, when it contains a missing class, an appropriate error is thrown`() {
         val classes = setOf(ThingId("DoesNotExist"))
 
@@ -257,6 +271,7 @@ class ResourceServiceUnitTests {
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val organizationId = OrganizationId(UUID.randomUUID())
         val extractionMethod = ExtractionMethod.AUTOMATIC
+        val modifiable = false
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
         every { classRepository.existsAll(classes) } returns true
@@ -264,7 +279,7 @@ class ResourceServiceUnitTests {
 
         service.update(
             UpdateResourceUseCase.UpdateCommand(
-                resource.id, label, classes, observatoryId, organizationId, extractionMethod
+                resource.id, label, classes, observatoryId, organizationId, extractionMethod, modifiable
             )
         )
 
@@ -277,6 +292,7 @@ class ResourceServiceUnitTests {
                 it.observatoryId shouldBe observatoryId
                 it.organizationId shouldBe organizationId
                 it.extractionMethod shouldBe extractionMethod
+                it.modifiable shouldBe modifiable
             })
         }
     }
@@ -298,7 +314,31 @@ class ResourceServiceUnitTests {
                 it.observatoryId shouldBe resource.observatoryId
                 it.organizationId shouldBe resource.organizationId
                 it.extractionMethod shouldBe resource.extractionMethod
+                it.modifiable shouldBe resource.modifiable
             })
         }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating an unmodifiable resource, it throws an exception`() {
+        val resource = createResource(modifiable = false)
+        val label = "updated label"
+        val classes = setOf(Classes.paper)
+        val observatoryId = ObservatoryId(UUID.randomUUID())
+        val organizationId = OrganizationId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.AUTOMATIC
+        val modifiable = false
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+
+        shouldThrow<ResourceNotModifiable> {
+            service.update(
+                UpdateResourceUseCase.UpdateCommand(
+                    resource.id, label, classes, observatoryId, organizationId, extractionMethod, modifiable
+                )
+            )
+        }.message shouldBe """Resource "${resource.id}" is not modifiable."""
+
+        verify(exactly = 1) { repository.findById(resource.id) }
     }
 }

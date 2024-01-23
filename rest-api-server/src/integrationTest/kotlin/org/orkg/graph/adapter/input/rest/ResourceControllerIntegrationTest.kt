@@ -420,6 +420,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                 .optional().ignored(),
             fieldWithPath("featured").description("Featured Value").optional().ignored(),
             fieldWithPath("unlisted").description("Unlisted Value").optional().ignored(),
+            fieldWithPath("modifiable").description("Whether this resource can be modified.").optional().ignored(),
             fieldWithPath("formatted_label").description("The formatted label of the resource if available").optional()
         )
 

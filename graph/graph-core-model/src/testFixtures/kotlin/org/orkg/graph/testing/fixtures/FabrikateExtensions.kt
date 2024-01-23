@@ -74,7 +74,8 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
             extractionMethod = random(),
             organizationId = random(),
             visibility = random(),
-            verified = random()
+            verified = random(),
+            modifiable = true
         )
     }
     return this

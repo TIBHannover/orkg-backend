@@ -38,6 +38,9 @@ class Neo4jResource : Neo4jThing() {
     @Property("organization_id")
     var organization_id: OrganizationId = OrganizationId.createUnknownOrganization()
 
+    @Property("modifiable")
+    var modifiable: Boolean? = null
+
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
      */
@@ -64,7 +67,8 @@ class Neo4jResource : Neo4jThing() {
         organizationId = organization_id,
         visibility = visibility!!,
         verified = verified,
-        unlistedBy = unlisted_by
+        unlistedBy = unlisted_by,
+        modifiable = modifiable!!
     )
 
     override fun toThing() = toResource()

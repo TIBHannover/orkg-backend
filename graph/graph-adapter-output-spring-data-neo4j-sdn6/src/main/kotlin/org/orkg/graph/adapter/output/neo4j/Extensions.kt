@@ -151,7 +151,8 @@ internal fun Node.toResource() = Resource(
     organizationId = this["organization_id"].toOrganizationId(),
     extractionMethod = this["extraction_method"].toExtractionMethod(),
     visibility = this["visibility"].toVisibility(),
-    verified = this["verified"].asNullableBoolean()
+    verified = this["verified"].asNullableBoolean(),
+    modifiable = this["modifiable"].asBoolean()
 )
 
 internal fun Node.toPredicate() = Predicate(

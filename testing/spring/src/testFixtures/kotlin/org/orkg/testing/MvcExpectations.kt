@@ -68,6 +68,7 @@ fun ResultActions.andExpectResource(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.organization_id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.observatory_id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.extraction_method", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.modifiable", `is`(notNullValue())))
     .andExpect(jsonPath("$path._class").value("resource"))
 //    .andExpect(jsonPath("$path.formatted_label", `is`(notNullValue())))
 //    .andExpect(jsonPath("$path.unlisted_by", `is`(notNullValue())))

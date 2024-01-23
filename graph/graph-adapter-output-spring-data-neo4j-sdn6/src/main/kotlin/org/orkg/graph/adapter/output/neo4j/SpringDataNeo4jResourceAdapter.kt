@@ -256,5 +256,6 @@ class SpringDataNeo4jResourceAdapter(
             organization_id = this@toNeo4jResource.organizationId
             classes = this@toNeo4jResource.classes
             unlisted_by = this@toNeo4jResource.unlistedBy
+            modifiable = this@toNeo4jResource.modifiable
         }
 }

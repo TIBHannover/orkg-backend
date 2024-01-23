@@ -52,7 +52,8 @@ class ResourceService(
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId ?: ContributorId.createUnknownContributor(),
             observatoryId = command.observatoryId ?: ObservatoryId.createUnknownObservatory(),
-            organizationId = command.organizationId ?: OrganizationId.createUnknownOrganization()
+            organizationId = command.organizationId ?: OrganizationId.createUnknownOrganization(),
+            modifiable = command.modifiable
         )
         repository.save(resource)
         return id
@@ -149,6 +150,10 @@ class ResourceService(
         // already checked by service
         var found = repository.findById(command.id).get()
 
+        if (!found.modifiable) {
+            throw ResourceNotModifiable(found.id)
+        }
+
         // update all the properties
         if (command.label != null) found = found.copy(label = command.label!!)
         if (command.classes != null) {
@@ -160,12 +165,17 @@ class ResourceService(
         if (command.observatoryId != null) found = found.copy(observatoryId = command.observatoryId!!)
         if (command.organizationId != null) found = found.copy(organizationId = command.organizationId!!)
         if (command.extractionMethod != null) found = found.copy(extractionMethod = command.extractionMethod!!)
+        if (command.modifiable != null) found = found.copy(modifiable = command.modifiable!!)
 
         repository.save(found)
     }
 
     override fun delete(id: ThingId, contributorId: ContributorId) {
         val resource = repository.findById(id).orElseThrow { ResourceNotFound.withId(id) }
+
+        if (!resource.modifiable) {
+            throw ResourceNotModifiable(resource.id)
+        }
 
         if (statementRepository.checkIfResourceHasStatements(resource.id))
             throw ResourceUsedInStatement(resource.id)

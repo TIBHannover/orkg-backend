@@ -61,13 +61,15 @@ fun CreateResourceUseCase.createResource(
     classes: Set<String> = setOf(),
     id: String? = null,
     label: String? = null,
-    extractionMethod: ExtractionMethod? = null
+    extractionMethod: ExtractionMethod? = null,
+    modifiable: Boolean = true
 ): ThingId = this.create(
     CreateResourceUseCase.CreateCommand(
         id = id?.let(::ThingId),
         label = label ?: "label",
         classes = classes.map(::ThingId).toSet(),
-        extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN
+        extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN,
+        modifiable = modifiable
     )
 )
 
@@ -78,7 +80,8 @@ fun CreateResourceUseCase.createResource(
     extractionMethod: ExtractionMethod? = null,
     userId: ContributorId = ContributorId.createUnknownContributor(),
     observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
-    organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+    organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+    modifiable: Boolean = true
 ): ThingId = this.create(
     CreateResourceUseCase.CreateCommand(
         id = Optional.ofNullable(id).map(::ThingId).orElse(null),
@@ -88,6 +91,7 @@ fun CreateResourceUseCase.createResource(
         contributorId = userId,
         observatoryId = observatoryId,
         organizationId = organizationId,
+        modifiable = modifiable
     )
 )
 

@@ -87,6 +87,9 @@ class PredicateAlreadyExists(id: ThingId) :
 class LiteralAlreadyExists(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Literal "$id" already exists.""")
 
+class ResourceNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Resource "$id" is not modifiable.""")
+
 class InvalidClassCollection(ids: Iterable<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The collection of classes "$ids" contains one or more invalid classes.""")
 
@@ -97,7 +100,7 @@ class InvalidLabel : PropertyValidationException("label", "A label must not be b
 
 class InvalidLiteralLabel : PropertyValidationException("label", "A literal must be at most $MAX_LABEL_LENGTH characters long.")
 
-class InvalidLiteralDatatype: PropertyValidationException("datatype", "A literal datatype must be a URI or a \"xsd:\"-prefixed type")
+class InvalidLiteralDatatype : PropertyValidationException("datatype", "A literal datatype must be a URI or a \"xsd:\"-prefixed type")
 
 class InvalidURI : PropertyValidationException("uri", "The provided URI is not a valid URI.")
 

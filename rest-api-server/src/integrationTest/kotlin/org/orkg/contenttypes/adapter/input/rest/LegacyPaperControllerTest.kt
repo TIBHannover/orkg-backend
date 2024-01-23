@@ -440,6 +440,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("visibility").optional().ignored(),
             fieldWithPath("featured").optional().ignored(),
             fieldWithPath("unlisted").optional().ignored(),
+            fieldWithPath("modifiable").description("Whether this resource can be modified.").optional().ignored(),
             fieldWithPath("formatted_label").description("The formatted label of the resource if available").optional()
         )
 }

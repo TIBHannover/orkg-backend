@@ -99,7 +99,8 @@ data class ResourceRepresentation(
     val extractionMethod: ExtractionMethod,
     // This is added to replace @JsonTypeInfo on the Thing data class
     @get:JsonProperty("_class")
-    val jsonClass: String = "resource"
+    val jsonClass: String = "resource",
+    val modifiable: Boolean
 ) : ThingRepresentation, ResourceProvenanceMetadata, ContentTypeFlags
 
 data class StatementRepresentation(

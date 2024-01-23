@@ -28,6 +28,7 @@ interface CreateResourceUseCase {
         val contributorId: ContributorId? = null,
         val observatoryId: ObservatoryId? = null,
         val organizationId: OrganizationId? = null,
+        val modifiable: Boolean = true
     )
 }
 
@@ -40,7 +41,8 @@ interface UpdateResourceUseCase {
         val classes: Set<ThingId>? = null,
         val observatoryId: ObservatoryId? = null,
         val organizationId: OrganizationId? = null,
-        val extractionMethod: ExtractionMethod? = null
+        val extractionMethod: ExtractionMethod? = null,
+        val modifiable: Boolean? = null
     )
 }
 

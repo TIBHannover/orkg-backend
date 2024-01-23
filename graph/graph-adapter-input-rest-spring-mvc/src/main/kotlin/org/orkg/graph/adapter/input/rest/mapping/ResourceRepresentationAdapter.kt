@@ -44,6 +44,7 @@ interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {
             unlisted = visibility == Visibility.UNLISTED,
             verified = verified ?: false,
             unlistedBy = unlistedBy,
+            modifiable = modifiable,
             formattedLabel = formattedLabels[this@toResourceRepresentation.id],
             extractionMethod = extractionMethod
         )

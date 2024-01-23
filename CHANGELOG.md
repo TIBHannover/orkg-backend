@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added `modifiable` field to resources (read-only).
+  (See: [!757](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/757))
+- Listing papers (content-type) now supports additional filtering parameters in arbitrary combinations: `exact`, `verified`, `created_at_start`, `created_at_end`, `observatory_id`, `organization_id`.
+  (See: [!732](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/732))
+
+### Changed
+- Comparison content-type endpoints now return a full list of previous versions.
+  (Closes: [!537](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/537))
+
+### Fixed
+- It is no longer possible to assign research field "Science" (R11) using content-type endpoints.
+  (Closes: [!538](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/538))
+- It is now possible to assign multiple DOIs to a single resource.
+  (Closes: [!540](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/540))
+- Fixed documentation for visibility field.
+  (See: [!753](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/753))
 
 ## [0.44.0] - 2023-12-20
 ### Fixed

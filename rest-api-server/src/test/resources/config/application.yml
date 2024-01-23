@@ -8,3 +8,6 @@ orkg:
   init:
     setup:
       entities-file: "data/required_entities.json"
+  ranking:
+    papers:
+      log-file: 'paper-ranking.log'

@@ -1,6 +1,5 @@
-import org.gradlex.javaecosystem.capabilities.rules.JakartaActivationApiRule
-import org.gradlex.javaecosystem.capabilities.rules.JakartaActivationImplementationRule
 import org.orkg.gradle.metadatarules.versionalignment.JacksonBomAlignmentRule
+import org.orkg.gradle.metadatarules.versionalignment.MockKVirtualPlatformAlignmentRule
 
 plugins {
     id("dev.jacomet.logging-capabilities")
@@ -12,6 +11,7 @@ loggingCapabilities.enforceLogback()
 
 dependencies.components {
     all<JacksonBomAlignmentRule>()
+    all<MockKVirtualPlatformAlignmentRule>()
 }
 
 configurations.all {

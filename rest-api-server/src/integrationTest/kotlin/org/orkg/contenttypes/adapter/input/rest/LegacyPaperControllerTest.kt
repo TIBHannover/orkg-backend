@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.not
@@ -28,6 +29,7 @@ import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
@@ -42,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Paper Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
+@ImportAutoConfiguration(MigrationsAutoConfiguration::class)
 class LegacyPaperControllerTest : RestDocumentationBaseTest() {
 
     @Autowired

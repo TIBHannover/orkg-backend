@@ -5,7 +5,6 @@ plugins {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {

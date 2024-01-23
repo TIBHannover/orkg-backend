@@ -3,22 +3,20 @@ plugins {
 }
 
 dependencies {
+    api(project(":common"))
+    api(project(":content-types:content-types-core-model"))
     api(project(":graph:graph-core-model"))
 
-    implementation(project(":common"))
-    implementation(project(":content-types:content-types-core-model"))
+    api("org.springframework.data:spring-data-commons")
 
-    // for PageRequests object
-    implementation("org.springframework.data:spring-data-commons")
-
-    testFixturesImplementation(project(":common"))
-    testFixturesImplementation(testFixtures(project(":testing:spring")))
-    testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
-
-    testFixturesImplementation(project(":content-types:content-types-core-model"))
-
-    // for PageRequests object
+    testFixturesApi("io.kotest:kotest-framework-api")
+    testFixturesImplementation("io.kotest:kotest-assertions-shared")
+    testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     testFixturesImplementation("org.springframework.data:spring-data-commons")
-    testFixturesImplementation(libs.kotest.runner)
     testFixturesImplementation(libs.forkhandles.fabrikate4k)
+    testFixturesImplementation(libs.kotest.assertions.core)
+    testFixturesImplementation(project(":common"))
+    testFixturesImplementation(project(":graph:graph-core-model"))
+    testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
+    testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
 }

@@ -37,6 +37,7 @@ testing {
                     exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
                 }
                 implementation("org.springframework.data:spring-data-neo4j:6.3.16")
+                implementation(libs.kotest.runner)
             }
         }
     }

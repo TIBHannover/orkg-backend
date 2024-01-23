@@ -7,24 +7,24 @@ plugins {
 }
 
 dependencies {
-    testFixturesApi(libs.bundles.testcontainers)
+    testFixturesApi("jakarta.persistence:jakarta.persistence-api")
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
-
-    // TODO: These might be "downgraded" to only use the specific package used to declare the API
-    testFixturesImplementation("org.springframework.boot:spring-boot-starter-data-jpa") {
-        exclude(group = "org.springframework.data", module = "spring-data-commons")
-        exclude(group = "org.springframework.data", module = "spring-data-jpa")
-    }
-
-    testFixturesCompileOnly(libs.spring.boot.starter.neo4j.migrations)
-    testFixturesImplementation("org.springframework.data:spring-data-commons")
-    testFixturesImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(group = "junit", module = "junit")
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-        exclude(module = "mockito-core")
-    }
-    testFixturesImplementation(libs.spring.mockk)
-    testFixturesImplementation(libs.spring.restdocs)
-    testFixturesImplementation("org.springframework.security:spring-security-core")
-    testFixturesImplementation("org.springframework.security:spring-security-test")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
+    testFixturesApi("org.springframework.boot:spring-boot-test-autoconfigure")
+    testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
+    testFixturesApi("org.springframework.security:spring-security-core")
+    testFixturesApi("org.springframework.security:spring-security-test")
+    testFixturesApi("org.springframework:spring-beans")
+    testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework:spring-test")
+    testFixturesApi("org.springframework:spring-web")
+    testFixturesApi(libs.jackson.databind)
+    testFixturesApi(libs.spring.boot.starter.neo4j.migrations)
+    testFixturesApi(libs.spring.restdocs)
+    testFixturesApi(libs.testcontainers.junit5)
+    testFixturesApi(libs.testcontainers.neo4j)
+    testFixturesApi(libs.testcontainers.postgresql)
+    testFixturesImplementation("org.hamcrest:hamcrest:2.2")
+    testFixturesImplementation(libs.assertj.core)
+    testFixturesImplementation(libs.testcontainers.core)
 }

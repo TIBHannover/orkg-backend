@@ -6,54 +6,40 @@ plugins {
 }
 
 dependencies {
+    api(project(":common"))
+    api(project(":community:community-adapter-output-spring-data-jpa")) // TODO: break dependency
+    api(project(":community:community-ports-input"))
+    api(project(":community:community-ports-output"))
+    api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
 
-    implementation(project(":common"))
-    implementation(project(":content-types:content-types-core-model")) // TODO: move to correct module
-    implementation(project(":community:community-core-model"))
-    implementation(project(":community:community-ports-input"))
-    implementation(project(":community:community-ports-output"))
-    implementation(project(":community:community-adapter-output-spring-data-jpa")) // TODO: break dependency
-
-    implementation("org.springframework.data:spring-data-commons")
-    implementation("org.springframework:spring-core") // Spring MimeType
-    implementation(libs.javax.activation)
-    implementation("com.fasterxml.jackson.core:jackson-core")
-    implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation(libs.forkhandles.result4k)
-    implementation(libs.forkhandles.values4k)
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework:spring-context")
+    api("org.springframework:spring-tx")
+    api(libs.forkhandles.result4k)
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
-        exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
-    }
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        // Disable JUnit 4 (aka Vintage)
-        exclude(group = "junit", module = "junit")
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-        // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
-        // exclude(module = "mockito-core")
-    }
-
-    testApi(enforcedPlatform(libs.junit5.bom))
-    testImplementation(project(mapOf("path" to ":content-types:content-types-core-services"))) // TODO: Remove after upgrade
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework:spring-web")
+    implementation(libs.forkhandles.values4k)
+    implementation(project(":community:community-core-model"))
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
-                implementation(testFixtures(project(":testing:spring"))) // for fixedClock
-                implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.kotest:kotest-common")
+                implementation("io.kotest:kotest-framework-api")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation(libs.assertj.core)
                 implementation(testFixtures(project(":community:community-core-model")))
-                implementation(project(":media-storage:media-storage-core-model"))
-                implementation(testFixtures(project(":media-storage:media-storage-core-model")))
-                implementation(project(":media-storage:media-storage-ports-input"))
-                implementation(libs.spring.mockk)
-                implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+                implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(testFixtures(project(":testing:spring"))) // for fixedClock
+                runtimeOnly(libs.kotest.runner)
             }
         }
     }

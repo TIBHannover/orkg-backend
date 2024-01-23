@@ -38,7 +38,7 @@ kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "kote
 liquibase = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
 postgres-driver = { module = "org.postgresql:postgresql", version = "" }
 spring-boot-starter-neo4j-migrations = { module = "eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter", version = "1.16.1" }
-spring-mockk = { module = "com.ninja-squad:springmockk", version = "4.0.2" }
+spring-mockk = { module = "com.ninja-squad:springmockk", version = "" }
 spring-restdocs = { module = "org.springframework.restdocs:spring-restdocs-mockmvc", version = "" } # Provided by Spring
 testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }

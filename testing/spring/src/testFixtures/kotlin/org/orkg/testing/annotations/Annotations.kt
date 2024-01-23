@@ -1,11 +1,13 @@
 package org.orkg.testing.annotations
 
+import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
 import io.mockk.junit5.MockKExtension
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.CLASS
 import org.junit.jupiter.api.extension.ExtendWith
 import org.orkg.testing.MockUserId
 import org.orkg.testing.Neo4jContainerInitializer
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
@@ -20,12 +22,13 @@ import org.springframework.test.context.ContextConfiguration
 @Retention(RUNTIME)
 @Target(CLASS)
 @ExtendWith(MockKExtension::class)
-//@MockKExtension.ConfirmVerification // TODO: uncomment after upgrade
-//@MockKExtension.CheckUnnecessaryStub // TODO: uncomment after upgrade
+// @MockKExtension.ConfirmVerification // TODO: uncomment after upgrade
+// @MockKExtension.CheckUnnecessaryStub // TODO: uncomment after upgrade
 annotation class UsesMocking
 
 @SpringBootTest
 @ContextConfiguration(initializers = [Neo4jContainerInitializer::class])
+@ImportAutoConfiguration(MigrationsAutoConfiguration::class)
 annotation class Neo4jContainerIntegrationTest
 
 /**

@@ -55,7 +55,6 @@ idea {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("org.springframework.security:spring-security-test")
@@ -72,7 +71,6 @@ testing {
         }
         val integrationTest by registering(JvmTestSuite::class) {
             testType.set(TestSuiteType.INTEGRATION_TEST)
-            useJUnitJupiter()
             dependencies {
                 implementation(project())
                 implementation(project(":common"))

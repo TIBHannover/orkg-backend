@@ -25,7 +25,6 @@ dependencies {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
                 implementation("org.assertj:assertj-core")
                 implementation(libs.kotest.runner)

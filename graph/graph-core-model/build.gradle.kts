@@ -3,37 +3,30 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
+    api(project(":common"))
 
-    implementation(libs.jackson.core) // TODO
-    implementation("org.springframework:spring-core") // Spring MimeType
-    implementation(libs.javax.activation) // Javax Mimetype
+    api("com.fasterxml.jackson.core:jackson-annotations")
+    api("org.springframework.data:spring-data-commons")
+    api(libs.forkhandles.values4k)
+    implementation("org.apache.lucene:lucene-queryparser") // Search string parsing
     implementation("org.springframework:spring-web")
-    implementation("org.springframework.data:spring-data-commons")
-    implementation(libs.jackson.databind) // for JsonProperty
-    // Search string parsing
-    implementation("org.apache.lucene:lucene-queryparser:9.5.0")
-    implementation(libs.forkhandles.values4k)
 
-    testFixturesApi(libs.kotest.runner) {
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    testFixturesImplementation(project(":common"))
+    testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
+    testFixturesApi(libs.forkhandles.fabrikate4k)
+    testFixturesApi(project(":common"))
     testFixturesImplementation(testFixtures(project(":testing:spring")))
-    testFixturesImplementation("org.springframework:spring-core")
-    testFixturesImplementation("org.springframework.data:spring-data-commons") // TODO: does not work?
-    testFixturesImplementation("org.springframework.boot:spring-boot-starter-data-jpa") // org.springframework.data.domain.Page
-    testFixturesImplementation(libs.forkhandles.fabrikate4k)
-    testFixturesImplementation(libs.forkhandles.values4k)
-    testFixturesImplementation(libs.javax.activation) // Javax Mimetype
-    testFixturesImplementation(libs.spring.restdocs)
+    testFixturesRuntimeOnly("org.springframework:spring-core")
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
+                implementation(project(":graph:graph-core-model"))
+
+                implementation("io.kotest:kotest-assertions-shared")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.junit.jupiter:junit-jupiter-params")
                 implementation(libs.assertj.core)
                 implementation(libs.contractual)
             }

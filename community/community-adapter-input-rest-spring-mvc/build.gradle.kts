@@ -8,7 +8,6 @@ plugins {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
@@ -25,6 +24,7 @@ testing {
                 implementation(libs.spring.mockk)
                 implementation(libs.spring.restdocs)
                 implementation(libs.forkhandles.fabrikate4k)
+                implementation(libs.kotest.assertions.core)
             }
         }
     }

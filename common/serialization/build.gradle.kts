@@ -3,25 +3,27 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
+    api(project(":common"))
 
-    implementation("org.springframework:spring-context")
-    implementation("org.springframework.boot:spring-boot-autoconfigure")
-    implementation(libs.jackson.databind)
+    api("com.fasterxml.jackson.core:jackson-core")
+    api("org.springframework.boot:spring-boot-autoconfigure")
+    api("org.springframework:spring-context")
+    api(libs.jackson.databind)
+    implementation("org.springframework:spring-web")
     implementation(libs.jackson.kotlin)
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
-                implementation(testFixtures(project(":testing:spring")))
-                implementation("org.springframework.boot:spring-boot-starter-test") {
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    // exclude(module = "mockito-core") // TODO: uncomment when migrated to MockK
-                }
+                implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.kotest:kotest-common")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework:spring-beans")
+                implementation("org.springframework:spring-test")
                 implementation(libs.kotest.runner)
             }
         }

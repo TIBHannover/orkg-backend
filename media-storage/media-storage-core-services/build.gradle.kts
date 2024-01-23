@@ -15,7 +15,6 @@ dependencies {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
                 implementation(project(":community:community-ports-input"))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))

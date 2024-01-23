@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    testFixturesImplementation(libs.kotest.runner)
+    testFixturesApi("io.kotest:kotest-framework-api")
     testFixturesImplementation("org.apache.commons:commons-lang3")
 }

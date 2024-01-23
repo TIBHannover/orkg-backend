@@ -12,74 +12,68 @@ val neo4jMigrations: Configuration by configurations.creating {
     isCanBeResolved = true
 }
 
+dependencies {
+    api(project(":common"))
+    api(project(":graph:graph-core-model"))
+    api(project(":graph:graph-ports-output"))
+
+    api("org.neo4j.driver:neo4j-java-driver")
+    api("org.neo4j:neo4j-cypher-dsl:2022.8.5")
+    api("org.springframework.boot:spring-boot-autoconfigure")
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework.data:spring-data-neo4j")
+    api("org.springframework:spring-context")
+    api("org.springframework:spring-core")
+    api("org.springframework:spring-tx")
+
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation(libs.forkhandles.values4k)
+    implementation(project(":common:neo4j-dsl"))
+
+    testFixturesApi(project(":common"))
+
+    neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
+
+    containerTestApi("io.kotest:kotest-framework-api")
+    containerTestApi(project(":graph:graph-ports-output"))
+}
+
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(testFixtures(project(":testing:spring")))
+                implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation("org.springframework.boot:spring-boot-starter-test") {
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    exclude(module = "mockito-core")
-                }
-                implementation(libs.spring.mockk)
-                implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
-                    exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
-                }
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework:spring-beans")
+                implementation("org.springframework:spring-test")
+                implementation(libs.assertj.core)
             }
         }
         val containerTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project())
                 implementation(project(":common"))
-                implementation(libs.kotest.extensions.spring)
-                implementation(libs.spring.boot.starter.neo4j.migrations)
-                implementation(testFixtures(project(":testing:spring")))
-                implementation(project(":graph:graph-ports-output"))
+                implementation(project(":graph:graph-core-model"))
                 implementation(project(":graph:graph-core-services"))
-                implementation(testFixtures(project(":graph:graph-ports-output")))
-                implementation(testFixtures(project(":graph:graph-core-model")))
+                runtimeOnly(project(":migrations:neo4j-migrations"))
                 implementation(testFixtures(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")))
-                implementation(project(":migrations:neo4j-migrations"))
-                implementation("org.springframework.boot:spring-boot-starter-test") {
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    exclude(module = "mockito-core")
-                }
-                implementation(libs.spring.mockk)
-                implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
-                    exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
-                }
-                implementation("org.springframework.data:spring-data-neo4j:6.3.16")
+                implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(testFixtures(project(":graph:graph-ports-output")))
+                implementation(testFixtures(project(":testing:spring")))
+                implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
+                implementation("io.kotest:kotest-assertions-shared")
+                implementation("org.neo4j:neo4j-cypher-dsl")
+                implementation("org.springframework.boot:spring-boot-autoconfigure")
+                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework:spring-beans")
+                implementation("org.springframework:spring-context")
+                implementation("org.springframework:spring-test")
+                implementation(libs.kotest.assertions.core)
+                implementation(libs.spring.boot.starter.neo4j.migrations)
+                runtimeOnly(libs.kotest.extensions.spring)
+                runtimeOnly(libs.kotest.runner)
             }
         }
     }
-}
-
-dependencies {
-    implementation(project(":graph:graph-ports-output"))
-
-    implementation(project(":common"))
-    implementation(project(":common:neo4j-dsl"))
-
-    // Pagination (e.g. Page, Pageable, etc.)
-    implementation("org.springframework.data:spring-data-commons")
-
-    // Forkhandles
-    implementation(libs.forkhandles.values4k)
-
-    // Neo4j
-    implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
-        exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
-    }
-    // implementation("org.neo4j:neo4j-cypher-dsl:2022.8.5")
-    implementation("org.springframework.data:spring-data-neo4j")
-
-    // Caching
-    implementation("org.springframework.boot:spring-boot-starter-cache")
-
-    neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
-
-    testFixturesImplementation(project(":common"))
 }

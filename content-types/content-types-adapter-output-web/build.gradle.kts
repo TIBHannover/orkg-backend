@@ -26,7 +26,6 @@ dependencies {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
                 implementation("org.assertj:assertj-core")

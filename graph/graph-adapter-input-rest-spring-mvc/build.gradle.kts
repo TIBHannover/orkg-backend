@@ -5,52 +5,59 @@ plugins {
     id("org.orkg.gradle.input-adapter-spring-web")
 }
 
-testing {
-    suites {
-        val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
-            dependencies {
-                implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(project(":media-storage:media-storage-ports-input"))
-                implementation(testFixtures(project(":media-storage:media-storage-core-model")))
-                implementation(testFixtures(project(":community:community-core-model")))
-                implementation("org.springframework.boot:spring-boot-starter-test") {
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    // exclude(module = "mockito-core") // TODO: uncomment when migrated to MockK
-                }
-                implementation("org.springframework.security:spring-security-test")
-                implementation(libs.spring.mockk)
-                implementation(libs.spring.restdocs)
-                implementation(libs.forkhandles.fabrikate4k)
-            }
-        }
-    }
-}
-
 dependencies {
-    implementation(project(":graph:graph-ports-input"))
-    implementation(project(":graph:graph-ports-output")) // for FormattedLabelRepository
+    api(project(":common"))
+    api(project(":community:community-ports-input"))
+    api(project(":content-types:content-types-core-model"))
+    api(project(":feature-flags:feature-flags-ports"))
+    api(project(":graph:graph-ports-input"))
+    api(project(":graph:graph-ports-output")) // for FormattedLabelRepository
 
-    implementation(project(":common"))
-    implementation(project(":common:serialization"))
-    implementation(project(":feature-flags:feature-flags-ports"))
-    implementation(project(":content-types:content-types-core-model"))
-    implementation(project(":content-types:content-types-ports-input"))
-    implementation(project(":content-types:content-types-ports-output"))
-    implementation(project(":community:community-ports-input"))
+    implementation(project(":community:community-core-model"))
 
-    implementation("org.springframework:spring-context")
-    implementation("org.springframework.data:spring-data-commons")
-
-    implementation(libs.forkhandles.result4k)
-    implementation(libs.forkhandles.values4k)
-
+    api("com.fasterxml.jackson.core:jackson-annotations")
+    api("com.fasterxml.jackson.core:jackson-core")
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework.security:spring-security-core")
+    api("org.springframework:spring-context")
+    api("org.springframework:spring-web")
+    api(libs.jackson.databind)
+    api(libs.jakarta.validation)
+    api(project(":graph:graph-core-model"))
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
+    implementation(libs.forkhandles.result4k)
+    implementation(libs.forkhandles.values4k)
+}
 
-    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            dependencies {
+                implementation(project(":common:serialization"))
+                implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(testFixtures(project(":testing:spring")))
+
+                implementation("io.kotest:kotest-assertions-api")
+                implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.mockk:mockk-dsl")
+                implementation("io.mockk:mockk-jvm")
+                implementation("org.hamcrest:hamcrest")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework.boot:spring-boot-test")
+                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.restdocs:spring-restdocs-core")
+                implementation("org.springframework.security:spring-security-test")
+                implementation("org.springframework:spring-beans")
+                implementation("org.springframework:spring-test")
+                implementation(libs.assertj.core)
+                implementation(libs.forkhandles.fabrikate4k)
+                implementation(libs.kotest.assertions.core)
+                implementation(libs.spring.mockk)
+                implementation(libs.spring.restdocs)
+                runtimeOnly("com.jayway.jsonpath:json-path")
+            }
+        }
+    }
 }

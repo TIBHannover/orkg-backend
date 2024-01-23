@@ -6,33 +6,37 @@ plugins {
 }
 
 dependencies {
+    api("org.neo4j.driver:neo4j-java-driver")
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework.security:spring-security-core") // for AccessDeniedException, UserDetails
     api("org.springframework:spring-web")
-
+    api("org.springframework:spring-webmvc")
+    implementation("com.fasterxml.jackson.core:jackson-core")
     implementation("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
-    implementation("org.springframework.data:spring-data-commons")
-    implementation("org.springframework.data:spring-data-neo4j") // for UncategorizedNeo4jException
-    implementation("org.springframework.security:spring-security-core") // for AccessDeniedException, UserDetails
-    implementation("org.springframework:spring-webmvc")
-
+    implementation("org.slf4j:jcl-over-slf4j") // for org.apache.commons.logging.LogFactory in ResponseEntityExceptionHandler
+    implementation("org.springframework:spring-context")
     implementation(libs.jackson.databind)
-    implementation(libs.jackson.kotlin)
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310") // for timestamp serialization
+    runtimeOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310") // for timestamp serialization
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
+                implementation(project(":common"))
                 implementation(project(":common:serialization"))
+
                 implementation(testFixtures(project(":testing:spring")))
-                implementation("org.springframework.boot:spring-boot-starter-test") {
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    // exclude(module = "mockito-core") // TODO: uncomment when migrated to MockK
-                }
-                implementation(libs.spring.restdocs)
+
+                implementation("org.hamcrest:hamcrest")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework.boot:spring-boot-test")
+                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.restdocs:spring-restdocs-core")
+                implementation("org.springframework:spring-test")
                 implementation(libs.assertj.core)
+                implementation(libs.spring.restdocs)
+                runtimeOnly("com.jayway.jsonpath:json-path")
             }
         }
     }

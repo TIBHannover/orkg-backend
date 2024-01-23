@@ -6,6 +6,7 @@ dependencies {
     implementation(platform(project(":plugins-platform")))
 
     implementation(project(":dependency-rules-plugins"))
+    implementation(project(":dependency-analysis-plugins"))
 
     implementation("org.asciidoctor:asciidoctor-gradle-jvm")
     implementation("org.asciidoctor:asciidoctor-gradle-jvm-gems")

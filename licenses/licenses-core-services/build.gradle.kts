@@ -15,7 +15,6 @@ dependencies {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
                 implementation(libs.spring.mockk)
                 implementation("org.assertj:assertj-core")

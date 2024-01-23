@@ -3,23 +3,22 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation("org.springframework.data:spring-data-commons")
+    api(project(":common"))
 
-    // Neo4j
-    implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
-        exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
-    }
-    // implementation("org.neo4j:neo4j-cypher-dsl:2022.8.5")
-    implementation("org.springframework.data:spring-data-neo4j")
+    api("org.neo4j.driver:neo4j-java-driver")
+    api("org.neo4j:neo4j-cypher-dsl")
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework.data:spring-data-neo4j")
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
-                implementation(libs.spring.mockk)
+                compileOnly(libs.spring.mockk)
+                implementation("io.mockk:mockk-dsl")
+                implementation("io.mockk:mockk-jvm")
+                implementation("org.junit.jupiter:junit-jupiter-api")
             }
         }
     }

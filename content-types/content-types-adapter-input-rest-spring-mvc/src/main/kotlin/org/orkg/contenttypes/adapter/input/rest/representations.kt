@@ -111,8 +111,8 @@ data class ComparisonRepresentation(
     val createdAt: OffsetDateTime,
     @get:JsonProperty("created_by")
     val createdBy: ContributorId,
-    @get:JsonProperty("previous_version")
-    val previousVersion: ThingId?,
+    @get:JsonProperty("versions")
+    val versions: List<ComparisonVersionRepresentation>,
     @get:JsonProperty("is_anonymized")
     val isAnonymized: Boolean,
     val visibility: Visibility,
@@ -142,6 +142,13 @@ data class ComparisonRelatedFigureRepresentation(
     val createdAt: OffsetDateTime,
     @get:JsonProperty("created_by")
     val createdBy: ContributorId
+)
+
+data class ComparisonVersionRepresentation(
+    val id: ThingId,
+    val label: String,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime
 )
 
 data class VisualizationRepresentation(

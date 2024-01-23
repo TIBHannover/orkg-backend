@@ -140,7 +140,10 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         timestampFieldWithPath("created_at", "the comparison resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this comparison."),
-                        fieldWithPath("previous_version").description("The ID of the resource of a previous version of the comparison."),
+                        fieldWithPath("versions").description("A sorted list by creation date of previous versions of the comparison."),
+                        fieldWithPath("versions[].id").description("The ID of the resource of a previous version of the comparison."),
+                        fieldWithPath("versions[].label").description("The label of a previous version of the comparison."),
+                        timestampFieldWithPath("versions[].created_at", "the previous version of the comparison resource was created"),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison is anonymized."),
                         fieldWithPath("visibility").description("""Visibility of the comparison. Can be one of "default", "featured", "unlisted" or "deleted"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this comparison.").optional()

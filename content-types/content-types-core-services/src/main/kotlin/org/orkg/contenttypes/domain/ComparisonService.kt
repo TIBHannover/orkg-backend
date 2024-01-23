@@ -26,6 +26,7 @@ import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelat
 import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.RetrieveComparisonContributionsUseCase
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -67,6 +68,7 @@ class ComparisonService(
     private val listService: ListUseCases,
     private val researchFieldService: RetrieveResearchFieldUseCase,
     private val publishingService: PublishingService,
+    private val comparisonRepository: ComparisonRepository,
     @Value("\${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/"
 ) : ComparisonUseCases, RetrieveComparisonContributionsUseCase {
@@ -337,7 +339,7 @@ class ComparisonService(
             extractionMethod = extractionMethod,
             createdAt = createdAt,
             createdBy = createdBy,
-            previousVersion = directStatements.wherePredicate(Predicates.hasPreviousVersion).firstObjectId(),
+            versions = comparisonRepository.findVersionHistory(id),
             isAnonymized = directStatements.wherePredicate(Predicates.isAnonymized)
                 .firstOrNull { it.`object` is Literal && (it.`object` as Literal).datatype == Literals.XSD.BOOLEAN.prefixedUri }
                 ?.`object`?.label.toBoolean(),

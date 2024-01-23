@@ -10,6 +10,7 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Comparison
 import org.orkg.contenttypes.domain.ComparisonRelatedFigure
 import org.orkg.contenttypes.domain.ComparisonRelatedResource
+import org.orkg.contenttypes.domain.ComparisonVersion
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.graph.domain.ExtractionMethod
@@ -109,7 +110,18 @@ fun createDummyComparison() = Comparison(
     extractionMethod = ExtractionMethod.UNKNOWN,
     createdAt = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
-    previousVersion = ThingId("R963"),
+    versions = listOf(
+        ComparisonVersion(
+            id = ThingId("R156"),
+            label = "Previous version comparison",
+            createdAt = OffsetDateTime.parse("2023-04-11T13:15:48.959539600+02:00")
+        ),
+        ComparisonVersion(
+            id = ThingId("R155"),
+            label = "Previous version comparison",
+            createdAt = OffsetDateTime.parse("2023-04-10T14:07:21.959539600+02:00")
+        )
+    ),
     isAnonymized = false,
     visibility = Visibility.DEFAULT
 )

@@ -115,7 +115,10 @@ fun ResultActions.andExpectComparison(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.extraction_method", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.previous_version", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.versions").isArray)
+    .andExpect(jsonPath("$path.versions[*].id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.versions[*].label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.versions[*].created_at", `is`(notNullValue())))
     .andExpect(jsonPath("$path.is_anonymized", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
 

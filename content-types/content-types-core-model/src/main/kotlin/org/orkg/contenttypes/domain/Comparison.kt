@@ -26,7 +26,7 @@ data class Comparison(
     val extractionMethod: ExtractionMethod,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId,
-    val previousVersion: ThingId?,
+    val versions: List<ComparisonVersion>,
     val isAnonymized: Boolean,
     val visibility: Visibility,
     val unlistedBy: ContributorId? = null
@@ -49,4 +49,10 @@ data class ComparisonRelatedFigure(
     val description: String?,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId
+)
+
+data class ComparisonVersion(
+    val id: ThingId,
+    val label: String,
+    val createdAt: OffsetDateTime
 )

@@ -4,13 +4,18 @@ import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.mockk.clearAllMocks
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
+import java.time.OffsetDateTime
 import java.util.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -22,6 +27,7 @@ import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -40,6 +46,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
@@ -55,6 +62,7 @@ class ComparisonServiceUnitTests {
     private val listService: ListUseCases = mockk()
     private val researchFieldService: RetrieveResearchFieldUseCase = mockk()
     private val publishingService: PublishingService = mockk()
+    private val comparisonRepository: ComparisonRepository = mockk()
 
     private val service = ComparisonService(
         repository = contributionComparisonRepository,
@@ -68,8 +76,32 @@ class ComparisonServiceUnitTests {
         listService = listService,
         researchFieldService = researchFieldService,
         publishingService = publishingService,
+        comparisonRepository = comparisonRepository,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
     )
+
+    @BeforeEach
+    fun resetState() {
+        clearAllMocks()
+    }
+
+    @AfterEach
+    fun verifyMocks() {
+        confirmVerified(
+            contributionComparisonRepository,
+            resourceRepository,
+            statementRepository,
+            observatoryRepository,
+            organizationRepository,
+            resourceService,
+            statementService,
+            literalService,
+            listService,
+            researchFieldService,
+            publishingService,
+            comparisonRepository
+        )
+    }
 
     @Test
     fun `Given a comparison exists, when fetching it by id, then it is returned`() {
@@ -78,7 +110,13 @@ class ComparisonServiceUnitTests {
             organizationId = OrganizationId(UUID.randomUUID()),
             observatoryId = ObservatoryId(UUID.randomUUID())
         )
-        val previousVersion = ThingId("R156")
+        val versions = listOf(
+            ComparisonVersion(
+                id = ThingId("R156"),
+                label = "Previous version comparison",
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(1)
+            )
+        )
         val researchFieldId = ThingId("R20")
         val doi = "10.1000/182"
         val publicationYear: Long = 2016
@@ -185,16 +223,12 @@ class ComparisonServiceUnitTests {
                 `object` = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
             ),
             createStatement(
-                subject = expected,
-                predicate = createPredicate(Predicates.hasPreviousVersion),
-                `object` = createResource(id = previousVersion)
-            ),
-            createStatement(
                 subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
                 `object` = createLiteral(label = "Author 1")
             )
         )
+        every { comparisonRepository.findVersionHistory(expected.id) } returns versions
 
         val actual = service.findById(expected.id)
 
@@ -249,7 +283,7 @@ class ComparisonServiceUnitTests {
             comparison.extractionMethod shouldBe expected.extractionMethod
             comparison.createdAt shouldBe expected.createdAt
             comparison.createdBy shouldBe expected.createdBy
-            comparison.previousVersion shouldBe previousVersion
+            comparison.versions shouldBe versions
             comparison.isAnonymized shouldBe true
             comparison.visibility shouldBe Visibility.DEFAULT
             comparison.unlistedBy shouldBe expected.unlistedBy
@@ -263,6 +297,7 @@ class ComparisonServiceUnitTests {
                 sort = Sort.unsorted()
             )
         }
+        verify(exactly = 1) { comparisonRepository.findVersionHistory(expected.id) }
     }
 
     @Test

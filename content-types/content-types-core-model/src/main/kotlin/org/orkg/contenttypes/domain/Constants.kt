@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain
 
+import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.domain.identifiers.GoogleScholarId
 import org.orkg.contenttypes.domain.identifiers.Identifier
@@ -25,4 +26,8 @@ object Identifiers {
         Identifier("wikidata", Predicates.hasWikidataId, WikidataId::of),
         Identifier("web_of_science", Predicates.hasWebOfScienceId, ResearcherId::of)
     )
+}
+
+object ResearchFields {
+    val science = ThingId("R11")
 }

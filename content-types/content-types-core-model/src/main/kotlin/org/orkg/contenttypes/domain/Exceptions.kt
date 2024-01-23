@@ -28,6 +28,9 @@ class TemplateNotFound(id: ThingId) :
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")
 
+class ResearchFieldNotAllowed(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Research field "$id" is not allowed.""")
+
 class OnlyOneOrganizationAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one organization is allowed.""")
 
@@ -78,8 +81,8 @@ class InvalidStatementSubject(id: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid statement subject "$id".""")
 
 class EmptyContribution : SimpleMessageException {
-    constructor(): super(HttpStatus.BAD_REQUEST, """Contribution does not contain any statements.""")
-    constructor(index: Int): super(HttpStatus.BAD_REQUEST, """Contribution at index "$index" does not contain any statements.""")
+    constructor() : super(HttpStatus.BAD_REQUEST, """Contribution does not contain any statements.""")
+    constructor(index: Int) : super(HttpStatus.BAD_REQUEST, """Contribution at index "$index" does not contain any statements.""")
 }
 
 class DoiAlreadyRegistered(id: ThingId) :

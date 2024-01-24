@@ -109,9 +109,6 @@ class UserNotFound : SimpleMessageException {
     constructor(email: String) : super(HttpStatus.BAD_REQUEST, """User with email "$email" not found.""")
 }
 
-class OrcidNotValid(orcid: String) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """The ORCID "$orcid" is not valid.""")
-
 class OrphanOrcidValue(orcid: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The ORCID "$orcid" is not attached to any author.""")
 
@@ -120,9 +117,6 @@ class CannotResetURI(id: String) :
 
 class URIAlreadyInUse(uri: String) :
     ForbiddenOperationException("uri", """The URI <$uri> is already in use by another class.""")
-
-class InvalidClassFilter(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """The class "$id" cannot be included and excluded at the same time.""")
 
 class StatementSubjectNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Subject "$id" not found.""")

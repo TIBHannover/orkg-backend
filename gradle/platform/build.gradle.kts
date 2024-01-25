@@ -17,7 +17,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons:2.7.16!!")
     api("org.springframework.data:spring-data-neo4j:6.3.16!!")
     api("org.apache.lucene:lucene-queryparser:9.5.0")
-    api("org.springframework.boot:spring-boot-autoconfigure:2.4.13!!") // mis-alignment in tests
+    api("org.springframework.boot:spring-boot-autoconfigure:2.7.8!!") // mis-alignment in tests; required for Neo4j Migrations
     // Related to capability resolution:
     api("com.sun.activation:jakarta.activation:1.2.2!!")
     // Version alignment

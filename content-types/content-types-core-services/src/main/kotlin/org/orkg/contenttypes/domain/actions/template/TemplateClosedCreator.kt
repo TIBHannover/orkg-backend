@@ -8,24 +8,11 @@ import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
-class TemplateMetadataCreator(
+class TemplateClosedCreator(
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases
 ) : TemplateAction {
     override fun invoke(command: CreateTemplateCommand, state: State): State {
-        command.description?.let { description ->
-            statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.description,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = command.contributorId,
-                        label = description
-                    )
-                )
-            )
-        }
         if (command.isClosed) {
             statementService.add(
                 userId = command.contributorId,

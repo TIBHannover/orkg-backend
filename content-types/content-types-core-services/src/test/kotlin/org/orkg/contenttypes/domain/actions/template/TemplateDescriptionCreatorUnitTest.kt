@@ -15,17 +15,16 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.TemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
-import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
-class TemplateMetadataCreatorUnitTest {
+class TemplateDescriptionCreatorUnitTest {
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 
-    private val templateResourceCreator = TemplateMetadataCreator(literalService, statementService)
+    private val templateDescriptionCreator = TemplateDescriptionCreator(literalService, statementService)
 
     @BeforeEach
     fun resetState() {
@@ -38,14 +37,13 @@ class TemplateMetadataCreatorUnitTest {
     }
 
     @Test
-    fun `Given a template create command, when creating the template metadata, it returns success`() {
+    fun `Given a template create command, when description is not null, it creates a new statement`() {
         val command = dummyCreateTemplateCommand()
         val templateId = ThingId("R123")
         val state = TemplateState(
             templateId = templateId
         )
         val descriptionLiteralId = ThingId("R124")
-        val closedLiteralId = ThingId("R125")
 
         every {
             literalService.create(
@@ -63,25 +61,8 @@ class TemplateMetadataCreatorUnitTest {
                 `object` = descriptionLiteralId
             )
         } just runs
-        every {
-            literalService.create(
-                CreateCommand(
-                    contributorId = command.contributorId,
-                    label = "true",
-                    datatype = Literals.XSD.BOOLEAN.prefixedUri
-                )
-            )
-        } returns closedLiteralId
-        every {
-            statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.shClosed,
-                `object` = closedLiteralId
-            )
-        } just runs
 
-        val result = templateResourceCreator(command, state)
+        val result = templateDescriptionCreator(command, state)
 
         result.asClue {
             it.templateId shouldBe state.templateId
@@ -103,37 +84,19 @@ class TemplateMetadataCreatorUnitTest {
                 `object` = descriptionLiteralId
             )
         }
-        verify(exactly = 1) {
-            literalService.create(
-                CreateCommand(
-                    contributorId = command.contributorId,
-                    label = "true",
-                    datatype = Literals.XSD.BOOLEAN.prefixedUri
-                )
-            )
-        }
-        verify(exactly = 1) {
-            statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.shClosed,
-                `object` = closedLiteralId
-            )
-        }
     }
 
     @Test
-    fun `Given a template create command, when creating the template metadata, it does not create null values`() {
+    fun `Given a template create command, when description is null, it does not create a statement`() {
         val command = dummyCreateTemplateCommand().copy(
-            description = null,
-            isClosed = false
+            description = null
         )
         val templateId = ThingId("R123")
         val state = TemplateState(
             templateId = templateId
         )
 
-        val result = templateResourceCreator(command, state)
+        val result = templateDescriptionCreator(command, state)
 
         result.asClue {
             it.templateId shouldBe state.templateId

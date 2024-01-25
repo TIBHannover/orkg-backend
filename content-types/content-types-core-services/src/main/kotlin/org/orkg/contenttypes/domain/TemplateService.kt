@@ -12,11 +12,15 @@ import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.TemplatePropertyState
 import org.orkg.contenttypes.domain.actions.TemplateState
 import org.orkg.contenttypes.domain.actions.execute
-import org.orkg.contenttypes.domain.actions.template.TemplateMetadataCreator
+import org.orkg.contenttypes.domain.actions.template.TemplateClosedCreator
+import org.orkg.contenttypes.domain.actions.template.TemplateDescriptionCreator
+import org.orkg.contenttypes.domain.actions.template.TemplateFormattedLabelCreator
 import org.orkg.contenttypes.domain.actions.template.TemplatePropertiesCreator
 import org.orkg.contenttypes.domain.actions.template.TemplatePropertiesValidator
+import org.orkg.contenttypes.domain.actions.template.TemplateRelationsCreator
 import org.orkg.contenttypes.domain.actions.template.TemplateRelationsValidator
 import org.orkg.contenttypes.domain.actions.template.TemplateResourceCreator
+import org.orkg.contenttypes.domain.actions.template.TemplateTargetClassCreator
 import org.orkg.contenttypes.domain.actions.template.TemplateTargetClassValidator
 import org.orkg.contenttypes.domain.actions.template.property.TemplatePropertyExistenceValidator
 import org.orkg.contenttypes.domain.actions.template.property.TemplatePropertyTemplateValidator
@@ -82,7 +86,11 @@ class TemplateService(
             OrganizationValidator(organizationRepository) { it.organizations },
             ObservatoryValidator(observatoryRepository) { it.observatories },
             TemplateResourceCreator(resourceService),
-            TemplateMetadataCreator(literalService, statementService),
+            TemplateTargetClassCreator(statementService),
+            TemplateRelationsCreator(statementService),
+            TemplateDescriptionCreator(literalService, statementService),
+            TemplateFormattedLabelCreator(literalService, statementService),
+            TemplateClosedCreator(literalService, statementService),
             TemplatePropertiesCreator(resourceService, literalService, statementService)
         )
         return steps.execute(command, TemplateState()).templateId!!

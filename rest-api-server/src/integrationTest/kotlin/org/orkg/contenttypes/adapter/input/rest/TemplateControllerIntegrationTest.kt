@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -22,20 +22,20 @@ import org.orkg.createUser
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
-import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
+import org.orkg.testing.andExpectTemplate
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.RequestBuilder
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Template Controller")
@@ -51,12 +51,6 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var classService: ClassUseCases
-
-    @Autowired
-    private lateinit var statementService: StatementUseCases
-
-    @Autowired
-    private lateinit var literalService: LiteralUseCases
 
     @Autowired
     private lateinit var userService: AuthUseCase
@@ -76,12 +70,12 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
         cleanup()
 
-        Assertions.assertThat(predicateService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(resourceService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(classService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(observatoryService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(organizationService.listOrganizations()).hasSize(0)
-        Assertions.assertThat(organizationService.listConferences()).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        assertThat(classService.findAll(tempPageable)).hasSize(0)
+        assertThat(observatoryService.findAll(tempPageable)).hasSize(0)
+        assertThat(organizationService.listOrganizations()).hasSize(0)
+        assertThat(organizationService.listConferences()).hasSize(0)
 
         listOf(
             Predicates.hasAuthor,
@@ -145,49 +139,63 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails(userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun create() {
-        MockMvcRequestBuilders.post("/api/templates")
+        val id = post("/api/templates")
             .content(createTemplateJson)
-            .accept("application/vnd.orkg.template.v1+json")
-            .contentType("application/vnd.orkg.template.v1+json")
+            .accept(TEMPLATE_JSON_V1)
+            .contentType(TEMPLATE_JSON_V1)
             .characterEncoding("utf-8")
             .perform()
-            .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andExpect(status().isCreated)
+            .andReturn()
+            .response
+            .getHeaderValue("Location")!!
+            .toString()
+            .substringAfterLast("/")
+
+        get("/api/templates/{id}", id)
+            .content(createTemplateJson)
+            .accept(TEMPLATE_JSON_V1)
+            .contentType(TEMPLATE_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectTemplate()
     }
 
     @Test
-    @WithUserDetails(userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun createLiteralProperty() {
         val templateId = resourceService.createResource(
             id = "R165487",
             classes = setOf(Classes.nodeShape.value)
         )
 
-        MockMvcRequestBuilders.post("/api/templates/$templateId/properties")
+        post("/api/templates/$templateId/properties")
             .content(createLiteralTemplatePropertyJson)
-            .accept("application/vnd.orkg.template.property.v1+json")
-            .contentType("application/vnd.orkg.template.property.v1+json")
+            .accept(TEMPLATE_PROPERTY_JSON_V1)
+            .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .characterEncoding("utf-8")
             .perform()
-            .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andExpect(status().isCreated)
     }
 
     @Test
-    @WithUserDetails(userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun createResourceProperty() {
         val templateId = resourceService.createResource(
             id = "R165487",
             classes = setOf(Classes.nodeShape.value)
         )
 
-        MockMvcRequestBuilders.post("/api/templates/$templateId/properties")
+        post("/api/templates/$templateId/properties")
             .content(createResourceTemplatePropertyJson)
-            .accept("application/vnd.orkg.template.property.v1+json")
-            .contentType("application/vnd.orkg.template.property.v1+json")
+            .accept(TEMPLATE_PROPERTY_JSON_V1)
+            .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .characterEncoding("utf-8")
             .perform()
-            .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andExpect(status().isCreated)
     }
 
     private fun RequestBuilder.perform(): ResultActions = mockMvc.perform(this)

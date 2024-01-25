@@ -30,7 +30,6 @@ import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.ContributionInfo
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates

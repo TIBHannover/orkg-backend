@@ -7,7 +7,6 @@ dependencies {
 
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(testFixtures(project(":media-storage:media-storage-core-model")))
-    testFixturesImplementation(project(":community:community-ports-input"))
     testFixturesImplementation(libs.kotest.runner)
     testFixturesImplementation(libs.javax.activation)
 }

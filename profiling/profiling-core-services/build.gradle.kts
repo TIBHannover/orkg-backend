@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
     implementation(project(":profiling:profiling-core-model"))
     implementation(project(":profiling:profiling-ports-output"))
 

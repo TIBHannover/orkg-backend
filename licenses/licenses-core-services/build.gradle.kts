@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
     implementation(project(":licenses:licenses-ports-input"))
     implementation(project(":licenses:licenses-core-model"))
 

@@ -10,7 +10,6 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
@@ -32,7 +31,6 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-core-services"))
     implementation(project(":community:community-ports-output"))
     implementation(project(":community:community-core-model"))
 

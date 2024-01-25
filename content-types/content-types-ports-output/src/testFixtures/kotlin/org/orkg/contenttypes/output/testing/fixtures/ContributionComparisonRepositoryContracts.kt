@@ -8,8 +8,8 @@ import io.kotest.matchers.shouldBe
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.ContributionInfo
 import org.orkg.contenttypes.output.ContributionComparisonRepository
-import org.orkg.graph.domain.ContributionInfo
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Resource
@@ -26,7 +26,7 @@ import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 
 fun <
-    CC: ContributionComparisonRepository,
+    CC : ContributionComparisonRepository,
     S : StatementRepository,
     C : ClassRepository,
     L : LiteralRepository,
@@ -140,7 +140,6 @@ fun <
     val createSubgraphWithYearAsLiteral: () -> List<ContributionInfo> = {
         createDummySubgraph(createDummyYearLiteral())
     }
-
 
     val createSubgraphWithYearAsResource: () -> List<ContributionInfo> = {
         createDummySubgraph(createDummyYearResource())

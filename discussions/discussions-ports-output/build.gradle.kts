@@ -14,7 +14,6 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
     testFixturesImplementation(project(":common"))
-    testFixturesImplementation(project(":graph:graph-core-model"))
     testFixturesImplementation(project(":discussions:discussions-core-model"))
     testFixturesImplementation("org.springframework.data:spring-data-commons")
 }

@@ -14,7 +14,6 @@ testing {
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))
                 implementation(project(":content-types:content-types-core-model"))
-                implementation(testFixtures(project(":content-types:content-types-core-services")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -38,7 +37,7 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-core-services"))
+    implementation(project(":graph:graph-ports-input"))
     implementation(project(":identity-management:idm-ports-input")) // in legacy controller, TODO: break dependency
     implementation(project(":media-storage:media-storage-core-model"))
     implementation(project(":media-storage:media-storage-ports-input"))

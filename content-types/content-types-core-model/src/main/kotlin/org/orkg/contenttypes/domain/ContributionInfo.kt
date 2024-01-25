@@ -1,4 +1,4 @@
-package org.orkg.graph.domain
+package org.orkg.contenttypes.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ThingId

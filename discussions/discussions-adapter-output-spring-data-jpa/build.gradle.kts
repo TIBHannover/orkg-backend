@@ -16,8 +16,6 @@ dependencies {
     implementation(project(":discussions:discussions-ports-output"))
 
     implementation(project(":common"))
-    implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-core-services"))
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

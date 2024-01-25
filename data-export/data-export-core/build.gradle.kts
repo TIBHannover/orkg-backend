@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-core-services"))
+    implementation(project(":graph:graph-ports-output"))
 
     implementation(project(":content-types:content-types-core-model"))
     implementation(project(":content-types:content-types-ports-input"))

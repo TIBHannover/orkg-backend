@@ -8,7 +8,6 @@ dependencies {
     implementation(project(":media-storage:media-storage-ports-output"))
 
     implementation(project(":common"))
-    implementation(project(":graph:graph-core-model"))
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

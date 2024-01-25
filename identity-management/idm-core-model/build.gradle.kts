@@ -6,9 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common")) // for exceptions
-
-    implementation(libs.jackson.databind)
+    api(project(":common")) // for exceptions
 
     testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
 }

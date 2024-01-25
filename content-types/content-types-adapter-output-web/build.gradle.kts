@@ -9,18 +9,12 @@ plugins {
 dependencies {
     implementation(project(":content-types:content-types-ports-output"))
 
-    implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
-    implementation(project(":community:community-core-model"))
 
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework:spring-web")
     implementation(libs.jackson.core)
     implementation(libs.forkhandles.values4k)
-
-    testFixturesImplementation(project(":common"))
-    testFixturesImplementation(project(":graph:graph-core-model"))
-    testFixturesImplementation(project(":community:community-core-model"))
 }
 
 testing {

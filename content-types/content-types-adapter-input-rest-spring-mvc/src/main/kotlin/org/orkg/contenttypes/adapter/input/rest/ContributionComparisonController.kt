@@ -2,7 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.RetrieveComparisonContributionsUseCase
-import org.orkg.graph.domain.ContributionInfo
+import org.orkg.contenttypes.domain.ContributionInfo
 import org.orkg.graph.domain.TooFewIDsError
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

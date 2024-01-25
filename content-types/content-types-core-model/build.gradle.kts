@@ -9,7 +9,6 @@ plugins {
 dependencies {
     implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
-    implementation(project(":community:community-core-model"))
 
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework.boot:spring-boot")

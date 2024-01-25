@@ -15,7 +15,6 @@ dependencies {
     implementation(project(":graph:graph-ports-output"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // for representation adapters, TODO: break dependency
     implementation(project(":community:community-core-model"))
-    implementation(project(":community:community-ports-input"))
     implementation(project(":feature-flags:feature-flags-ports"))
 
     implementation("org.springframework.data:spring-data-commons")

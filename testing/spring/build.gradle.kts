@@ -7,8 +7,10 @@ plugins {
 }
 
 dependencies {
+    testFixturesApi("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
     testFixturesApi("jakarta.persistence:jakarta.persistence-api")
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
+    testFixturesApi("org.springframework.boot:spring-boot-autoconfigure")
     testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi("org.springframework.boot:spring-boot-test-autoconfigure")
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")

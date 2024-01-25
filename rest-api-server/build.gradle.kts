@@ -56,7 +56,6 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(testFixtures(project(":testing:spring")))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -80,14 +79,10 @@ testing {
                 implementation(project(":graph:graph-core-model"))
                 implementation(project(":graph:graph-core-services"))
                 implementation(project(":graph:graph-ports-input"))
-                implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
-                implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
+                implementation(project(":graph:graph-ports-output"))
+                implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
                 implementation(project(":content-types:content-types-ports-input"))
                 implementation(project(":content-types:content-types-ports-output"))
-                implementation(project(":content-types:content-types-core-model"))
-                implementation(project(":content-types:content-types-core-services"))
-                implementation(project(":content-types:content-types-adapter-output-web"))
-                implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
                 implementation(project(":identity-management:idm-ports-input"))
                 implementation(project(":identity-management:idm-ports-output"))
                 implementation(project(":identity-management:idm-core-model"))
@@ -95,10 +90,7 @@ testing {
                 implementation(project(":community:community-core-model"))
                 implementation(project(":community:community-ports-input"))
                 implementation(project(":community:community-ports-output")) // for CuratorRepository
-                implementation(project(":discussions:discussions-adapter-output-spring-data-jpa"))
                 implementation(project(":media-storage:media-storage-core-model"))
-                implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
-                implementation(project(":media-storage:media-storage-adapter-input-serialization"))
                 implementation(project(":feature-flags:feature-flags-ports"))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
@@ -115,7 +107,6 @@ testing {
                 implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
                     exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
                 }
-                implementation(libs.spring.boot.starter.neo4j.migrations)
             }
             targets {
                 all {
@@ -151,12 +142,12 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":common:serialization"))
 
-    implementation(project(":community:community-adapter-input-rest-spring-mvc"))
-    implementation(project(":community:community-adapter-output-spring-data-jpa"))
-    implementation(project(":community:community-core-model"))
-    implementation(project(":community:community-core-services"))
+    runtimeOnly(project(":community:community-adapter-input-rest-spring-mvc"))
     implementation(project(":community:community-ports-input"))
+    implementation(project(":community:community-core-model"))
+    runtimeOnly(project(":community:community-core-services"))
     implementation(project(":community:community-ports-output"))
+    runtimeOnly(project(":community:community-adapter-output-spring-data-jpa"))
 
     implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
     implementation(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
@@ -170,36 +161,27 @@ dependencies {
     implementation(project(":data-export:data-export-core"))
     implementation(project(":data-export:data-export-ports-input"))
 
-    implementation(project(":discussions:discussions-adapter-input-rest-spring-mvc"))
-    implementation(project(":discussions:discussions-adapter-output-spring-data-jpa"))
-    implementation(project(":discussions:discussions-core-model"))
-    implementation(project(":discussions:discussions-core-services"))
-    implementation(project(":discussions:discussions-ports-input"))
-    implementation(project(":discussions:discussions-ports-output"))
+    runtimeOnly(project(":discussions:discussions-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":discussions:discussions-core-services"))
+    runtimeOnly(project(":discussions:discussions-adapter-output-spring-data-jpa"))
 
-    implementation(project(":feature-flags:feature-flags-ports"))
-    implementation(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
+    implementation(project(":feature-flags:feature-flags-ports")) // for cache warmup
+    runtimeOnly(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
 
-    implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
-    // implementation(project(":graph:graph-adapter-output-in-memory"))
+    runtimeOnly(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-services"))
     implementation(project(":graph:graph-ports-input"))
     implementation(project(":graph:graph-ports-output"))
 
-    implementation(project(":identity-management:idm-ports-input"))
-    // implementation(project(":identity-management:idm-ports-output"))
-    implementation(project(":identity-management:idm-core-model"))
-    implementation(project(":identity-management:idm-core-services"))
-    // only ports used, replace later
+    implementation(project(":identity-management:idm-ports-input")) // for PostgresDummyDataSetup
     runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))
+    runtimeOnly(project(":identity-management:idm-core-services"))
     runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
 
-    implementation(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
-    implementation(project(":licenses:licenses-core-model"))
-    implementation(project(":licenses:licenses-core-services"))
-    implementation(project(":licenses:licenses-ports-input"))
+    runtimeOnly(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":licenses:licenses-core-services"))
 
     implementation(project(":media-storage:media-storage-adapter-input-serialization"))
     implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
@@ -214,7 +196,7 @@ dependencies {
     runtimeOnly(project(":profiling:profiling-core-services"))
     runtimeOnly(project(":profiling:profiling-ports-output"))
 
-    implementation(project(":widget"))
+    runtimeOnly(project(":widget"))
 
     // Migrations
     liquibase(project(mapOf("path" to ":migrations:liquibase", "configuration" to "liquibase")))
@@ -227,8 +209,8 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
-    implementation("org.postgresql:postgresql")
-    implementation(libs.liquibase)
+    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly(libs.liquibase)
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
         exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
     }
@@ -263,8 +245,9 @@ dependencies {
     // Testing
     //
     // Note: Version Catalogs are not yet supported in the test suites plugin
-    "integrationTestImplementation"(libs.bundles.testcontainers)
-    "integrationTestImplementation"(libs.bundles.kotest)
+    "integrationTestRuntimeOnly"(libs.bundles.testcontainers)
+    "integrationTestRuntimeOnly"(libs.bundles.kotest)
+    "integrationTestApi"("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
     //
     // Documentation
     //

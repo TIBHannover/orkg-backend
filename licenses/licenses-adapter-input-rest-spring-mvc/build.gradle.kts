@@ -23,10 +23,8 @@ testing {
 
 dependencies {
     implementation(project(":common"))
-    implementation(project(":common:serialization"))
     implementation(project(":licenses:licenses-ports-input"))
     implementation(project(":licenses:licenses-core-model"))
-    implementation(project(":licenses:licenses-core-services"))
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.data:spring-data-commons")

@@ -17,7 +17,6 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for SDN adapters, TODO: refactor?
                 implementation(project(":graph:graph-core-services"))
                 implementation(project(":graph:graph-ports-output"))
@@ -46,7 +45,6 @@ testing {
 dependencies {
     implementation(project(":content-types:content-types-ports-output"))
 
-    implementation(project(":graph:graph-core-services"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for Neo4jLiteral, TODO: break dependency
 
     implementation(project(":common"))

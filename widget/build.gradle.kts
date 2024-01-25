@@ -9,7 +9,6 @@ dependencies {
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-ports-input"))
-    implementation(project(":graph:graph-ports-output"))
 
     implementation("org.springframework:spring-context")
     implementation("com.fasterxml.jackson.core:jackson-databind")
@@ -22,7 +21,6 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(testFixtures(project(":testing:kotest")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(libs.kotest.runner)
                 implementation(libs.spring.mockk)

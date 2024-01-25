@@ -19,9 +19,7 @@ dependencies {
 
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(project(":graph:graph-core-model"))
-    testFixturesImplementation(project(":community:community-core-model"))
     testFixturesImplementation(project(":content-types:content-types-core-model"))
-    testFixturesImplementation(project(":content-types:content-types-core-services"))
     testFixturesImplementation(project(":content-types:content-types-ports-input"))
     testFixturesImplementation(libs.forkhandles.values4k)
 }

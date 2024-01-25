@@ -2,7 +2,7 @@ package org.orkg.contenttypes.adapter.output.neo4j.internal
 
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResource
-import org.orkg.graph.domain.ContributionInfo
+import org.orkg.contenttypes.domain.ContributionInfo
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository

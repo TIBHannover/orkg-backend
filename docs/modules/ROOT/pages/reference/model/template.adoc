@@ -1,0 +1,37 @@
+= Template Model Diagram
+
+[mermaid,width=100%]
+----
+flowchart LR
+    Template[NodeShape \n Resource] --> |"description"| description[Literal \n xsd:string]
+    Template --> |"TemplateLabelFormat"| formattedLabel[Literal \n xsd:string]
+	Template --> |"sh:targetClass"| targetClass[Class]
+	Template --> |"TemplateOfResearchField"| researchField[ResearchField \n Resource]
+	Template --> |"TemplateOfResearchProblem"| problem[Problem \n Resource]
+	Template --> |"TemplateOfPredicate"| predicate[Predicate]
+	subgraph Relations
+		researchField
+		problem
+		predicate
+	end
+	Template --> |"sh:property"| TemplatePopoerty
+	subgraph TemplatePopoerty[Template Popoerty]
+		subgraph Resource Property
+			ResourceProperty[PropertyShape \n Resource] --> |"sh:class"| klass[Class]
+			ResourceProperty --> |"sh:order"| order[Literal \n xsd:integer]
+			ResourceProperty --> |"sh:minCount"| minCount[Literal \n xsd:integer]
+			ResourceProperty --> |"sh:maxCount"| maxCount[Literal \n xsd:integer]
+			ResourceProperty --> |"sh:pattern"| pattern[Literal \n xsd:integer]
+			ResourceProperty --> |"sh:path"| path[Predicate]
+		end
+		subgraph Literal Property
+			LiteralProperty[PropertyShape \n Resource] --> |"sh:datatype"| datatype[Class]
+			LiteralProperty --> |"sh:order"| literalOrder[Literal \n xsd:integer]
+			LiteralProperty --> |"sh:minCount"| literalMinCount[Literal \n xsd:integer]
+			LiteralProperty --> |"sh:maxCount"| literalMaxCount[Literal \n xsd:integer]
+			LiteralProperty --> |"sh:pattern"| literalPattern[Literal \n xsd:integer]
+			LiteralProperty --> |"sh:path"| literalPath[Predicate]
+		end
+	end
+	Template --> |"sh:closed"| closed[Literal \n xsd:boolean]
+----

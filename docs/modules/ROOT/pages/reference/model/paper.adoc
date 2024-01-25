@@ -1,0 +1,46 @@
+= Paper Model Diagram
+
+[mermaid,width=100%]
+----
+flowchart LR
+    Paper[Paper \n Resource] --> |"P30 \n has research field"| researchField[ResearchField \n Resource]
+    Paper --> |"P26 \n has DOI"| doi[Literal \n xsd:string]
+    subgraph Publication Info
+        monthPublished
+        yearPublished
+        publishedIn
+        url
+    end
+    Paper --> |"P28 \n month published"| monthPublished[Literal \n xsd:integer]
+    Paper --> |"P29 \n year published"| yearPublished[Literal \n xsd:integer]
+    Paper --> |"HAS_VENUE"| publishedIn[Venue \n Resource]
+    Paper --> |"url"| url[Literal \n xsd:anyURI]
+    Paper --> |"hasAuthors"| authorList[List \n Resource]
+    subgraph Author List
+        authorList --> |"hasListElement"| Author
+		subgraph Author
+			subgraph Literal Author
+				literalAuthor[Literal \n xsd:string]
+			end
+			subgraph Resource Author
+				resourceAuthor[Author \n Resource] --> |"website"| resourceAuthorWebsite[Literal \n xsd:anyURI]
+				resourceAuthor --> |"HAS_ORCID"| orcid[Literal \n xsd:string]
+				resourceAuthor --> |"googleScholarID"| googleScholarID[Literal \n xsd:string]
+				resourceAuthor --> |"researchGateID"| researchGateID[Literal \n xsd:string]
+				resourceAuthor --> |"linkedInID"| linkedInID[Literal \n xsd:string]
+				resourceAuthor --> |"P76020 \n wikidata id"| wikidataId[Literal \n xsd:string]
+				resourceAuthor --> |"P58083 \n web of science id"| webOfScienceId[Literal \n xsd:string]
+				subgraph Identifiers
+					orcid
+					googleScholarID
+					researchGateID
+					linkedInID
+					wikidataId
+					webOfScienceId
+				end
+			end
+		end
+    end
+    Paper --> |"P31 \n has contribution"| Contribution
+    Contribution[Contribution \n Resource] --> |"Any"| Any
+----

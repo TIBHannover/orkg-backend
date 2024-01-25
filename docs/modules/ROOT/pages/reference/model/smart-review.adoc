@@ -1,0 +1,38 @@
+= Smart Review Model Diagram
+
+[mermaid,width=100%]
+----
+flowchart LR
+    SmartReviewPublished --> |"P26 \n has DOI"| doi[Literal \n xsd:string]
+    SmartReviewPublished --> |"description"| description[Literal \n xsd:string]
+	SmartReviewPublished --> |"HasPaper"| SmartReview
+	SmartReview --> |"P31 \n has Contribution"| Contribution
+    SmartReview --> |"hasAuthors"| authorList[List \n Resource]
+	SmartReview --> |"P30 \n has research field"| researchField[ResearchField \n Resource]
+    subgraph Author List
+        authorList --> |"hasListElement"| Author
+		subgraph Author
+			subgraph Literal Author
+				literalAuthor[Literal \n xsd:string]
+			end
+			subgraph Resource Author
+				resourceAuthor[Resource Author] --> |"website"| resourceAuthorWebsite[Literal \n xsd:anyURI]
+				resourceAuthor --> |"HAS_ORCID"| orcid[Literal \n xsd:string]
+				resourceAuthor --> |"googleScholarID"| googleScholarID[Literal \n xsd:string]
+				resourceAuthor --> |"researchGateID"| researchGateID[Literal \n xsd:string]
+				resourceAuthor --> |"linkedInID"| linkedInID[Literal \n xsd:string]
+				resourceAuthor --> |"P76020 \n wikidata id"| wikidataId[Literal \n xsd:string]
+				resourceAuthor --> |"P58083 \n web of science id"| webOfScienceId[Literal \n xsd:string]
+				subgraph Identifiers
+					orcid
+					googleScholarID
+					researchGateID
+					linkedInID
+					wikidataId
+					webOfScienceId
+				end
+			end
+		end
+    end
+    Contribution --> |"Any"| Any
+----

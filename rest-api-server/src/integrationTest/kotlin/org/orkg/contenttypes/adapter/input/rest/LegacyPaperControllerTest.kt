@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase.LegacyCreatePaperRequest
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase.PaperDefinition
@@ -26,6 +25,7 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
+import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
@@ -61,9 +61,6 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var legacyPaperService: LegacyPaperUseCases
-
-    @Autowired
-    private lateinit var userService: AuthUseCase
 
     @BeforeEach
     fun setup() {
@@ -224,7 +221,8 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     fun mergePapersThatExistsOnTitle() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
+        val userUUID = UUID.fromString(MockUserId.USER)
+        val originalId = legacyPaperService.addPaperContent(originalPaper, false, userUUID).value
 
         val paperWithSameTitle = mapOf(
             "paper" to mapOf(
@@ -270,7 +268,8 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     fun mergePapersThatExistsOnDoi() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
+        val userUUID = UUID.fromString(MockUserId.USER)
+        val originalId = legacyPaperService.addPaperContent(originalPaper, false, userUUID).value
 
         val paperWithSameDOI = mapOf(
             "paper" to mapOf(
@@ -316,7 +315,8 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     fun mergePapersIfBothTitleAndDoiExist() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
+        val userUUID = UUID.fromString(MockUserId.USER)
+        val originalId = legacyPaperService.addPaperContent(originalPaper, false, userUUID).value
 
         val paperWithSameTitleAndDOI = mapOf(
             "paper" to mapOf(

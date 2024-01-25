@@ -70,7 +70,7 @@ interface Neo4jProblemRepository :
     fun findAllContributionsByProblemAndVisibility(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 
     // Papers
-    
+
     @Query("""$MATCH_PAPER_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_PAPER_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT""")
     fun findAllListedPapersByProblem(id: ThingId, pageable: Pageable): Page<Neo4jResource>
@@ -78,9 +78,9 @@ interface Neo4jProblemRepository :
     @Query("""$MATCH_PAPER_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_PAPER_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT""")
     fun findAllPapersByProblemAndVisibility(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-    
+
     // Research Fields
-    
+
     @Query("""$MATCH_RESEARCH_FIELD_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_RESEARCH_FIELD_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT""")
     fun findAllListedResearchFieldsByProblem(id: ThingId, pageable: Pageable): Page<Neo4jResource>
@@ -88,9 +88,9 @@ interface Neo4jProblemRepository :
     @Query("""$MATCH_RESEARCH_FIELD_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_RESEARCH_FIELD_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT""")
     fun findAllResearchFieldsByProblemAndVisibility(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-   
+
     // Comparisons
-    
+
     @Query("""$MATCH_COMPARISON_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_COMPARISON_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT""")
     fun findAllListedComparisonsByProblem(id: ThingId, pageable: Pageable): Page<Neo4jResource>
@@ -161,7 +161,7 @@ interface Neo4jProblemRepository :
     fun findContributorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<ContributorPerProblem>
 
     @Query(value = """MATCH (ds:$DATASET_CLASS {id: $datasetId})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
-                    RETURN DISTINCT problem $PAGE_PARAMS""",
+                    RETURN DISTINCT problem ORDER BY problem.id $PAGE_PARAMS""",
         countQuery = """MATCH (ds:$DATASET_CLASS {id: $datasetId})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
                     RETURN COUNT(DISTINCT problem) as cnt""")
     fun findResearchProblemForDataset(datasetId: ThingId, pageable: Pageable): Page<Neo4jResource>

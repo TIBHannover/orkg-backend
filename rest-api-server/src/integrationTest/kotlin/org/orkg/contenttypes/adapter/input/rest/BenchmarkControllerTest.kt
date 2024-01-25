@@ -15,7 +15,6 @@ import org.orkg.createClasses
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -37,9 +36,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @DisplayName("Benchmark Controller")
 @Import(MockUserDetailsService::class)
 class BenchmarkControllerTest : RestDocumentationBaseTest() {
-
-    @Autowired
-    private lateinit var flags: FeatureFlagService
 
     @Autowired
     private lateinit var labelsAndClasses: LabelAndClassService

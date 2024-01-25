@@ -7,10 +7,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.LegacyPaperUseCases
 import org.orkg.createClass
 import org.orkg.createLiteral
 import org.orkg.createPredicate
@@ -62,12 +60,6 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var statementService: StatementUseCases
-
-    @Autowired
-    private lateinit var legacyPaperService: LegacyPaperUseCases
-
-    @Autowired
-    private lateinit var userService: AuthUseCase
 
     @Autowired
     private lateinit var literalService: LiteralUseCases

@@ -9,7 +9,9 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
-import org.orkg.contenttypes.input.ThingDefinitions
+import org.orkg.contenttypes.input.LiteralDefinition
+import org.orkg.contenttypes.input.PredicateDefinition
+import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
@@ -52,23 +54,23 @@ fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     contents = CreatePaperUseCase.CreateCommand.PaperContents(
         resources = mapOf(
-            "#temp1" to ThingDefinitions.ResourceDefinition(
+            "#temp1" to ResourceDefinition(
                 label = "MOTO",
                 classes = setOf(ThingId("R2000"))
             )
         ),
         literals = mapOf(
-            "#temp2" to ThingDefinitions.LiteralDefinition(
+            "#temp2" to LiteralDefinition(
                 label = "0.1",
                 dataType = Literals.XSD.DECIMAL.prefixedUri
             )
         ),
         predicates = mapOf(
-            "#temp3" to ThingDefinitions.PredicateDefinition(
+            "#temp3" to PredicateDefinition(
                 label = "hasResult",
                 description = "has result"
             ),
-            "#temp4" to ThingDefinitions.PredicateDefinition(
+            "#temp4" to PredicateDefinition(
                 label = "hasLiteral"
             )
         ),

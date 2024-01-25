@@ -7,10 +7,6 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.PublicationInfo
-import org.orkg.contenttypes.input.ThingDefinitions.ListDefinition
-import org.orkg.contenttypes.input.ThingDefinitions.LiteralDefinition
-import org.orkg.contenttypes.input.ThingDefinitions.PredicateDefinition
-import org.orkg.contenttypes.input.ThingDefinitions.ResourceDefinition
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.input.CreateObjectUseCase
 
@@ -35,7 +31,10 @@ interface CreatePaperUseCase {
             override val predicates: Map<String, PredicateDefinition> = emptyMap(),
             override val lists: Map<String, ListDefinition> = emptyMap(),
             val contributions: List<ContributionDefinition>
-        ) : ThingDefinitions
+        ) : ThingDefinitions {
+            override val classes: Map<String, ClassDefinition>
+                get() = emptyMap()
+        }
     }
 }
 

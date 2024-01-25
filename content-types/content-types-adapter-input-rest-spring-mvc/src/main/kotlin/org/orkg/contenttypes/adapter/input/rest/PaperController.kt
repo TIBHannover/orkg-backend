@@ -19,10 +19,8 @@ import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.PublishPaperUseCase
-import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
@@ -206,56 +204,6 @@ class PaperController(
                 )
         }
 
-        data class ResourceDefinitionDTO(
-            @field:NotBlank
-            val label: String,
-            val classes: Set<ThingId>?
-        ) {
-            fun toCreateCommand(): ThingDefinitions.ResourceDefinition =
-                ThingDefinitions.ResourceDefinition(
-                    label = label,
-                    classes = classes.orEmpty()
-                )
-        }
-
-        data class LiteralDefinitionDTO(
-            @field:NotBlank
-            val label: String,
-            @JsonProperty("data_type")
-            val dataType: String?
-        ) {
-            fun toCreateCommand(): ThingDefinitions.LiteralDefinition =
-                ThingDefinitions.LiteralDefinition(
-                    label = label,
-                    dataType = dataType ?: Literals.XSD.STRING.prefixedUri
-                )
-        }
-
-        data class PredicateDefinitionDTO(
-            @field:NotBlank
-            val label: String,
-            @field:NotBlank
-            val description: String?
-        ) {
-            fun toCreateCommand(): ThingDefinitions.PredicateDefinition =
-                ThingDefinitions.PredicateDefinition(
-                    label = label,
-                    description = description
-                )
-        }
-
-        data class ListDefinitionDTO(
-            @field:NotBlank
-            val label: String,
-            val elements: List<String>
-        ) {
-            fun toCreateCommand(): ThingDefinitions.ListDefinition =
-                ThingDefinitions.ListDefinition(
-                    label = label,
-                    elements = elements
-                )
-        }
-
         data class ContributionDTO(
             @field:NotBlank
             val label: String,
@@ -334,13 +282,13 @@ class PaperController(
 
     data class CreateContributionRequest(
         @field:Valid
-        val resources: Map<String, CreatePaperRequest.ResourceDefinitionDTO>?,
+        val resources: Map<String, ResourceDefinitionDTO>?,
         @field:Valid
-        val literals: Map<String, CreatePaperRequest.LiteralDefinitionDTO>?,
+        val literals: Map<String, LiteralDefinitionDTO>?,
         @field:Valid
-        val predicates: Map<String, CreatePaperRequest.PredicateDefinitionDTO>?,
+        val predicates: Map<String, PredicateDefinitionDTO>?,
         @field:Valid
-        val lists: Map<String, CreatePaperRequest.ListDefinitionDTO>?,
+        val lists: Map<String, ListDefinitionDTO>?,
         @field:Valid
         val contribution: CreatePaperRequest.ContributionDTO,
         @JsonProperty("extraction_method")

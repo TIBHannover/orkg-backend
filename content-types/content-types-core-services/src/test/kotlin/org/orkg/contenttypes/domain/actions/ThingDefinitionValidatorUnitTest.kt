@@ -14,7 +14,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.input.CreatePaperUseCase
-import org.orkg.contenttypes.input.ThingDefinitions
+import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.graph.domain.ReservedClass
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.reservedClassIds
@@ -41,7 +41,7 @@ class ThingDefinitionValidatorUnitTest {
     fun `Given paper contents, when specified class id for resource is not resolvable, it throws an exception`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to ThingDefinitions.ResourceDefinition(
+                "#temp1" to ResourceDefinition(
                     label = "MOTO",
                     classes = setOf(ThingId("R2000"))
                 )
@@ -68,7 +68,7 @@ class ThingDefinitionValidatorUnitTest {
     fun `Given paper contents, when specified class id for resource does not resolve to a class, it throws an exception`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to ThingDefinitions.ResourceDefinition(
+                "#temp1" to ResourceDefinition(
                     label = "MOTO",
                     classes = setOf(ThingId("R2000"))
                 )
@@ -96,7 +96,7 @@ class ThingDefinitionValidatorUnitTest {
     fun `Given paper contents, when specified class id for a resource is reserved, it throws an exception`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
-                "#temp1" to ThingDefinitions.ResourceDefinition(
+                "#temp1" to ResourceDefinition(
                     label = "MOTO",
                     classes = setOf(reservedClassIds.first())
                 )

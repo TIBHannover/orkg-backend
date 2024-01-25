@@ -11,23 +11,29 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.StatementRepository
 
 class PaperContributionCreator(
-    resourceService: ResourceUseCases,
-    statementService: StatementUseCases,
-    literalService: LiteralUseCases,
-    predicateService: PredicateUseCases,
-    statementRepository: StatementRepository,
-    listService: ListUseCases
-) : ContributionCreator(
-    resourceService = resourceService,
-    statementService = statementService,
-    literalService = literalService,
-    predicateService = predicateService,
-    statementRepository = statementRepository,
-    listService = listService
-), CreatePaperAction {
+    private val contributionCreator: ContributionCreator
+) : CreatePaperAction {
+    constructor(
+        resourceService: ResourceUseCases,
+        statementService: StatementUseCases,
+        literalService: LiteralUseCases,
+        predicateService: PredicateUseCases,
+        statementRepository: StatementRepository,
+        listService: ListUseCases
+    ) : this(
+        ContributionCreator(
+            resourceService = resourceService,
+            statementService = statementService,
+            literalService = literalService,
+            predicateService = predicateService,
+            statementRepository = statementRepository,
+            listService = listService
+        )
+    )
+
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
         command.contents?.let {
-            create(
+            contributionCreator.create(
                 paperId = state.paperId!!,
                 contributorId = command.contributorId,
                 extractionMethod = command.extractionMethod,

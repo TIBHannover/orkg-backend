@@ -28,11 +28,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreateContributionRequest
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionDTO
-import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ListDefinitionDTO
-import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.LiteralDefinitionDTO
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.PaperContentsDTO
-import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.PredicateDefinitionDTO
-import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ResourceDefinitionDTO
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.StatementObjectDefinitionDTO
 import org.orkg.contenttypes.adapter.input.rest.PaperController.UpdatePaperRequest
 import org.orkg.contenttypes.domain.AmbiguousAuthor

@@ -20,5 +20,5 @@ abstract class TempIdValidator {
     }
 
     protected fun ThingDefinitions.tempIds(): List<String> =
-        listOf(resources.keys, literals.keys, predicates.keys, lists.keys).flatten()
+        listOf(resources.keys, literals.keys, predicates.keys, classes.keys, lists.keys).flatten()
 }

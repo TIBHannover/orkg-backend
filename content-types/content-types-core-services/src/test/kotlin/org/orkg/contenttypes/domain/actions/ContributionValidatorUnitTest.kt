@@ -16,7 +16,8 @@ import org.orkg.contenttypes.domain.InvalidStatementSubject
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
 import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
-import org.orkg.contenttypes.input.ThingDefinitions
+import org.orkg.contenttypes.input.LiteralDefinition
+import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.output.ThingRepository
@@ -137,7 +138,7 @@ class ContributionValidatorUnitTest {
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             predicates = mapOf(
-                "#temp1" to ThingDefinitions.PredicateDefinition(
+                "#temp1" to PredicateDefinition(
                     label = "predicate"
                 )
             ),
@@ -223,7 +224,7 @@ class ContributionValidatorUnitTest {
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             literals = mapOf(
-                "#temp1" to ThingDefinitions.LiteralDefinition("label")
+                "#temp1" to LiteralDefinition("label")
             ),
             contributions = listOf(
                 ContributionDefinition(

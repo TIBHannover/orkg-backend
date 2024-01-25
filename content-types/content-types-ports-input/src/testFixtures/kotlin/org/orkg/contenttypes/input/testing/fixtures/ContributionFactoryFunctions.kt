@@ -5,7 +5,9 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreateContributionUseCase
-import org.orkg.contenttypes.input.ThingDefinitions
+import org.orkg.contenttypes.input.LiteralDefinition
+import org.orkg.contenttypes.input.PredicateDefinition
+import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -15,23 +17,23 @@ fun dummyCreateContributionCommand() = CreateContributionUseCase.CreateCommand(
     paperId = ThingId("R123"),
     extractionMethod = ExtractionMethod.MANUAL,
     resources = mapOf(
-        "#temp1" to ThingDefinitions.ResourceDefinition(
+        "#temp1" to ResourceDefinition(
             label = "MOTO",
             classes = setOf(ThingId("R2000"))
         )
     ),
     literals = mapOf(
-        "#temp2" to ThingDefinitions.LiteralDefinition(
+        "#temp2" to LiteralDefinition(
             label = "0.1",
             dataType = Literals.XSD.DECIMAL.prefixedUri
         )
     ),
     predicates = mapOf(
-        "#temp3" to ThingDefinitions.PredicateDefinition(
+        "#temp3" to PredicateDefinition(
             label = "hasResult",
             description = "has result"
         ),
-        "#temp4" to ThingDefinitions.PredicateDefinition(
+        "#temp4" to PredicateDefinition(
             label = "hasLiteral"
         )
     ),

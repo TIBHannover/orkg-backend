@@ -19,14 +19,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-private val reservedClassIds = setOf(
-    ThingId("Literal"),
-    ThingId("Class"),
-    ThingId("Predicate"),
-    ThingId("Resource"),
-    Classes.list
-)
-
 @Service
 @Transactional
 class ResourceService(

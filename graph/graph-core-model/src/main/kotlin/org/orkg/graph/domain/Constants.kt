@@ -2,6 +2,14 @@ package org.orkg.graph.domain
 
 import org.orkg.common.ThingId
 
+val reservedClassIds = setOf(
+    ThingId("Literal"),
+    ThingId("Class"),
+    ThingId("Predicate"),
+    ThingId("Resource"),
+    Classes.list
+)
+
 object Predicates {
     val comparesContribution = ThingId("compareContribution")
     val description = ThingId("description")

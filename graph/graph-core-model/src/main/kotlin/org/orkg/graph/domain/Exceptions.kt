@@ -93,6 +93,9 @@ class ResourceNotModifiable(id: ThingId) :
 class InvalidClassCollection(ids: Iterable<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The collection of classes "$ids" contains one or more invalid classes.""")
 
+class ReservedClass(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Class "$id" is reserved and therefor cannot be set.""")
+
 class DuplicateURI(uri: URI, id: String) :
     PropertyValidationException("uri", """The URI <$uri> is already assigned to class with ID "$id".""")
 

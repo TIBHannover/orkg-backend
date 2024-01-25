@@ -4,7 +4,9 @@ import org.orkg.common.Either
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.ReservedClass
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.domain.reservedClassIds
 import org.orkg.graph.output.ThingRepository
 
 abstract class ThingDefinitionValidator(
@@ -22,6 +24,9 @@ abstract class ThingDefinitionValidator(
             .flatMap { it.classes }
             .toSet()
             .forEach {
+                if (it in reservedClassIds) {
+                    throw ReservedClass(it)
+                }
                 validateId(it.value, tempIds, validatedIds).onRight { thing ->
                     if (thing !is Class) {
                         throw ThingIsNotAClass(thing.id)

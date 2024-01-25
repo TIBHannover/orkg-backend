@@ -15,7 +15,9 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.ThingDefinitions
+import org.orkg.graph.domain.ReservedClass
 import org.orkg.graph.domain.ThingNotFound
+import org.orkg.graph.domain.reservedClassIds
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createResource
 
@@ -88,5 +90,28 @@ class ThingDefinitionValidatorUnitTest {
         }
 
         verify(exactly = 1) { thingRepository.findByThingId(any()) }
+    }
+
+    @Test
+    fun `Given paper contents, when specified class id for a resource is reserved, it throws an exception`() {
+        val contents = CreatePaperUseCase.CreateCommand.PaperContents(
+            resources = mapOf(
+                "#temp1" to ThingDefinitions.ResourceDefinition(
+                    label = "MOTO",
+                    classes = setOf(reservedClassIds.first())
+                )
+            ),
+            literals = emptyMap(),
+            predicates = emptyMap(),
+            contributions = emptyList()
+        )
+
+        assertThrows<ReservedClass> {
+            thingDefinitionValidator.validateIdsInDefinitions(
+                thingDefinitions = contents,
+                tempIds = emptySet(),
+                validatedIds = mutableMapOf()
+            )
+        }
     }
 }

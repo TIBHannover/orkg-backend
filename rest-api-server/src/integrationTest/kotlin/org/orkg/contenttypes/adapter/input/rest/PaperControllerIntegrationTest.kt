@@ -218,7 +218,7 @@ private const val createPaperJson = """{
     "R12"
   ],
   "identifiers": {
-    "doi": "10.48550/arXiv.2304.05327"
+    "doi": ["10.48550/arXiv.2304.05327"]
   },
   "publication_info": {
     "published_month": 5,
@@ -234,14 +234,14 @@ private const val createPaperJson = """{
     {
       "name": "Author with orcid",
       "identifiers": {
-        "orcid": "0000-1111-2222-3333"
+        "orcid": ["0000-1111-2222-3333"]
       }
     },
     {
       "name": "Author with id and orcid",
       "id": "R456",
       "identifiers": {
-        "orcid": "1111-2222-3333-4444"
+        "orcid": ["1111-2222-3333-4444"]
       }
     },
     {
@@ -332,7 +332,7 @@ private const val updatePaperJson = """{
     "R194"
   ],
   "identifiers": {
-    "doi": "10.48550/arXiv.2304.05328"
+    "doi": ["10.48550/arXiv.2304.05328"]
   },
   "publication_info": {
     "published_month": 6,
@@ -348,14 +348,14 @@ private const val updatePaperJson = """{
     {
       "name": "Author with orcid",
       "identifiers": {
-        "orcid": "0000-1111-2222-3333"
+        "orcid": ["0000-1111-2222-3333"]
       }
     },
     {
       "name": "Author with id and orcid",
       "id": "R456",
       "identifiers": {
-        "orcid": "4444-3333-2222-1111"
+        "orcid": ["4444-3333-2222-1111"]
       }
     },
     {

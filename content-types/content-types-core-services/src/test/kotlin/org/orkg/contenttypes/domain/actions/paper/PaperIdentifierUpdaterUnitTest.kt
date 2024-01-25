@@ -54,7 +54,7 @@ class PaperIdentifierUpdaterUnitTest {
         val paperId = paper.id
         val state = UpdatePaperState(paper = paper)
 
-        val doi = command.identifiers!!["doi"]!!
+        val doi = command.identifiers!!["doi"]!!.first()
         val doiLiteralId = ThingId("L1")
 
         every {
@@ -90,10 +90,10 @@ class PaperIdentifierUpdaterUnitTest {
         val oldDoi = "10.1234/56790"
         val newDoi = "10.1234/56789"
         val command = dummyUpdatePaperCommand().copy(
-            identifiers = mapOf("doi" to newDoi)
+            identifiers = mapOf("doi" to listOf(newDoi))
         )
         val paper = createDummyPaper().copy(
-            identifiers = mapOf("doi" to oldDoi)
+            identifiers = mapOf("doi" to listOf(oldDoi))
         )
         val paperId = paper.id
         val state = UpdatePaperState(paper = paper)
@@ -156,7 +156,7 @@ class PaperIdentifierUpdaterUnitTest {
     @Test
     fun `Given a paper update command, when an unknown identifier is specified, it does not create the identifier`() {
         val command = dummyUpdatePaperCommand().copy(
-            identifiers = mapOf("unknown" to "value")
+            identifiers = mapOf("unknown" to listOf("value"))
         )
         val paper = createDummyPaper().copy(
             identifiers = emptyMap()

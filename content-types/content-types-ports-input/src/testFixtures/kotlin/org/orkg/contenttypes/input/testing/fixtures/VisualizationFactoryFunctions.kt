@@ -20,12 +20,12 @@ fun dummyCreateVisualizationCommand() = CreateVisualizationUseCase.CreateCommand
         ),
         Author(
             name = "Author with orcid",
-            identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
         ),
         Author(
             id = ThingId("R456"),
             name = "Author with id and orcid",
-            identifiers = mapOf("orcid" to "1111-2222-3333-4444")
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
         ),
         Author(
             name = "Author with homepage",

@@ -97,23 +97,25 @@ abstract class AuthorCreator(
 
     private fun createIdentifiers(
         authorId: ThingId,
-        missingIdentifiers: Map<String, String>,
+        missingIdentifiers: Map<String, List<String>>,
         contributorId: ContributorId
     ) {
         val identifiers = Identifiers.author.parse(missingIdentifiers, validate = false)
-        identifiers.forEach { (identifier, value) ->
-            val literalId = literalService.create(
-                CreateCommand(
-                    contributorId = contributorId,
-                    label = value
+        identifiers.forEach { (identifier, values) ->
+            values.forEach { value ->
+                val literalId = literalService.create(
+                    CreateCommand(
+                        contributorId = contributorId,
+                        label = value
+                    )
                 )
-            )
-            statementService.add(
-                userId = contributorId,
-                subject = authorId,
-                predicate = identifier.predicateId,
-                `object` = literalId
-            )
+                statementService.add(
+                    userId = contributorId,
+                    subject = authorId,
+                    predicate = identifier.predicateId,
+                    `object` = literalId
+                )
+            }
         }
     }
 }

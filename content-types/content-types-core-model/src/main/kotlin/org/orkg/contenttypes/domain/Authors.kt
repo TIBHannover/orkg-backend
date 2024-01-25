@@ -10,7 +10,7 @@ import org.orkg.graph.domain.Resource
 data class Author(
     val name: String,
     val id: ThingId? = null,
-    val identifiers: Map<String, String>? = null,
+    val identifiers: Map<String, List<String>>? = null,
     val homepage: URI? = null
 )
 

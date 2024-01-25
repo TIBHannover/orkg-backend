@@ -55,7 +55,7 @@ class AuthorCreatorUnitTest {
             id = authorId,
             name = "Author",
             identifiers = mapOf(
-                "orcid" to orcid
+                "orcid" to listOf(orcid)
             )
         )
         val authorListId = ThingId("R1456")
@@ -209,7 +209,7 @@ class AuthorCreatorUnitTest {
         val author = Author(
             name = "Author",
             identifiers = mapOf(
-                "orcid" to orcid
+                "orcid" to listOf(orcid)
             ),
             homepage = URI.create("https://orkg.org")
         )

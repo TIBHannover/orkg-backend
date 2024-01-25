@@ -41,7 +41,7 @@ class PaperIdentifierCreatorUnitTest {
         val paperId = ThingId("Paper")
         val state = CreatePaperState(paperId = paperId)
 
-        val doi = command.identifiers["doi"]!!
+        val doi = command.identifiers["doi"]!!.first()
         val doiLiteralId = ThingId("L1")
 
         every {
@@ -78,7 +78,7 @@ class PaperIdentifierCreatorUnitTest {
     @Test
     fun `Given a paper create command, when an unknown identifier is specified, it does not create the identifier`() {
         val command = dummyCreatePaperCommand().copy(
-            identifiers = mapOf("unknown" to "value")
+            identifiers = mapOf("unknown" to listOf("value"))
         )
         val paperId = ThingId("Paper")
         val state = CreatePaperState(paperId = paperId)

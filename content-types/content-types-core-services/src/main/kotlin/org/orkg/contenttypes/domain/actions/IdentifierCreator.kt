@@ -14,23 +14,25 @@ abstract class IdentifierCreator(
 ) {
     internal fun create(
         contributorId: ContributorId,
-        identifiers: Map<String, String>,
+        identifiers: Map<String, List<String>>,
         identifierDefinitions: Set<Identifier>,
         subjectId: ThingId
     ) {
         val parsedIdentifiers = identifierDefinitions.parse(identifiers, validate = false)
-        parsedIdentifiers.forEach { (identifier, value) ->
-            statementService.create(
-                contributorId,
-                subjectId,
-                identifier.predicateId,
-                literalService.create(
-                    CreateCommand(
-                        contributorId = contributorId,
-                        label = value
+        parsedIdentifiers.forEach { (identifier, values) ->
+            values.forEach { value ->
+                statementService.create(
+                    contributorId,
+                    subjectId,
+                    identifier.predicateId,
+                    literalService.create(
+                        CreateCommand(
+                            contributorId = contributorId,
+                            label = value
+                        )
                     )
                 )
-            )
+            }
         }
     }
 }

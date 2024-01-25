@@ -39,7 +39,7 @@ class IdentifierCreatorUnitTest {
         val paperId = ThingId("Paper")
         val contributorId = ContributorId(UUID.randomUUID())
         val doi = "10.1234/56789"
-        val identifiers = mapOf("doi" to doi)
+        val identifiers = mapOf("doi" to listOf(doi))
         val doiLiteralId = ThingId("L1")
 
         every {
@@ -69,7 +69,7 @@ class IdentifierCreatorUnitTest {
     fun `Given a map of identifiers, when an unknown identifier is specified, it does not create the identifier`() {
         val paperId = ThingId("Paper")
         val contributorId = ContributorId(UUID.randomUUID())
-        val identifiers = mapOf("unknown" to "value")
+        val identifiers = mapOf("unknown" to listOf("value"))
 
         identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId)
 

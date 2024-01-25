@@ -177,14 +177,14 @@ private const val createVisualizationJson = """{
     {
       "name": "Author with orcid",
       "identifiers": {
-        "orcid": "0000-1111-2222-3333"
+        "orcid": ["0000-1111-2222-3333"]
       }
     },
     {
       "name": "Author with id and orcid",
       "id": "R456",
       "identifiers": {
-        "orcid": "1111-2222-3333-4444"
+        "orcid": ["1111-2222-3333-4444"]
       }
     },
     {

@@ -14,8 +14,8 @@ abstract class IdentifierUpdater(
 ) {
     internal fun update(
         contributorId: ContributorId,
-        oldIdentifiers: Map<String, String>,
-        newIdentifiers: Map<String, String>,
+        oldIdentifiers: Map<String, List<String>>,
+        newIdentifiers: Map<String, List<String>>,
         identifierDefinitions: Set<Identifier>,
         subjectId: ThingId
     ) {

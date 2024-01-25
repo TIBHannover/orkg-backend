@@ -13,7 +13,7 @@ data class Comparison(
     val title: String,
     val description: String?,
     val researchFields: List<ObjectIdAndLabel>,
-    val identifiers: Map<String, String>,
+    val identifiers: Map<String, List<String>>,
     val publicationInfo: PublicationInfo,
     val authors: List<Author>,
     val contributions: List<ObjectIdAndLabel>,

@@ -18,7 +18,7 @@ abstract class AuthorValidator(
     internal fun validate(authors: List<Author>): List<Author> {
         val validatedAuthors = authors.distinct().map { author ->
             val resources: MutableSet<ThingId> = mutableSetOf()
-            val missingIdentifiers = mutableMapOf<String, String>()
+            val missingIdentifiers = mutableMapOf<String, MutableSet<String>>()
             if (author.id != null) {
                 resources += resourceRepository.findById(author.id!!)
                     .filter { thing -> Classes.author in thing.classes }
@@ -26,27 +26,31 @@ abstract class AuthorValidator(
                     .id
             }
             val identifiers = Identifiers.author.parse(author.identifiers.orEmpty())
-            identifiers.forEach { (identifier, value) ->
-                val authorsWithIdentifier = statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
-                    predicateId = identifier.predicateId,
-                    literal = value,
-                    subjectClass = Classes.author,
-                    pageable = PageRequests.ALL
-                )
-                if (authorsWithIdentifier.isEmpty) {
-                    missingIdentifiers[identifier.id] = value
-                } else {
-                    authorsWithIdentifier.forEach {
-                        if (resources.isNotEmpty() && it.subject.id !in resources) {
-                            throw AmbiguousAuthor(author)
+            identifiers.forEach { (identifier, values) ->
+                values.forEach { value ->
+                    val authorsWithIdentifier = statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+                        predicateId = identifier.predicateId,
+                        literal = value,
+                        subjectClass = Classes.author,
+                        pageable = PageRequests.ALL
+                    )
+                    if (authorsWithIdentifier.isEmpty) {
+                        missingIdentifiers.computeIfAbsent(identifier.id) { mutableSetOf() } += value
+                    } else {
+                        authorsWithIdentifier.forEach {
+                            if (resources.isNotEmpty() && it.subject.id !in resources) {
+                                throw AmbiguousAuthor(author)
+                            }
+                            resources += it.subject.id
                         }
-                        resources += it.subject.id
                     }
                 }
             }
             author.copy(
                 id = resources.singleOrNull(),
-                identifiers = missingIdentifiers.ifEmpty { null }
+                identifiers = missingIdentifiers
+                    .mapValues { (_, value) -> value.toList() }
+                    .ifEmpty { null }
             )
         }
         return validatedAuthors

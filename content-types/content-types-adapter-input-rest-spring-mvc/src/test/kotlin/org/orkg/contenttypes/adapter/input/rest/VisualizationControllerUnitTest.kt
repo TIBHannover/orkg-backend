@@ -84,13 +84,14 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
                         fieldWithPath("authors").description("The list of authors that originally contributed to the visualization."),
                         fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
                         fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].name").description("The name of the author."),
                         fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").description("The ORCID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the visualization belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the visualization belongs to."),
@@ -276,13 +277,14 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
                         fieldWithPath("authors").description("The list of authors that originally contributed to the visualization."),
                         fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
                         fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].name").description("The name of the author."),
                         fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").description("The ORCID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the visualization belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the visualization belongs to."),
@@ -356,7 +358,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
             Author(
                 id = ThingId("R123"),
                 name = "author",
-                identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
             )
         )
         every { visualizationService.create(any()) } throws exception
@@ -387,13 +389,13 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
                 AuthorDTO(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = mapOf("orcid" to "0000-1111-2222-3333"),
+                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
                     homepage = null
                 ),
                 AuthorDTO(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = mapOf("orcid" to "1111-2222-3333-4444"),
+                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
                     homepage = null
                 ),
                 AuthorDTO(

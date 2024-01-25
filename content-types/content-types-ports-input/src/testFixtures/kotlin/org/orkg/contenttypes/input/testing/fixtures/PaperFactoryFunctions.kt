@@ -19,7 +19,7 @@ fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
     contributorId = ContributorId("9d791767-245b-46e1-b260-2c00fb34efda"),
     title = "test",
     researchFields = listOf(ThingId("R12")),
-    identifiers = mapOf("doi" to "10.1234/56789"),
+    identifiers = mapOf("doi" to listOf("10.1234/56789")),
     publicationInfo = PublicationInfo(
         publishedYear = 2015,
         publishedMonth = 5,
@@ -33,12 +33,12 @@ fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
         ),
         Author(
             name = "Author with orcid",
-            identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
         ),
         Author(
             id = ThingId("R456"),
             name = "Author with id and orcid",
-            identifiers = mapOf("orcid" to "1111-2222-3333-4444")
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
         ),
         Author(
             name = "Author with homepage",
@@ -118,7 +118,7 @@ fun dummyUpdatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
     contributorId = ContributorId("9d791767-245b-46e1-b260-2c00fb34efda"),
     title = "test",
     researchFields = listOf(ThingId("R12")),
-    identifiers = mapOf("doi" to "10.1234/56789"),
+    identifiers = mapOf("doi" to listOf("10.1234/56789")),
     publicationInfo = PublicationInfo(
         publishedYear = 2015,
         publishedMonth = 5,
@@ -132,12 +132,12 @@ fun dummyUpdatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
         ),
         Author(
             name = "Author with orcid",
-            identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
         ),
         Author(
             id = ThingId("R456"),
             name = "Author with id and orcid",
-            identifiers = mapOf("orcid" to "1111-2222-3333-4444")
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
         ),
         Author(
             name = "Author with homepage",

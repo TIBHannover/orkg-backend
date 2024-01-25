@@ -12,7 +12,7 @@ data class Paper(
     val id: ThingId,
     val title: String,
     val researchFields: List<ObjectIdAndLabel>,
-    val identifiers: Map<String, String>,
+    val identifiers: Map<String, List<String>>,
     val publicationInfo: PublicationInfo,
     val authors: List<Author>,
     val contributions: List<ObjectIdAndLabel>,

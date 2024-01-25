@@ -139,7 +139,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("research_fields[].id").description("The id of the research field."),
                         fieldWithPath("research_fields[].label").description("The label of the research field."),
                         fieldWithPath("identifiers").description("The unique identifiers of the paper."),
-                        fieldWithPath("identifiers.doi").description("The DOI of the paper. (optional)").optional(),
+                        fieldWithPath("identifiers.doi").description("The list of DOIs of the paper. (optional)").optional(),
                         fieldWithPath("publication_info").description("The publication info of the paper.").optional(),
                         fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
                         fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
@@ -148,13 +148,14 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
                         fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
                         fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].name").description("The name of the author."),
                         fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").description("The ORCID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("contributions").description("The list of contributions of the paper."),
                         fieldWithPath("contributions[].id").description("The ID of the contribution."),
@@ -385,12 +386,12 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
                         fieldWithPath("authors[].name").description("The name of the author."),
                         fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").type("String").description("The ORCID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list of ORCIDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                     )
                 )
@@ -520,13 +521,14 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
                         fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
                         fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].name").description("The name of the author."),
                         fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").description("The ORCID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("contents").description("Definition of the contents of the paper."),
                         fieldWithPath("contents.resources").description("Definition of resources that need to be created."),
@@ -726,7 +728,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             Author(
                 id = ThingId("R123"),
                 name = "author",
-                identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
             )
         )
         every { paperService.create(any()) } throws exception
@@ -865,13 +867,14 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
                         fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
                         fieldWithPath("authors[].name").description("The name of the author."),
-                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.orcid").description("The ORCID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
+                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. (optional)").optional()
@@ -931,7 +934,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             Author(
                 id = ThingId("R123"),
                 name = "author",
-                identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
             )
         )
         every { paperService.update(any()) } throws exception
@@ -1271,7 +1274,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         CreatePaperRequest(
             title = "example paper",
             researchFields = listOf(ThingId("R12")),
-            identifiers = mapOf("doi" to "10.48550 / arXiv.2304.05327"),
+            identifiers = mapOf("doi" to listOf("10.48550 / arXiv.2304.05327")),
             publicationInfo = PublicationInfoDTO(
                 publishedMonth = 5,
                 publishedYear = 2015,
@@ -1288,13 +1291,13 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                 AuthorDTO(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = mapOf("orcid" to "0000-1111-2222-3333"),
+                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
                     homepage = null
                 ),
                 AuthorDTO(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = mapOf("orcid" to "1111-2222-3333-4444"),
+                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
                     homepage = null
                 ),
                 AuthorDTO(
@@ -1394,7 +1397,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         UpdatePaperRequest(
             title = "example paper",
             researchFields = listOf(ThingId("R14")),
-            identifiers = mapOf("doi" to "10.48550/arXiv.2304.05327"),
+            identifiers = mapOf("doi" to listOf("10.48550/arXiv.2304.05327")),
             publicationInfo = PublicationInfoDTO(
                 publishedMonth = 5,
                 publishedYear = 2015,
@@ -1411,13 +1414,13 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                 AuthorDTO(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = mapOf("orcid" to "0000-1111-2222-3333"),
+                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
                     homepage = null
                 ),
                 AuthorDTO(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = mapOf("orcid" to "1111-2222-3333-4444"),
+                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
                     homepage = null
                 ),
                 AuthorDTO(

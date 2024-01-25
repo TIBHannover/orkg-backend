@@ -27,14 +27,15 @@ fun List<GeneralStatement>.objects() = map { it.`object` }
 
 fun List<GeneralStatement>.firstObjectLabel(): String? = firstOrNull()?.`object`?.label
 
-fun List<GeneralStatement>.associateIdentifiers(identifiers: Set<Identifier>): Map<String, String> =
+fun List<GeneralStatement>.associateIdentifiers(identifiers: Set<Identifier>): Map<String, List<String>> =
     mapNotNull { statement ->
         identifiers.firstOrNull { statement.predicate.id == it.predicateId }
-            ?.let { identifier -> identifier.id to statement.`object`.label }
-    }.toMap()
+            ?.let { identifier -> identifier.id to statement.`object` }
+    }
+        .groupBy({ it.first }, { it.second })
+        .mapValues { (_, value) -> value.sortedBy { it.id }.map { it.label }.distinct() }
 
 fun List<GeneralStatement>.firstObjectId(): ThingId? = firstOrNull()?.`object`?.id
 
 fun List<GeneralStatement>.withoutObjectsWithBlankLabels(): List<GeneralStatement> =
     filter { it.`object`.label.isNotBlank() }
-

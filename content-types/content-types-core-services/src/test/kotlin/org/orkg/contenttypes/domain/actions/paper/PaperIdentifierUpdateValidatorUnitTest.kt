@@ -42,7 +42,7 @@ class PaperIdentifierUpdateValidatorUnitTest {
     fun `Given a paper update command, when validating its identifiers, it returns success`() {
         val command = dummyUpdatePaperCommand()
         val state = UpdatePaperState()
-        val doi = command.identifiers!!["doi"]!!
+        val doi = command.identifiers!!["doi"]!!.first()
 
         every {
             statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
@@ -69,7 +69,7 @@ class PaperIdentifierUpdateValidatorUnitTest {
     fun `Given a paper update command, when paper with identifier already exists, it throws an exception`() {
         val command = dummyUpdatePaperCommand()
         val state = UpdatePaperState()
-        val doi = command.identifiers!!["doi"]!!
+        val doi = command.identifiers!!["doi"]!!.first()
 
         val statement = createStatement(
             subject = createResource(),

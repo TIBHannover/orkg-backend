@@ -18,7 +18,7 @@ fun dummyRegisterDoiCommand(): DoiService.RegisterCommand =
                 id = ThingId("147"),
                 name = "Josiah Stinkney Carberry",
                 identifiers = mapOf(
-                    "orcid" to "0000-0002-1825-0097"
+                    "orcid" to listOf("0000-0002-1825-0097")
                 ),
                 homepage = URI.create("https://example.org")
             ),

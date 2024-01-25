@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URI
 import java.time.OffsetDateTime
+import javax.validation.Valid
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
@@ -25,7 +26,7 @@ data class PaperRepresentation(
     val title: String,
     @get:JsonProperty("research_fields")
     val researchFields: List<LabeledObjectRepresentation>,
-    val identifiers: Map<String, String>,
+    val identifiers: Map<String, List<String>>,
     @get:JsonProperty("publication_info")
     val publicationInfo: PublicationInfoRepresentation,
     val authors: List<AuthorRepresentation>,
@@ -60,7 +61,7 @@ data class PublicationInfoRepresentation(
 data class AuthorRepresentation(
     val id: ThingId?,
     val name: String,
-    val identifiers: Map<String, String>,
+    val identifiers: Map<String, List<String>>,
     val homepage: URI?
 )
 
@@ -92,7 +93,7 @@ data class ComparisonRepresentation(
     val description: String?,
     @get:JsonProperty("research_fields")
     val researchFields: List<LabeledObjectRepresentation>,
-    val identifiers: Map<String, String>,
+    val identifiers: Map<String, List<String>>,
     @get:JsonProperty("publication_info")
     val publicationInfo: PublicationInfoRepresentation,
     val authors: List<AuthorRepresentation>,
@@ -174,7 +175,8 @@ data class AuthorDTO(
     val id: ThingId?,
     @field:NotBlank
     val name: String,
-    val identifiers: Map<String, String>?,
+    @field:Valid
+    val identifiers: Map<String, List<String>>?,
     val homepage: URI?
 ) {
     fun toAuthor(): Author =

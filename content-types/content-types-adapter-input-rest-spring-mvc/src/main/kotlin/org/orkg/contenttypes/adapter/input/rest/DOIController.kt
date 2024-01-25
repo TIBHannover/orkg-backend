@@ -52,7 +52,7 @@ class DOIController(
                 creators = request.authors.map { creator ->
                     Author(
                         name = creator.name,
-                        identifiers = creator.orcid?.let { mapOf("orcid" to it) }
+                        identifiers = creator.orcid?.let { mapOf("orcid" to listOf(it)) }
                     )
                 },
                 resourceType = request.type,

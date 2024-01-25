@@ -87,7 +87,7 @@ class AuthorValidatorUnitTest {
             ),
             Author(
                 name = "Author with orcid",
-                identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
             ),
             Author(
                 id = ThingId("R456"),
@@ -150,7 +150,7 @@ class AuthorValidatorUnitTest {
             Author(
                 id = ThingId("R123"),
                 name = "Author with orcid",
-                identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
             )
         )
 
@@ -193,8 +193,8 @@ class AuthorValidatorUnitTest {
                 id = ThingId("R123"),
                 name = "Author with orcid",
                 identifiers = mapOf(
-                    "orcid" to "0000-1111-2222-3333",
-                    "research_gate" to "1111-2222-3333-4444"
+                    "orcid" to listOf("0000-1111-2222-3333"),
+                    "research_gate" to listOf("1111-2222-3333-4444")
                 )
             )
         )
@@ -259,7 +259,7 @@ class AuthorValidatorUnitTest {
             Author(
                 name = "Invalid Author",
                 identifiers = mapOf(
-                    "orcid" to "invalid"
+                    "orcid" to listOf("invalid")
                 )
             )
         )

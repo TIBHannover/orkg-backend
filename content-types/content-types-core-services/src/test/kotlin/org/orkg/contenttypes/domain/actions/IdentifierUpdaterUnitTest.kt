@@ -47,8 +47,8 @@ class IdentifierUpdaterUnitTest {
         val subjectId = ThingId("Author")
         val contributorId = ContributorId(UUID.randomUUID())
         val orcid = "0000-0002-1825-0097"
-        val oldIdentifiers = mapOf("orcid" to orcid)
-        val newIdentifiers = mapOf("orcid" to orcid)
+        val oldIdentifiers = mapOf("orcid" to listOf(orcid))
+        val newIdentifiers = mapOf("orcid" to listOf(orcid))
 
         identifierUpdater.update(contributorId, oldIdentifiers, newIdentifiers, Identifiers.author, subjectId)
     }
@@ -59,8 +59,8 @@ class IdentifierUpdaterUnitTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldOrcid = "0000-0002-1825-0097"
         val newOrcid = "0000-0002-1825-0098"
-        val oldIdentifiers = mapOf("orcid" to oldOrcid)
-        val newIdentifiers = mapOf("orcid" to newOrcid)
+        val oldIdentifiers = mapOf("orcid" to listOf(oldOrcid))
+        val newIdentifiers = mapOf("orcid" to listOf(newOrcid))
         val statementId = StatementId("S1")
 
         every {
@@ -98,8 +98,8 @@ class IdentifierUpdaterUnitTest {
         val authorId = ThingId("Author")
         val contributorId = ContributorId(UUID.randomUUID())
         val oldOrcid = "0000-0002-1825-0097"
-        val oldIdentifiers = mapOf("orcid" to oldOrcid)
-        val newIdentifiers = emptyMap<String, String>()
+        val oldIdentifiers = mapOf("orcid" to listOf(oldOrcid))
+        val newIdentifiers = emptyMap<String, List<String>>()
         val statementId = StatementId("S1")
 
         every {
@@ -135,7 +135,7 @@ class IdentifierUpdaterUnitTest {
         val authorId = ThingId("Author")
         val contributorId = ContributorId(UUID.randomUUID())
         val orcid = "0000-0002-1825-0097"
-        val newIdentifiers = mapOf("orcid" to orcid)
+        val newIdentifiers = mapOf("orcid" to listOf(orcid))
 
         every { identifierCreator.create(contributorId, newIdentifiers, Identifiers.author, authorId) } just runs
 

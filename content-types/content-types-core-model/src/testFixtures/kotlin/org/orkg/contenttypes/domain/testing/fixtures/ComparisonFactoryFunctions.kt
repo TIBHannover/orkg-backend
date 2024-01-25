@@ -31,7 +31,7 @@ fun createDummyComparison() = Comparison(
         )
     ),
     identifiers = mapOf(
-        "doi" to "10.1000/182"
+        "doi" to listOf("10.1000/182")
     ),
     publicationInfo = PublicationInfo(
         publishedMonth = 4,
@@ -44,7 +44,7 @@ fun createDummyComparison() = Comparison(
             id = ThingId("147"),
             name = "Josiah Stinkney Carberry",
             identifiers = mapOf(
-                "orcid" to "0000-0002-1825-0097"
+                "orcid" to listOf("0000-0002-1825-0097")
             ),
             homepage = URI.create("https://example.org")
         ),

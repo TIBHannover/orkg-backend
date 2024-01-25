@@ -169,7 +169,8 @@ class PaperController(
         @field:Size(min = 1, max = 1)
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
-        val identifiers: Map<String, String>?,
+        @field: Valid
+        val identifiers: Map<String, List<String>>?,
         @JsonProperty("publication_info")
         val publicationInfo: PublicationInfoDTO?,
         @field:Valid
@@ -305,7 +306,8 @@ class PaperController(
         @field:Size(min = 1, max = 1)
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
-        val identifiers: Map<String, String>?,
+        @field: Valid
+        val identifiers: Map<String, List<String>>?,
         @field:Valid
         @JsonProperty("publication_info")
         val publicationInfo: PublicationInfoDTO?,

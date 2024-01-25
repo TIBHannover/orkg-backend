@@ -242,7 +242,7 @@ class ComparisonServiceUnitTests {
             )
             comparison.identifiers shouldNotBe null
             comparison.identifiers shouldBe mapOf(
-                "doi" to doi
+                "doi" to listOf(doi)
             )
             comparison.publicationInfo shouldNotBe null
             comparison.publicationInfo.asClue { publicationInfo ->
@@ -322,7 +322,7 @@ class ComparisonServiceUnitTests {
                 id = ThingId("R132564"),
                 name = "Author 2",
                 identifiers = mapOf(
-                    "orcid" to "0000-1111-2222-3333"
+                    "orcid" to listOf("0000-1111-2222-3333")
                 ),
                 homepage = URI.create("https://example.org")
             )
@@ -378,7 +378,7 @@ class ComparisonServiceUnitTests {
                 id = ThingId("R132564"),
                 name = "Author 2",
                 identifiers = mapOf(
-                    "orcid" to "0000-1111-2222-3333"
+                    "orcid" to listOf("0000-1111-2222-3333")
                 ),
                 homepage = URI.create("https://example.org")
             )

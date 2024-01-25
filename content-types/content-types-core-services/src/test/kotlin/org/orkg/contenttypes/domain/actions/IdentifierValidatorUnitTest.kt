@@ -40,7 +40,7 @@ class IdentifierValidatorUnitTest {
     @Test
     fun `Given a map of identifiers, when searching for existing resources, it returns success`() {
         val doi = "10.1234/56789"
-        val identifiers = mapOf("doi" to doi)
+        val identifiers = mapOf("doi" to listOf(doi))
 
         every {
             statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
@@ -66,7 +66,7 @@ class IdentifierValidatorUnitTest {
     @Test
     fun `Given a map of identifiers, when searching for existing resources, and identifier matches, it throws an exception`() {
         val doi = "10.1234/56789"
-        val identifiers = mapOf("doi" to doi)
+        val identifiers = mapOf("doi" to listOf(doi))
         val statement = createStatement(
             subject = createResource(),
             predicate = createPredicate(Predicates.hasDOI),
@@ -101,7 +101,7 @@ class IdentifierValidatorUnitTest {
     @Test
     fun `Given a map of identifiers, when searching for existing resources, and identifier matches, but matched resource is expected, it returns success`() {
         val doi = "10.1234/56789"
-        val identifiers = mapOf("doi" to doi)
+        val identifiers = mapOf("doi" to listOf(doi))
         val subjectId = ThingId("R123")
         val statement = createStatement(
             subject = createResource(subjectId),
@@ -132,7 +132,7 @@ class IdentifierValidatorUnitTest {
 
     @Test
     fun `Given a paper create command, when paper identifier is structurally invalid, it throws an exception`() {
-        val identifiers = mapOf("doi" to "invalid")
+        val identifiers = mapOf("doi" to listOf("invalid"))
         val result = assertThrows<InvalidIdentifier> {
             identifierCreateValidator.validate(
                 identifiers = identifiers,

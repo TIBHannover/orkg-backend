@@ -74,8 +74,8 @@ class DataCiteDoiServiceAdapter(
                     Creator(
                         name = author.name,
                         nameIdentifiers = author.identifiers?.get("orcid")
-                            ?.let { listOf(NameIdentifier.fromORCID(it)) }
                             .orEmpty()
+                            .map(NameIdentifier::fromORCID)
                     )
                 },
                 titles = listOf(Title(title)),

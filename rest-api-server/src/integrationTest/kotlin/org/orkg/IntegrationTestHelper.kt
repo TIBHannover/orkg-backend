@@ -51,7 +51,7 @@ fun CreatePredicateUseCase.createPredicate(
     CreatePredicateUseCase.CreateCommand(
         id = id,
         label = label ?: "label",
-        contributorId = contributorId ?: ContributorId.createUnknownContributor()
+        contributorId = contributorId ?: ContributorId.UNKNOWN
     )
 )
 
@@ -78,7 +78,7 @@ fun CreateResourceUseCase.createResource(
     id: String? = null,
     label: String? = null,
     extractionMethod: ExtractionMethod? = null,
-    userId: ContributorId = ContributorId.createUnknownContributor(),
+    userId: ContributorId = ContributorId.UNKNOWN,
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     organizationId: OrganizationId = OrganizationId.UNKNOWN,
     modifiable: Boolean = true
@@ -107,7 +107,7 @@ fun CreateLiteralUseCase.createLiteral(
         id = id,
         label = label ?: "label",
         datatype = datatype ?: Literals.XSD.STRING.prefixedUri,
-        contributorId = contributorId ?: ContributorId.createUnknownContributor()
+        contributorId = contributorId ?: ContributorId.UNKNOWN
     )
 )
 

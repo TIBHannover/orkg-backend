@@ -28,7 +28,7 @@ fun createResource(
     label: String = "Default Label",
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-06T11:28:14.613254+01:00"),
     classes: Set<ThingId> = emptySet(),
-    createdBy: ContributorId = ContributorId.createUnknownContributor(),
+    createdBy: ContributorId = ContributorId.UNKNOWN,
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     organizationId: OrganizationId = OrganizationId.UNKNOWN,
@@ -92,7 +92,7 @@ fun createList(
     label: String = "Default Label",
     elements: KotlinList<ThingId> = emptyList(),
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-01T16:33:19.156943+01:00"),
-    createdBy: ContributorId = ContributorId.createUnknownContributor(),
+    createdBy: ContributorId = ContributorId.UNKNOWN,
 ) = List(id, label, elements, createdAt, createdBy)
 
 fun createPaperResource(

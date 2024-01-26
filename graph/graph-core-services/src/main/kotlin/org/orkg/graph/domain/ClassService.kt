@@ -42,13 +42,13 @@ class ClassService(
                 ?: throw IllegalArgumentException("Invalid label: ${command.label}"),
             uri = command.uri,
             createdAt = OffsetDateTime.now(clock),
-            createdBy = command.contributorId ?: ContributorId.createUnknownContributor(),
+            createdBy = command.contributorId ?: ContributorId.UNKNOWN,
         )
         repository.save(newClass)
         return newClass.id
     }
 
-    override fun create(label: String): Class = create(ContributorId.createUnknownContributor(), label)
+    override fun create(label: String): Class = create(ContributorId.UNKNOWN, label)
 
     override fun create(userId: ContributorId, label: String): Class {
         val newClassId = create(
@@ -121,7 +121,7 @@ class ClassService(
                         label = label,
                         uri = uri,
                         createdAt = OffsetDateTime.now(clock),
-                        createdBy = ContributorId.createUnknownContributor()
+                        createdBy = ContributorId.UNKNOWN
                     )
                 )
             }
@@ -135,7 +135,7 @@ class ClassService(
                         label = label,
                         uri = uri,
                         createdAt = OffsetDateTime.now(clock),
-                        createdBy = ContributorId.createUnknownContributor()
+                        createdBy = ContributorId.UNKNOWN
                     )
                 )
                 // Throwing an exception if IDs are different

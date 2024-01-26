@@ -8,6 +8,6 @@ data class Predicate(
     override val id: ThingId,
     override val label: String,
     val createdAt: OffsetDateTime,
-    val createdBy: ContributorId = ContributorId.createUnknownContributor(),
+    val createdBy: ContributorId = ContributorId.UNKNOWN,
     val description: String? = null
 ) : Thing

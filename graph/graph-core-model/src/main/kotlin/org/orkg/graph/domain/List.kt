@@ -9,5 +9,5 @@ data class List(
     val label: String,
     val elements: kotlin.collections.List<ThingId>,
     val createdAt: OffsetDateTime,
-    val createdBy: ContributorId = ContributorId.createUnknownContributor()
+    val createdBy: ContributorId = ContributorId.UNKNOWN
 )

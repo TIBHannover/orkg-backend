@@ -10,5 +10,5 @@ data class ClassSubclassRelation(
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime,
     @JsonProperty("created_by")
-    val createdBy: ContributorId = ContributorId.createUnknownContributor()
+    val createdBy: ContributorId = ContributorId.UNKNOWN
 )

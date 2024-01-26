@@ -34,7 +34,7 @@ class ListService(
             label = label,
             elements = command.elements,
             createdAt = OffsetDateTime.now(clock),
-            createdBy = command.contributorId ?: ContributorId.createUnknownContributor(),
+            createdBy = command.contributorId ?: ContributorId.UNKNOWN,
         )
         repository.save(list, list.createdBy)
         return id
@@ -64,7 +64,7 @@ class ListService(
                 label = label ?: list.label,
                 elements = elements ?: list.elements
             ),
-            contributorId = command.contributorId ?: ContributorId.createUnknownContributor()
+            contributorId = command.contributorId ?: ContributorId.UNKNOWN
         )
     }
 

@@ -28,7 +28,7 @@ import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 private const val chunkSize = 10_000
-private val UNKNOWN_CONTRIBUTOR = ContributorId.createUnknownContributor()
+private val UNKNOWN_CONTRIBUTOR = ContributorId.UNKNOWN
 
 @Component
 @Profile("listMigrations")

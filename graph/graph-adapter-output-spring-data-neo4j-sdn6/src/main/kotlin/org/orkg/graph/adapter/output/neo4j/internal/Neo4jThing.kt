@@ -28,7 +28,7 @@ abstract class Neo4jThing {
     var label: String? = null
 
     @Property("created_by")
-    var created_by: ContributorId = ContributorId.createUnknownContributor()
+    var created_by: ContributorId = ContributorId.UNKNOWN
 
     @Property("created_at")
     var created_at: OffsetDateTime? = null

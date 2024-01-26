@@ -31,7 +31,7 @@ class ClassHierarchyServiceUnitTests {
         every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
 
         val exception = assertThrows<InvalidSubclassRelation> {
-            service.create(ContributorId.createUnknownContributor(), parentId, setOf(childId), false)
+            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
         }
         assertThat(exception.message).isEqualTo(InvalidSubclassRelation(childId, parentId).message)
     }
@@ -45,7 +45,7 @@ class ClassHierarchyServiceUnitTests {
         every { repository.existsChildren(parentId) } returns true
 
         val exception = assertThrows<ParentClassAlreadyHasChildren> {
-            service.create(ContributorId.createUnknownContributor(), parentId, setOf(childId), true)
+            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), true)
         }
         assertThat(exception.message).isEqualTo(ParentClassAlreadyHasChildren(parentId).message)
     }
@@ -59,7 +59,7 @@ class ClassHierarchyServiceUnitTests {
         every { classRepository.findById(childId) } returns Optional.empty()
 
         val exception = assertThrows<ClassNotFound> {
-            service.create(ContributorId.createUnknownContributor(), parentId, setOf(childId), false)
+            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
         }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(childId).message)
     }
@@ -73,7 +73,7 @@ class ClassHierarchyServiceUnitTests {
         every { classRepository.findById(parentId) } returns Optional.empty()
 
         val exception = assertThrows<ClassNotFound> {
-            service.create(ContributorId.createUnknownContributor(), parentId, setOf(childId), false)
+            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
         }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(parentId).message)
     }
@@ -88,7 +88,7 @@ class ClassHierarchyServiceUnitTests {
         every { repository.findParent(childId) } returns Optional.of(createClass(id = parentId))
 
         val exception = assertThrows<ParentClassAlreadyExists> {
-            service.create(ContributorId.createUnknownContributor(), parentId, setOf(childId), false)
+            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
         }
         assertThat(exception.message).isEqualTo(ParentClassAlreadyExists(childId, parentId).message)
     }
@@ -104,7 +104,7 @@ class ClassHierarchyServiceUnitTests {
         every { repository.existsChild(childId, parentId) } returns true
 
         val exception = assertThrows<InvalidSubclassRelation> {
-            service.create(ContributorId.createUnknownContributor(), parentId, setOf(childId), false)
+            service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
         }
         assertThat(exception.message).isEqualTo(InvalidSubclassRelation(childId, parentId).message)
     }
@@ -120,7 +120,7 @@ class ClassHierarchyServiceUnitTests {
         every { repository.existsChild(childId, parentId) } returns false
         every { relationRepository.saveAll(any()) } returns Unit
 
-        service.create(ContributorId.createUnknownContributor(), parentId, setOf(childId), false)
+        service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
 
         verify(exactly = 1) { relationRepository.saveAll(any()) }
     }

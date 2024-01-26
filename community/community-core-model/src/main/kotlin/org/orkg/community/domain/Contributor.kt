@@ -73,7 +73,7 @@ data class Contributor(
     companion object {
         val UNKNOWN: Contributor =
             Contributor(
-                id = ContributorId.createUnknownContributor(),
+                id = ContributorId.UNKNOWN,
                 name = "Unknown User",
                 joinedAt = OffsetDateTime.MIN
             )

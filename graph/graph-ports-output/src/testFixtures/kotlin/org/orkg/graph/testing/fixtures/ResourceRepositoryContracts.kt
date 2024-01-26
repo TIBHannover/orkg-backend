@@ -718,7 +718,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
     }
 
     context("finding all contributor ids") {
-        val unknownContributor = ContributorId.createUnknownContributor()
+        val unknownContributor = ContributorId.UNKNOWN
         val resources = fabricator.random<MutableList<Resource>>()
         resources[0] = resources[0].copy(
             createdBy = unknownContributor

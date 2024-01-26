@@ -26,5 +26,5 @@ data class ResourceObject(
     val classes: Set<ThingId> = emptySet(),
     val shared: Int = 0,
     @JsonProperty("created_by")
-    val createdBy: ContributorId = ContributorId.createUnknownContributor()
+    val createdBy: ContributorId = ContributorId.UNKNOWN
 )

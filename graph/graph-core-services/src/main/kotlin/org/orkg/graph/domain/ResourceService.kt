@@ -42,7 +42,7 @@ class ResourceService(
             classes = command.classes,
             extractionMethod = command.extractionMethod,
             createdAt = OffsetDateTime.now(clock),
-            createdBy = command.contributorId ?: ContributorId.createUnknownContributor(),
+            createdBy = command.contributorId ?: ContributorId.UNKNOWN,
             observatoryId = command.observatoryId ?: ObservatoryId.UNKNOWN,
             organizationId = command.organizationId ?: OrganizationId.UNKNOWN,
             modifiable = command.modifiable

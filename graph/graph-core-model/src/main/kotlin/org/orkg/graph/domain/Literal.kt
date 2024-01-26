@@ -9,5 +9,5 @@ data class Literal(
     override val label: String,
     val datatype: String = "xsd:string",
     val createdAt: OffsetDateTime,
-    val createdBy: ContributorId = ContributorId.createUnknownContributor(),
+    val createdBy: ContributorId = ContributorId.UNKNOWN,
 ) : Thing

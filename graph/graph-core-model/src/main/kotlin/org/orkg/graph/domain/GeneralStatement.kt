@@ -12,9 +12,8 @@ data class GeneralStatement(
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
     @JsonProperty("created_by")
-    val createdBy: ContributorId = ContributorId.createUnknownContributor(),
+    val createdBy: ContributorId = ContributorId.UNKNOWN,
     val index: Int? = null
 ) {
     fun isOwnedBy(contributorId: ContributorId) = createdBy == contributorId
 }
-

@@ -34,7 +34,7 @@ class PredicateService(
             id = id,
             label = Label.ofOrNull(command.label)?.value ?: throw InvalidLabel(),
             createdAt = OffsetDateTime.now(clock),
-            createdBy = command.contributorId ?: ContributorId.createUnknownContributor()
+            createdBy = command.contributorId ?: ContributorId.UNKNOWN
         )
         repository.save(predicate)
         return id

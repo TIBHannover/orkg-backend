@@ -25,5 +25,5 @@ data class LiteralObject(
     val createdAt: OffsetDateTime?,
     val classes: Set<ThingId> = emptySet(),
     @JsonProperty("created_by")
-    val createdBy: ContributorId = ContributorId.createUnknownContributor()
+    val createdBy: ContributorId = ContributorId.UNKNOWN
 )

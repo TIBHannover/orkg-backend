@@ -59,7 +59,7 @@ class StatementService(
     override fun exists(id: StatementId): Boolean = statementRepository.exists(id)
 
     override fun create(subject: ThingId, predicate: ThingId, `object`: ThingId): StatementId =
-        create(ContributorId.createUnknownContributor(), subject, predicate, `object`)
+        create(ContributorId.UNKNOWN, subject, predicate, `object`)
 
     override fun create(
         userId: ContributorId,
@@ -171,8 +171,8 @@ class StatementService(
             val foundSubject = thingRepository.findByThingId(it)
                 .orElseThrow { StatementSubjectNotFound(it) }
 
-            if ((found.predicate.id == Predicates.hasListElement || command.predicateId == Predicates.hasListElement)
-                && foundSubject is Resource && Classes.list in foundSubject.classes
+            if ((found.predicate.id == Predicates.hasListElement || command.predicateId == Predicates.hasListElement) &&
+                foundSubject is Resource && Classes.list in foundSubject.classes
             ) {
                 throw ForbiddenStatementSubject.isList()
             }

@@ -18,7 +18,7 @@ data class Class(
     override val label: String,
     val uri: URI?,
     val createdAt: OffsetDateTime,
-    val createdBy: ContributorId = ContributorId.createUnknownContributor(),
+    val createdBy: ContributorId = ContributorId.UNKNOWN,
     val description: String? = null
 ) : Thing
 

@@ -13,7 +13,7 @@ data class Organization(
     var name: String?,
 
     @JsonProperty("created_by")
-    val createdBy: ContributorId? = ContributorId.createUnknownContributor(),
+    val createdBy: ContributorId? = ContributorId.UNKNOWN,
 
     var homepage: String?,
 

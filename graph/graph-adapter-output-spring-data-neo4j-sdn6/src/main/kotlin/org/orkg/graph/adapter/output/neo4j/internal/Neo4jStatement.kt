@@ -28,7 +28,7 @@ class Neo4jStatement {
     var targetNode: Neo4jThing? = null
 
     @Property("created_by")
-    var createdBy: ContributorId = ContributorId.createUnknownContributor()
+    var createdBy: ContributorId = ContributorId.UNKNOWN
 
     @Property("created_at")
     var createdAt: OffsetDateTime? = null

@@ -129,9 +129,9 @@ class ListServiceUnitTests {
                     label = command.label,
                     elements = command.elements,
                     createdAt = OffsetDateTime.now(fixedClock),
-                    createdBy = ContributorId.createUnknownContributor()
+                    createdBy = ContributorId.UNKNOWN
                 ),
-                ContributorId.createUnknownContributor()
+                ContributorId.UNKNOWN
             )
         }
     }
@@ -155,7 +155,7 @@ class ListServiceUnitTests {
 
         service.update(id, command)
 
-        verify(exactly = 1) { repository.save(expected, ContributorId.createUnknownContributor()) }
+        verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
     }
 
     @Test
@@ -230,7 +230,7 @@ class ListServiceUnitTests {
         service.update(id, command)
 
         verify(exactly = 0) { thingRepository.existsAll(any()) }
-        verify(exactly = 1) { repository.save(expected, ContributorId.createUnknownContributor()) }
+        verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
     }
 
     @Test
@@ -251,7 +251,7 @@ class ListServiceUnitTests {
 
         service.update(id, command)
 
-        verify(exactly = 1) { repository.save(expected, ContributorId.createUnknownContributor()) }
+        verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
     }
 
     @Test
@@ -273,7 +273,7 @@ class ListServiceUnitTests {
         service.update(id, command)
 
         verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 1) { repository.save(expected, ContributorId.createUnknownContributor()) }
+        verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
     }
 
     @Test

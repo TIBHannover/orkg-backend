@@ -11,7 +11,7 @@ data class Resource(
     override val label: String,
     val createdAt: OffsetDateTime,
     val classes: Set<ThingId> = emptySet(),
-    val createdBy: ContributorId = ContributorId.createUnknownContributor(),
+    val createdBy: ContributorId = ContributorId.UNKNOWN,
     val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     val organizationId: OrganizationId = OrganizationId.UNKNOWN,

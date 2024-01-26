@@ -10,7 +10,7 @@ fun createNeo4jLiteral(
     id: ThingId = ThingId("L1"),
     label: String = "Default Label",
     createdAt: OffsetDateTime? = null,
-    createdBy: ContributorId = ContributorId.createUnknownContributor(),
+    createdBy: ContributorId = ContributorId.UNKNOWN,
     datatype: String = "xsd:string",
     clock: Clock = Clock.systemDefaultZone()
 ): Neo4jLiteral = Neo4jLiteral().apply {

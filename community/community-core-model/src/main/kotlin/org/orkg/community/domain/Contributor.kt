@@ -36,7 +36,7 @@ data class Contributor(
      * The ID of the organization the user belongs to.
      */
     @JsonProperty("organization_id")
-    val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+    val organizationId: OrganizationId = OrganizationId.UNKNOWN,
 
     /**
      * The ID of the observatory the user belongs to.

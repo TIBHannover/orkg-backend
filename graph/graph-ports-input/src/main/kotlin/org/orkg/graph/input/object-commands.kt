@@ -32,7 +32,7 @@ interface CreateObjectUseCase {
         val values: HashMap<String, List<ObjectStatement>>?,
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
-        val organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+        val organizationId: OrganizationId = OrganizationId.UNKNOWN
     ) {
         /**
          * Check if the object has a set

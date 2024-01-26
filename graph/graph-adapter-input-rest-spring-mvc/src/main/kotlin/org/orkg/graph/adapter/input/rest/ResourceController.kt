@@ -106,7 +106,7 @@ class ResourceController(
         if (resource.id != null && service.findById(resource.id).isPresent) throw ResourceAlreadyExists(resource.id)
         val contributor = contributorService.findById(currentUser.contributorId())
         var observatoryId = ObservatoryId.UNKNOWN
-        var organizationId = OrganizationId.createUnknownOrganization()
+        var organizationId = OrganizationId.UNKNOWN
         if (!contributor.isEmpty) {
             organizationId = contributor.get().organizationId
             observatoryId = contributor.get().observatoryId

@@ -7,7 +7,7 @@ data class OrganizationId(val value: UUID) {
     constructor(s: String) : this(UUID.fromString(s))
 
     companion object {
-        fun createUnknownOrganization() = OrganizationId(UUID(0, 0))
+        val UNKNOWN = OrganizationId(UUID(0, 0))
     }
 
     override fun toString() = value.toString()

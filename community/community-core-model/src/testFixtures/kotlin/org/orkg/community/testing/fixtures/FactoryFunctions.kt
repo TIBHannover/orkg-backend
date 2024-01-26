@@ -16,7 +16,7 @@ fun createContributor(
     name: String = "Some Name",
     email: String? = null,
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
-    organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+    organizationId: OrganizationId = OrganizationId.UNKNOWN,
     joinedAt: OffsetDateTime = OffsetDateTime.parse("2023-10-06T10:37:17.055493+01:00"),
 ): Contributor = Contributor(
     id = id,

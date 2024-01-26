@@ -44,7 +44,7 @@ class ResourceService(
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId ?: ContributorId.createUnknownContributor(),
             observatoryId = command.observatoryId ?: ObservatoryId.UNKNOWN,
-            organizationId = command.organizationId ?: OrganizationId.createUnknownOrganization(),
+            organizationId = command.organizationId ?: OrganizationId.UNKNOWN,
             modifiable = command.modifiable
         )
         repository.save(resource)

@@ -14,7 +14,7 @@ data class Resource(
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
     val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
-    val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+    val organizationId: OrganizationId = OrganizationId.UNKNOWN,
     val visibility: Visibility = Visibility.DEFAULT,
     val verified: Boolean? = null,
     val unlistedBy: ContributorId? = null,

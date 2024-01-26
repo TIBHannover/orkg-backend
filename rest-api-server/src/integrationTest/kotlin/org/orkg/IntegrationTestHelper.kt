@@ -80,7 +80,7 @@ fun CreateResourceUseCase.createResource(
     extractionMethod: ExtractionMethod? = null,
     userId: ContributorId = ContributorId.createUnknownContributor(),
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
-    organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+    organizationId: OrganizationId = OrganizationId.UNKNOWN,
     modifiable: Boolean = true
 ): ThingId = this.create(
     CreateResourceUseCase.CreateCommand(

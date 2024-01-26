@@ -36,7 +36,7 @@ class Neo4jResource : Neo4jThing() {
     var unlisted_by: ContributorId? = null
 
     @Property("organization_id")
-    var organization_id: OrganizationId = OrganizationId.createUnknownOrganization()
+    var organization_id: OrganizationId = OrganizationId.UNKNOWN
 
     @Property("modifiable")
     var modifiable: Boolean? = null

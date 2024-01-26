@@ -31,7 +31,7 @@ fun createResource(
     createdBy: ContributorId = ContributorId.createUnknownContributor(),
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
-    organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+    organizationId: OrganizationId = OrganizationId.UNKNOWN,
     visibility: Visibility = Visibility.DEFAULT,
     verified: Boolean? = null,
     unlistedBy: ContributorId? = null,

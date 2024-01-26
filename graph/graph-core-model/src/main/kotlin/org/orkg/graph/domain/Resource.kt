@@ -12,7 +12,7 @@ data class Resource(
     val createdAt: OffsetDateTime,
     val classes: Set<ThingId> = emptySet(),
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
-    val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+    val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
     val visibility: Visibility = Visibility.DEFAULT,

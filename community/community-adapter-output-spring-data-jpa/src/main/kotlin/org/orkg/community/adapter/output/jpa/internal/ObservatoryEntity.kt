@@ -72,5 +72,5 @@ fun User.toContributor() =
         email = this.email,
         joinedAt = OffsetDateTime.of(this.createdAt, ZoneOffset.UTC),
         organizationId = this.organizationId?.let(::OrganizationId) ?: OrganizationId.createUnknownOrganization(),
-        observatoryId = this.observatoryId?.let(::ObservatoryId) ?: ObservatoryId.createUnknownObservatory(),
+        observatoryId = this.observatoryId?.let(::ObservatoryId) ?: ObservatoryId.UNKNOWN,
     )

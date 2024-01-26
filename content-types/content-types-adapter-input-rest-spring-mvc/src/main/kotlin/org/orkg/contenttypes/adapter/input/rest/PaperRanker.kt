@@ -89,7 +89,7 @@ class PaperRanker(
     private fun rankPaper(paper: Resource): Score {
         val stats = PaperStats()
         stats.hasTitle = paper.label.isNotBlank()
-        stats.hasObservatory = paper.observatoryId != ObservatoryId.createUnknownObservatory()
+        stats.hasObservatory = paper.observatoryId != ObservatoryId.UNKNOWN
         val contributions: MutableSet<ThingId> = mutableSetOf()
         val authors: MutableSet<ThingId> = mutableSetOf()
         rankingService.findAllStatementsAboutPaper(paper.id).forEach {

@@ -105,7 +105,7 @@ class ResourceController(
         Label.ofOrNull(resource.label) ?: throw InvalidLabel()
         if (resource.id != null && service.findById(resource.id).isPresent) throw ResourceAlreadyExists(resource.id)
         val contributor = contributorService.findById(currentUser.contributorId())
-        var observatoryId = ObservatoryId.createUnknownObservatory()
+        var observatoryId = ObservatoryId.UNKNOWN
         var organizationId = OrganizationId.createUnknownOrganization()
         if (!contributor.isEmpty) {
             organizationId = contributor.get().organizationId

@@ -21,7 +21,7 @@ private val ReservedClassIds = setOf(
 @Node("Resource")
 class Neo4jResource : Neo4jThing() {
     @Property("observatory_id")
-    var observatory_id: ObservatoryId = ObservatoryId.createUnknownObservatory()
+    var observatory_id: ObservatoryId = ObservatoryId.UNKNOWN
 
     @Property("extraction_method")
     var extraction_method: ExtractionMethod = ExtractionMethod.UNKNOWN

@@ -79,7 +79,7 @@ fun CreateResourceUseCase.createResource(
     label: String? = null,
     extractionMethod: ExtractionMethod? = null,
     userId: ContributorId = ContributorId.createUnknownContributor(),
-    observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+    observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
     modifiable: Boolean = true
 ): ThingId = this.create(

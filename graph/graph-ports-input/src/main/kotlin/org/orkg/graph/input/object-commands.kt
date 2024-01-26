@@ -31,7 +31,7 @@ interface CreateObjectUseCase {
         val classes: List<String>?,
         val values: HashMap<String, List<ObjectStatement>>?,
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
-        val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+        val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
         val organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
     ) {
         /**

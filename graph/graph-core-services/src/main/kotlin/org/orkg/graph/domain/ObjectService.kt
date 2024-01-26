@@ -53,7 +53,7 @@ class ObjectService(
         val organizationId: OrganizationId
         val observatoryId: ObservatoryId
         // if comparisons is assigned a conference i.e, organizationId will be available and observatoryId  will not be.
-        if (request.resource.organizationId != OrganizationId.createUnknownOrganization() && request.resource.observatoryId == ObservatoryId.createUnknownObservatory()) {
+        if (request.resource.organizationId != OrganizationId.createUnknownOrganization() && request.resource.observatoryId == ObservatoryId.UNKNOWN) {
             organizationId = request.resource.organizationId
             observatoryId = request.resource.observatoryId
         } else {

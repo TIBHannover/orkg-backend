@@ -29,7 +29,7 @@ fun createResource(
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-06T11:28:14.613254+01:00"),
     classes: Set<ThingId> = emptySet(),
     createdBy: ContributorId = ContributorId.createUnknownContributor(),
-    observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+    observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
     visibility: Visibility = Visibility.DEFAULT,

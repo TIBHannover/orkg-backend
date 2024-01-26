@@ -42,7 +42,7 @@ data class Contributor(
      * The ID of the observatory the user belongs to.
      */
     @JsonProperty("observatory_id")
-    val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+    val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
 
     /**
      * The email address of the contributor.

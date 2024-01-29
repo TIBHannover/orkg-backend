@@ -299,21 +299,38 @@ class ComparisonService(
     }
 
     private fun Resource.toComparison(): Comparison {
-        val statements = statementRepository.fetchAsBundle(
-            id = id,
-            configuration = BundleConfiguration(
-                minLevel = null,
-                maxLevel = 3,
-                blacklist = listOf(
-                    Classes.researchField,
-                    Classes.contribution,
-                    Classes.visualization,
-                    Classes.comparisonRelatedFigure,
-                    Classes.comparisonRelatedResource
+        val statements = (
+            statementRepository.fetchAsBundle(
+                id = id,
+                configuration = BundleConfiguration(
+                    minLevel = null,
+                    maxLevel = 3,
+                    blacklist = listOf(
+                        Classes.researchField,
+                        Classes.contribution,
+                        Classes.visualization,
+                        Classes.comparisonRelatedFigure,
+                        Classes.comparisonRelatedResource
+                    ),
+                    whitelist = emptyList()
                 ),
-                whitelist = emptyList()
-            ),
-            sort = Sort.unsorted()
+                sort = Sort.unsorted()
+            ) + statementRepository.fetchAsBundle(
+                id = id,
+                configuration = BundleConfiguration(
+                    minLevel = null,
+                    maxLevel = 1,
+                    blacklist = emptyList(),
+                    whitelist = listOf(
+                        Classes.researchField,
+                        Classes.contribution,
+                        Classes.visualization,
+                        Classes.comparisonRelatedFigure,
+                        Classes.comparisonRelatedResource
+                    )
+                ),
+                sort = Sort.unsorted()
+            )
         ).groupBy { it.subject.id }
         val directStatements = statements[id].orEmpty()
         return Comparison(

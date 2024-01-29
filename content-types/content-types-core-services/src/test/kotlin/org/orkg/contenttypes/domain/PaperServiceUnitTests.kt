@@ -114,30 +114,27 @@ class PaperServiceUnitTests {
         val publishedUrl = "https://example.org/conference"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
         val resourceAuthor = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
-        val bundleConfiguration = BundleConfiguration(
+        val firstBundleConfiguration = BundleConfiguration(
             minLevel = null,
             maxLevel = 3,
             blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
             whitelist = emptyList()
+        )
+        val secondBundleConfiguration = BundleConfiguration(
+            minLevel = null,
+            maxLevel = 1,
+            blacklist = emptyList(),
+            whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue)
         )
 
         every { resourceRepository.findPaperById(expected.id) } returns Optional.of(expected)
         every {
             statementRepository.fetchAsBundle(
                 id = expected.id,
-                configuration = bundleConfiguration,
+                configuration = firstBundleConfiguration,
                 sort = Sort.unsorted()
             )
         } returns pageOf(
-            createStatement(
-                subject = expected,
-                predicate = createPredicate(Predicates.hasResearchField),
-                `object` = createResource(
-                    id = researchFieldId,
-                    classes = setOf(Classes.researchField),
-                    label = "Research Field 1"
-                )
-            ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasDOI),
@@ -155,11 +152,6 @@ class PaperServiceUnitTests {
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(Predicates.hasVenue),
-                `object` = createLiteral(label = publishedIn)
-            ),
-            createStatement(
-                subject = expected,
                 predicate = createPredicate(Predicates.hasURL),
                 `object` = createLiteral(label = publishedUrl, datatype = Literals.XSD.URI.prefixedUri)
             ),
@@ -167,15 +159,6 @@ class PaperServiceUnitTests {
                 subject = expected,
                 predicate = createPredicate(Predicates.hasAuthors),
                 `object` = authorList
-            ),
-            createStatement(
-                subject = expected,
-                predicate = createPredicate(Predicates.hasContribution),
-                `object` = createResource(
-                    classes = setOf(Classes.contribution),
-                    label = "Contribution",
-                    id = ThingId("Contribution123")
-                )
             ),
             createStatement(
                 subject = authorList,
@@ -196,6 +179,37 @@ class PaperServiceUnitTests {
                 subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasWebsite),
                 `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
+            )
+        )
+        every {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = secondBundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        } returns pageOf(
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasResearchField),
+                `object` = createResource(
+                    id = researchFieldId,
+                    classes = setOf(Classes.researchField),
+                    label = "Research Field 1"
+                )
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasContribution),
+                `object` = createResource(
+                    classes = setOf(Classes.contribution),
+                    label = "Contribution",
+                    id = ThingId("Contribution123")
+                )
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasVenue),
+                `object` = createLiteral(label = publishedIn)
             )
         )
 
@@ -256,7 +270,14 @@ class PaperServiceUnitTests {
         verify(exactly = 1) {
             statementRepository.fetchAsBundle(
                 id = expected.id,
-                configuration = bundleConfiguration,
+                configuration = firstBundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        }
+        verify(exactly = 1) {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = secondBundleConfiguration,
                 sort = Sort.unsorted()
             )
         }

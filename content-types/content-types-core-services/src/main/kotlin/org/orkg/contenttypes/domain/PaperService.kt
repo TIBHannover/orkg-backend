@@ -191,15 +191,26 @@ class PaperService(
     }
 
     private fun Resource.toPaper(): Paper {
-        val statements = statementRepository.fetchAsBundle(
-            id = id,
-            configuration = BundleConfiguration(
-                minLevel = null,
-                maxLevel = 3,
-                blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
-                whitelist = emptyList()
-            ),
-            sort = Sort.unsorted()
+        val statements = (
+            statementRepository.fetchAsBundle(
+                id = id,
+                configuration = BundleConfiguration(
+                    minLevel = null,
+                    maxLevel = 3,
+                    blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
+                    whitelist = emptyList()
+                ),
+                sort = Sort.unsorted()
+            ) + statementRepository.fetchAsBundle(
+                id = id,
+                configuration = BundleConfiguration(
+                    minLevel = null,
+                    maxLevel = 1,
+                    blacklist = emptyList(),
+                    whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue)
+                ),
+                sort = Sort.unsorted()
+            )
         ).groupBy { it.subject.id }
         val directStatements = statements[id].orEmpty()
         return Paper(

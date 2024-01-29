@@ -123,7 +123,7 @@ class ComparisonServiceUnitTests {
         val publicationMonth = 1
         val reference = "https://orkg.org"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
-        val bundleConfiguration = BundleConfiguration(
+        val firstBundleConfiguration = BundleConfiguration(
             minLevel = null,
             maxLevel = 3,
             blacklist = listOf(
@@ -135,24 +135,27 @@ class ComparisonServiceUnitTests {
             ),
             whitelist = emptyList()
         )
+        val secondBundleConfiguration = BundleConfiguration(
+            minLevel = null,
+            maxLevel = 1,
+            blacklist = emptyList(),
+            whitelist = listOf(
+                Classes.researchField,
+                Classes.contribution,
+                Classes.visualization,
+                Classes.comparisonRelatedFigure,
+                Classes.comparisonRelatedResource
+            )
+        )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
         every {
             statementRepository.fetchAsBundle(
                 id = expected.id,
-                configuration = bundleConfiguration,
+                configuration = firstBundleConfiguration,
                 sort = Sort.unsorted()
             )
         } returns pageOf(
-            createStatement(
-                subject = expected,
-                predicate = createPredicate(Predicates.hasSubject),
-                `object` = createResource(
-                    id = researchFieldId,
-                    classes = setOf(Classes.researchField),
-                    label = "Research Field 1"
-                )
-            ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasDOI),
@@ -175,6 +178,38 @@ class ComparisonServiceUnitTests {
                 subject = expected,
                 predicate = createPredicate(Predicates.hasAuthors),
                 `object` = authorList
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.reference),
+                `object` = createLiteral(label = reference)
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.isAnonymized),
+                `object` = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
+            ),
+            createStatement(
+                subject = authorList,
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = createLiteral(label = "Author 1")
+            )
+        )
+        every {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = secondBundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        } returns pageOf(
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasSubject),
+                `object` = createResource(
+                    id = researchFieldId,
+                    classes = setOf(Classes.researchField),
+                    label = "Research Field 1"
+                )
             ),
             createStatement(
                 subject = expected,
@@ -211,21 +246,6 @@ class ComparisonServiceUnitTests {
                     label = "ComparisonRelatedFigure",
                     id = ThingId("ComparisonRelatedFigure")
                 )
-            ),
-            createStatement(
-                subject = expected,
-                predicate = createPredicate(Predicates.reference),
-                `object` = createLiteral(label = reference)
-            ),
-            createStatement(
-                subject = expected,
-                predicate = createPredicate(Predicates.isAnonymized),
-                `object` = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
-            ),
-            createStatement(
-                subject = authorList,
-                predicate = createPredicate(Predicates.hasListElement),
-                `object` = createLiteral(label = "Author 1")
             )
         )
         every { comparisonRepository.findVersionHistory(expected.id) } returns versions
@@ -293,7 +313,14 @@ class ComparisonServiceUnitTests {
         verify(exactly = 1) {
             statementRepository.fetchAsBundle(
                 id = expected.id,
-                configuration = bundleConfiguration,
+                configuration = firstBundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        }
+        verify(exactly = 1) {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = secondBundleConfiguration,
                 sort = Sort.unsorted()
             )
         }

@@ -10,8 +10,7 @@ private const val id = "${'$'}id"
 
 interface Neo4jComparisonRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query("""
-MATCH (cmp:Comparison:Resource {id: $id})
-OPTIONAL MATCH (cmp)-[:RELATED*1.. {predicate_id: "hasPreviousVersion"}]->(prev)
+MATCH (cmp:Comparison:Resource {id: $id})-[:RELATED*1.. {predicate_id: "hasPreviousVersion"}]->(prev:Comparison)
 RETURN prev.id AS id, prev.label AS label, prev.created_at AS createdAt""")
     fun findVersionHistory(id: ThingId): List<ComparisonVersion>
 }

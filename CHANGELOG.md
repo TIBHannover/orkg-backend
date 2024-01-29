@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added graph model documentation for content-types
+  (See: [!751](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/751))
+
+### Changed
+- Content-type responses now support multiple identifiers per type
+  (See: [!756](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/756))
+
+### Fixed
+- Fixed metadata creation for templates
+  (See: [!761](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/761))
+- Reserved classes can no longer be used in paper and contribution requests
+  (See: [!764](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/764))
+- Fixed comparison endpoints returning status 500
+  (See: [!771](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/771))
+- Fixed paper and comparison endpoints not returning all available data
 
 ## [0.45.0] - 2024-01-23
 ### Added

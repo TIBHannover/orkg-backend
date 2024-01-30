@@ -12,7 +12,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-abstract class AuthorUpdater(
+open class AuthorUpdater(
     private val resourceService: ResourceUseCases,
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,

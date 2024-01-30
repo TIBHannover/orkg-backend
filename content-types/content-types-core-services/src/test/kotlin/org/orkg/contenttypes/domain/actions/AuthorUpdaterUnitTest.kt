@@ -34,7 +34,7 @@ class AuthorUpdaterUnitTest {
     private val authorCreator: AuthorCreator = mockk()
 
     private val authorUpdater =
-        object : AuthorUpdater(resourceService, statementService, literalService, listService, authorCreator) {}
+        AuthorUpdater(resourceService, statementService, literalService, listService, authorCreator)
 
     @BeforeEach
     fun resetState() {

@@ -9,11 +9,19 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
 class PaperAuthorUpdater(
-    resourceService: ResourceUseCases,
-    statementService: StatementUseCases,
-    literalService: LiteralUseCases,
-    listService: ListUseCases
-) : AuthorUpdater(resourceService, statementService, literalService, listService), UpdatePaperAction {
-    override operator fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState =
-        state.apply { update(command.contributorId, state.authors, command.paperId) }
+    private val authorUpdater: AuthorUpdater
+) : UpdatePaperAction {
+    constructor(
+        resourceService: ResourceUseCases,
+        statementService: StatementUseCases,
+        literalService: LiteralUseCases,
+        listService: ListUseCases
+    ) : this(AuthorUpdater(resourceService, statementService, literalService, listService))
+
+    override operator fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
+        if (command.authors != null) {
+            authorUpdater.update(command.contributorId, state.authors, command.paperId)
+        }
+        return state
+    }
 }

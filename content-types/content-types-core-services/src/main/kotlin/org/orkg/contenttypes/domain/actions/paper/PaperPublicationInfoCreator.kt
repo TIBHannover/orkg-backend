@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain.actions.paper
 
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperState
+import org.orkg.contenttypes.domain.actions.PublicationInfoCreator
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases

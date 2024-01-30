@@ -1,10 +1,10 @@
-package org.orkg.contenttypes.domain.actions.paper
+package org.orkg.contenttypes.domain.actions
 
 import java.net.URI
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.PublicationInfo
+import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -22,7 +22,7 @@ abstract class PublicationInfoCreator(
     protected val statementService: StatementUseCases,
     protected val literalService: LiteralUseCases
 ) {
-    internal fun create(contributorId: ContributorId, publicationInfo: PublicationInfo, subjectId: ThingId) {
+    internal fun create(contributorId: ContributorId, publicationInfo: PublicationInfoDefinition, subjectId: ThingId) {
         if (publicationInfo.publishedMonth != null) {
             linkPublicationMonth(contributorId, subjectId, publicationInfo.publishedMonth!!)
         }

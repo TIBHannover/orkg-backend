@@ -17,8 +17,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.contenttypes.domain.actions.CreatePaperState
+import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
@@ -83,7 +83,7 @@ class PaperPublicationInfoCreatorUnitTest {
         val paperId = ThingId("R123")
         val month = 5
         val command = dummyCreatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = month,
                 publishedYear = null,
                 publishedIn = null,
@@ -147,7 +147,7 @@ class PaperPublicationInfoCreatorUnitTest {
         val paperId = ThingId("R123")
         val year = 5L
         val command = dummyCreatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = year,
                 publishedIn = null,
@@ -211,7 +211,7 @@ class PaperPublicationInfoCreatorUnitTest {
         val paperId = ThingId("R123")
         val venue = "Conference"
         val command = dummyCreatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = venue,
@@ -274,7 +274,7 @@ class PaperPublicationInfoCreatorUnitTest {
         val paperId = ThingId("R123")
         val venue = "Conference"
         val command = dummyCreatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = venue,
@@ -344,7 +344,7 @@ class PaperPublicationInfoCreatorUnitTest {
         val paperId = ThingId("R123")
         val url = URI.create("https://orkg.org")
         val command = dummyCreatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,

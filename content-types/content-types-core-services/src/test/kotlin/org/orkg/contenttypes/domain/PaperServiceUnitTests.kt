@@ -110,6 +110,7 @@ class PaperServiceUnitTests {
         val doi = "10.1000/182"
         val publishedYear: Long = 2016
         val publishedMonth = 1
+        val publishedInId = ThingId("R4153")
         val publishedIn = "Conference"
         val publishedUrl = "https://example.org/conference"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
@@ -209,7 +210,7 @@ class PaperServiceUnitTests {
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasVenue),
-                `object` = createLiteral(label = publishedIn)
+                `object` = createResource(publishedInId, label = publishedIn)
             )
         )
 
@@ -232,7 +233,7 @@ class PaperServiceUnitTests {
             paper.publicationInfo.asClue { publicationInfo ->
                 publicationInfo.publishedMonth shouldBe publishedMonth
                 publicationInfo.publishedYear shouldBe publishedYear
-                publicationInfo.publishedIn shouldBe publishedIn
+                publicationInfo.publishedIn shouldBe ObjectIdAndLabel(publishedInId, publishedIn)
                 publicationInfo.url shouldBe URI.create(publishedUrl)
             }
             paper.authors shouldNotBe null

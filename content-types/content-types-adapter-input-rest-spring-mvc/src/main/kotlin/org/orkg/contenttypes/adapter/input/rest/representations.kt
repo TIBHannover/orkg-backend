@@ -16,7 +16,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
-import org.orkg.contenttypes.domain.PublicationInfo
+import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
@@ -54,7 +54,7 @@ data class PublicationInfoRepresentation(
     @get:JsonProperty("published_year")
     val publishedYear: Long?,
     @get:JsonProperty("published_in")
-    val publishedIn: String?,
+    val publishedIn: ObjectIdAndLabel?,
     val url: URI?
 )
 
@@ -200,8 +200,8 @@ data class PublicationInfoDTO(
     val publishedIn: String?,
     val url: URI?
 ) {
-    fun toPublicationInfo(): PublicationInfo =
-        PublicationInfo(
+    fun toPublicationInfoDefinition(): PublicationInfoDefinition =
+        PublicationInfoDefinition(
             publishedMonth = publishedMonth,
             publishedYear = publishedYear,
             publishedIn = publishedIn,

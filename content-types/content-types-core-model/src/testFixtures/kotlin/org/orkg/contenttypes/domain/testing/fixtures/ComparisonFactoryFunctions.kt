@@ -36,7 +36,7 @@ fun createDummyComparison() = Comparison(
     publicationInfo = PublicationInfo(
         publishedMonth = 4,
         publishedYear = 2023,
-        publishedIn = "ORKG",
+        publishedIn = ObjectIdAndLabel(ThingId("R4867"), "ORKG"),
         url = URI.create("https://example.org")
     ),
     authors = listOf(

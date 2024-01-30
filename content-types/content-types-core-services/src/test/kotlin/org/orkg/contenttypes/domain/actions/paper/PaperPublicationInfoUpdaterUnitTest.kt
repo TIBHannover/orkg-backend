@@ -17,9 +17,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
+import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
@@ -92,7 +94,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             publicationInfo = publicationInfo
         )
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = publicationInfo
+            publicationInfo = publicationInfo.toPublicationInfoDefinition()
         )
         val state = UpdatePaperState(
             paper = paper
@@ -117,7 +119,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             )
         )
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -175,7 +177,7 @@ class PaperPublicationInfoUpdaterUnitTest {
         )
         val month = 5
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = month,
                 publishedYear = null,
                 publishedIn = null,
@@ -242,7 +244,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             )
         )
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = 6,
                 publishedYear = null,
                 publishedIn = null,
@@ -338,7 +340,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             publicationInfo = publicationInfo
         )
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = publicationInfo
+            publicationInfo = publicationInfo.toPublicationInfoDefinition()
         )
         val state = UpdatePaperState(
             paper = paper
@@ -363,7 +365,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             )
         )
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -421,7 +423,7 @@ class PaperPublicationInfoUpdaterUnitTest {
         )
         val year: Long = 2023
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = year,
                 publishedIn = null,
@@ -488,7 +490,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             )
         )
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = 2023,
                 publishedIn = null,
@@ -577,14 +579,14 @@ class PaperPublicationInfoUpdaterUnitTest {
         val publicationInfo = PublicationInfo(
             publishedMonth = null,
             publishedYear = null,
-            publishedIn = "Conference",
+            publishedIn = ObjectIdAndLabel(ThingId("irrelevant"), "Conference"),
             url = null
         )
         val paper = createDummyPaper().copy(
             publicationInfo = publicationInfo
         )
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = publicationInfo
+            publicationInfo = publicationInfo.toPublicationInfoDefinition()
         )
         val state = UpdatePaperState(
             paper = paper
@@ -604,12 +606,12 @@ class PaperPublicationInfoUpdaterUnitTest {
             publicationInfo = PublicationInfo(
                 publishedMonth = null,
                 publishedYear = null,
-                publishedIn = "Conference",
+                publishedIn = ObjectIdAndLabel(ThingId("irrelevant"), "Conference"),
                 url = null
             )
         )
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -670,7 +672,7 @@ class PaperPublicationInfoUpdaterUnitTest {
         )
         val venue = "Conference"
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = venue,
@@ -744,7 +746,7 @@ class PaperPublicationInfoUpdaterUnitTest {
         )
         val venue = "Conference"
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = venue,
@@ -822,7 +824,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             publicationInfo = publicationInfo
         )
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = publicationInfo
+            publicationInfo = publicationInfo.toPublicationInfoDefinition()
         )
         val state = UpdatePaperState(
             paper = paper
@@ -847,7 +849,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             )
         )
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -905,7 +907,7 @@ class PaperPublicationInfoUpdaterUnitTest {
         )
         val url = URI.create("https://orkg.org/")
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -972,7 +974,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             )
         )
         val command = dummyUpdatePaperCommand().copy(
-            publicationInfo = PublicationInfo(
+            publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
@@ -1055,4 +1057,12 @@ class PaperPublicationInfoUpdaterUnitTest {
             )
         }
     }
+
+    private fun PublicationInfo.toPublicationInfoDefinition(): PublicationInfoDefinition =
+        PublicationInfoDefinition(
+            publishedMonth = publishedMonth,
+            publishedYear = publishedYear,
+            publishedIn = publishedIn?.label,
+            url = url
+        )
 }

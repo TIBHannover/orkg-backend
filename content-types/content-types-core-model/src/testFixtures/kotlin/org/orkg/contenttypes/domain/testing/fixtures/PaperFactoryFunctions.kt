@@ -32,7 +32,7 @@ fun createDummyPaper() = Paper(
     publicationInfo = PublicationInfo(
         publishedMonth = 4,
         publishedYear = 2023,
-        publishedIn = "Fancy Conference",
+        publishedIn = ObjectIdAndLabel(ThingId("R4561"), "Fancy Conference"),
         url = URI.create("https://example.org")
     ),
     authors = listOf(

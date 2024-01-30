@@ -4,12 +4,11 @@ import java.net.URI
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.actions.PublicationInfoCreator
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.graph.domain.Literal
-import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -39,9 +38,9 @@ class PaperPublicationInfoUpdater(
                     subjectId = command.paperId
                 )
             }
-            if (state.paper?.publicationInfo?.publishedIn != command.publicationInfo!!.publishedIn) {
+            if (state.paper?.publicationInfo?.publishedIn?.label != command.publicationInfo!!.publishedIn) {
                 updateOrLinkPublicationIn(
-                    oldVenue = state.paper?.publicationInfo?.publishedIn,
+                    oldVenue = state.paper?.publicationInfo?.publishedIn?.label,
                     newVenue = command.publicationInfo!!.publishedIn,
                     contributorId = command.contributorId,
                     subjectId = command.paperId
@@ -113,7 +112,7 @@ class PaperPublicationInfoUpdater(
             ).single()
             statementService.delete(statement.id!!)
         }
-        
+
         if (newVenue != null) {
             linkPublicationVenue(contributorId, subjectId, newVenue)
         }

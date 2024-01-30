@@ -6,11 +6,11 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
-import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.PredicateDefinition
+import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.graph.domain.ExtractionMethod
@@ -22,7 +22,7 @@ fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
     title = "test",
     researchFields = listOf(ThingId("R12")),
     identifiers = mapOf("doi" to listOf("10.1234/56789")),
-    publicationInfo = PublicationInfo(
+    publicationInfo = PublicationInfoDefinition(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",
@@ -121,7 +121,7 @@ fun dummyUpdatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
     title = "test",
     researchFields = listOf(ThingId("R12")),
     identifiers = mapOf("doi" to listOf("10.1234/56789")),
-    publicationInfo = PublicationInfo(
+    publicationInfo = PublicationInfoDefinition(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",

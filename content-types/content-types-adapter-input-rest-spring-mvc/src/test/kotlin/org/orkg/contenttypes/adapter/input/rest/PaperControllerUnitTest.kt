@@ -140,6 +140,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
                         fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
                         fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
+                        fieldWithPath("publication_info.published_in.id").description("The ID of the venue."),
+                        fieldWithPath("publication_info.published_in.label").description("The label of the venue."),
                         fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
                         fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
                         fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),

@@ -6,7 +6,6 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
-import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.input.CreateObjectUseCase
 
@@ -18,7 +17,7 @@ interface CreatePaperUseCase {
         val title: String,
         val researchFields: List<ThingId>,
         val identifiers: Map<String, List<String>>,
-        val publicationInfo: PublicationInfo?,
+        val publicationInfo: PublicationInfoDefinition?,
         val authors: List<Author>,
         val observatories: List<ObservatoryId>,
         val organizations: List<OrganizationId>,
@@ -47,7 +46,7 @@ interface UpdatePaperUseCase {
         val title: String?,
         val researchFields: List<ThingId>?,
         val identifiers: Map<String, List<String>>?,
-        val publicationInfo: PublicationInfo?,
+        val publicationInfo: PublicationInfoDefinition?,
         val authors: List<Author>?,
         val observatories: List<ObservatoryId>?,
         val organizations: List<OrganizationId>?

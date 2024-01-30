@@ -109,6 +109,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("publication_info.published_month").description("The month in which the comparison was published. (optional)").optional(),
                         fieldWithPath("publication_info.published_year").description("The year in which the comparison was published. (optional)").optional(),
                         fieldWithPath("publication_info.published_in").description("The venue where the comparison was published. (optional)").optional(),
+                        fieldWithPath("publication_info.published_in.id").description("The ID of the venue."),
+                        fieldWithPath("publication_info.published_in.label").description("The label of the venue."),
                         fieldWithPath("publication_info.url").description("The URL to the original comparison. (optional)").optional(),
                         fieldWithPath("authors").description("The list of authors that originally contributed to the comparison."),
                         fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),

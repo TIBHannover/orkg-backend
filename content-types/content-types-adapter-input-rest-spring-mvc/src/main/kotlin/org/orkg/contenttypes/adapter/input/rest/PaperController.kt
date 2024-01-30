@@ -239,7 +239,7 @@ class PaperController(
                 title = title,
                 researchFields = researchFields,
                 identifiers = identifiers.orEmpty(),
-                publicationInfo = publicationInfo?.toPublicationInfo(),
+                publicationInfo = publicationInfo?.toPublicationInfoDefinition(),
                 authors = authors.map { it.toAuthor() },
                 observatories = observatories,
                 organizations = organizations,
@@ -273,7 +273,7 @@ class PaperController(
                 title = title,
                 researchFields = researchFields,
                 identifiers = identifiers,
-                publicationInfo = publicationInfo?.toPublicationInfo(),
+                publicationInfo = publicationInfo?.toPublicationInfoDefinition(),
                 authors = authors?.map { it.toAuthor() },
                 observatories = observatories,
                 organizations = organizations

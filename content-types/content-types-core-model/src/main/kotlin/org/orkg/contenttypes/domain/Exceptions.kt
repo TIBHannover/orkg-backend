@@ -28,9 +28,6 @@ class TemplateNotFound(id: ThingId) :
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")
 
-class ResearchFieldNotAllowed(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Research field "$id" is not allowed.""")
-
 class OnlyOneOrganizationAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one organization is allowed.""")
 

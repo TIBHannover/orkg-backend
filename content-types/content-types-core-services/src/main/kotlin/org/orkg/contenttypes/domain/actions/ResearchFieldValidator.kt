@@ -2,15 +2,9 @@ package org.orkg.contenttypes.domain.actions
 
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
-import org.orkg.contenttypes.domain.ResearchFieldNotAllowed
-import org.orkg.contenttypes.domain.ResearchFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.output.ResourceRepository
-
-private val researchFieldBlacklist = listOf(
-    ResearchFields.science
-)
 
 class ResearchFieldValidator<T, S>(
     private val resourceRepository: ResourceRepository,
@@ -23,9 +17,6 @@ class ResearchFieldValidator<T, S>(
                 throw OnlyOneResearchFieldAllowed()
             }
             researchFields.distinct().forEach { id ->
-                if (id in researchFieldBlacklist) {
-                    throw ResearchFieldNotAllowed(id)
-                }
                 resourceRepository.findById(id)
                     .filter { Classes.researchField in it.classes }
                     .orElseThrow { ResearchFieldNotFound(id) }

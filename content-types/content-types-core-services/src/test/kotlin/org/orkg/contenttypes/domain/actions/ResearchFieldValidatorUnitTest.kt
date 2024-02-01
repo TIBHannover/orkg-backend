@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
-import org.orkg.contenttypes.domain.ResearchFieldNotAllowed
-import org.orkg.contenttypes.domain.ResearchFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.output.ResourceRepository
@@ -73,10 +71,5 @@ class ResearchFieldValidatorUnitTest {
     fun `Given a list of research fields, when more than one research field is specified, it throws an exception`() {
         val ids = listOf(ThingId("R12"), ThingId("R11"))
         assertThrows<OnlyOneResearchFieldAllowed> { researchFieldValidator(ids, Unit) }
-    }
-
-    @Test
-    fun `Given a list of research fields, when research field is not allowed, it throws an exception`() {
-        assertThrows<ResearchFieldNotAllowed> { researchFieldValidator(listOf(ResearchFields.science), Unit) }
     }
 }

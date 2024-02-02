@@ -1,13 +1,16 @@
 package org.orkg.contenttypes.domain
 
-
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.mockk.clearAllMocks
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.graph.domain.Classes
@@ -22,6 +25,16 @@ class ContributionServiceUnitTests {
     private val statementRepository: StatementRepository = mockk()
 
     private val service = ContributionService(resourceRepository, statementRepository)
+
+    @BeforeEach
+    fun resetState() {
+        clearAllMocks()
+    }
+
+    @AfterEach
+    fun verifyMocks() {
+        confirmVerified(resourceRepository, statementRepository)
+    }
 
     @Test
     fun `Given a contribution exists, when fetching it by id, then it is returned`() {

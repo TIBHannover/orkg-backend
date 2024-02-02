@@ -3,10 +3,14 @@ package org.orkg.contenttypes.domain
 import io.kotest.assertions.asClue
 import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -59,6 +63,27 @@ class TemplateServiceUnitTests {
         templateRepository = templateRepository
     )
 
+    @BeforeEach
+    fun resetState() {
+        clearAllMocks()
+    }
+
+    @AfterEach
+    fun verifyMocks() {
+        confirmVerified(
+            resourceRepository,
+            statementRepository,
+            classRepository,
+            predicateRepository,
+            resourceService,
+            literalService,
+            statementService,
+            observatoryRepository,
+            organizationRepository,
+            templateRepository
+        )
+    }
+
     @Test
     fun `Given a template exists, when fetching it by id, then it is returned`() {
         val expected = createResource(
@@ -100,7 +125,7 @@ class TemplateServiceUnitTests {
         val resourcePropertyPattern = """\w+"""
         val resourcePropertyPath = createPredicate(ThingId("R27"), label = "resource property path label")
         val resourcePropertyClass = createClass(ThingId("R28"), label = "resource property class label")
-        
+
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
         every {
             statementRepository.fetchAsBundle(
@@ -169,7 +194,7 @@ class TemplateServiceUnitTests {
                 `object` = resourceProperty
             ),
 
-            //Statements for literal property
+            // Statements for literal property
             createStatement(
                 subject = literalProperty,
                 predicate = createPredicate(Predicates.shOrder),
@@ -201,7 +226,7 @@ class TemplateServiceUnitTests {
                 `object` = literalPropertyDatatype
             ),
 
-            //Statements for resource property
+            // Statements for resource property
             createStatement(
                 subject = resourceProperty,
                 predicate = createPredicate(Predicates.shOrder),

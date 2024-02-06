@@ -25,6 +25,7 @@ abstract class AdaptedInMemoryRepository<ID, T>(
 }
 
 interface InMemoryEntityAdapter<ID, T> {
+    val keys: Collection<ID>
     val values: Collection<T>
     val size: Int get() = values.size
 

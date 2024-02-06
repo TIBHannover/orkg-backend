@@ -24,6 +24,7 @@ class InMemoryResourceRepository(inMemoryGraph: InMemoryGraph) :
     AdaptedInMemoryRepository<ThingId, Resource>(compareBy(Resource::createdAt)), ResourceRepository {
 
     override val entities: InMemoryEntityAdapter<ThingId, Resource> = object : InMemoryEntityAdapter<ThingId, Resource> {
+        override val keys: Collection<ThingId> get() = inMemoryGraph.findAllResources().map { it.id }
         override val values: MutableCollection<Resource> get() = inMemoryGraph.findAllResources().toMutableSet()
 
         override fun remove(key: ThingId): Resource? = inMemoryGraph.remove(key).takeIf { it is Resource } as? Resource

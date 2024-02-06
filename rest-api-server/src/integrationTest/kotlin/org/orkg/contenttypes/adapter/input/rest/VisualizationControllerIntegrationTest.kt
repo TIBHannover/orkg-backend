@@ -118,7 +118,7 @@ class VisualizationControllerIntegrationTest : RestDocumentationBaseTest() {
 
         statementService.create(
             subject = resourceService.createResource(
-                id = "R456",
+                id = "R4567",
                 label = "Author with orcid",
                 classes = setOf("Author")
             ),

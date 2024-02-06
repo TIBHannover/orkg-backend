@@ -132,7 +132,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithMockUser
+    @TestWithMockUser
     fun addWithExistingIds() {
         val resource = mapOf("label" to "bar", "id" to "Test")
 

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.createPredicate
+import org.orkg.createResource
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
@@ -39,9 +40,9 @@ class StatementServiceIntegrationTest {
     @Test
     @DisplayName("shouldCreateStatementWhenAllResourcesExist")
     fun shouldCreateStatementWhenAllResourcesExist() {
-        val subjectId = resourceService.create("subject").id
+        val subjectId = resourceService.createResource(label = "subject")
         val predicateId = predicateService.createPredicate(label = "predicate")
-        val objectId = resourceService.create("object").id
+        val objectId = resourceService.createResource(label = "object")
 
         val id = service.create(
             subjectId,
@@ -61,9 +62,9 @@ class StatementServiceIntegrationTest {
     @DisplayName("should find all created statements")
     fun shouldFindAllCreatedStatements() {
         val pagination = PageRequest.of(0, 10)
-        val r1 = resourceService.create("one").id
-        val r2 = resourceService.create("two").id
-        val r3 = resourceService.create("three").id
+        val r1 = resourceService.createResource(label = "one")
+        val r2 = resourceService.createResource(label = "two")
+        val r3 = resourceService.createResource(label = "three")
         val p1 = predicateService.createPredicate(label = "greater than")
         val p2 = predicateService.createPredicate(label = "less than")
 
@@ -79,9 +80,9 @@ class StatementServiceIntegrationTest {
     @Test
     @DisplayName("should find statement by ID")
     fun shouldFindStatementByID() {
-        val r1 = resourceService.create("one").id
-        val r2 = resourceService.create("two").id
-        val r3 = resourceService.create("three").id
+        val r1 = resourceService.createResource(label = "one")
+        val r2 = resourceService.createResource(label = "two")
+        val r3 = resourceService.createResource(label = "three")
         val p1 = predicateService.createPredicate(label = "greater than")
         val p2 = predicateService.createPredicate(label = "less than")
 
@@ -103,9 +104,9 @@ class StatementServiceIntegrationTest {
     @DisplayName("should find statements by subject")
     fun shouldFindStatementsBySubject() {
         val pagination = PageRequest.of(0, 10)
-        val r1 = resourceService.create("one").id
-        val r2 = resourceService.create("two").id
-        val r3 = resourceService.create("three").id
+        val r1 = resourceService.createResource(label = "one")
+        val r2 = resourceService.createResource(label = "two")
+        val r3 = resourceService.createResource(label = "three")
         val p1 = predicateService.createPredicate(label = "greater than")
         val p2 = predicateService.createPredicate(label = "less than")
 
@@ -124,9 +125,9 @@ class StatementServiceIntegrationTest {
     @DisplayName("should find statements by predicate")
     fun shouldFindStatementsByPredicate() {
         val pagination = PageRequest.of(0, 10)
-        val r1 = resourceService.create("one").id
-        val r2 = resourceService.create("two").id
-        val r3 = resourceService.create("three").id
+        val r1 = resourceService.createResource(label = "one")
+        val r2 = resourceService.createResource(label = "two")
+        val r3 = resourceService.createResource(label = "three")
         val p1 = predicateService.createPredicate(label = "greater than")
         val p2 = predicateService.createPredicate(label = "less than")
 
@@ -144,8 +145,8 @@ class StatementServiceIntegrationTest {
     @DisplayName("does not create duplicate statements")
     fun doesNotCreateDuplicateStatements() {
         val pagination = PageRequest.of(0, 10)
-        val r1 = resourceService.create("one").id
-        val r2 = resourceService.create("two").id
+        val r1 = resourceService.createResource(label = "one")
+        val r2 = resourceService.createResource(label = "two")
         val p1 = predicateService.createPredicate(label = "less than")
 
         val s1 = service.create(r1, p1, r2)

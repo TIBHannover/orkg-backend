@@ -1,7 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.forkhandles.values.ofOrNull
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -15,9 +14,6 @@ import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.InvalidLabel
-import org.orkg.graph.domain.Label
-import org.orkg.graph.domain.ResourceAlreadyExists
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.SearchString
@@ -98,37 +94,26 @@ class ResourceController(
     @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
-        @RequestBody resource: CreateResourceRequest,
+        @RequestBody request: CreateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<ResourceRepresentation> {
-        Label.ofOrNull(resource.label) ?: throw InvalidLabel()
-        if (resource.id != null && service.findById(resource.id).isPresent) throw ResourceAlreadyExists(resource.id)
         val contributor = contributorService.findById(currentUser.contributorId())
-        var observatoryId = ObservatoryId.UNKNOWN
-        var organizationId = OrganizationId.UNKNOWN
-        if (!contributor.isEmpty) {
-            organizationId = contributor.get().organizationId
-            observatoryId = contributor.get().observatoryId
-        }
-        val id =
-            service.create(
-                CreateResourceUseCase.CreateCommand(
-                    id = resource.id,
-                    label = resource.label,
-                    classes = resource.classes,
-                    extractionMethod = resource.extractionMethod,
-                    contributorId = currentUser.contributorId(),
-                    observatoryId = observatoryId,
-                    organizationId = organizationId,
-                )
+        val id = service.create(
+            CreateResourceUseCase.CreateCommand(
+                id = request.id,
+                label = request.label,
+                classes = request.classes,
+                extractionMethod = request.extractionMethod,
+                contributorId = currentUser.contributorId(),
+                observatoryId = contributor.map { it.observatoryId }.orElse(ObservatoryId.UNKNOWN),
+                organizationId = contributor.map { it.organizationId }.orElse(OrganizationId.UNKNOWN),
             )
-
+        )
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
-
         return created(location).body(service.findById(id).mapToResourceRepresentation().get())
     }
 

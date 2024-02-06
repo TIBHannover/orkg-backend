@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import dev.forkhandles.values.ofOrNull
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
@@ -32,15 +33,16 @@ class ResourceService(
     override fun exists(id: ThingId): Boolean = repository.exists(id)
 
     override fun create(command: CreateResourceUseCase.CreateCommand): ThingId {
-        val id = command.id ?: repository.nextIdentity()
-        if (command.classes.isNotEmpty() && (!classRepository.existsAll(command.classes) || command.classes.any { it in reservedClassIds })) {
-            throw InvalidClassCollection(command.classes)
-        }
+        val label = Label.ofOrNull(command.label)?.value ?: throw InvalidLabel()
+        val classes = validateClasses(command.classes)
+        val id = command.id
+            ?.also { id -> repository.findById(id).ifPresent { throw ResourceAlreadyExists(id) } }
+            ?: repository.nextIdentity()
         val resource = Resource(
             id = id,
-            label = command.label,
-            classes = command.classes,
-            extractionMethod = command.extractionMethod,
+            label = label,
+            classes = classes,
+            extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId ?: ContributorId.UNKNOWN,
             observatoryId = command.observatoryId ?: ObservatoryId.UNKNOWN,
@@ -50,28 +52,6 @@ class ResourceService(
         repository.save(resource)
         return id
     }
-
-    override fun create(label: String): Resource =
-        create(CreateResourceUseCase.CreateCommand(label = label))
-            .let { findById(it).get() }
-
-    override fun create(
-        userId: ContributorId,
-        label: String,
-        observatoryId: ObservatoryId,
-        extractionMethod: ExtractionMethod,
-        organizationId: OrganizationId
-    ): Resource =
-        create(
-            CreateResourceUseCase.CreateCommand(
-                label = label,
-                contributorId = userId,
-                observatoryId = observatoryId,
-                extractionMethod = extractionMethod,
-                organizationId = organizationId,
-            )
-        )
-            .let { findById(it).get() }
 
     override fun findAll(
         pageable: Pageable,
@@ -148,11 +128,8 @@ class ResourceService(
 
         // update all the properties
         if (command.label != null) found = found.copy(label = command.label!!)
-        if (command.classes != null) {
-            if (command.classes!!.isNotEmpty() && (!classRepository.existsAll(command.classes!!) || command.classes!!.any { it in reservedClassIds })) {
-                throw InvalidClassCollection(command.classes!!)
-            }
-            found = found.copy(classes = command.classes!!)
+        command.classes?.let {
+            found = found.copy(classes = validateClasses(it))
         }
         if (command.observatoryId != null) found = found.copy(observatoryId = command.observatoryId!!)
         if (command.organizationId != null) found = found.copy(organizationId = command.organizationId!!)
@@ -262,5 +239,18 @@ class ResourceService(
         var resultObj = result.orElseThrow { ResourceNotFound.withId(resourceId) }
         resultObj = resultObj.copy(verified = verified)
         repository.save(resultObj)
+    }
+
+    private fun validateClasses(classes: Set<ThingId>): Set<ThingId> {
+        if (classes.isNotEmpty()) {
+            val reserved = classes.intersect(reservedClassIds)
+            if (reserved.isNotEmpty()) {
+                throw ReservedClass(reserved.first())
+            }
+            if (!classRepository.existsAll(classes - reservedClassIds)) {
+                throw InvalidClassCollection(classes)
+            }
+        }
+        return classes
     }
 }

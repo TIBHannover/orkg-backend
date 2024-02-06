@@ -5,26 +5,15 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.Resource
 
 interface CreateResourceUseCase {
     fun create(command: CreateCommand): ThingId
-
-    // legacy methods:
-    fun create(label: String): Resource
-    fun create(
-        userId: ContributorId,
-        label: String,
-        observatoryId: ObservatoryId,
-        extractionMethod: ExtractionMethod,
-        organizationId: OrganizationId
-    ): Resource
 
     data class CreateCommand(
         val id: ThingId? = null,
         val label: String,
         val classes: Set<ThingId> = emptySet(),
-        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+        val extractionMethod: ExtractionMethod? = null,
         val contributorId: ContributorId? = null,
         val observatoryId: ObservatoryId? = null,
         val organizationId: OrganizationId? = null,

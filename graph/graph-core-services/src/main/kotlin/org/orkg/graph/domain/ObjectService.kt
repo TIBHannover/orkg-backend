@@ -197,7 +197,7 @@ class ObjectService(
                         // add pre-defined classes
                         MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ThingId(it) }?.let { classes.add(it) }
                         // Create resource
-                        val newResource = if (classes.isNotEmpty()) resourceService.create(
+                        val newResource = resourceService.create(
                             CreateResourceUseCase.CreateCommand(
                                 label = jsonObject.label!!,
                                 classes = classes.toSet(),
@@ -207,9 +207,6 @@ class ObjectService(
                                 organizationId = organizationId,
                             )
                         )
-                        else resourceService.create(
-                            userId, jsonObject.label!!, observatoryId, extractionMethod, organizationId
-                        ).id
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`!!] = newResource
                         }

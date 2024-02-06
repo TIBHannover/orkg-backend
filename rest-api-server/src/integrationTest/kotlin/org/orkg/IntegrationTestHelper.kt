@@ -1,7 +1,6 @@
 package org.orkg
 
 import java.net.URI
-import java.util.*
 import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -60,32 +59,16 @@ fun CreatePredicateUseCase.createPredicate(
 fun CreateResourceUseCase.createResource(
     classes: Set<String> = setOf(),
     id: String? = null,
-    label: String? = null,
-    extractionMethod: ExtractionMethod? = null,
-    modifiable: Boolean = true
-): ThingId = this.create(
-    CreateResourceUseCase.CreateCommand(
-        id = id?.let(::ThingId),
-        label = label ?: "label",
-        classes = classes.map(::ThingId).toSet(),
-        extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN,
-        modifiable = modifiable
-    )
-)
-
-fun CreateResourceUseCase.createResource(
-    classes: Set<String> = setOf(),
-    id: String? = null,
-    label: String? = null,
+    label: String = "label",
     extractionMethod: ExtractionMethod? = null,
     userId: ContributorId = ContributorId.UNKNOWN,
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     organizationId: OrganizationId = OrganizationId.UNKNOWN,
     modifiable: Boolean = true
-): ThingId = this.create(
+): ThingId = create(
     CreateResourceUseCase.CreateCommand(
-        id = Optional.ofNullable(id).map(::ThingId).orElse(null),
-        label = label ?: "label",
+        id = id?.let(::ThingId),
+        label = label,
         classes = classes.map(::ThingId).toSet(),
         extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN,
         contributorId = userId,

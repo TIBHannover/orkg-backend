@@ -9,6 +9,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
+import java.time.OffsetDateTime
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -26,6 +27,7 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.MockUserId
 import org.orkg.testing.fixedClock
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -55,8 +57,116 @@ class ResourceServiceUnitTests {
         confirmVerified(
             repository,
             statementRepository,
-            classRepository
+            classRepository,
+            curatorRepository
         )
+    }
+
+    @Test
+    fun `given a resource create command, when inputs are valid, it creates a new resource`() {
+        val id = ThingId("R123")
+        val command = CreateResourceUseCase.CreateCommand(
+            id = id,
+            label = "label",
+            classes = setOf(Classes.paper),
+            extractionMethod = ExtractionMethod.MANUAL,
+            contributorId = ContributorId(MockUserId.USER),
+            observatoryId = ObservatoryId("1255bbe4-1850-4033-ba10-c80d4b370e3e"),
+            organizationId = OrganizationId("56a4b65e-de56-0d4b-255b-255b372b65ef"),
+            modifiable = false
+        )
+
+        every { repository.findById(id) } returns Optional.empty()
+        every { classRepository.existsAll(command.classes) } returns true
+        every { repository.save(any()) } just runs
+
+        service.create(command)
+
+        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { classRepository.existsAll(command.classes) }
+        verify(exactly = 1) {
+            repository.save(withArg {
+                it.id shouldBe command.id
+                it.label shouldBe command.label
+                it.createdAt shouldBe OffsetDateTime.now(fixedClock)
+                it.classes shouldBe command.classes
+                it.createdBy shouldBe command.contributorId
+                it.observatoryId shouldBe command.observatoryId
+                it.extractionMethod shouldBe command.extractionMethod
+                it.organizationId shouldBe command.organizationId
+                it.visibility shouldBe Visibility.DEFAULT
+                it.verified shouldBe null
+                it.unlistedBy shouldBe null
+                it.modifiable shouldBe command.modifiable
+            })
+        }
+    }
+
+    @Test
+    fun `given a resource create command, when inputs are minimal, it get a new id form the repository and creates a new resource with default values`() {
+        val id = ThingId("R123")
+        val command = CreateResourceUseCase.CreateCommand(
+            label = "label"
+        )
+
+        every { repository.nextIdentity() } returns id
+        every { repository.save(any()) } just runs
+
+        service.create(command)
+
+        verify(exactly = 1) { repository.nextIdentity() }
+        verify(exactly = 1) {
+            repository.save(withArg {
+                it.id shouldBe id
+                it.label shouldBe command.label
+                it.createdAt shouldBe OffsetDateTime.now(fixedClock)
+                it.classes shouldBe command.classes
+                it.createdBy shouldBe ContributorId.UNKNOWN
+                it.observatoryId shouldBe ObservatoryId.UNKNOWN
+                it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+                it.organizationId shouldBe OrganizationId.UNKNOWN
+                it.visibility shouldBe Visibility.DEFAULT
+                it.verified shouldBe null
+                it.unlistedBy shouldBe null
+                it.modifiable shouldBe command.modifiable
+            })
+        }
+    }
+
+    @Test
+    fun `given a resource create command, when label is invalid, it throws an exception`() {
+        val id = ThingId("R123")
+        val command = CreateResourceUseCase.CreateCommand(
+            id = id,
+            label = "\n",
+            classes = setOf(Classes.paper)
+        )
+
+        assertThrows<InvalidLabel> { service.create(command) }
+    }
+
+    @Test
+    fun `given a resource create command, when reserved class is specified in class list, it throws an exception`() {
+        val command = CreateResourceUseCase.CreateCommand(
+            label = "label",
+            classes = setOf(reservedClassIds.first())
+        )
+
+        assertThrows<ReservedClass> { service.create(command) }
+    }
+
+    @Test
+    fun `given a resource create command, when specified class does not exist, it throws an exception`() {
+        val command = CreateResourceUseCase.CreateCommand(
+            label = "label",
+            classes = setOf(Classes.paper)
+        )
+
+        every { classRepository.existsAll(command.classes) } returns false
+
+        assertThrows<InvalidClassCollection> { service.create(command) }
+
+        verify(exactly = 1) { classRepository.existsAll(command.classes) }
     }
 
     @Test
@@ -167,6 +277,7 @@ class ResourceServiceUnitTests {
         verify(exactly = 1) { repository.findById(mockResource.id) }
         verify(exactly = 1) { statementRepository.checkIfResourceHasStatements(mockResource.id) }
         verify(exactly = 1) { repository.deleteById(mockResource.id) }
+        verify(exactly = 1) { curatorRepository.findById(aCurator.id) }
     }
 
     @Test
@@ -187,6 +298,7 @@ class ResourceServiceUnitTests {
         verify(exactly = 1) { repository.findById(mockResource.id) }
         verify(exactly = 1) { statementRepository.checkIfResourceHasStatements(mockResource.id) }
         verify(exactly = 0) { repository.deleteById(mockResource.id) }
+        verify(exactly = 1) { curatorRepository.findById(loggedInUserId) }
     }
 
     @Test
@@ -204,53 +316,13 @@ class ResourceServiceUnitTests {
     }
 
     @Test
-    fun `given a resource is being created, when it contains a missing class, an appropriate error is thrown`() {
-        val classes = setOf(ThingId("DoesNotExist"))
-
-        every { repository.nextIdentity() } returns ThingId("R1")
-        every { classRepository.existsAll(classes) } returns false
-
-        assertThrows<InvalidClassCollection> {
-            service.create(
-                CreateResourceUseCase.CreateCommand(
-                    label = "irrelevant",
-                    classes = classes
-                )
-            )
-        }
-        verify(exactly = 1) { repository.nextIdentity() }
-        verify(exactly = 1) { classRepository.existsAll(classes) }
-    }
-
-    @Test
-    fun `when a resource is being created, and it contains a reserved class, an appropriate error is thrown`() {
-        val classes = setOf(Classes.list)
-
-        every { repository.nextIdentity() } returns ThingId("R1")
-        every { classRepository.existsAll(classes) } returns true
-
-        assertThrows<InvalidClassCollection> {
-            service.create(
-                CreateResourceUseCase.CreateCommand(
-                    label = "irrelevant",
-                    classes = classes
-                )
-            )
-        }
-
-        verify(exactly = 1) { repository.nextIdentity() }
-        verify(exactly = 1) { classRepository.existsAll(classes) }
-    }
-
-    @Test
     fun `Given a resource update command, when it contains a reserved class, it throws an exception`() {
         val resource = createResource()
         val classes = setOf(Classes.list)
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
-        every { classRepository.existsAll(classes) } returns true
 
-        assertThrows<InvalidClassCollection> {
+        assertThrows<ReservedClass> {
             service.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = resource.id,
@@ -260,7 +332,6 @@ class ResourceServiceUnitTests {
         }
 
         verify(exactly = 1) { repository.findById(resource.id) }
-        verify(exactly = 1) { classRepository.existsAll(classes) }
     }
 
     @Test

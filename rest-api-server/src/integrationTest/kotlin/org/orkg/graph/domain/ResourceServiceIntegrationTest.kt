@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.createResource
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
@@ -44,7 +45,7 @@ class ResourceServiceIntegrationTest {
     @DisplayName("Given a resource with a label that contains whitespaces, When searched exactly, Then it should return the resource")
     fun whenSearchedExactlyThenItShouldReturnTheResource() {
         val label = "a label with whitespace"
-        service.create(label)
+        service.createResource(label = label)
 
         val result = service.findAll(
             label = SearchString.of(label, exactMatch = true),
@@ -59,7 +60,7 @@ class ResourceServiceIntegrationTest {
     @DisplayName("Given a resource with a label that contains whitespaces, When searched exactly but surrounded by extra whitespace, Then it should return the resource")
     fun whenSearchedExactlyButSurroundedByExtraWhitespaceThenItShouldReturnTheResource() {
         val label = "a label with whitespace"
-        service.create(label)
+        service.createResource(label = label)
 
         val result = service.findAll(
             label = SearchString.of("  $label\t ", exactMatch = true),
@@ -74,7 +75,7 @@ class ResourceServiceIntegrationTest {
     @DisplayName("Given a resource with a label that contains whitespaces, When searched partially, Then it should return the resource")
     fun whenSearchedPartiallyThenItShouldReturnTheResource() {
         val label = "a label with whitespace"
-        service.create(label)
+        service.createResource(label = label)
 
         val result = service.findAll(
             label = SearchString.of("label with", exactMatch = false),
@@ -89,7 +90,7 @@ class ResourceServiceIntegrationTest {
     @DisplayName("Given a resource with a label that contains whitespaces, When searched with extra whitespace in the search string, Then it should return the resource")
     fun whenSearchedWithExtraWhitespaceInTheSearchStringThenItShouldReturnTheResource() {
         val label = "a label with whitespace"
-        service.create(label)
+        service.createResource(label = label)
 
         val result = service.findAll(
             label = SearchString.of("label \t  with", exactMatch = false),
@@ -104,7 +105,7 @@ class ResourceServiceIntegrationTest {
     @DisplayName("Given a resource with a label containing multiple consecutive whitespace, When searched with single whitespace, Then it should return the resource")
     fun whenSearchedWithSingleWhitespaceThenItShouldReturnTheResource() {
         val label = "one two  three   four"
-        service.create(label)
+        service.createResource(label = label)
 
         val result = service.findAll(
             label = SearchString.of("one two three four", exactMatch = false),
@@ -118,8 +119,8 @@ class ResourceServiceIntegrationTest {
     @Test
     @DisplayName("should find created resources")
     fun shouldFindCreatedResources() {
-        service.create("first")
-        service.create("second")
+        service.createResource(label = "first")
+        service.createResource(label = "second")
         val pagination = PageRequest.of(0, 10)
         val resources = service.findAll(pagination)
         val labels = resources.map(Resource::label)
@@ -132,8 +133,8 @@ class ResourceServiceIntegrationTest {
     @DisplayName("should return an empty list when label was not found")
     fun shouldReturnEmptyListWhenNotFound() {
         val pagination = PageRequest.of(0, 10)
-        service.create("first")
-        service.create("second")
+        service.createResource(label = "first")
+        service.createResource(label = "second")
 
         val result = service.findAll(
             label = SearchString.of("not in the list", exactMatch = true),
@@ -146,10 +147,10 @@ class ResourceServiceIntegrationTest {
     @Test
     @DisplayName("should return all resource that match the label (duplicates allowed)")
     fun shouldReturnSeveralWhenSame() {
-        service.create("same")
-        service.create("same")
-        service.create("other")
-        service.create("yet another")
+        service.createResource(label = "same")
+        service.createResource(label = "same")
+        service.createResource(label = "other")
+        service.createResource(label = "yet another")
         val pagination = PageRequest.of(0, 10)
 
         val result = service.findAll(
@@ -164,17 +165,17 @@ class ResourceServiceIntegrationTest {
     @DisplayName("should not return resource containing substring")
     fun shouldNotReturnResourceContainingSubstring() {
         val pagination = PageRequest.of(0, 10)
-        service.create("this is part of the test")
+        service.createResource(label = "this is part of the test")
         assertThat(service.findAll(label = SearchString.of("part", exactMatch = true), pageable = pagination)).isEmpty()
     }
 
     @Test
     @DisplayName("when matching label partially should return all occurrences")
     fun whenMatchingLabelPartiallyShouldReturnAllOccurrences() {
-        service.create("first part is this")
-        service.create("this is another part")
-        service.create("part at the beginning")
-        service.create("something else")
+        service.createResource(label = "first part is this")
+        service.createResource(label = "this is another part")
+        service.createResource(label = "part at the beginning")
+        service.createResource(label = "something else")
         val pagination = PageRequest.of(0, 10)
         val result = service.findAll(
             label = SearchString.of("part", exactMatch = false),
@@ -187,9 +188,9 @@ class ResourceServiceIntegrationTest {
     @Test
     @DisplayName("should return resource with the same ID")
     fun shouldReturnResourceWithTheSameId() {
-        service.create("irrelevant")
-        service.create("also irrelevant")
-        val expectedId = service.create("to be found").id
+        service.createResource(label = "irrelevant")
+        service.createResource(label = "also irrelevant")
+        val expectedId = service.createResource(label = "to be found")
         val found = service.findById(expectedId)
         assertThat(found).isPresent
         assertThat(found.get().id).isEqualTo(expectedId)
@@ -198,7 +199,7 @@ class ResourceServiceIntegrationTest {
     @Test
     @DisplayName("should allow regex special chars in resource label")
     fun shouldAllowRegexSpecialCharsInLabel() {
-        val res = service.create("C\$razy LAb(el. he*r?").id
+        val res = service.createResource(label = "C\$razy LAb(el. he*r?")
         val found = service.findAll(
             label = SearchString.of("LAb(el.", exactMatch = false),
             pageable = PageRequest.of(1, 10)

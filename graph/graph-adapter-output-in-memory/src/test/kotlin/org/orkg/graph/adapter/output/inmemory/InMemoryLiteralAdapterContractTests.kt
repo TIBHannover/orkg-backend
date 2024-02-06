@@ -4,5 +4,5 @@ import io.kotest.core.spec.style.DescribeSpec
 import org.orkg.graph.testing.fixtures.literalRepositoryContract
 
 internal class InMemoryLiteralAdapterContractTests : DescribeSpec({
-    include(literalRepositoryContract(InMemoryLiteralRepository()))
+    include(literalRepositoryContract(InMemoryLiteralRepository(InMemoryGraph())))
 })

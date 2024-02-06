@@ -9,7 +9,7 @@ internal class InMemoryStatementAdapterContractTests : DescribeSpec({
         statementRepositoryContract(
             InMemoryStatementRepository(),
             InMemoryClassRepository(inMemoryGraph),
-            InMemoryLiteralRepository(),
+            InMemoryLiteralRepository(inMemoryGraph),
             InMemoryResourceRepository(inMemoryGraph),
             InMemoryPredicateRepository()
         )

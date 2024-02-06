@@ -142,5 +142,6 @@ class SpringDataNeo4jClassAdapter(
             uri = this@toNeo4jClass.uri?.toString()
             created_by = this@toNeo4jClass.createdBy
             created_at = this@toNeo4jClass.createdAt
+            modifiable = this@toNeo4jClass.modifiable
         }
 }

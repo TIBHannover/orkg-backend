@@ -36,9 +36,10 @@ fun CreateClassUseCase.createClass(
     label: String,
     id: String? = null,
     contributorId: ContributorId? = null,
-    uri: URI? = null
+    uri: URI? = null,
+    modifiable: Boolean = true
 ): ThingId =
-    this.create(CreateClassUseCase.CreateCommand(label, id, contributorId, uri))
+    create(CreateClassUseCase.CreateCommand(label, id, contributorId, uri, modifiable))
 
 // Predicates
 

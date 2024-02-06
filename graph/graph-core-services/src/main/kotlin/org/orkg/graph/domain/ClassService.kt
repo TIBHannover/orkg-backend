@@ -20,6 +20,7 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.InvalidLabel
 import org.orkg.graph.input.InvalidURI
+import org.orkg.graph.input.ClassNotModifiableProblem
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateNotAllowed
 import org.orkg.graph.output.ClassRepository
@@ -43,6 +44,7 @@ class ClassService(
             uri = command.uri,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId ?: ContributorId.UNKNOWN,
+            modifiable = command.modifiable
         )
         repository.save(newClass)
         return newClass.id
@@ -78,6 +80,7 @@ class ClassService(
     override fun replace(id: ThingId, command: UpdateClassUseCase.ReplaceCommand): Result<Unit, ClassUpdateProblem> {
         val label = Label.ofOrNull(command.label) ?: return Failure(InvalidLabel)
         val found = repository.findById(id).orElse(null) ?: return Failure(ClassNotFound)
+        if (!found.modifiable) return Failure(ClassNotModifiableProblem)
         if (found.uri != command.uri && found.uri != null) return Failure(UpdateNotAllowed)
         command.uri?.let {
             val possiblyUsed = findByURI(it).orElse(null)
@@ -90,6 +93,7 @@ class ClassService(
     override fun updateLabel(id: ThingId, newLabel: String): Result<Unit, ClassLabelUpdateProblem> {
         val label = Label.ofOrNull(newLabel) ?: return Failure(InvalidLabel)
         val found = repository.findById(id).orElse(null) ?: return Failure(ClassNotFound)
+        if (!found.modifiable) return Failure(ClassNotModifiableProblem)
         if (found.label != label.value) repository.save(found.copy(label = label.value))
         return Success(Unit)
     }
@@ -97,6 +101,7 @@ class ClassService(
     override fun updateURI(id: ThingId, with: String): Result<Unit, ClassURIUpdateProblem> {
         val uri = with.toURIOrNull() ?: return Failure(InvalidURI)
         val found = repository.findById(id).orElse(null) ?: return Failure(ClassNotFound)
+        if (!found.modifiable) return Failure(ClassNotModifiableProblem)
         if (found.uri != null) return Failure(UpdateNotAllowed)
         val possiblyUsed = findByURI(uri).orElse(null)
         if (possiblyUsed != null && possiblyUsed.id != found.id) return Failure(AlreadyInUse)

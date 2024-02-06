@@ -15,6 +15,7 @@ import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.ClassAlreadyExists
 import org.orkg.graph.domain.ClassNotAllowed
 import org.orkg.graph.domain.ClassNotFound
+import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.DuplicateURI
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
@@ -28,6 +29,7 @@ import org.orkg.graph.input.InvalidURI
 import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.ClassNotModifiableProblem
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateNotAllowed
 import org.orkg.graph.output.FormattedLabelRepository
@@ -147,6 +149,7 @@ class ClassController(
                 InvalidURI -> throw IllegalStateException("An invalid URI got passed when replacing a class. This should not happen. Please report a bug.")
                 UpdateNotAllowed -> throw CannotResetURI(id.value)
                 AlreadyInUse -> throw URIAlreadyInUse(request.uri.toString())
+                ClassNotModifiableProblem -> throw ClassNotModifiable(id)
             }
         }
         return service.findById(id).mapToClassRepresentation().get()
@@ -163,6 +166,7 @@ class ClassController(
                 when (it.reason) {
                     ClassNotFoundProblem -> throw ClassNotFound.withThingId(id)
                     InvalidLabelProblem -> throw InvalidLabel()
+                    ClassNotModifiableProblem -> throw ClassNotModifiable(id)
                 }
             }
         }
@@ -173,6 +177,7 @@ class ClassController(
                     InvalidURI -> throw org.orkg.graph.domain.InvalidURI()
                     UpdateNotAllowed -> throw CannotResetURI(id.value)
                     AlreadyInUse -> throw URIAlreadyInUse(requestBody.uri)
+                    ClassNotModifiableProblem -> throw ClassNotModifiable(id)
                 }
             }
         }

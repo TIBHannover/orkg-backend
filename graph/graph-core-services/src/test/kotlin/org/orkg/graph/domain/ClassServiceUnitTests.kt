@@ -18,6 +18,7 @@ import org.orkg.graph.input.ClassNotFound
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.InvalidLabel
 import org.orkg.graph.input.InvalidURI
+import org.orkg.graph.input.ClassNotModifiableProblem
 import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
 import org.orkg.graph.input.UpdateNotAllowed
 import org.orkg.graph.output.ClassRepository
@@ -25,7 +26,7 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
 import org.orkg.testing.fixedClock
 
-class ClassServiceTests {
+class ClassServiceUnitTests {
 
     private val repository: ClassRepository = mockk()
     private val service = ClassService(repository, fixedClock)
@@ -158,6 +159,17 @@ class ClassServiceTests {
     }
 
     @Test
+    fun `given a class is unmodifiable, when updating the label, it returns an appropriate error`() {
+        val originalClass = createClass(modifiable = false)
+        every { repository.findById(ThingId("OK")) } returns Optional.of(originalClass)
+
+        val actual = service.updateLabel(ThingId("OK"), "some label")
+
+        assertThat(actual).isEqualTo(Failure(ClassNotModifiableProblem))
+        verify(exactly = 0) { repository.save(any()) }
+    }
+
+    @Test
     fun `given a class does not exist, when updating the URI, then it returns an appropriate error`() {
         every { repository.findById(any()) } returns Optional.empty()
 
@@ -215,6 +227,17 @@ class ClassServiceTests {
         val actual = service.updateURI(ThingId("OK"), "https://example.com/DIFFERENT")
 
         assertThat(actual).isEqualTo(Failure(UpdateNotAllowed))
+        verify(exactly = 0) { repository.save(any()) }
+    }
+
+    @Test
+    fun `given a class is unmodifiable, when updating the URI, it returns an appropriate error`() {
+        val originalClass = createClass(modifiable = false)
+        every { repository.findById(ThingId("OK")) } returns Optional.of(originalClass)
+
+        val actual = service.updateURI(ThingId("OK"), "https://example.com/DIFFERENT")
+
+        assertThat(actual).isEqualTo(Failure(ClassNotModifiableProblem))
         verify(exactly = 0) { repository.save(any()) }
     }
 
@@ -336,6 +359,19 @@ class ClassServiceTests {
 
         assertThat(actual).isEqualTo(Success(Unit))
         verify(exactly = 1) { repository.save(expectedClass) }
+    }
+
+    @Test
+    fun `given a class is replaced, when class is unmodifiable, then returns an error`() {
+        val classToReplace = ThingId("ToReplace")
+        val existingClass = createClass(id = classToReplace, modifiable = false)
+        val replacingClass = createClass(label = "other label").toReplaceCommand()
+        every { repository.findById(classToReplace) } returns existingClass.toOptional()
+
+        val actual = service.replace(classToReplace, command = replacingClass)
+
+        assertThat(actual).isEqualTo(Failure(ClassNotModifiableProblem))
+        verify(exactly = 0) { repository.save(any()) }
     }
 
     private fun Class.toReplaceCommand(): ReplaceCommand = ReplaceCommand(

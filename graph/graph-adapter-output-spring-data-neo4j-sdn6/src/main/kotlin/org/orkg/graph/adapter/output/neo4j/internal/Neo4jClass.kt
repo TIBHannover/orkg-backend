@@ -12,6 +12,9 @@ class Neo4jClass : Neo4jThing() {
     @Property("uri")
     var uri: String? = null
 
+    @Property("modifiable")
+    var modifiable: Boolean? = null
+
     @Relationship(type = "RELATED", direction = Relationship.Direction.OUTGOING)
     var statements: MutableList<Neo4jStatement> = mutableListOf()
 
@@ -21,7 +24,8 @@ class Neo4jClass : Neo4jThing() {
         uri = if (uri != null) URI.create(uri!!) else null,
         createdAt = created_at!!,
         createdBy = created_by,
-        description = statements.singleOrNull { it.predicateId == Predicates.description }?.targetNode?.label
+        description = statements.singleOrNull { it.predicateId == Predicates.description }?.targetNode?.label,
+        modifiable = modifiable!!
     )
 
     override fun toThing() = toClass()

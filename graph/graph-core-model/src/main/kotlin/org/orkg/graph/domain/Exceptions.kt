@@ -90,6 +90,9 @@ class LiteralAlreadyExists(id: ThingId) :
 class ResourceNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Resource "$id" is not modifiable.""")
 
+class ClassNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Class "$id" is not modifiable.""")
+
 class InvalidClassCollection(ids: Iterable<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The collection of classes "$ids" contains one or more invalid classes.""")
 

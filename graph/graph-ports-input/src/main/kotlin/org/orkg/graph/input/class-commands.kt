@@ -19,6 +19,7 @@ interface CreateClassUseCase {
         val id: String? = null,
         val contributorId: ContributorId? = null,
         val uri: URI? = null,
+        val modifiable: Boolean = true
     )
 }
 
@@ -48,6 +49,8 @@ object InvalidURI : ClassURIUpdateProblem
 object UpdateNotAllowed : ClassURIUpdateProblem
 
 object AlreadyInUse : ClassURIUpdateProblem
+
+data object ClassNotModifiableProblem : ClassUpdateProblem, ClassLabelUpdateProblem, ClassURIUpdateProblem
 
 interface DeleteClassUseCase {
     // legacy methods:

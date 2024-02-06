@@ -13,5 +13,5 @@ interface ClassRepresentationAdapter {
         map { it.toClassRepresentation() }
 
     fun Class.toClassRepresentation() =
-        ClassRepresentation(id, label, uri, description, createdAt, createdBy)
+        ClassRepresentation(id, label, uri, description, createdAt, createdBy, modifiable)
 }

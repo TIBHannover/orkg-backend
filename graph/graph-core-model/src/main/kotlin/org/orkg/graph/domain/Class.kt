@@ -19,7 +19,8 @@ data class Class(
     val uri: URI?,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.UNKNOWN,
-    val description: String? = null
+    val description: String? = null,
+    val modifiable: Boolean = true
 ) : Thing
 
 fun Class?.toOptional() = Optional.ofNullable(this)

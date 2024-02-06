@@ -75,6 +75,7 @@ fun <
                 it.createdBy shouldBe expected.createdBy
                 it.id shouldBe expected.id
                 it.description shouldBe expected.description
+                it.modifiable shouldBe expected.modifiable
             }
         }
         it("updates an already existing class") {
@@ -337,7 +338,7 @@ fun <
 
     describe("requesting a new identity") {
         context("returns a valid id") {
-            it("that is not blank")  {
+            it("that is not blank") {
                 repository.nextIdentity().value shouldNotMatch """\s+"""
             }
             it("that is prefixed with 'C'") {

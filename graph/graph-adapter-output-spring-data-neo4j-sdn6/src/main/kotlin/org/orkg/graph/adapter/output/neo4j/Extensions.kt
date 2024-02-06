@@ -139,6 +139,7 @@ internal fun Node.toClass() = Class(
     uri = this["uri"].toURI(),
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),
+    modifiable = this["modifiable"].asBoolean()
 )
 
 internal fun Node.toResource() = Resource(

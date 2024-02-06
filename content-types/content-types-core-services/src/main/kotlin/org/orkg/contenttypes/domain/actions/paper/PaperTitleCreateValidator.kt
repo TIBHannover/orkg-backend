@@ -5,7 +5,7 @@ import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.graph.input.ResourceUseCases
 
-class PaperTitleValidator(
+class PaperTitleCreateValidator(
     private val resourceService: ResourceUseCases
 ) : CreatePaperAction {
     override fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {

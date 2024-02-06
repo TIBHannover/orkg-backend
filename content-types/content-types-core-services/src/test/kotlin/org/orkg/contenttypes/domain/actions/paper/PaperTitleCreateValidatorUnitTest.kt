@@ -19,10 +19,10 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 
-class PaperTitleValidatorUnitTest {
+class PaperTitleCreateValidatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
 
-    private val paperTitleValidator = PaperTitleValidator(
+    private val paperTitleCreateValidator = PaperTitleCreateValidator(
         resourceService = resourceService
     )
 
@@ -43,7 +43,7 @@ class PaperTitleValidatorUnitTest {
 
         every { resourceService.findAllPapersByTitle(command.title) } returns Page.empty()
 
-        val result = paperTitleValidator(command, state)
+        val result = paperTitleCreateValidator(command, state)
 
         result.asClue {
             it.tempIds.size shouldBe 0
@@ -65,7 +65,7 @@ class PaperTitleValidatorUnitTest {
 
         every { resourceService.findAllPapersByTitle(command.title) } returns pageOf(paper)
 
-        assertThrows<PaperAlreadyExists> { paperTitleValidator(command, state) }.message shouldBe expected.message
+        assertThrows<PaperAlreadyExists> { paperTitleCreateValidator(command, state) }.message shouldBe expected.message
 
         verify(exactly = 1) { resourceService.findAllPapersByTitle(command.title) }
     }

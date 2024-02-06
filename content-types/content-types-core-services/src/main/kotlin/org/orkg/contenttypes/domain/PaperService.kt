@@ -43,7 +43,8 @@ import org.orkg.contenttypes.domain.actions.paper.PaperResourceCreator
 import org.orkg.contenttypes.domain.actions.paper.PaperResourceUpdater
 import org.orkg.contenttypes.domain.actions.paper.PaperTempIdValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperThingDefinitionValidator
-import org.orkg.contenttypes.domain.actions.paper.PaperTitleValidator
+import org.orkg.contenttypes.domain.actions.paper.PaperTitleCreateValidator
+import org.orkg.contenttypes.domain.actions.paper.PaperTitleUpdateValidator
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.output.PaperRepository
@@ -126,7 +127,7 @@ class PaperService(
     override fun create(command: CreatePaperCommand): ThingId {
         val steps = listOf(
             PaperTempIdValidator(),
-            PaperTitleValidator(resourceService),
+            PaperTitleCreateValidator(resourceService),
             PaperIdentifierCreateValidator(statementRepository),
             ResearchFieldValidator(resourceRepository) { it.researchFields },
             ObservatoryValidator(observatoryRepository) { it.observatories },
@@ -161,6 +162,7 @@ class PaperService(
             ResearchFieldValidator(resourceRepository) { it.researchFields },
             ObservatoryValidator(observatoryRepository) { it.observatories },
             OrganizationValidator(organizationRepository) { it.organizations },
+            PaperTitleUpdateValidator(resourceService),
             PaperIdentifierUpdateValidator(statementRepository),
             PaperAuthorUpdateValidator(resourceRepository, statementRepository),
             PaperResourceUpdater(resourceService),

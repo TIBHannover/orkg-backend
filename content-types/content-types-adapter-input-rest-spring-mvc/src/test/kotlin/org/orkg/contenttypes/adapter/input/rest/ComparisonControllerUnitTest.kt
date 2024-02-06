@@ -105,13 +105,6 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("research_fields[].label").description("The label of the research field."),
                         fieldWithPath("identifiers").description("The unique identifiers of the comparison."),
                         fieldWithPath("identifiers.doi").description("The DOI of the comparison. (optional)").optional(),
-                        fieldWithPath("publication_info").description("The publication info of the comparison.").optional(),
-                        fieldWithPath("publication_info.published_month").description("The month in which the comparison was published. (optional)").optional(),
-                        fieldWithPath("publication_info.published_year").description("The year in which the comparison was published. (optional)").optional(),
-                        fieldWithPath("publication_info.published_in").description("The venue where the comparison was published. (optional)").optional(),
-                        fieldWithPath("publication_info.published_in.id").description("The ID of the venue."),
-                        fieldWithPath("publication_info.published_in.label").description("The label of the venue."),
-                        fieldWithPath("publication_info.url").description("The URL to the original comparison. (optional)").optional(),
                         fieldWithPath("contributions").description("The list of contributions of the comparison."),
                         fieldWithPath("contributions[].id").description("The ID of the contribution."),
                         fieldWithPath("contributions[].label").description("The label of the contribution."),
@@ -139,6 +132,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("visibility").description("""Visibility of the comparison. Can be one of "default", "featured", "unlisted" or "deleted"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this comparison.").optional()
                     ).and(authorListFields("comparison"))
+                        .and(publicationInfoFields("paper"))
                 )
             )
             .andDo(generateDefaultDocSnippets())

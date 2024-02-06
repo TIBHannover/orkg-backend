@@ -16,3 +16,13 @@ fun authorListFields(type: String, path: String = "authors"): List<FieldDescript
     fieldWithPath("$path[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
     fieldWithPath("$path[].homepage").description("The homepage of the author. (optional)").optional(),
 )
+
+fun publicationInfoFields(type: String, path: String = "publication_info"): List<FieldDescriptor> = listOf(
+    fieldWithPath(path).description("The publication info of the paper.").optional(),
+    fieldWithPath("$path.published_month").description("The month in which the $type was published. (optional)").optional(),
+    fieldWithPath("$path.published_year").description("The year in which the $type was published. (optional)").optional(),
+    fieldWithPath("$path.published_in").description("The venue where the $type was published. (optional)").optional(),
+    fieldWithPath("$path.published_in.id").description("The ID of the venue."),
+    fieldWithPath("$path.published_in.label").description("The label of the venue."),
+    fieldWithPath("$path.url").description("The URL to the original $type. (optional)").optional(),
+)

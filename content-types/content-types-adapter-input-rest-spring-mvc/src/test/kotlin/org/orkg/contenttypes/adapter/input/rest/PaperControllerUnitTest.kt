@@ -136,13 +136,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("research_fields[].label").description("The label of the research field."),
                         fieldWithPath("identifiers").description("The unique identifiers of the paper."),
                         fieldWithPath("identifiers.doi").description("The list of DOIs of the paper. (optional)").optional(),
-                        fieldWithPath("publication_info").description("The publication info of the paper.").optional(),
-                        fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
-                        fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
-                        fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
-                        fieldWithPath("publication_info.published_in.id").description("The ID of the venue."),
-                        fieldWithPath("publication_info.published_in.label").description("The label of the venue."),
-                        fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
                         fieldWithPath("contributions").description("The list of contributions of the paper."),
                         fieldWithPath("contributions[].id").description("The ID of the contribution."),
                         fieldWithPath("contributions[].label").description("The label of the contribution."),
@@ -156,6 +149,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("visibility").description("""Visibility of the paper. Can be one of "default", "featured", "unlisted" or "deleted"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this paper.").optional()
                     ).and(authorListFields("paper"))
+                        .and(publicationInfoFields("paper"))
                 )
             )
             .andDo(generateDefaultDocSnippets())

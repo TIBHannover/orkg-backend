@@ -21,6 +21,7 @@ import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.AlreadyInUse
 import org.orkg.graph.input.ClassRepresentation
 import org.orkg.graph.input.ClassUseCases
@@ -83,12 +84,14 @@ class ClassController(
         @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("creator", required = false) creator: ContributorId?,
+        @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
         return resourceService.findAll(
             includeClasses = setOf(id),
             label = string?.let { SearchString.of(it, exactMatch) },
             createdBy = creator,
+            visibility = visibility,
             pageable = pageable
         ).mapToResourceRepresentation()
     }

@@ -143,17 +143,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("publication_info.published_in.id").description("The ID of the venue."),
                         fieldWithPath("publication_info.published_in.label").description("The label of the venue."),
                         fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
-                        fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
-                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].name").description("The name of the author."),
-                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("contributions").description("The list of contributions of the paper."),
                         fieldWithPath("contributions[].id").description("The ID of the contribution."),
                         fieldWithPath("contributions[].label").description("The label of the contribution."),
@@ -166,7 +155,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("verified").description("Determines if the paper was verified by a curator."),
                         fieldWithPath("visibility").description("""Visibility of the paper. Can be one of "default", "featured", "unlisted" or "deleted"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this paper.").optional()
-                    )
+                    ).and(authorListFields("paper"))
                 )
             )
             .andDo(generateDefaultDocSnippets())

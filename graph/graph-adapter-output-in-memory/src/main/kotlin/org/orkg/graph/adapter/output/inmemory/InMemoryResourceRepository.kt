@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.output.inmemory
 
 import java.time.OffsetDateTime
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -19,9 +20,21 @@ private val paperClass = ThingId("Paper")
 private val paperDeletedClass = ThingId("PaperDeleted")
 private val unknownUUID = UUID(0, 0)
 
-class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
-    compareBy(Resource::createdAt)
-), ResourceRepository {
+class InMemoryResourceRepository(inMemoryGraph: InMemoryGraph) :
+    AdaptedInMemoryRepository<ThingId, Resource>(compareBy(Resource::createdAt)), ResourceRepository {
+
+    override val entities: InMemoryEntityAdapter<ThingId, Resource> = object : InMemoryEntityAdapter<ThingId, Resource> {
+        override val values: MutableCollection<Resource> get() = inMemoryGraph.findAllResources().toMutableSet()
+
+        override fun remove(key: ThingId): Resource? = inMemoryGraph.remove(key).takeIf { it is Resource } as? Resource
+        override fun clear() = inMemoryGraph.findAllResources().forEach(inMemoryGraph::remove)
+
+        override fun contains(id: ThingId) = inMemoryGraph.findResourceById(id).isPresent
+        override fun get(key: ThingId): Resource? = inMemoryGraph.findResourceById(key).getOrNull()
+        override fun set(key: ThingId, value: Resource): Resource? =
+            inMemoryGraph.findResourceById(key).also { inMemoryGraph.add(value) }.orElse(null)
+    }
+
     override fun nextIdentity(): ThingId {
         var count = entities.size.toLong()
         var id = ThingId("R$count")

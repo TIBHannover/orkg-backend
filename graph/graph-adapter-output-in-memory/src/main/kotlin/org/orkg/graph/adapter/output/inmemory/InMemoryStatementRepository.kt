@@ -3,6 +3,7 @@ package org.orkg.graph.adapter.output.inmemory
 import java.text.SimpleDateFormat
 import java.time.OffsetDateTime
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -38,9 +39,23 @@ private val hasResearchProblem = ThingId("P32")
 private val hasDOI = ThingId("P26")
 private val compareContribution = ThingId("compareContribution")
 
-class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralStatement>(
-    compareBy(GeneralStatement::createdAt)
-), StatementRepository {
+class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
+    InMemoryRepository<StatementId, GeneralStatement>(compareBy(GeneralStatement::createdAt)), StatementRepository {
+
+    override val entities: InMemoryEntityAdapter<StatementId, GeneralStatement> =
+        object : InMemoryEntityAdapter<StatementId, GeneralStatement> {
+            override val keys: Collection<StatementId> get() = inMemoryGraph.findAllStatements().map { it.id!! }
+            override val values: MutableCollection<GeneralStatement>
+                get() = inMemoryGraph.findAllStatements().toMutableSet()
+
+            override fun remove(key: StatementId): GeneralStatement? = get(key)?.also { inMemoryGraph.remove(it.id!!) }
+            override fun clear() = inMemoryGraph.findAllStatements().forEach(inMemoryGraph::remove)
+
+            override fun get(key: StatementId): GeneralStatement? = inMemoryGraph.findStatementById(key).getOrNull()
+            override fun set(key: StatementId, value: GeneralStatement): GeneralStatement? =
+                get(key).also { inMemoryGraph.add(value) }
+        }
+
     override fun save(statement: GeneralStatement) {
         entities[statement.id!!] = statement
     }
@@ -52,7 +67,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     override fun count(): Long = entities.size.toLong()
 
     override fun delete(statement: GeneralStatement) {
-        entities.remove(statement.id)
+        entities.remove(statement.id!!)
     }
 
     override fun deleteByStatementId(id: StatementId) {
@@ -66,7 +81,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         Optional.ofNullable(entities[id])
 
     override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> =
-        findAllFilteredAndPaged(pageable) { it.id in ids}
+        findAllFilteredAndPaged(pageable) { it.id in ids }
 
     override fun findAllBySubject(subjectId: ThingId, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.subject.id == subjectId }
@@ -121,14 +136,14 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     }
 
     override fun findAllBySubjects(
-        subjectIds: kotlin.collections.List<ThingId>,
+        subjectIds: List<ThingId>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
         it.subject.id in subjectIds
     }
 
     override fun findAllByObjects(
-        objectIds: kotlin.collections.List<ThingId>,
+        objectIds: List<ThingId>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
         it.`object`.id in objectIds
@@ -146,14 +161,14 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                     return@findSubgraph false
                 } else if (statement.`object` is Resource) {
                     with(statement.`object` as Resource) {
-                        if (configuration.blacklist.isNotEmpty()
-                            && (classes.containsAny(configuration.blacklist)
-                                || configuration.blacklist.contains(ThingId("Resource")))
+                        if (configuration.blacklist.isNotEmpty() &&
+                            (classes.containsAny(configuration.blacklist) ||
+                                configuration.blacklist.contains(ThingId("Resource")))
                         ) {
                             return@findSubgraph false
-                        } else if (configuration.whitelist.isNotEmpty()
-                            && !classes.containsAny(configuration.whitelist)
-                            && configuration.whitelist.contains(ThingId("Resource"))
+                        } else if (configuration.whitelist.isNotEmpty() &&
+                            !classes.containsAny(configuration.whitelist) &&
+                            configuration.whitelist.contains(ThingId("Resource"))
                         ) {
                             return@findSubgraph false
                         }
@@ -191,7 +206,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             }
         }
 
-    private fun <T : Comparable<T>> Sort.Order.compare(a : T?, b: T?): Int {
+    private fun <T : Comparable<T>> Sort.Order.compare(a: T?, b: T?): Int {
         val result = when {
             a == null && b == null -> 0
             a == null -> 1
@@ -219,25 +234,24 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     }
 
     override fun countStatementsAboutResource(id: ThingId) =
-        entities.filter { id.value == it.value.`object`.id.value }.count().toLong()
+        entities.count { id == it.`object`.id }.toLong()
 
     override fun countStatementsAboutResources(resourceIds: Set<ThingId>) =
         resourceIds.associateWith(::countStatementsAboutResource).filter { it.value > 0 }
 
     override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> =
-        entities.filter { it.value.id in statementIds }.map { OwnershipInfo(it.value.id!!, it.value.createdBy) }.toSet()
+        entities.filter { it.id in statementIds }.map { OwnershipInfo(it.id!!, it.createdBy) }.toSet()
 
     override fun findDOIByContributionId(id: ThingId): Optional<Literal> =
         Optional.ofNullable(entities.values.find {
-            it.subject is Resource && paperClass in (it.subject as Resource).classes
-                && it.predicate.id == hasContribution
-                && it.`object`.id.value == id.value
+            it.subject is Resource && paperClass in (it.subject as Resource).classes &&
+                it.predicate.id == hasContribution &&
+                it.`object`.id.value == id.value
         }?.let {
             it.subject as Resource
         }?.let { paper ->
             entities.values.find {
-                it.subject.id == paper.id
-                    && it.predicate.id == hasDOI
+                it.subject.id == paper.id && it.predicate.id == hasDOI
             }?.let {
                 it.`object` as Literal
             }
@@ -245,14 +259,14 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun findAllDOIsRelatedToComparison(id: ThingId): Iterable<String> =
         entities.values.filter {
-            it.subject.id == id && it.subject is Resource && Classes.comparison in (it.subject as Resource).classes
-                && it.predicate.id == Predicates.comparesContribution
-                && it.`object` is Resource && Classes.contribution in (it.`object` as Resource).classes
+            it.subject.id == id && it.subject is Resource && Classes.comparison in (it.subject as Resource).classes &&
+                it.predicate.id == Predicates.comparesContribution &&
+                it.`object` is Resource && Classes.contribution in (it.`object` as Resource).classes
         }.map { comparisonHasContribution ->
             val paperIds = entities.values.filter {
-                it.subject is Resource && Classes.paper in (it.subject as Resource).classes
-                    && it.predicate.id == Predicates.hasContribution
-                    && it.`object`.id == comparisonHasContribution.`object`.id
+                it.subject is Resource && Classes.paper in (it.subject as Resource).classes &&
+                    it.predicate.id == Predicates.hasContribution &&
+                    it.`object`.id == comparisonHasContribution.`object`.id
             }.map { it.subject.id }
             entities.values
                 .filter { it.subject.id in paperIds && it.predicate.id == Predicates.hasDOI && it.`object` is Literal }
@@ -262,16 +276,16 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun countPredicateUsage(id: ThingId): Long =
         entities.values.count {
-            (it.subject is Predicate && (it.subject as Predicate).id == id
-                || it.predicate.id == id
-                || it.`object` is Predicate && (it.`object` as Predicate).id == id)
-                && it.predicate.id.value != "description"
+            (it.subject is Predicate && (it.subject as Predicate).id == id ||
+                it.predicate.id == id ||
+                it.`object` is Predicate && (it.`object` as Predicate).id == id) &&
+                it.predicate.id.value != "description"
         }.toLong()
 
     override fun findByDOI(doi: String): Optional<Resource> =
         Optional.ofNullable(entities.values.find {
-            it.subject is Resource && it.predicate.id == hasDOI
-                && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
+            it.subject is Resource && it.predicate.id == hasDOI &&
+                it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
         }).map { it.subject as Resource }
 
     override fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource> =
@@ -289,14 +303,14 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         // FIXME: Create a union with all Problems that are not used in statements
         entities.values.filter {
-            it.subject is Resource && paperClass in (it.subject as Resource).classes && (it.subject as Resource).observatoryId == id
-                && it.predicate.id == hasContribution
-                && it.`object` is Resource && contributionClass in (it.`object` as Resource).classes
+            it.subject is Resource && paperClass in (it.subject as Resource).classes && (it.subject as Resource).observatoryId == id &&
+                it.predicate.id == hasContribution &&
+                it.`object` is Resource && contributionClass in (it.`object` as Resource).classes
         }.map { hasContributionStatement ->
             entities.values.filter {
-                it.subject.id == hasContributionStatement.`object`.id
-                    && it.predicate.id == hasResearchProblem
-                    && it.`object` is Resource && problemClass in (it.`object` as Resource).classes
+                it.subject.id == hasContributionStatement.`object`.id &&
+                    it.predicate.id == hasResearchProblem &&
+                    it.`object` is Resource && problemClass in (it.`object` as Resource).classes
             }.map { it.`object` as Resource }
         }.flatten().distinct().paged(pageable)
 
@@ -351,21 +365,22 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         entities.values.filter {
-            it.subject is Resource && comparisonClass in (it.subject as Resource).classes && (it.subject as Resource).organizationId == id
-                && it.predicate.id == compareContribution
-                && it.`object` is Resource && contributionClass in (it.`object` as Resource).classes
+            it.subject is Resource && comparisonClass in (it.subject as Resource).classes && (it.subject as Resource).organizationId == id &&
+                it.predicate.id == compareContribution &&
+                it.`object` is Resource && contributionClass in (it.`object` as Resource).classes
         }.map { compareContributionStatement ->
             entities.values.filter {
-                it.subject.id == compareContributionStatement.`object`.id
-                    && it.predicate.id == hasResearchProblem
-                    && it.`object` is Resource && problemClass in (it.`object` as Resource).classes
+                it.subject.id == compareContributionStatement.`object`.id &&
+                    it.predicate.id == hasResearchProblem &&
+                    it.`object` is Resource && problemClass in (it.`object` as Resource).classes
             }.map { it.`object` as Resource }
         }.flatten().distinct().paged(pageable)
 
     override fun nextIdentity(): StatementId {
-        var id = StatementId(entities.size.toLong())
-        while(id in entities) {
-            id = StatementId(id.value.toLong() + 1)
+        var count = entities.size.toLong()
+        var id = StatementId(count)
+        while (id in entities) {
+            id = StatementId(++count)
         }
         return id
     }
@@ -381,8 +396,8 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     override fun findAllCurrentComparisons(pageable: Pageable): Page<Resource> =
         entities.values
             .filter {
-                it.subject is Resource && Classes.comparison in (it.subject as Resource).classes
-                    && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+                it.subject is Resource && Classes.comparison in (it.subject as Resource).classes &&
+                    findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
             }
             .map { it.subject as Resource }
             .distinct()
@@ -418,8 +433,8 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             .filter {
                 it.subject is Resource && with(it.subject as Resource) {
                     Classes.comparison in classes && (visibility == Visibility.DEFAULT || visibility == Visibility.FEATURED)
-                } && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
-                    && findAllBySubjectAndPredicate(it.subject.id, Predicates.hasDOI, PageRequest.of(0, 1)).isEmpty
+                } && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty &&
+                    findAllBySubjectAndPredicate(it.subject.id, Predicates.hasDOI, PageRequest.of(0, 1)).isEmpty
             }
             .map { it.subject as Resource }
             .distinct()
@@ -454,7 +469,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         when (this) {
             is Class -> createdBy
             is Resource -> createdBy
-            is Predicate ->createdBy
+            is Predicate -> createdBy
             is Literal -> createdBy
         }
 
@@ -466,7 +481,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             is Literal -> ResourceEdit(createdBy, createdAt.toInstant().toEpochMilli())
         }
 
-    private fun <T: Any> Iterable<T>.containsAny(other: Iterable<T>): Boolean = any(other::contains)
+    private fun <T : Any> Iterable<T>.containsAny(other: Iterable<T>): Boolean = any(other::contains)
 
     private data class ResourceEdit(
         val contributor: ContributorId,

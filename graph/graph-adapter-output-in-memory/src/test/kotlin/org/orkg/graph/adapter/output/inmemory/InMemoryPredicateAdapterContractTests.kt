@@ -8,7 +8,7 @@ internal class InMemoryPredicateAdapterContractTests : DescribeSpec({
     include(
         predicateRepositoryContract(
             InMemoryPredicateRepository(inMemoryGraph),
-            InMemoryStatementRepository(),
+            InMemoryStatementRepository(inMemoryGraph),
             InMemoryLiteralRepository(inMemoryGraph)
         )
     )

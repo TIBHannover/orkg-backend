@@ -7,7 +7,7 @@ internal class InMemoryStatementAdapterContractTests : DescribeSpec({
     val inMemoryGraph = InMemoryGraph()
     include(
         statementRepositoryContract(
-            InMemoryStatementRepository(),
+            InMemoryStatementRepository(inMemoryGraph),
             InMemoryClassRepository(inMemoryGraph),
             InMemoryLiteralRepository(inMemoryGraph),
             InMemoryResourceRepository(inMemoryGraph),

@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryClassRepository(inMemoryGraph: InMemoryGraph) :
-    AdaptedInMemoryRepository<ThingId, Class>(compareBy(Class::createdAt)), ClassRepository {
+    InMemoryRepository<ThingId, Class>(compareBy(Class::createdAt)), ClassRepository {
 
     override val entities: InMemoryEntityAdapter<ThingId, Class> = object : InMemoryEntityAdapter<ThingId, Class> {
         override val keys: Collection<ThingId> get() = inMemoryGraph.findAllClasses().map { it.id }

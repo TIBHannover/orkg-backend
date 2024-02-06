@@ -50,6 +50,9 @@ class InMemoryGraph {
     fun findLiteralById(thingId: ThingId): Optional<Literal> =
         Optional.ofNullable(literals[thingId])
 
+    fun findStatementById(statementId: StatementId): Optional<GeneralStatement> =
+        Optional.ofNullable(statements[statementId])
+
     fun findAll(): List<Thing> = things.values.distinct()
 
     fun findAllResources(): List<Resource> = resources.values.distinct()

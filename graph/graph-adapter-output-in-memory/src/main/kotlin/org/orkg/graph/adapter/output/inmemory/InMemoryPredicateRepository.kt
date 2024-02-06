@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryPredicateRepository(inMemoryGraph: InMemoryGraph) :
-    AdaptedInMemoryRepository<ThingId, Predicate>(compareBy(Predicate::createdAt)), PredicateRepository {
+    InMemoryRepository<ThingId, Predicate>(compareBy(Predicate::createdAt)), PredicateRepository {
 
     override val entities: InMemoryEntityAdapter<ThingId, Predicate> = object : InMemoryEntityAdapter<ThingId, Predicate> {
         override val keys: Collection<ThingId> get() = inMemoryGraph.findAllPredicates().map { it.id }

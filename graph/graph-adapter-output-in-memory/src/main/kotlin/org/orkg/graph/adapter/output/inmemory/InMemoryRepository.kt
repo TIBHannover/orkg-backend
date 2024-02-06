@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable
 abstract class InMemoryRepository<ID, T>(
     private val defaultComparator: Comparator<T>
 ) : EntityRepository<T, ID> {
-    protected val entities: MutableMap<ID, T> = mutableMapOf()
+    abstract val entities: InMemoryEntityAdapter<ID, T>
 
     override fun findAll(pageable: Pageable): Page<T> =
         findAllFilteredAndPaged(pageable) { true }
@@ -24,6 +24,21 @@ abstract class InMemoryRepository<ID, T>(
         .filter(predicate)
         .sortedWith(comparator)
         .paged(pageable)
+}
+
+interface InMemoryEntityAdapter<ID, T> : Iterable<T> {
+    val keys: Collection<ID>
+    val values: Collection<T>
+    val size: Int get() = values.size
+
+    fun remove(key: ID): T?
+    fun clear()
+
+    operator fun contains(id: ID): Boolean = get(id) != null
+    operator fun get(key: ID): T?
+    operator fun set(key: ID, value: T): T?
+
+    override fun iterator(): Iterator<T> = values.iterator()
 }
 
 fun <T> List<T>.paged(pageable: Pageable): PageImpl<T> {

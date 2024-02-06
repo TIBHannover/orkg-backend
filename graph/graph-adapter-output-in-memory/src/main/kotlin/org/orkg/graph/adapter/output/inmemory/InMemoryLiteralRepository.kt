@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryLiteralRepository(inMemoryGraph: InMemoryGraph) :
-    AdaptedInMemoryRepository<ThingId, Literal>(compareBy(Literal::createdAt)), LiteralRepository {
+    InMemoryRepository<ThingId, Literal>(compareBy(Literal::createdAt)), LiteralRepository {
 
     override val entities: InMemoryEntityAdapter<ThingId, Literal> = object : InMemoryEntityAdapter<ThingId, Literal> {
         override val keys: Collection<ThingId> get() = inMemoryGraph.findAllLiterals().map { it.id }

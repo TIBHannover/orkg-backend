@@ -7,6 +7,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
@@ -16,25 +17,21 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
-private val paperClass = ThingId("Paper")
-private val paperDeletedClass = ThingId("PaperDeleted")
-private val unknownUUID = UUID(0, 0)
-
 class InMemoryResourceRepository(inMemoryGraph: InMemoryGraph) :
     InMemoryRepository<ThingId, Resource>(compareBy(Resource::createdAt)), ResourceRepository {
 
-    override val entities: InMemoryEntityAdapter<ThingId, Resource> = object : InMemoryEntityAdapter<ThingId, Resource> {
-        override val keys: Collection<ThingId> get() = inMemoryGraph.findAllResources().map { it.id }
-        override val values: MutableCollection<Resource> get() = inMemoryGraph.findAllResources().toMutableSet()
+    override val entities: InMemoryEntityAdapter<ThingId, Resource> =
+        object : InMemoryEntityAdapter<ThingId, Resource> {
+            override val keys: Collection<ThingId> get() = inMemoryGraph.findAllResources().map { it.id }
+            override val values: MutableCollection<Resource> get() = inMemoryGraph.findAllResources().toMutableSet()
 
-        override fun remove(key: ThingId): Resource? = inMemoryGraph.remove(key).takeIf { it is Resource } as? Resource
-        override fun clear() = inMemoryGraph.findAllResources().forEach(inMemoryGraph::remove)
+            override fun remove(key: ThingId): Resource? = get(key)?.also { inMemoryGraph.remove(it.id) }
+            override fun clear() = inMemoryGraph.findAllResources().forEach(inMemoryGraph::remove)
 
-        override fun contains(id: ThingId) = inMemoryGraph.findResourceById(id).isPresent
-        override fun get(key: ThingId): Resource? = inMemoryGraph.findResourceById(key).getOrNull()
-        override fun set(key: ThingId, value: Resource): Resource? =
-            inMemoryGraph.findResourceById(key).also { inMemoryGraph.add(value) }.orElse(null)
-    }
+            override fun get(key: ThingId): Resource? = inMemoryGraph.findResourceById(key).getOrNull()
+            override fun set(key: ThingId, value: Resource): Resource? =
+                get(key).also { inMemoryGraph.add(value) }
+        }
 
     override fun nextIdentity(): ThingId {
         var count = entities.size.toLong()
@@ -113,25 +110,30 @@ class InMemoryResourceRepository(inMemoryGraph: InMemoryGraph) :
         )
 
     override fun findAllPapersByLabel(label: String) =
-        entities.values.filter { it.label.equals(label, ignoreCase = true) && paperClass in it.classes && paperDeletedClass !in it.classes }
+        entities.values.filter {
+            it.label.equals(label, ignoreCase = true) &&
+                Classes.paper in it.classes && Classes.paperDeleted !in it.classes
+        }
 
     override fun findPaperByLabel(label: String) =
-        Optional.ofNullable(entities.values.firstOrNull { it.label.equals(label, ignoreCase = true) && paperClass in it.classes })
+        Optional.ofNullable(entities.values.firstOrNull {
+            it.label.equals(label, ignoreCase = true) && Classes.paper in it.classes
+        })
 
     // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
     override fun findPaperById(id: ThingId) =
         Optional.ofNullable(entities.values.firstOrNull {
-            it.id == id && paperClass in it.classes
+            it.id == id && Classes.paper in it.classes
         })
 
     override fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { (it.verified ?: false) == verified && paperClass in it.classes }
+        findAllFilteredAndPaged(pageable) { (it.verified ?: false) == verified && Classes.paper in it.classes }
 
     override fun findAllContributorIds(pageable: Pageable) =
         entities.values
             .map { it.createdBy }
             .distinct()
-            .filter { it.value != unknownUUID }
+            .filter { it != ContributorId.UNKNOWN }
             .sortedBy { it.value.toString() }
             .paged(pageable)
 

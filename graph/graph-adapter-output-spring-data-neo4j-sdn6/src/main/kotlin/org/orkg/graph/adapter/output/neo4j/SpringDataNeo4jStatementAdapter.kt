@@ -364,7 +364,7 @@ class SpringDataNeo4jStatementAdapter(
         .withQuery {
             val apocConfiguration = mapOf<String, Any>(
                 "relationshipFilter" to ">",
-                "labelFilter" to "-ResearchField|-ResearchProblem|-Paper"
+                "labelFilter" to "-ResearchField|-Problem|-Paper"
             )
             val n = name("n")
             val relationships = name("relationships")
@@ -673,7 +673,7 @@ class SpringDataNeo4jStatementAdapter(
             .withCommonQuery {
                 val apocConfiguration = mapOf<String, Any>(
                     "relationshipFilter" to ">",
-                    "labelFilter" to "-ResearchField|-ResearchProblem|-Paper"
+                    "labelFilter" to "-ResearchField|-Problem|-Paper"
                 )
                 val n = name("n")
                 val relationships = name("relationships")
@@ -712,7 +712,7 @@ class SpringDataNeo4jStatementAdapter(
             .withCommonQuery {
                 val apocConfiguration = mapOf<String, Any>(
                     "relationshipFilter" to ">",
-                    "labelFilter" to "-ResearchField|-ResearchProblem|-Paper"
+                    "labelFilter" to "-ResearchField|-Problem|-Paper"
                 )
                 val n = name("n")
                 val relationships = name("relationships")

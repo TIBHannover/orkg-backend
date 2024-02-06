@@ -15,18 +15,18 @@ import org.springframework.data.domain.Pageable
 class InMemoryClassRepository(inMemoryGraph: InMemoryGraph) :
     InMemoryRepository<ThingId, Class>(compareBy(Class::createdAt)), ClassRepository {
 
-    override val entities: InMemoryEntityAdapter<ThingId, Class> = object : InMemoryEntityAdapter<ThingId, Class> {
-        override val keys: Collection<ThingId> get() = inMemoryGraph.findAllClasses().map { it.id }
-        override val values: MutableCollection<Class> get() = inMemoryGraph.findAllClasses().toMutableSet()
+    override val entities: InMemoryEntityAdapter<ThingId, Class> =
+        object : InMemoryEntityAdapter<ThingId, Class> {
+            override val keys: Collection<ThingId> get() = inMemoryGraph.findAllClasses().map { it.id }
+            override val values: MutableCollection<Class> get() = inMemoryGraph.findAllClasses().toMutableSet()
 
-        override fun remove(key: ThingId): Class? = inMemoryGraph.remove(key).takeIf { it is Class } as? Class
-        override fun clear() = inMemoryGraph.findAllClasses().forEach(inMemoryGraph::remove)
+            override fun remove(key: ThingId): Class? = get(key)?.also { inMemoryGraph.remove(it.id) }
+            override fun clear() = inMemoryGraph.findAllClasses().forEach(inMemoryGraph::remove)
 
-        override fun contains(id: ThingId) = inMemoryGraph.findClassById(id).isPresent
-        override fun get(key: ThingId): Class? = inMemoryGraph.findClassById(key).getOrNull()
-        override fun set(key: ThingId, value: Class): Class? =
-            inMemoryGraph.findClassById(key).also { inMemoryGraph.add(value) }.orElse(null)
-    }
+            override fun get(key: ThingId): Class? = inMemoryGraph.findClassById(key).getOrNull()
+            override fun set(key: ThingId, value: Class): Class? =
+                get(key).also { inMemoryGraph.add(value) }
+        }
 
     override fun save(c: Class) {
         entities[c.id] = c

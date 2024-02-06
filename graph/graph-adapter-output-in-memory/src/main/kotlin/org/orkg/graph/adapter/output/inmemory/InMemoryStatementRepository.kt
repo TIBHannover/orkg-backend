@@ -28,17 +28,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
-private val paperClass = ThingId("Paper")
-private val problemClass = ThingId("Problem")
-private val comparisonClass = ThingId("Comparison")
-private val contributionClass = ThingId("Contribution")
-private val researchProblemClass = ThingId("ResearchProblem")
-private val researchFieldClass = ThingId("ResearchField")
-private val hasContribution = ThingId("P31")
-private val hasResearchProblem = ThingId("P32")
-private val hasDOI = ThingId("P26")
-private val compareContribution = ThingId("compareContribution")
-
 class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
     InMemoryRepository<StatementId, GeneralStatement>(compareBy(GeneralStatement::createdAt)), StatementRepository {
 
@@ -95,7 +84,7 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
     override fun countByIdRecursive(id: ThingId): Long =
         findSubgraph(ThingId(id.value)) { statement, _ ->
             statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
-                `class` == paperClass || `class` == researchProblemClass || `class` == researchFieldClass
+                `class` == Classes.paper || `class` == Classes.problem || `class` == Classes.researchField
             }
         }.count().toLong()
 
@@ -244,14 +233,14 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
 
     override fun findDOIByContributionId(id: ThingId): Optional<Literal> =
         Optional.ofNullable(entities.values.find {
-            it.subject is Resource && paperClass in (it.subject as Resource).classes &&
-                it.predicate.id == hasContribution &&
+            it.subject is Resource && Classes.paper in (it.subject as Resource).classes &&
+                it.predicate.id == Predicates.hasContribution &&
                 it.`object`.id.value == id.value
         }?.let {
             it.subject as Resource
         }?.let { paper ->
             entities.values.find {
-                it.subject.id == paper.id && it.predicate.id == hasDOI
+                it.subject.id == paper.id && it.predicate.id == Predicates.hasDOI
             }?.let {
                 it.`object` as Literal
             }
@@ -284,7 +273,7 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
 
     override fun findByDOI(doi: String): Optional<Resource> =
         Optional.ofNullable(entities.values.find {
-            it.subject is Resource && it.predicate.id == hasDOI &&
+            it.subject is Resource && it.predicate.id == Predicates.hasDOI &&
                 it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
         }).map { it.subject as Resource }
 
@@ -293,7 +282,7 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             .filter {
                 it.subject is Resource && with(it.subject as Resource) {
                     subjectClass in classes
-                } && it.predicate.id == hasDOI && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
+                } && it.predicate.id == Predicates.hasDOI && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
             }
             .map { it.subject as Resource }
             .distinct()
@@ -303,21 +292,21 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         // FIXME: Create a union with all Problems that are not used in statements
         entities.values.filter {
-            it.subject is Resource && paperClass in (it.subject as Resource).classes && (it.subject as Resource).observatoryId == id &&
-                it.predicate.id == hasContribution &&
-                it.`object` is Resource && contributionClass in (it.`object` as Resource).classes
+            it.subject is Resource && Classes.paper in (it.subject as Resource).classes && (it.subject as Resource).observatoryId == id &&
+                it.predicate.id == Predicates.hasContribution &&
+                it.`object` is Resource && Classes.contribution in (it.`object` as Resource).classes
         }.map { hasContributionStatement ->
             entities.values.filter {
                 it.subject.id == hasContributionStatement.`object`.id &&
-                    it.predicate.id == hasResearchProblem &&
-                    it.`object` is Resource && problemClass in (it.`object` as Resource).classes
+                    it.predicate.id == Predicates.hasResearchProblem &&
+                    it.`object` is Resource && Classes.problem in (it.`object` as Resource).classes
             }.map { it.`object` as Resource }
         }.flatten().distinct().paged(pageable)
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
         findSubgraph(id) { statement, _ ->
             statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
-                `class` == paperClass || `class` == researchProblemClass || `class` == researchFieldClass
+                `class` == Classes.paper || `class` == Classes.problem || `class` == Classes.researchField
             }
         }.map {
             setOf(
@@ -335,7 +324,7 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             .subject as Resource
         return findSubgraph(id) { statement, _ ->
             statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
-                `class` == paperClass || `class` == researchProblemClass || `class` == researchFieldClass
+                `class` == Classes.paper || `class` == Classes.problem || `class` == Classes.researchField
             }
         }.asSequence()
             .map {
@@ -365,14 +354,14 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
 
     override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         entities.values.filter {
-            it.subject is Resource && comparisonClass in (it.subject as Resource).classes && (it.subject as Resource).organizationId == id &&
-                it.predicate.id == compareContribution &&
-                it.`object` is Resource && contributionClass in (it.`object` as Resource).classes
+            it.subject is Resource && Classes.comparison in (it.subject as Resource).classes && (it.subject as Resource).organizationId == id &&
+                it.predicate.id == Predicates.comparesContribution &&
+                it.`object` is Resource && Classes.contribution in (it.`object` as Resource).classes
         }.map { compareContributionStatement ->
             entities.values.filter {
                 it.subject.id == compareContributionStatement.`object`.id &&
-                    it.predicate.id == hasResearchProblem &&
-                    it.`object` is Resource && problemClass in (it.`object` as Resource).classes
+                    it.predicate.id == Predicates.hasResearchProblem &&
+                    it.`object` is Resource && Classes.problem in (it.`object` as Resource).classes
             }.map { it.`object` as Resource }
         }.flatten().distinct().paged(pageable)
 

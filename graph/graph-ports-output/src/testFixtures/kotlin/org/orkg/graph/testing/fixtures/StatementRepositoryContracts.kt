@@ -73,7 +73,7 @@ fun <
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
         ).withStandardMappings()
     ).withCustomMappings()
-    
+
     val saveThing: (Thing) -> Unit = {
         when (it) {
             is Class -> classRepository.save(it)
@@ -191,7 +191,7 @@ fun <
                     val expected = mapOf(
                         1L to 1L,
                         3L to 2L,
-                        //10L to 0L
+                        // 10L to 0L
                     ).mapKeys { ThingId("R${it.key}") }
                     val resourceIds = expected.keys + ThingId("R10")
                     val actual = repository.countStatementsAboutResources(resourceIds)
@@ -1104,7 +1104,7 @@ fun <
         context("by class and doi") {
             val doiLiteral = createLiteral(label = doi)
 
-            val paper =  createResource(
+            val paper = createResource(
                 id = fabricator.random(),
                 classes = setOf(Classes.paper)
             )
@@ -1325,7 +1325,7 @@ fun <
                 createdAt = OffsetDateTime.now(fixedClock)
             )
 
-            setOf("ResearchField", "ResearchProblem", "Paper").forEach {
+            setOf("ResearchField", "Problem", "Paper").forEach {
                 val resourceForIt = fabricator.random<Resource>().copy(
                     classes = setOf(ThingId(it)),
                     createdAt = resource.createdAt.plusSeconds(145864)
@@ -1417,7 +1417,7 @@ fun <
         context("by resource id") {
             val resource = fabricator.random<Resource>()
 
-            setOf("ResearchField", "ResearchProblem", "Paper").forEach {
+            setOf("ResearchField", "Problem", "Paper").forEach {
                 val resourceForIt = fabricator.random<Resource>().copy(
                     classes = setOf(ThingId(it))
                 )

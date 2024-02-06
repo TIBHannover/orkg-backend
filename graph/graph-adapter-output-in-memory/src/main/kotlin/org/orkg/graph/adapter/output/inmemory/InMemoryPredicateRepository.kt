@@ -14,18 +14,18 @@ import org.springframework.data.domain.Pageable
 class InMemoryPredicateRepository(inMemoryGraph: InMemoryGraph) :
     InMemoryRepository<ThingId, Predicate>(compareBy(Predicate::createdAt)), PredicateRepository {
 
-    override val entities: InMemoryEntityAdapter<ThingId, Predicate> = object : InMemoryEntityAdapter<ThingId, Predicate> {
-        override val keys: Collection<ThingId> get() = inMemoryGraph.findAllPredicates().map { it.id }
-        override val values: MutableCollection<Predicate> get() = inMemoryGraph.findAllPredicates().toMutableSet()
+    override val entities: InMemoryEntityAdapter<ThingId, Predicate> =
+        object : InMemoryEntityAdapter<ThingId, Predicate> {
+            override val keys: Collection<ThingId> get() = inMemoryGraph.findAllPredicates().map { it.id }
+            override val values: MutableCollection<Predicate> get() = inMemoryGraph.findAllPredicates().toMutableSet()
 
-        override fun remove(key: ThingId): Predicate? = inMemoryGraph.remove(key).takeIf { it is Predicate } as? Predicate
-        override fun clear() = inMemoryGraph.findAllPredicates().forEach(inMemoryGraph::remove)
+            override fun remove(key: ThingId): Predicate? = get(key)?.also { inMemoryGraph.remove(it.id) }
+            override fun clear() = inMemoryGraph.findAllPredicates().forEach(inMemoryGraph::remove)
 
-        override fun contains(id: ThingId) = inMemoryGraph.findPredicateById(id).isPresent
-        override fun get(key: ThingId): Predicate? = inMemoryGraph.findPredicateById(key).getOrNull()
-        override fun set(key: ThingId, value: Predicate): Predicate? =
-            inMemoryGraph.findPredicateById(key).also { inMemoryGraph.add(value) }.orElse(null)
-    }
+            override fun get(key: ThingId): Predicate? = inMemoryGraph.findPredicateById(key).getOrNull()
+            override fun set(key: ThingId, value: Predicate): Predicate? =
+                get(key).also { inMemoryGraph.add(value) }
+        }
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable) =
         entities.values

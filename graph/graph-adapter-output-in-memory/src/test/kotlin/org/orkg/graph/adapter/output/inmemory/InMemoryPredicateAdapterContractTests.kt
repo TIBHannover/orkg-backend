@@ -7,7 +7,7 @@ internal class InMemoryPredicateAdapterContractTests : DescribeSpec({
     val inMemoryGraph = InMemoryGraph()
     include(
         predicateRepositoryContract(
-            InMemoryPredicateRepository(),
+            InMemoryPredicateRepository(inMemoryGraph),
             InMemoryStatementRepository(),
             InMemoryLiteralRepository(inMemoryGraph)
         )

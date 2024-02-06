@@ -11,7 +11,7 @@ internal class InMemoryStatementAdapterContractTests : DescribeSpec({
             InMemoryClassRepository(inMemoryGraph),
             InMemoryLiteralRepository(inMemoryGraph),
             InMemoryResourceRepository(inMemoryGraph),
-            InMemoryPredicateRepository()
+            InMemoryPredicateRepository(inMemoryGraph)
         )
     )
 })

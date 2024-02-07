@@ -124,6 +124,7 @@ data class ListRepresentation(
     val elements: List<ThingId>,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
+    val modifiable: Boolean,
     @get:JsonProperty("_class")
     val jsonClass: String = "list"
 ) : ProvenanceMetadata

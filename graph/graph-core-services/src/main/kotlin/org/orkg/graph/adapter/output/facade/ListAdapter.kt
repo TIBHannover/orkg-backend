@@ -38,7 +38,8 @@ class ListAdapter(
             classes = setOf(Classes.list),
             label = list.label,
             createdAt = list.createdAt,
-            createdBy = list.createdBy
+            createdBy = list.createdBy,
+            modifiable = list.modifiable
         )
         resourceRepository.save(listResource)
         val existingStatements = statementRepository.findAllBySubjectAndPredicate(
@@ -119,6 +120,7 @@ class ListAdapter(
             .sortedBy { it.index }
             .map { it.`object`.id },
         createdAt = createdAt,
-        createdBy = createdBy
+        createdBy = createdBy,
+        modifiable = modifiable
     )
 }

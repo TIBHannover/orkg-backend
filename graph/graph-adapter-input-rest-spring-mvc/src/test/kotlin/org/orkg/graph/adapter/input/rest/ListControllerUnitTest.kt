@@ -88,6 +88,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             .andExpect(jsonPath("$.elements").isArray)
             .andExpect(jsonPath("$.created_at").value("2023-06-01T15:19:04.778631092+02:00"))
             .andExpect(jsonPath("$.created_by").value(list.createdBy.value.toString()))
+            .andExpect(jsonPath("$.modifiable").value(list.modifiable.toString()))
             .andExpect(jsonPath("$._class").value("list"))
             // Document the representation for later reference.
             .andDo(
@@ -101,6 +102,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
                         timestampFieldWithPath("created_at", "the list was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this list."),
+                        fieldWithPath("modifiable").description("Whether this list can be modified."),
                         fieldWithPath("_class").description("The type of object this json contains. Always has the value \"list\".")
                     )
                 )
@@ -243,7 +245,6 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
                 )
             )
             .andDo(generateDefaultDocSnippets())
-
 
         verify(exactly = 1) { listService.update(id, any()) }
     }

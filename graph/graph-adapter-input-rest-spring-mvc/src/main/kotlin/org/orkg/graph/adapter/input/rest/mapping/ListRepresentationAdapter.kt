@@ -14,5 +14,5 @@ interface ListRepresentationAdapter {
         map { it.toListRepresentation() }
 
     fun List.toListRepresentation(): ListRepresentation =
-        ListRepresentation(id, label, elements, createdAt, createdBy)
+        ListRepresentation(id, label, elements, createdAt, createdBy, modifiable)
 }

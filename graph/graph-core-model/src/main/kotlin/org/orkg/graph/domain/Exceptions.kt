@@ -102,6 +102,9 @@ class LiteralNotModifiable(id: ThingId) :
 class StatementNotModifiable(id: StatementId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Statement "$id" is not modifiable.""")
 
+class ListNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """List "$id" is not modifiable.""")
+
 class InvalidClassCollection(ids: Iterable<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The collection of classes "$ids" contains one or more invalid classes.""")
 

@@ -37,7 +37,8 @@ class ListServiceUnitTests {
             label = "label",
             elements = listOf(ThingId("R1")),
             id = ThingId("List1"),
-            contributorId = ContributorId(UUID.randomUUID())
+            contributorId = ContributorId(UUID.randomUUID()),
+            modifiable = false
         )
 
         every { thingRepository.existsAll(command.elements.toSet()) } returns true
@@ -129,7 +130,8 @@ class ListServiceUnitTests {
                     label = command.label,
                     elements = command.elements,
                     createdAt = OffsetDateTime.now(fixedClock),
-                    createdBy = ContributorId.UNKNOWN
+                    createdBy = ContributorId.UNKNOWN,
+                    modifiable = true
                 ),
                 ContributorId.UNKNOWN
             )
@@ -277,6 +279,25 @@ class ListServiceUnitTests {
     }
 
     @Test
+    fun `given a list is updated, when list is unmodifiable, it throws an exception`() {
+        val id = ThingId("List1")
+        val command = UpdateListUseCase.UpdateCommand(
+            label = "label",
+            elements = listOf()
+        )
+        val list = createList(id = id, elements = listOf(ThingId("R25")), modifiable = false)
+
+        every { repository.findById(id) } returns Optional.of(list)
+
+        assertThrows<ListNotModifiable> {
+            service.update(id, command)
+        }
+
+        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 0) { repository.delete(id) }
+    }
+
+    @Test
     fun `given a list, when its elements are fetched, it returns success`() {
         val id = ThingId("List1")
         val elements = listOf(
@@ -309,5 +330,20 @@ class ListServiceUnitTests {
 
         verify(exactly = 1) { repository.exists(id) }
         verify(exactly = 0) { repository.findAllElementsById(id, any()) }
+    }
+
+    @Test
+    fun `given a list is being deleted, when list is unmodifiable, then an exception is thrown`() {
+        val id = ThingId("List1")
+        val list = createList(id, modifiable = false)
+
+        every { repository.findById(id) } returns Optional.of(list)
+
+        assertThrows<ListNotModifiable> {
+            service.delete(id)
+        }
+
+        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 0) { repository.delete(id) }
     }
 }

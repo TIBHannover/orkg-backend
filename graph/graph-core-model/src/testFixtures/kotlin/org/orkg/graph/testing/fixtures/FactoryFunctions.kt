@@ -97,7 +97,8 @@ fun createList(
     elements: KotlinList<ThingId> = emptyList(),
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-01T16:33:19.156943+01:00"),
     createdBy: ContributorId = ContributorId.UNKNOWN,
-) = List(id, label, elements, createdAt, createdBy)
+    modifiable: Boolean = true
+) = List(id, label, elements, createdAt, createdBy, modifiable)
 
 fun createPaperResource(
     id: ThingId = ThingId("Paper1"),

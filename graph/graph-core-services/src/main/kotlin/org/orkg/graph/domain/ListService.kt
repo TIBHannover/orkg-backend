@@ -35,6 +35,7 @@ class ListService(
             elements = command.elements,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId ?: ContributorId.UNKNOWN,
+            modifiable = command.modifiable
         )
         repository.save(list, list.createdBy)
         return id
@@ -52,6 +53,8 @@ class ListService(
 
     override fun update(id: ThingId, command: UpdateListUseCase.UpdateCommand) {
         val list = repository.findById(id).orElseThrow { ListNotFound(id) }
+        if (!list.modifiable)
+            throw ListNotModifiable(id)
         val label = command.label?.let {
             Label.ofOrNull(it)?.value ?: throw InvalidLabel()
         }
@@ -68,5 +71,12 @@ class ListService(
         )
     }
 
-    override fun delete(id: ThingId) = repository.delete(id)
+    override fun delete(id: ThingId) {
+        repository.findById(id).ifPresent {
+            if (!it.modifiable) {
+                throw ListNotModifiable(id)
+            }
+            repository.delete(id)
+        }
+    }
 }

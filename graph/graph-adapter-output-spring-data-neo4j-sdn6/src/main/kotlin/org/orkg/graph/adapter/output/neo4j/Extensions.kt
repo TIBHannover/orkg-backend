@@ -104,6 +104,7 @@ data class ListMapper(val name: String, val elements: String) : BiFunction<TypeS
             elements = record[elements].toThingIds(),
             createdAt = node["created_at"].toOffsetDateTime(),
             createdBy = node["created_by"].toContributorId(),
+            modifiable = node["modifiable"].asBoolean()
         )
     }
 }

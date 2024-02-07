@@ -25,7 +25,8 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
             uri = random(),
             createdBy = random(),
             // Do not create a random description for tests as it is saved via statements
-            // description = random()
+            // description = random(),
+            modifiable = true
         )
         // TODO: generate predicates and resources too?
     }

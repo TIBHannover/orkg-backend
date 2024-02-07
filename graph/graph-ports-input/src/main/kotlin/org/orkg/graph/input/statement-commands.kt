@@ -7,8 +7,20 @@ import org.orkg.graph.domain.StatementId
 interface CreateStatementUseCase {
     // legacy methods:
     fun create(subject: ThingId, predicate: ThingId, `object`: ThingId): StatementId
-    fun create(userId: ContributorId, subject: ThingId, predicate: ThingId, `object`: ThingId): StatementId
-    fun add(userId: ContributorId, subject: ThingId, predicate: ThingId, `object`: ThingId)
+    fun create(
+        userId: ContributorId,
+        subject: ThingId,
+        predicate: ThingId,
+        `object`: ThingId,
+        modifiable: Boolean = true
+    ): StatementId
+    fun add(
+        userId: ContributorId,
+        subject: ThingId,
+        predicate: ThingId,
+        `object`: ThingId,
+        modifiable: Boolean = true
+    )
 }
 
 interface UpdateStatementUseCase {

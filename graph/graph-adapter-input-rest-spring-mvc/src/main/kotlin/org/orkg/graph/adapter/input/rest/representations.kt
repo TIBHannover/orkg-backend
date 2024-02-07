@@ -113,6 +113,7 @@ data class StatementRepresentation(
     val `object`: ThingRepresentation,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
+    val modifiable: Boolean,
     @get:JsonInclude(Include.NON_NULL)
     val index: Int?
 ) : ProvenanceMetadata

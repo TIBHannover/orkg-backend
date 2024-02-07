@@ -45,6 +45,7 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
             `object` = `object`.toThingRepresentation(statementCounts, formattedLabels),
             createdAt = createdAt!!,
             createdBy = createdBy,
+            modifiable = modifiable,
             index = index
         )
 

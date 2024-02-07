@@ -424,7 +424,8 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
     private fun statementFields() = listOf(
         fieldWithPath("id").description("The statement ID"),
         fieldWithPath("created_at").description("The statement creation datetime"),
-        fieldWithPath("created_by").description("The ID of the user that created the statement. All zeros if unknown.")
+        fieldWithPath("created_by").description("The ID of the user that created the statement. All zeros if unknown."),
+        fieldWithPath("modifiable").description("Whether this statement can be modified.")
     )
 
     private fun pageOfStatementsWithAnyObjectResponseFields() =

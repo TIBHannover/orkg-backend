@@ -78,7 +78,8 @@ data class StatementMapper(
             createdBy = relation["created_by"].toContributorId(),
             subject = record[subject].asNode().toThing(),
             `object` = record[`object`].asNode().toThing(),
-            index = relation["index"].asNullableInt()
+            index = relation["index"].asNullableInt(),
+            modifiable = relation["modifiable"].asBoolean()
         )
     }
 }

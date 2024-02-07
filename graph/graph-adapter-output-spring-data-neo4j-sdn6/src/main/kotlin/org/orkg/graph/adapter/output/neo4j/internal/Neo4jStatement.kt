@@ -32,4 +32,10 @@ class Neo4jStatement {
 
     @Property("created_at")
     var createdAt: OffsetDateTime? = null
+
+    @Property("index")
+    var index: Int? = null
+
+    @Property("modifiable")
+    var modifiable: Boolean = true
 }

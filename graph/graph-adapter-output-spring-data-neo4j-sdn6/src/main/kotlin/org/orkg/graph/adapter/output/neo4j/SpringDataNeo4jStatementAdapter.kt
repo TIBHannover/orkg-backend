@@ -97,7 +97,8 @@ class SpringDataNeo4jStatementAdapter(
                             "predicate_id", parameter("predicateId"),
                             "created_by", parameter("createdBy"),
                             "created_at", parameter("createdAt"),
-                            "index", parameter("index")
+                            "index", parameter("index"),
+                            "modifiable", parameter("modifiable")
                         )
                     )
             }
@@ -108,7 +109,8 @@ class SpringDataNeo4jStatementAdapter(
                 "predicateId" to statement.predicate.id.value,
                 "createdBy" to statement.createdBy.value.toString(),
                 "createdAt" to statement.createdAt!!.format(ISO_OFFSET_DATE_TIME),
-                "index" to statement.index
+                "index" to statement.index,
+                "modifiable" to statement.modifiable
             )
             .run()
     }
@@ -130,7 +132,8 @@ class SpringDataNeo4jStatementAdapter(
                             "predicate_id", valueAt(statement, 3),
                             "created_by", valueAt(statement, 4),
                             "created_at", valueAt(statement, 5),
-                            "index", valueAt(statement, 6)
+                            "index", valueAt(statement, 6),
+                            "modifiable", valueAt(statement, 7)
                         )
                     )
             }
@@ -143,7 +146,8 @@ class SpringDataNeo4jStatementAdapter(
                         it.predicate.id.value,
                         it.createdBy.value.toString(),
                         it.createdAt?.format(ISO_OFFSET_DATE_TIME),
-                        it.index
+                        it.index,
+                        it.modifiable
                     )
                 }
             )

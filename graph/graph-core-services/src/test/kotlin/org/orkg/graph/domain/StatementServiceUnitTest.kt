@@ -63,7 +63,7 @@ class StatementServiceUnitTest : DescribeSpec({
                 )
 
                 withContext(Dispatchers.IO) {
-                    shouldThrow<ForbiddenStatementSubject> {
+                    shouldThrow<InvalidStatement> {
                         service.create(
                             ContributorId(UUID.randomUUID()),
                             subject = listId,
@@ -90,7 +90,7 @@ class StatementServiceUnitTest : DescribeSpec({
                 )
 
                 withContext(Dispatchers.IO) {
-                    shouldThrow<ForbiddenStatementSubject> {
+                    shouldThrow<InvalidStatement> {
                         service.add(
                             ContributorId(UUID.randomUUID()),
                             subject = listId,
@@ -126,7 +126,7 @@ class StatementServiceUnitTest : DescribeSpec({
                 every { statementRepository.findByStatementId(id) } returns Optional.of(existingStatement)
 
                 withContext(Dispatchers.IO) {
-                    shouldThrow<UnmodifiableStatement> {
+                    shouldThrow<InvalidStatement> {
                         service.update(command)
                     }
                 }
@@ -161,7 +161,7 @@ class StatementServiceUnitTest : DescribeSpec({
                 every { thingRepository.findByThingId(listId) } returns Optional.of(list)
 
                 withContext(Dispatchers.IO) {
-                    shouldThrow<ForbiddenStatementSubject> {
+                    shouldThrow<InvalidStatement> {
                         service.update(command)
                     }
                 }
@@ -169,6 +169,21 @@ class StatementServiceUnitTest : DescribeSpec({
                 verify(exactly = 1) { statementRepository.findByStatementId(id) }
                 verify(exactly = 1) { thingRepository.findByThingId(listId) }
                 verify(exactly = 0) { statementRepository.save(any()) }
+            }
+        }
+        context("that is non-modifiable") {
+            val id = StatementId("S1")
+            val fakeStatement = createStatement(id, modifiable = false)
+            val command = UpdateStatementUseCase.UpdateCommand(id)
+
+            it("throws an exception") {
+                every { statementRepository.findByStatementId(id) } returns Optional.of(fakeStatement)
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<StatementNotModifiable> { service.update(command) }
+                }
+
+                verify(exactly = 1) { statementRepository.findByStatementId(any()) }
             }
         }
     }
@@ -275,6 +290,20 @@ class StatementServiceUnitTest : DescribeSpec({
                 verify(exactly = 1) { statementRepository.deleteByStatementId(any()) }
             }
         }
+        context("that is non-modifiable") {
+            val id = StatementId("S1")
+            val fakeStatement = createStatement(id, modifiable = false)
+
+            it("throws an exception") {
+                every { statementRepository.findByStatementId(id) } returns Optional.of(fakeStatement)
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<StatementNotModifiable> { service.delete(id) }
+                }
+
+                verify(exactly = 1) { statementRepository.findByStatementId(any()) }
+            }
+        }
     }
     context("deleting multiple statements") {
         // Disabled because functionality has temporarily been removed
@@ -349,6 +378,22 @@ class StatementServiceUnitTest : DescribeSpec({
 
                 verify(exactly = 1) { statementRepository.findAllByStatementIdIn(ids, any()) }
                 verify(exactly = 0) { statementRepository.deleteByStatementIds(any()) }
+            }
+        }
+        context("where at least one statement is non-modifiable") {
+            val ids = (1..4).map { StatementId("S$it") }.toSet()
+            val fakeStatements = ids.map { createStatement(it, modifiable = false) }
+
+            it("throws an error") {
+                every { statementRepository.findAllByStatementIdIn(ids, any()) } returns PageImpl(fakeStatements)
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<StatementNotModifiable> {
+                        service.delete(ids)
+                    }
+                }
+
+                verify(exactly = 1) { statementRepository.findAllByStatementIdIn(ids, any()) }
             }
         }
     }

@@ -11,6 +11,8 @@ import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.LiteralNotModifiable
 import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.ResourceNotModifiable
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.domain.StatementNotModifiable
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -101,6 +103,21 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun statementNotModifiable() {
+        val id = StatementId("S123")
+
+        get("/statement-not-modifiable")
+            .param("id", id.value)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/statement-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Statement "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -122,6 +139,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/literal-not-modifiable")
         fun literalNotModifiable(@RequestParam id: ThingId) {
             throw LiteralNotModifiable(id)
+        }
+
+        @GetMapping("/statement-not-modifiable")
+        fun statementNotModifiable(@RequestParam id: StatementId) {
+            throw StatementNotModifiable(id)
         }
     }
 

@@ -65,13 +65,14 @@ class StatementService(
         userId: ContributorId,
         subject: ThingId,
         predicate: ThingId,
-        `object`: ThingId
+        `object`: ThingId,
+        modifiable: Boolean
     ): StatementId {
         val foundSubject = thingRepository.findByThingId(subject)
             .orElseThrow { StatementSubjectNotFound(subject) }
 
         if (predicate == Predicates.hasListElement && foundSubject is Resource && Classes.list in foundSubject.classes) {
-            throw ForbiddenStatementSubject.isList()
+            throw InvalidStatement.isListElementStatement()
         }
 
         val foundPredicate = predicateService.findById(predicate)
@@ -97,7 +98,13 @@ class StatementService(
         return id
     }
 
-    override fun add(userId: ContributorId, subject: ThingId, predicate: ThingId, `object`: ThingId) {
+    override fun add(
+        userId: ContributorId,
+        subject: ThingId,
+        predicate: ThingId,
+        `object`: ThingId,
+        modifiable: Boolean
+    ) {
         // This method mostly exists for performance reasons. We just create the statement but do not return anything.
         // That saves the extra calls to the database to retrieve the statement again, even if it may not be needed.
 
@@ -105,7 +112,7 @@ class StatementService(
             .orElseThrow { StatementSubjectNotFound(subject) }
 
         if (predicate == Predicates.hasListElement && foundSubject is Resource && Classes.list in foundSubject.classes) {
-            throw ForbiddenStatementSubject.isList()
+            throw InvalidStatement.isListElementStatement()
         }
 
         val foundPredicate = predicateService.findById(predicate)
@@ -122,6 +129,7 @@ class StatementService(
             `object` = foundObject,
             createdBy = userId,
             createdAt = OffsetDateTime.now(clock),
+            modifiable = modifiable
         )
         statementRepository.save(statement)
     }
@@ -135,6 +143,7 @@ class StatementService(
      */
     override fun delete(statementId: StatementId) {
         statementRepository.findByStatementId(statementId).ifPresent {
+            if (!it.modifiable) throw StatementNotModifiable(it.id!!)
             if (it.predicate.id == Predicates.hasListElement && it.subject is Resource && Classes.list in (it.subject as Resource).classes) {
                 throw ForbiddenStatementDeletion.usedInList()
             }
@@ -149,6 +158,7 @@ class StatementService(
      */
     override fun delete(statementIds: Set<StatementId>) {
         statementRepository.findAllByStatementIdIn(statementIds, PageRequests.ALL).forEach {
+            if (!it.modifiable) throw StatementNotModifiable(it.id!!)
             if (it.predicate.id == Predicates.hasListElement && it.subject is Resource && Classes.list in (it.subject as Resource).classes) {
                 throw ForbiddenStatementDeletion.usedInList()
             }
@@ -160,8 +170,12 @@ class StatementService(
         var found = statementRepository.findByStatementId(command.statementId)
             .orElseThrow { StatementNotFound(command.statementId.value) }
 
+        if (!found.modifiable) {
+            throw StatementNotModifiable(found.id!!)
+        }
+
         if (found.predicate.id == Predicates.hasListElement && found.subject is Resource && Classes.list in (found.subject as Resource).classes) {
-            throw UnmodifiableStatement.subjectIsList()
+            throw InvalidStatement.isListElementStatement()
         }
 
         val literal: Thing? = found.`object`.takeIf { it is Literal }
@@ -174,7 +188,7 @@ class StatementService(
             if ((found.predicate.id == Predicates.hasListElement || command.predicateId == Predicates.hasListElement) &&
                 foundSubject is Resource && Classes.list in foundSubject.classes
             ) {
-                throw ForbiddenStatementSubject.isList()
+                throw InvalidStatement.isListElementStatement()
             }
             // found = found.copy(subject = foundSubject) // TODO: does this make sense?
         }

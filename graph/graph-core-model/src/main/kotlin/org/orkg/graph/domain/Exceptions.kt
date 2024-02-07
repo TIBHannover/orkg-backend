@@ -99,6 +99,9 @@ class PredicateNotModifiable(id: ThingId) :
 class LiteralNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Literal "$id" is not modifiable.""")
 
+class StatementNotModifiable(id: StatementId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Statement "$id" is not modifiable.""")
+
 class InvalidClassCollection(ids: Iterable<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The collection of classes "$ids" contains one or more invalid classes.""")
 
@@ -139,21 +142,12 @@ class StatementPredicateNotFound(id: ThingId) :
 class StatementObjectNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" not found.""")
 
-class ForbiddenStatementSubject private constructor(
+class InvalidStatement private constructor(
     override val message: String
 ) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
     companion object {
-        fun isList() =
-            ForbiddenStatementSubject("A list cannot be used as a subject for a statement. Please see the documentation on how to manage lists.")
-    }
-}
-
-class UnmodifiableStatement private constructor(
-    override val message: String
-) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
-    companion object {
-        fun subjectIsList() =
-            UnmodifiableStatement("A statement with a list as it's subject cannot be modified. Please see the documentation on how to manage lists.")
+        fun isListElementStatement() =
+            InvalidStatement("A list element statement cannot be managed using the statements endpoint. Please see the documentation on how to manage lists.")
     }
 }
 

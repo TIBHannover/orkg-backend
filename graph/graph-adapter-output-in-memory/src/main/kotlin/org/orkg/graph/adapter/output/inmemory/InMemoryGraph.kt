@@ -26,6 +26,19 @@ class InMemoryGraph {
             is Class -> classes[thing.id] = thing
             is Literal -> literals[thing.id] = thing
         }
+        statements.values.mapNotNull { statement ->
+            var result = statement
+            if (result.subject.id == thing.id) {
+                result = result.copy(subject = thing)
+            }
+            if (result.predicate.id == thing.id && thing is Predicate) {
+                result = result.copy(predicate = thing)
+            }
+            if (result.`object`.id == thing.id) {
+                result = result.copy(`object` = thing)
+            }
+            result.takeIf { it != statement }
+        }.forEach { statements[it.id!!] = it }
     }
 
     fun add(statement: GeneralStatement) {

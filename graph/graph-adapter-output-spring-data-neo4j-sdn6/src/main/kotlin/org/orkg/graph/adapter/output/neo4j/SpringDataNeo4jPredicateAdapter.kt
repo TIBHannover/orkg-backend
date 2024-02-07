@@ -140,5 +140,6 @@ class SpringDataNeo4jPredicateAdapter(
             label = this@toNeo4jPredicate.label
             created_by = this@toNeo4jPredicate.createdBy
             created_at = this@toNeo4jPredicate.createdAt
+            modifiable = this@toNeo4jPredicate.modifiable
         }
 }

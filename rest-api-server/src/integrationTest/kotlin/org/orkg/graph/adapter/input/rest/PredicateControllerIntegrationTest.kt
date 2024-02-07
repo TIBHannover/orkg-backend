@@ -223,7 +223,8 @@ class PredicateControllerIntegrationTest : RestDocumentationBaseTest() {
             fieldWithPath("description").description("The description of the predicate, if exists.").optional(),
             fieldWithPath("_class").description("Class description").optional().ignored(),
             fieldWithPath("featured").optional().ignored(),
-            fieldWithPath("unlisted").optional().ignored()
+            fieldWithPath("unlisted").optional().ignored(),
+            fieldWithPath("modifiable").description("Whether this predicate can be modified.").optional().ignored(),
         )
     }
 }

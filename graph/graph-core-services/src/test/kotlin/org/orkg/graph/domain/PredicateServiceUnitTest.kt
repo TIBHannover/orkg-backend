@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.input.CreatePredicateUseCase
+import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -119,6 +121,23 @@ class PredicateServiceUnitTest {
     }
 
     @Test
+    fun `Given a predicate update command, when updating an unmodifiable predicate, it throws an exception`() {
+        val predicate = createPredicate(modifiable = false)
+        val label = "updated label"
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+
+        shouldThrow<PredicateNotModifiable> {
+            service.update(predicate.id, UpdatePredicateUseCase.ReplaceCommand(label))
+        }.asClue {
+            it.message shouldBe """Predicate "${predicate.id}" is not modifiable."""
+        }
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+        verify(exactly = 0) { repository.save(any()) }
+    }
+
+    @Test
     fun `given a predicate is being deleted, when it is still used in a statement, an appropriate error is thrown`() {
         val mockPredicate = createPredicate()
 
@@ -143,5 +162,19 @@ class PredicateServiceUnitTest {
         service.delete(mockPredicate.id)
 
         verify(exactly = 1) { repository.deleteById(mockPredicate.id) }
+    }
+
+    @Test
+    fun `given a predicate is being deleted, when it is unmodifiable, it throws an exception`() {
+        val predicate = createPredicate(modifiable = false)
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+
+        shouldThrow<PredicateNotModifiable> { service.delete(predicate.id) }.asClue {
+            it.message shouldBe """Predicate "${predicate.id}" is not modifiable."""
+        }
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+        verify(exactly = 0) { repository.deleteById(any()) }
     }
 }

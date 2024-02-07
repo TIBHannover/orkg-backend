@@ -9,7 +9,8 @@ interface CreatePredicateUseCase {
     data class CreateCommand(
         val id: ThingId? = null,
         val label: String,
-        val contributorId: ContributorId? = null
+        val contributorId: ContributorId? = null,
+        val modifiable: Boolean = true
     )
 }
 

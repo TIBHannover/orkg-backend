@@ -76,6 +76,7 @@ data class PredicateRepresentation(
     val description: String?,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
+    val modifiable: Boolean,
     // This is added to replace @JsonTypeInfo on the Thing data class
     @get:JsonProperty("_class")
     val jsonClass: String = "predicate"

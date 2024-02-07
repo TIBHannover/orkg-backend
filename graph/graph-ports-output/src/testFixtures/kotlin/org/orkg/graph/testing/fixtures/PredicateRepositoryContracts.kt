@@ -23,8 +23,8 @@ import org.springframework.data.domain.Sort
 
 fun <
     R : PredicateRepository,
-    S: StatementRepository,
-    L: LiteralRepository
+    S : StatementRepository,
+    L : LiteralRepository
 > predicateRepositoryContract(
     repository: R,
     statementRepository: S,
@@ -69,6 +69,7 @@ fun <
                 it.createdBy shouldBe expected.createdBy
                 it.id shouldBe expected.id
                 it.description shouldBe it.description
+                it.modifiable shouldBe expected.modifiable
             }
         }
         it("updates an already existing predicate") {
@@ -251,7 +252,7 @@ fun <
 
     context("requesting a new identity") {
         context("returns a valid id") {
-            it("that is not blank")  {
+            it("that is not blank") {
                 repository.nextIdentity().value shouldNotMatch """\s+"""
             }
             it("that is prefixed with 'P'") {

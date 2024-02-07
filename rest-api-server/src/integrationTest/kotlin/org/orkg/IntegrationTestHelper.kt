@@ -45,13 +45,15 @@ fun CreateClassUseCase.createClass(
 
 fun CreatePredicateUseCase.createPredicate(
     id: ThingId? = null,
-    label: String? = null,
-    contributorId: ContributorId? = null,
+    label: String = "label",
+    contributorId: ContributorId = ContributorId.UNKNOWN,
+    modifiable: Boolean = true
 ): ThingId = create(
     CreatePredicateUseCase.CreateCommand(
         id = id,
-        label = label ?: "label",
-        contributorId = contributorId ?: ContributorId.UNKNOWN
+        label = label,
+        contributorId = contributorId,
+        modifiable = modifiable
     )
 )
 

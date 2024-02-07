@@ -9,5 +9,6 @@ data class Predicate(
     override val label: String,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.UNKNOWN,
-    val description: String? = null
+    val description: String? = null,
+    val modifiable: Boolean = true
 ) : Thing

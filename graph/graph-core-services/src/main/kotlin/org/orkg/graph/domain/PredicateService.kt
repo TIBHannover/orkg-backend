@@ -34,7 +34,8 @@ class PredicateService(
             id = id,
             label = Label.ofOrNull(command.label)?.value ?: throw InvalidLabel(),
             createdAt = OffsetDateTime.now(clock),
-            createdBy = command.contributorId ?: ContributorId.UNKNOWN
+            createdBy = command.contributorId ?: ContributorId.UNKNOWN,
+            modifiable = command.modifiable
         )
         repository.save(predicate)
         return id
@@ -52,6 +53,9 @@ class PredicateService(
     override fun update(id: ThingId, command: UpdatePredicateUseCase.ReplaceCommand) {
         var found = repository.findById(id).get()
 
+        if (!found.modifiable)
+            throw PredicateNotModifiable(found.id)
+
         // update all the properties
         found = found.copy(label = command.label)
 
@@ -60,6 +64,9 @@ class PredicateService(
 
     override fun delete(predicateId: ThingId) {
         val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId) }
+
+        if (!predicate.modifiable)
+            throw PredicateNotModifiable(predicate.id)
 
         if (statementRepository.countPredicateUsage(predicate.id) > 0)
             throw PredicateUsedInStatement(predicate.id)

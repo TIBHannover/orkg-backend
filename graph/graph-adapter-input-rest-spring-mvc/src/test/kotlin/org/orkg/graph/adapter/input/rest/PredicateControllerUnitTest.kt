@@ -81,6 +81,7 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
                         fieldWithPath("description").type("String").description("The description of the predicate, if exists.").optional(),
+                        fieldWithPath("modifiable").description("Whether this predicate can be modified."),
                         fieldWithPath("_class").description("Class description, always `predicate`.").optional().ignored()
                     )
                 )

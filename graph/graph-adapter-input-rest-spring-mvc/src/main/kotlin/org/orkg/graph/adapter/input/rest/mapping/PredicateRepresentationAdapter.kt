@@ -14,5 +14,5 @@ interface PredicateRepresentationAdapter {
         map { it.toPredicateRepresentation() }
 
     fun Predicate.toPredicateRepresentation(): PredicateRepresentation =
-        PredicateRepresentation(id, label, description, createdAt, createdBy)
+        PredicateRepresentation(id, label, description, createdAt, createdBy, modifiable)
 }

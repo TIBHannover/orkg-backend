@@ -8,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.graph.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
 import org.orkg.graph.domain.ClassNotModifiable
+import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
@@ -69,6 +70,21 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun predicateNotModifiable() {
+        val id = ThingId("R123")
+
+        get("/predicate-not-modifiable")
+            .param("id", id.value)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/predicate-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Predicate "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -80,6 +96,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/class-not-modifiable")
         fun classNotModifiable(@RequestParam id: ThingId) {
             throw ClassNotModifiable(id)
+        }
+
+        @GetMapping("/predicate-not-modifiable")
+        fun predicateNotModifiable(@RequestParam id: ThingId) {
+            throw PredicateNotModifiable(id)
         }
     }
 

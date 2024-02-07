@@ -161,6 +161,7 @@ internal fun Node.toPredicate() = Predicate(
     label = this["label"].asString(),
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),
+    modifiable = this["modifiable"].asBoolean()
 )
 
 internal fun Value.asNullableBoolean(): Boolean? = if (isNull) null else isTrue

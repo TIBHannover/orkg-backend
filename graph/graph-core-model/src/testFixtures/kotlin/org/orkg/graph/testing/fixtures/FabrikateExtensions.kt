@@ -50,7 +50,8 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
             createdAt = random(),
             createdBy = random(),
             // Do not create a random description for tests as it is saved via statements
-            // description = random()
+            // description = random(),
+            modifiable = true
         )
     }
     // register fabricator for Literal because _class needs to be set correctly

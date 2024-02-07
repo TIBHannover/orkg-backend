@@ -81,6 +81,7 @@ fun ResultActions.andExpectPredicate(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.description").hasJsonPath())
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.modifiable", `is`(notNullValue())))
     .andExpect(jsonPath("$path._class").value("predicate"))
 
 fun ResultActions.andExpectComparison(path: String = "$"): ResultActions = this

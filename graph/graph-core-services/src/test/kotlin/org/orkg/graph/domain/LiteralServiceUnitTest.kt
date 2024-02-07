@@ -69,7 +69,7 @@ class LiteralServiceUnitTest : DescribeSpec({
                 val id = ThingId("taken")
 
                 every { literalRepository.findById(id) } returns Optional.of(createLiteral(id))
-                
+
                 shouldThrowExactly<LiteralAlreadyExists> {
                     service.create(
                         CreateCommand(
@@ -94,7 +94,8 @@ class LiteralServiceUnitTest : DescribeSpec({
                     CreateCommand(
                         contributorId = contributorId,
                         label = "3.141593",
-                        datatype = "xsd:float"
+                        datatype = "xsd:float",
+                        modifiable = false
                     )
                 )
 
@@ -107,8 +108,24 @@ class LiteralServiceUnitTest : DescribeSpec({
                         it.createdBy shouldBe contributorId
                         it.datatype shouldBe "xsd:float"
                         it.label shouldBe "3.141593"
+                        it.modifiable shouldBe false
                     })
                 }
+            }
+        }
+    }
+    describe("updating a literal") {
+        context("when unmodifiable") {
+            it("throws an exception") {
+                val literal = createLiteral(modifiable = false)
+
+                every { literalRepository.findById(literal.id) } returns Optional.of(literal)
+
+                shouldThrowExactly<LiteralNotModifiable> {
+                    service.update(literal.copy(label = "new label"))
+                }
+
+                verify(exactly = 1) { literalRepository.findById(literal.id) }
             }
         }
     }

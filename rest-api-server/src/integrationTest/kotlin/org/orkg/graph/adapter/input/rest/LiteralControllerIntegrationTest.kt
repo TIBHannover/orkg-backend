@@ -183,7 +183,8 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
             fieldWithPath("created_by").description("The ID of the user that created the literal. All zeros if unknown."),
             fieldWithPath("_class").optional().ignored(),
             fieldWithPath("featured").optional().ignored(),
-            fieldWithPath("unlisted").optional().ignored()
+            fieldWithPath("unlisted").optional().ignored(),
+            fieldWithPath("modifiable").description("Whether this literal can be modified.").optional().ignored(),
         )
     }
 }

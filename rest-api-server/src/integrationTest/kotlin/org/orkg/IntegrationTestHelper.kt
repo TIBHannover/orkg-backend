@@ -85,17 +85,11 @@ fun CreateResourceUseCase.createResource(
 
 fun CreateLiteralUseCase.createLiteral(
     id: ThingId? = null,
-    label: String? = null,
-    datatype: String? = null,
-    contributorId: ContributorId? = null,
-): ThingId = create(
-    CreateLiteralUseCase.CreateCommand(
-        id = id,
-        label = label ?: "label",
-        datatype = datatype ?: Literals.XSD.STRING.prefixedUri,
-        contributorId = contributorId ?: ContributorId.UNKNOWN
-    )
-)
+    label: String = "label",
+    datatype: String = Literals.XSD.STRING.prefixedUri,
+    contributorId: ContributorId = ContributorId.UNKNOWN,
+    modifiable: Boolean = true
+): ThingId = create(CreateLiteralUseCase.CreateCommand(id, contributorId, label, datatype, modifiable))
 
 // Users
 

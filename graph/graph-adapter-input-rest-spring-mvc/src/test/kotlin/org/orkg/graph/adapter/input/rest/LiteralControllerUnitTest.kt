@@ -84,6 +84,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpect(jsonPath("$.datatype", `is`("xsd:string")))
             .andExpect(jsonPath("$.created_at", `is`("2023-06-01T15:19:04.778631092+02:00")))
             .andExpect(jsonPath("$.created_by", `is`("679ad2bd-ceb3-4f26-80ec-b6eab7a5e8c1")))
+            .andExpect(jsonPath("$.modifiable", `is`(true)))
             .andExpect(jsonPath("$._class", `is`("literal")))
             // Document the representation for later reference.
             .andDo(
@@ -97,6 +98,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
                         timestampFieldWithPath("created_at", "the literal was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this literal."),
+                        fieldWithPath("modifiable").description("Whether this literal can be modified."),
                         fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value \"`literal`\".")
                     )
                 )

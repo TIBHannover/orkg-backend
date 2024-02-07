@@ -12,6 +12,7 @@ fun createNeo4jLiteral(
     createdAt: OffsetDateTime? = null,
     createdBy: ContributorId = ContributorId.UNKNOWN,
     datatype: String = "xsd:string",
+    modifiable: Boolean = true,
     clock: Clock = Clock.systemDefaultZone()
 ): Neo4jLiteral = Neo4jLiteral().apply {
     this.id = id
@@ -19,4 +20,5 @@ fun createNeo4jLiteral(
     this.datatype = datatype
     this.created_at = createdAt ?: OffsetDateTime.now(clock)
     this.created_by = createdBy
+    this.modifiable = modifiable
 }

@@ -12,7 +12,8 @@ interface CreateLiteralUseCase {
         val id: ThingId? = null,
         val contributorId: ContributorId,
         val label: String,
-        val datatype: String = Literals.XSD.STRING.prefixedUri
+        val datatype: String = Literals.XSD.STRING.prefixedUri,
+        val modifiable: Boolean = true
     )
 }
 

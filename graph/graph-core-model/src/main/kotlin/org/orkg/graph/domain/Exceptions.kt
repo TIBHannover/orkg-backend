@@ -96,6 +96,9 @@ class ClassNotModifiable(id: ThingId) :
 class PredicateNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Predicate "$id" is not modifiable.""")
 
+class LiteralNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Literal "$id" is not modifiable.""")
+
 class InvalidClassCollection(ids: Iterable<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The collection of classes "$ids" contains one or more invalid classes.""")
 

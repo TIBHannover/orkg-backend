@@ -177,6 +177,7 @@ class SpringDataNeo4jStatementAdapter(
                     .where(
                         literalOf<String>("Literal").`in`(labels(node))
                             .and(node.relationshipBetween(anyNode()).asCondition().not())
+                            .and(o.property("modifiable").eq(literalOf<Boolean>(true)))
                     ).with(o.property("id").`as`(l), o.`as`(o))
                     .delete(o)
                     .returning(l)

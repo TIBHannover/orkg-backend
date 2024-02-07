@@ -61,7 +61,8 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
             label = random(),
             datatype = random(),
             createdAt = random(),
-            createdBy = random()
+            createdBy = random(),
+            modifiable = true
         )
     }
     // register fabricator for Resource because _class needs to be set correctly

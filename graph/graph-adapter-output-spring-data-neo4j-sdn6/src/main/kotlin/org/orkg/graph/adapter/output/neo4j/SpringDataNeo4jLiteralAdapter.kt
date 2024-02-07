@@ -133,5 +133,6 @@ class SpringDataNeo4jLiteralAdapter(
             datatype = this@toNeo4jLiteral.datatype
             created_at = this@toNeo4jLiteral.createdAt
             created_by = this@toNeo4jLiteral.createdBy
+            modifiable = this@toNeo4jLiteral.modifiable
         }
 }

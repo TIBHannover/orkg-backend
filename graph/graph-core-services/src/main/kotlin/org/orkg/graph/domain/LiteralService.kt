@@ -38,6 +38,7 @@ class LiteralService(
             datatype = command.datatype,
             createdBy = command.contributorId,
             createdAt = OffsetDateTime.now(clock),
+            modifiable = command.modifiable
         )
         repository.save(literal)
         return id
@@ -64,6 +65,9 @@ class LiteralService(
         }
         // already checked by service
         var found = repository.findById(literal.id).get()
+
+        if (!found.modifiable)
+            throw LiteralNotModifiable(found.id)
 
         // update all the properties
         found = found.copy(label = literal.label)

@@ -8,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.graph.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
 import org.orkg.graph.domain.ClassNotModifiable
+import org.orkg.graph.domain.LiteralNotModifiable
 import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.testing.FixedClockConfig
@@ -85,6 +86,21 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun literalNotModifiable() {
+        val id = ThingId("R123")
+
+        get("/literal-not-modifiable")
+            .param("id", id.value)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/literal-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Literal "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -101,6 +117,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/predicate-not-modifiable")
         fun predicateNotModifiable(@RequestParam id: ThingId) {
             throw PredicateNotModifiable(id)
+        }
+
+        @GetMapping("/literal-not-modifiable")
+        fun literalNotModifiable(@RequestParam id: ThingId) {
+            throw LiteralNotModifiable(id)
         }
     }
 

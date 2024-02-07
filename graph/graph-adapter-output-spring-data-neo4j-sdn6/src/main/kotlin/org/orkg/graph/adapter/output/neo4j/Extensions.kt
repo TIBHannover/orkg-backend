@@ -123,6 +123,7 @@ internal fun Node.toLiteral() = Literal(
     datatype = this["datatype"]?.asString() ?: "xsd:string",
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),
+    modifiable = this["modifiable"].asBoolean()
 )
 
 internal fun Node.toThing(): Thing = when {

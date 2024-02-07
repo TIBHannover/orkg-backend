@@ -10,4 +10,5 @@ data class Literal(
     val datatype: String = "xsd:string",
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.UNKNOWN,
+    val modifiable: Boolean = true
 ) : Thing

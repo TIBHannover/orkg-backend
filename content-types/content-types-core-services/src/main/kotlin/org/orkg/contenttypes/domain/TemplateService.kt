@@ -7,6 +7,7 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
+import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.TemplatePropertyState
@@ -80,6 +81,7 @@ class TemplateService(
 
     override fun create(command: CreateTemplateCommand): ThingId {
         val steps = listOf(
+            LabelValidator { it.label },
             TemplateTargetClassValidator(classRepository, statementRepository),
             TemplateRelationsValidator(resourceRepository, predicateRepository),
             TemplatePropertiesValidator(predicateRepository, classRepository),

@@ -18,6 +18,7 @@ import org.orkg.contenttypes.domain.InvalidRegexPattern
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
 import org.orkg.graph.domain.ClassNotFound
+import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
@@ -133,5 +134,11 @@ class TemplatePropertyValidatorUnitTest {
 
         verify(exactly = 1) { predicateRepository.findById(property.path) }
         verify(exactly = 1) { classRepository.findById(property.`class`) }
+    }
+
+    @Test
+    fun `Given a template property definition, when label is invalid, it throws an exception`() {
+        val property = dummyCreateResourceTemplatePropertyCommand().copy(label = "\n")
+        assertThrows<InvalidLabel> { templatePropertyValidator.validate(property) }
     }
 }

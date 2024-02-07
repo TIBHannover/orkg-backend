@@ -127,7 +127,7 @@ class ResourceService(
         }
 
         // update all the properties
-        if (command.label != null) found = found.copy(label = command.label!!)
+        if (command.label != null) found = found.copy(label = Label.ofOrNull(command.label!!)?.value ?: throw InvalidLabel())
         command.classes?.let {
             found = found.copy(classes = validateClasses(it))
         }

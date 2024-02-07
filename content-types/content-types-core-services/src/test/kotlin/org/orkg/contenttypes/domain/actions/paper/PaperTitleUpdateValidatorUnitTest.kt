@@ -15,6 +15,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.PaperAlreadyExists
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
+import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.pageOf
@@ -69,5 +70,13 @@ class PaperTitleUpdateValidatorUnitTest {
         assertThrows<PaperAlreadyExists> { paperTitleUpdateValidator(command, state) }.message shouldBe expected.message
 
         verify(exactly = 1) { resourceService.findAllPapersByTitle(command.title) }
+    }
+
+    @Test
+    fun `Given a paper update command, when paper label is invalid, it throws an exception`() {
+        val command = dummyUpdatePaperCommand().copy(title = "\n")
+        val state = UpdatePaperState()
+
+        assertThrows<InvalidLabel> { paperTitleUpdateValidator(command, state) }
     }
 }

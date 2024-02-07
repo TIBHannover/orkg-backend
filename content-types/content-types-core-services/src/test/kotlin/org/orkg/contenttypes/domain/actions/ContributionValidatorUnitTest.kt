@@ -18,6 +18,7 @@ import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.PredicateDefinition
+import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.output.ThingRepository
@@ -246,6 +247,28 @@ class ContributionValidatorUnitTest {
                     Predicates.hasEvaluation.value to Either.right(createPredicate(Predicates.hasEvaluation))
                 ),
                 destination = mutableSetOf()
+            )
+        }
+    }
+
+    @Test
+    fun `Given paper contents, when contribution has an invalid label, it throws an exception`() {
+        val contents = CreatePaperUseCase.CreateCommand.PaperContents(
+            contributions = listOf(
+                ContributionDefinition(
+                    label = "\n",
+                    statements = mapOf("P32" to listOf(ContributionDefinition.StatementObjectDefinition("R3003")))
+                )
+            )
+        )
+
+        assertThrows<InvalidLabel> {
+            contributionValidator.validate(
+                bakedStatements = mutableSetOf(),
+                validatedIds = mutableMapOf(),
+                tempIds = emptySet(),
+                thingDefinitions = contents,
+                contributionDefinitions = contents.contributions
             )
         }
     }

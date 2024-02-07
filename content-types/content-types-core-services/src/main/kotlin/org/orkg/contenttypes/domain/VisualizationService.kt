@@ -6,6 +6,7 @@ import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateVisualizationCommand
+import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.VisualizationState
@@ -82,6 +83,7 @@ class VisualizationService(
 
     override fun create(command: CreateVisualizationCommand): ThingId {
         val steps = listOf(
+            LabelValidator { it.title },
             ObservatoryValidator(observatoryRepository) { it.observatories },
             OrganizationValidator(organizationRepository) { it.organizations },
             VisualizationAuthorValidator(resourceRepository, statementRepository),

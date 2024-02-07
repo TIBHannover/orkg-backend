@@ -412,4 +412,22 @@ class ResourceServiceUnitTests {
 
         verify(exactly = 1) { repository.findById(resource.id) }
     }
+
+    @Test
+    fun `Given a resource update command, when it contains an invalid label, it throws an exception`() {
+        val resource = createResource()
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+
+        assertThrows<InvalidLabel> {
+            service.update(
+                UpdateResourceUseCase.UpdateCommand(
+                    id = resource.id,
+                    label = "\n"
+                )
+            )
+        }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+    }
 }

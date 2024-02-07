@@ -14,6 +14,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.PaperAlreadyExists
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.pageOf
@@ -68,5 +69,13 @@ class PaperTitleCreateValidatorUnitTest {
         assertThrows<PaperAlreadyExists> { paperTitleCreateValidator(command, state) }.message shouldBe expected.message
 
         verify(exactly = 1) { resourceService.findAllPapersByTitle(command.title) }
+    }
+
+    @Test
+    fun `Given a paper create command, when paper label is invalid, it throws an exception`() {
+        val command = dummyCreatePaperCommand().copy(title = "\n")
+        val state = CreatePaperState()
+
+        assertThrows<InvalidLabel> { paperTitleCreateValidator(command, state) }
     }
 }

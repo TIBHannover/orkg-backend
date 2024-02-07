@@ -8,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
+import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
@@ -143,6 +144,7 @@ class ComparisonService(
 
     override fun create(command: CreateComparisonCommand): ThingId {
         val steps = listOf(
+            LabelValidator { it.title },
             ComparisonContributionValidator(resourceRepository),
             ResearchFieldValidator(resourceRepository) { it.researchFields },
             ObservatoryValidator(observatoryRepository) { it.observatories },

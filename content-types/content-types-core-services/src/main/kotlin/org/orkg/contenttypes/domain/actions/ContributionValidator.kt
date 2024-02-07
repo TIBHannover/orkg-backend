@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.actions
 
+import dev.forkhandles.values.ofOrNull
 import org.orkg.common.Either
 import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.InvalidStatementSubject
@@ -9,6 +10,8 @@ import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.ContributionDefinition.StatementObjectDefinition
 import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Thing
@@ -25,6 +28,7 @@ abstract class ContributionValidator(
         contributionDefinitions: List<ContributionDefinition>
     ) {
         contributionDefinitions.forEachIndexed { index, contribution ->
+            Label.ofOrNull(contribution.label) ?: throw InvalidLabel()
             if (contribution.statements.isEmpty()) {
                 if (contributionDefinitions.size == 1) {
                     throw EmptyContribution()

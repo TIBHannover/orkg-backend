@@ -279,7 +279,7 @@ IDs always start with "P", followed by a number.
 
 A `GET` request lists all predicates:
 
-operation::predicate-controller-test-index[snippets='request-parameters,curl-request,http-response']
+operation::predicate-controller-integration-test-index[snippets='request-parameters,curl-request,http-response']
 
 TIP: {pagination_note}
 
@@ -305,21 +305,21 @@ A `PUT` request updates a predicate with a new given label.
 The response will be `200 OK` when successful.
 The created predicate is returned in the body for convenience.
 
-operation::predicate-controller-test-edit[snippets='curl-request,http-response']
+operation::predicate-controller-integration-test-edit[snippets='curl-request,http-response']
 
 [[predicates-fetch]]
 === Fetching a predicate
 
 A `GET` request provides information about a predicate.
 
-operation::predicate-controller-test-fetch[snippets='curl-request,http-response']
+operation::predicate-controller-integration-test-fetch[snippets='curl-request,http-response']
 
 [[predicates-lookup]]
 === Lookup a predicate by label
 
 Predicates can be looked up by label by providing a search fragment.
 
-operation::predicate-controller-test-lookup[snippets='curl-request,http-response']
+operation::predicate-controller-integration-test-lookup[snippets='curl-request,http-response']
 
 
 [[literals]]

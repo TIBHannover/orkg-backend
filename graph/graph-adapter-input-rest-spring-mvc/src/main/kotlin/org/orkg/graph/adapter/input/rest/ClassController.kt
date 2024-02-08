@@ -1,7 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
 import dev.forkhandles.result4k.onFailure
-import dev.forkhandles.values.ofOrNull
 import java.net.URI
 import javax.validation.Valid
 import org.orkg.common.ContributorId
@@ -12,17 +11,14 @@ import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.CannotResetURI
-import org.orkg.graph.domain.ClassAlreadyExists
-import org.orkg.graph.domain.ClassNotAllowed
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ClassNotModifiable
-import org.orkg.graph.domain.DuplicateURI
 import org.orkg.graph.domain.InvalidLabel
-import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.AlreadyInUse
+import org.orkg.graph.input.ClassNotModifiableProblem
 import org.orkg.graph.input.ClassRepresentation
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
@@ -30,7 +26,6 @@ import org.orkg.graph.input.InvalidURI
 import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.input.ClassNotModifiableProblem
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateNotAllowed
 import org.orkg.graph.output.FormattedLabelRepository
@@ -111,29 +106,22 @@ class ClassController(
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(
-        @RequestBody `class`: CreateClassRequest,
+        @RequestBody request: CreateClassRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<ClassRepresentation> {
-        Label.ofOrNull(`class`.label) ?: throw InvalidLabel()
-        if (`class`.id != null && service.findById(`class`.id).isPresent) throw ClassAlreadyExists(`class`.id.value)
-        if (!`class`.hasValidName()) throw ClassNotAllowed(`class`.id!!.value)
-        if (`class`.uri != null) {
-            val found = service.findByURI(`class`.uri)
-            if (found.isPresent) throw DuplicateURI(`class`.uri, found.get().id.toString())
-        }
-
-        val contributorId = currentUser.contributorId()
         val id = service.create(
             CreateClassUseCase.CreateCommand(
-                contributorId = contributorId,
-                id = `class`.id?.value,
-                label = `class`.label,
-                uri = `class`.uri,
+                contributorId = currentUser.contributorId(),
+                id = request.id,
+                label = request.label,
+                uri = request.uri,
             )
         )
-        val location = uriComponentsBuilder.path("api/classes/{id}").buildAndExpand(id).toUri()
-
+        val location = uriComponentsBuilder
+            .path("api/classes/{id}")
+            .buildAndExpand(id)
+            .toUri()
         return created(location).body(service.findById(id).mapToClassRepresentation().get())
     }
 
@@ -187,6 +175,12 @@ class ClassController(
         return ResponseEntity.ok(Unit)
     }
 
+    data class CreateClassRequest(
+        val id: ThingId?,
+        val label: String,
+        val uri: URI?
+    )
+
     data class UpdateRequestBody(
         val label: String? = null,
         val uri: String? = null,
@@ -196,18 +190,4 @@ class ClassController(
         val label: String,
         val uri: URI? = null,
     )
-}
-
-data class CreateClassRequest(
-    val id: ThingId?,
-    val label: String,
-    val uri: URI?
-) {
-    /*
-    Checks if the class has a valid class ID (class name)
-    a valid class name is either null (auto assigned by the system)
-    or a name that is not one of the reserved ones.
-     */
-    fun hasValidName(): Boolean =
-        this.id == null || this.id.value !in listOf("Predicate", "Resource", "Class", "Literal", "List", "Thing")
 }

@@ -72,11 +72,11 @@ class ResourceUsedInStatement(id: ThingId) :
 class PredicateUsedInStatement(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete predicate "$id" because it is used in at least one statement.""")
 
-class ClassNotAllowed(`class`: String) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Class id "$`class`" is not allowed.""")
+class ClassNotAllowed(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Class id "$id" is not allowed.""")
 
-class ClassAlreadyExists(`class`: String) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Class "$`class`" already exists.""")
+class ClassAlreadyExists(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Class "$id" already exists.""")
 
 class ResourceAlreadyExists(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Resource "$id" already exists.""")
@@ -111,7 +111,7 @@ class InvalidClassCollection(ids: Iterable<ThingId>) :
 class ReservedClass(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Class "$id" is reserved and therefor cannot be set.""")
 
-class DuplicateURI(uri: URI, id: String) :
+class DuplicateURI(uri: URI, id: ThingId) :
     PropertyValidationException("uri", """The URI <$uri> is already assigned to class with ID "$id".""")
 
 class InvalidLabel : PropertyValidationException("label", "A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long.")

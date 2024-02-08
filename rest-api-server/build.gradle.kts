@@ -80,6 +80,7 @@ testing {
                 implementation(project(":graph:graph-core-services"))
                 implementation(project(":graph:graph-ports-input"))
                 implementation(project(":graph:graph-ports-output"))
+                implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
                 implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
                 implementation(project(":content-types:content-types-ports-input"))
                 implementation(project(":content-types:content-types-ports-output"))

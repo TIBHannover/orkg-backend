@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.createClass
 import org.orkg.createResource
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateResourceUseCase
@@ -210,7 +211,7 @@ class ResourceServiceIntegrationTest {
 
     @Test
     fun `when several resources of a class exist with the same label, partial search should return all of them`() {
-        val researchProblemClass = classService.create("ResearchProblem").id
+        val researchProblemClass = classService.createClass("ResearchProblem")
         val resources = mutableListOf<Resource>()
         repeat(5) {
             resources += service.create(

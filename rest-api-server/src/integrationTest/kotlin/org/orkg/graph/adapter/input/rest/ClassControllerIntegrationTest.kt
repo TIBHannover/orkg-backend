@@ -11,10 +11,10 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.createClass
 import org.orkg.createResource
+import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.MockUserDetailsService
-import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -79,7 +79,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    classResponseFields()
+                    responseFields(classResponseFields())
                 )
             )
     }
@@ -102,7 +102,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    classResponseFields()
+                    responseFields(classResponseFields())
                 )
             )
     }
@@ -119,94 +119,6 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     classListDetailedResponseFields()
-                )
-            )
-    }
-
-    @Test
-    @TestWithMockUser
-    fun add() {
-        val `class` = mapOf("label" to "foo", "uri" to "http://example.org/bar")
-
-        mockMvc
-            .perform(postRequestWithBody("/api/classes/", `class`))
-            .andExpect(status().isCreated)
-            .andExpect(jsonPath("$.label").value("foo"))
-            .andExpect(jsonPath("$.uri").value("http://example.org/bar"))
-            .andDo(
-                document(
-                    snippet,
-                    requestFields(
-                        fieldWithPath("label").description("The class label"),
-                        fieldWithPath("uri").description("The class URI")
-                    ),
-                    createdResponseHeaders(),
-                    classResponseFields()
-                )
-            )
-    }
-
-    @Test
-    @TestWithMockUser
-    fun addExistingId() {
-        val id = service.createClass(label = "foo")
-        val duplicateClass = mapOf("label" to "bar", "id" to "$id")
-
-        mockMvc
-            .perform(postRequestWithBody("/api/classes/", duplicateClass))
-            .andExpect(status().isBadRequest)
-            .andDo(
-                document(
-                    snippet,
-                    requestFields(
-                        fieldWithPath("id").description("The class id"),
-                        fieldWithPath("label").description("The class label")
-                    )
-                )
-            )
-    }
-
-    @Test
-    @TestWithMockUser
-    fun addExistingURI() {
-        service.createClass(
-            label = "foo",
-            uri = URI.create("http://example.org/in-use")
-        )
-        val duplicateClass = mapOf(
-            "label" to "bar",
-            "uri" to "http://example.org/in-use"
-        )
-
-        mockMvc
-            .perform(postRequestWithBody("/api/classes/", duplicateClass))
-            .andExpect(status().isBadRequest)
-            .andDo(
-                document(
-                    snippet,
-                    requestFields(
-                        fieldWithPath("label").description("The class label"),
-                        fieldWithPath("uri").description("The URI of the class")
-                    )
-                )
-            )
-    }
-
-    @Test
-    @TestWithMockUser
-    fun addReservedId() {
-        val reservedClass = mapOf("label" to "bar", "id" to "Resource")
-
-        mockMvc
-            .perform(postRequestWithBody("/api/classes/", reservedClass))
-            .andExpect(status().isBadRequest)
-            .andDo(
-                document(
-                    snippet,
-                    requestFields(
-                        fieldWithPath("id").description("The class id"),
-                        fieldWithPath("label").description("The class label")
-                    )
                 )
             )
     }
@@ -324,7 +236,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("label").description("The updated class label"),
                         fieldWithPath("uri").ignored()
-                    ), classResponseFields()
+                    ), responseFields(classResponseFields())
                 )
             )
     }
@@ -347,7 +259,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("label").description("The updated class label"),
                         fieldWithPath("uri").ignored()
-                    ), classResponseFields()
+                    ), responseFields(classResponseFields())
                 )
             )
     }
@@ -369,25 +281,6 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
                     snippet,
                     resourceListDetailedResponseFields()
                 )
-            )
-    }
-
-    private fun classResponseFields() =
-        responseFields(classListResponseFields())
-
-    companion object RestDoc {
-        fun classListResponseFields() =
-            listOf(
-                fieldWithPath("id").description("The class ID").optional(),
-                fieldWithPath("label").description("The class label"),
-                fieldWithPath("uri").description("An optional URI to describe the class (RDF)").optional(),
-                fieldWithPath("created_at").description("The class creation datetime"),
-                fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown."),
-                fieldWithPath("description").description("The description of the class, if exists.").optional(),
-                fieldWithPath("_class").optional().ignored(),
-                fieldWithPath("featured").description("Featured Value").optional().ignored(),
-                fieldWithPath("unlisted").description("Unlisted Value").optional().ignored(),
-                fieldWithPath("modifiable").description("Whether this class can be modified."),
             )
     }
 
@@ -418,6 +311,6 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
 
     fun classListDetailedResponseFields(): ResponseFieldsSnippet =
         responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", classListResponseFields()
+            .andWithPrefix("content[].", classResponseFields()
         ).andWithPrefix("")
 }

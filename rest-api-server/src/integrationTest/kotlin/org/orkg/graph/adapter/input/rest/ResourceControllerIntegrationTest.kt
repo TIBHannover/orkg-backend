@@ -174,14 +174,14 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         val oldClass = classService.createClass(label = "class")
         val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
 
-        val newClass = classService.create("clazz")
-        val update = mapOf("classes" to listOf(newClass.id.value))
+        val newClass = classService.createClass("clazz")
+        val update = mapOf("classes" to listOf(newClass))
 
         mockMvc
             .perform(putRequestWithBody("/api/resources/$resource", update))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value("test"))
-            .andExpect(jsonPath("$.classes[0]").value(newClass.id.value))
+            .andExpect(jsonPath("$.classes[0]").value(newClass.value))
             .andDo(
                 document(
                     snippet,

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.InputStream
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreatePredicateUseCase
@@ -120,7 +121,7 @@ class ExampleData(
         //
         // Class
         //
-        classService.create(CreateClassUseCase.CreateCommand(id = "Paper", label = "Paper", uri = null))
+        classService.create(CreateClassUseCase.CreateCommand(id = Classes.paper, label = "Paper", uri = null))
 
         //
         // Resource

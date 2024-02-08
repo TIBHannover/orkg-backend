@@ -4,19 +4,13 @@ import dev.forkhandles.result4k.Result
 import java.net.URI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.graph.domain.Class
 
 interface CreateClassUseCase {
-    fun create(command: CreateClassUseCase.CreateCommand): ThingId
-
-    // legacy methods:
-    fun create(label: String): Class
-    fun create(userId: ContributorId, label: String): Class
-    fun createIfNotExists(id: ThingId, label: String, uri: URI?)
+    fun create(command: CreateCommand): ThingId
 
     data class CreateCommand(
         val label: String,
-        val id: String? = null,
+        val id: ThingId? = null,
         val contributorId: ContributorId? = null,
         val uri: URI? = null,
         val modifiable: Boolean = true
@@ -24,7 +18,7 @@ interface CreateClassUseCase {
 }
 
 interface UpdateClassUseCase {
-    fun replace(id: ThingId, command: UpdateClassUseCase.ReplaceCommand): Result<Unit, ClassUpdateProblem>
+    fun replace(id: ThingId, command: ReplaceCommand): Result<Unit, ClassUpdateProblem>
     fun updateLabel(id: ThingId, newLabel: String): Result<Unit, ClassLabelUpdateProblem>
     fun updateURI(id: ThingId, with: String): Result<Unit, ClassURIUpdateProblem>
 

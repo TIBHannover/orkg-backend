@@ -21,11 +21,11 @@ The class can be retrieved by following the URI in the `Location` header field.
 
 NOTE: The created class is returned in the body for convenience. This might be subject to change.
 
-operation::class-controller-integration-test-add[snippets='request-fields,curl-request,http-response']
+operation::classes-create[snippets='request-fields,curl-request,http-response']
 
 The response body consists of the following fields:
 
-operation::class-controller-integration-test-add[snippets='response-fields']
+operation::classes-create[snippets='response-fields']
 
 [[classes-fetch]]
 === Fetching a class

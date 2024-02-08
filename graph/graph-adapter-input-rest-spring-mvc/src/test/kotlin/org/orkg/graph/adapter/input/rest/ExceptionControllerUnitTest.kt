@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
+import java.net.URI
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.BeforeEach
@@ -7,8 +8,14 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.graph.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
+import org.orkg.graph.domain.ClassAlreadyExists
+import org.orkg.graph.domain.ClassNotAllowed
 import org.orkg.graph.domain.ClassNotModifiable
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.DuplicateURI
+import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.LiteralNotModifiable
+import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.graph.domain.StatementId
@@ -118,6 +125,69 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun invalidLabel() {
+        get("/invalid-label")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("label"))
+            .andExpect(jsonPath("$.errors[0].message").value("""A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."""))
+            .andExpect(jsonPath("$.path").value("/invalid-label"))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun duplicateURI() {
+        val id = ThingId("C123")
+        val uri = "http://example.org/C123"
+
+        get("/duplicate-uri")
+            .param("id", id.value)
+            .param("uri", uri)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("uri"))
+            .andExpect(jsonPath("$.errors[0].message").value("""The URI <$uri> is already assigned to class with ID "$id"."""))
+            .andExpect(jsonPath("$.path").value("/duplicate-uri"))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun classNotAllowed() {
+        val id = Classes.list
+
+        get("/class-not-allowed")
+            .param("id", id.value)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/class-not-allowed"))
+            .andExpect(jsonPath("$.message").value("""Class id "$id" is not allowed."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun classAlreadyExists() {
+        val id = Classes.list
+
+        get("/class-already-exists")
+            .param("id", id.value)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/class-already-exists"))
+            .andExpect(jsonPath("$.message").value("""Class "$id" already exists."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -144,6 +214,26 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/statement-not-modifiable")
         fun statementNotModifiable(@RequestParam id: StatementId) {
             throw StatementNotModifiable(id)
+        }
+
+        @GetMapping("/invalid-label")
+        fun invalidLabel() {
+            throw InvalidLabel()
+        }
+
+        @GetMapping("/duplicate-uri")
+        fun duplicateURI(@RequestParam id: ThingId, @RequestParam uri: URI) {
+            throw DuplicateURI(uri, id)
+        }
+
+        @GetMapping("/class-not-allowed")
+        fun classNotAllowed(@RequestParam id: ThingId) {
+            throw ClassNotAllowed(id)
+        }
+
+        @GetMapping("/class-already-exists")
+        fun classAlreadyExists(@RequestParam id: ThingId) {
+            throw ClassAlreadyExists(id)
         }
     }
 

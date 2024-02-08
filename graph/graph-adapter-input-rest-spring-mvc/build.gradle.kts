@@ -3,6 +3,7 @@
 
 plugins {
     id("org.orkg.gradle.input-adapter-spring-web")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {
@@ -29,6 +30,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)
+
+    testFixturesImplementation(libs.spring.restdocs)
 }
 
 testing {

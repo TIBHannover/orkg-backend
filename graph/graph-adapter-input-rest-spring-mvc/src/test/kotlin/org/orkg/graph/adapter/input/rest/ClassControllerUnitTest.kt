@@ -1,16 +1,16 @@
 package org.orkg.graph.adapter.input.rest
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
 import java.net.URI
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
-import org.junit.jupiter.api.BeforeEach
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -18,6 +18,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.toOptional
@@ -31,21 +32,23 @@ import org.orkg.graph.input.UpdateNotAllowed
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.MockUserId
+import org.orkg.testing.andExpectClass
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.orkg.graph.input.ClassNotFound as ClassNotFoundProblem
 import org.orkg.graph.input.InvalidLabel as InvalidLabelProblem
 
@@ -55,15 +58,7 @@ internal const val INVALID_URI = "invalid\nuri"
 @ContextConfiguration(classes = [ClassController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ClassController::class])
 @DisplayName("Given a Class controller")
-internal class ClassControllerUnitTest {
-
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
-
-    @Autowired
-    private lateinit var context: WebApplicationContext
+internal class ClassControllerUnitTest : RestDocsTest("classes") {
 
     @MockkBean
     private lateinit var classService: ClassUseCases
@@ -87,11 +82,6 @@ internal class ClassControllerUnitTest {
     @Autowired
     private lateinit var clock: Clock
 
-    @BeforeEach
-    fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
-    }
-
     @Nested
     @DisplayName("When a class with a URI exists")
     inner class URIsExist {
@@ -104,29 +94,6 @@ internal class ClassControllerUnitTest {
                 .perform(performGetByURI("http://example.org/exists"))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.uri").value("http://example.org/exists"))
-        }
-
-        @Test
-        @TestWithMockUser
-        @DisplayName("Then creating a new class with the same URI should return `400 Bad Request`")
-        fun postShouldReturnError() {
-            every { classService.findByURI(any()) } returns Optional.of(mockReply())
-
-            val body = mapOf(
-                "label" to "irrelevant",
-                "uri" to "http://example.org/exists"
-            )
-
-            mockMvc
-                .perform(performPost(body))
-                .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.errors.length()").value(1))
-                .andExpect(jsonPath("$.errors[0].field").value("uri"))
-                .andExpect(jsonPath("$.errors[0].message").value("""The URI <http://example.org/exists> is already assigned to class with ID "C1"."""))
-                .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andExpect(jsonPath("$.path").value("/api/classes/"))
         }
     }
 
@@ -147,6 +114,51 @@ internal class ClassControllerUnitTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.path").value("/api/classes/"))
         }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a class is created, when service succeeds, then status is 200 OK and class is returned")
+    fun create() {
+        val id = ThingId("C123")
+        val uri = URI.create("http://example.org/bar")
+        val label = "foo"
+        val request = mapOf("id" to id, "label" to label, "uri" to uri)
+
+        every { classService.create(any()) } returns id
+        every { classService.findById(id) } returns createClass(id = id, label = label, uri = uri).toOptional()
+
+        post("/api/classes/", request)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/classes/$id")))
+            .andExpectClass()
+            .andExpect(jsonPath("$.id").value(id.value))
+            .andExpect(jsonPath("$.label").value(label))
+            .andExpect(jsonPath("$.uri").value(uri.toString()))
+            .andDo(
+                documentationHandler.document(
+                    requestFields(
+                        fieldWithPath("id").description("The class id (optional)"),
+                        fieldWithPath("label").description("The class label"),
+                        fieldWithPath("uri").description("The class URI")
+                    ),
+                    responseFields(classResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            classService.create(withArg {
+                it.id shouldBe id
+                it.label shouldBe label
+                it.uri shouldBe uri
+                it.contributorId.toString() shouldBe MockUserId.USER
+            })
+        }
+        verify(exactly = 1) { classService.findById(id) }
     }
 
     @Test
@@ -392,12 +404,6 @@ internal class ClassControllerUnitTest {
         get("/api/classes/?uri=$uri")
             .contentType(MediaType.APPLICATION_JSON)
             .characterEncoding("UTF-8")
-
-    private fun performPost(body: Map<String, String>) =
-        post("/api/classes/")
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding("UTF-8")
-            .content(objectMapper.writeValueAsString(body))
 
     private fun mockReply() = Class(
         id = ThingId("C1"),

@@ -14,13 +14,13 @@ import org.orkg.common.ThingId
 import org.orkg.graph.input.AlreadyInUse
 import org.orkg.graph.input.ClassLabelUpdateProblem
 import org.orkg.graph.input.ClassNotFound
+import org.orkg.graph.input.ClassNotModifiableProblem
 import org.orkg.graph.input.ClassURIUpdateProblem
 import org.orkg.graph.input.ClassUpdateProblem
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.InvalidLabel
 import org.orkg.graph.input.InvalidURI
-import org.orkg.graph.input.ClassNotModifiableProblem
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateNotAllowed
 import org.orkg.graph.output.ClassRepository
@@ -36,11 +36,23 @@ class ClassService(
     private val clock: Clock,
 ) : ClassUseCases {
     override fun create(command: CreateClassUseCase.CreateCommand): ThingId {
-        val id = if (command.id != null) ThingId(command.id!!) else repository.nextIdentity()
+        val label = Label.ofOrNull(command.label)?.value ?: throw InvalidLabel()
+        command.uri?.let { uri ->
+            repository.findByUri(uri.toString()).ifPresent {
+                throw DuplicateURI(uri, it.id)
+            }
+        }
+        val id = command.id?.also { id ->
+            if (id in reservedClassIds) {
+                throw ClassNotAllowed(id)
+            }
+            repository.findById(id).ifPresent {
+                throw ClassAlreadyExists(id)
+            }
+        } ?: repository.nextIdentity()
         val newClass = Class(
             id = id,
-            label = Label.ofOrNull(command.label)?.value
-                ?: throw IllegalArgumentException("Invalid label: ${command.label}"),
+            label = label,
             uri = command.uri,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId ?: ContributorId.UNKNOWN,
@@ -48,18 +60,6 @@ class ClassService(
         )
         repository.save(newClass)
         return newClass.id
-    }
-
-    override fun create(label: String): Class = create(ContributorId.UNKNOWN, label)
-
-    override fun create(userId: ContributorId, label: String): Class {
-        val newClassId = create(
-            CreateClassUseCase.CreateCommand(
-                label = label,
-                contributorId = userId,
-            )
-        )
-        return repository.findById(newClassId).get()
     }
 
     @Transactional(readOnly = true)
@@ -113,43 +113,6 @@ class ClassService(
 
     override fun findByURI(uri: URI): Optional<Class> =
         repository.findByUri(uri.toString())
-
-    override fun createIfNotExists(id: ThingId, label: String, uri: URI?) {
-        // Checking if URI is null
-        if (uri == null) {
-            // check only for ID
-            val found = repository.findById(id)
-            if (found.isEmpty) {
-                repository.save(
-                    Class(
-                        id = id,
-                        label = label,
-                        uri = uri,
-                        createdAt = OffsetDateTime.now(clock),
-                        createdBy = ContributorId.UNKNOWN
-                    )
-                )
-            }
-        } else {
-            val oClassByURI = repository.findByUri(uri.toString())
-            val oClassById = repository.findById(id)
-            when {
-                oClassById.isEmpty && oClassByURI.isEmpty -> repository.save(
-                    Class(
-                        id = id,
-                        label = label,
-                        uri = uri,
-                        createdAt = OffsetDateTime.now(clock),
-                        createdBy = ContributorId.UNKNOWN
-                    )
-                )
-                // Throwing an exception if IDs are different
-                oClassById.isPresent && oClassByURI.isPresent && oClassById.get().id != oClassByURI.get().id -> throw Exception(
-                    "ID mismatch for class ID: ${oClassById.get().id}"
-                )
-            }
-        }
-    }
 
     private fun String.toURIOrNull(): URI? = try {
         URI(this)

@@ -39,7 +39,7 @@ fun CreateClassUseCase.createClass(
     uri: URI? = null,
     modifiable: Boolean = true
 ): ThingId =
-    create(CreateClassUseCase.CreateCommand(label, id, contributorId, uri, modifiable))
+    create(CreateClassUseCase.CreateCommand(label, id?.let(::ThingId), contributorId, uri, modifiable))
 
 // Predicates
 

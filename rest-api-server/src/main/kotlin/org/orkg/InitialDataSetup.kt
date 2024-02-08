@@ -2,9 +2,11 @@ package org.orkg
 
 import java.io.FileReader
 import java.net.URI
+import java.util.*
 import javax.validation.constraints.NotBlank
 import org.orkg.common.ThingId
 import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.PredicateUseCases
 import org.slf4j.LoggerFactory
@@ -51,14 +53,23 @@ class DataInitializer(
      * Create Classes
      */
     private fun createClasses(classList: List<CreateClassCommand>) {
-        classList.forEach { createClassCommand ->
-            val classURI: URI? = createClassCommand.uri?.let { URI.create(it) }
+        classList.forEach { command ->
+            val id = ThingId(command.id)
+            val classByURI = command.uri?.let { classService.findByURI(URI.create(it)) } ?: Optional.empty()
+            val classById = classService.findById(id)
 
-            classService.createIfNotExists(
-                ThingId(createClassCommand.id),
-                createClassCommand.label,
-                classURI
-            )
+            if (classById.isPresent && classByURI.isPresent && classById.get().id != classByURI.get().id)
+                throw Exception("ID mismatch for class ID: ${classById.get().id}")
+
+            if (classById.isEmpty) {
+                classService.create(
+                    CreateClassUseCase.CreateCommand(
+                        id = id,
+                        label = command.label,
+                        uri = command.uri?.let(URI::create)
+                    )
+                )
+            }
         }
     }
 

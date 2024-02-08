@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain
 
+import dev.forkhandles.values.ofOrNull
 import java.net.URI
 import java.util.*
 import org.orkg.common.ContributorId
@@ -31,6 +32,8 @@ import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -160,6 +163,7 @@ class ComparisonService(
     }
 
     override fun createComparisonRelatedResource(command: CreateComparisonRelatedResourceCommand): ThingId {
+        Label.ofOrNull(command.label) ?: throw InvalidLabel()
         resourceRepository.findById(command.comparisonId)
             .filter { Classes.comparison in it.classes }
             .orElseThrow { ComparisonNotFound(command.comparisonId) }
@@ -213,6 +217,7 @@ class ComparisonService(
     }
 
     override fun createComparisonRelatedFigure(command: CreateComparisonRelatedFigureCommand): ThingId {
+        Label.ofOrNull(command.label) ?: throw InvalidLabel()
         resourceRepository.findById(command.comparisonId)
             .filter { Classes.comparison in it.classes }
             .orElseThrow { ComparisonNotFound(command.comparisonId) }

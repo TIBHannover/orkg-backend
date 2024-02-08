@@ -31,6 +31,7 @@ import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
@@ -566,6 +567,19 @@ class ComparisonServiceUnitTests {
     }
 
     @Test
+    fun `Given a comparison related resource create command, when label is invalid, it throws an exception`() {
+        val command = CreateComparisonUseCase.CreateComparisonRelatedResourceCommand(
+            comparisonId = ThingId("R123"),
+            contributorId = ContributorId(UUID.randomUUID()),
+            label = "\n",
+            image = null,
+            url = null,
+            description = null
+        )
+        shouldThrow<InvalidLabel> { service.createComparisonRelatedResource(command) }
+    }
+
+    @Test
     fun `Given a comparison related resource create command, when comparison does not exist, it throws an exception`() {
         val command = CreateComparisonUseCase.CreateComparisonRelatedResourceCommand(
             comparisonId = ThingId("R123"),
@@ -684,6 +698,18 @@ class ComparisonServiceUnitTests {
                 `object` = description.id
             )
         }
+    }
+
+    @Test
+    fun `Given a comparison related figure create command, when label is invalid, it throws an exception`() {
+        val command = CreateComparisonUseCase.CreateComparisonRelatedFigureCommand(
+            comparisonId = ThingId("R123"),
+            contributorId = ContributorId(UUID.randomUUID()),
+            label = "\n",
+            image = null,
+            description = null
+        )
+        shouldThrow<InvalidLabel> { service.createComparisonRelatedFigure(command) }
     }
 
     @Test

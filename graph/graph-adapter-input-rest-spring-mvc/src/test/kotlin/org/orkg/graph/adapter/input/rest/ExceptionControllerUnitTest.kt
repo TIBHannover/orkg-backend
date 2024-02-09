@@ -34,7 +34,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.context.WebApplicationContext
@@ -57,12 +56,15 @@ internal class ExceptionControllerUnitTest {
     fun resourceNotModifiable() {
         val id = ThingId("R123")
 
-        get("/resourceNotModifiable/{id}", id)
+        get("/resource-not-modifiable")
+            .param("id", id.value)
             .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/resourceNotModifiable/$id"))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/resource-not-modifiable"))
             .andExpect(jsonPath("$.message").value("""Resource "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
     @Test
@@ -191,8 +193,8 @@ internal class ExceptionControllerUnitTest {
     @TestComponent
     @RestController
     internal class FakeExceptionController {
-        @GetMapping("/resourceNotModifiable/{id}")
-        fun resourceNotModifiable(@PathVariable id: ThingId) {
+        @GetMapping("/resource-not-modifiable")
+        fun resourceNotModifiable(@RequestParam id: ThingId) {
             throw ResourceNotModifiable(id)
         }
 

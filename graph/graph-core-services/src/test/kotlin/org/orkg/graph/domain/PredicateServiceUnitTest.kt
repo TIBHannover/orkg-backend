@@ -32,7 +32,7 @@ class PredicateServiceUnitTest {
         every { repository.nextIdentity() } returns mockPredicateId
         every { repository.save(any()) } returns Unit
 
-        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", id = null))
+        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", id = null)) shouldBe mockPredicateId
 
         verify(exactly = 1) { repository.nextIdentity() }
     }
@@ -43,7 +43,7 @@ class PredicateServiceUnitTest {
         every { repository.findById(mockPredicateId) } returns Optional.empty()
         every { repository.save(any()) } returns Unit
 
-        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", id = mockPredicateId))
+        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", id = mockPredicateId)) shouldBe mockPredicateId
 
         verify(exactly = 1) { repository.findById(mockPredicateId) }
         verify(exactly = 1) {
@@ -85,7 +85,7 @@ class PredicateServiceUnitTest {
         every { repository.nextIdentity() } returns mockPredicateId
         every { repository.save(any()) } returns Unit
 
-        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant"))
+        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant")) shouldBe mockPredicateId
 
         verify(exactly = 1) {
             repository.save(
@@ -106,7 +106,12 @@ class PredicateServiceUnitTest {
         every { repository.save(any()) } returns Unit
 
         val randomContributorId = ContributorId(UUID.randomUUID())
-        service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", contributorId = randomContributorId))
+        service.create(
+            CreatePredicateUseCase.CreateCommand(
+                label = "irrelevant",
+                contributorId = randomContributorId
+            )
+        ) shouldBe mockPredicateId
 
         verify(exactly = 1) {
             repository.save(

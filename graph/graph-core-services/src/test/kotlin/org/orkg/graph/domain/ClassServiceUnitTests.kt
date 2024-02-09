@@ -2,6 +2,7 @@ package org.orkg.graph.domain
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
+import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -51,7 +52,7 @@ class ClassServiceUnitTests {
         every { repository.nextIdentity() } returns mockClassId
         every { repository.save(any()) } returns Unit
 
-        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = null))
+        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = null)) shouldBe mockClassId
 
         verify(exactly = 1) { repository.nextIdentity() }
         verify(exactly = 1) { repository.save(any()) }
@@ -63,7 +64,7 @@ class ClassServiceUnitTests {
         every { repository.findById(mockClassId) } returns Optional.empty()
         every { repository.save(any()) } returns Unit
 
-        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = mockClassId))
+        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = mockClassId)) shouldBe mockClassId
 
         verify(exactly = 1) { repository.findById(mockClassId) }
         verify(exactly = 1) { repository.save(any()) }
@@ -113,7 +114,7 @@ class ClassServiceUnitTests {
         every { repository.nextIdentity() } returns mockClassId
         every { repository.save(any()) } returns Unit
 
-        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant"))
+        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant")) shouldBe mockClassId
 
         verify(exactly = 1) {
             repository.save(

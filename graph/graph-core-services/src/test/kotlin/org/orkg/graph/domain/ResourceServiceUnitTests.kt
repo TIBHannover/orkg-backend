@@ -80,7 +80,7 @@ class ResourceServiceUnitTests {
         every { classRepository.existsAll(command.classes) } returns true
         every { repository.save(any()) } just runs
 
-        service.create(command)
+        service.create(command) shouldBe id
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) { classRepository.existsAll(command.classes) }
@@ -112,7 +112,7 @@ class ResourceServiceUnitTests {
         every { repository.nextIdentity() } returns id
         every { repository.save(any()) } just runs
 
-        service.create(command)
+        service.create(command) shouldBe id
 
         verify(exactly = 1) { repository.nextIdentity() }
         verify(exactly = 1) {

@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Added `modifiable` field for classes, predicates, literals, statements and lists (read-only).
+  (See: [!777](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/777),
+        [!786](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/786),
+        [!787](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/787),
+        [!788](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/788),
+        [!789](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/789))
+- Added visibility filter parameter to `/api/classes/{id}/resources` endpoint.
+  (See: [!790](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/790))
+
+### Changed
+- The venue of papers and comparison responses now contains an additional id of the resource.
+  (See: [!772](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/772))
+- Multiple headers are now exposed to browser scripts.
+  (See: [!774](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/774))
+- It is again possible to assign research field R11 (Science) to content-types.
+  (See [!781](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/781))
+
+### Fixed
+- The author list of papers and comparisons is no longer being deleted when updating with `null` author list.
+  (See [!773](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/773))
+- Fixed missing label validation for content-type endpoints.
+  (See: [!776](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/776),
+        [!780](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/780),
+        [!800](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/800))
 
 ## [0.46.0] - 2024-01-29
 ### Added

@@ -43,6 +43,7 @@ data class PaperRepresentation(
     val createdBy: ContributorId,
     val verified: Boolean,
     val visibility: Visibility,
+    val modifiable: Boolean,
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?

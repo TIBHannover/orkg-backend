@@ -23,5 +23,6 @@ data class Paper(
     val createdBy: ContributorId,
     val verified: Boolean,
     val visibility: Visibility,
+    val modifiable: Boolean,
     val unlistedBy: ContributorId? = null
 )

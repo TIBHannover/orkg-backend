@@ -21,7 +21,7 @@ import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.actions.contribution.ContributionContentsCreator
 import org.orkg.contenttypes.domain.actions.contribution.ContributionContentsValidator
-import org.orkg.contenttypes.domain.actions.contribution.ContributionPaperExistenceValidator
+import org.orkg.contenttypes.domain.actions.contribution.ContributionPaperValidator
 import org.orkg.contenttypes.domain.actions.contribution.ContributionTempIdValidator
 import org.orkg.contenttypes.domain.actions.contribution.ContributionThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.execute
@@ -36,6 +36,7 @@ import org.orkg.contenttypes.domain.actions.paper.PaperIdentifierCreateValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperIdentifierCreator
 import org.orkg.contenttypes.domain.actions.paper.PaperIdentifierUpdateValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperIdentifierUpdater
+import org.orkg.contenttypes.domain.actions.paper.PaperModifiableValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperPublicationInfoCreator
 import org.orkg.contenttypes.domain.actions.paper.PaperPublicationInfoUpdater
 import org.orkg.contenttypes.domain.actions.paper.PaperResearchFieldCreator
@@ -150,7 +151,7 @@ class PaperService(
     override fun createContribution(command: CreateContributionCommand): ThingId {
         val steps = listOf(
             ContributionTempIdValidator(),
-            ContributionPaperExistenceValidator(resourceRepository),
+            ContributionPaperValidator(resourceRepository),
             ContributionThingDefinitionValidator(thingRepository),
             ContributionContentsValidator(thingRepository),
             ContributionContentsCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
@@ -161,6 +162,7 @@ class PaperService(
     override fun update(command: UpdatePaperCommand) {
         val steps = listOf(
             PaperExistenceValidator(this),
+            PaperModifiableValidator(),
             PublicationInfoValidator { it.publicationInfo },
             ResearchFieldValidator(resourceRepository) { it.researchFields },
             ObservatoryValidator(observatoryRepository) { it.observatories },
@@ -235,6 +237,7 @@ class PaperService(
             createdBy = createdBy,
             verified = verified ?: false,
             visibility = visibility,
+            modifiable = modifiable,
             unlistedBy = unlistedBy
         )
     }

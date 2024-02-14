@@ -25,6 +25,9 @@ class VisualizationNotFound(id: ThingId) :
 class TemplateNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Template "$id" not found.""")
 
+class PaperNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Paper "$id" is not modifiable.""")
+
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")
 

@@ -56,6 +56,7 @@ fun ResultActions.andExpectPaper(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
     .andExpect(jsonPath("$path.verified", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.modifiable", `is`(notNullValue())))
 
 fun ResultActions.andExpectResource(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))

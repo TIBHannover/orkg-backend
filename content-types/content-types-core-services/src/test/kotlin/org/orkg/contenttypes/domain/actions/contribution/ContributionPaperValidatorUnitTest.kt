@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.PaperNotFound
+import org.orkg.contenttypes.domain.PaperNotModifiable
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateContributionCommand
 import org.orkg.graph.domain.Classes
@@ -21,12 +22,12 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-class ContributionPaperExistenceValidatorUnitTest {
+class ContributionPaperValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val resourceService: ResourceUseCases = mockk()
 
-    private val contributionExistenceValidator = ContributionPaperExistenceValidator(
+    private val contributionPaperValidator = ContributionPaperValidator(
         resourceRepository = resourceRepository
     )
 
@@ -48,7 +49,7 @@ class ContributionPaperExistenceValidatorUnitTest {
 
         every { resourceRepository.findPaperById(command.paperId) } returns Optional.of(paper)
 
-        val result = contributionExistenceValidator(command, state)
+        val result = contributionPaperValidator(command, state)
 
         result.asClue {
             it.tempIds.size shouldBe 0
@@ -67,7 +68,20 @@ class ContributionPaperExistenceValidatorUnitTest {
 
         every { resourceRepository.findPaperById(command.paperId) } returns Optional.empty()
 
-        assertThrows<PaperNotFound> { contributionExistenceValidator(command, state) }
+        assertThrows<PaperNotFound> { contributionPaperValidator(command, state) }
+
+        verify(exactly = 1) { resourceRepository.findPaperById(command.paperId) }
+    }
+
+    @Test
+    fun `Given a contribution create command, when paper is not modifiable, it throws an exception`() {
+        val command = dummyCreateContributionCommand()
+        val state = ContributionState()
+        val paper = createResource(id = command.paperId, classes = setOf(Classes.paper), modifiable = false)
+
+        every { resourceRepository.findPaperById(command.paperId) } returns Optional.of(paper)
+
+        assertThrows<PaperNotModifiable> { contributionPaperValidator(command, state) }
 
         verify(exactly = 1) { resourceRepository.findPaperById(command.paperId) }
     }

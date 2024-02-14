@@ -73,5 +73,6 @@ fun createDummyPaper() = Paper(
     createdAt = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     visibility = Visibility.DEFAULT,
-    verified = false
+    verified = false,
+    modifiable = true
 )

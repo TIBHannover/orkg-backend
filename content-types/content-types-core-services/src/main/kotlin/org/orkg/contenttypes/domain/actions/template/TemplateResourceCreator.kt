@@ -10,7 +10,7 @@ class TemplateResourceCreator(
     private val resourceService: ResourceUseCases
 ) : TemplateAction {
     override fun invoke(command: CreateTemplateCommand, state: State): State {
-        val templateId = resourceService.create(
+        val templateId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
                 label = command.label,
                 classes = setOf(Classes.nodeShape),

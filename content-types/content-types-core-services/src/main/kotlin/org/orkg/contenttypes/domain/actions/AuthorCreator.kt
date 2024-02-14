@@ -64,7 +64,7 @@ abstract class AuthorCreator(
         )
 
     private fun createResourceAuthor(author: Author, contributorId: ContributorId): ThingId {
-        val authorId = resourceService.create(
+        val authorId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
                 label = author.name,
                 classes = setOf(Classes.author),

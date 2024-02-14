@@ -86,7 +86,7 @@ abstract class PublicationInfoCreator(
             includeClasses = setOf(Classes.venue),
             label = SearchString.of(publishedIn, exactMatch = true),
             pageable = PageRequests.SINGLE
-        ).content.singleOrNull()?.id ?: resourceService.create(
+        ).content.singleOrNull()?.id ?: resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
                 label = publishedIn,
                 classes = setOf(Classes.venue),

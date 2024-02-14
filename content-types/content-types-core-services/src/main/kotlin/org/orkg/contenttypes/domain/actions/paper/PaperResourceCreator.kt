@@ -10,7 +10,7 @@ class PaperResourceCreator(
     private val resourceService: ResourceUseCases
 ) : CreatePaperAction {
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
-        val paperId = resourceService.create(
+        val paperId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
                 label = command.title,
                 classes = setOf(Classes.paper),

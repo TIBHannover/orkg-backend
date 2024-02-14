@@ -56,7 +56,7 @@ class TemplatePropertyValueCreatorUnitTest {
         val orderLiteralId = ThingId("L126")
 
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = command.label,
                     classes = setOf(Classes.propertyShape),
@@ -164,7 +164,7 @@ class TemplatePropertyValueCreatorUnitTest {
         }
 
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = command.label,
                     classes = setOf(Classes.propertyShape),
@@ -280,7 +280,7 @@ class TemplatePropertyValueCreatorUnitTest {
         val orderLiteral = ThingId("L126")
 
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = command.label,
                     classes = setOf(Classes.propertyShape),
@@ -338,7 +338,7 @@ class TemplatePropertyValueCreatorUnitTest {
         }
 
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = command.label,
                     classes = setOf(Classes.propertyShape),
@@ -403,7 +403,7 @@ class TemplatePropertyValueCreatorUnitTest {
         val orderLiteralId = ThingId("L126")
 
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = command.label,
                     classes = setOf(Classes.propertyShape),
@@ -511,7 +511,7 @@ class TemplatePropertyValueCreatorUnitTest {
         }
 
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = command.label,
                     classes = setOf(Classes.propertyShape),
@@ -627,7 +627,7 @@ class TemplatePropertyValueCreatorUnitTest {
         val orderLiteral = ThingId("L126")
 
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = command.label,
                     classes = setOf(Classes.propertyShape),
@@ -685,7 +685,7 @@ class TemplatePropertyValueCreatorUnitTest {
         }
 
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = command.label,
                     classes = setOf(Classes.propertyShape),

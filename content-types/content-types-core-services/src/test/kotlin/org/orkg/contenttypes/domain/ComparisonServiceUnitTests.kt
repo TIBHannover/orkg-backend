@@ -447,7 +447,7 @@ class ComparisonServiceUnitTests {
 
         every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.label,
@@ -508,7 +508,7 @@ class ComparisonServiceUnitTests {
 
         verify(exactly = 1) { resourceRepository.findById(command.comparisonId) }
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.label,
@@ -613,7 +613,7 @@ class ComparisonServiceUnitTests {
 
         every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.label,
@@ -658,7 +658,7 @@ class ComparisonServiceUnitTests {
 
         verify(exactly = 1) { resourceRepository.findById(command.comparisonId) }
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.label,

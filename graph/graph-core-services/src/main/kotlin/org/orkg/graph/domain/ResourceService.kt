@@ -33,15 +33,17 @@ class ResourceService(
     override fun exists(id: ThingId): Boolean = repository.exists(id)
 
     override fun create(command: CreateResourceUseCase.CreateCommand): ThingId {
-        val label = Label.ofOrNull(command.label)?.value ?: throw InvalidLabel()
-        val classes = validateClasses(command.classes)
-        val id = command.id
-            ?.also { id -> repository.findById(id).ifPresent { throw ResourceAlreadyExists(id) } }
-            ?: repository.nextIdentity()
+        Label.ofOrNull(command.label) ?: throw InvalidLabel()
+        validateClasses(command.classes)
+        command.id?.also { id -> repository.findById(id).ifPresent { throw ResourceAlreadyExists(id) } }
+        return createUnsafe(command)
+    }
+
+    override fun createUnsafe(command: CreateResourceUseCase.CreateCommand): ThingId {
         val resource = Resource(
-            id = id,
-            label = label,
-            classes = classes,
+            id = command.id ?: repository.nextIdentity(),
+            label = command.label,
+            classes = command.classes,
             extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId ?: ContributorId.UNKNOWN,
@@ -50,7 +52,7 @@ class ResourceService(
             modifiable = command.modifiable
         )
         repository.save(resource)
-        return id
+        return resource.id
     }
 
     override fun findAll(

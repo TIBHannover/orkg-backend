@@ -66,7 +66,7 @@ class TemplatePropertiesCreatorUnitTest {
 
         // Literal property mocks
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = literalProperty.label,
                     classes = setOf(Classes.propertyShape),
@@ -159,7 +159,7 @@ class TemplatePropertiesCreatorUnitTest {
 
         // Resource property mocks
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceProperty.label,
                     classes = setOf(Classes.propertyShape),
@@ -258,7 +258,7 @@ class TemplatePropertiesCreatorUnitTest {
 
         // Literal property mocks
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = literalProperty.label,
                     classes = setOf(Classes.propertyShape),
@@ -342,7 +342,7 @@ class TemplatePropertiesCreatorUnitTest {
 
         // Resource property mocks
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceProperty.label,
                     classes = setOf(Classes.propertyShape),
@@ -468,7 +468,7 @@ class TemplatePropertiesCreatorUnitTest {
 
         // Literal property mocks
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = literalProperty.label,
                     classes = setOf(Classes.propertyShape),
@@ -520,7 +520,7 @@ class TemplatePropertiesCreatorUnitTest {
 
         // Resource property mocks
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceProperty.label,
                     classes = setOf(Classes.propertyShape),
@@ -578,7 +578,7 @@ class TemplatePropertiesCreatorUnitTest {
 
         // Literal property mocks
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = literalProperty.label,
                     classes = setOf(Classes.propertyShape),
@@ -630,7 +630,7 @@ class TemplatePropertiesCreatorUnitTest {
 
         // Resource property mocks
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceProperty.label,
                     classes = setOf(Classes.propertyShape),

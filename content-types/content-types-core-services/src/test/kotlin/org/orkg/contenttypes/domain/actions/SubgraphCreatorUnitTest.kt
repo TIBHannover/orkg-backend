@@ -89,7 +89,7 @@ class SubgraphCreatorUnitTest {
         )
 
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,
@@ -108,7 +108,7 @@ class SubgraphCreatorUnitTest {
         )
 
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,
@@ -465,7 +465,7 @@ class SubgraphCreatorUnitTest {
         val literal = ThingId("L1")
 
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,
@@ -513,7 +513,7 @@ class SubgraphCreatorUnitTest {
         )
 
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,

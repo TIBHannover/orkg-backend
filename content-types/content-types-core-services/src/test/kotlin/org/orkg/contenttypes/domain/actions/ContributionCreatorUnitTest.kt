@@ -58,7 +58,7 @@ class ContributionCreatorUnitTest {
         val contributionId = ThingId("R456")
 
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution),
@@ -99,7 +99,7 @@ class ContributionCreatorUnitTest {
         result shouldBe listOf(contributionId)
 
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution),

@@ -49,9 +49,9 @@ class TemplatePropertyCreatorUnitTest {
         val maxLiteralId = ThingId("L124")
         val patternLiteralId = ThingId("L125")
         val orderLiteralId = ThingId("L126")
-        
+
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = property.label,
                     classes = setOf(Classes.propertyShape),
@@ -154,7 +154,7 @@ class TemplatePropertyCreatorUnitTest {
         templatePropertyCreator.create(property.contributorId, property.templateId, order, property)
 
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = property.label,
                     classes = setOf(Classes.propertyShape),
@@ -266,7 +266,7 @@ class TemplatePropertyCreatorUnitTest {
         val orderLiteralId = ThingId("L126")
 
         every {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = property.label,
                     classes = setOf(Classes.propertyShape),
@@ -369,7 +369,7 @@ class TemplatePropertyCreatorUnitTest {
         templatePropertyCreator.create(property.contributorId, property.templateId, order, property)
 
         verify(exactly = 1) {
-            resourceService.create(
+            resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = property.label,
                     classes = setOf(Classes.propertyShape),

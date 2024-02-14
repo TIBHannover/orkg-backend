@@ -167,7 +167,7 @@ class ComparisonService(
         resourceRepository.findById(command.comparisonId)
             .filter { Classes.comparison in it.classes }
             .orElseThrow { ComparisonNotFound(command.comparisonId) }
-        val resourceId = resourceService.create(
+        val resourceId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = command.label,
@@ -221,7 +221,7 @@ class ComparisonService(
         resourceRepository.findById(command.comparisonId)
             .filter { Classes.comparison in it.classes }
             .orElseThrow { ComparisonNotFound(command.comparisonId) }
-        val figureId = resourceService.create(
+        val figureId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = command.label,

@@ -696,7 +696,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 pageable = PageRequests.SINGLE
             )
         } returns Page.empty()
-        every { resourceService.create(resourceCreateCommand) } returns venueId
+        every { resourceService.createUnsafe(resourceCreateCommand) } returns venueId
         every {
             statementService.add(
                 userId = command.contributorId,
@@ -723,7 +723,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 pageable = PageRequests.SINGLE
             )
         }
-        verify(exactly = 1) { resourceService.create(resourceCreateCommand) }
+        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
         verify(exactly = 1) {
             statementService.add(
                 userId = command.contributorId,

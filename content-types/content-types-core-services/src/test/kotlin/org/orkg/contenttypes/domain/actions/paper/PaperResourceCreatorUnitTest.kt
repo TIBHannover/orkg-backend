@@ -47,7 +47,7 @@ class PaperResourceCreatorUnitTest {
         )
         val id = ThingId("Paper")
 
-        every { resourceService.create(resourceCreateCommand) } returns id
+        every { resourceService.createUnsafe(resourceCreateCommand) } returns id
 
         val result = paperResourceCreator(command, state)
 
@@ -59,6 +59,6 @@ class PaperResourceCreatorUnitTest {
             it.paperId shouldBe id
         }
 
-        verify(exactly = 1) { resourceService.create(resourceCreateCommand) }
+        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
     }
 }

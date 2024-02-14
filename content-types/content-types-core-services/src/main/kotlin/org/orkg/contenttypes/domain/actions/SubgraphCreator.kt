@@ -51,7 +51,7 @@ class SubgraphCreator(
     ) {
         thingDefinitions.resources.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
-                lookup[it.key] = resourceService.create(
+                lookup[it.key] = resourceService.createUnsafe(
                     CreateResourceUseCase.CreateCommand(
                         label = it.value.label,
                         classes = it.value.classes,

@@ -53,7 +53,7 @@ class ContributionCreator(
     ): List<ThingId> {
         val contributionLookup = mutableMapOf<String, ThingId>()
         val contributions = contributionDefinitions.mapIndexed { index, contribution ->
-            val contributionId = resourceService.create(
+            val contributionId = resourceService.createUnsafe(
                 CreateResourceUseCase.CreateCommand(
                     label = contribution.label,
                     classes = contribution.classes + Classes.contribution,

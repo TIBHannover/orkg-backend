@@ -47,7 +47,7 @@ class ComparisonResourceCreatorUnitTest {
         )
         val id = ThingId("Comparison")
 
-        every { resourceService.create(resourceCreateCommand) } returns id
+        every { resourceService.createUnsafe(resourceCreateCommand) } returns id
 
         val result = comparisonResourceCreator(command, state)
 
@@ -56,6 +56,6 @@ class ComparisonResourceCreatorUnitTest {
             it.comparisonId shouldBe id
         }
 
-        verify(exactly = 1) { resourceService.create(resourceCreateCommand) }
+        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
     }
 }

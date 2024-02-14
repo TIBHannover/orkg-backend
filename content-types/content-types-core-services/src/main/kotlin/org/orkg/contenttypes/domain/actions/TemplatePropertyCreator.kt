@@ -25,7 +25,7 @@ abstract class TemplatePropertyCreator(
         order: Int,
         property: TemplatePropertyDefinition
     ): ThingId {
-        val propertyId = resourceService.create(
+        val propertyId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
                 label = property.label,
                 classes = setOf(Classes.propertyShape),

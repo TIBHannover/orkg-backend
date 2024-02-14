@@ -224,7 +224,7 @@ class AuthorCreatorUnitTest {
         val homepageLiteralId = ThingId("L13254")
         val authorListId = ThingId("R1456")
 
-        every { resourceService.create(resourceCreateCommand) } returns authorId
+        every { resourceService.createUnsafe(resourceCreateCommand) } returns authorId
         every {
             literalService.create(
                 CreateCommand(
@@ -278,7 +278,7 @@ class AuthorCreatorUnitTest {
 
         authorCreator.create(contributorId, listOf(author), subjectId)
 
-        verify(exactly = 1) { resourceService.create(resourceCreateCommand) }
+        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
         verify(exactly = 1) {
             literalService.create(
                 CreateCommand(

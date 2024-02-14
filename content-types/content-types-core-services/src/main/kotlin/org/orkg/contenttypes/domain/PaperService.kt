@@ -15,6 +15,7 @@ import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.PublicationInfoValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
@@ -127,6 +128,7 @@ class PaperService(
     override fun create(command: CreatePaperCommand): ThingId {
         val steps = listOf(
             PaperTempIdValidator(),
+            PublicationInfoValidator { it.publicationInfo },
             PaperTitleCreateValidator(resourceService),
             PaperIdentifierCreateValidator(statementRepository),
             ResearchFieldValidator(resourceRepository) { it.researchFields },
@@ -159,6 +161,7 @@ class PaperService(
     override fun update(command: UpdatePaperCommand) {
         val steps = listOf(
             PaperExistenceValidator(this),
+            PublicationInfoValidator { it.publicationInfo },
             ResearchFieldValidator(resourceRepository) { it.researchFields },
             ObservatoryValidator(observatoryRepository) { it.observatories },
             OrganizationValidator(organizationRepository) { it.organizations },

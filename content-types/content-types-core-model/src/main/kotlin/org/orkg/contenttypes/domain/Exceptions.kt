@@ -105,3 +105,6 @@ class InvalidRegexPattern(pattern: String, cause: Throwable) :
 
 class TemplateClosed(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Template "$id" is closed.""")
+
+class InvalidMonth(month: Int) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid month "$month". Must be in range [1..12].""")

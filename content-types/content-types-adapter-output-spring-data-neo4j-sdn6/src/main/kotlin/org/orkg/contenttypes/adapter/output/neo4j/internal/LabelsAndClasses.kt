@@ -14,8 +14,8 @@ class LabelsAndClasses : LabelAndClassService {
     override val modelPredicate: String = MODEL_PREDICATE
     override val quantityClass: String = QUANTITY_CLASS
     override val quantityPredicate: String = QUANTITY_PREDICATE
-    override val metricClass: String = METRIC_CLASS
-    override val metricPredicate: String = METRIC_PREDICATE
+    override val metricClass: String = QUANTITY_KIND_CLASS
+    override val metricPredicate: String = QUANTITY_KIND_PREDICATE
     override val quantityValueClass: String = QUANTITY_VALUE_CLASS
     override val quantityValuePredicate: String =
         QUANTITY_VALUE_PREDICATE

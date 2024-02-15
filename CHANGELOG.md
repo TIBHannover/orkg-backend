@@ -6,8 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added `modifiable` field to papers (read-only).
+  (See: [!806](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/806))
 
-## [0.46.1] - 2024-02-09
+### Fixed
+- The publication info is now properly validated when creating a paper.
+  (See: [!801](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/801))
+
+## [0.47.0] - 2024-02-09
+### Added
 - Added `modifiable` field for classes, predicates, literals, statements and lists (read-only).
   (See: [!777](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/777),
         [!786](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/786),

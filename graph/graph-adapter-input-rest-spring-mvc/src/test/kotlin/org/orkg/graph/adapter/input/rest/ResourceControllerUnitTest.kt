@@ -36,6 +36,7 @@ import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.annotations.TestWithMockUser
@@ -128,8 +129,8 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     fun `Given the contributors are requested, when service succeeds, then status is 200 OK and contributors are returned`() {
         val id = ThingId("R123")
         val contributorIds = listOf(
-            ContributorId(UUID.randomUUID()),
-            ContributorId(UUID.randomUUID())
+            ContributorId(MockUserId.USER),
+            ContributorId(MockUserId.ADMIN)
         )
         val contributors = PageImpl(
             contributorIds,
@@ -163,8 +164,8 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     fun `Given a timeline is requested, when service succeeds, then status is 200 OK and timeline is returned`() {
         val id = ThingId("R123")
         val resourceContributors = listOf(
-            UUID.randomUUID() to OffsetDateTime.now(clock),
-            UUID.randomUUID() to OffsetDateTime.now(clock)
+            UUID.fromString(MockUserId.USER) to OffsetDateTime.now(clock),
+            UUID.fromString(MockUserId.ADMIN) to OffsetDateTime.now(clock)
         ).map {
             ResourceContributor(it.first.toString(), it.second.format(ISO_DATE_TIME))
         }
@@ -208,7 +209,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
 
         every { contributorService.findById(any()) } returns Optional.of(
             Contributor(
-                id = ContributorId(UUID.randomUUID()),
+                id = ContributorId(MockUserId.USER),
                 name = "irrelevant",
                 joinedAt = OffsetDateTime.now(clock)
             )
@@ -253,7 +254,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
-        documentedGetRequestTo("/api/resources/")
+        documentedGetRequestTo("/api/resources")
             .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
@@ -276,15 +277,15 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         val label = "label"
         val exact = true
         val visibility = VisibilityFilter.ALL_LISTED
-        val createdBy = ContributorId(UUID.randomUUID())
+        val createdBy = ContributorId(MockUserId.USER)
         val createdAtStart = OffsetDateTime.now(clock).minusHours(1)
         val createdAtEnd = OffsetDateTime.now(clock).plusHours(1)
         val includeClasses = setOf(ThingId("Include1"), ThingId("Include2"))
         val excludeClasses = setOf(ThingId("Exclude1"), ThingId("Exclude2"))
-        val observatoryId = ObservatoryId(UUID.randomUUID())
-        val organizationId = OrganizationId(UUID.randomUUID())
+        val observatoryId = ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
 
-        documentedGetRequestTo("/api/resources/")
+        documentedGetRequestTo("/api/resources")
             .param("q", label)
             .param("exact", exact.toString())
             .param("visibility", visibility.toString())
@@ -306,7 +307,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                         parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
                         parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("visibility").description("""Filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED". (optional)"""),
-                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this paper. (optional)"),
+                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this resource. (optional)"),
                         parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)"),
                         parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)"),
                         parameterWithName("include").description("A comma-separated set of classes that the resource must have. (optional)"),
@@ -343,13 +344,13 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         val exception = UnknownSortingProperty("unknown")
         every { resourceService.findAll(any()) } throws exception
 
-        mockMvc.perform(get("/api/resources/?sort=unknown"))
+        mockMvc.perform(get("/api/resources?sort=unknown"))
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
             .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
             .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/resources/"))
+            .andExpect(jsonPath("$.path").value("/api/resources"))
     }
 
     private fun MockMvc.performPost(urlTemplate: String, request: Any): ResultActions = perform(

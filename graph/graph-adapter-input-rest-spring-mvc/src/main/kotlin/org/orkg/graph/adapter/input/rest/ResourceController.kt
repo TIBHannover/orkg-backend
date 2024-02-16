@@ -51,7 +51,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/resources/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/resources", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ResourceController(
     private val service: ResourceUseCases,
     private val contributorService: RetrieveContributorUseCase,
@@ -64,7 +64,7 @@ class ResourceController(
     fun findById(@PathVariable id: ThingId): ResourceRepresentation =
         service.findById(id).mapToResourceRepresentation().orElseThrow { ResourceNotFound.withId(id) }
 
-    @GetMapping("/")
+    @GetMapping
     fun findAll(
         @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,

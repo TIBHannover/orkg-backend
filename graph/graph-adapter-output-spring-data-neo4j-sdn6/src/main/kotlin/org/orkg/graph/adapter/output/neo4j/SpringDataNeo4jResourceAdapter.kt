@@ -11,7 +11,6 @@ import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Functions.labels
 import org.neo4j.cypherdsl.core.Functions.size
 import org.neo4j.cypherdsl.core.Functions.toLower
 import org.orkg.common.ContributorId
@@ -129,7 +128,7 @@ class SpringDataNeo4jResourceAdapter(
             val node = node("Resource", includeClasses.map { it.value }).named("node")
             val match = label?.let { searchString ->
                 val labelCondition = includeClasses.toCondition {
-                    anonParameter(includeClasses.map { it.value }).includesAll(labels(node))
+                    node.hasLabels(*includeClasses.map { it.value }.toTypedArray())
                 }
                 when (searchString) {
                     is ExactSearchString -> {
@@ -156,7 +155,7 @@ class SpringDataNeo4jResourceAdapter(
                 createdBy.toCondition { node.property("created_by").eq(anonParameter(it.value.toString())) },
                 createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
-                excludeClasses.toCondition { labels(node).includesAny(anonParameter(it.map { id -> id.value })).not() },
+                excludeClasses.toCondition { classes -> classes.map { node.hasLabels(it.value).not() }.reduce(Condition::and) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
                 organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) }
             )

@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.input.rest
 
-import dev.forkhandles.result4k.onFailure
 import java.net.URI
 import javax.validation.Valid
 import org.orkg.common.ContributorId
@@ -10,24 +9,16 @@ import org.orkg.common.contributorId
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
-import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.ClassNotFound
-import org.orkg.graph.domain.ClassNotModifiable
-import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.input.AlreadyInUse
-import org.orkg.graph.input.ClassNotModifiableProblem
 import org.orkg.graph.input.ClassRepresentation
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
-import org.orkg.graph.input.InvalidURI
 import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateClassUseCase
-import org.orkg.graph.input.UpdateNotAllowed
 import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -35,6 +26,7 @@ import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
@@ -48,8 +40,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
-import org.orkg.graph.input.ClassNotFound as ClassNotFoundProblem
-import org.orkg.graph.input.InvalidLabel as InvalidLabelProblem
 
 @RestController
 @RequestMapping("/api/classes/", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -131,18 +121,7 @@ class ClassController(
         @PathVariable id: ThingId,
         @RequestBody request: ReplaceClassRequest
     ): ClassRepresentation {
-        // We will be very lenient with the ID, meaning we do not validate it. But we correct for it in the response. (For now.)
-        val newValues = UpdateClassUseCase.ReplaceCommand(label = request.label, uri = request.uri)
-        service.replace(id, newValues).onFailure {
-            when (it.reason) {
-                ClassNotFoundProblem -> throw ClassNotFound.withThingId(id)
-                InvalidLabelProblem -> throw InvalidLabel()
-                InvalidURI -> throw IllegalStateException("An invalid URI got passed when replacing a class. This should not happen. Please report a bug.")
-                UpdateNotAllowed -> throw CannotResetURI(id.value)
-                AlreadyInUse -> throw URIAlreadyInUse(request.uri.toString())
-                ClassNotModifiableProblem -> throw ClassNotModifiable(id)
-            }
-        }
+        service.replace(UpdateClassUseCase.ReplaceCommand(id, request.label, request.uri))
         return service.findById(id).mapToClassRepresentation().get()
     }
 
@@ -150,29 +129,10 @@ class ClassController(
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
-        @Valid @RequestBody requestBody: UpdateRequestBody
+        @Valid @RequestBody request: UpdateClassRequest
     ): ResponseEntity<Any> {
-        if (requestBody.label != null) {
-            service.updateLabel(id, requestBody.label).onFailure {
-                when (it.reason) {
-                    ClassNotFoundProblem -> throw ClassNotFound.withThingId(id)
-                    InvalidLabelProblem -> throw InvalidLabel()
-                    ClassNotModifiableProblem -> throw ClassNotModifiable(id)
-                }
-            }
-        }
-        if (requestBody.uri != null) {
-            service.updateURI(id, requestBody.uri).onFailure {
-                when (it.reason) {
-                    ClassNotFoundProblem -> throw ClassNotFound.withThingId(id)
-                    InvalidURI -> throw org.orkg.graph.domain.InvalidURI()
-                    UpdateNotAllowed -> throw CannotResetURI(id.value)
-                    AlreadyInUse -> throw URIAlreadyInUse(requestBody.uri)
-                    ClassNotModifiableProblem -> throw ClassNotModifiable(id)
-                }
-            }
-        }
-        return ResponseEntity.ok(Unit)
+        service.update(UpdateClassUseCase.UpdateCommand(id, request.label, request.uri))
+        return ok().build()
     }
 
     data class CreateClassRequest(
@@ -181,9 +141,9 @@ class ClassController(
         val uri: URI?
     )
 
-    data class UpdateRequestBody(
+    data class UpdateClassRequest(
         val label: String? = null,
-        val uri: String? = null,
+        val uri: URI? = null,
     )
 
     data class ReplaceClassRequest(

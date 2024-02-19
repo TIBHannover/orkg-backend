@@ -111,7 +111,7 @@ class InvalidClassCollection(ids: Iterable<ThingId>) :
 class ReservedClass(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Class "$id" is reserved and therefor cannot be set.""")
 
-class DuplicateURI(uri: URI, id: ThingId) :
+class URIAlreadyInUse(uri: URI, id: ThingId) :
     PropertyValidationException("uri", """The URI <$uri> is already assigned to class with ID "$id".""")
 
 class InvalidLabel : PropertyValidationException("label", "A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long.")
@@ -119,8 +119,6 @@ class InvalidLabel : PropertyValidationException("label", "A label must not be b
 class InvalidLiteralLabel : PropertyValidationException("label", "A literal must be at most $MAX_LABEL_LENGTH characters long.")
 
 class InvalidLiteralDatatype : PropertyValidationException("datatype", "A literal datatype must be a URI or a \"xsd:\"-prefixed type")
-
-class InvalidURI : PropertyValidationException("uri", "The provided URI is not a valid URI.")
 
 class UserNotFound : SimpleMessageException {
     constructor(userId: UUID) : super(HttpStatus.BAD_REQUEST, """User "$userId" not found.""")
@@ -130,11 +128,8 @@ class UserNotFound : SimpleMessageException {
 class OrphanOrcidValue(orcid: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The ORCID "$orcid" is not attached to any author.""")
 
-class CannotResetURI(id: String) :
+class CannotResetURI(id: ThingId) :
     ForbiddenOperationException("uri", """The class "$id" already has a URI. It is not allowed to change URIs.""")
-
-class URIAlreadyInUse(uri: String) :
-    ForbiddenOperationException("uri", """The URI <$uri> is already in use by another class.""")
 
 class StatementSubjectNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Subject "$id" not found.""")

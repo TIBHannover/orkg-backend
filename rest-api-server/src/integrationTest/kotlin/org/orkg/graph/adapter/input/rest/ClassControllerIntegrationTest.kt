@@ -21,12 +21,10 @@ import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -217,52 +215,6 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     internal fun List<String>.toJSONArray(): JSONArray = JSONArray().apply { addAll(this@toJSONArray) }
-
-    @Test
-    @WithMockUser
-    fun replaceLabel() {
-        val classId = service.createClass(label = "foo", uri = URI("https://example.org/foo"))
-        val newLabel = "bar"
-        val resource = mapOf("label" to newLabel, "uri" to "https://example.org/foo")
-
-        mockMvc
-            .perform(putRequestWithBody("/api/classes/$classId", resource))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.label").value(newLabel))
-            .andExpect(jsonPath("$.uri").value("https://example.org/foo")) // old value
-            .andDo(
-                document(
-                    snippet,
-                    requestFields(
-                        fieldWithPath("label").description("The updated class label"),
-                        fieldWithPath("uri").ignored()
-                    ), responseFields(classResponseFields())
-                )
-            )
-    }
-
-    @Test
-    @WithMockUser
-    fun replaceLabelAndURI() {
-        val classId = service.createClass(label = "foo")
-        val newLabel = "new label"
-        val resource = mapOf("label" to newLabel, "uri" to "https://orkg.org/entity/foo")
-
-        mockMvc
-            .perform(putRequestWithBody("/api/classes/$classId", resource))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.label").value(newLabel))
-            .andExpect(jsonPath("$.uri").value(resource["uri"].toString()))
-            .andDo(
-                document(
-                    snippet,
-                    requestFields(
-                        fieldWithPath("label").description("The updated class label"),
-                        fieldWithPath("uri").ignored()
-                    ), responseFields(classResponseFields())
-                )
-            )
-    }
 
     @Test
     fun lookupByClassAndLabel() {

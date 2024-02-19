@@ -1,6 +1,5 @@
 package org.orkg.graph.input
 
-import dev.forkhandles.result4k.Result
 import java.net.URI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -18,33 +17,21 @@ interface CreateClassUseCase {
 }
 
 interface UpdateClassUseCase {
-    fun replace(id: ThingId, command: ReplaceCommand): Result<Unit, ClassUpdateProblem>
-    fun updateLabel(id: ThingId, newLabel: String): Result<Unit, ClassLabelUpdateProblem>
-    fun updateURI(id: ThingId, with: String): Result<Unit, ClassURIUpdateProblem>
+    fun update(command: UpdateCommand)
+    fun replace(command: ReplaceCommand)
+
+    data class UpdateCommand(
+        val id: ThingId,
+        val label: String? = null,
+        val uri: URI? = null
+    )
 
     data class ReplaceCommand(
+        val id: ThingId,
         val label: String,
         val uri: URI?,
     )
 }
-
-sealed interface ClassUpdateProblem
-
-sealed interface ClassLabelUpdateProblem : ClassUpdateProblem
-
-sealed interface ClassURIUpdateProblem : ClassUpdateProblem
-
-object ClassNotFound : ClassLabelUpdateProblem, ClassURIUpdateProblem
-
-object InvalidLabel : ClassLabelUpdateProblem
-
-object InvalidURI : ClassURIUpdateProblem
-
-object UpdateNotAllowed : ClassURIUpdateProblem
-
-object AlreadyInUse : ClassURIUpdateProblem
-
-data object ClassNotModifiableProblem : ClassUpdateProblem, ClassLabelUpdateProblem, ClassURIUpdateProblem
 
 interface DeleteClassUseCase {
     // legacy methods:

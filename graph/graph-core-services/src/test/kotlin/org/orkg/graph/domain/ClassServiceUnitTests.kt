@@ -1,7 +1,5 @@
 package org.orkg.graph.domain
 
-import dev.forkhandles.result4k.Failure
-import dev.forkhandles.result4k.Success
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
@@ -11,21 +9,15 @@ import io.mockk.verify
 import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.graph.input.AlreadyInUse
-import org.orkg.graph.input.ClassNotFound
-import org.orkg.graph.input.ClassNotModifiableProblem
 import org.orkg.graph.input.CreateClassUseCase
-import org.orkg.graph.input.InvalidLabel
-import org.orkg.graph.input.InvalidURI
+import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
-import org.orkg.graph.input.UpdateNotAllowed
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
@@ -101,7 +93,7 @@ class ClassServiceUnitTests {
         val mockClass = createClass(uri = URI.create("https://orkg.org/class/C1"))
         every { repository.findByUri(mockClass.uri.toString()) } returns mockClass.toOptional()
 
-        assertThrows<DuplicateURI> {
+        assertThrows<URIAlreadyInUse> {
             service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", uri = mockClass.uri))
         }
 
@@ -158,8 +150,7 @@ class ClassServiceUnitTests {
         val id = ThingId("non-existent")
         every { repository.findById(any()) } returns Optional.empty()
 
-        val actual = service.updateLabel(id, "new label")
-        assertThat(actual).isEqualTo(Failure(ClassNotFound))
+        assertThrows<ClassNotFound> { service.update(UpdateClassUseCase.UpdateCommand(id, label = "new label")) }
 
         verify(exactly = 1) { repository.findById(id) }
     }
@@ -171,8 +162,7 @@ class ClassServiceUnitTests {
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
         every { repository.save(expectedClass) } returns Unit
 
-        val actual = service.updateLabel(originalClass.id, "new label")
-        assertThat(actual).isEqualTo(Success(Unit))
+        service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, label = "new label"))
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
         verify(exactly = 1) { repository.save(expectedClass) }
@@ -180,8 +170,9 @@ class ClassServiceUnitTests {
 
     @Test
     fun `given a class exists, when updating the label and the label is invalid, it returns an appropriate error`() {
-        val actual = service.updateLabel(ThingId("OK"), "some\ninvalid\nlabel")
-        assertThat(actual).isEqualTo(Failure(InvalidLabel))
+        assertThrows<InvalidLabel> {
+            service.update(UpdateClassUseCase.UpdateCommand(ThingId("OK"), label = "some\ninvalid\nlabel"))
+        }
     }
 
     @Test
@@ -190,8 +181,7 @@ class ClassServiceUnitTests {
         val id = ThingId("OK")
         every { repository.findById(id) } returns Optional.of(originalClass)
 
-        val actual = service.updateLabel(id, "some label")
-        assertThat(actual).isEqualTo(Success(Unit))
+        service.update(UpdateClassUseCase.UpdateCommand(id, label = "some label"))
 
         verify(exactly = 1) { repository.findById(id) }
     }
@@ -201,8 +191,9 @@ class ClassServiceUnitTests {
         val originalClass = createClass(modifiable = false)
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
 
-        val actual = service.updateLabel(originalClass.id, "some label")
-        assertThat(actual).isEqualTo(Failure(ClassNotModifiableProblem))
+        assertThrows<ClassNotModifiable> {
+            service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, label = "some label"))
+        }
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
     }
@@ -212,8 +203,9 @@ class ClassServiceUnitTests {
         val id = ThingId("non-existent")
         every { repository.findById(id) } returns Optional.empty()
 
-        val actual = service.updateURI(id, "https://example.org/foo")
-        assertThat(actual).isEqualTo(Failure(ClassNotFound))
+        assertThrows<ClassNotFound> {
+            service.update(UpdateClassUseCase.UpdateCommand(id, uri = URI.create("https://example.org/foo")))
+        }
 
         verify(exactly = 1) { repository.findById(id) }
     }
@@ -226,8 +218,7 @@ class ClassServiceUnitTests {
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns Unit
 
-        val actual = service.updateURI(originalClass.id, "https://example.org/NEW")
-        assertThat(actual).isEqualTo(Success(Unit))
+        service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = URI.create("https://example.org/NEW")))
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
         verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
@@ -242,18 +233,12 @@ class ClassServiceUnitTests {
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
 
-        val actual = service.updateURI(originalClass.id, "https://example.org/NEW")
-        assertThat(actual).isEqualTo(Failure(AlreadyInUse))
+        assertThrows<URIAlreadyInUse> {
+            service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = URI.create("https://example.org/NEW")))
+        }
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
         verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
-    }
-
-    @Test
-    fun `given a class exists and has no URI, when updating the URI and the URI is invalid, it returns an appropriate error`() {
-        val originalClass = createClassWithoutURI()
-        val actual = service.updateURI(originalClass.id, "\n")
-        assertThat(actual).isEqualTo(Failure(InvalidURI))
     }
 
     @Test
@@ -261,10 +246,16 @@ class ClassServiceUnitTests {
         val originalClass = createClass()
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
 
-        val actual = service.updateURI(originalClass.id, "https://example.com/DIFFERENT")
-        assertThat(actual).isEqualTo(Failure(UpdateNotAllowed))
+        assertThrows<CannotResetURI> {
+            service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = URI.create("https://example.org/DIFFERENT")))
+        }
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
+    }
+
+    @Test
+    fun `given a class exists, when updating with no URI and no label, it does nothing`() {
+        service.update(UpdateClassUseCase.UpdateCommand(ThingId("EXISTS")))
     }
 
     @Test
@@ -272,8 +263,9 @@ class ClassServiceUnitTests {
         val originalClass = createClass(modifiable = false)
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
 
-        val actual = service.updateURI(originalClass.id, "https://example.com/DIFFERENT")
-        assertThat(actual).isEqualTo(Failure(ClassNotModifiableProblem))
+        assertThrows<ClassNotModifiable> {
+            service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = URI.create("https://example.com/DIFFERENT")))
+        }
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
     }
@@ -287,8 +279,7 @@ class ClassServiceUnitTests {
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns Unit
 
-        val actual = service.replace(originalClass.id, command = replacingClass.toReplaceCommand())
-        assertThat(actual).isEqualTo(Success(Unit))
+        service.replace(replacingClass.toReplaceCommand())
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
         verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
@@ -297,22 +288,19 @@ class ClassServiceUnitTests {
 
     @Test
     fun `given a class is replaced, when an invalid label is provided, then returns an error`() {
-        val classToReplace = ThingId("ToReplace")
         val replacingClass = createClass(label = "invalid\nlabel", uri = URI.create("https://example.com/NEW"))
 
-        val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
-        assertThat(actual).isEqualTo(Failure(InvalidLabel))
+        assertThrows<InvalidLabel> { service.replace(replacingClass.toReplaceCommand()) }
     }
 
     @Test
     fun `given a class is replaced, when no URI is provided and the class has a URI, then returns an error`() {
         val classToReplace = ThingId("ToReplace")
-        val replacingClass = createClassWithoutURI().copy(label = "other label")
+        val replacingClass = createClassWithoutURI().copy(id = classToReplace, label = "other label")
         val existingClass = createClass(id = classToReplace)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
 
-        val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
-        assertThat(actual).isEqualTo(Failure(UpdateNotAllowed))
+        assertThrows<CannotResetURI> { service.replace(replacingClass.toReplaceCommand()) }
 
         verify(exactly = 1) { repository.findById(classToReplace) }
     }
@@ -321,14 +309,13 @@ class ClassServiceUnitTests {
     fun `given a class is replaced, when a URI is provided and the class has the same URI, then updates return success`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClass(id = classToReplace)
-        val replacingClass = createClass(label = "other label")
+        val replacingClass = existingClass.copy(label = "other label")
         val expectedClass = existingClass.copy(id = classToReplace, label = replacingClass.label)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns Unit
 
-        val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
-        assertThat(actual).isEqualTo(Success(Unit))
+        service.replace(replacingClass.toReplaceCommand())
 
         verify(exactly = 1) { repository.findById(classToReplace) }
         verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
@@ -339,15 +326,13 @@ class ClassServiceUnitTests {
     fun `given a class is replaced, when a URI is provided and the class has no URI and the URI is not already used, then updates return success`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
-        val replacingClass =
-            createClass(uri = URI.create("https://example.com/NEW"), label = existingClass.label)
+        val replacingClass = existingClass.copy(uri = URI.create("https://example.com/NEW"))
         val expectedClass = existingClass.copy(id = classToReplace, uri = replacingClass.uri)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns Unit
 
-        val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
-        assertThat(actual).isEqualTo(Success(Unit))
+        service.replace(replacingClass.toReplaceCommand())
 
         verify(exactly = 1) { repository.findById(classToReplace) }
         verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
@@ -358,15 +343,13 @@ class ClassServiceUnitTests {
     fun `given a class is replaced, when a URI is provided and the class has no URI and the URI is already used, then returns an error`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
-        val replacingClass =
-            createClass(uri = URI.create("https://example.com/NEW"), label = existingClass.label)
+        val replacingClass = existingClass.copy(uri = URI.create("https://example.com/NEW"))
         val expectedClass = existingClass.copy(id = classToReplace, uri = replacingClass.uri)
         val differentWithSameURI = createClassWithoutURI().copy(id = ThingId("different"), uri = expectedClass.uri)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
 
-        val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
-        assertThat(actual).isEqualTo(Failure(AlreadyInUse))
+        assertThrows<URIAlreadyInUse> { service.replace(replacingClass.toReplaceCommand()) }
 
         verify(exactly = 1) { repository.findById(classToReplace) }
         verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
@@ -375,13 +358,11 @@ class ClassServiceUnitTests {
     @Test
     fun `given a class is replaced, when a URI is provided and the class has a different URI, then returns an error`() {
         val classToReplace = ThingId("ToReplace")
-        val replacingClass =
-            createClass(label = "other label", uri = URI.create("https://example.com/NEW")).toReplaceCommand()
+        val replacingClass = createClass(id = classToReplace, label = "other label", uri = URI.create("https://example.com/NEW"))
         val existingClass = createClass(id = classToReplace)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
 
-        val actual = service.replace(classToReplace, command = replacingClass)
-        assertThat(actual).isEqualTo(Failure(UpdateNotAllowed))
+        assertThrows<CannotResetURI> { service.replace(replacingClass.toReplaceCommand()) }
 
         verify(exactly = 1) { repository.findById(classToReplace) }
     }
@@ -390,13 +371,12 @@ class ClassServiceUnitTests {
     fun `given a class is replaced, when no URI is provided and the class has no URI, then updates and returns success`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
-        val replacingClass = createClassWithoutURI().copy(label = "other label").toReplaceCommand()
+        val replacingClass = existingClass.copy(label = "other label")
         val expectedClass = existingClass.copy(id = classToReplace, label = replacingClass.label)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { repository.save(expectedClass) } returns Unit
 
-        val actual = service.replace(classToReplace, command = replacingClass)
-        assertThat(actual).isEqualTo(Success(Unit))
+        service.replace(replacingClass.toReplaceCommand())
 
         verify(exactly = 1) { repository.findById(classToReplace) }
         verify(exactly = 1) { repository.save(expectedClass) }
@@ -406,17 +386,13 @@ class ClassServiceUnitTests {
     fun `given a class is replaced, when class is unmodifiable, then returns an error`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClass(id = classToReplace, modifiable = false)
-        val replacingClass = createClass(label = "other label").toReplaceCommand()
+        val replacingClass = existingClass.copy(label = "other label")
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
 
-        val actual = service.replace(classToReplace, command = replacingClass)
-        assertThat(actual).isEqualTo(Failure(ClassNotModifiableProblem))
+        assertThrows<ClassNotModifiable> { service.replace(replacingClass.toReplaceCommand()) }
 
         verify(exactly = 1) { repository.findById(classToReplace) }
     }
 
-    private fun Class.toReplaceCommand(): ReplaceCommand = ReplaceCommand(
-        label = this.label,
-        uri = this.uri,
-    )
+    private fun Class.toReplaceCommand(): ReplaceCommand = ReplaceCommand(id, label, uri)
 }

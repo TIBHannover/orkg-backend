@@ -140,7 +140,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             label = "List label",
             elements = listOf(ThingId("R1"))
         )
-        val request = json(
+        val request = mapOf(
             "label" to list.label,
             "elements" to list.elements
         )
@@ -227,14 +227,16 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             label = "List label",
             elements = listOf(ThingId("R1"))
         )
-        val request = json(
+        val request = mapOf(
             "label" to list.label,
             "elements" to list.elements
         )
 
         every { listService.update(id, any()) } just runs
 
-        mockMvc.perform(documentedPatchRequestTo("/api/lists/$id", id, body = request))
+        documentedPatchRequestTo("/api/lists/{id}", id)
+            .content(request)
+            .perform()
             .andExpect(status().isNoContent)
             .andDo(
                 documentationHandler.document(
@@ -367,6 +369,4 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             .characterEncoding(Charsets.UTF_8.name())
             .content(objectMapper.writeValueAsString(body))
     )
-
-    private fun json(vararg entries: Pair<String, Any>) = objectMapper.writeValueAsString(mapOf(*entries))
 }

@@ -47,3 +47,19 @@ operation::class-controller-integration-test-lookup[snippets='curl-request,http-
 List all resources that are of the provided class type
 
 operation::class-controller-integration-test-lookup-by-class[snippets='curl-request,http-response']
+
+[[classes-edit]]
+=== Editing a class
+
+A `PATCH` request updates a class with a new given label and URI.
+Only fields provided in the response, and therefore non-null, will be updated.
+The response will be `200 OK` when successful.
+
+operation::classes-update[snippets='request-fields,curl-request,http-response']
+
+A `PUT` request updates a class with a new given label and URI.
+All fields will be updated in the process.
+The response will be `200 OK` when successful.
+The updated class is returned in the body for convenience.
+
+operation::classes-replace[snippets='request-fields,curl-request,http-response']

@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.graph.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
+import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.ClassAlreadyExists
 import org.orkg.graph.domain.ClassNotAllowed
 import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.DuplicateURI
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.LiteralNotModifiable
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
@@ -20,6 +20,7 @@ import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementNotModifiable
+import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -142,11 +143,11 @@ internal class ExceptionControllerUnitTest {
     }
 
     @Test
-    fun duplicateURI() {
+    fun uriAlreadyInUse() {
         val id = ThingId("C123")
         val uri = "http://example.org/C123"
 
-        get("/duplicate-uri")
+        get("/uri-already-in-use")
             .param("id", id.value)
             .param("uri", uri)
             .perform()
@@ -156,7 +157,7 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.errors.length()").value(1))
             .andExpect(jsonPath("$.errors[0].field").value("uri"))
             .andExpect(jsonPath("$.errors[0].message").value("""The URI <$uri> is already assigned to class with ID "$id"."""))
-            .andExpect(jsonPath("$.path").value("/duplicate-uri"))
+            .andExpect(jsonPath("$.path").value("/uri-already-in-use"))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
@@ -187,6 +188,23 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.error", `is`("Bad Request")))
             .andExpect(jsonPath("$.path").value("/class-already-exists"))
             .andExpect(jsonPath("$.message").value("""Class "$id" already exists."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun cannotResetURI() {
+        val id = ThingId("C123")
+
+        get("/cannot-reset-uri")
+            .param("id", id.value)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.error", `is`("Forbidden")))
+            .andExpect(jsonPath("$.path").value("/cannot-reset-uri"))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("uri"))
+            .andExpect(jsonPath("$.errors[0].message").value("""The class "$id" already has a URI. It is not allowed to change URIs."""))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
@@ -223,9 +241,9 @@ internal class ExceptionControllerUnitTest {
             throw InvalidLabel()
         }
 
-        @GetMapping("/duplicate-uri")
-        fun duplicateURI(@RequestParam id: ThingId, @RequestParam uri: URI) {
-            throw DuplicateURI(uri, id)
+        @GetMapping("/uri-already-in-use")
+        fun uriAlreadyInUse(@RequestParam id: ThingId, @RequestParam uri: URI) {
+            throw URIAlreadyInUse(uri, id)
         }
 
         @GetMapping("/class-not-allowed")
@@ -236,6 +254,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/class-already-exists")
         fun classAlreadyExists(@RequestParam id: ThingId) {
             throw ClassAlreadyExists(id)
+        }
+
+        @GetMapping("/cannot-reset-uri")
+        fun cannotResetURI(@RequestParam id: ThingId) {
+            throw CannotResetURI(id)
         }
     }
 

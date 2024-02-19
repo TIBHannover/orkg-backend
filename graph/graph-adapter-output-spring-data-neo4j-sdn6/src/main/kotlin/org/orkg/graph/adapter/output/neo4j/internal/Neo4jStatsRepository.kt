@@ -214,29 +214,29 @@ RETURN COUNT(contributor)""")
 
     @Query("""
 CALL {
-    MATCH (sub:Paper:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'PaperDeleted' IN labels RETURN sub
+    MATCH (sub:Paper:Resource) WHERE NOT sub:PaperDeleted RETURN sub
     UNION ALL
-    MATCH (sub:Contribution:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'ContributionDeleted' IN labels RETURN sub
+    MATCH (sub:Contribution:Resource) WHERE NOT sub:ContributionDeleted RETURN sub
     UNION ALL
     MATCH (sub:Problem:Resource) RETURN sub
     UNION ALL
     MATCH (sub:Visualization:Resource) RETURN sub
     UNION ALL
-    MATCH (sub:Comparison:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'ComparisonDeleted' IN labels RETURN sub
+    MATCH (sub:Comparison:Resource) WHERE NOT sub:ComparisonDeleted RETURN sub
 } WITH sub
 ORDER BY sub.created_at DESC
 RETURN sub $PAGE_PARAMS""",
         countQuery = """
 CALL {
-    MATCH (sub:Paper:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'PaperDeleted' IN labels RETURN sub
+    MATCH (sub:Paper:Resource) WHERE NOT sub:PaperDeleted RETURN sub
     UNION ALL
-    MATCH (sub:Contribution:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'ContributionDeleted' IN labels RETURN sub
+    MATCH (sub:Contribution:Resource) WHERE NOT sub:ContributionDeleted RETURN sub
     UNION ALL
     MATCH (sub:Problem:Resource) RETURN sub
     UNION ALL
     MATCH (sub:Visualization:Resource) RETURN sub
     UNION ALL
-    MATCH (sub:Comparison:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'ComparisonDeleted' IN labels RETURN sub
+    MATCH (sub:Comparison:Resource) WHERE NOT sub:ComparisonDeleted RETURN sub
 } WITH sub
 RETURN COUNT(sub)
 """)

@@ -179,7 +179,7 @@ class SpringDataNeo4jStatementAdapter(
                     .delete(relation)
                     .with(o)
                     .where(
-                        literalOf<String>("Literal").`in`(labels(node))
+                        node.hasLabels("Literal")
                             .and(node.relationshipBetween(anyNode()).asCondition().not())
                             .and(o.property("modifiable").eq(literalOf<Boolean>(true)))
                     ).with(o.property("id").`as`(l), o.`as`(o))
@@ -210,7 +210,7 @@ class SpringDataNeo4jStatementAdapter(
                     .delete(relation)
                     .with(o)
                     .where(
-                        literalOf<String>("Literal").`in`(labels(node))
+                        node.hasLabels("Literal")
                             .and(node.relationshipBetween(anyNode()).asCondition().not())
                     ).with(o.property("id").`as`(l), o.`as`(o))
                     .delete(o)

@@ -58,10 +58,10 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, ThingId> {
 
     override fun findById(id: ThingId): Optional<Neo4jResource>
 
-    @Query("""MATCH (node:Paper:Resource) WHERE NOT 'PaperDeleted' IN labels(node) AND toLower(node.label) = toLower($label) $RETURN_NODE LIMIT 1""")
+    @Query("""MATCH (node:Paper:Resource) WHERE NOT node:PaperDeleted AND toLower(node.label) = toLower($label) $RETURN_NODE LIMIT 1""")
     fun findPaperByLabel(label: String?): Optional<Neo4jResource>
 
-    @Query("""MATCH (node:Paper:Resource) WHERE NOT 'PaperDeleted' IN labels(node) AND toLower(node.label) = toLower($label) $RETURN_NODE""")
+    @Query("""MATCH (node:Paper:Resource) WHERE NOT node:PaperDeleted AND toLower(node.label) = toLower($label) $RETURN_NODE""")
     fun findAllPapersByLabel(label: String): Iterable<Neo4jResource>
 
     @Query("""$MATCH_PAPER_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")

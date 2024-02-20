@@ -22,4 +22,6 @@ interface OrganizationRepository {
     fun findByName(name: String): Optional<Organization>
 
     fun findByType(type: OrganizationType): List<Organization>
+
+    fun count(): Long
 }

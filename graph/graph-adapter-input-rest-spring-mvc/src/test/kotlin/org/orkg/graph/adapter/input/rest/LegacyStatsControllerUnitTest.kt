@@ -14,7 +14,7 @@ import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.graph.domain.ObservatoryStats
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.ResearchFieldStats
-import org.orkg.graph.input.RetrieveStatisticsUseCase
+import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
@@ -31,14 +31,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [StatsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
-@WebMvcTest(controllers = [StatsController::class])
+@ContextConfiguration(classes = [LegacyStatsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@WebMvcTest(controllers = [LegacyStatsController::class])
 @DisplayName("Given a Stats controller")
 @UsesMocking
-class StatsControllerUnitTest : RestDocsTest("stats") {
+class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
 
     @MockkBean
-    private lateinit var statisticsService: RetrieveStatisticsUseCase
+    private lateinit var statisticsService: RetrieveLegacyStatisticsUseCase
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean

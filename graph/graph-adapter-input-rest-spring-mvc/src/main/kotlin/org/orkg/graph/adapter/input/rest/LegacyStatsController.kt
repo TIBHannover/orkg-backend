@@ -8,7 +8,7 @@ import org.orkg.graph.domain.ObservatoryStats
 import org.orkg.graph.domain.ResearchFieldStats
 import org.orkg.graph.domain.Stats
 import org.orkg.graph.domain.TrendingResearchProblems
-import org.orkg.graph.input.RetrieveStatisticsUseCase
+import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 @RequestMapping("/api/stats/", produces = [MediaType.APPLICATION_JSON_VALUE])
-class StatsController(private val service: RetrieveStatisticsUseCase) {
+class LegacyStatsController(private val service: RetrieveLegacyStatisticsUseCase) {
     /**
      * Fetch the top statistics of ORKG
      * like paper count, resources count, etc

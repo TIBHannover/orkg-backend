@@ -184,6 +184,9 @@ dependencies {
     runtimeOnly(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
     runtimeOnly(project(":licenses:licenses-core-services"))
 
+    runtimeOnly(project(":statistics:statistics-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":statistics:statistics-core-services"))
+
     implementation(project(":media-storage:media-storage-adapter-input-serialization"))
     implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
     implementation(project(":media-storage:media-storage-core-model"))
@@ -258,6 +261,7 @@ dependencies {
     restdocs(project(withSnippets(":data-export:data-export-adapters")))
     restdocs(project(withSnippets(":licenses:licenses-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":content-types:content-types-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":statistics:statistics-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":widget")))
 }
 

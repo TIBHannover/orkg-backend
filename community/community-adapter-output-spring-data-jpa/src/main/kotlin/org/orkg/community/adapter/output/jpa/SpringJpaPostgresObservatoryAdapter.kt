@@ -62,4 +62,6 @@ class SpringJpaPostgresObservatoryAdapter(
     // TODO: refactor
     override fun allMembers(id: ObservatoryId, pageable: Pageable): Page<Contributor> =
         userRepository.findAllByObservatoryId(id.value, pageable).map(UserEntity::toUser).map(User::toContributor)
+
+    override fun count(): Long = postgresRepository.count()
 }

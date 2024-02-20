@@ -11,7 +11,7 @@ import org.orkg.graph.domain.TrendingResearchProblems
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface RetrieveStatisticsUseCase {
+interface RetrieveLegacyStatisticsUseCase {
     /**
      * Get stats
      *

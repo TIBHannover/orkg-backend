@@ -45,4 +45,6 @@ class SpringJpaPostgresOrganizationAdapter(
 
     override fun findByType(type: OrganizationType): List<Organization> =
         postgresOrganizationRepository.findByType(type).map(OrganizationEntity::toOrganization)
+
+    override fun count(): Long = postgresOrganizationRepository.count()
 }

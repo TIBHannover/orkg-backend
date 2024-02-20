@@ -8,7 +8,7 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
-import org.orkg.graph.input.RetrieveStatisticsUseCase
+import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
@@ -23,7 +23,7 @@ class CacheWarmup(
     private val resourceService: ResourceUseCases,
     private val predicateService: PredicateUseCases,
     private val statementService: StatementUseCases,
-    private val statsService: RetrieveStatisticsUseCase,
+    private val statsService: RetrieveLegacyStatisticsUseCase,
     private val researchFieldService: RetrieveResearchFieldUseCase,
     private val flags: FeatureFlagService
 ) : ApplicationRunner {

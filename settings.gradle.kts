@@ -94,5 +94,11 @@ include(
     "profiling:profiling-adapter-output",
     "profiling:profiling-adapter-output-spring-data-neo4j-sdn6"
 )
+include(
+    "statistics:statistics-core-model",
+    "statistics:statistics-core-services",
+    "statistics:statistics-ports-input",
+    "statistics:statistics-adapter-input-rest-spring-mvc",
+)
 include("widget")
 include("rest-api-server")

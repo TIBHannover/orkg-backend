@@ -11,7 +11,7 @@ import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationReposi
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.output.ContributorRepository
-import org.orkg.graph.input.RetrieveStatisticsUseCase
+import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatsRepository
 import org.springframework.data.domain.Page
@@ -22,14 +22,14 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class StatisticsService(
+class LegacyStatisticsService(
     private val statsRepository: StatsRepository,
     private val contributorRepository: ContributorRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository,
     private val resourceRepository: ResourceRepository,
     private val clock: Clock,
-) : RetrieveStatisticsUseCase {
+) : RetrieveLegacyStatisticsUseCase {
     override fun getStats(extra: List<String>?): Stats {
         val metadata = statsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>

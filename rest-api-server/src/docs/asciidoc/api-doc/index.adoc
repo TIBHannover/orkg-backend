@@ -416,6 +416,10 @@ include::parts/licenses.adoc[]
 [[widget]]
 include::parts/widget.adoc[leveloffset=+1]
 
+[[statistics]]
+include::parts/statistics.adoc[leveloffset=+1]
+
+[[identifiers]]
 include::parts/identifiers.adoc[leveloffset=+1]
 
 [[visibility-filter]]

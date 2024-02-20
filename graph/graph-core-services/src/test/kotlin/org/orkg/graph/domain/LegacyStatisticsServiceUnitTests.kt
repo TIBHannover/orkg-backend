@@ -19,7 +19,7 @@ import org.orkg.graph.output.StatsRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.fixedClock
 
-class StatisticsServiceUnitTests {
+class LegacyStatisticsServiceUnitTests {
 
     private val statsRepository: StatsRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
@@ -27,7 +27,7 @@ class StatisticsServiceUnitTests {
     private val organizationRepository: PostgresOrganizationRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
-    private val service = StatisticsService(
+    private val service = LegacyStatisticsService(
         statsRepository,
         contributorRepository,
         observatoryRepository,

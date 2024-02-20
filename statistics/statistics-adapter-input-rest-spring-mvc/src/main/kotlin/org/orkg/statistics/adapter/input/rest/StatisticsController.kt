@@ -17,7 +17,7 @@ class StatisticsController(private val service: RetrieveStatisticsUseCase) : Met
         service.findAllGroups().associateWith {
             EndpointReference(
                 uriComponentsBuilder.cloneBuilder()
-                    .path("/api/statistics/{group}")
+                    .path("api/statistics/{group}")
                     .buildAndExpand(it)
                     .toUri()
             )
@@ -31,7 +31,7 @@ class StatisticsController(private val service: RetrieveStatisticsUseCase) : Met
         service.findAllMetricsByGroup(group).associate {
             it.name to EndpointReference(
                 uriComponentsBuilder.cloneBuilder()
-                    .path("/api/statistics/{group}/{metric}")
+                    .path("api/statistics/{group}/{metric}")
                     .buildAndExpand(it.group, it.name)
                     .toUri()
             )

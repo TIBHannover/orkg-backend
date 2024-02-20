@@ -684,7 +684,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This CHANGELOG file. Finally!
 
 [unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.47.0...master
-[0.46.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.47.0
+[0.47.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.47.0
 [0.46.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.46.0
 [0.45.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.45.0
 [0.44.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.44.0

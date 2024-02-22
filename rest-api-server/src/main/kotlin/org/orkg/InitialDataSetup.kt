@@ -2,13 +2,15 @@ package org.orkg
 
 import java.io.FileReader
 import java.net.URI
+import java.time.Clock
+import java.time.OffsetDateTime
 import java.util.*
 import javax.validation.constraints.NotBlank
 import org.orkg.common.ThingId
-import org.orkg.graph.input.ClassUseCases
-import org.orkg.graph.input.CreateClassUseCase
-import org.orkg.graph.input.CreatePredicateUseCase
-import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.Predicate
+import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.PredicateRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationArguments
@@ -21,8 +23,9 @@ import org.springframework.stereotype.Component
 @ComponentScan("org.orkg.configuration")
 @Profile("development", "docker")
 class DataInitializer(
-    private val classService: ClassUseCases,
-    private val predicateService: PredicateUseCases
+    private val classRepository: ClassRepository,
+    private val predicateRepository: PredicateRepository,
+    private val clock: Clock
 ) : ApplicationRunner {
 
     private val logger = LoggerFactory.getLogger(this::class.java.name)
@@ -55,18 +58,19 @@ class DataInitializer(
     private fun createClasses(classList: List<CreateClassCommand>) {
         classList.forEach { command ->
             val id = ThingId(command.id)
-            val classByURI = command.uri?.let { classService.findByURI(URI.create(it)) } ?: Optional.empty()
-            val classById = classService.findById(id)
+            val classByURI = command.uri?.let { classRepository.findByUri(it) } ?: Optional.empty()
+            val classById = classRepository.findById(id)
 
             if (classById.isPresent && classByURI.isPresent && classById.get().id != classByURI.get().id)
                 throw Exception("ID mismatch for class ID: ${classById.get().id}")
 
             if (classById.isEmpty) {
-                classService.create(
-                    CreateClassUseCase.CreateCommand(
+                classRepository.save(
+                    Class(
                         id = id,
                         label = command.label,
-                        uri = command.uri?.let(URI::create)
+                        uri = command.uri?.let(URI::create),
+                        createdAt = OffsetDateTime.now(clock)
                     )
                 )
             }
@@ -79,11 +83,12 @@ class DataInitializer(
     private fun createPredicates(predicateList: List<CreatePredicatesCommand>) {
         predicateList.forEach { (id, label) ->
             val thingId = ThingId(id)
-            if (predicateService.findById(thingId).isEmpty) {
-                predicateService.create(
-                    CreatePredicateUseCase.CreateCommand(
+            if (predicateRepository.findById(thingId).isEmpty) {
+                predicateRepository.save(
+                    Predicate(
                         id = thingId,
-                        label = label
+                        label = label,
+                        createdAt = OffsetDateTime.now(clock)
                     )
                 )
             }

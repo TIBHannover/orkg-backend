@@ -114,18 +114,18 @@ fun OrganizationUseCases.createOrganization(
 // Observatories
 
 fun ObservatoryUseCases.createObservatory(
-    organizationId: OrganizationId,
-    researchField: ThingId,
+    id: ObservatoryId? = null,
     name: String = "Test Observatory",
     description: String = "Example description",
+    organizations: Set<OrganizationId> = emptySet(),
+    researchField: ThingId = ThingId("R123"),
     displayId: String = name.toDisplayId(),
-    id: ObservatoryId? = null
 ) = this.create(
     CreateObservatoryUseCase.CreateCommand(
         id = id,
         name = name,
         description = description,
-        organizationId = organizationId,
+        organizations = organizations,
         researchField = researchField,
         displayId = displayId
     )

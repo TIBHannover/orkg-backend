@@ -25,19 +25,28 @@ class ObservatoryService(
     private val resourceRepository: ResourceRepository
 ) : ObservatoryUseCases {
     override fun create(command: CreateObservatoryUseCase.CreateCommand): ObservatoryId {
-        val id = command.id ?: ObservatoryId(UUID.randomUUID())
-        val organization = postgresOrganizationRepository
-            .findById(command.organizationId)
-            .orElseThrow { OrganizationNotFound(command.organizationId) }
-        val researchField = resourceRepository.findById(command.researchField)
+        postgresObservatoryRepository.findByName(command.name).ifPresent {
+            throw ObservatoryAlreadyExists.withName(command.name)
+        }
+        postgresObservatoryRepository.findByDisplayId(command.displayId).ifPresent {
+            throw ObservatoryAlreadyExists.withDisplayId(command.displayId)
+        }
+        command.organizations.forEach { organizationId ->
+            postgresOrganizationRepository.findById(organizationId)
+                .orElseThrow { OrganizationNotFound(organizationId) }
+        }
+        resourceRepository.findById(command.researchField)
             .filter { resource -> Classes.researchField in resource.classes }
             .orElseThrow { ResearchFieldNotFound(command.researchField) }
+        val id = command.id
+            ?.also { id -> postgresObservatoryRepository.findById(id).ifPresent { throw ObservatoryAlreadyExists.withId(id) } }
+            ?: ObservatoryId(UUID.randomUUID())
         val observatory = Observatory(
             id = id,
             name = command.name,
             description = command.description,
-            researchField = researchField.id,
-            organizationIds = mutableSetOf(organization.id!!),
+            researchField = command.researchField,
+            organizationIds = command.organizations,
             displayId = command.displayId
         )
         postgresObservatoryRepository.save(observatory)

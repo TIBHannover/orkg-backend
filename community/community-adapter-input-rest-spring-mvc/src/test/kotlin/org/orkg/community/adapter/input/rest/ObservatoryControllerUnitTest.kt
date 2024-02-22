@@ -7,7 +7,7 @@ import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.hamcrest.Matchers
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
@@ -17,7 +17,6 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.Observatory
-import org.orkg.community.domain.ObservatoryAlreadyExists
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.ObservatoryURLNotFound
 import org.orkg.community.domain.OrganizationNotFound
@@ -26,13 +25,16 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.testing.fixtures.createObservatory
 import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.contenttypes.domain.ResearchField
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.andExpectObservatory
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedPatchRequestTo
+import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -40,6 +42,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
@@ -49,6 +52,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import orkg.orkg.community.testing.fixtures.observatoryResponseFields
 
 @ContextConfiguration(classes = [ObservatoryController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ObservatoryController::class])
@@ -77,54 +81,6 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(status().isOk)
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
-    }
-
-    @Test
-    fun `Creating the observatory with duplicate name, status must be 400`() {
-        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
-        val observatory = createObservatory(organizationsIds)
-        val body = ObservatoryController.CreateObservatoryRequest(
-            name = observatory.name,
-            organizationId = observatory.organizationIds.single(),
-            description = observatory.description!!,
-            researchField = observatory.researchField!!,
-            displayId = observatory.displayId
-        )
-        every { observatoryUseCases.findByName(observatory.name) } returns Optional.of(observatory)
-
-        mockMvc.performPost("/api/observatories/", body)
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.path").value("/api/observatories/"))
-            .andExpect(jsonPath("$.message").value(ObservatoryAlreadyExists.withName(observatory.name).message))
-
-        verify(exactly = 0) {
-            observatoryUseCases.create(any())
-        }
-    }
-
-    @Test
-    fun `Creating the observatory with duplicate displayId, status must be 400`() {
-        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
-        val observatory = createObservatory(organizationsIds)
-
-        val body = ObservatoryController.CreateObservatoryRequest(
-            name = "observatoryName",
-            organizationId = observatory.organizationIds.single(),
-            description = observatory.description!!,
-            researchField = observatory.researchField!!,
-            displayId = observatory.displayId
-        )
-        every { observatoryUseCases.findByName("observatoryName") } returns Optional.empty()
-        every { observatoryUseCases.findByDisplayId(observatory.displayId) } returns Optional.of(observatory)
-
-        mockMvc.performPost("/api/observatories/", body)
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.path").value("/api/observatories/"))
-            .andExpect(jsonPath("$.message").value(ObservatoryAlreadyExists.withDisplayId(observatory.displayId).message))
-
-        verify(exactly = 0) { observatoryUseCases.create(any()) }
     }
 
     @Test
@@ -584,6 +540,62 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
 
     @Test
     @TestWithMockCurator
+    @DisplayName("Given an observatory is created, when service succeeds, then status is 201 CREATED and observatory is returned")
+    fun create() {
+        val id = ObservatoryId("95565e51-2b80-4c28-918c-6fbc5e2a9b33")
+        val observatory = createObservatory(
+            id = id,
+            organizationIds = setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"))
+        )
+        val researchField = createResource(observatory.researchField!!, classes = setOf(Classes.researchField))
+        val request = ObservatoryController.CreateObservatoryRequest(
+            name = observatory.name,
+            organizationId = observatory.organizationIds.first(),
+            description = observatory.description!!,
+            researchField = observatory.researchField!!,
+            displayId = observatory.displayId
+        )
+
+        every { observatoryUseCases.create(any()) } returns observatory.id
+        every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
+        every { resourceUseCases.findById(observatory.researchField!!) } returns Optional.of(researchField)
+
+        documentedPostRequestTo("/api/observatories")
+            .content(request)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/observatories/$id")))
+            .andExpectObservatory()
+            .andDo(
+                documentationHandler.document(
+                    requestFields(
+                        fieldWithPath("name").description("The name of the observatory. Alternatively, the legacy field `observatory_name` can be used for equivalent behavior."),
+                        fieldWithPath("organization_id").description("The id of the organization that the observatory belongs to."),
+                        fieldWithPath("description").description("The description of the observatory."),
+                        fieldWithPath("research_field").description("The id of the research field of the observatory."),
+                        fieldWithPath("display_id").description("The URI slug of the observatory."),
+                    ),
+                    responseFields(observatoryResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            observatoryUseCases.create(withArg {
+                it.id shouldBe null
+                it.name shouldBe observatory.name
+                it.organizations shouldBe observatory.organizationIds
+                it.description shouldBe observatory.description
+                it.researchField shouldBe observatory.researchField
+                it.displayId shouldBe observatory.displayId
+            })
+        }
+        verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
+        verify(exactly = 1) { resourceUseCases.findById(observatory.researchField!!) }
+    }
+
+    @Test
+    @TestWithMockCurator
     @DisplayName("Given an observatory, when updated, then status is 204 NO CONTENT")
     fun update() {
         val id = ObservatoryId("73b2e081-9b50-4d55-b464-22d94e8a25f6")
@@ -600,7 +612,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .content(request)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", Matchers.endsWith("/api/observatories/$id")))
+            .andExpect(header().string("Location", endsWith("/api/observatories/$id")))
             .andDo(
                 documentationHandler.document(
                     requestFields(

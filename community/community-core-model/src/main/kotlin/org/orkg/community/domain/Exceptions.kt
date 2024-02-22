@@ -45,6 +45,8 @@ class ObservatoryAlreadyExists private constructor(
     message: String
 ) : SimpleMessageException(status, message) {
     companion object {
+        fun withId(id: ObservatoryId) =
+            ObservatoryAlreadyExists(HttpStatus.BAD_REQUEST, """Observatory with id "$id" already exists.""")
         fun withName(name: String) =
             ObservatoryAlreadyExists(HttpStatus.BAD_REQUEST, """Observatory with name "$name" already exists.""")
         fun withDisplayId(displayId: String) =
@@ -72,5 +74,5 @@ class ConferenceSeriesNotFound : SimpleMessageException {
 class InvalidImageEncoding :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid image encoding.""")
 
-class BadPeerReviewType(badValue: String):
+class BadPeerReviewType(badValue: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The value "$badValue" is not a valid peer review type.""")

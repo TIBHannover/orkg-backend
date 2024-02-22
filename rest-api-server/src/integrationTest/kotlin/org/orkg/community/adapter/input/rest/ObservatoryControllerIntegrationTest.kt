@@ -31,6 +31,7 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
+import orkg.orkg.community.testing.fixtures.observatoryResponseFields
 
 @DisplayName("Observatory Controller")
 @Transactional
@@ -81,7 +82,10 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
-        observatoryService.createObservatory(organizationId, researchField)
+        observatoryService.createObservatory(
+            organizations = setOf(organizationId),
+            researchField = researchField
+        )
 
         mockMvc
             .perform(getRequestTo("/api/observatories/"))
@@ -101,7 +105,10 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
-        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
+        val observatoryId = observatoryService.createObservatory(
+            organizations = setOf(organizationId),
+            researchField = researchField
+        )
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId"))
@@ -121,7 +128,10 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
-        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
+        val observatoryId = observatoryService.createObservatory(
+            organizations = setOf(organizationId),
+            researchField = researchField
+        )
         resourceService.createResource(
             classes = setOf("Paper"),
             organizationId = organizationId,
@@ -147,7 +157,10 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
-        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
+        val observatoryId = observatoryService.createObservatory(
+            organizations = setOf(organizationId),
+            researchField = researchField
+        )
         resourceService.createResource(
             classes = setOf("Comparison"),
             organizationId = organizationId,
@@ -173,7 +186,10 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
-        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
+        val observatoryId = observatoryService.createObservatory(
+            organizations = setOf(organizationId),
+            researchField = researchField
+        )
         resourceService.createResource(
             classes = setOf("Problem"),
             organizationId = organizationId,
@@ -199,7 +215,10 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
-        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
+        val observatoryId = observatoryService.createObservatory(
+            organizations = setOf(organizationId),
+            researchField = researchField
+        )
         val resourceId = resourceService.createResource(
             classes = setOf("SomeClass"),
             organizationId = organizationId,
@@ -220,7 +239,10 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
-        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
+        val observatoryId = observatoryService.createObservatory(
+            organizations = setOf(organizationId),
+            researchField = researchField
+        )
         resourceService.createResource(
             classes = setOf("SomeClass"),
             organizationId = organizationId,
@@ -234,20 +256,6 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     companion object RestDoc {
-        private fun observatoryResponseFields() = listOf(
-            fieldWithPath("id").description("The observatory ID"),
-            fieldWithPath("name").description("The observatory name"),
-            fieldWithPath("description").description("The observatory description"),
-            fieldWithPath("research_field").description("The research field of an observatory"),
-            fieldWithPath("research_field.id").description("The research field of an observatory"),
-            fieldWithPath("research_field.label").description("The research field of an observatory"),
-            fieldWithPath("members").description("The members belonging to the observatory"),
-            fieldWithPath("organization_ids").description("The list of organizations that the observatory belongs to"),
-            fieldWithPath("display_id").description("The URI of an observatory"),
-            fieldWithPath("featured").optional().ignored(),
-            fieldWithPath("unlisted").optional().ignored()
-        )
-
         fun listOfObservatoriesResponseFields(): ResponseFieldsSnippet =
             responseFields(fieldWithPath("[]").description("A list of observatories"))
                 .andWithPrefix("[].", observatoryResponseFields())

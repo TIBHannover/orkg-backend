@@ -111,7 +111,10 @@ class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
-        observatoryService.createObservatory(organizationId, researchField)
+        observatoryService.createObservatory(
+            organizations = setOf(organizationId),
+            researchField = researchField
+        )
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$organizationId/observatories"))

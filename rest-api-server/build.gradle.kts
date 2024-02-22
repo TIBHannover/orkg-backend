@@ -91,6 +91,7 @@ testing {
                 implementation(project(":community:community-core-model"))
                 implementation(project(":community:community-ports-input"))
                 implementation(project(":community:community-ports-output")) // for CuratorRepository
+                implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
                 implementation(project(":media-storage:media-storage-core-model"))
                 implementation(project(":feature-flags:feature-flags-ports"))
                 implementation("org.springframework.security:spring-security-test")

@@ -1,5 +1,6 @@
 package org.orkg.community.adapter.input.rest
 
+import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.*
 import javax.validation.Valid
@@ -13,19 +14,19 @@ import org.orkg.common.annotations.PreAuthorizeCurator
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.community.adapter.input.rest.mapping.ObservatoryRepresentationAdapter
 import org.orkg.community.domain.Contributor
-import org.orkg.community.domain.ObservatoryAlreadyExists
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.ObservatoryURLNotFound
 import org.orkg.community.input.CreateObservatoryUseCase.CreateCommand
 import org.orkg.community.input.ObservatoryUseCases
-import org.orkg.community.input.UpdateObservatoryUseCase.*
+import org.orkg.community.input.UpdateObservatoryUseCase.UpdateCommand
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.graph.input.ResourceUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.*
+import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -38,23 +39,18 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/observatories/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/observatories", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ObservatoryController(
     private val service: ObservatoryUseCases,
     override val resourceRepository: ResourceUseCases,
     private val observatoryRepository: ObservatoryRepository,
 ) : ObservatoryRepresentationAdapter {
-    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun create(
         @RequestBody @Valid request: CreateObservatoryRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<ObservatoryRepresentation> {
-        if (service.findByName(request.name).isPresent) {
-            throw ObservatoryAlreadyExists.withName(request.name)
-        } else if (service.findByDisplayId(request.displayId).isPresent) {
-            throw ObservatoryAlreadyExists.withDisplayId(request.displayId)
-        }
         val id = service.create(request.toCreateCommand())
         val location = uriComponentsBuilder
             .path("api/observatories/{id}")
@@ -177,7 +173,7 @@ class ObservatoryController(
     }
 
     data class CreateObservatoryRequest(
-        @JsonProperty("observatory_name")
+        @JsonAlias("observatory_name")
         val name: String,
         @JsonProperty("organization_id")
         val organizationId: OrganizationId,
@@ -195,7 +191,7 @@ class ObservatoryController(
         fun toCreateCommand() = CreateCommand(
             name = name,
             description = description,
-            organizationId = organizationId,
+            organizations = setOf(organizationId),
             researchField = researchField,
             displayId = displayId
         )

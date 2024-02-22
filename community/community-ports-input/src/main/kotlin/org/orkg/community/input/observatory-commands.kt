@@ -11,7 +11,7 @@ interface CreateObservatoryUseCase {
         val id: ObservatoryId? = null,
         val name: String,
         val description: String,
-        val organizationId: OrganizationId,
+        val organizations: Set<OrganizationId>,
         val researchField: ThingId,
         val displayId: String
     )

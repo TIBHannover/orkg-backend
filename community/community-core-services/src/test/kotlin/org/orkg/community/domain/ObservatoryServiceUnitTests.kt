@@ -1,7 +1,7 @@
 package org.orkg.community.domain
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -18,7 +18,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.community.input.CreateObservatoryUseCase
+import org.orkg.community.input.CreateObservatoryUseCase.CreateCommand
 import org.orkg.community.input.UpdateObservatoryUseCase.UpdateCommand
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -47,58 +47,6 @@ class ObservatoryServiceUnitTests {
     @AfterEach
     fun verifyMocks() {
         confirmVerified(repository, organizationRepository, resourceRepository)
-    }
-
-    @Test
-    fun `Creating an observatory`() {
-        val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
-        val organizationId = observatory.organizationIds.single()
-        val researchField = createResource(
-            id = observatory.researchField!!,
-            classes = setOf(ThingId("ResearchField"))
-        )
-
-        every { repository.save(observatory) } returns Unit
-        every { resourceRepository.findById(observatory.researchField!!) } returns Optional.of(researchField)
-        every { organizationRepository.findById(organizationId) } returns Optional.of(
-            createOrganization(id = organizationId)
-        )
-
-        service.create(
-            CreateObservatoryUseCase.CreateCommand(
-                id = observatory.id,
-                name = observatory.name,
-                description = observatory.description!!,
-                organizationId = organizationId,
-                researchField = observatory.researchField!!,
-                displayId = observatory.displayId
-            )
-        )
-
-        verify(exactly = 1) { repository.save(observatory) }
-        verify(exactly = 1) { resourceRepository.findById(observatory.researchField!!) }
-        verify(exactly = 1) { organizationRepository.findById(organizationId) }
-    }
-
-    @Test
-    fun `Creating an observatory without existing organization`() {
-        val oId = OrganizationId(UUID.randomUUID())
-        every { organizationRepository.findById(oId) } returns Optional.empty()
-
-        shouldThrow<OrganizationNotFound> {
-            service.create(
-                CreateObservatoryUseCase.CreateCommand(
-                    id = null,
-                    name = "test",
-                    description = "test",
-                    organizationId = oId,
-                    researchField = ThingId("R1"),
-                    displayId = "test"
-                )
-            )
-        }
-
-        verify(exactly = 1) { organizationRepository.findById(oId) }
     }
 
     @Test
@@ -177,6 +125,188 @@ class ObservatoryServiceUnitTests {
         service.findAll(pageRequest)
 
         verify(exactly = 1) { repository.findAll(pageRequest) }
+    }
+
+    @Test
+    fun `Given an observatory create command, when inputs are valid, it creates a new observatory`() {
+        val organization = createOrganization()
+        val researchField = createResource(ThingId("R456"), classes = setOf(Classes.researchField))
+        val command = CreateCommand(
+            id = ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174"),
+            name = "observatory name",
+            description = "description",
+            organizations = setOf(organization.id!!),
+            researchField = researchField.id,
+            displayId = "observatory_display_id"
+        )
+        every { repository.findByName(command.name) } returns Optional.empty()
+        every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
+        every { organizationRepository.findById(organization.id!!) } returns Optional.of(organization)
+        every { repository.findById(command.id!!) } returns Optional.empty()
+        every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
+        every { repository.save(any()) } just runs
+
+        service.create(command) shouldBe command.id
+
+        verify(exactly = 1) { repository.findByName(command.name) }
+        verify(exactly = 1) { repository.findByDisplayId(command.displayId) }
+        verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
+        verify(exactly = 1) { repository.findById(command.id!!) }
+        verify(exactly = 1) { resourceRepository.findById(researchField.id) }
+        verify(exactly = 1) {
+            repository.save(withArg {
+                it.id shouldBe command.id
+                it.name shouldBe command.name
+                it.organizationIds shouldBe command.organizations
+                it.description shouldBe command.description
+                it.researchField shouldBe command.researchField
+                it.displayId shouldBe command.displayId
+            })
+        }
+    }
+
+    @Test
+    fun `Given an observatory create command, when no id is specified, it generates a new id and creates a new observatory`() {
+        val organization = createOrganization()
+        val researchField = createResource(ThingId("R456"), classes = setOf(Classes.researchField))
+        val command = CreateCommand(
+            id = null,
+            name = "observatory name",
+            description = "description",
+            organizations = setOf(organization.id!!),
+            researchField = researchField.id,
+            displayId = "observatory_display_id"
+        )
+        every { repository.findByName(command.name) } returns Optional.empty()
+        every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
+        every { organizationRepository.findById(organization.id!!) } returns Optional.of(organization)
+        every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
+        every { repository.save(any()) } just runs
+
+        service.create(command) shouldNotBe null
+
+        verify(exactly = 1) { repository.findByName(command.name) }
+        verify(exactly = 1) { repository.findByDisplayId(command.displayId) }
+        verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
+        verify(exactly = 1) { resourceRepository.findById(researchField.id) }
+        verify(exactly = 1) {
+            repository.save(withArg {
+                it.id shouldNotBe null
+                it.name shouldBe command.name
+                it.organizationIds shouldBe command.organizations
+                it.description shouldBe command.description
+                it.researchField shouldBe command.researchField
+                it.displayId shouldBe command.displayId
+            })
+        }
+    }
+
+    @Test
+    fun `Given an observatory create command, when name is already exists, it throws an exception`() {
+        val command = CreateCommand(
+            id = ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174"),
+            name = "already taken",
+            description = "description",
+            organizations = setOf(OrganizationId("d02073bc-30fd-481e-9167-f3fc3595d590")),
+            researchField = ThingId("R456"),
+            displayId = "observatory_display_id"
+        )
+        every { repository.findByName(command.name) } returns Optional.of(createObservatory())
+
+        assertThrows<ObservatoryAlreadyExists> { service.create(command) }
+
+        verify(exactly = 1) { repository.findByName(command.name) }
+    }
+
+    @Test
+    fun `Given an observatory create command, when display id is already exists, it throws an exception`() {
+        val command = CreateCommand(
+            id = ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174"),
+            name = "observatory name",
+            description = "description",
+            organizations = setOf(OrganizationId("d02073bc-30fd-481e-9167-f3fc3595d590")),
+            researchField = ThingId("R456"),
+            displayId = "already_taken"
+        )
+        every { repository.findByName(command.name) } returns Optional.empty()
+        every { repository.findByDisplayId(command.displayId) } returns Optional.of(createObservatory())
+
+        assertThrows<ObservatoryAlreadyExists> { service.create(command) }
+
+        verify(exactly = 1) { repository.findByName(command.name) }
+        verify(exactly = 1) { repository.findByDisplayId(command.displayId) }
+    }
+
+    @Test
+    fun `Given an observatory create command, when organization does not exist, it throws an exception`() {
+        val organizationId = OrganizationId("d02073bc-30fd-481e-9167-f3fc3595d590")
+        val command = CreateCommand(
+            id = ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174"),
+            name = "observatory name",
+            description = "description",
+            organizations = setOf(organizationId),
+            researchField = ThingId("R456"),
+            displayId = "observatory_display_id"
+        )
+        every { repository.findByName(command.name) } returns Optional.empty()
+        every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
+        every { organizationRepository.findById(organizationId) } returns Optional.empty()
+
+        assertThrows<OrganizationNotFound> { service.create(command) }
+
+        verify(exactly = 1) { repository.findByName(command.name) }
+        verify(exactly = 1) { repository.findByDisplayId(command.displayId) }
+        verify(exactly = 1) { organizationRepository.findById(organizationId) }
+    }
+
+    @Test
+    fun `Given an observatory create command, when research field does not exist, it throws an exception`() {
+        val organization = createOrganization()
+        val researchFieldId = ThingId("Missing")
+        val command = CreateCommand(
+            id = ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174"),
+            name = "observatory name",
+            description = "description",
+            organizations = setOf(organization.id!!),
+            researchField = researchFieldId,
+            displayId = "observatory_display_id"
+        )
+        every { repository.findByName(command.name) } returns Optional.empty()
+        every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
+        every { organizationRepository.findById(organization.id!!) } returns Optional.of(organization)
+        every { resourceRepository.findById(researchFieldId) } returns Optional.empty()
+
+        assertThrows<ResearchFieldNotFound> { service.create(command) }
+
+        verify(exactly = 1) { repository.findByName(command.name) }
+        verify(exactly = 1) { repository.findByDisplayId(command.displayId) }
+        verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
+        verify(exactly = 1) { resourceRepository.findById(researchFieldId) }
+    }
+
+    @Test
+    fun `Given an observatory create command, when research field resource exists but is not an instance of research field, it throws an exception`() {
+        val organization = createOrganization()
+        val someResource = createResource(ThingId("R456"))
+        val command = CreateCommand(
+            id = ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174"),
+            name = "observatory name",
+            description = "description",
+            organizations = setOf(organization.id!!),
+            researchField = someResource.id,
+            displayId = "observatory_display_id"
+        )
+        every { repository.findByName(command.name) } returns Optional.empty()
+        every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
+        every { organizationRepository.findById(organization.id!!) } returns Optional.of(organization)
+        every { resourceRepository.findById(someResource.id) } returns Optional.of(someResource)
+
+        assertThrows<ResearchFieldNotFound> { service.create(command) }
+
+        verify(exactly = 1) { repository.findByName(command.name) }
+        verify(exactly = 1) { repository.findByDisplayId(command.displayId) }
+        verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
+        verify(exactly = 1) { resourceRepository.findById(someResource.id) }
     }
 
     @Test

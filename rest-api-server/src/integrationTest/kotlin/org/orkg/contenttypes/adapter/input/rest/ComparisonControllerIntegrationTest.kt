@@ -144,7 +144,7 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
         )
 
         observatoryService.createObservatory(
-            organizationId = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
+            organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
             researchField = ThingId("R12"),
             id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
         )

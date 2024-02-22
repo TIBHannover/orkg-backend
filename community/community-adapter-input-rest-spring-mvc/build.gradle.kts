@@ -3,6 +3,7 @@
 
 plugins {
     id("org.orkg.gradle.input-adapter-spring-web")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 testing {
@@ -50,4 +51,6 @@ dependencies {
     implementation(libs.jackson.core)
 
     testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
+
+    testFixturesImplementation(libs.spring.restdocs)
 }

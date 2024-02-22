@@ -1,5 +1,6 @@
 package org.orkg.graph.output
 
+import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -34,6 +35,19 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun deleteByStatementIds(ids: Set<StatementId>)
     fun deleteAll()
     fun findByStatementId(id: StatementId): Optional<GeneralStatement>
+    fun findAll(
+        pageable: Pageable,
+        subjectClasses: Set<ThingId> = emptySet(),
+        subjectId: ThingId? = null,
+        subjectLabel: String? = null,
+        predicateId: ThingId? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        objectClasses: Set<ThingId> = emptySet(),
+        objectId: ThingId? = null,
+        objectLabel: String? = null
+    ): Page<GeneralStatement>
     fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement>
     fun findAllBySubject(subjectId: ThingId, pageable: Pageable): Page<GeneralStatement>
     fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable): Page<GeneralStatement>

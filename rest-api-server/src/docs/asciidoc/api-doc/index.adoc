@@ -120,7 +120,11 @@ This allows storing and retrieving provenance information about them.
 
 A `GET` request lists all the statements:
 
-operation::statement-controller-integration-test-index[snippets='curl-request,http-response']
+operation::statements-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::statements-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 TIP: {pagination_note}
 
@@ -467,19 +471,30 @@ By default, sorting is done by the `created_at` property (time-based).
 [options="header"]
 |=======================
 |Key  |Description
-2+^|*For sorting resources & predicates*
-|id   | the id of the resource or predicate
-|label    | the label of the resource or the predicate
-|created    |the datetime timestamp of the creation
+2+^|*For sorting resources*
+|id   | the id of the resource
+|label    | the label of the resource
+|created_at    |the datetime timestamp of the creation
+|created_by    |the id of the curator who originally created the resource
+|visibility    |the visibility of the resource
+2+^|*For sorting predicates, classes & literals*
+|id   | the id of the predicate, class or literal
+|label    | the label of the predicate, class or literal
+|created_at    |the datetime timestamp of the creation
+|created_by    |the id of the curator who originally created the predicate, class or literal
 2+^|*For sorting statements*
 |id   | the statement id
-|created    |the datetime timestamp of the creation
+|index   | the index of the statement
+|created_at    |the datetime timestamp of the creation
+|created_by    |the id of the curator who originally created the statement
+|sub.id    |the id of the subject
 |sub.label    |the label of the subject
-|sub.created  |the creation timestamp of the subject
-|rel.label    |the label of the predicate
-|rel.created  |the creation timestamp of the predicate
+|sub.created_at  |the creation timestamp of the subject
+|sub.created_by  |the id of the curator who originally created the subject of the statement
+|obj.id    |the id of the object
 |obj.label    |the label of the object
-|obj.created  |the creation timestamp of the object
+|obj.created_at  |the creation timestamp of the object
+|obj.created_by  |the id of the curator who originally created the object of the statement
 |=======================
 
 

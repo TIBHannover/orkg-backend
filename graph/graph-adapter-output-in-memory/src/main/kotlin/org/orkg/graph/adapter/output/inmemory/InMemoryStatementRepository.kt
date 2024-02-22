@@ -21,6 +21,8 @@ import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.domain.createdAt
+import org.orkg.graph.domain.createdBy
 import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.Page
@@ -68,6 +70,50 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
 
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         Optional.ofNullable(entities[id])
+
+    override fun findAll(pageable: Pageable): Page<GeneralStatement> =
+        findAll(
+            pageable = pageable,
+            subjectClasses = emptySet(),
+            subjectId = null,
+            subjectLabel = null,
+            predicateId = null,
+            createdBy = null,
+            createdAtStart = null,
+            createdAtEnd = null,
+            objectClasses = emptySet(),
+            objectId = null,
+            objectLabel = null
+        )
+
+    override fun findAll(
+        pageable: Pageable,
+        subjectClasses: Set<ThingId>,
+        subjectId: ThingId?,
+        subjectLabel: String?,
+        predicateId: ThingId?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        objectClasses: Set<ThingId>,
+        objectId: ThingId?,
+        objectLabel: String?
+    ): Page<GeneralStatement> =
+        findAllFilteredAndPaged(
+            pageable = pageable,
+            comparator = pageable.withDefaultSort { Sort.by("created_at") }.sort.comparator
+        ) {
+            it.subject isInstanceOfAll subjectClasses &&
+                (subjectId == null || subjectId == it.subject.id) &&
+                (subjectLabel == null || subjectLabel == it.subject.label) &&
+                (predicateId == null || predicateId == it.predicate.id) &&
+                (createdBy == null || it.createdBy == createdBy) &&
+                (createdAtStart == null || it.createdAt!! >= createdAtStart) &&
+                (createdAtEnd == null || it.createdAt!! <= createdAtEnd) &&
+                it.`object` isInstanceOfAll objectClasses &&
+                (objectId == null || objectId == it.`object`.id) &&
+                (objectLabel == null || objectLabel == it.`object`.label)
+        }
 
     override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { it.id in ids }
@@ -182,9 +228,18 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
                 var result = 0
                 for (order in this) {
                     result = when (order.property) {
+                        "id" -> order.compare(a.id, b.id)
                         "created_at" -> order.compare(a.createdAt, b.createdAt)
                         "created_by" -> order.compare(a.createdBy.value, b.createdBy.value)
                         "index" -> order.compare(a.index, b.index)
+                        "sub.id" -> order.compare(a.subject.id, b.subject.id)
+                        "sub.label" -> order.compare(a.subject.label, b.subject.label)
+                        "sub.created_at" -> order.compare(a.subject.createdAt, b.subject.createdAt)
+                        "sub.created_by" -> order.compare(a.subject.createdBy.value, b.subject.createdBy.value)
+                        "obj.id" -> order.compare(a.`object`.id, b.`object`.id)
+                        "obj.label" -> order.compare(a.`object`.label, b.`object`.label)
+                        "obj.created_at" -> order.compare(a.`object`.createdAt, b.`object`.createdAt)
+                        "obj.created_by" -> order.compare(a.`object`.createdBy.value, b.`object`.createdBy.value)
                         else -> 0 // TODO: Throw exception?
                     }
                     if (result != 0) {
@@ -471,6 +526,14 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
         }
 
     private fun <T : Any> Iterable<T>.containsAny(other: Iterable<T>): Boolean = any(other::contains)
+
+    private infix fun Thing.isInstanceOfAll(classes: Set<ThingId>) =
+        classes.isEmpty() || classes.size == 1 && when (this) {
+            is Resource -> classes.single() == Classes.resource
+            is Predicate -> classes.single() == Classes.predicate
+            is Literal -> classes.single() == Classes.literal
+            is Class -> classes.single() == Classes.`class`
+        } || this is Resource && (classes - Classes.resource).all { it in classes }
 
     private data class ResourceEdit(
         val contributor: ContributorId,

@@ -259,6 +259,428 @@ fun <
     }
 
     describe("finding several statements") {
+        context("with filters") {
+            context("using no parameters") {
+                val statements = fabricator.random<List<GeneralStatement>>()
+                statements.forEach(saveStatement)
+
+                val expected = statements.sortedBy { it.createdAt }.take(10)
+                val pageable = PageRequest.of(0, 10)
+                val result = repository.findAll(pageable = pageable)
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 10
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 2
+                    result.totalElements shouldBe statements.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            context("by subject classes") {
+                val expectedCount = 3
+                val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
+                val subjectClasses = setOf(Classes.paper, Classes.comparison)
+                (0 until 3).forEach {
+                    val subject = fabricator.random<Resource>().let { resource ->
+                        resource.copy(classes = resource.classes + subjectClasses)
+                    }
+                    statements[it] = statements[it].copy(subject = subject)
+                }
+                statements.forEach(saveStatement)
+
+                val expected = statements.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    subjectClasses = subjectClasses
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            context("by subject id") {
+                val expectedCount = 3
+                val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
+                val subject = fabricator.random<Resource>()
+                (0 until 3).forEach {
+                    statements[it] = statements[it].copy(subject = subject)
+                }
+                statements.forEach(saveStatement)
+
+                val expected = statements.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    subjectId = subject.id
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            context("by subject label") {
+                val expectedCount = 3
+                val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
+                val label = "label to find"
+                (0 until 3).forEach {
+                    statements[it] = statements[it].copy(subject = fabricator.random<Resource>().copy(label = label))
+                }
+                statements.forEach(saveStatement)
+
+                val expected = statements.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    subjectLabel = label
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            context("by predicate id") {
+                val expectedCount = 3
+                val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
+                val predicate = createPredicate(ThingId("UniquePredicateId"))
+                (0 until 3).forEach {
+                    statements[it] = statements[it].copy(predicate = predicate)
+                }
+                statements.forEach(saveStatement)
+
+                val expected = statements.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    predicateId = predicate.id
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            context("by created by") {
+                val expectedCount = 3
+                val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
+                val createdBy = ContributorId(UUID.randomUUID())
+                (0 until 3).forEach {
+                    statements[it] = statements[it].copy(createdBy = createdBy)
+                }
+                statements.forEach(saveStatement)
+
+                val expected = statements.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    createdBy = createdBy
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            context("by created at start") {
+                val expectedCount = 3
+                val statements = fabricator.random<List<GeneralStatement>>().mapIndexed { index, statement ->
+                    statement.copy(
+                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong())
+                    )
+                }
+                statements.forEach(saveStatement)
+
+                val expected = statements.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    createdAtStart = expected.last().createdAt
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            context("by created at end") {
+                val expectedCount = 3
+                val statements = fabricator.random<List<GeneralStatement>>().mapIndexed { index, statement ->
+                    statement.copy(
+                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())
+                    )
+                }
+                statements.forEach(saveStatement)
+
+                val expected = statements.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    createdAtEnd = expected.last().createdAt
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            context("by object classes") {
+                val expectedCount = 3
+                val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
+                val objectClasses = setOf(Classes.paper, Classes.comparison)
+                (0 until 3).forEach {
+                    val `object` = fabricator.random<Resource>().let { resource ->
+                        resource.copy(classes = resource.classes + objectClasses)
+                    }
+                    statements[it] = statements[it].copy(`object` = `object`)
+                }
+                statements.forEach(saveStatement)
+
+                val expected = statements.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    objectClasses = objectClasses
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            context("by object id") {
+                val expectedCount = 3
+                val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
+                val `object` = fabricator.random<Resource>()
+                (0 until 3).forEach {
+                    statements[it] = statements[it].copy(`object` = `object`)
+                }
+                statements.forEach(saveStatement)
+
+                val expected = statements.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    objectId = `object`.id
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            context("by object label") {
+                val expectedCount = 3
+                val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
+                val label = "label to find"
+                (0 until 3).forEach {
+                    statements[it] = statements[it].copy(`object` = fabricator.random<Resource>().copy(label = label))
+                }
+                statements.forEach(saveStatement)
+
+                val expected = statements.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    objectLabel = label
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            context("using all parameters") {
+                val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
+                statements.forEach(saveStatement)
+
+                val expected = fabricator.random<GeneralStatement>().copy(
+                    subject = fabricator.random<Resource>(),
+                    `object` = fabricator.random<Resource>()
+                )
+                saveStatement(expected)
+
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    subjectClasses = (expected.subject as Resource).classes,
+                    subjectId = expected.subject.id,
+                    subjectLabel = expected.subject.label,
+                    predicateId = expected.predicate.id,
+                    createdBy = expected.createdBy,
+                    createdAtStart = expected.createdAt,
+                    createdAtEnd = expected.createdAt,
+                    objectClasses = (expected.`object` as Resource).classes,
+                    objectId = expected.`object`.id,
+                    objectLabel = expected.`object`.label
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 1
+                    result.content shouldContainAll setOf(expected)
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe 1
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt!! shouldBeLessThan b.createdAt!!
+                    }
+                }
+            }
+            it("sorts the results by multiple properties") {
+                val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
+                statements[1] = statements[1].copy(subject = statements[0].subject)
+                statements.forEach(repository::save)
+
+                val sort = Sort.by("sub.label").ascending().and(Sort.by("created_at").descending())
+                val result = repository.findAll(PageRequest.of(0, 12, sort))
+
+                result.content.zipWithNext { a, b ->
+                    if (a.subject.label == b.subject.label) {
+                        a.createdAt!! shouldBeGreaterThan b.createdAt!!
+                    } else {
+                        a.subject.label shouldBeLessThan b.subject.label
+                    }
+                }
+            }
+        }
         context("by id") {
             context("with a single id") {
                 val expectedCount = 1

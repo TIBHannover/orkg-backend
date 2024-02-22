@@ -1,8 +1,10 @@
 package org.orkg.graph.adapter.output.neo4j
 
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.neo4j.cypherdsl.core.Condition
+import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.asExpression
 import org.neo4j.cypherdsl.core.Cypher.call
@@ -39,6 +41,7 @@ import org.orkg.common.neo4jdsl.PagedQueryBuilder.countDistinctOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.fetchAs
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
+import org.orkg.common.neo4jdsl.QueryCache.Uncached
 import org.orkg.common.neo4jdsl.SingleQueryBuilder.fetchAs
 import org.orkg.common.neo4jdsl.SingleQueryBuilder.mappedBy
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jStatementIdGenerator
@@ -235,19 +238,20 @@ class SpringDataNeo4jStatementAdapter(
             .run()
     }
 
-    override fun findAll(pageable: Pageable): Page<GeneralStatement> = CypherQueryBuilder(neo4jClient)
-        .withCommonQuery {
-            val subject = anyNode().named("sub")
-            val `object` = anyNode().named("obj")
-            match(subject.relationshipTo(`object`, RELATED).named("rel"))
-        }
-        .withQuery { commonQuery ->
-            commonQuery.returningWithSortableFields("rel", "sub", "obj")
-        }
-        .countOver("rel")
-        .fetchAs<GeneralStatement>()
-        .mappedBy(StatementMapper(predicateRepository))
-        .fetch(pageable)
+    override fun findAll(pageable: Pageable): Page<GeneralStatement> =
+        findAll(
+            pageable = pageable,
+            subjectClasses = emptySet(),
+            subjectId = null,
+            subjectLabel = null,
+            predicateId = null,
+            createdBy = null,
+            createdAtStart = null,
+            createdAtEnd = null,
+            objectClasses = emptySet(),
+            objectId = null,
+            objectLabel = null
+        )
 
     override fun countStatementsAboutResource(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
         .withQuery {
@@ -326,6 +330,83 @@ class SpringDataNeo4jStatementAdapter(
         .withParameters("id" to id.value)
         .mappedBy(StatementMapper(predicateRepository))
         .one()
+
+    override fun findAll(
+        pageable: Pageable,
+        subjectClasses: Set<ThingId>,
+        subjectId: ThingId?,
+        subjectLabel: String?,
+        predicateId: ThingId?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        objectClasses: Set<ThingId>,
+        objectId: ThingId?,
+        objectLabel: String?
+    ): Page<GeneralStatement> = CypherQueryBuilder(neo4jClient, Uncached)
+        .withCommonQuery {
+            val subject = anyNode().named("sub")
+            val r = name("r")
+            val `object` = anyNode().named("obj")
+            match(subject.relationshipTo(`object`, RELATED).named(r))
+                .with(r, subject, `object`)
+                .where(
+                    subjectClasses.toCondition { subject.hasLabels(*it.map(ThingId::value).toTypedArray()) },
+                    subjectId.toCondition { subject.property("id").eq(anonParameter(it.value)) },
+                    subjectLabel.toCondition { subject.property("label").eq(anonParameter(it)) },
+                    predicateId.toCondition { r.property("predicate_id").eq(anonParameter(it.value)) },
+                    createdBy.toCondition { r.property("created_by").eq(anonParameter(it.value.toString())) },
+                    createdAtStart.toCondition { r.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
+                    createdAtEnd.toCondition { r.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
+                    objectClasses.toCondition { `object`.hasLabels(*it.map(ThingId::value).toTypedArray()) },
+                    objectId.toCondition { `object`.property("id").eq(anonParameter(it.value)) },
+                    objectLabel.toCondition { `object`.property("label").eq(anonParameter(it)) }
+                )
+        }
+        .withQuery { commonQuery ->
+            val subject = name("sub")
+            val r = name("r")
+            val `object` = name("obj")
+            val sort = pageable.withDefaultSort { Sort.by("created_at") }.sort
+            val propertyMappings = mapOf(
+                "id" to r.property("id"),
+                "created_at" to r.property("created_at"),
+                "created_by" to r.property("created_by"),
+                "index" to r.property("index"),
+                "sub.id" to subject.property("id"),
+                "sub.label" to subject.property("label"),
+                "sub.created_at" to subject.property("created_at"),
+                "sub.created_by" to subject.property("created_by"),
+                "obj.id" to `object`.property("id"),
+                "obj.label" to `object`.property("label"),
+                "obj.created_at" to `object`.property("created_at"),
+                "obj.created_by" to `object`.property("created_by"),
+            )
+            commonQuery
+                .with(r, subject, `object`)
+                .where(
+                    orderByOptimizations(
+                        propertyMappings = propertyMappings,
+                        sort = sort,
+                        properties = arrayOf("id", "created_at", "created_by", "index")
+                    )
+                )
+                .with(r, subject, `object`)
+                .orderBy(
+                    sort.toSortItems(
+                        propertyMappings = propertyMappings,
+                        knownProperties = arrayOf(
+                            "id", "created_at", "created_by", "index",
+                            "sub.id", "sub.label", "sub.created_at", "sub.created_by",
+                            "obj.id", "obj.label", "obj.created_at", "obj.created_by"
+                        )
+                    )
+                )
+                .returning(r.`as`("rel"), subject, `object`)
+        }
+        .countOver("r")
+        .mappedBy(StatementMapper(predicateRepository))
+        .fetch(pageable, false)
 
     override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> =
         CypherQueryBuilder(neo4jClient)

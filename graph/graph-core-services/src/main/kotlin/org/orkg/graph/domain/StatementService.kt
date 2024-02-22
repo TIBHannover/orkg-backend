@@ -58,6 +58,33 @@ class StatementService(
     @Transactional(readOnly = true)
     override fun exists(id: StatementId): Boolean = statementRepository.exists(id)
 
+    override fun findAll(
+        pageable: Pageable,
+        subjectClasses: Set<ThingId>,
+        subjectId: ThingId?,
+        subjectLabel: String?,
+        predicateId: ThingId?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        objectClasses: Set<ThingId>,
+        objectId: ThingId?,
+        objectLabel: String?
+    ): Page<GeneralStatement> =
+        statementRepository.findAll(
+            pageable = pageable,
+            subjectClasses = subjectClasses,
+            subjectId = subjectId,
+            subjectLabel = subjectLabel,
+            predicateId = predicateId,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            objectClasses = objectClasses,
+            objectId = objectId,
+            objectLabel = objectLabel
+        )
+
     override fun create(subject: ThingId, predicate: ThingId, `object`: ThingId): StatementId =
         create(ContributorId.UNKNOWN, subject, predicate, `object`)
 

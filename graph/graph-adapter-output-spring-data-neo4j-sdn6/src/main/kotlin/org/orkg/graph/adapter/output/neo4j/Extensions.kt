@@ -15,6 +15,7 @@ import org.neo4j.cypherdsl.core.FunctionInvocation
 import org.neo4j.cypherdsl.core.Functions
 import org.neo4j.cypherdsl.core.IdentifiableElement
 import org.neo4j.cypherdsl.core.PatternElement
+import org.neo4j.cypherdsl.core.Property
 import org.neo4j.cypherdsl.core.ResultStatement
 import org.neo4j.cypherdsl.core.SortItem
 import org.neo4j.cypherdsl.core.StatementBuilder
@@ -207,14 +208,22 @@ internal fun StatementBuilder.TerminalExposesOrderBy.build(pageable: Pageable): 
     orderBy(pageable.sort.toSortItems()).skip(pageable.offset).limit(pageable.pageSize).build()
 
 fun Sort.toSortItems(
-    node: Expression? = null,
+    node: Expression,
+    vararg knownProperties: String
+): kotlin.collections.List<SortItem> = toSortItems(
+    propertyMappings = knownProperties.associateWith { node.property(it) },
+    knownProperties = knownProperties
+)
+
+fun Sort.toSortItems(
+    propertyMappings: Map<String, Property>? = null,
     vararg knownProperties: String
 ): kotlin.collections.List<SortItem> =
     map { sort ->
         if (knownProperties.isNotEmpty() && sort.property !in knownProperties) {
             throw UnknownSortingProperty(sort.property)
         }
-        var expression: Expression = node?.let { node.property(sort.property) } ?: name(sort.property)
+        var expression: Expression = propertyMappings?.get(sort.property) ?: name(sort.property)
         if (sort.isIgnoreCase) {
             expression = Functions.toLower(expression)
         }
@@ -276,10 +285,20 @@ fun orderByOptimizations(
     node: Expression,
     sort: Sort,
     vararg properties: String
+): kotlin.collections.List<Condition> = orderByOptimizations(
+    propertyMappings = properties.associateWith { node.property(it) },
+    sort = sort,
+    properties = properties
+)
+
+fun orderByOptimizations(
+    propertyMappings: Map<String, Expression>,
+    sort: Sort,
+    vararg properties: String
 ): kotlin.collections.List<Condition> {
     val sortProperties = sort.map { it.property }
     return properties.filter { it in sortProperties }
-        .map { node.property(it).isNotNull }
+        .map { propertyMappings[it]!!.isNotNull }
 }
 
 fun node(label: ThingId, vararg additionalLabels: ThingId) =

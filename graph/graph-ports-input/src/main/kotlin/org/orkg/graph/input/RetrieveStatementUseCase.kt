@@ -1,6 +1,8 @@
 package org.orkg.graph.input
 
+import java.time.OffsetDateTime
 import java.util.*
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Bundle
 import org.orkg.graph.domain.BundleConfiguration
@@ -13,6 +15,19 @@ import org.springframework.data.domain.Sort
 
 interface RetrieveStatementUseCase {
     fun exists(id: StatementId): Boolean
+    fun findAll(
+        pageable: Pageable,
+        subjectClasses: Set<ThingId> = emptySet(),
+        subjectId: ThingId? = null,
+        subjectLabel: String? = null,
+        predicateId: ThingId? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        objectClasses: Set<ThingId> = emptySet(),
+        objectId: ThingId? = null,
+        objectLabel: String? = null
+    ): Page<GeneralStatement>
     // legacy methods:
     fun findAll(pagination: Pageable): Page<GeneralStatement>
     fun findById(statementId: StatementId): Optional<GeneralStatement>

@@ -1,5 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
+import java.time.OffsetDateTime
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
@@ -18,6 +20,8 @@ import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat.*
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -44,11 +48,33 @@ class StatementController(
     override val flags: FeatureFlagService
 ) : StatementRepresentationAdapter, BundleRepresentationAdapter {
 
-    @GetMapping("/")
+    @GetMapping
     fun findAll(
+        @RequestParam("subject_classes", required = false) subjectClasses: Set<ThingId>?,
+        @RequestParam("subject_id", required = false) subjectId: ThingId?,
+        @RequestParam("subject_label", required = false) subjectLabel: String?,
+        @RequestParam("predicate_id", required = false) predicateId: ThingId?,
+        @RequestParam("created_by", required = false) createdBy: ContributorId?,
+        @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
+        @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
+        @RequestParam("object_classes", required = false) objectClasses: Set<ThingId>?,
+        @RequestParam("object_id", required = false) objectId: ThingId?,
+        @RequestParam("object_label", required = false) objectLabel: String?,
         pageable: Pageable
     ): Page<StatementRepresentation> =
-        statementService.findAll(pageable).mapToStatementRepresentation()
+        statementService.findAll(
+            pageable = pageable,
+            subjectClasses = subjectClasses.orEmpty(),
+            subjectId = subjectId,
+            subjectLabel = subjectLabel,
+            predicateId = predicateId,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            objectClasses = objectClasses.orEmpty(),
+            objectId = objectId,
+            objectLabel = objectLabel
+        ).mapToStatementRepresentation()
 
     @GetMapping("/{statementId}")
     fun findById(@PathVariable statementId: StatementId): StatementRepresentation =

@@ -64,32 +64,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    fun index() {
-        val r1 = resourceService.createResource(label = "one")
-        val r2 = resourceService.createResource(label = "two")
-        val r3 = resourceService.createResource(label = "three")
-        val l1 = literalService.createLiteral(label = "literal")
-        val p1 = predicateService.createPredicate(label = "blah")
-        val p2 = predicateService.createPredicate(label = "blub")
-        val pl = predicateService.createPredicate(label = "to literal")
-
-        statementService.create(r1, p1, r2)
-        statementService.create(r1, p2, r3)
-        statementService.create(r1, p2, r3)
-        statementService.create(r1, pl, l1)
-
-        mockMvc
-            .perform(getRequestTo("/api/statements/"))
-            .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    pageOfStatementsWithAnyObjectResponseFields()
-                )
-            )
-    }
-
-    @Test
     fun fetch() {
         val r1 = resourceService.createResource(label = "one")
         val r2 = resourceService.createResource(label = "two")
@@ -137,100 +111,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     statementWithLiteralResponseFields()
-                )
-            )
-    }
-
-    @Test
-    fun lookupBySubject() {
-        val r1 = resourceService.createResource(label = "one")
-        val r2 = resourceService.createResource(label = "two")
-        val r3 = resourceService.createResource(label = "three")
-        val p1 = predicateService.createPredicate(label = "blah")
-        val p2 = predicateService.createPredicate(label = "blub")
-
-        statementService.create(r1, p1, r2)
-        statementService.create(r1, p2, r3)
-
-        mockMvc
-            .perform(getRequestTo("/api/statements/subject/$r1"))
-            .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    pageOfStatementsWithAnyObjectResponseFields()
-                )
-            )
-    }
-
-    @Test
-    fun lookupBySubjectAndPredicate() {
-        val r1 = resourceService.createResource(label = "one")
-        val r2 = resourceService.createResource(label = "two")
-        val r3 = resourceService.createResource(label = "three")
-        val p1 = predicateService.createPredicate(label = "blah")
-        val p2 = predicateService.createPredicate(label = "blub")
-
-        statementService.create(r1, p1, r2)
-        statementService.create(r1, p2, r2)
-        statementService.create(r1, p2, r3)
-
-        mockMvc
-            .perform(getRequestTo("/api/statements/subject/$r1/predicate/$p1"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andDo(
-                document(
-                    snippet,
-                    pageOfStatementsWithAnyObjectResponseFields()
-                )
-            )
-    }
-
-    @Test
-    fun lookupByPredicate() {
-        val r1 = resourceService.createResource(label = "one")
-        val r2 = resourceService.createResource(label = "two")
-        val r3 = resourceService.createResource(label = "three")
-        val p1 = predicateService.createPredicate(label = "blah")
-        val p2 = predicateService.createPredicate(label = "blub")
-
-        statementService.create(r1, p1, r2)
-        statementService.create(r1, p1, r3)
-        statementService.create(r1, p2, r3)
-
-        mockMvc
-            .perform(getRequestTo("/api/statements/predicate/$p1"))
-            .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    pageOfStatementsWithAnyObjectResponseFields()
-                )
-            )
-    }
-
-    @Test
-    fun lookupByObjectAndPredicate() {
-        val r1 = resourceService.createResource(label = "one")
-        val r2 = resourceService.createResource(label = "two")
-        val r3 = resourceService.createResource(label = "three")
-        val p1 = predicateService.createPredicate(label = "owns")
-        val p2 = predicateService.createPredicate(label = "have")
-        val l1 = literalService.createLiteral(label = "money")
-
-        statementService.create(r1, p1, l1)
-        statementService.create(r2, p2, l1)
-        statementService.create(r3, p1, l1)
-
-        mockMvc
-            .perform(getRequestTo("/api/statements/object/$l1/predicate/$p1"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
-            .andDo(
-                document(
-                    snippet,
-                    pageOfStatementsWithAnyObjectResponseFields()
                 )
             )
     }

@@ -7,6 +7,9 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.verify
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -15,8 +18,11 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
+import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementObjectNotFound
 import org.orkg.graph.domain.StatementPredicateNotFound
@@ -30,16 +36,21 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
+import org.orkg.testing.andExpectPage
+import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.security.test.context.support.WithAnonymousUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
@@ -65,10 +76,124 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     @MockkBean
     private lateinit var flags: FeatureFlagService
 
+    @Autowired
+    private lateinit var clock: Clock
+
     @AfterEach
     fun verifyMockedCalls() {
         confirmVerified(statementService)
         clearAllMocks()
+    }
+
+    @Test
+    @DisplayName("Given several statements, when filtering by no parameters, then status is 200 OK and statements are returned")
+    fun getPaged() {
+        every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createStatement())
+        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { flags.isFormattedLabelsEnabled() } returns false
+
+        documentedGetRequestTo("/api/statements")
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectStatement("$.content[*]")
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
+        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
+    }
+
+    @Test
+    @DisplayName("Given several statements, when they are fetched with all possible filtering parameters, then status is 200 OK and statements are returned")
+    fun getPagedWithParameters() {
+        val statement = createStatement().copy(
+            subject = createResource(classes = setOf(Classes.contribution, ThingId("C123"))),
+            `object` = createLiteral()
+        )
+        every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(statement)
+        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { flags.isFormattedLabelsEnabled() } returns false
+
+        val subjectClasses = (statement.subject as Resource).classes
+        val subjectId = statement.subject.id
+        val subjectLabel = statement.subject.label
+        val predicateId = statement.predicate.id
+        val createdBy = statement.createdBy
+        val createdAtStart = OffsetDateTime.now(clock).minusHours(1)
+        val createdAtEnd = OffsetDateTime.now(clock).plusHours(1)
+        val objectClasses = setOf(Classes.literal)
+        val objectId = statement.`object`.id
+        val objectLabel = statement.`object`.label
+
+        documentedGetRequestTo("/api/statements")
+            .param("subject_classes", subjectClasses.joinToString(separator = ","))
+            .param("subject_id", subjectId.value)
+            .param("subject_label", subjectLabel)
+            .param("predicate_id", predicateId.value)
+            .param("created_by", createdBy.value.toString())
+            .param("created_at_start", createdAtStart.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("created_at_end", createdAtEnd.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("object_classes", objectClasses.joinToString(separator = ","))
+            .param("object_id", objectId.value)
+            .param("object_label", objectLabel)
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectStatement("$.content[*]")
+            .andDo(
+                documentationHandler.document(
+                    requestParameters(
+                        parameterWithName("subject_classes").description("A comma-separated set of classes that the subject of the statement must have. The ids `Resource`, `Class` and `Predicate` can be used to filter for a general type of subject. (optional)"),
+                        parameterWithName("subject_id").description("Filter for the subject id. (optional)"),
+                        parameterWithName("subject_label").description("Filter for the label of the subject. The label has to match exactly. (optional)"),
+                        parameterWithName("predicate_id").description("""Filter for the predicate id of the statement. (optional)"""),
+                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this statement. (optional)"),
+                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned statement can have. (optional)"),
+                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned statement can have. (optional)"),
+                        parameterWithName("object_classes").description("A comma-separated set of classes that the object of the statement must have. The ids `Resource`, `Class`, `Predicate` and `Literal` can be used to filter for a general type of object. (optional)"),
+                        parameterWithName("object_id").description("Filter for the object id. (optional)"),
+                        parameterWithName("object_label").description("Filter for the label of the object. The label has to match exactly. (optional)")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            statementService.findAll(
+                pageable = any(),
+                subjectClasses = subjectClasses,
+                subjectId = subjectId,
+                subjectLabel = subjectLabel,
+                predicateId = predicateId,
+                createdBy = createdBy,
+                createdAtStart = createdAtStart,
+                createdAtEnd = createdAtEnd,
+                objectClasses = objectClasses,
+                objectId = objectId,
+                objectLabel = objectLabel
+            )
+        }
+        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
+    }
+
+    @Test
+    fun `Given several statements, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
+        val exception = UnknownSortingProperty("unknown")
+        every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } throws exception
+
+        mockMvc.perform(get("/api/statements?sort=unknown"))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/statements"))
+
+        verify(exactly = 1) { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
     }
 
     @Test

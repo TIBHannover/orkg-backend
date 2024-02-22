@@ -5,6 +5,7 @@ import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
+import javax.validation.constraints.Size
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -17,13 +18,16 @@ import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.ObservatoryURLNotFound
 import org.orkg.community.input.CreateObservatoryUseCase.CreateCommand
 import org.orkg.community.input.ObservatoryUseCases
+import org.orkg.community.input.UpdateObservatoryUseCase.*
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.graph.input.ResourceUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -56,7 +60,7 @@ class ObservatoryController(
             .path("api/observatories/{id}")
             .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.created(location).body(service.findById(id).mapToObservatoryRepresentation().get())
+        return created(location).body(service.findById(id).mapToObservatoryRepresentation().get())
     }
 
     @GetMapping("/{id}")
@@ -102,6 +106,20 @@ class ObservatoryController(
         pageable: Pageable
     ): Page<Contributor> =
         observatoryRepository.allMembers(id, pageable)
+
+    @PreAuthorizeCurator
+    @PatchMapping("/{id}")
+    fun update(
+        @PathVariable id: ObservatoryId,
+        @RequestBody @Valid request: UpdateObservatoryRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
+        service.update(request.toUpdateCommand(id))
+        val location = uriComponentsBuilder.path("api/observatories/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
@@ -180,6 +198,25 @@ class ObservatoryController(
             organizationId = organizationId,
             researchField = researchField,
             displayId = displayId
+        )
+    }
+
+    data class UpdateObservatoryRequest(
+        @field:Valid
+        @field:Size(min = 1)
+        val name: String?,
+        @field:Valid
+        val organizations: Set<OrganizationId>?,
+        val description: String?,
+        @JsonProperty("research_field")
+        val researchField: ThingId?
+    ) {
+        fun toUpdateCommand(id: ObservatoryId) = UpdateCommand(
+            id = id,
+            name = name,
+            organizations = organizations,
+            description = description,
+            researchField = researchField
         )
     }
 

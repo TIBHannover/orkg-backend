@@ -1,13 +1,13 @@
 package org.orkg.community.adapter.input.rest
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.BeforeEach
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
@@ -29,36 +29,31 @@ import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.pageOf
-import org.springframework.beans.factory.annotation.Autowired
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedPatchRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
 
 @ContextConfiguration(classes = [ObservatoryController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ObservatoryController::class])
 @DisplayName("Given an Observatory controller")
-internal class ObservatoryControllerUnitTest {
-
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var context: WebApplicationContext
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
+internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
 
     @MockkBean
     private lateinit var observatoryUseCases: ObservatoryUseCases
@@ -69,12 +64,6 @@ internal class ObservatoryControllerUnitTest {
 
     @MockkBean
     private lateinit var observatoryRepository: ObservatoryRepository
-
-
-    @BeforeEach
-    fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
-    }
 
     @Test
     fun `Fetching the observatory after creating, status must be 200`() {
@@ -591,6 +580,48 @@ internal class ObservatoryControllerUnitTest {
             .andExpect(jsonPath("$.content[0].label").value(label))
 
         verify(exactly = 1) { observatoryUseCases.findAllResearchFields(any()) }
+    }
+
+    @Test
+    @TestWithMockCurator
+    @DisplayName("Given an observatory, when updated, then status is 204 NO CONTENT")
+    fun update() {
+        val id = ObservatoryId("73b2e081-9b50-4d55-b464-22d94e8a25f6")
+        val request = ObservatoryController.UpdateObservatoryRequest(
+            name = "updated",
+            organizations = setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")),
+            description = "new observatory description",
+            researchField = ThingId("R123")
+        )
+
+        every { observatoryUseCases.update(any()) } just runs
+
+        documentedPatchRequestTo("/api/observatories/{id}", id)
+            .content(request)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", Matchers.endsWith("/api/observatories/$id")))
+            .andDo(
+                documentationHandler.document(
+                    requestFields(
+                        fieldWithPath("name").description("The new name of the observatory. (optional)"),
+                        fieldWithPath("organizations").description("The new set of organizations that the observatory belongs to. (optional)"),
+                        fieldWithPath("description").description("The new description of the observatory. (optional)"),
+                        fieldWithPath("research_field").description("The id of the new research field of the observatory. (optional)"),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            observatoryUseCases.update(withArg {
+                it.id shouldBe id
+                it.name shouldBe "updated"
+                it.organizations shouldBe setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"))
+                it.description shouldBe "new observatory description"
+                it.researchField shouldBe ThingId("R123")
+            })
+        }
     }
 
     private fun MockMvc.performPut(urlTemplate: String, updateRequest: Any): ResultActions = perform(

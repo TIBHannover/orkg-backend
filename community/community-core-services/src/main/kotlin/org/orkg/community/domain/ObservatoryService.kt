@@ -6,6 +6,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.input.CreateObservatoryUseCase
 import org.orkg.community.input.ObservatoryUseCases
+import org.orkg.community.input.UpdateObservatoryUseCase
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.graph.domain.Classes
@@ -41,6 +42,33 @@ class ObservatoryService(
         )
         postgresObservatoryRepository.save(observatory)
         return id
+    }
+
+    override fun update(command: UpdateObservatoryUseCase.UpdateCommand) {
+        if (command.hasNoContents()) return
+        val observatory = postgresObservatoryRepository.findById(command.id)
+            .orElseThrow { ObservatoryNotFound(command.id) }
+        if (command.organizations != null && command.organizations != observatory.organizationIds) {
+            command.organizations!!.forEach { organizationId ->
+                postgresOrganizationRepository
+                    .findById(organizationId)
+                    .orElseThrow { OrganizationNotFound(organizationId) }
+            }
+        }
+        if (command.researchField != null && command.researchField != observatory.researchField) {
+            resourceRepository.findById(command.researchField!!)
+                .filter { resource -> Classes.researchField in resource.classes }
+                .orElseThrow { ResearchFieldNotFound(command.researchField!!) }
+        }
+        val updated = observatory.copy(
+            name = command.name ?: observatory.name,
+            organizationIds = command.organizations ?: observatory.organizationIds,
+            description = command.description ?: observatory.description,
+            researchField = command.researchField ?: observatory.researchField
+        )
+        if (updated != observatory) {
+            postgresObservatoryRepository.save(updated)
+        }
     }
 
     override fun findAll(pageable: Pageable): Page<Observatory> =

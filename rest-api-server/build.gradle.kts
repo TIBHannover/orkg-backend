@@ -261,6 +261,7 @@ dependencies {
     restdocs(project(withSnippets(":data-export:data-export-adapters")))
     restdocs(project(withSnippets(":licenses:licenses-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":content-types:content-types-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":community:community-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":statistics:statistics-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":widget")))
 }

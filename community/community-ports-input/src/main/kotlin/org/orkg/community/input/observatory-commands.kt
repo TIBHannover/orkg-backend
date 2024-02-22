@@ -18,6 +18,20 @@ interface CreateObservatoryUseCase {
 }
 
 interface UpdateObservatoryUseCase {
+    fun update(command: UpdateCommand)
+
+    data class UpdateCommand(
+        val id: ObservatoryId,
+        val name: String? = null,
+        val organizations: Set<OrganizationId>? = null,
+        val description: String? = null,
+        val researchField: ThingId? = null
+    ) {
+        fun hasNoContents(): Boolean =
+            name == null && organizations == null && description == null && researchField == null
+    }
+
+    // legacy methods:
     fun changeName(id: ObservatoryId, name: String)
 
     fun changeDescription(id: ObservatoryId, description: String)

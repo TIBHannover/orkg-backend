@@ -222,3 +222,14 @@ fun ResultActions.andExpectResearchFieldHierarchyEntry(path: String = "$"): Resu
     .andExpect(jsonPath("$path.parent_ids").isArray)
     .andExpect(jsonPath("$path.resource", `is`(notNullValue())))
     .andExpectResource("$path.resource")
+
+fun ResultActions.andExpectObservatory(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.name", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.description", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.research_field", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.research_field.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.research_field.label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.members").isArray)
+    .andExpect(jsonPath("$path.organization_ids").isArray)
+    .andExpect(jsonPath("$path.display_id", `is`(notNullValue())))

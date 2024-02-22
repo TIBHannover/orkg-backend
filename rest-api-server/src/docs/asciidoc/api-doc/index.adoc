@@ -163,24 +163,6 @@ A `GET` request provides information about a statement.
 
 operation::statement-controller-integration-test-fetch[snippets='curl-request,http-response']
 
-[[statements-lookup-by-subject]]
-=== Lookup statements by subject
-
-A `GET` request lists all the statements with a given subject:
-
-operation::statement-controller-integration-test-lookup-by-subject[snippets='curl-request,http-response']
-
-TIP: {pagination_note}
-
-[[statements-lookup-by-predicate]]
-=== Lookup statements by predicate
-
-A `GET` request lists all the statements with a given predicate:
-
-operation::statement-controller-integration-test-lookup-by-predicate[snippets='curl-request,http-response']
-
-TIP: {pagination_note}
-
 [[statements-fetch-as-bundle]]
 === Fetching statements for a thing as a bundle
 

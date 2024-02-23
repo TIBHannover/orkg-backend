@@ -9,10 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added `modifiable` field to papers (read-only).
   (See: [!806](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/806))
+- Added new statistics endpoints.
+  (See: [!803](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/803))
+- Added new observatory update endpoint.
+  (See: [!812](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/812))
+- Added a new endpoint for fetching statements.
+  (See: [!809](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/809))
+
+### Changed
+- It is now possible to use the field `name` instead of `observatory_name` when creating a new observatory.
+  (See: [!813](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/813))
 
 ### Fixed
 - The publication info is now properly validated when creating a paper.
   (See: [!801](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/801))
+- Fixed benchmark related queries using the wrong quantity kind class.
+  (Closes: [#530](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/530))
+- Fixed startup crash when neo4j database was empty.
+  (See: [!814](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/814))
 
 ## [0.47.0] - 2024-02-09
 ### Added

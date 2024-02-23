@@ -448,36 +448,35 @@ NOTE: The elements in `content` can be objects of arbitrary structure and are so
 
 By default, sorting is done by the `created_at` property (time-based).
 
-[cols="e,m"]
 .Sorting keys allowed by the API
 [options="header"]
-|=======================
-|Key  |Description
-2+^|*For sorting resources*
-|id   | the id of the resource
-|label    | the label of the resource
-|created_at    |the datetime timestamp of the creation
-|created_by    |the id of the curator who originally created the resource
-|visibility    |the visibility of the resource
-2+^|*For sorting predicates, classes & literals*
-|id   | the id of the predicate, class or literal
-|label    | the label of the predicate, class or literal
-|created_at    |the datetime timestamp of the creation
-|created_by    |the id of the curator who originally created the predicate, class or literal
-2+^|*For sorting statements*
-|id   | the statement id
-|index   | the index of the statement
-|created_at    |the datetime timestamp of the creation
-|created_by    |the id of the curator who originally created the statement
-|sub.id    |the id of the subject
-|sub.label    |the label of the subject
-|sub.created_at  |the creation timestamp of the subject
-|sub.created_by  |the id of the curator who originally created the subject of the statement
-|obj.id    |the id of the object
-|obj.label    |the label of the object
-|obj.created_at  |the creation timestamp of the object
-|obj.created_by  |the id of the curator who originally created the object of the statement
-|=======================
+|==============================================================================================
+| Key            | Description
+2+^| *For sorting resources*
+| id             | The id of the resource
+| label          | The label of the resource
+| created_at     | The datetime timestamp of the creation
+| created_by     | The id of the curator who originally created the resource
+| visibility     | The visibility of the resource
+2+^| *For sorting predicates, classes & literals*
+| id             | The id of the predicate, class or literal
+| label          | The label of the predicate, class or literal
+| created_at     | The datetime timestamp of the creation
+| created_by     | The id of the curator who originally created the predicate, class or literal
+2+^| *For sorting statements*
+| id             | The statement id
+| index          | The index of the statement
+| created_at     | The datetime timestamp of the creation
+| created_by     | The id of the curator who originally created the statement
+| sub.id         | The id of the subject
+| sub.label      | The label of the subject
+| sub.created_at | The creation timestamp of the subject
+| sub.created_by | The id of the curator who originally created the subject of the statement
+| obj.id         | The id of the object
+| obj.label      | The label of the object
+| obj.created_at | The creation timestamp of the object
+| obj.created_by | The id of the curator who originally created the object of the statement
+|==============================================================================================
 
 
 == Representations

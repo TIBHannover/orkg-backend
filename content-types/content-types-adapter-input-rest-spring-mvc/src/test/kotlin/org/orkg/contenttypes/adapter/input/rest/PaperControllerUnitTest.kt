@@ -1052,7 +1052,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
                     ),
                     requestFields(
-                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (default: "unknown")""").optional(),
+                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (default: "UNKNOWN")""").optional(),
                         fieldWithPath("resources").description("Definition of resources that need to be created."),
                         fieldWithPath("resources.*.label").description("The label of the resource."),
                         fieldWithPath("resources.*.classes").description("The list of classes of the resource."),

@@ -110,7 +110,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("label").description("The resource label."),
                         fieldWithPath("classes").type("Array").description("The classes of the resource. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "unknown")""").optional()
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional()
                     ),
                     createdResponseHeaders(),
                     responseFields(resourceResponseFields())

@@ -249,7 +249,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         fieldWithPath("created_by").description("The ID of the user that created the resource. All zeros if unknown."),
         fieldWithPath("classes").description("The list of classes the resource belongs to"),
         fieldWithPath("observatory_id").description("The ID of the observatory that maintains this resource."),
-        fieldWithPath("extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
+        fieldWithPath("extraction_method").description("""Method to extract this resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
         fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
         fieldWithPath("shared").description("The number of times this resource is shared"),
         fieldWithPath("formatted_label").description("The formatted label of the resource if available").optional(),

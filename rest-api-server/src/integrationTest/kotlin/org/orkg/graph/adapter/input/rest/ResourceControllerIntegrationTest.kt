@@ -110,7 +110,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("label").description("The resource label."),
                         fieldWithPath("classes").type("Array").description("The classes of the resource. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "unknown", "manual" or "automatic". (optional, default: "unknown")""").optional()
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "unknown")""").optional()
                     ),
                     createdResponseHeaders(),
                     responseFields(resourceResponseFields())
@@ -161,7 +161,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("label").description("The updated resource label. (optional)").optional(),
                         fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "unknown", "manual" or "automatic". (optional)""").optional()
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""").optional()
                     ),
                     responseFields(resourceResponseFields())
                 )
@@ -188,7 +188,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("label").type("String").description("The updated resource label. (optional)").optional(),
                         fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "unknown", "manual" or "automatic". (optional)""").optional()
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""").optional()
                     ),
                     responseFields(resourceResponseFields())
                 )
@@ -402,7 +402,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
             fieldWithPath("created_by").description("The ID of the user that created the resource. All zeros if unknown."),
             fieldWithPath("classes").description("The list of classes the resource belongs to"),
             fieldWithPath("observatory_id").description("The ID of the observatory that maintains this resource."),
-            fieldWithPath("extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
+            fieldWithPath("extraction_method").description("""Method to extract this resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
             fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("shared").description("The number of times this resource is shared").optional(),
             fieldWithPath("_class").description("Class").optional(),

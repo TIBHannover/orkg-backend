@@ -141,12 +141,12 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("contributions[].label").description("The label of the contribution."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "unknown", "manual" or "automatic"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
                         timestampFieldWithPath("created_at", "the paper resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this paper."),
                         fieldWithPath("verified").description("Determines if the paper was verified by a curator."),
-                        fieldWithPath("visibility").description("""Visibility of the paper. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("visibility").description("""Visibility of the paper. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
                         fieldWithPath("modifiable").description("Whether this paper can be modified."),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this paper.").optional()
                     ).and(authorListFields("paper"))
@@ -530,7 +530,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("contents.contributions[].statements.*[].id").description("The ID of the object of the statement."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "unknown", "manual" or "automatic".""")
+                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC".""")
                     )
                 )
             )
@@ -1052,7 +1052,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
                     ),
                     requestFields(
-                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of "unknown", "manual" or "automatic". (default: "unknown")""").optional(),
+                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (default: "unknown")""").optional(),
                         fieldWithPath("resources").description("Definition of resources that need to be created."),
                         fieldWithPath("resources.*.label").description("The label of the resource."),
                         fieldWithPath("resources.*.classes").description("The list of classes of the resource."),

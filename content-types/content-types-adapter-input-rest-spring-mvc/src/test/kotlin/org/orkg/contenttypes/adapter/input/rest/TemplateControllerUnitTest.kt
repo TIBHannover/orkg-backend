@@ -127,7 +127,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         timestampFieldWithPath("created_at", "the template resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this template."),
-                        fieldWithPath("visibility").description("""Visibility of the template. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("visibility").description("""Visibility of the template. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this template.").optional()
                     )
                 )

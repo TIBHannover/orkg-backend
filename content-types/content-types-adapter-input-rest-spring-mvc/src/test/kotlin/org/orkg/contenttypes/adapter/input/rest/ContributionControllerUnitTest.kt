@@ -61,11 +61,11 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
                         fieldWithPath("label").description("The label of the contribution."),
                         fieldWithPath("classes").description("The classes of the contribution resource."),
                         subsectionWithPath("properties").description("A map of predicate ids to lists of thing ids, that represent the statements that this contribution consists of."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of "unknown", "manual" or "automatic"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
                         timestampFieldWithPath("created_at", "the contribution resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this contribution."),
-                        fieldWithPath("visibility").description("""Visibility of the contribution. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("visibility").description("""Visibility of the contribution. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this contribution.").optional()
                     )
                 )

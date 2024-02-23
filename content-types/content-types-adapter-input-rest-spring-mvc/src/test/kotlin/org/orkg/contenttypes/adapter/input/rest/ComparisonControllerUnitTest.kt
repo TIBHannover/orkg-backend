@@ -120,7 +120,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("references[]").description("The list of references of the comparison."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the comparison belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "unknown", "manual" or "automatic"."""),
+                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
                         timestampFieldWithPath("created_at", "the comparison resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this comparison."),
@@ -129,7 +129,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("versions[].label").description("The label of a previous version of the comparison."),
                         timestampFieldWithPath("versions[].created_at", "the previous version of the comparison resource was created"),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison is anonymized."),
-                        fieldWithPath("visibility").description("""Visibility of the comparison. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("visibility").description("""Visibility of the comparison. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this comparison.").optional()
                     ).and(authorListFields("comparison"))
                         .and(publicationInfoFields("paper"))
@@ -648,7 +648,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the comparison belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to."),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison should be displayed as anonymous."),
-                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "unknown", "manual" or "automatic".""")
+                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC".""")
                     )
                 )
             )

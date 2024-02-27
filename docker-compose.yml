@@ -84,13 +84,39 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HOSTNAME_URL: http://localhost:8888
-      DB_VENDOR: H2
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres:5432/postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
     volumes:
       - ./rest-api-server/src/integrationTest/resources/keycloak/import:/opt/keycloak/data/import:ro
       - ./rest-api-server/src/integrationTest/resources/keycloak/providers:/opt/keycloak/providers:ro
+    depends_on:
+      keycloak-postgres:
+        condition: service_healthy
     networks:
       - auth
       - mail
+
+  keycloak-postgres:
+    image: postgres:11
+    expose:
+      - '5433'
+    ports:
+      - '127.0.0.1:5433:5432'
+      #- '::1:5432:5432'
+    environment:
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    networks:
+      - auth
+    volumes:
+      - 'keycloak-data:/var/lib/postgresql/data/pgdata'
 
   # Mail server. Can be used in Keycloak to test mail flows.
   mailhog:
@@ -110,3 +136,4 @@ networks:
 volumes:
   neo4j-data:
   postgres-data:
+  keycloak-data:

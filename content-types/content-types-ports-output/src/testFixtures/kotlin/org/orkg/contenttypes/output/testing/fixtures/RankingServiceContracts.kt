@@ -218,7 +218,7 @@ fun <
             id = ThingId("HasEntry")
         )
         val hasPaper = fabricator.random<Predicate>().copy(
-            id = ThingId("HasPaper")
+            id = ThingId("HasLink")
         )
         saveStatement(fabricator.random<GeneralStatement>().copy(
             subject = literatureList,

@@ -41,7 +41,7 @@ class SpringDataNeo4jRankingServiceAdapter(
 
     override fun countLiteratureListsIncludingPaper(id: ThingId): Long =
         neo4jClient.query("""
-            MATCH (n:LiteratureList:Resource)-[:RELATED {predicate_id: "HasSection"}]->(:ListSection:Resource)-[:RELATED {predicate_id:"HasEntry"}]->(:Resource)-[:RELATED {predicate_id:"HasPaper"}]->(:Paper:Resource {id: ${'$'}id})
+            MATCH (n:LiteratureList:Resource)-[:RELATED {predicate_id: "HasSection"}]->(:ListSection:Resource)-[:RELATED {predicate_id:"HasEntry"}]->(:Resource)-[:RELATED {predicate_id:"HasLink"}]->(:Paper:Resource {id: ${'$'}id})
             RETURN COUNT(n) AS count""".trimIndent()
         ).bindAll(mapOf("id" to id.value))
             .fetchAs<Long>()

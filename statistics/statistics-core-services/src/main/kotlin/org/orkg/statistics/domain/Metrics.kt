@@ -137,6 +137,14 @@ class Metrics {
         supplier = { statsRepository.findNodeCountForLabel("Problem") }
     )
 
+    @Bean
+    fun benchmarkCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+        name = "benchmark-count",
+        description = "Number of benchmarks in the graph.",
+        group = "content-types",
+        supplier = { statsRepository.findNodeCountForLabel("C14022") }
+    )
+
     //
     // Community
     //

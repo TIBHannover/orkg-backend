@@ -343,9 +343,9 @@ class SpringDataNeo4jStatementAdapter(
         objectLabel: String?
     ): Page<GeneralStatement> = CypherQueryBuilder(neo4jClient, Uncached)
         .withCommonQuery {
-            val subject = anyNode().named("sub")
+            val subject = node("Thing").named("sub")
             val r = name("r")
-            val `object` = anyNode().named("obj")
+            val `object` = node("Thing").named("obj")
             match(subject.relationshipTo(`object`, RELATED).named(r))
                 .with(r, subject, `object`)
                 .where(

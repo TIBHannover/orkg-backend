@@ -15,10 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!812](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/812))
 - Added a new endpoint for fetching statements.
   (See: [!809](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/809))
+- Added support for assigning sustainable development goals to observatories.
+  (See: [!815](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/815))
 
 ### Changed
 - It is now possible to use the field `name` instead of `observatory_name` when creating a new observatory.
   (See: [!813](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/813))
+- Fields for paper update requests are now only evaluated when they are different to the existing fields of the paper.
+  (See: [!818](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/818))
 
 ### Fixed
 - The publication info is now properly validated when creating a paper.

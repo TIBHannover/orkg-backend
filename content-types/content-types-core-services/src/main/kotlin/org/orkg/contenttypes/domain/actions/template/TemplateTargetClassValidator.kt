@@ -15,7 +15,11 @@ class TemplateTargetClassValidator(
 ) : TemplateAction {
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         classRepository.findById(command.targetClass).orElseThrow { ClassNotFound.withThingId(command.targetClass) }
-        val statements = statementRepository.findAllByObjectAndPredicate(command.targetClass, Predicates.shTargetClass, PageRequests.SINGLE)
+        val statements = statementRepository.findAll(
+            predicateId = Predicates.shTargetClass,
+            objectId = command.targetClass,
+            pageable = PageRequests.SINGLE
+        )
         if (statements.numberOfElements > 0) {
             throw TemplateAlreadyExistsForClass(command.targetClass, statements.single().subject.id)
         }

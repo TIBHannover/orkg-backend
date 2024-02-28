@@ -65,10 +65,10 @@ class PaperPublicationInfoUpdater(
         subjectId: ThingId
     ) {
         if (oldMonth != null) {
-            val statement = statementService.findAllBySubjectAndPredicate(
+            val statement = statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.monthPublished,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             ).single()
             statementService.delete(statement.id!!)
         }
@@ -85,10 +85,10 @@ class PaperPublicationInfoUpdater(
         subjectId: ThingId
     ) {
         if (oldYear != null) {
-            val statement = statementService.findAllBySubjectAndPredicate(
+            val statement = statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.yearPublished,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             ).single()
             statementService.delete(statement.id!!)
         }
@@ -105,10 +105,10 @@ class PaperPublicationInfoUpdater(
         subjectId: ThingId
     ) {
         if (oldVenue != null) {
-            val statement = statementService.findAllBySubjectAndPredicate(
+            val statement = statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasVenue,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             ).single()
             statementService.delete(statement.id!!)
         }
@@ -125,10 +125,10 @@ class PaperPublicationInfoUpdater(
         subjectId: ThingId
     ) {
         if (oldUrl != null) {
-            val statement = statementService.findAllBySubjectAndPredicate(
+            val statement = statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasURL,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             ).single { it.`object` is Literal }
             statementService.delete(statement.id!!)
         }

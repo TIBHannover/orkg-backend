@@ -31,7 +31,11 @@ class PublishingService(
         if (!resource.hasPublishableClasses()) {
             throw UnpublishableThing(command.id)
         }
-        val hasDoiStatements = statementService.findAllBySubjectAndPredicate(command.id, Predicates.hasDOI, PageRequests.SINGLE)
+        val hasDoiStatements = statementService.findAll(
+            subjectId = command.id,
+            predicateId = Predicates.hasDOI,
+            pageable = PageRequests.SINGLE
+        )
         if (!hasDoiStatements.isEmpty) {
             throw DoiAlreadyRegistered(command.id)
         }

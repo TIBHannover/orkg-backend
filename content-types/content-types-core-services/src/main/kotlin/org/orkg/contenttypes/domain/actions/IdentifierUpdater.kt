@@ -31,10 +31,10 @@ abstract class IdentifierUpdater(
         // Remove unwanted identifiers
         if (toRemove.isNotEmpty()) {
             toRemove.forEach { (key, _) ->
-                statementService.findAllBySubjectAndPredicate(
+                statementService.findAll(
                     subjectId = subjectId,
                     predicateId = key2Identifier[key]!!.predicateId,
-                    pagination = PageRequests.ALL
+                    pageable = PageRequests.ALL
                 ).forEach { statementService.delete(it.id!!) }
             }
         }

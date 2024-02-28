@@ -27,7 +27,7 @@ class ContributionService(
             .pmap { it.toContribution() }
 
     private fun Resource.toContribution(): Contribution {
-        val statements = statementRepository.findAllBySubject(id, PageRequests.ALL).content
+        val statements = statementRepository.findAll(subjectId = id, pageable = PageRequests.ALL).content
             .withoutObjectsWithBlankLabels()
         return Contribution(
             id = this@toContribution.id,

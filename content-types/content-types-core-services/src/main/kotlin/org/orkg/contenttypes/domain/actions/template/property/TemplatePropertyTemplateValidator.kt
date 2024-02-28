@@ -13,11 +13,11 @@ class TemplatePropertyTemplateValidator(
     private val statementRepository: StatementRepository
 ) : TemplatePropertyAction {
     override fun invoke(command: CreateTemplatePropertyCommand, state: State): State {
-        val statements = statementRepository.findAllBySubject(command.templateId, PageRequests.ALL)
+        val statements = statementRepository.findAll(subjectId = command.templateId, pageable = PageRequests.ALL)
         statements.firstOrNull {
-            it.predicate.id == Predicates.shClosed && it.`object` is Literal
-                && (it.`object` as Literal).datatype == Literals.XSD.BOOLEAN.prefixedUri
-                && it.`object`.label.equals("true", ignoreCase = true)
+            it.predicate.id == Predicates.shClosed && it.`object` is Literal &&
+                (it.`object` as Literal).datatype == Literals.XSD.BOOLEAN.prefixedUri &&
+                it.`object`.label.equals("true", ignoreCase = true)
         }?.let { throw TemplateClosed(command.templateId) }
         val propertyCount = statements.count { it.predicate.id == Predicates.shProperty }
         return state.copy(propertyCount = propertyCount)

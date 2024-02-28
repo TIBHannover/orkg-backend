@@ -103,10 +103,10 @@ class PaperIdentifierUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = paperId,
                 predicateId = Predicates.hasDOI,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         } returns pageOf(
             createStatement(
@@ -135,10 +135,10 @@ class PaperIdentifierUpdaterUnitTest {
         }
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = paperId,
                 predicateId = Predicates.hasDOI,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }

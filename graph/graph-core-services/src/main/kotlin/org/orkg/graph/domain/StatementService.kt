@@ -28,32 +28,8 @@ class StatementService(
     private val clock: Clock,
 ) : StatementUseCases {
 
-    override fun findAll(pagination: Pageable): Page<GeneralStatement> =
-        statementRepository.findAll(pagination)
-
     override fun findById(statementId: StatementId): Optional<GeneralStatement> =
         statementRepository.findByStatementId(statementId)
-
-    override fun findAllBySubject(subjectId: ThingId, pagination: Pageable): Page<GeneralStatement> =
-        statementRepository.findAllBySubject(subjectId, pagination)
-
-    override fun findAllByPredicate(predicateId: ThingId, pagination: Pageable): Page<GeneralStatement> =
-        statementRepository.findAllByPredicateId(predicateId, pagination)
-
-    override fun findAllByObject(objectId: ThingId, pagination: Pageable): Page<GeneralStatement> =
-        statementRepository.findAllByObject(objectId, pagination)
-
-    override fun findAllBySubjectAndPredicate(
-        subjectId: ThingId,
-        predicateId: ThingId,
-        pagination: Pageable
-    ): Page<GeneralStatement> = statementRepository.findAllBySubjectAndPredicate(subjectId, predicateId, pagination)
-
-    override fun findAllByObjectAndPredicate(
-        objectId: ThingId,
-        predicateId: ThingId,
-        pagination: Pageable
-    ): Page<GeneralStatement> = statementRepository.findAllByObjectAndPredicate(objectId, predicateId, pagination)
 
     @Transactional(readOnly = true)
     override fun exists(id: StatementId): Boolean = statementRepository.exists(id)
@@ -108,9 +84,14 @@ class StatementService(
         val foundObject = thingRepository.findByThingId(`object`)
             .orElseThrow { StatementObjectNotFound(`object`) }
 
-        val statement = statementRepository.findBySubjectIdAndPredicateIdAndObjectId(subject, predicate, `object`)
-        if (statement.isPresent) {
-            return statement.get().id!!
+        val statement = statementRepository.findAll(
+            subjectId = subject,
+            predicateId = predicate,
+            objectId = `object`,
+            pageable = PageRequests.SINGLE
+        )
+        if (!statement.isEmpty) {
+            return statement.single().id!!
         }
         val id = statementRepository.nextIdentity()
         val newStatement = GeneralStatement(
@@ -241,25 +222,6 @@ class StatementService(
     }
 
     override fun countStatements(paperId: ThingId): Long = statementRepository.countByIdRecursive(paperId)
-
-    override fun findAllByPredicateAndLabel(
-        predicateId: ThingId,
-        literal: String,
-        pagination: Pageable
-    ): Page<GeneralStatement> = statementRepository.findAllByPredicateIdAndLabel(predicateId, literal, pagination)
-
-    override fun findAllByPredicateAndLabelAndSubjectClass(
-        predicateId: ThingId,
-        literal: String,
-        subjectClass: ThingId,
-        pagination: Pageable
-    ): Page<GeneralStatement> =
-        statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
-            predicateId,
-            literal,
-            subjectClass,
-            pagination
-        )
 
     override fun fetchAsBundle(
         thingId: ThingId,

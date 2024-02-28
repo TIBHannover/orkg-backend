@@ -105,21 +105,35 @@ class ComparisonService(
         }.pmap { it.toComparison() }
 
     override fun findRelatedResourceById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedResource> =
-        statementRepository.findBySubjectIdAndPredicateIdAndObjectId(comparisonId, Predicates.hasRelatedFigure, id)
+        statementRepository.findAll(
+            subjectId = comparisonId,
+            predicateId = Predicates.hasRelatedResource,
+            objectId = id,
+            pageable = PageRequests.SINGLE
+        )
             .filter { it.`object` is Resource && Classes.comparisonRelatedResource in (it.`object` as Resource).classes }
+            .singleOrNull()
+            .let { Optional.ofNullable(it) }
             .map { (it.`object` as Resource).toComparisonRelatedResource() }
 
     override fun findAllRelatedResources(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedResource> =
-        statementRepository.findAllBySubjectAndPredicate(comparisonId, Predicates.hasRelatedFigure, pageable)
+        statementRepository.findAll(subjectId = comparisonId, predicateId = Predicates.hasRelatedResource, pageable = pageable)
             .map { (it.`object` as Resource).toComparisonRelatedResource() }
 
     override fun findRelatedFigureById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedFigure> =
-        statementRepository.findBySubjectIdAndPredicateIdAndObjectId(comparisonId, Predicates.hasRelatedFigure, id)
+        statementRepository.findAll(
+            subjectId = comparisonId,
+            predicateId = Predicates.hasRelatedFigure,
+            objectId = id,
+            pageable = PageRequests.SINGLE
+        )
             .filter { it.`object` is Resource && Classes.comparisonRelatedFigure in (it.`object` as Resource).classes }
+            .singleOrNull()
+            .let { Optional.ofNullable(it) }
             .map { (it.`object` as Resource).toComparisonRelatedFigure() }
 
     override fun findAllRelatedFigures(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedFigure> =
-        statementRepository.findAllBySubjectAndPredicate(comparisonId, Predicates.hasRelatedFigure, pageable)
+        statementRepository.findAll(subjectId = comparisonId, predicateId = Predicates.hasRelatedFigure, pageable = pageable)
             .map { (it.`object` as Resource).toComparisonRelatedFigure() }
 
     override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison> =
@@ -277,7 +291,7 @@ class ComparisonService(
     }
 
     private fun Resource.toComparisonRelatedResource(): ComparisonRelatedResource {
-        val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
+        val statements = statementRepository.findAll(subjectId = id, pageable = PageRequests.ALL)
             .content
             .withoutObjectsWithBlankLabels()
         return ComparisonRelatedResource(
@@ -292,7 +306,7 @@ class ComparisonService(
     }
 
     private fun Resource.toComparisonRelatedFigure(): ComparisonRelatedFigure {
-        val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
+        val statements = statementRepository.findAll(subjectId = id, pageable = PageRequests.ALL)
             .content
             .withoutObjectsWithBlankLabels()
         return ComparisonRelatedFigure(

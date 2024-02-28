@@ -56,18 +56,20 @@ class AuthorValidatorUnitTest {
         every { resourceRepository.findById(author1.id) } returns Optional.of(author1)
         every { resourceRepository.findById(author2.id) } returns Optional.of(author2)
         every {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.author),
                 predicateId = Predicates.hasORCID,
-                literal = "0000-1111-2222-3333",
-                subjectClass = Classes.author,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = "0000-1111-2222-3333",
                 pageable = PageRequests.ALL
             )
         } returns Page.empty()
         every {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.author),
                 predicateId = Predicates.hasORCID,
-                literal = "1111-2222-3333-4444",
-                subjectClass = Classes.author,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = "1111-2222-3333-4444",
                 pageable = PageRequests.ALL
             )
         } returns pageOf(
@@ -105,18 +107,20 @@ class AuthorValidatorUnitTest {
         verify(exactly = 1) { resourceRepository.findById(author1.id) }
         verify(exactly = 1) { resourceRepository.findById(author2.id) }
         verify(exactly = 1) {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.author),
                 predicateId = Predicates.hasORCID,
-                literal = "0000-1111-2222-3333",
-                subjectClass = Classes.author,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = "0000-1111-2222-3333",
                 pageable = PageRequests.ALL
             )
         }
         verify(exactly = 1) {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.author),
                 predicateId = Predicates.hasORCID,
-                literal = "1111-2222-3333-4444",
-                subjectClass = Classes.author,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = "1111-2222-3333-4444",
                 pageable = PageRequests.ALL
             )
         }
@@ -159,10 +163,11 @@ class AuthorValidatorUnitTest {
 
         every { resourceRepository.findById(author1.id) } returns Optional.of(author1)
         every {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.author),
                 predicateId = Predicates.hasORCID,
-                literal = "0000-1111-2222-3333",
-                subjectClass = Classes.author,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = "0000-1111-2222-3333",
                 pageable = PageRequests.ALL
             )
         } returns pageOf(
@@ -177,10 +182,11 @@ class AuthorValidatorUnitTest {
 
         verify(exactly = 1) { resourceRepository.findById(author1.id) }
         verify(exactly = 1) {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.author),
                 predicateId = Predicates.hasORCID,
-                literal = "0000-1111-2222-3333",
-                subjectClass = Classes.author,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = "0000-1111-2222-3333",
                 pageable = PageRequests.ALL
             )
         }
@@ -204,10 +210,11 @@ class AuthorValidatorUnitTest {
 
         every { resourceRepository.findById(author1.id) } returns Optional.of(author1)
         every {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.author),
                 predicateId = Predicates.hasORCID,
-                literal = "0000-1111-2222-3333",
-                subjectClass = Classes.author,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = "0000-1111-2222-3333",
                 pageable = PageRequests.ALL
             )
         } returns pageOf(
@@ -218,10 +225,11 @@ class AuthorValidatorUnitTest {
             )
         )
         every {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.author),
                 predicateId = Predicates.hasResearchGateId,
-                literal = "1111-2222-3333-4444",
-                subjectClass = Classes.author,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = "1111-2222-3333-4444",
                 pageable = PageRequests.ALL
             )
         } returns pageOf(
@@ -236,18 +244,20 @@ class AuthorValidatorUnitTest {
 
         verify(exactly = 1) { resourceRepository.findById(author1.id) }
         verify(exactly = 1) {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.author),
                 predicateId = Predicates.hasORCID,
-                literal = "0000-1111-2222-3333",
-                subjectClass = Classes.author,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = "0000-1111-2222-3333",
                 pageable = PageRequests.ALL
             )
         }
         verify(exactly = 1) {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.author),
                 predicateId = Predicates.hasResearchGateId,
-                literal = "1111-2222-3333-4444",
-                subjectClass = Classes.author,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = "1111-2222-3333-4444",
                 pageable = PageRequests.ALL
             )
         }

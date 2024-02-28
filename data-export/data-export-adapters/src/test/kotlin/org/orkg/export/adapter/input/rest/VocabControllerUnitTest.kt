@@ -57,7 +57,7 @@ class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
     fun resolveResource() {
         val resourceId = ThingId("R1")
         every { resourceRepository.findById(resourceId) } returns Optional.of(createResource(id = resourceId))
-        every { statementRepository.findAllBySubject(resourceId, any()) } returns Page.empty() // TODO: expand example?
+        every { statementRepository.findAll(subjectId = resourceId, pageable = any()) } returns Page.empty() // TODO: expand example?
 
         mockMvc.perform(get("/api/vocab/resource/{id}", resourceId.value).accept("application/rdf+xml"))
             .andExpect(status().isOk)

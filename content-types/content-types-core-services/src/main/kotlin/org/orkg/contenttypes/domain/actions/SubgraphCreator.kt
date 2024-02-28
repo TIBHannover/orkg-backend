@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain.actions
 
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.ExtractionMethod
@@ -151,7 +152,7 @@ class SubgraphCreator(
             val predicate = resolve(predicateId, lookup)
             val `object` = resolve(objectId, lookup)
             val hasTempId = subjectId.isTempId || predicateId.isTempId || objectId.isTempId
-            if (hasTempId || statementRepository.findBySubjectIdAndPredicateIdAndObjectId(subject, predicate, `object`).isEmpty) {
+            if (hasTempId || statementRepository.findAll(subjectId = subject, predicateId = predicate, objectId = `object`, pageable = PageRequests.SINGLE).isEmpty) {
                 statementService.add(contributorId, subject, predicate, `object`)
             }
         }

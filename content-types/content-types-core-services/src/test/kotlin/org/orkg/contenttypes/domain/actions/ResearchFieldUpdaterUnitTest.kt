@@ -46,10 +46,10 @@ class ResearchFieldUpdaterUnitTest {
         val subjectId = ThingId("R123")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasResearchField,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         } returns pageOf()
         every { researchFieldCreator.create(contributorId, listOf(id), subjectId) } just runs
@@ -57,10 +57,10 @@ class ResearchFieldUpdaterUnitTest {
         researchFieldUpdater.update(contributorId, listOf(id), subjectId)
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasResearchField,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         }
         verify(exactly = 1) { researchFieldCreator.create(contributorId, listOf(id), subjectId) }
@@ -73,10 +73,10 @@ class ResearchFieldUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasResearchField,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         } returns pageOf(
             createStatement(
@@ -91,10 +91,10 @@ class ResearchFieldUpdaterUnitTest {
         researchFieldUpdater.update(contributorId, emptyList(), subjectId)
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasResearchField,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }
@@ -108,10 +108,10 @@ class ResearchFieldUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasResearchField,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         } returns pageOf(
             createStatement(
@@ -127,10 +127,10 @@ class ResearchFieldUpdaterUnitTest {
         researchFieldUpdater.update(contributorId, listOf(id), subjectId)
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasResearchField,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }

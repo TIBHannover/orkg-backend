@@ -51,7 +51,12 @@ class TemplatePropertyTemplateValidatorUnitTest {
         val state = TemplatePropertyState()
         val template = createResource(id = command.templateId, classes = setOf(Classes.nodeShape))
 
-        every { statementRepository.findAllBySubject(command.templateId, PageRequests.ALL) } returns pageOf(
+        every {
+            statementRepository.findAll(
+                subjectId = command.templateId,
+                pageable = PageRequests.ALL
+            )
+        } returns pageOf(
             createStatement(
                 subject = template,
                 predicate = createPredicate(Predicates.shClosed),
@@ -71,7 +76,12 @@ class TemplatePropertyTemplateValidatorUnitTest {
             it.propertyCount shouldBe 1
         }
 
-        verify(exactly = 1) { statementRepository.findAllBySubject(command.templateId, PageRequests.ALL) }
+        verify(exactly = 1) {
+            statementRepository.findAll(
+                subjectId = command.templateId,
+                pageable = PageRequests.ALL
+            )
+        }
     }
 
     @ParameterizedTest
@@ -79,7 +89,12 @@ class TemplatePropertyTemplateValidatorUnitTest {
     fun `Given a template property create command, when the template has no statements, it returns success`(command: CreateTemplatePropertyCommand) {
         val state = TemplatePropertyState()
 
-        every { statementRepository.findAllBySubject(command.templateId, PageRequests.ALL) } returns pageOf()
+        every {
+            statementRepository.findAll(
+                subjectId = command.templateId,
+                pageable = PageRequests.ALL
+            )
+        } returns pageOf()
 
         val result = templatePropertyTemplateValidator(command, state)
 
@@ -88,7 +103,12 @@ class TemplatePropertyTemplateValidatorUnitTest {
             it.propertyCount shouldBe 0
         }
 
-        verify(exactly = 1) { statementRepository.findAllBySubject(command.templateId, PageRequests.ALL) }
+        verify(exactly = 1) {
+            statementRepository.findAll(
+                subjectId = command.templateId,
+                pageable = PageRequests.ALL
+            )
+        }
     }
 
     @ParameterizedTest
@@ -97,7 +117,12 @@ class TemplatePropertyTemplateValidatorUnitTest {
         val state = TemplatePropertyState()
         val template = createResource(id = command.templateId, classes = setOf(Classes.nodeShape))
 
-        every { statementRepository.findAllBySubject(command.templateId, PageRequests.ALL) } returns pageOf(
+        every {
+            statementRepository.findAll(
+                subjectId = command.templateId,
+                pageable = PageRequests.ALL
+            )
+        } returns pageOf(
             createStatement(
                 subject = template,
                 predicate = createPredicate(Predicates.shClosed),
@@ -107,7 +132,12 @@ class TemplatePropertyTemplateValidatorUnitTest {
 
         assertThrows<TemplateClosed> { templatePropertyTemplateValidator(command, state) }
 
-        verify(exactly = 1) { statementRepository.findAllBySubject(command.templateId, PageRequests.ALL) }
+        verify(exactly = 1) {
+            statementRepository.findAll(
+                subjectId = command.templateId,
+                pageable = PageRequests.ALL
+            )
+        }
     }
 
     companion object {

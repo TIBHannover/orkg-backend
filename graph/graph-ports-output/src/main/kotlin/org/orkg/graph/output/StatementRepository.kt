@@ -49,35 +49,7 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
         objectLabel: String? = null
     ): Page<GeneralStatement>
     fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement>
-    fun findAllBySubject(subjectId: ThingId, pageable: Pageable): Page<GeneralStatement>
-    fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable): Page<GeneralStatement>
-    fun findAllByObject(objectId: ThingId, pageable: Pageable): Page<GeneralStatement>
     fun countByIdRecursive(id: ThingId): Long // Subject id
-    fun findAllByObjectAndPredicate(
-        objectId: ThingId,
-        predicateId: ThingId,
-        pageable: Pageable
-    ): Page<GeneralStatement>
-
-    fun findAllBySubjectAndPredicate(
-        subjectId: ThingId,
-        predicateId: ThingId,
-        pageable: Pageable
-    ): Page<GeneralStatement>
-
-    fun findAllByPredicateIdAndLabel(
-        predicateId: ThingId,
-        literal: String,
-        pageable: Pageable
-    ): Page<GeneralStatement>
-
-    fun findAllByPredicateIdAndLabelAndSubjectClass(
-        predicateId: ThingId,
-        literal: String,
-        subjectClass: ThingId,
-        pageable: Pageable
-    ): Page<GeneralStatement>
-
     fun findAllBySubjects(subjectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement>
     fun findAllByObjects(objectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement>
     fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement>
@@ -95,7 +67,6 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
     fun checkIfResourceHasStatements(id: ThingId): Boolean
     fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
-    fun findBySubjectIdAndPredicateIdAndObjectId(subjectId: ThingId, predicateId: ThingId, objectId: ThingId): Optional<GeneralStatement>
 
     fun findAllCurrentComparisons(pageable: Pageable): Page<Resource>
     fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource>

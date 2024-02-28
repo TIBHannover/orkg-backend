@@ -351,7 +351,14 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             `object` = createLiteral(label = "path/to/resource")
         )
 
-        every { statementService.findAllByPredicateAndLabel(any(), any(), any()) } returns pageOf(statement)
+        every {
+            statementService.findAll(
+                predicateId = statement.predicate.id,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = statement.`object`.label,
+                pageable = any()
+            )
+        } returns pageOf(statement)
         every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
@@ -359,7 +366,12 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpect(status().isOk)
 
         verify(exactly = 1) {
-            statementService.findAllByPredicateAndLabel(statement.predicate.id, statement.`object`.label, any())
+            statementService.findAll(
+                predicateId = statement.predicate.id,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = statement.`object`.label,
+                pageable = any()
+            )
             statementService.countStatementsAboutResources(any())
             flags.isFormattedLabelsEnabled()
         }

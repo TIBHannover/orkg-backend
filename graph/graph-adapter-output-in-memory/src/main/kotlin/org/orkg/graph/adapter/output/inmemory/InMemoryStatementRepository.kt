@@ -7,6 +7,7 @@ import kotlin.jvm.optionals.getOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Class
@@ -26,7 +27,6 @@ import org.orkg.graph.domain.createdBy
 import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
@@ -118,57 +118,12 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
     override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { it.id in ids }
 
-    override fun findAllBySubject(subjectId: ThingId, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.subject.id == subjectId }
-
-    override fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.predicate.id == predicateId }
-
-    override fun findAllByObject(objectId: ThingId, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.`object`.id == objectId }
-
     override fun countByIdRecursive(id: ThingId): Long =
         findSubgraph(ThingId(id.value)) { statement, _ ->
             statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
                 `class` == Classes.paper || `class` == Classes.problem || `class` == Classes.researchField
             }
         }.count().toLong()
-
-    override fun findAllByObjectAndPredicate(
-        objectId: ThingId,
-        predicateId: ThingId,
-        pageable: Pageable
-    ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object`.id == objectId
-    }
-
-    override fun findAllBySubjectAndPredicate(
-        subjectId: ThingId,
-        predicateId: ThingId,
-        pageable: Pageable
-    ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.subject.id == subjectId
-    }
-
-    // FIXME: rename to findAllByPredicateIdAndLiteralObjectLabel
-    override fun findAllByPredicateIdAndLabel(
-        predicateId: ThingId,
-        literal: String,
-        pageable: Pageable
-    ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal
-    }
-
-    // FIXME: rename to findAllByPredicateIdAndLiteralObjectLabelAndSubjectClass
-    override fun findAllByPredicateIdAndLabelAndSubjectClass(
-        predicateId: ThingId,
-        literal: String,
-        subjectClass: ThingId,
-        pageable: Pageable
-    ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal &&
-            it.subject is Resource && subjectClass in (it.subject as Resource).classes
-    }
 
     override fun findAllBySubjects(
         subjectIds: List<ThingId>,
@@ -365,8 +320,8 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             }
         }.map {
             setOf(
-                it.subject.toContributor(),
-                it.`object`.toContributor(),
+                it.subject.createdBy,
+                it.`object`.createdBy,
                 it.createdBy
             )
         }.flatten().distinct()
@@ -429,19 +384,15 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
         return id
     }
 
-    override fun findBySubjectIdAndPredicateIdAndObjectId(
-        subjectId: ThingId,
-        predicateId: ThingId,
-        objectId: ThingId
-    ): Optional<GeneralStatement> = Optional.ofNullable(entities.values.firstOrNull {
-        it.subject.id == subjectId && it.predicate.id == predicateId && it.`object`.id == objectId
-    })
-
     override fun findAllCurrentComparisons(pageable: Pageable): Page<Resource> =
         entities.values
             .filter {
                 it.subject is Resource && Classes.comparison in (it.subject as Resource).classes &&
-                    findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+                    findAll(
+                        objectId = it.subject.id,
+                        predicateId = Predicates.hasPreviousVersion,
+                        pageable = PageRequests.SINGLE
+                    ).isEmpty
             }
             .map { it.subject as Resource }
             .distinct()
@@ -453,7 +404,11 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             .filter {
                 it.subject is Resource && with(it.subject as Resource) {
                     Classes.comparison in classes && (visibility == Visibility.DEFAULT || visibility == Visibility.FEATURED)
-                } && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+                } && findAll(
+                    objectId = it.subject.id,
+                    predicateId = Predicates.hasPreviousVersion,
+                    pageable = PageRequests.SINGLE
+                ).isEmpty
             }
             .map { it.subject as Resource }
             .distinct()
@@ -465,7 +420,11 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             .filter {
                 it.subject is Resource && with(it.subject as Resource) {
                     Classes.comparison in classes && this.visibility == visibility
-                } && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+                } && findAll(
+                    objectId = it.subject.id,
+                    predicateId = Predicates.hasPreviousVersion,
+                    pageable = PageRequests.SINGLE
+                ).isEmpty
             }
             .map { it.subject as Resource }
             .distinct()
@@ -477,8 +436,15 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             .filter {
                 it.subject is Resource && with(it.subject as Resource) {
                     Classes.comparison in classes && (visibility == Visibility.DEFAULT || visibility == Visibility.FEATURED)
-                } && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty &&
-                    findAllBySubjectAndPredicate(it.subject.id, Predicates.hasDOI, PageRequest.of(0, 1)).isEmpty
+                } && findAll(
+                    objectId = it.subject.id,
+                    predicateId = Predicates.hasPreviousVersion,
+                    pageable = PageRequests.SINGLE
+                ).isEmpty && findAll(
+                    subjectId = it.subject.id,
+                    predicateId = Predicates.hasDOI,
+                    pageable = PageRequests.SINGLE
+                ).isEmpty
             }
             .map { it.subject as Resource }
             .distinct()
@@ -508,14 +474,6 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
         }
         return visited
     }
-
-    private fun Thing.toContributor() =
-        when (this) {
-            is Class -> createdBy
-            is Resource -> createdBy
-            is Predicate -> createdBy
-            is Literal -> createdBy
-        }
 
     private fun Thing.toResourceEdit() =
         when (this) {

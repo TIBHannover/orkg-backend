@@ -64,10 +64,10 @@ class IdentifierUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = authorId,
                 predicateId = Predicates.hasORCID,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         } returns pageOf(
             createStatement(
@@ -83,10 +83,10 @@ class IdentifierUpdaterUnitTest {
         identifierUpdater.update(contributorId, oldIdentifiers, newIdentifiers, Identifiers.author, authorId)
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = authorId,
                 predicateId = Predicates.hasORCID,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }
@@ -103,10 +103,10 @@ class IdentifierUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = authorId,
                 predicateId = Predicates.hasORCID,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         } returns pageOf(
             createStatement(
@@ -121,10 +121,10 @@ class IdentifierUpdaterUnitTest {
         identifierUpdater.update(contributorId, oldIdentifiers, newIdentifiers, Identifiers.author, authorId)
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = authorId,
                 predicateId = Predicates.hasORCID,
-                pagination = PageRequests.ALL
+                pageable = PageRequests.ALL
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }

@@ -21,10 +21,10 @@ open class AuthorUpdater(
 ) {
     internal fun update(contributorId: ContributorId, authors: List<Author>, subjectId: ThingId) {
         // Remove current authors list, literal authors will be fully deleted in the process
-        statementService.findAllBySubjectAndPredicate(
+        statementService.findAll(
             subjectId = subjectId,
             predicateId = Predicates.hasAuthors,
-            pagination = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE
         )
             .filter { it.`object` is Resource && Classes.list in (it.`object` as Resource).classes }
             .singleOrNull()

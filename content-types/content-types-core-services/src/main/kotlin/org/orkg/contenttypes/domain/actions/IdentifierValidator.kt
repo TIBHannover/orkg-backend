@@ -4,6 +4,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Identifiers
 import org.orkg.contenttypes.domain.identifiers.parse
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.StatementRepository
 
 abstract class IdentifierValidator(
@@ -12,10 +13,11 @@ abstract class IdentifierValidator(
     internal fun validate(identifiers: Map<String, List<String>>, `class`: ThingId, subjectId: ThingId?, exceptionFactory: (String) -> Throwable) {
         Identifiers.paper.parse(identifiers).forEach { (identifier, values) ->
             values.forEach { value ->
-                val papers = statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+                val papers = statementRepository.findAll(
+                    subjectClasses = setOf(`class`),
                     predicateId = identifier.predicateId,
-                    literal = value,
-                    subjectClass = `class`,
+                    objectClasses = setOf(Classes.literal),
+                    objectLabel = value,
                     pageable = PageRequests.SINGLE
                 )
                     .content

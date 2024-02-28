@@ -25,7 +25,6 @@ import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
-import org.neo4j.cypherdsl.core.Functions.labels
 import org.neo4j.cypherdsl.core.Functions.sum
 import org.neo4j.cypherdsl.core.Functions.trim
 import org.neo4j.cypherdsl.core.Node
@@ -39,7 +38,6 @@ import org.orkg.common.ThingId
 import org.orkg.common.neo4jdsl.CypherQueryBuilder
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countDistinctOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
-import org.orkg.common.neo4jdsl.PagedQueryBuilder.fetchAs
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache.Uncached
 import org.orkg.common.neo4jdsl.SingleQueryBuilder.fetchAs
@@ -431,21 +429,6 @@ class SpringDataNeo4jStatementAdapter(
             .mappedBy(StatementMapper(predicateRepository))
             .fetch(pageable)
 
-    override fun findAllBySubject(subjectId: ThingId, pageable: Pageable): Page<GeneralStatement> =
-        findAllFilteredAndPaged(mapOf("subjectId" to subjectId.value), pageable) { subject, _, _ ->
-            subject.property("id").eq(parameter("subjectId"))
-        }
-
-    override fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable): Page<GeneralStatement> =
-        findAllFilteredAndPaged(mapOf("predicateId" to predicateId.value), pageable) { _, relation, _ ->
-            relation.property("predicate_id").eq(parameter("predicateId"))
-        }
-
-    override fun findAllByObject(objectId: ThingId, pageable: Pageable): Page<GeneralStatement> =
-        findAllFilteredAndPaged(mapOf("objectId" to objectId.value), pageable) { _, _, `object` ->
-            `object`.property("id").eq(parameter("objectId"))
-        }
-
     override fun countByIdRecursive(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
         .withQuery {
             val apocConfiguration = mapOf<String, Any>(
@@ -472,76 +455,6 @@ class SpringDataNeo4jStatementAdapter(
         .fetchAs<Long>()
         .one()
         .orElse(0)
-
-    override fun findAllByObjectAndPredicate(
-        objectId: ThingId,
-        predicateId: ThingId,
-        pageable: Pageable
-    ): Page<GeneralStatement> =
-        findAllFilteredAndPaged(
-            parameters = mapOf(
-                "objectId" to objectId.value,
-                "predicateId" to predicateId.value
-            ),
-            pageable = pageable
-        ) { _, relation, `object` ->
-            `object`.property("id").eq(parameter("objectId"))
-                .and(relation.property("predicate_id").eq(parameter("predicateId")))
-        }
-
-    override fun findAllBySubjectAndPredicate(
-        subjectId: ThingId,
-        predicateId: ThingId,
-        pageable: Pageable
-    ): Page<GeneralStatement> =
-        findAllFilteredAndPaged(
-            parameters = mapOf(
-                "subjectId" to subjectId.value,
-                "predicateId" to predicateId.value
-            ),
-            pageable = pageable
-        ) { subject, relation, _ ->
-            subject.property("id").eq(parameter("subjectId"))
-                .and(relation.property("predicate_id").eq(parameter("predicateId")))
-        }
-
-    override fun findAllByPredicateIdAndLabel(
-        predicateId: ThingId,
-        literal: String,
-        pageable: Pageable
-    ): Page<GeneralStatement> =
-        findAllFilteredAndPaged(
-            pageable = pageable,
-            parameters = mapOf(
-                "predicateId" to predicateId.value,
-                "literal" to literal
-            ),
-            `object` = node("Thing", "Literal")
-        ) { _, relation, `object` ->
-            relation.property("predicate_id").eq(parameter("predicateId"))
-                .and(`object`.property("label").eq(parameter("literal")))
-        }
-
-    override fun findAllByPredicateIdAndLabelAndSubjectClass(
-        predicateId: ThingId,
-        literal: String,
-        subjectClass: ThingId,
-        pageable: Pageable
-    ): Page<GeneralStatement> =
-        findAllFilteredAndPaged(
-            pageable = pageable,
-            parameters = mapOf(
-                "predicateId" to predicateId.value,
-                "literal" to literal,
-                "predicateId" to predicateId.value,
-                "subjectClass" to subjectClass.value
-            ),
-            `object` = node("Thing", "Literal")
-                .withProperties("label", parameter("literal"))
-        ) { subject, relation, _ ->
-            relation.property("predicate_id").eq(parameter("predicateId"))
-                .and(parameter("subjectClass").`in`(labels(subject)))
-        }
 
     override fun findAllBySubjects(subjectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(
@@ -894,33 +807,6 @@ class SpringDataNeo4jStatementAdapter(
             .withParameters("id" to id.value.toString())
             .mappedBy(ResourceMapper("p"))
             .fetch(pageable)
-
-    override fun findBySubjectIdAndPredicateIdAndObjectId(
-        subjectId: ThingId,
-        predicateId: ThingId,
-        objectId: ThingId
-    ): Optional<GeneralStatement> = CypherQueryBuilder(neo4jClient)
-        .withQuery {
-            val r = name("rel")
-            val subject = node("Thing")
-            val `object` = node("Thing")
-            match(
-                subject.relationshipTo(`object`, RELATED).named(r)
-            ).where(
-                r.property("predicate_id").eq(parameter("predicateId"))
-                    .and(subject.property("id").eq(parameter("subjectId")))
-                    .and(`object`.property("id").eq(parameter("objectId")))
-            )
-                .returningWithSortableFields(r, subject.asExpression(), `object`.asExpression())
-                .limit(1)
-        }
-        .withParameters(
-            "subjectId" to subjectId.value,
-            "predicateId" to predicateId.value,
-            "objectId" to objectId.value
-        )
-        .mappedBy(StatementMapper(predicateRepository))
-        .one()
 
     override fun findAllCurrentComparisons(pageable: Pageable): Page<Resource> = CypherQueryBuilder(neo4jClient)
         .withCommonQuery {

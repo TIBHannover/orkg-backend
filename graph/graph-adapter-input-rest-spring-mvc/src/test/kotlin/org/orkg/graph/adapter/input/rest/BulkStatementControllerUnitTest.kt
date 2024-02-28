@@ -91,8 +91,8 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         )
         val pageable = PageRequest.of(0, 5)
 
-        every { statementService.findAllBySubject(r1, any()) } returns pageOf(s1, pageable = pageable)
-        every { statementService.findAllBySubject(r3, any()) } returns pageOf(s2, pageable = pageable)
+        every { statementService.findAll(subjectId = r1, pageable = any()) } returns pageOf(s1, pageable = pageable)
+        every { statementService.findAll(subjectId = r3, pageable = any()) } returns pageOf(s2, pageable = pageable)
         every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
@@ -115,8 +115,8 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            statementService.findAllBySubject(r1, any())
-            statementService.findAllBySubject(r3, any())
+            statementService.findAll(subjectId = r1, pageable = any())
+            statementService.findAll(subjectId = r3, pageable = any())
         }
         verify(exactly = 2) {
             statementService.countStatementsAboutResources(any())
@@ -146,8 +146,8 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         )
         val pageable = PageRequest.of(0, 5)
 
-        every { statementService.findAllByObject(r2, any()) } returns pageOf(s1, pageable = pageable)
-        every { statementService.findAllByObject(r4, any()) } returns pageOf(s2, pageable = pageable)
+        every { statementService.findAll(objectId = r2, pageable = any()) } returns pageOf(s1, pageable = pageable)
+        every { statementService.findAll(objectId = r4, pageable = any()) } returns pageOf(s2, pageable = pageable)
         every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
@@ -170,8 +170,8 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            statementService.findAllByObject(r2, any())
-            statementService.findAllByObject(r4, any())
+            statementService.findAll(objectId = r2, pageable = any())
+            statementService.findAll(objectId = r4, pageable = any())
         }
         verify(exactly = 2) {
             statementService.countStatementsAboutResources(any())

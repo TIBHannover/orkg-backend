@@ -42,7 +42,7 @@ class ContributionServiceUnitTests {
             classes = setOf(Classes.contribution)
         )
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
-        every { statementRepository.findAllBySubject(expected.id, PageRequests.ALL) } returns Page.empty(PageRequests.ALL)
+        every { statementRepository.findAll(subjectId = expected.id, pageable = PageRequests.ALL) } returns Page.empty(PageRequests.ALL)
 
         val actual = service.findById(expected.id)
         actual.isPresent shouldBe true
@@ -59,7 +59,7 @@ class ContributionServiceUnitTests {
         }
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }
-        verify(exactly = 1) { statementRepository.findAllBySubject(expected.id, any()) }
+        verify(exactly = 1) { statementRepository.findAll(subjectId = expected.id, pageable = PageRequests.ALL) }
     }
 
     @Test
@@ -70,6 +70,5 @@ class ContributionServiceUnitTests {
         service.findById(expected.id).isPresent shouldBe false
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }
-        verify(exactly = 0) { statementRepository.findAllBySubject(expected.id, any()) }
     }
 }

@@ -43,10 +43,11 @@ class IdentifierValidatorUnitTest {
         val identifiers = mapOf("doi" to listOf(doi))
 
         every {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.paper),
                 predicateId = Predicates.hasDOI,
-                literal = doi,
-                subjectClass = Classes.paper,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = doi,
                 pageable = any()
             )
         } returns Page.empty()
@@ -54,10 +55,11 @@ class IdentifierValidatorUnitTest {
         identifierCreateValidator.validate(identifiers, Classes.paper, null) { AssertionError() }
 
         verify(exactly = 1) {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.paper),
                 predicateId = Predicates.hasDOI,
-                literal = doi,
-                subjectClass = Classes.paper,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = doi,
                 pageable = any()
             )
         }
@@ -75,10 +77,11 @@ class IdentifierValidatorUnitTest {
         val expected = AssertionError(doi)
 
         every {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.paper),
                 predicateId = Predicates.hasDOI,
-                literal = doi,
-                subjectClass = Classes.paper,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = doi,
                 pageable = any()
             )
         } returns pageOf(statement)
@@ -89,10 +92,11 @@ class IdentifierValidatorUnitTest {
         result.message shouldBe expected.message
 
         verify(exactly = 1) {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.paper),
                 predicateId = Predicates.hasDOI,
-                literal = doi,
-                subjectClass = Classes.paper,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = doi,
                 pageable = any()
             )
         }
@@ -110,10 +114,11 @@ class IdentifierValidatorUnitTest {
         )
 
         every {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.paper),
                 predicateId = Predicates.hasDOI,
-                literal = doi,
-                subjectClass = Classes.paper,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = doi,
                 pageable = any()
             )
         } returns pageOf(statement)
@@ -121,10 +126,11 @@ class IdentifierValidatorUnitTest {
         identifierCreateValidator.validate(identifiers, Classes.paper, subjectId) { AssertionError(it) }
 
         verify(exactly = 1) {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.paper),
                 predicateId = Predicates.hasDOI,
-                literal = doi,
-                subjectClass = Classes.paper,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = doi,
                 pageable = any()
             )
         }

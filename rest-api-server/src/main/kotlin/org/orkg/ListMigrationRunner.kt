@@ -100,7 +100,7 @@ class ListMigrationRunner(
     }
 
     private fun migrateStatementsToList(resource: Resource, oldPredicateId: ThingId, newPredicate: Predicate, label: String) {
-        val statements = statementRepository.findAllBySubjectAndPredicate(
+        val statements = statementRepository.findAll(
             subjectId = resource.id,
             predicateId = oldPredicateId,
             pageable = PageRequests.ALL
@@ -136,7 +136,7 @@ class ListMigrationRunner(
     }
 
     private fun migrateLiteratureList(resource: Resource, newPredicate: Predicate) {
-        val sectionStatements = statementRepository.findAllBySubjectAndPredicate(
+        val sectionStatements = statementRepository.findAll(
             subjectId = resource.id,
             predicateId = Predicates.hasSection,
             pageable = PageRequests.ALL
@@ -144,7 +144,7 @@ class ListMigrationRunner(
         val sections = sectionStatements
             .sortedBy { it.createdAt }
             .map { sectionStatement ->
-                val entryStatements = statementRepository.findAllBySubjectAndPredicate(
+                val entryStatements = statementRepository.findAll(
                     subjectId = sectionStatement.`object`.id,
                     predicateId = Predicates.hasEntry,
                     pageable = PageRequests.ALL

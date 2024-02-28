@@ -39,6 +39,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.fixedClock
+import org.orkg.testing.pageOf
 
 class SubgraphCreatorUnitTest {
     private val statementRepository: StatementRepository = mockk()
@@ -557,12 +558,13 @@ class SubgraphCreatorUnitTest {
         )
 
         every {
-            statementRepository.findBySubjectIdAndPredicateIdAndObjectId(
+            statementRepository.findAll(
                 subjectId = ThingId("R1000"),
                 predicateId = ThingId("R2000"),
-                objectId = ThingId("R3000")
+                objectId = ThingId("R3000"),
+                pageable = any()
             )
-        } returns Optional.empty()
+        } returns pageOf()
         every {
             statementService.add(
                 userId = contributorId,
@@ -581,10 +583,11 @@ class SubgraphCreatorUnitTest {
         )
 
         verify(exactly = 1) {
-            statementRepository.findBySubjectIdAndPredicateIdAndObjectId(
+            statementRepository.findAll(
                 subjectId = ThingId("R1000"),
                 predicateId = ThingId("R2000"),
-                objectId = ThingId("R3000")
+                objectId = ThingId("R3000"),
+                pageable = any()
             )
         }
         verify(exactly = 1) {
@@ -611,12 +614,13 @@ class SubgraphCreatorUnitTest {
         )
 
         every {
-            statementRepository.findBySubjectIdAndPredicateIdAndObjectId(
+            statementRepository.findAll(
                 subjectId = ThingId("R1000"),
                 predicateId = ThingId("R2000"),
-                objectId = ThingId("R3000")
+                objectId = ThingId("R3000"),
+                pageable = any()
             )
-        } returns Optional.of(statement)
+        } returns pageOf(statement)
 
         subgraphCreator.create(
             contributorId = contributorId,
@@ -627,10 +631,11 @@ class SubgraphCreatorUnitTest {
         )
 
         verify(exactly = 1) {
-            statementRepository.findBySubjectIdAndPredicateIdAndObjectId(
+            statementRepository.findAll(
                 subjectId = ThingId("R1000"),
                 predicateId = ThingId("R2000"),
-                objectId = ThingId("R3000")
+                objectId = ThingId("R3000"),
+                pageable = any()
             )
         }
     }

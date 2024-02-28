@@ -9,6 +9,7 @@ import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.BundleRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.BundleConfiguration
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.CreateStatement
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementNotFound
@@ -85,7 +86,7 @@ class StatementController(
         @PathVariable subjectId: ThingId,
         pageable: Pageable
     ): Page<StatementRepresentation> =
-        statementService.findAllBySubject(subjectId, pageable).mapToStatementRepresentation()
+        statementService.findAll(subjectId = subjectId, pageable = pageable).mapToStatementRepresentation()
 
     @GetMapping("/subject/{subjectId}/predicate/{predicateId}")
     fun findBySubjectAndPredicate(
@@ -93,14 +94,15 @@ class StatementController(
         @PathVariable predicateId: ThingId,
         pageable: Pageable
     ): Page<StatementRepresentation> =
-        statementService.findAllBySubjectAndPredicate(subjectId, predicateId, pageable).mapToStatementRepresentation()
+        statementService.findAll(subjectId = subjectId, predicateId = predicateId, pageable = pageable)
+            .mapToStatementRepresentation()
 
     @GetMapping("/predicate/{predicateId}")
     fun findByPredicate(
         @PathVariable predicateId: ThingId,
         pageable: Pageable
     ): Page<StatementRepresentation> =
-        statementService.findAllByPredicate(predicateId, pageable).mapToStatementRepresentation()
+        statementService.findAll(predicateId = predicateId, pageable = pageable).mapToStatementRepresentation()
 
     @GetMapping("/predicate/{predicateId}/literal/{literal}")
     fun findByPredicateAndLiteralAndSubjectClass(
@@ -118,22 +120,20 @@ class StatementController(
         @RequestParam("subjectClass", required = false) subjectClass: ThingId?,
         pageable: Pageable
     ): Page<StatementRepresentation> =
-        when (subjectClass) {
-            null -> statementService.findAllByPredicateAndLabel(predicateId, literal, pageable)
-            else -> statementService.findAllByPredicateAndLabelAndSubjectClass(
-                predicateId = predicateId,
-                literal = literal,
-                subjectClass = subjectClass,
-                pagination = pageable
-            )
-        }.mapToStatementRepresentation()
+        statementService.findAll(
+            subjectClasses = setOfNotNull(subjectClass),
+            predicateId = predicateId,
+            objectClasses = setOf(Classes.literal),
+            objectLabel = literal,
+            pageable = pageable
+        ).mapToStatementRepresentation()
 
     @GetMapping("/object/{objectId}")
     fun findByObject(
         @PathVariable objectId: ThingId,
         pageable: Pageable
     ): Page<StatementRepresentation> =
-        statementService.findAllByObject(objectId, pageable).mapToStatementRepresentation()
+        statementService.findAll(objectId = objectId, pageable = pageable).mapToStatementRepresentation()
 
     @GetMapping("/object/{objectId}/predicate/{predicateId}")
     fun findByObjectAndPredicate(
@@ -141,7 +141,8 @@ class StatementController(
         @PathVariable predicateId: ThingId,
         pageable: Pageable
     ): Page<StatementRepresentation> =
-        statementService.findAllByObjectAndPredicate(objectId, predicateId, pageable).mapToStatementRepresentation()
+        statementService.findAll(objectId = objectId, predicateId = predicateId, pageable = pageable)
+            .mapToStatementRepresentation()
 
     @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])

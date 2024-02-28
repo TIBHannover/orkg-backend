@@ -42,7 +42,7 @@ class ListAdapter(
             modifiable = list.modifiable
         )
         resourceRepository.save(listResource)
-        val existingStatements = statementRepository.findAllBySubjectAndPredicate(
+        val existingStatements = statementRepository.findAll(
             subjectId = list.id,
             predicateId = Predicates.hasListElement,
             pageable = PageRequests.ALL
@@ -90,7 +90,7 @@ class ListAdapter(
             .map { it.toList() }
 
     override fun findAllElementsById(id: ThingId, pageable: Pageable): Page<Thing> =
-        statementRepository.findAllBySubjectAndPredicate(
+        statementRepository.findAll(
             subjectId = id,
             predicateId = Predicates.hasListElement,
             pageable = PageRequest.of(pageable.pageNumber, pageable.pageSize, Sort.by("index"))
@@ -105,7 +105,7 @@ class ListAdapter(
 
     override fun delete(id: ThingId) {
         if (exists(id)) {
-            val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
+            val statements = statementRepository.findAll(subjectId = id, pageable = PageRequests.ALL)
             if (!statements.isEmpty) {
                 statementRepository.deleteByStatementIds(statements.map { it.id!! }.toSet())
             }
@@ -116,7 +116,7 @@ class ListAdapter(
     private fun Resource.toList(): List = List(
         id = id,
         label = label,
-        elements = statementRepository.findAllBySubject(id, PageRequests.ALL)
+        elements = statementRepository.findAll(subjectId = id, pageable = PageRequests.ALL)
             .sortedBy { it.index }
             .map { it.`object`.id },
         createdAt = createdAt,

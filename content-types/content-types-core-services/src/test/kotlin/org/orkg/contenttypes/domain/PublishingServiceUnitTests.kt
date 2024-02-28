@@ -67,7 +67,13 @@ class PublishingServiceUnitTests {
         val monthLiteralId = ThingId("L3")
 
         every { resourceRepository.findById(id) } returns Optional.of(resource)
-        every { statementService.findAllBySubjectAndPredicate(id, Predicates.hasDOI, PageRequests.SINGLE) } returns pageOf()
+        every {
+            statementService.findAll(
+                subjectId = command.id,
+                predicateId = Predicates.hasDOI,
+                pageable = PageRequests.SINGLE
+            )
+        } returns pageOf()
         every { doiService.register(any()) } returns doi
         every {
             literalService.create(
@@ -103,7 +109,13 @@ class PublishingServiceUnitTests {
         result shouldBe doi
 
         verify(exactly = 1) { resourceRepository.findById(id) }
-        verify(exactly = 1) { statementService.findAllBySubjectAndPredicate(command.id, Predicates.hasDOI, PageRequests.SINGLE) }
+        verify(exactly = 1) {
+            statementService.findAll(
+                subjectId = command.id,
+                predicateId = Predicates.hasDOI,
+                pageable = PageRequests.SINGLE
+            )
+        }
         verify(exactly = 1) {
             doiService.register(
                 withArg {
@@ -182,7 +194,13 @@ class PublishingServiceUnitTests {
         val resource = createResource(id = id, classes = setOf(Classes.paper))
 
         every { resourceRepository.findById(id) } returns Optional.of(resource)
-        every { statementService.findAllBySubjectAndPredicate(id, Predicates.hasDOI, PageRequests.SINGLE) } returns pageOf(
+        every {
+            statementService.findAll(
+                subjectId = id,
+                predicateId = Predicates.hasDOI,
+                pageable = PageRequests.SINGLE
+            )
+        } returns pageOf(
             createStatement(
                 subject = resource,
                 predicate = createPredicate(Predicates.hasDOI),
@@ -193,6 +211,12 @@ class PublishingServiceUnitTests {
         shouldThrow<DoiAlreadyRegistered> { service.publish(command) }
 
         verify(exactly = 1) { resourceRepository.findById(id) }
-        verify(exactly = 1) { statementService.findAllBySubjectAndPredicate(command.id, Predicates.hasDOI, PageRequests.SINGLE) }
+        verify(exactly = 1) {
+            statementService.findAll(
+                subjectId = id,
+                predicateId = Predicates.hasDOI,
+                pageable = PageRequests.SINGLE
+            )
+        }
     }
 }

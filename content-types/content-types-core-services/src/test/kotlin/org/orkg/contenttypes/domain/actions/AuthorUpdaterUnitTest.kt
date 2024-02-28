@@ -59,10 +59,10 @@ class AuthorUpdaterUnitTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasAuthors,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         } returns pageOf()
         every { authorCreator.create(contributorId, authors, subjectId) } just runs
@@ -70,10 +70,10 @@ class AuthorUpdaterUnitTest {
         authorUpdater.update(contributorId, authors, subjectId)
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasAuthors,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { authorCreator.create(contributorId, authors, subjectId) }
@@ -93,10 +93,10 @@ class AuthorUpdaterUnitTest {
         val contributorId = ContributorId(UUID.randomUUID())
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasAuthors,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         } returns pageOf(
             createStatement(
@@ -111,10 +111,10 @@ class AuthorUpdaterUnitTest {
         authorUpdater.update(contributorId, authors, subjectId)
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = subjectId,
                 predicateId = Predicates.hasAuthors,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { listService.delete(authorListId) }

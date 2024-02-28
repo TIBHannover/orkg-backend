@@ -12,10 +12,10 @@ abstract class ResearchFieldUpdater(
 ) {
     internal fun update(contributorId: ContributorId, researchFields: List<ThingId>, subjectId: ThingId) {
         // Find out what already exists and what needs to be created or removed
-        val oldResearchFields = statementService.findAllBySubjectAndPredicate(
+        val oldResearchFields = statementService.findAll(
             subjectId = subjectId,
             predicateId = Predicates.hasResearchField,
-            pagination = PageRequests.ALL
+            pageable = PageRequests.ALL
         ).associate { it.`object`.id to it.id }
         val toRemove = oldResearchFields.keys - researchFields.toSet()
         val toAdd = researchFields - oldResearchFields.keys.toSet()

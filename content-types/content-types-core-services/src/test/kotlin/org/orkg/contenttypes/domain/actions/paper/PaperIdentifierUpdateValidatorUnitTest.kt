@@ -46,10 +46,11 @@ class PaperIdentifierUpdateValidatorUnitTest {
         val doi = command.identifiers!!["doi"]!!.first()
 
         every {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.paper),
                 predicateId = Predicates.hasDOI,
-                literal = doi,
-                subjectClass = Classes.paper,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = doi,
                 pageable = any()
             )
         } returns Page.empty()
@@ -57,10 +58,11 @@ class PaperIdentifierUpdateValidatorUnitTest {
         paperIdentifierUpdateValidator(command, state)
 
         verify(exactly = 1) {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.paper),
                 predicateId = Predicates.hasDOI,
-                literal = doi,
-                subjectClass = Classes.paper,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = doi,
                 pageable = any()
             )
         }
@@ -80,10 +82,11 @@ class PaperIdentifierUpdateValidatorUnitTest {
         val expected = PaperAlreadyExists.withIdentifier(doi)
 
         every {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.paper),
                 predicateId = Predicates.hasDOI,
-                literal = doi,
-                subjectClass = Classes.paper,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = doi,
                 pageable = any()
             )
         } returns pageOf(statement)
@@ -94,10 +97,11 @@ class PaperIdentifierUpdateValidatorUnitTest {
         result.message shouldBe expected.message
 
         verify(exactly = 1) {
-            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+            statementRepository.findAll(
+                subjectClasses = setOf(Classes.paper),
                 predicateId = Predicates.hasDOI,
-                literal = doi,
-                subjectClass = Classes.paper,
+                objectClasses = setOf(Classes.literal),
+                objectLabel = doi,
                 pageable = any()
             )
         }

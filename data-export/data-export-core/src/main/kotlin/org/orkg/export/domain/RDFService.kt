@@ -8,6 +8,7 @@ import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.OWL
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.export.input.ExportRDFUseCase
 import org.orkg.graph.domain.Class
@@ -24,7 +25,6 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.forEach
-import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 private const val DEFAULT_FILE_NAME = "rdf-export-orkg.nt"
@@ -87,8 +87,7 @@ class RDFService(
 
     override fun rdfModelForResource(id: ThingId): Optional<Model> {
         val resource = resourceRepository.findById(id).orElse(null) ?: return Optional.empty()
-        val statements =
-            statementRepository.findAllBySubject(resource.id, PageRequest.of(0, Int.MAX_VALUE)) // FIXME
+        val statements = statementRepository.findAll(subjectId = resource.id, pageable = PageRequests.ALL) // FIXME
         with(resource) {
             val model = ModelBuilder().apply {
                 setNamespace("r", RdfConstants.RESOURCE_NS)
@@ -151,8 +150,7 @@ fun GeneralStatement.toNTriple(writer: Writer) {
     val pPrefix = RdfConstants.PREDICATE_NS
     val statement = if (predicate.id == Predicates.hasListElement && index != null && subject is Resource && Classes.list in (subject as Resource).classes) {
         "${serializeThing(subject)} <http://www.w3.org/1999/02/22-rdf-syntax-ns#_${index!! + 1}> ${serializeThing(`object`)} .\n"
-    }
-    else "${serializeThing(subject)} <$pPrefix${predicate.id}> ${serializeThing(`object`)} .\n"
+    } else "${serializeThing(subject)} <$pPrefix${predicate.id}> ${serializeThing(`object`)} .\n"
     if (statement[0] == '"')
         // Ignore literal
         // TODO: log this somewhere

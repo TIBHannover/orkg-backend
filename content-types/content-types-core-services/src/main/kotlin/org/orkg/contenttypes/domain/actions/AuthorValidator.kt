@@ -28,10 +28,11 @@ abstract class AuthorValidator(
             val identifiers = Identifiers.author.parse(author.identifiers.orEmpty())
             identifiers.forEach { (identifier, values) ->
                 values.forEach { value ->
-                    val authorsWithIdentifier = statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+                    val authorsWithIdentifier = statementRepository.findAll(
+                        subjectClasses = setOf(Classes.author),
                         predicateId = identifier.predicateId,
-                        literal = value,
-                        subjectClass = Classes.author,
+                        objectClasses = setOf(Classes.literal),
+                        objectLabel = value,
                         pageable = PageRequests.ALL
                     )
                     if (authorsWithIdentifier.isEmpty) {

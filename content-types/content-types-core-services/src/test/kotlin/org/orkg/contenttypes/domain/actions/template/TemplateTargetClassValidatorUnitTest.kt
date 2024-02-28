@@ -49,7 +49,7 @@ class TemplateTargetClassValidatorUnitTest {
 
         every { classRepository.findById(command.targetClass) } returns Optional.of(createClass())
         every {
-            statementRepository.findAllByObjectAndPredicate(
+            statementRepository.findAll(
                 objectId = command.targetClass,
                 predicateId = Predicates.shTargetClass,
                 pageable = PageRequests.SINGLE
@@ -64,7 +64,7 @@ class TemplateTargetClassValidatorUnitTest {
 
         verify(exactly = 1) { classRepository.findById(command.targetClass) }
         verify(exactly = 1) {
-            statementRepository.findAllByObjectAndPredicate(
+            statementRepository.findAll(
                 objectId = command.targetClass,
                 predicateId = Predicates.shTargetClass,
                 pageable = PageRequests.SINGLE
@@ -94,7 +94,7 @@ class TemplateTargetClassValidatorUnitTest {
 
         every { classRepository.findById(command.targetClass) } returns Optional.of(targetClass)
         every {
-            statementRepository.findAllByObjectAndPredicate(
+            statementRepository.findAll(
                 objectId = command.targetClass,
                 predicateId = Predicates.shTargetClass,
                 pageable = PageRequests.SINGLE
@@ -111,7 +111,7 @@ class TemplateTargetClassValidatorUnitTest {
 
         verify(exactly = 1) { classRepository.findById(command.targetClass) }
         verify(exactly = 1) {
-            statementRepository.findAllByObjectAndPredicate(
+            statementRepository.findAll(
                 objectId = command.targetClass,
                 predicateId = Predicates.shTargetClass,
                 pageable = PageRequests.SINGLE

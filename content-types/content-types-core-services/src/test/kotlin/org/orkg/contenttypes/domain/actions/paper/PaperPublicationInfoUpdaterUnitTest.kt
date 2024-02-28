@@ -133,10 +133,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.monthPublished,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         } returns pageOf(
             createStatement(
@@ -156,10 +156,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         }
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.monthPublished,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }
@@ -262,10 +262,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.monthPublished,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         } returns pageOf(
             createStatement(
@@ -302,10 +302,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         }
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.monthPublished,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }
@@ -379,10 +379,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.yearPublished,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         } returns pageOf(
             createStatement(
@@ -402,10 +402,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         }
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.yearPublished,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }
@@ -508,10 +508,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.yearPublished,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         } returns pageOf(
             createStatement(
@@ -548,10 +548,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         }
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.yearPublished,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }
@@ -628,10 +628,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.hasVenue,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         } returns pageOf(
             createStatement(
@@ -651,10 +651,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         }
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.hasVenue,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }
@@ -863,10 +863,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.hasURL,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         } returns pageOf(
             createStatement(
@@ -886,10 +886,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         }
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.hasURL,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }
@@ -992,10 +992,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         val statementId = StatementId("S1")
 
         every {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.hasURL,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         } returns pageOf(
             createStatement(
@@ -1032,10 +1032,10 @@ class PaperPublicationInfoUpdaterUnitTest {
         }
 
         verify(exactly = 1) {
-            statementService.findAllBySubjectAndPredicate(
+            statementService.findAll(
                 subjectId = command.paperId,
                 predicateId = Predicates.hasURL,
-                pagination = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }

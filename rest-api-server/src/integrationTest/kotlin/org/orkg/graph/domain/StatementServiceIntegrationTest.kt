@@ -116,9 +116,9 @@ class StatementServiceIntegrationTest {
 
         assertThat(service.findAll(pagination)).hasSize(3)
 
-        assertThat(service.findAllBySubject(r1, pagination)).hasSize(2)
-        assertThat(service.findAllBySubject(r2, pagination)).hasSize(0)
-        assertThat(service.findAllBySubject(r3, pagination)).hasSize(1)
+        assertThat(service.findAll(subjectId = r1, pageable = pagination)).hasSize(2)
+        assertThat(service.findAll(subjectId = r2, pageable = pagination)).hasSize(0)
+        assertThat(service.findAll(subjectId = r3, pageable = pagination)).hasSize(1)
     }
 
     @Test
@@ -137,8 +137,8 @@ class StatementServiceIntegrationTest {
 
         assertThat(service.findAll(pagination)).hasSize(3)
 
-        assertThat(service.findAllByPredicate(p1, pagination)).hasSize(2)
-        assertThat(service.findAllByPredicate(p2, pagination)).hasSize(1)
+        assertThat(service.findAll(predicateId = p1, pageable = pagination)).hasSize(2)
+        assertThat(service.findAll(predicateId = p2, pageable = pagination)).hasSize(1)
     }
 
     @Test

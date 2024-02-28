@@ -40,7 +40,8 @@ class BulkStatementController(
         resourceIds.pmap {
             BulkGetStatementsResponse(
                 id = it,
-                statements = statementService.findAllBySubject(it, pageable).mapToStatementRepresentation()
+                statements = statementService.findAll(subjectId = it, pageable = pageable)
+                    .mapToStatementRepresentation()
             )
         }
 
@@ -52,7 +53,8 @@ class BulkStatementController(
         resourceIds.pmap {
             BulkGetStatementsResponse(
                 id = it,
-                statements = statementService.findAllByObject(it, pageable).mapToStatementRepresentation()
+                statements = statementService.findAll(objectId = it, pageable = pageable)
+                    .mapToStatementRepresentation()
             )
         }
 

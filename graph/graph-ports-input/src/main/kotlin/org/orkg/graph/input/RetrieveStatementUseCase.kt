@@ -28,38 +28,9 @@ interface RetrieveStatementUseCase {
         objectId: ThingId? = null,
         objectLabel: String? = null
     ): Page<GeneralStatement>
-    // legacy methods:
-    fun findAll(pagination: Pageable): Page<GeneralStatement>
     fun findById(statementId: StatementId): Optional<GeneralStatement>
-    fun findAllBySubject(subjectId: ThingId, pagination: Pageable): Page<GeneralStatement>
-    fun findAllByPredicate(predicateId: ThingId, pagination: Pageable): Page<GeneralStatement>
-    fun findAllByObject(objectId: ThingId, pagination: Pageable): Page<GeneralStatement>
-    fun findAllBySubjectAndPredicate(
-        subjectId: ThingId,
-        predicateId: ThingId,
-        pagination: Pageable
-    ): Page<GeneralStatement>
-
-    fun findAllByObjectAndPredicate(
-        objectId: ThingId,
-        predicateId: ThingId,
-        pagination: Pageable
-    ): Page<GeneralStatement>
-
     fun totalNumberOfStatements(): Long
     fun countStatements(paperId: ThingId): Long
-    fun findAllByPredicateAndLabel(
-        predicateId: ThingId,
-        literal: String,
-        pagination: Pageable
-    ): Page<GeneralStatement>
-
-    fun findAllByPredicateAndLabelAndSubjectClass(
-        predicateId: ThingId,
-        literal: String,
-        subjectClass: ThingId,
-        pagination: Pageable
-    ): Page<GeneralStatement>
 
     fun fetchAsBundle(thingId: ThingId, configuration: BundleConfiguration, includeFirst: Boolean, sort: Sort): Bundle
 

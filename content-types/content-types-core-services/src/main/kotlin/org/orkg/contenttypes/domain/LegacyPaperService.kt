@@ -277,10 +277,9 @@ class LegacyPaperService(
                         ).firstOrNull()
                         if (foundOrcid != null) {
                             // Link existing ORCID
-                            val authorStatement = statementService.findAllByObject(
-                                foundOrcid.id, PageRequest.of(
-                                    0, 10
-                                ) // TODO: Hide values by using default values for the parameters
+                            val authorStatement = statementService.findAll(
+                                objectId = foundOrcid.id,
+                                pageable = PageRequest.of(0, 10)
                             ).firstOrNull { it.predicate.id == Predicates.hasORCID }
                                 ?: throw OrphanOrcidValue(orcidValue)
                             (authorStatement.subject as Resource).id

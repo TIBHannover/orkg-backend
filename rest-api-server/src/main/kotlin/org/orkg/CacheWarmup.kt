@@ -1,9 +1,11 @@
 package org.orkg
 
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.PredicateUseCases
@@ -53,7 +55,7 @@ class CacheWarmup(
 
     private fun warmupHome() {
         val featuredResearchField = statsService.getFieldsStats().toList().maxByOrNull { it.second }?.first!!
-        statementService.findAllBySubjectAndPredicate(featuredResearchField, ThingId("P36"), PageRequest.of(0, 9999))
+        statementService.findAll(subjectId = featuredResearchField, predicateId = Predicates.hasSubfield, pageable = PageRequests.ALL)
         listOf(VisibilityFilter.FEATURED, VisibilityFilter.ALL_LISTED).forEach { visibility ->
             researchFieldService.findAllEntitiesBasedOnClassesByResearchField(
                 id = featuredResearchField,
@@ -80,7 +82,7 @@ class CacheWarmup(
                 includeSubFields = true,
                 pageable = PageRequest.of(0, 5)
             ).forEach {
-                statementService.findAllBySubject(it.id, PageRequest.of(0, 9999))
+                statementService.findAll(subjectId = it.id, pageable = PageRequests.ALL)
             }
         }
     }
@@ -99,7 +101,7 @@ class CacheWarmup(
             includeClasses = setOf(Classes.paper),
             pageable = PageRequest.of(0, 25)
         ).forEach {
-            statementService.findAllBySubject(it.id, PageRequest.of(0, 9999))
+            statementService.findAll(subjectId = it.id, pageable = PageRequests.ALL)
         }
     }
 
@@ -131,38 +133,38 @@ class CacheWarmup(
     }
 
     private fun fetchComparison(id: ThingId) {
-        statementService.findAllBySubject(id, PageRequest.of(0, 9999)).forEach {
+        statementService.findAll(subjectId = id, pageable = PageRequests.ALL).forEach {
             val `object` = it.`object`
             if (`object` is Resource && (ThingId("ComparisonRelatedFigure") in `object`.classes ||
                     it.predicate.id == ThingId("hasPreviousVersion"))
             ) {
-                statementService.findAllBySubject(`object`.id, PageRequest.of(0, 9999))
+                statementService.findAll(subjectId = `object`.id, pageable = PageRequests.ALL)
             }
         }
     }
 
     private fun fetchVisualization(id: ThingId) {
-        statementService.findAllByObjectAndPredicate(
+        statementService.findAll(
             objectId = id,
             predicateId = ThingId("hasVisualization"),
-            pagination = PageRequest.of(0, 5)
+            pageable = PageRequest.of(0, 5)
         )
-        statementService.findAllBySubjectAndPredicate(
+        statementService.findAll(
             subjectId = id,
             predicateId = ThingId("hasSubject"),
-            pagination = PageRequest.of(0, 5)
+            pageable = PageRequest.of(0, 5)
         )
     }
 
     private fun fetchAssociatedPapers(id: ThingId) {
-        statementService.findAllBySubjectAndPredicate(
+        statementService.findAll(
             subjectId = id,
             predicateId = ThingId("HasPaper"),
-            pagination = PageRequest.of(0, 9999)
+            pageable = PageRequest.of(0, 9999)
         ).forEach { hasPaperStatement ->
             val paper = hasPaperStatement.`object`
             if (paper is Resource) {
-                statementService.findAllBySubject(paper.id, PageRequest.of(0, 9999))
+                statementService.findAll(subjectId = paper.id, pageable = PageRequests.ALL)
             }
         }
     }

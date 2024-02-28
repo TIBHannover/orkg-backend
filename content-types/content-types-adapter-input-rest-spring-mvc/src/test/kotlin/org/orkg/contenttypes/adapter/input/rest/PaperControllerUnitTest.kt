@@ -209,11 +209,11 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val doi = "10.456/8764"
         val visibility = VisibilityFilter.ALL_LISTED
         val verified = true
-        val createdBy = ContributorId(UUID.randomUUID())
+        val createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
         val createdAtStart = OffsetDateTime.now(fixedClock).minusHours(1)
         val createdAtEnd = OffsetDateTime.now(fixedClock).plusHours(1)
-        val observatoryId = ObservatoryId(UUID.randomUUID())
-        val organizationId = OrganizationId(UUID.randomUUID())
+        val observatoryId = ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
         val researchFieldId = ThingId("R456")
         val includeSubfields = true
 
@@ -300,7 +300,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @DisplayName("Given a paper, when contributors are fetched, then status 200 OK and contributors are returned")
     fun getContributors() {
         val id = ThingId("R8186")
-        val contributors = listOf(ContributorId(UUID.fromString("0a56acb7-cd97-4277-9c9b-9b3089bde45f")))
+        val contributors = listOf(ContributorId("0a56acb7-cd97-4277-9c9b-9b3089bde45f"))
         every { paperService.findAllContributorsByPaperId(id, any()) } returns PageImpl(contributors, PageRequest.of(0, 5), 1)
 
         documentedGetRequestTo("/api/papers/{id}/contributors", id)

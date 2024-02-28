@@ -105,3 +105,7 @@ object Literals {
         val uri: String get() = "http://www.w3.org/2001/XMLSchema#$fragment"
     }
 }
+
+object Resources {
+    val sustainableDevelopmentGoals = (1..17).map { ThingId("SDG_$it") }
+}

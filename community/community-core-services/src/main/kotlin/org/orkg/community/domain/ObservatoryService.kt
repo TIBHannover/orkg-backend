@@ -12,6 +12,7 @@ import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResearchFieldNotFound
+import org.orkg.graph.domain.Resources
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -40,9 +41,9 @@ class ObservatoryService(
             .filter { resource -> Classes.researchField in resource.classes }
             .orElseThrow { ResearchFieldNotFound(command.researchField) }
         command.sustainableDevelopmentGoals.forEach { sdgId ->
-            resourceRepository.findById(sdgId)
-                .filter { resource -> Classes.sustainableDevelopmentGoal in resource.classes }
-                .orElseThrow { SustainableDevelopmentGoalNotFound(sdgId) }
+            if (sdgId !in Resources.sustainableDevelopmentGoals) {
+                throw SustainableDevelopmentGoalNotFound(sdgId)
+            }
         }
         val id = command.id
             ?.also { id -> postgresObservatoryRepository.findById(id).ifPresent { throw ObservatoryAlreadyExists.withId(id) } }
@@ -78,9 +79,9 @@ class ObservatoryService(
         }
         if (command.sustainableDevelopmentGoals != null && command.sustainableDevelopmentGoals != observatory.sustainableDevelopmentGoals) {
             command.sustainableDevelopmentGoals!!.forEach { sdgId ->
-                resourceRepository.findById(sdgId)
-                    .filter { resource -> Classes.sustainableDevelopmentGoal in resource.classes }
-                    .orElseThrow { SustainableDevelopmentGoalNotFound(sdgId) }
+                if (sdgId !in Resources.sustainableDevelopmentGoals) {
+                    throw SustainableDevelopmentGoalNotFound(sdgId)
+                }
             }
         }
         val updated = observatory.copy(

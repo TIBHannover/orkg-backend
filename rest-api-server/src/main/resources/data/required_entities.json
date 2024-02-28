@@ -206,6 +206,10 @@
     {
       "id": "List",
       "label": "List"
+    },
+    {
+      "id": "SustainableDevelopmentGoal",
+      "label": "Sustainable Development Goal"
     }
   ],
 

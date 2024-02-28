@@ -45,5 +45,6 @@ fun createObservatory(
     description: String = "Example Description",
     researchField: ThingId = ThingId("R1234"),
     members: Set<ContributorId> = emptySet(),
-    displayId: String = "test_observatory"
-) = Observatory(id, name, description, researchField, members, organizationIds, displayId)
+    displayId: String = "test_observatory",
+    sustainableDevelopmentGoals: Set<ThingId> = emptySet()
+) = Observatory(id, name, description, researchField, members, organizationIds, displayId, sustainableDevelopmentGoals)

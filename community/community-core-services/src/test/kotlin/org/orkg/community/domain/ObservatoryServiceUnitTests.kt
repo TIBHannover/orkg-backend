@@ -24,6 +24,7 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.createObservatory
 import org.orkg.community.testing.fixtures.createOrganization
+import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.output.ResourceRepository
@@ -131,19 +132,22 @@ class ObservatoryServiceUnitTests {
     fun `Given an observatory create command, when inputs are valid, it creates a new observatory`() {
         val organization = createOrganization()
         val researchField = createResource(ThingId("R456"), classes = setOf(Classes.researchField))
+        val sdg = createResource(ThingId("SDG1"), classes = setOf(Classes.sustainableDevelopmentGoal))
         val command = CreateCommand(
             id = ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174"),
             name = "observatory name",
             description = "description",
             organizations = setOf(organization.id!!),
             researchField = researchField.id,
-            displayId = "observatory_display_id"
+            displayId = "observatory_display_id",
+            sustainableDevelopmentGoals = setOf(sdg.id)
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
         every { organizationRepository.findById(organization.id!!) } returns Optional.of(organization)
         every { repository.findById(command.id!!) } returns Optional.empty()
         every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
+        every { resourceRepository.findById(sdg.id) } returns Optional.of(sdg)
         every { repository.save(any()) } just runs
 
         service.create(command) shouldBe command.id
@@ -153,6 +157,7 @@ class ObservatoryServiceUnitTests {
         verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
         verify(exactly = 1) { repository.findById(command.id!!) }
         verify(exactly = 1) { resourceRepository.findById(researchField.id) }
+        verify(exactly = 1) { resourceRepository.findById(sdg.id) }
         verify(exactly = 1) {
             repository.save(withArg {
                 it.id shouldBe command.id
@@ -161,6 +166,7 @@ class ObservatoryServiceUnitTests {
                 it.description shouldBe command.description
                 it.researchField shouldBe command.researchField
                 it.displayId shouldBe command.displayId
+                it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
             })
         }
     }
@@ -175,7 +181,8 @@ class ObservatoryServiceUnitTests {
             description = "description",
             organizations = setOf(organization.id!!),
             researchField = researchField.id,
-            displayId = "observatory_display_id"
+            displayId = "observatory_display_id",
+            sustainableDevelopmentGoals = emptySet()
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
@@ -197,6 +204,7 @@ class ObservatoryServiceUnitTests {
                 it.description shouldBe command.description
                 it.researchField shouldBe command.researchField
                 it.displayId shouldBe command.displayId
+                it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
             })
         }
     }
@@ -209,7 +217,8 @@ class ObservatoryServiceUnitTests {
             description = "description",
             organizations = setOf(OrganizationId("d02073bc-30fd-481e-9167-f3fc3595d590")),
             researchField = ThingId("R456"),
-            displayId = "observatory_display_id"
+            displayId = "observatory_display_id",
+            sustainableDevelopmentGoals = emptySet()
         )
         every { repository.findByName(command.name) } returns Optional.of(createObservatory())
 
@@ -226,7 +235,8 @@ class ObservatoryServiceUnitTests {
             description = "description",
             organizations = setOf(OrganizationId("d02073bc-30fd-481e-9167-f3fc3595d590")),
             researchField = ThingId("R456"),
-            displayId = "already_taken"
+            displayId = "already_taken",
+            sustainableDevelopmentGoals = emptySet()
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.of(createObservatory())
@@ -246,7 +256,8 @@ class ObservatoryServiceUnitTests {
             description = "description",
             organizations = setOf(organizationId),
             researchField = ThingId("R456"),
-            displayId = "observatory_display_id"
+            displayId = "observatory_display_id",
+            sustainableDevelopmentGoals = emptySet()
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
@@ -269,7 +280,8 @@ class ObservatoryServiceUnitTests {
             description = "description",
             organizations = setOf(organization.id!!),
             researchField = researchFieldId,
-            displayId = "observatory_display_id"
+            displayId = "observatory_display_id",
+            sustainableDevelopmentGoals = emptySet()
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
@@ -294,7 +306,8 @@ class ObservatoryServiceUnitTests {
             description = "description",
             organizations = setOf(organization.id!!),
             researchField = someResource.id,
-            displayId = "observatory_display_id"
+            displayId = "observatory_display_id",
+            sustainableDevelopmentGoals = emptySet()
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
@@ -310,20 +323,81 @@ class ObservatoryServiceUnitTests {
     }
 
     @Test
+    fun `Given an observatory create command, when sustainable development goal does not exist, it throws an exception`() {
+        val organization = createOrganization()
+        val researchField = createResource(ThingId("R456"), classes = setOf(Classes.researchField))
+        val sdgId = ThingId("Missing")
+        val command = CreateCommand(
+            id = ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174"),
+            name = "observatory name",
+            description = "description",
+            organizations = setOf(organization.id!!),
+            researchField = researchField.id,
+            displayId = "observatory_display_id",
+            sustainableDevelopmentGoals = setOf(sdgId)
+        )
+        every { repository.findByName(command.name) } returns Optional.empty()
+        every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
+        every { organizationRepository.findById(organization.id!!) } returns Optional.of(organization)
+        every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
+        every { resourceRepository.findById(sdgId) } returns Optional.empty()
+
+        assertThrows<SustainableDevelopmentGoalNotFound> { service.create(command) }
+
+        verify(exactly = 1) { repository.findByName(command.name) }
+        verify(exactly = 1) { repository.findByDisplayId(command.displayId) }
+        verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
+        verify(exactly = 1) { resourceRepository.findById(researchField.id) }
+        verify(exactly = 1) { resourceRepository.findById(sdgId) }
+    }
+
+    @Test
+    fun `Given an observatory create command, when sustainable development goal resource exists but is not an instance of sustainable development goal, it throws an exception`() {
+        val organization = createOrganization()
+        val researchField = createResource(ThingId("R456"), classes = setOf(Classes.researchField))
+        val someResource = createResource(ThingId("R123"))
+        val command = CreateCommand(
+            id = ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174"),
+            name = "observatory name",
+            description = "description",
+            organizations = setOf(organization.id!!),
+            researchField = researchField.id,
+            displayId = "observatory_display_id",
+            sustainableDevelopmentGoals = setOf(someResource.id)
+        )
+        every { repository.findByName(command.name) } returns Optional.empty()
+        every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
+        every { organizationRepository.findById(organization.id!!) } returns Optional.of(organization)
+        every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
+        every { resourceRepository.findById(someResource.id) } returns Optional.of(someResource)
+
+        assertThrows<SustainableDevelopmentGoalNotFound> { service.create(command) }
+
+        verify(exactly = 1) { repository.findByName(command.name) }
+        verify(exactly = 1) { repository.findByDisplayId(command.displayId) }
+        verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
+        verify(exactly = 1) { resourceRepository.findById(researchField.id) }
+        verify(exactly = 1) { resourceRepository.findById(someResource.id) }
+    }
+
+    @Test
     fun `Given an observatory update command, when updating all fields, it returns success and observatory is updated`() {
         val observatory = createObservatory()
         val organization = createOrganization()
         val researchField = createResource(ThingId("R456"), classes = setOf(Classes.researchField))
+        val sdg = createResource(ThingId("R4789"), classes = setOf(Classes.sustainableDevelopmentGoal))
         val command = UpdateCommand(
             id = observatory.id,
             name = "new name",
             organizations = setOf(organization.id!!),
             description = "new description",
-            researchField = researchField.id
+            researchField = researchField.id,
+            sustainableDevelopmentGoals = setOf(sdg.id)
         )
         every { repository.findById(observatory.id) } returns Optional.of(observatory)
         every { organizationRepository.findById(organization.id!!) } returns Optional.of(organization)
         every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
+        every { resourceRepository.findById(sdg.id) } returns Optional.of(sdg)
         every { repository.save(any()) } just runs
 
         service.update(command)
@@ -331,6 +405,7 @@ class ObservatoryServiceUnitTests {
         verify(exactly = 1) { repository.findById(observatory.id) }
         verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
         verify(exactly = 1) { resourceRepository.findById(researchField.id) }
+        verify(exactly = 1) { resourceRepository.findById(sdg.id) }
         verify(exactly = 1) {
             repository.save(withArg {
                 it.id shouldBe observatory.id
@@ -339,6 +414,7 @@ class ObservatoryServiceUnitTests {
                 it.description shouldBe command.description
                 it.researchField shouldBe command.researchField
                 it.displayId shouldBe observatory.displayId
+                it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
             })
         }
     }
@@ -364,6 +440,7 @@ class ObservatoryServiceUnitTests {
                 it.description shouldBe observatory.description
                 it.researchField shouldBe observatory.researchField
                 it.displayId shouldBe observatory.displayId
+                it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
             })
         }
     }
@@ -392,6 +469,7 @@ class ObservatoryServiceUnitTests {
                 it.description shouldBe observatory.description
                 it.researchField shouldBe observatory.researchField
                 it.displayId shouldBe observatory.displayId
+                it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
             })
         }
     }
@@ -417,6 +495,7 @@ class ObservatoryServiceUnitTests {
                 it.description shouldBe command.description
                 it.researchField shouldBe observatory.researchField
                 it.displayId shouldBe observatory.displayId
+                it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
             })
         }
     }
@@ -445,6 +524,36 @@ class ObservatoryServiceUnitTests {
                 it.description shouldBe observatory.description
                 it.researchField shouldBe command.researchField
                 it.displayId shouldBe observatory.displayId
+                it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
+            })
+        }
+    }
+
+    @Test
+    fun `Given an observatory update command, when updating the sustainable development goals, it returns success and observatory is updated`() {
+        val observatory = createObservatory()
+        val sdg = createResource(ThingId("SDG1"), classes = setOf(Classes.sustainableDevelopmentGoal))
+        val command = UpdateCommand(
+            id = observatory.id,
+            sustainableDevelopmentGoals = setOf(sdg.id)
+        )
+        every { repository.findById(observatory.id) } returns Optional.of(observatory)
+        every { resourceRepository.findById(sdg.id) } returns Optional.of(sdg)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(observatory.id) }
+        verify(exactly = 1) { resourceRepository.findById(sdg.id) }
+        verify(exactly = 1) {
+            repository.save(withArg {
+                it.id shouldBe observatory.id
+                it.name shouldBe observatory.name
+                it.organizationIds shouldBe observatory.organizationIds
+                it.description shouldBe observatory.description
+                it.researchField shouldBe observatory.researchField
+                it.displayId shouldBe observatory.displayId
+                it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
             })
         }
     }
@@ -519,15 +628,54 @@ class ObservatoryServiceUnitTests {
     }
 
     @Test
+    fun `Given an observatory update command, when sustainable development goal does not exist, it throws an exception`() {
+        val observatory = createObservatory()
+        val sdg = ThingId("SDG1")
+        val command = UpdateCommand(
+            id = observatory.id,
+            sustainableDevelopmentGoals = setOf(sdg)
+        )
+        every { repository.findById(observatory.id) } returns Optional.of(observatory)
+        every { resourceRepository.findById(sdg) } returns Optional.empty()
+
+        assertThrows<SustainableDevelopmentGoalNotFound> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(observatory.id) }
+        verify(exactly = 1) { resourceRepository.findById(sdg) }
+    }
+
+    @Test
+    fun `Given an observatory update command, when sustainable development goal resource exists, but is not a sustainable development goal instance, it throws an exception`() {
+        val observatory = createObservatory()
+        val sdg = createResource(ThingId("SDG1"))
+        val command = UpdateCommand(
+            id = observatory.id,
+            sustainableDevelopmentGoals = setOf(sdg.id)
+        )
+        every { repository.findById(observatory.id) } returns Optional.of(observatory)
+        every { resourceRepository.findById(sdg.id) } returns Optional.of(sdg)
+
+        assertThrows<SustainableDevelopmentGoalNotFound> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(observatory.id) }
+        verify(exactly = 1) { resourceRepository.findById(sdg.id) }
+    }
+
+    @Test
     fun `Given an observatory update command, when new fields are equal, it skips validation and does not save the observatory again`() {
-        val organization = createOrganization()
-        val observatory = createObservatory(organizationIds = setOf(organization.id!!))
+        val organizationId = OrganizationId("d02073bc-30fd-481e-9167-f3fc3595d590")
+        val sdgId = ThingId("SDG1")
+        val observatory = createObservatory(
+            organizationIds = setOf(organizationId),
+            sustainableDevelopmentGoals = setOf(sdgId)
+        )
         val command = UpdateCommand(
             id = observatory.id,
             name = observatory.name,
             organizations = observatory.organizationIds,
             description = observatory.description,
-            researchField = observatory.researchField
+            researchField = observatory.researchField,
+            sustainableDevelopmentGoals = observatory.sustainableDevelopmentGoals
         )
         every { repository.findById(observatory.id) } returns Optional.of(observatory)
 

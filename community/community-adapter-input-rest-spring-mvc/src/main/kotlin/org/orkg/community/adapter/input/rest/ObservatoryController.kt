@@ -186,14 +186,18 @@ class ObservatoryController(
         )
         @field:NotBlank
         @JsonProperty("display_id")
-        val displayId: String
+        val displayId: String,
+        @field:Valid
+        @JsonProperty("sdgs")
+        val sustainableDevelopmentGoals: Set<ThingId>?
     ) {
         fun toCreateCommand() = CreateCommand(
             name = name,
             description = description,
             organizations = setOf(organizationId),
             researchField = researchField,
-            displayId = displayId
+            displayId = displayId,
+            sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty()
         )
     }
 
@@ -205,14 +209,17 @@ class ObservatoryController(
         val organizations: Set<OrganizationId>?,
         val description: String?,
         @JsonProperty("research_field")
-        val researchField: ThingId?
+        val researchField: ThingId?,
+        @JsonProperty("sdgs")
+        val sustainableDevelopmentGoals: Set<ThingId>?
     ) {
         fun toUpdateCommand(id: ObservatoryId) = UpdateCommand(
             id = id,
             name = name,
             organizations = organizations,
             description = description,
-            researchField = researchField
+            researchField = researchField,
+            sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty()
         )
     }
 

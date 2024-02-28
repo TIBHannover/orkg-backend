@@ -12,6 +12,5 @@ fun observatoryResponseFields() = listOf(
     fieldWithPath("members").description("The members belonging to the observatory"),
     fieldWithPath("organization_ids").description("The list of organizations that the observatory belongs to"),
     fieldWithPath("display_id").description("The URI of an observatory"),
-    fieldWithPath("featured").optional().ignored(),
-    fieldWithPath("unlisted").optional().ignored()
+    fieldWithPath("sdgs").description("The set of ids of sustainable development goals that the observatory belongs to")
 )

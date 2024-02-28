@@ -9,6 +9,7 @@ import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.UpdateObservatoryUseCase
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.output.ResourceRepository
@@ -38,6 +39,11 @@ class ObservatoryService(
         resourceRepository.findById(command.researchField)
             .filter { resource -> Classes.researchField in resource.classes }
             .orElseThrow { ResearchFieldNotFound(command.researchField) }
+        command.sustainableDevelopmentGoals.forEach { sdgId ->
+            resourceRepository.findById(sdgId)
+                .filter { resource -> Classes.sustainableDevelopmentGoal in resource.classes }
+                .orElseThrow { SustainableDevelopmentGoalNotFound(sdgId) }
+        }
         val id = command.id
             ?.also { id -> postgresObservatoryRepository.findById(id).ifPresent { throw ObservatoryAlreadyExists.withId(id) } }
             ?: ObservatoryId(UUID.randomUUID())
@@ -47,7 +53,8 @@ class ObservatoryService(
             description = command.description,
             researchField = command.researchField,
             organizationIds = command.organizations,
-            displayId = command.displayId
+            displayId = command.displayId,
+            sustainableDevelopmentGoals = command.sustainableDevelopmentGoals
         )
         postgresObservatoryRepository.save(observatory)
         return id
@@ -69,11 +76,19 @@ class ObservatoryService(
                 .filter { resource -> Classes.researchField in resource.classes }
                 .orElseThrow { ResearchFieldNotFound(command.researchField!!) }
         }
+        if (command.sustainableDevelopmentGoals != null && command.sustainableDevelopmentGoals != observatory.sustainableDevelopmentGoals) {
+            command.sustainableDevelopmentGoals!!.forEach { sdgId ->
+                resourceRepository.findById(sdgId)
+                    .filter { resource -> Classes.sustainableDevelopmentGoal in resource.classes }
+                    .orElseThrow { SustainableDevelopmentGoalNotFound(sdgId) }
+            }
+        }
         val updated = observatory.copy(
             name = command.name ?: observatory.name,
             organizationIds = command.organizations ?: observatory.organizationIds,
             description = command.description ?: observatory.description,
-            researchField = command.researchField ?: observatory.researchField
+            researchField = command.researchField ?: observatory.researchField,
+            sustainableDevelopmentGoals = command.sustainableDevelopmentGoals ?: observatory.sustainableDevelopmentGoals
         )
         if (updated != observatory) {
             postgresObservatoryRepository.save(updated)

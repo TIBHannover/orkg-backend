@@ -62,7 +62,8 @@ class PostgresDummyDataSetup(
                 researchField = node["research_field"]["id"].takeIf { !it.isNull }?.let { ThingId(it.asText()) },
                 members = node["members"].map { ContributorId(UUID.fromString(it.asText())) }.toSet(),
                 organizationIds = node["organization_ids"].map { OrganizationId(UUID.fromString(it.asText())) }.toSet(),
-                displayId = node["display_id"].asText()
+                displayId = node["display_id"].asText(),
+                sustainableDevelopmentGoals = node["sdgs"].map { ThingId(it.textValue()) }.toSet()
             )
         }
     }

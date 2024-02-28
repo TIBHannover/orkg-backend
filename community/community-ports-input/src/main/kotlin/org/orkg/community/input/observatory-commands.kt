@@ -13,7 +13,8 @@ interface CreateObservatoryUseCase {
         val description: String,
         val organizations: Set<OrganizationId>,
         val researchField: ThingId,
-        val displayId: String
+        val displayId: String,
+        val sustainableDevelopmentGoals: Set<ThingId>
     )
 }
 
@@ -25,10 +26,12 @@ interface UpdateObservatoryUseCase {
         val name: String? = null,
         val organizations: Set<OrganizationId>? = null,
         val description: String? = null,
-        val researchField: ThingId? = null
+        val researchField: ThingId? = null,
+        val sustainableDevelopmentGoals: Set<ThingId>? = null
     ) {
         fun hasNoContents(): Boolean =
-            name == null && organizations == null && description == null && researchField == null
+            name == null && organizations == null && description == null && researchField == null &&
+                sustainableDevelopmentGoals == null
     }
 
     // legacy methods:

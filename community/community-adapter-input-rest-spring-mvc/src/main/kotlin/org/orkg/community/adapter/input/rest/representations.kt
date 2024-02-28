@@ -16,7 +16,9 @@ data class ObservatoryRepresentation(
     @get:JsonProperty("organization_ids")
     val organizationIds: Set<OrganizationId>,
     @get:JsonProperty("display_id")
-    val displayId: String
+    val displayId: String,
+    @get:JsonProperty("sdgs")
+    val sustainableDevelopmentGoals: Set<ThingId>
 )
 
 data class ResearchFieldRepresentation(

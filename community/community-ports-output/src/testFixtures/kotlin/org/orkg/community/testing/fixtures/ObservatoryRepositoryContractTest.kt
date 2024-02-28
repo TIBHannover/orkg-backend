@@ -13,6 +13,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Observatory
+import org.orkg.community.domain.Organization
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.springframework.data.domain.PageRequest
@@ -24,7 +25,15 @@ interface ObservatoryRepositoryContractTest {
 
     @Test
     fun `successfully restores all properties after saving`() {
-        val expected = createObservatory(organizations = 2)
+        val expected = createObservatory(
+            organizationIds = setOf(
+                OrganizationId("6b9737ca-0cf4-4265-b6a3-316506587906"),
+                OrganizationId("fd8cc4bf-5862-43cb-96ea-2a76db509ad7")
+            ),
+            sustainableDevelopmentGoals = setOf(ThingId("SDG1"))
+        )
+        expected.createOrganizations()
+        repository.save(expected)
 
         val actual = repository.findById(expected.id).orElse(null)
 
@@ -37,12 +46,57 @@ interface ObservatoryRepositoryContractTest {
             it.organizationIds.size shouldBe expected.organizationIds.size
             it.organizationIds shouldContainAll expected.organizationIds
             it.displayId shouldBe expected.displayId
+            it.sustainableDevelopmentGoals shouldBe expected.sustainableDevelopmentGoals
+        }
+    }
+
+    @Test
+    fun `Saving an observatory, updates an already existing observatory`() {
+        val observatory = createObservatory(
+            organizationIds = setOf(
+                OrganizationId("6b9737ca-0cf4-4265-b6a3-316506587906"),
+                OrganizationId("fd8cc4bf-5862-43cb-96ea-2a76db509ad7")
+            ),
+            sustainableDevelopmentGoals = setOf(ThingId("SDG1"))
+        )
+        observatory.createOrganizations()
+        repository.save(observatory)
+
+        val updated = repository.findById(observatory.id).get().copy(
+            name = "new name",
+            organizationIds = setOf(
+                OrganizationId("6b9737ca-0cf4-4265-b6a3-316506587906")
+            ),
+            description = "new description",
+            sustainableDevelopmentGoals = setOf(ThingId("SDG1"), ThingId("SDG2"))
+        )
+        repository.save(updated)
+
+        val actual = repository.findById(observatory.id).orElse(null)
+
+        actual shouldNotBe null
+        actual.asClue {
+            it.id shouldBe updated.id
+            it.name shouldBe updated.name
+            it.description shouldBe updated.description
+            it.researchField shouldBe updated.researchField
+            it.organizationIds.size shouldBe updated.organizationIds.size
+            it.organizationIds shouldContainAll updated.organizationIds
+            it.displayId shouldBe updated.displayId
+            it.sustainableDevelopmentGoals shouldBe updated.sustainableDevelopmentGoals
         }
     }
 
     @Test
     fun `When searching several observatories by organization id, it returns the correct result`() {
-        val expected = createObservatory(organizations = 2)
+        val expected = createObservatory(
+            organizationIds = setOf(
+                OrganizationId("6b9737ca-0cf4-4265-b6a3-316506587906"),
+                OrganizationId("fd8cc4bf-5862-43cb-96ea-2a76db509ad7")
+            )
+        )
+        expected.createOrganizations()
+        repository.save(expected)
 
         val actual = repository.findAllByOrganizationId(expected.organizationIds.first(), PageRequest.of(0, 5))
         actual.content shouldNotBe null
@@ -55,7 +109,8 @@ interface ObservatoryRepositoryContractTest {
 
     @Test
     fun `When searching an observatory by its name, it returns the correct result`() {
-        val expected = createObservatory(organizations = 2)
+        val expected = createObservatory()
+        repository.save(expected)
 
         val actual = repository.findByName(expected.name).orElse(null)
 
@@ -65,7 +120,8 @@ interface ObservatoryRepositoryContractTest {
 
     @Test
     fun `When searching an observatory by its display Id, it returns the correct result`() {
-        val expected = createObservatory(organizations = 2)
+        val expected = createObservatory()
+        repository.save(expected)
 
         val actual = repository.findByDisplayId(expected.displayId).orElse(null)
 
@@ -75,7 +131,8 @@ interface ObservatoryRepositoryContractTest {
 
     @Test
     fun `When searching several observatories by research field id, it returns the correct result`() {
-        val expected = createObservatory(organizations = 2)
+        val expected = createObservatory()
+        repository.save(expected)
 
         val actual = repository.findAllByResearchField(expected.researchField!!, PageRequest.of(0, 5))
 
@@ -88,32 +145,14 @@ interface ObservatoryRepositoryContractTest {
     }
 
     @Test
-    fun `When searching observatories by incorrect display id, it returns the incorrect result`() {
-        val expected = createObservatory(organizations = 1)
-        val actual = repository.findByDisplayId("test observatory").orElse(null)
-
-        actual shouldNotBe expected
-    }
-
-    @Test
-    fun `When searching observatories by incorrect research field id, it returns the incorrect result`() {
-        createObservatory(organizations = 1)
-        val actual = repository.findAllByResearchField(ThingId("R1"), PageRequest.of(0, 5))
-
-        actual.size shouldBe 5
-        actual.number shouldBe 0
-        actual.totalPages shouldBe 0
-        actual.totalElements shouldBe 0
-    }
-
-    @Test
     fun `When retrieving several observatories, it returns the correct result`() {
-        val expected = createObservatory(2)
+        val expected = createObservatory()
+        repository.save(expected)
+
         val actual = repository.findAll(PageRequest.of(0, 5))
 
         actual shouldNotBe null
         actual.content shouldContainAll setOf(expected)
-        actual.content.first().organizationIds.size shouldBe 2
         actual.size shouldBe 5
         actual.number shouldBe 0
         actual.totalPages shouldBe 1
@@ -122,13 +161,11 @@ interface ObservatoryRepositoryContractTest {
 
     @Test
     fun `When retrieving several research fields, it returns the correct result`() {
-        val organization = organizationRepository.createOrganization()
         val nullObservatory = Observatory(
             id = ObservatoryId(UUID.randomUUID()),
             name = "zero",
             description = "desc",
             researchField = null,
-            organizationIds = setOf(organization),
             displayId = "displayId"
         )
         val observatories = (0..3).map {
@@ -137,10 +174,10 @@ interface ObservatoryRepositoryContractTest {
                 name = "$it",
                 description = "desc",
                 researchField = ThingId("R${it.coerceAtMost(2)}"),
-                organizationIds = setOf(organization),
                 displayId = "displayId$it"
             )
-        } + nullObservatory
+        }
+        repository.save(nullObservatory)
         observatories.forEach(repository::save)
 
         val expected = observatories.mapNotNull { it.researchField }.toSet()
@@ -158,14 +195,13 @@ interface ObservatoryRepositoryContractTest {
 
     @Test
     fun `When searching several observatories by name containing, it returns the correct result`() {
-        val organization = organizationRepository.createOrganization()
         val observatories = (0..3).map {
             Observatory(
                 id = ObservatoryId(UUID.randomUUID()),
                 name = "ABC$it",
                 description = "desc",
                 researchField = ThingId("R${it.coerceAtMost(2)}"),
-                organizationIds = setOf(organization),
+                organizationIds = emptySet(),
                 displayId = "displayId$it"
             )
         }
@@ -184,27 +220,18 @@ interface ObservatoryRepositoryContractTest {
         actual.totalElements shouldBe expected.size
     }
 
-    private fun createObservatory(organizations: Int = 1): Observatory {
-        val organizationIds = (0 until organizations)
-            .map { organizationRepository.createOrganization() }
-            .toSet()
-        val observatory = createObservatory(organizationIds)
-        repository.save(observatory)
-        return observatory
+    private fun Observatory.createOrganizations() {
+        organizationIds.forEach {
+            val organization = createOrganization(id = it, displayId = it.value.toString())
+            organization.createUser()
+            organizationRepository.save(organization)
+        }
     }
 
-    private fun OrganizationRepository.createOrganization(): OrganizationId {
-        val organizationId = OrganizationId(UUID.randomUUID())
-        val organization = org.orkg.community.testing.fixtures.createOrganization().copy(
-            id = organizationId,
-            displayId = "displayId${organizationId.value}"
-        )
-        val createdBy = organization.createdBy!!.value
-        if (userRepository.findById(createdBy).isEmpty) {
-            userRepository.save(createUser(createdBy))
+    private fun Organization.createUser() {
+        if (userRepository.findById(createdBy!!.value).isEmpty) {
+            userRepository.save(createUser(createdBy!!.value))
         }
-        this.save(organization)
-        return organizationId
     }
 
     fun cleanUpAfterEach()

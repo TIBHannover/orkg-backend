@@ -30,6 +30,7 @@ interface ObservatoryRepresentationAdapter : ResearchFieldRepresentationAdapter 
             researchField = researchField.toResearchFieldRepresentation(),
             members = members,
             organizationIds = organizationIds,
-            displayId = displayId
+            displayId = displayId,
+            sustainableDevelopmentGoals = sustainableDevelopmentGoals
         )
 }

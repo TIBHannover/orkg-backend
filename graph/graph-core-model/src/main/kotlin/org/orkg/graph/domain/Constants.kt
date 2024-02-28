@@ -86,6 +86,7 @@ object Classes {
     val resource = ThingId("Resource")
     val review = ThingId("SmartReview")
     val reviewPublished = ThingId("SmartReviewPublished")
+    val sustainableDevelopmentGoal = ThingId("SustainableDevelopmentGoal")
     val venue = ThingId("Venue")
     val visualization = ThingId("Visualization")
 }

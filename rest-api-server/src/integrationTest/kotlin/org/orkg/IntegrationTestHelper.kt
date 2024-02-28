@@ -120,6 +120,7 @@ fun ObservatoryUseCases.createObservatory(
     organizations: Set<OrganizationId> = emptySet(),
     researchField: ThingId = ThingId("R123"),
     displayId: String = name.toDisplayId(),
+    sustainableDevelopmentGoals: Set<ThingId> = emptySet()
 ) = this.create(
     CreateObservatoryUseCase.CreateCommand(
         id = id,
@@ -127,7 +128,8 @@ fun ObservatoryUseCases.createObservatory(
         description = description,
         organizations = organizations,
         researchField = researchField,
-        displayId = displayId
+        displayId = displayId,
+        sustainableDevelopmentGoals = sustainableDevelopmentGoals
     )
 )
 

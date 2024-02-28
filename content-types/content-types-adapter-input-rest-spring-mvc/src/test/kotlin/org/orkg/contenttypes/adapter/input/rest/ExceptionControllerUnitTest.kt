@@ -4,9 +4,11 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
 import org.orkg.contenttypes.domain.InvalidMonth
+import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -52,12 +54,30 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun sustainableDevelopmentGoalNotFound() {
+        get("/sustainable-development-goal-not-found")
+            .param("sdgId", "SDG1")
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.error", `is`("Not Found")))
+            .andExpect(jsonPath("$.path").value("/sustainable-development-goal-not-found"))
+            .andExpect(jsonPath("$.message").value("""Sustainable Development Goal "SDG1" not found."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
         @GetMapping("/invalid-month")
         fun invalidMonth(@RequestParam month: Int) {
             throw InvalidMonth(month)
+        }
+
+        @GetMapping("/sustainable-development-goal-not-found")
+        fun sustainableDevelopmentGoalNotFound(@RequestParam sdgId: ThingId) {
+            throw SustainableDevelopmentGoalNotFound(sdgId)
         }
     }
 

@@ -33,6 +33,7 @@ internal fun PostgresObservatoryRepository.toObservatoryEntity(
             organizationRepository.findById(it.value)
                 .orElseThrow { OrganizationNotFound(it.value.toString()) }
         }.toMutableSet()
+        sustainableDevelopmentGoals = observatory.sustainableDevelopmentGoals.map { it.value }.toMutableSet()
     }
 
 internal fun PostgresOrganizationRepository.toOrganizationEntity(

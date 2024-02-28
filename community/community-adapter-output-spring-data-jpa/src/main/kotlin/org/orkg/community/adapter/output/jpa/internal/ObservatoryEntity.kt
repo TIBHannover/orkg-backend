@@ -4,7 +4,9 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.*
 import javax.persistence.CascadeType
+import javax.persistence.CollectionTable
 import javax.persistence.Column
+import javax.persistence.ElementCollection
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Id
@@ -51,6 +53,14 @@ class ObservatoryEntity() {
         inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")]
     )
     var organizations: MutableSet<OrganizationEntity>? = mutableSetOf()
+
+    @ElementCollection
+    @CollectionTable(
+        name = "observatories_sdgs",
+        joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")]
+    )
+    @Column(name = "sdg_id")
+    var sustainableDevelopmentGoals: MutableSet<String>? = mutableSetOf()
 }
 
 fun ObservatoryEntity.toObservatory() =
@@ -61,7 +71,8 @@ fun ObservatoryEntity.toObservatory() =
         researchField = researchField?.let { ThingId(it) },
         members = users.orEmpty().map { ContributorId(it.id!!) }.toSet(),
         organizationIds = organizations.orEmpty().map { OrganizationId(it.id!!) }.toSet(),
-        displayId = displayId!!
+        displayId = displayId!!,
+        sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty().map(::ThingId).toSet()
     )
 
 // TODO: should be internal, but is used by input adapter (legacy controller)

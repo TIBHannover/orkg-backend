@@ -12,5 +12,6 @@ data class Observatory(
     val researchField: ThingId?,
     val members: Set<ContributorId> = emptySet(),
     val organizationIds: Set<OrganizationId> = emptySet(),
-    val displayId: String
+    val displayId: String,
+    val sustainableDevelopmentGoals: Set<ThingId> = emptySet()
 )

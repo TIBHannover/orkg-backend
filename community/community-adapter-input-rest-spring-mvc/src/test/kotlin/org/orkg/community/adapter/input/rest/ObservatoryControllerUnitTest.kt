@@ -109,7 +109,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             organizationId = organizationId,
             description = "test observatory",
             researchField = ThingId("R45"),
-            displayId = "test"
+            displayId = "test",
+            sustainableDevelopmentGoals = setOf(ThingId("SDG1"))
         )
 
         mockMvc.performPost("/api/observatories/", body)
@@ -543,9 +544,11 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     @DisplayName("Given an observatory is created, when service succeeds, then status is 201 CREATED and observatory is returned")
     fun create() {
         val id = ObservatoryId("95565e51-2b80-4c28-918c-6fbc5e2a9b33")
+        val sdg = ThingId("SDG1")
         val observatory = createObservatory(
             id = id,
-            organizationIds = setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"))
+            organizationIds = setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")),
+            sustainableDevelopmentGoals = setOf(sdg)
         )
         val researchField = createResource(observatory.researchField!!, classes = setOf(Classes.researchField))
         val request = ObservatoryController.CreateObservatoryRequest(
@@ -553,7 +556,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             organizationId = observatory.organizationIds.first(),
             description = observatory.description!!,
             researchField = observatory.researchField!!,
-            displayId = observatory.displayId
+            displayId = observatory.displayId,
+            sustainableDevelopmentGoals = observatory.sustainableDevelopmentGoals
         )
 
         every { observatoryUseCases.create(any()) } returns observatory.id
@@ -574,6 +578,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
                         fieldWithPath("description").description("The description of the observatory."),
                         fieldWithPath("research_field").description("The id of the research field of the observatory."),
                         fieldWithPath("display_id").description("The URI slug of the observatory."),
+                        fieldWithPath("sdgs").description("The set of ids of https://sdgs.un.org[sustainable development goals,window=_blank] the observatory belongs to."),
                     ),
                     responseFields(observatoryResponseFields())
                 )
@@ -588,6 +593,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
                 it.description shouldBe observatory.description
                 it.researchField shouldBe observatory.researchField
                 it.displayId shouldBe observatory.displayId
+                it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
             })
         }
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
@@ -603,7 +609,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             name = "updated",
             organizations = setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")),
             description = "new observatory description",
-            researchField = ThingId("R123")
+            researchField = ThingId("R123"),
+            sustainableDevelopmentGoals = setOf(ThingId("SDG1"))
         )
 
         every { observatoryUseCases.update(any()) } just runs
@@ -620,6 +627,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
                         fieldWithPath("organizations").description("The new set of organizations that the observatory belongs to. (optional)"),
                         fieldWithPath("description").description("The new description of the observatory. (optional)"),
                         fieldWithPath("research_field").description("The id of the new research field of the observatory. (optional)"),
+                        fieldWithPath("sdgs").description("The new set of ids of https://sdgs.un.org/[sustainable development goals,window=_blank] that the observatory belongs to. (optional)"),
                     )
                 )
             )
@@ -632,6 +640,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
                 it.organizations shouldBe setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"))
                 it.description shouldBe "new observatory description"
                 it.researchField shouldBe ThingId("R123")
+                it.sustainableDevelopmentGoals shouldBe setOf(ThingId("SDG1"))
             })
         }
     }

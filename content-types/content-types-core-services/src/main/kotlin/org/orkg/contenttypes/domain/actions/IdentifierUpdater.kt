@@ -19,6 +19,9 @@ abstract class IdentifierUpdater(
         identifierDefinitions: Set<Identifier>,
         subjectId: ThingId
     ) {
+        if (oldIdentifiers == newIdentifiers)
+            return
+
         val key2Identifier = identifierDefinitions.associateBy { it.id }
 
         // Find out what already exists and what needs to be created or removed

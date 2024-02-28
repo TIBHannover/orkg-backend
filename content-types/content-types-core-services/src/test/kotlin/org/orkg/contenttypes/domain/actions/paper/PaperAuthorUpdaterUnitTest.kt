@@ -7,12 +7,12 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.AuthorUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
 
 class PaperAuthorUpdaterUnitTest {
@@ -33,7 +33,7 @@ class PaperAuthorUpdaterUnitTest {
     @Test
     fun `Given a paper update command, it updates the authors`() {
         val command = dummyUpdatePaperCommand()
-        val state = UpdatePaperState()
+        val state = UpdatePaperState(paper = createDummyPaper())
 
         every { authorUpdater.update(command.contributorId, state.authors, command.paperId) } just runs
 
@@ -43,10 +43,16 @@ class PaperAuthorUpdaterUnitTest {
     }
 
     @Test
-    fun `Given a paper update command, when author list is null, it does nothing`() {
-        val command = dummyUpdatePaperCommand().copy(
-            authors = null
-        )
+    fun `Given a paper update command, when new author list is identical to new author list, it does nothing`() {
+        val command = dummyUpdatePaperCommand()
+        val state = UpdatePaperState(paper = createDummyPaper().copy(authors = command.authors!!))
+
+        paperAuthorUpdater(command, state)
+    }
+
+    @Test
+    fun `Given a paper update command, when no author list is set, it does nothing`() {
+        val command = dummyUpdatePaperCommand().copy(authors = null)
         val state = UpdatePaperState()
 
         paperAuthorUpdater(command, state)

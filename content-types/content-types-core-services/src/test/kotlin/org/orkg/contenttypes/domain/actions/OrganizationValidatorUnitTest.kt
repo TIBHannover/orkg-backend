@@ -19,7 +19,7 @@ import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 class OrganizationValidatorUnitTest {
     private val organizationRepository: OrganizationRepository = mockk()
 
-    private val organizationValidator = OrganizationValidator<List<OrganizationId>, Unit>(organizationRepository) { it }
+    private val organizationValidator = OrganizationValidator<List<OrganizationId>?, List<OrganizationId>>(organizationRepository, { it }, { it })
 
     @BeforeEach
     fun resetState() {
@@ -38,7 +38,7 @@ class OrganizationValidatorUnitTest {
 
         every { organizationRepository.findById(organization.id!!) } returns Optional.of(organization)
 
-        organizationValidator(listOf(id), Unit)
+        organizationValidator(listOf(id), emptyList())
 
         verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
     }
@@ -49,7 +49,7 @@ class OrganizationValidatorUnitTest {
 
         every { organizationRepository.findById(id) } returns Optional.empty()
 
-        assertThrows<OrganizationNotFound> { organizationValidator(listOf(id), Unit) }
+        assertThrows<OrganizationNotFound> { organizationValidator(listOf(id), emptyList()) }
 
         verify(exactly = 1) { organizationRepository.findById(id) }
     }
@@ -57,6 +57,18 @@ class OrganizationValidatorUnitTest {
     @Test
     fun `Given a list of organizations, when more than one organization is specified, it throws an exception`() {
         val ids = listOf(OrganizationId(UUID.randomUUID()), OrganizationId(UUID.randomUUID()))
-        assertThrows<OnlyOneOrganizationAllowed> { organizationValidator(ids, Unit) }
+        assertThrows<OnlyOneOrganizationAllowed> { organizationValidator(ids, emptyList()) }
+    }
+
+    @Test
+    fun `Given a list of observatories, when old list of observatories is identical, it does nothing`() {
+        val ids = listOf(OrganizationId(UUID.randomUUID()), OrganizationId(UUID.randomUUID()))
+        organizationValidator(ids, ids)
+    }
+
+    @Test
+    fun `Given a list of observatories, when no new observatories list is set, it does nothing`() {
+        val ids = listOf(OrganizationId(UUID.randomUUID()), OrganizationId(UUID.randomUUID()))
+        organizationValidator(null, ids)
     }
 }

@@ -84,8 +84,8 @@ class VisualizationService(
     override fun create(command: CreateVisualizationCommand): ThingId {
         val steps = listOf(
             LabelValidator { it.title },
-            ObservatoryValidator(observatoryRepository) { it.observatories },
-            OrganizationValidator(organizationRepository) { it.organizations },
+            ObservatoryValidator(observatoryRepository, { it.observatories }),
+            OrganizationValidator(organizationRepository, { it.organizations }),
             VisualizationAuthorValidator(resourceRepository, statementRepository),
             VisualizationResourceCreator(resourceService),
             VisualizationDescriptionCreator(literalService, statementService),

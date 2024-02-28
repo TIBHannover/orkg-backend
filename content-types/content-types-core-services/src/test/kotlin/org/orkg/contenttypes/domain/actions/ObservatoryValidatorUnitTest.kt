@@ -19,7 +19,7 @@ import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 class ObservatoryValidatorUnitTest {
     private val observatoryRepository: ObservatoryRepository = mockk()
 
-    private val observatoryValidator = ObservatoryValidator<List<ObservatoryId>, Unit>(observatoryRepository) { it }
+    private val observatoryValidator = ObservatoryValidator<List<ObservatoryId>?, List<ObservatoryId>>(observatoryRepository, { it }, { it })
 
     @BeforeEach
     fun resetState() {
@@ -38,7 +38,7 @@ class ObservatoryValidatorUnitTest {
 
         every { observatoryRepository.findById(observatory.id) } returns Optional.of(observatory)
 
-        observatoryValidator(listOf(id), Unit)
+        observatoryValidator(listOf(id), emptyList())
 
         verify(exactly = 1) { observatoryRepository.findById(observatory.id) }
     }
@@ -49,7 +49,7 @@ class ObservatoryValidatorUnitTest {
 
         every { observatoryRepository.findById(id) } returns Optional.empty()
 
-        assertThrows<ObservatoryNotFound> { observatoryValidator(listOf(id), Unit) }
+        assertThrows<ObservatoryNotFound> { observatoryValidator(listOf(id), emptyList()) }
 
         verify(exactly = 1) { observatoryRepository.findById(id) }
     }
@@ -57,6 +57,18 @@ class ObservatoryValidatorUnitTest {
     @Test
     fun `Given a list of observatories, when more than one observatory is specified, it throws an exception`() {
         val ids = listOf(ObservatoryId(UUID.randomUUID()), ObservatoryId(UUID.randomUUID()))
-        assertThrows<OnlyOneObservatoryAllowed> { observatoryValidator(ids, Unit) }
+        assertThrows<OnlyOneObservatoryAllowed> { observatoryValidator(ids, emptyList()) }
+    }
+
+    @Test
+    fun `Given a list of observatories, when old list of observatories is identical, it does nothing`() {
+        val ids = listOf(ObservatoryId(UUID.randomUUID()), ObservatoryId(UUID.randomUUID()))
+        observatoryValidator(ids, ids)
+    }
+
+    @Test
+    fun `Given a list of observatories, when no new observatories list is set, it does nothing`() {
+        val ids = listOf(ObservatoryId(UUID.randomUUID()), ObservatoryId(UUID.randomUUID()))
+        observatoryValidator(null, ids)
     }
 }

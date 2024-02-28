@@ -7,15 +7,17 @@ import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 
 class ObservatoryValidator<T, S>(
     private val observatoryRepository: ObservatoryRepository,
-    private val valueSelector: (T) -> List<ObservatoryId>?
+    private val newValueSelector: (T) -> List<ObservatoryId>?,
+    private val oldValueSelector: (S) -> List<ObservatoryId> = { emptyList() }
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
-        val observatories = valueSelector(command)
-        if (observatories != null) {
-            if (observatories.size > 1) {
+        val newObservatories = newValueSelector(command)
+        val oldObservatories = oldValueSelector(state)
+        if (newObservatories != null && newObservatories.toSet() != oldObservatories.toSet()) {
+            if (newObservatories.size > 1) {
                 throw OnlyOneObservatoryAllowed()
             }
-            observatories.distinct().forEach {
+            (newObservatories.distinct() - oldObservatories.toSet()).forEach {
                 observatoryRepository.findById(it).orElseThrow { ObservatoryNotFound(it) }
             }
         }

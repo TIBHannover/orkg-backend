@@ -12,10 +12,10 @@ class PaperTitleUpdateValidator(
     private val resourceService: ResourceUseCases
 ) : UpdatePaperAction {
     override fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
-        command.title?.let { title ->
-            Label.ofOrNull(title) ?: throw InvalidLabel()
-            if (resourceService.findAllPapersByTitle(title).any { it.id != command.paperId }) {
-                throw PaperAlreadyExists.withTitle(title)
+        if (command.title != null && command.title != state.paper!!.title) {
+            Label.ofOrNull(command.title!!) ?: throw InvalidLabel()
+            if (resourceService.findAllPapersByTitle(command.title).any { it.id != command.paperId }) {
+                throw PaperAlreadyExists.withTitle(command.title!!)
             }
         }
         return state

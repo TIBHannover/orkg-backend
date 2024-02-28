@@ -174,4 +174,20 @@ class PaperIdentifierUpdaterUnitTest {
         verify(exactly = 0) { literalService.create(any()) }
         verify(exactly = 0) { statementService.create(any(), paperId, any(), any()) }
     }
+
+    @Test
+    fun `Given a paper update command, when new identifiers are identical to old identifiers, it does nothing`() {
+        val command = dummyUpdatePaperCommand()
+        val state = UpdatePaperState(paper = createDummyPaper().copy(identifiers = command.identifiers!!))
+
+        paperIdentifierUpdater(command, state)
+    }
+
+    @Test
+    fun `Given a paper update command, when no new identifiers are set, it does nothing`() {
+        val command = dummyUpdatePaperCommand().copy(identifiers = null)
+        val state = UpdatePaperState(paper = createDummyPaper())
+
+        paperIdentifierUpdater(command, state)
+    }
 }

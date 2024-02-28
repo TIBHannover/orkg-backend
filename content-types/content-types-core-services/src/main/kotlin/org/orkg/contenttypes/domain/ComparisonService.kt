@@ -149,9 +149,9 @@ class ComparisonService(
         val steps = listOf(
             LabelValidator { it.title },
             ComparisonContributionValidator(resourceRepository),
-            ResearchFieldValidator(resourceRepository) { it.researchFields },
-            ObservatoryValidator(observatoryRepository) { it.observatories },
-            OrganizationValidator(organizationRepository) { it.organizations },
+            ResearchFieldValidator(resourceRepository, { it.researchFields }),
+            ObservatoryValidator(observatoryRepository, { it.observatories }),
+            OrganizationValidator(organizationRepository, { it.organizations }),
             ComparisonAuthorValidator(resourceRepository, statementRepository),
             ComparisonResourceCreator(resourceService),
             ComparisonDescriptionCreator(literalService, statementService),

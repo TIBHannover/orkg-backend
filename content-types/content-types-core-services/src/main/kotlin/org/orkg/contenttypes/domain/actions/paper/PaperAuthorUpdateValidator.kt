@@ -10,6 +10,10 @@ class PaperAuthorUpdateValidator(
     resourceRepository: ResourceRepository,
     statementRepository: StatementRepository
 ) : AuthorValidator(resourceRepository, statementRepository), UpdatePaperAction {
-    override operator fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState =
-        command.authors?.let { state.copy(authors = validate(it)) } ?: state
+    override operator fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
+        if (command.authors != null && command.authors != state.paper!!.authors) {
+            return state.copy(authors = validate(command.authors!!))
+        }
+        return state
+    }
 }

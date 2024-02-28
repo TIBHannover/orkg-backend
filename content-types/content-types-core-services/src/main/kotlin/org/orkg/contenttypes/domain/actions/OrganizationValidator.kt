@@ -7,15 +7,17 @@ import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 
 class OrganizationValidator<T, S>(
     private val organizationRepository: OrganizationRepository,
-    private val valueSelector: (T) -> List<OrganizationId>?
+    private val newValueSelector: (T) -> List<OrganizationId>?,
+    private val oldValueSelector: (S) -> List<OrganizationId> = { emptyList() }
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
-        val organizations = valueSelector(command)
-        if (organizations != null) {
-            if (organizations.size > 1) {
+        val newOrganizations = newValueSelector(command)
+        val oldOrganizations = oldValueSelector(state)
+        if (newOrganizations != null && newOrganizations.toSet() != oldOrganizations.toSet()) {
+            if (newOrganizations.size > 1) {
                 throw OnlyOneOrganizationAllowed()
             }
-            organizations.distinct().forEach {
+            (newOrganizations.distinct() - oldOrganizations.toSet()).forEach {
                 organizationRepository.findById(it).orElseThrow { OrganizationNotFound(it) }
             }
         }

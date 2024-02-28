@@ -19,7 +19,7 @@ class PaperAuthorUpdater(
     ) : this(AuthorUpdater(resourceService, statementService, literalService, listService))
 
     override operator fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
-        if (command.authors != null) {
+        if (command.authors != null && command.authors != state.paper!!.authors) {
             authorUpdater.update(command.contributorId, state.authors, command.paperId)
         }
         return state

@@ -233,9 +233,6 @@ dependencies {
     implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations
     // File uploads
     implementation("commons-fileupload:commons-fileupload:1.5")
-    implementation("io.github.config4k:config4k:0.4.2") {
-        because("Required for parsing the essential entity configuration")
-    }
     // Caching
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("org.springframework.boot:spring-boot-starter-cache")

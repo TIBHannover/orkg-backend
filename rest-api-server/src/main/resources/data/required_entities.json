@@ -430,5 +430,7 @@
        "label": "has list element",
        "id": "hasListElement"
     }
-  ]
+  ],
+
+  "resources": []
 }

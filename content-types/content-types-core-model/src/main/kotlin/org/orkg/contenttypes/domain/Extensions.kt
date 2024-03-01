@@ -27,6 +27,8 @@ fun List<GeneralStatement>.objects() = map { it.`object` }
 
 fun List<GeneralStatement>.firstObjectLabel(): String? = firstOrNull()?.`object`?.label
 
+fun List<GeneralStatement>.singleObjectLabel(): String? = singleOrNull()?.`object`?.label
+
 fun List<GeneralStatement>.associateIdentifiers(identifiers: Set<Identifier>): Map<String, List<String>> =
     mapNotNull { statement ->
         identifiers.firstOrNull { statement.predicate.id == it.predicateId }

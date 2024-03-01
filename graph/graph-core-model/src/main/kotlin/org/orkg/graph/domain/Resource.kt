@@ -9,16 +9,16 @@ import org.orkg.common.ThingId
 data class Resource(
     override val id: ThingId,
     override val label: String,
-    val createdAt: OffsetDateTime,
+    override val createdAt: OffsetDateTime,
     val classes: Set<ThingId> = emptySet(),
-    val createdBy: ContributorId = ContributorId.UNKNOWN,
+    override val createdBy: ContributorId = ContributorId.UNKNOWN,
     val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     val organizationId: OrganizationId = OrganizationId.UNKNOWN,
     val visibility: Visibility = Visibility.DEFAULT,
     val verified: Boolean? = null,
     val unlistedBy: ContributorId? = null,
-    val modifiable: Boolean = true
+    override val modifiable: Boolean = true
 ) : Thing {
     val publishableClasses: Set<ThingId>
         get() = classes intersect PUBLISHABLE_CLASSES

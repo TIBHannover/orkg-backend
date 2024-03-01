@@ -429,6 +429,10 @@
     {
        "label": "has list element",
        "id": "hasListElement"
+    },
+    {
+      "label": "has published version",
+      "id": "hasPublishedVersion"
     }
   ],
 

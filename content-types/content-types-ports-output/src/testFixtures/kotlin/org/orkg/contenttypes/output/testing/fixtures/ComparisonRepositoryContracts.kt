@@ -6,7 +6,7 @@ import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.orkg.contenttypes.domain.ComparisonVersion
+import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
@@ -84,7 +84,7 @@ fun <
         }
 
         val expected = comparisons.drop(1).map {
-            ComparisonVersion(it.id, it.label, it.createdAt)
+            HeadVersion(it.id, it.label, it.createdAt)
         }
         val result = repository.findVersionHistory(comparisons.first().id)
 

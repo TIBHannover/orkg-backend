@@ -25,6 +25,9 @@ class VisualizationNotFound(id: ThingId) :
 class TemplateNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Template "$id" not found.""")
 
+class LiteratureListNotFound(id: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Literature list "$id" not found.""")
+
 class SustainableDevelopmentGoalNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Sustainable Development Goal "$id" not found.""")
 

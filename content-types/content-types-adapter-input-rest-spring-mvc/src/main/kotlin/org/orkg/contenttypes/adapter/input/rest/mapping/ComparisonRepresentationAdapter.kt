@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.Comparison
 import org.springframework.data.domain.Page
 
 interface ComparisonRepresentationAdapter : AuthorRepresentationAdapter, LabeledObjectRepresentationAdapter,
-    PublicationInfoRepresentationAdapter, ComparisonVersionRepresentationAdapter {
+    PublicationInfoRepresentationAdapter, VersionRepresentationAdapter {
 
     fun Optional<Comparison>.mapToComparisonRepresentation(): Optional<ComparisonRepresentation> =
         map { it.toComparisonRepresentation() }
@@ -33,7 +33,7 @@ interface ComparisonRepresentationAdapter : AuthorRepresentationAdapter, Labeled
             extractionMethod = extractionMethod,
             createdAt = createdAt,
             createdBy = createdBy,
-            versions = versions.map { it.toComparisonVersionRepresentation() },
+            versions = versions.map { it.toHeadVersionRepresentation() },
             isAnonymized = isAnonymized,
             visibility = visibility,
             unlistedBy = unlistedBy

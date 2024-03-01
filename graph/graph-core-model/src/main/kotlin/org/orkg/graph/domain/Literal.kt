@@ -8,7 +8,7 @@ data class Literal(
     override val id: ThingId,
     override val label: String,
     val datatype: String = "xsd:string",
-    val createdAt: OffsetDateTime,
-    val createdBy: ContributorId = ContributorId.UNKNOWN,
-    val modifiable: Boolean = true
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId = ContributorId.UNKNOWN,
+    override val modifiable: Boolean = true
 ) : Thing

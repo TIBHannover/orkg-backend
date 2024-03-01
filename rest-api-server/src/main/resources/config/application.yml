@@ -48,6 +48,8 @@ orkg:
     base-url:
       paper: "http://localhost/paper/"
       comparison: "http://localhost/comparison/"
+  simcomp:
+    host: "https://orkg.org/simcomp"
 management:
   endpoints:
     enabled-by-default: false

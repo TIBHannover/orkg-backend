@@ -4,8 +4,8 @@
 ----
 flowchart LR
     LiteratureListPublished[LiteratureListPublished \n Resource] --> |"description"| description[Literal \n xsd:string]
-	LiteratureListPublished --> |"HasList"| LiteratureList
-    LiteratureList[LiteratureList \n Resource] --> |"hasAuthors"| authorList[List \n Resource]
+	LiteratureList[LiteratureList \n Resource] --> |"hasPublishedVersion"| LiteratureListPublished
+    LiteratureList --> |"hasAuthors"| authorList[List \n Resource]
 	LiteratureList --> |"P30 \n has research field"| researchField[ResearchField \n Resource]
     subgraph Author List
         authorList --> |"hasListElement"| Author

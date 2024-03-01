@@ -8,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
 import org.orkg.contenttypes.domain.InvalidMonth
+import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
@@ -67,6 +68,21 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun literatureListNotFound() {
+        val id = ThingId("R123")
+
+        get("/errors/literature-list-not-found")
+            .param("id", id.value)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.error").value("Not Found"))
+            .andExpect(jsonPath("$.path").value("/errors/literature-list-not-found"))
+            .andExpect(jsonPath("$.message").value("""Literature list "$id" not found."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -78,6 +94,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/sustainable-development-goal-not-found")
         fun sustainableDevelopmentGoalNotFound(@RequestParam sdgId: ThingId) {
             throw SustainableDevelopmentGoalNotFound(sdgId)
+        }
+
+        @GetMapping("/errors/literature-list-not-found")
+        fun literatureListNotFound(@RequestParam id: ThingId) {
+            throw LiteratureListNotFound(id)
         }
     }
 

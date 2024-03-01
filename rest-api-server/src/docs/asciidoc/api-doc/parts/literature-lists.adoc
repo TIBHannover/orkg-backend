@@ -1,0 +1,26 @@
+= Literature Lists
+
+Literature Lists represent a collection of concepts in the knowledge graph.
+They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+The provided endpoints aggregate these concepts into a literature list representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[literature-lists-fetch]]
+== Fetching a literature list
+
+A `GET` request provides information about a literature list.
+
+operation::literature-lists-get-single[snippets='curl-request,response-fields']
+
+[[literature-lists-list]]
+== Listing literature lists
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<literature-lists-fetch,literature lists>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::literature-lists-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::literature-lists-get-paged-with-parameters[snippets='request-parameters,curl-request']

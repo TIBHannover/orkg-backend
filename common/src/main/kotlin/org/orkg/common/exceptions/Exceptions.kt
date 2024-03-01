@@ -61,3 +61,5 @@ class InvalidUUID(uuid: String, cause: Throwable?) :
 
 class Unauthorized :
     SimpleMessageException(HttpStatus.UNAUTHORIZED, """Unauthorized.""")
+
+class ServiceUnavailable : LoggedMessageException(HttpStatus.SERVICE_UNAVAILABLE, """Service unavailable.""")

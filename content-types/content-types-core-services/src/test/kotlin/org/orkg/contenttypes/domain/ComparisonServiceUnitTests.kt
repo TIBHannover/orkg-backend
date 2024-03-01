@@ -112,7 +112,7 @@ class ComparisonServiceUnitTests {
             observatoryId = ObservatoryId(UUID.randomUUID())
         )
         val versions = listOf(
-            ComparisonVersion(
+            HeadVersion(
                 id = ThingId("R156"),
                 label = "Previous version comparison",
                 createdAt = OffsetDateTime.now(fixedClock).minusDays(1)

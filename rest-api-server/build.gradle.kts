@@ -152,6 +152,7 @@ dependencies {
     runtimeOnly(project(":community:community-adapter-output-spring-data-jpa"))
 
     implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
+    implementation(project(":content-types:content-types-adapter-output-simcomp"))
     implementation(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
     implementation(project(":content-types:content-types-adapter-output-web"))
     implementation(project(":content-types:content-types-core-model"))

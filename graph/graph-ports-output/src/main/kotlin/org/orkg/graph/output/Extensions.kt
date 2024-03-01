@@ -48,3 +48,12 @@ fun Map<ThingId, List<GeneralStatement>>.authors(subjectId: ThingId): List<Autho
         ?.filter { it is Resource || it is Literal }
         ?.map { it.toAuthor(this[it.id].orEmpty()) }
         .orEmpty()
+
+fun Map<ThingId, List<GeneralStatement>>.legacyAuthors(subjectId: ThingId): List<Author> =
+    this[subjectId]
+        ?.filter { it.predicate.id == Predicates.hasAuthor }
+        ?.sortedBy { it.createdAt }
+        ?.objects()
+        ?.filter { it is Resource || it is Literal }
+        ?.map { it.toAuthor(this[it.id].orEmpty()) }
+        .orEmpty()

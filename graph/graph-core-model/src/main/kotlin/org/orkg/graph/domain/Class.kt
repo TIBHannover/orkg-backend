@@ -17,10 +17,10 @@ data class Class(
     override val id: ThingId,
     override val label: String,
     val uri: URI?,
-    val createdAt: OffsetDateTime,
-    val createdBy: ContributorId = ContributorId.UNKNOWN,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId = ContributorId.UNKNOWN,
     val description: String? = null,
-    val modifiable: Boolean = true
+    override val modifiable: Boolean = true
 ) : Thing
 
 fun Class?.toOptional() = Optional.ofNullable(this)

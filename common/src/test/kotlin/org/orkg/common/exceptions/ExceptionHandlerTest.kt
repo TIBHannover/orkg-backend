@@ -14,6 +14,7 @@ import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.bind.annotation.GetMapping
@@ -137,6 +138,18 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun serviceUnavailable() {
+        get("/errors/service-unavailable")
+            .perform()
+            .andExpect(status().isServiceUnavailable)
+            .andExpect(jsonPath("$.status", `is`(503)))
+            .andExpect(jsonPath("$.error", `is`("Service Unavailable")))
+            .andExpect(jsonPath("$.message", `is`("""Service unavailable.""")))
+            .andExpect(jsonPath("$.path", `is`("/errors/service-unavailable")))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class TestController {
@@ -145,6 +158,9 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
 
         @PostMapping("/errors/json")
         fun json(@RequestBody request: JsonRequest): Nothing = throw NotImplementedError()
+
+        @GetMapping("/errors/service-unavailable")
+        fun serviceUnavailable(): Nothing = throw ServiceUnavailable()
 
         data class JsonRequest(
             val field: String,

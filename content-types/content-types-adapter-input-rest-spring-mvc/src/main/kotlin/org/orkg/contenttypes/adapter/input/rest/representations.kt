@@ -16,6 +16,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
@@ -114,7 +115,7 @@ data class ComparisonRepresentation(
     @get:JsonProperty("created_by")
     val createdBy: ContributorId,
     @get:JsonProperty("versions")
-    val versions: List<ComparisonVersionRepresentation>,
+    val versions: List<HeadVersionRepresentation>,
     @get:JsonProperty("is_anonymized")
     val isAnonymized: Boolean,
     val visibility: Visibility,
@@ -146,11 +147,24 @@ data class ComparisonRelatedFigureRepresentation(
     val createdBy: ContributorId
 )
 
-data class ComparisonVersionRepresentation(
+data class VersionInfoRepresentation(
+    val head: HeadVersionRepresentation,
+    val published: List<PublishedVersionRepresentation>
+)
+
+data class HeadVersionRepresentation(
     val id: ThingId,
     val label: String,
     @get:JsonProperty("created_at")
     val createdAt: OffsetDateTime
+)
+
+data class PublishedVersionRepresentation(
+    val id: ThingId,
+    val label: String,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    val changelog: String?
 )
 
 data class VisualizationRepresentation(
@@ -283,3 +297,46 @@ data class ResourceTemplatePropertyRepresentation(
     override val createdBy: ContributorId,
     val `class`: ObjectIdAndLabel
 ) : TemplatePropertyRepresentation
+
+data class LiteratureListRepresentation(
+    val id: ThingId,
+    val title: String,
+    @get:JsonProperty("research_fields")
+    val researchFields: List<ObjectIdAndLabel>,
+    val authors: List<AuthorRepresentation>,
+    val versions: VersionInfoRepresentation,
+    val observatories: List<ObservatoryId>,
+    val organizations: List<OrganizationId>,
+    @get:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    val visibility: Visibility,
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("unlisted_by")
+    val unlistedBy: ContributorId? = null,
+    val published: Boolean,
+    val sections: List<LiteratureListSectionRepresentation>
+)
+
+sealed interface LiteratureListSectionRepresentation {
+    val id: ThingId
+    val type: String
+}
+
+data class ListSectionRepresentation(
+    override val id: ThingId,
+    val entries: List<ResourceReference>,
+    override val type: String = "list"
+) : LiteratureListSectionRepresentation
+
+data class TextSectionRepresentation(
+    override val id: ThingId,
+    val heading: String,
+    @get:JsonProperty("heading_size")
+    val headingSize: Int,
+    val text: String,
+    override val type: String = "text"
+) : LiteratureListSectionRepresentation

@@ -25,3 +25,5 @@ interface ContentTypeResourcesUseCase :
 interface LegacyPaperUseCases : LegacyRetrievePaperUseCase, LegacyCreatePaperUseCase
 
 interface ResearchFieldHierarchyUseCases : RetrieveResearchFieldHierarchyUseCase
+
+interface LiteratureListUseCases : RetrieveLiteratureListUseCase

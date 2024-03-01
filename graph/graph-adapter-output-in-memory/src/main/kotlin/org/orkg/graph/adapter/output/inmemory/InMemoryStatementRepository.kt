@@ -22,8 +22,6 @@ import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
-import org.orkg.graph.domain.createdAt
-import org.orkg.graph.domain.createdBy
 import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.Page
@@ -339,8 +337,8 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
         }.asSequence()
             .map {
                 setOf(
-                    it.subject.toResourceEdit(),
-                    it.`object`.toResourceEdit(),
+                    ResourceEdit(it.subject.createdBy, it.subject.createdAt.toInstant().toEpochMilli()),
+                    ResourceEdit(it.`object`.createdBy, it.`object`.createdAt.toInstant().toEpochMilli()),
                     ResourceEdit(it.createdBy, it.createdAt!!.toInstant().toEpochMilli())
                 )
             }.flatten()
@@ -474,14 +472,6 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
         }
         return visited
     }
-
-    private fun Thing.toResourceEdit() =
-        when (this) {
-            is Class -> ResourceEdit(createdBy, createdAt.toInstant().toEpochMilli())
-            is Resource -> ResourceEdit(createdBy, createdAt.toInstant().toEpochMilli())
-            is Predicate -> ResourceEdit(createdBy, createdAt.toInstant().toEpochMilli())
-            is Literal -> ResourceEdit(createdBy, createdAt.toInstant().toEpochMilli())
-        }
 
     private fun <T : Any> Iterable<T>.containsAny(other: Iterable<T>): Boolean = any(other::contains)
 

@@ -374,6 +374,9 @@ include::parts/comparisons.adoc[leveloffset=+1]
 [[visualizations]]
 include::parts/visualizations.adoc[leveloffset=+1]
 
+[[literature-lists]]
+include::parts/literature-lists.adoc[leveloffset=+1]
+
 [[templates]]
 include::parts/templates.adoc[leveloffset=+1]
 

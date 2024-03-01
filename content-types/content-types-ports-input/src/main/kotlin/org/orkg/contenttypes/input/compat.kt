@@ -27,3 +27,5 @@ interface LegacyPaperUseCases : LegacyRetrievePaperUseCase, LegacyCreatePaperUse
 interface ResearchFieldHierarchyUseCases : RetrieveResearchFieldHierarchyUseCase
 
 interface LiteratureListUseCases : RetrieveLiteratureListUseCase
+
+interface SmartReviewUseCases : RetrieveSmartReviewUseCase

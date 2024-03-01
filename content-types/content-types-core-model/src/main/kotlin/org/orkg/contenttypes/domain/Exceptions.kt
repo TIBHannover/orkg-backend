@@ -28,6 +28,9 @@ class TemplateNotFound(id: ThingId) :
 class LiteratureListNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Literature list "$id" not found.""")
 
+class SmartReviewNotFound(id: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Smart review "$id" not found.""")
+
 class SustainableDevelopmentGoalNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Sustainable Development Goal "$id" not found.""")
 

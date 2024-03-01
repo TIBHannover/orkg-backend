@@ -1,0 +1,26 @@
+= Smart Reviews
+
+Smart Reviews represent a collection of concepts in the knowledge graph.
+They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+The provided endpoints aggregate these concepts into a smart review representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[smart-reviews-fetch]]
+== Fetching a smart review
+
+A `GET` request provides information about a smart review.
+
+operation::smart-reviews-get-single[snippets='curl-request,response-fields']
+
+[[smart-reviews-list]]
+== Listing smart reviews
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<smart-reviews-fetch,smart reviews>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::smart-reviews-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::smart-reviews-get-paged-with-parameters[snippets='request-parameters,curl-request']

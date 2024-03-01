@@ -152,28 +152,28 @@ class ContentTypeResourceService(
 
     override fun loadFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
         repository.findAll(
-            includeClasses = setOf(Classes.reviewPublished),
+            includeClasses = setOf(Classes.smartReviewPublished),
             visibility = VisibilityFilter.FEATURED,
             pageable = pageable
         )
 
     override fun loadNonFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
         repository.findAll(
-            includeClasses = setOf(Classes.reviewPublished),
+            includeClasses = setOf(Classes.smartReviewPublished),
             visibility = VisibilityFilter.NON_FEATURED,
             pageable = pageable
         )
 
     override fun loadUnlistedSmartReviews(pageable: Pageable): Page<Resource> =
         repository.findAll(
-            includeClasses = setOf(Classes.reviewPublished),
+            includeClasses = setOf(Classes.smartReviewPublished),
             visibility = VisibilityFilter.UNLISTED,
             pageable = pageable
         )
 
     override fun loadListedSmartReviews(pageable: Pageable): Page<Resource> =
         repository.findAll(
-            includeClasses = setOf(Classes.reviewPublished),
+            includeClasses = setOf(Classes.smartReviewPublished),
             visibility = VisibilityFilter.ALL_LISTED,
             pageable = pageable
         )
@@ -216,13 +216,13 @@ class ContentTypeResourceService(
 
     override fun getFeaturedSmartReviewFlag(id: ThingId): Boolean =
         repository.findById(id)
-            .filter { Classes.reviewPublished in it.classes }
+            .filter { Classes.smartReviewPublished in it.classes }
             .map { it.visibility == Visibility.FEATURED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun getUnlistedSmartReviewFlag(id: ThingId): Boolean =
         repository.findById(id)
-            .filter { Classes.reviewPublished in it.classes }
+            .filter { Classes.smartReviewPublished in it.classes }
             .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
             .orElseThrow { ResourceNotFound.withId(id) }
 }

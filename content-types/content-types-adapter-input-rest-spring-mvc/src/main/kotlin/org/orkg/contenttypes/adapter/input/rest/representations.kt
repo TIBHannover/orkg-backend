@@ -16,7 +16,9 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.PredicateReference
 import org.orkg.contenttypes.domain.ResourceReference
+import org.orkg.contenttypes.domain.ThingReference
 import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
@@ -340,3 +342,77 @@ data class TextSectionRepresentation(
     val text: String,
     override val type: String = "text"
 ) : LiteratureListSectionRepresentation
+
+data class SmartReviewRepresentation(
+    val id: ThingId,
+    val title: String,
+    @get:JsonProperty("research_fields")
+    val researchFields: List<ObjectIdAndLabel>,
+    val authors: List<AuthorRepresentation>,
+    val versions: VersionInfoRepresentation,
+    val observatories: List<ObservatoryId>,
+    val organizations: List<OrganizationId>,
+    @get:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    val visibility: Visibility,
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("unlisted_by")
+    val unlistedBy: ContributorId? = null,
+    val published: Boolean,
+    val sections: List<SmartReviewSectionRepresentation>,
+    val references: List<String>
+)
+
+sealed interface SmartReviewSectionRepresentation {
+    val id: ThingId
+    val heading: String
+    val type: String
+}
+
+data class SmartReviewComparisonSectionRepresentation(
+    override val id: ThingId,
+    override val heading: String,
+    val comparison: ResourceReference?,
+    override val type: String = "comparison"
+) : SmartReviewSectionRepresentation
+
+data class SmartReviewVisualizationSectionRepresentation(
+    override val id: ThingId,
+    override val heading: String,
+    val visualization: ResourceReference?,
+    override val type: String = "visualization"
+) : SmartReviewSectionRepresentation
+
+data class SmartReviewResourceSectionRepresentation(
+    override val id: ThingId,
+    override val heading: String,
+    val resource: ResourceReference?,
+    override val type: String = "resource"
+) : SmartReviewSectionRepresentation
+
+data class SmartReviewPredicateSectionRepresentation(
+    override val id: ThingId,
+    override val heading: String,
+    val predicate: PredicateReference?,
+    override val type: String = "property"
+) : SmartReviewSectionRepresentation
+
+data class SmartReviewOntologySectionRepresentation(
+    override val id: ThingId,
+    override val heading: String,
+    val entities: List<ThingReference>,
+    val predicates: List<PredicateReference>,
+    override val type: String = "ontology"
+) : SmartReviewSectionRepresentation
+
+data class SmartReviewTextSectionRepresentation(
+    override val id: ThingId,
+    override val heading: String,
+    val classes: Set<ThingId>,
+    val text: String,
+    override val type: String = "text"
+) : SmartReviewSectionRepresentation

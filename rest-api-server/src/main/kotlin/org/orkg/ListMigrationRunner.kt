@@ -71,7 +71,7 @@ class ListMigrationRunner(
         forEachResource(Classes.paperVersion) {
             migrateStatementsToList(it, Predicates.hasAuthor, hasAuthorsPredicate, "authors list")
         }
-        forEachResource(Classes.review) {
+        forEachResource(Classes.smartReview) {
             migrateStatementsToList(it, Predicates.hasAuthor, hasAuthorsPredicate, "authors list")
         }
         forEachResource(Classes.literatureList) {

@@ -3,9 +3,9 @@
 [mermaid,width=100%]
 ----
 flowchart LR
-    SmartReviewPublished --> |"P26 \n has DOI"| doi[Literal \n xsd:string]
+    SmartReviewPublished[SmartReviewPublished \n Resource] --> |"P26 \n has DOI"| doi[Literal \n xsd:string]
     SmartReviewPublished --> |"description"| description[Literal \n xsd:string]
-	SmartReviewPublished --> |"HasPaper"| SmartReview
+	SmartReview[SmartReview \n Resource] --> |"hasPublishedVersion"| SmartReviewPublished
 	SmartReview --> |"P31 \n has Contribution"| Contribution
     SmartReview --> |"hasAuthors"| authorList[List \n Resource]
 	SmartReview --> |"P30 \n has research field"| researchField[ResearchField \n Resource]
@@ -34,5 +34,32 @@ flowchart LR
 			end
 		end
     end
-    Contribution --> |"Any"| Any
+    Contribution[ContributionSmartReview] --> |"HasSection"| smartReviewSections
+	subgraph smartReviewSections[Smart Review Sections]
+		comparisonSection[ComparisonSection \n Resource]
+		visualizationSection[VisualizationSection \n Resource]
+		resourceSection[ResourceSection \n Resource]
+		propertySection[PropertySection \n Resource]
+		ontologySection[OntologySection \n Resource]
+		section[Section \n Resource]
+		subgraph Section
+			section --> |"hasContent"| content[Literal \n xsd:string]
+		end
+		subgraph Comaprison Section
+			comparisonSection --> |"HasLink"| comparison[Comparison \n Resource]
+		end
+		subgraph Visualization Section
+			visualizationSection --> |"HasLink"| visualization[Visualization \n Resource]
+		end
+		subgraph Resource Section
+			resourceSection --> |"HasLink"| resource[Resource]
+		end
+		subgraph Property Section
+			propertySection --> |"HasLink"| property[Predicate]
+		end
+		subgraph Ontology Section
+			ontologySection --> |"HasEntity"| entity[Predicate or Resource]
+			ontologySection --> |"ShowProperty"| showProperty[Predicate]
+		end
+	end
 ----

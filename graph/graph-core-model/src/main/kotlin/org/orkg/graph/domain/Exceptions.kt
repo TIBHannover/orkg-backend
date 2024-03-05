@@ -6,7 +6,6 @@ import kotlin.collections.List
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ForbiddenOperationException
-import org.orkg.common.exceptions.LoggedMessageException
 import org.orkg.common.exceptions.PropertyValidationException
 import org.orkg.common.exceptions.SimpleMessageException
 import org.springframework.http.HttpStatus
@@ -160,14 +159,6 @@ class ForbiddenStatementDeletion private constructor(
 
 class TooFewIDsError(ids: List<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Too few ids: At least two ids are required. Got only "${ids.size}".""")
-
-class DOIServiceUnavailable : LoggedMessageException {
-    constructor(cause: Throwable) : super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service unavailable""", cause)
-    constructor(responseMessage: String, errorResponse: String) :
-        super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service returned "$responseMessage" with error response: $errorResponse""")
-    constructor(status: Int, responseMessage: String) :
-        super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service returned "$status" with error response: $responseMessage""")
-}
 
 class ListElementNotFound : PropertyValidationException("element", "All elements inside the list have to exist.")
 

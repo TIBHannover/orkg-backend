@@ -40,7 +40,7 @@ class SimCompThingRepository(
                     Optional.of(PublishedContentType(rootResource, statements))
                 }
             HttpStatus.NOT_FOUND.value() -> Optional.empty()
-            else -> throw ServiceUnavailable()
+            else -> throw ServiceUnavailable.create("SimComp", response.statusCode(), response.body())
         }
     }
 }

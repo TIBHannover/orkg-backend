@@ -17,6 +17,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
+import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.AmbiguousAuthor
@@ -34,7 +35,6 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedFigure
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedResource
 import org.orkg.contenttypes.input.ComparisonUseCases
-import org.orkg.graph.domain.DOIServiceUnavailable
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.VisibilityFilter
@@ -582,7 +582,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             "description" to description,
             "authors" to authors
         )
-        val exception = DOIServiceUnavailable(500, "Internal error")
+        val exception = ServiceUnavailable.create("DOI", 500, "Internal error")
 
         every { comparisonService.publish(any()) } throws exception
 

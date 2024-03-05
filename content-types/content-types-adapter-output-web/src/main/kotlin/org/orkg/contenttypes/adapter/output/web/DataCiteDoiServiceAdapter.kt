@@ -8,6 +8,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Clock
 import java.time.OffsetDateTime
+import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.domain.identifiers.DOI
@@ -22,7 +23,6 @@ import org.orkg.contenttypes.domain.json.DataCiteJson.Subject
 import org.orkg.contenttypes.domain.json.DataCiteJson.Title
 import org.orkg.contenttypes.domain.json.DataCiteJson.Type
 import org.orkg.contenttypes.output.DoiService
-import org.orkg.graph.domain.DOIServiceUnavailable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -55,13 +55,13 @@ class DataCiteDoiServiceAdapter(
                 } catch (_: Exception) {
                     "Unknown error"
                 }
-                throw DOIServiceUnavailable(response.statusCode(), responseMessage)
+                throw ServiceUnavailable.create("DOI", response.statusCode(), responseMessage)
             }
             return DOI.of("${dataciteConfiguration.doiPrefix}/${command.suffix}")
         } catch (e: IOException) {
-            throw DOIServiceUnavailable(e)
+            throw ServiceUnavailable.create("DOI", e)
         } catch (e: InterruptedException) {
-            throw DOIServiceUnavailable(e)
+            throw ServiceUnavailable.create("DOI", e)
         }
     }
 

@@ -24,7 +24,7 @@ abstract class SimpleMessageException(
 ) : RuntimeException(message, cause)
 
 abstract class LoggedMessageException(
-    override var status: HttpStatus,
+    override val status: HttpStatus,
     override val message: String,
     override val cause: Throwable? = null
 ) : SimpleMessageException(status, message, cause)
@@ -62,4 +62,14 @@ class InvalidUUID(uuid: String, cause: Throwable?) :
 class Unauthorized :
     SimpleMessageException(HttpStatus.UNAUTHORIZED, """Unauthorized.""")
 
-class ServiceUnavailable : LoggedMessageException(HttpStatus.SERVICE_UNAVAILABLE, """Service unavailable.""")
+class ServiceUnavailable private constructor(
+    val internalMessage: String,
+    cause: Throwable? = null
+) : LoggedMessageException(HttpStatus.SERVICE_UNAVAILABLE, "Service unavailable.", cause) {
+    companion object {
+        fun create(serviceName: String, status: Int, responseMessage: String) =
+            ServiceUnavailable("""$serviceName service returned status $status with error response: "$responseMessage".""")
+        fun create(serviceName: String, cause: Throwable) =
+            ServiceUnavailable("""$serviceName service threw an exception.""", cause)
+    }
+}

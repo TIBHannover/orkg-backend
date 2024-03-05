@@ -10,6 +10,10 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpResponse
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,6 +23,8 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.contenttypes.adapter.output.simcomp.internal.SimCompThingRepository
+import org.orkg.contenttypes.adapter.output.simcomp.internal.ThingType
 import org.orkg.contenttypes.adapter.output.simcomp.json.SimCompJacksonModule
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.Class
@@ -30,12 +36,6 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpResponse
-import java.time.OffsetDateTime
-import org.orkg.contenttypes.adapter.output.simcomp.internal.SimCompThingRepository
-import org.orkg.contenttypes.adapter.output.simcomp.internal.ThingType
 
 class SimCompThingRepositoryUnitTest {
     private val simCompHostUrl = "https://example.org/simcomp"
@@ -176,8 +176,12 @@ class SimCompThingRepositoryUnitTest {
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
         every { response.statusCode() } returns 500
+        every { response.body() } returns "Error message"
 
-        shouldThrow<ServiceUnavailable> { adapter.findById(id, ThingType.LIST) }
+        shouldThrow<ServiceUnavailable> { adapter.findById(id, ThingType.LIST) }.asClue {
+            it.message shouldBe "Service unavailable."
+            it.internalMessage shouldBe """SimComp service returned status 500 with error response: "Error message"."""
+        }
 
         verify(exactly = 1) {
             httpClient.send(withArg {
@@ -185,6 +189,7 @@ class SimCompThingRepositoryUnitTest {
             }, any<HttpResponse.BodyHandler<String>>())
         }
         verify { response.statusCode() }
+        verify { response.body() }
 
         confirmVerified(response)
     }

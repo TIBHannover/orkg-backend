@@ -28,10 +28,10 @@ import java.util.concurrent.Flow
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.testing.fixtures.dummyRegisterDoiCommand
-import org.orkg.graph.domain.DOIServiceUnavailable
 import org.springframework.http.MediaType
 
 class DataCiteDoiServiceAdapterUnitTest {
@@ -111,7 +111,6 @@ class DataCiteDoiServiceAdapterUnitTest {
         val dataCiteUri = "https://api.test.datacite.org/dois"
         val dataCitePrefix = "10.7484"
         val encodedCredentials = Base64.getEncoder().encodeToString("username:password".toByteArray())
-        val expected = DOIServiceUnavailable(500, "Internal error")
 
         every { dataciteConfiguration.publish } returns "draft"
         every { dataciteConfiguration.url } returns dataCiteUri
@@ -121,10 +120,11 @@ class DataCiteDoiServiceAdapterUnitTest {
         every { response.statusCode() } returns 500
         every { response.body() } returns dataCiteErrorResponseJson
 
-        shouldThrow<DOIServiceUnavailable> {
+        shouldThrow<ServiceUnavailable> {
             adapter.register(command)
         }.asClue {
-            it.message shouldBe expected.message
+            it.message shouldBe "Service unavailable."
+            it.internalMessage shouldBe """DOI service returned status 500 with error response: "Internal error"."""
         }
 
         verify(exactly = 1) { dataciteConfiguration.publish }

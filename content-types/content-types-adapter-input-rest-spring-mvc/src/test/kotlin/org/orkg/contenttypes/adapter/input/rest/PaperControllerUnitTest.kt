@@ -23,6 +23,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
+import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreateContributionRequest
@@ -49,7 +50,6 @@ import org.orkg.contenttypes.domain.ThingNotDefined
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.PaperUseCases
-import org.orkg.graph.domain.DOIServiceUnavailable
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ThingNotFound
@@ -443,7 +443,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             "description" to description,
             "authors" to authors
         )
-        val exception = DOIServiceUnavailable(500, "Internal error")
+        val exception = ServiceUnavailable.create("DOI", 500, "Internal error")
 
         every { paperService.publish(any()) } throws exception
 

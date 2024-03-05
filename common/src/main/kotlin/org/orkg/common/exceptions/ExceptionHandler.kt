@@ -130,6 +130,15 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
         return handleSimpleMessageException(ex, request)
     }
 
+    @ExceptionHandler(ServiceUnavailable::class)
+    fun handleServiceUnavailable(
+        ex: ServiceUnavailable,
+        request: WebRequest
+    ): ResponseEntity<Any> {
+        logger.error(ex.internalMessage)
+        return handleLoggedMessageException(ex, request)
+    }
+
     @ExceptionHandler(SimpleMessageException::class)
     fun handleSimpleMessageException(
         ex: SimpleMessageException,

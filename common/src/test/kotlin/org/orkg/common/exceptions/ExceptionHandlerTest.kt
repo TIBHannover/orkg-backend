@@ -160,7 +160,7 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
         fun json(@RequestBody request: JsonRequest): Nothing = throw NotImplementedError()
 
         @GetMapping("/errors/service-unavailable")
-        fun serviceUnavailable(): Nothing = throw ServiceUnavailable()
+        fun serviceUnavailable(): Nothing = throw ServiceUnavailable.create("TEST", 500, "irrelevant")
 
         data class JsonRequest(
             val field: String,

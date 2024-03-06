@@ -137,7 +137,7 @@ class SimCompThingRepositoryUnitTest {
 
         verify(exactly = 1) {
             httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
+                it.uri() shouldBe URI.create("$simCompHostUrl/thing?thing_type=LIST&thing_key=$id")
             }, any<HttpResponse.BodyHandler<String>>())
         }
         verify(exactly = 1) { response.statusCode() }
@@ -160,7 +160,7 @@ class SimCompThingRepositoryUnitTest {
 
         verify(exactly = 1) {
             httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
+                it.uri() shouldBe URI.create("$simCompHostUrl/thing?thing_type=LIST&thing_key=$id")
             }, any<HttpResponse.BodyHandler<String>>())
         }
         verify { response.statusCode() }
@@ -185,7 +185,7 @@ class SimCompThingRepositoryUnitTest {
 
         verify(exactly = 1) {
             httpClient.send(withArg {
-                it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
+                it.uri() shouldBe URI.create("$simCompHostUrl/thing?thing_type=LIST&thing_key=$id")
             }, any<HttpResponse.BodyHandler<String>>())
         }
         verify { response.statusCode() }

@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.adapter.output.simcomp.internal
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.net.URI
 import java.net.http.HttpClient
+import java.net.http.HttpClient.Version.HTTP_1_1
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.*
@@ -23,13 +23,15 @@ class SimCompThingRepository(
     private val host: String = "http://localhost/simcomp"
 ) {
     fun findById(id: ThingId, type: ThingType): Optional<PublishedContentType> {
-        val uri = UriComponentsBuilder.fromUri(URI.create("$host/").resolve("thing/"))
+        val uri = UriComponentsBuilder.fromHttpUrl(host)
+            .path("/thing")
             .queryParam("thing_type", type.name)
             .queryParam("thing_key", id.value)
             .build()
             .toUri()
         val request = HttpRequest.newBuilder()
             .uri(uri)
+            .version(HTTP_1_1)
             .header("Accept", MediaType.APPLICATION_JSON_VALUE)
             .GET()
             .build()

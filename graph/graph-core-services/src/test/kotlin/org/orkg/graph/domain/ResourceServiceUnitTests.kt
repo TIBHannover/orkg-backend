@@ -23,6 +23,7 @@ import org.orkg.community.output.CuratorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UpdateResourceUseCase
+import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -37,12 +38,14 @@ class ResourceServiceUnitTests {
     private val repository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val classRepository: ClassRepository = mockk()
+    private val classHierarchyRepository: ClassHierarchyRepository = mockk()
     private val curatorRepository: CuratorRepository = mockk()
 
     private val service = ResourceService(
         repository,
         statementRepository,
         classRepository,
+        classHierarchyRepository,
         curatorRepository,
         fixedClock,
     )

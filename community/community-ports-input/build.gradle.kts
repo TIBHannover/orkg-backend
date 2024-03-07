@@ -9,6 +9,7 @@ dependencies {
     api(project(":community:community-core-model"))
 
     implementation(project(":common"))
+    implementation(project(":graph:graph-core-model"))
     implementation(project(":identity-management:idm-core-model")) // for LegacyController/UseCases, TODO: break dependency
     implementation(project(":media-storage:media-storage-core-model"))
 

@@ -2,7 +2,6 @@ package org.orkg.community.domain
 
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
-import org.orkg.common.exceptions.PropertyValidationException
 import org.orkg.common.exceptions.SimpleMessageException
 import org.springframework.http.HttpStatus
 
@@ -19,6 +18,9 @@ class OrganizationNotFound : SimpleMessageException {
     constructor(id: String) : super(HttpStatus.NOT_FOUND, """Organization "$id" not found.""")
     constructor(id: OrganizationId) : this(id.toString())
 }
+
+class ObservatoryFilterNotFound(id: ObservatoryFilterId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Observatory filter "$id" not found.""")
 
 class OrganizationAlreadyExists private constructor(
     status: HttpStatus,
@@ -37,8 +39,6 @@ class LogoNotFound(id: OrganizationId) :
 
 class UserIsAlreadyMemberOfOrganization(id: OrganizationId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """User is already a member of organization "$id".""")
-
-class InvalidImage : PropertyValidationException("image", """Invalid image.""")
 
 class ObservatoryAlreadyExists private constructor(
     status: HttpStatus,
@@ -76,3 +76,9 @@ class InvalidImageEncoding :
 
 class BadPeerReviewType(badValue: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The value "$badValue" is not a valid peer review type.""")
+
+class InvalidFilterConfig :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid filter config.""")
+
+class ObservatoryFilterAlreadyExists(id: ObservatoryFilterId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Observatory filter "$id" already exists.""")

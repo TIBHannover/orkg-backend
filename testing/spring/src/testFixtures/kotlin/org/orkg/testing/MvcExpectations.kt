@@ -332,3 +332,14 @@ fun ResultActions.andExpectObservatory(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.members").isArray)
     .andExpect(jsonPath("$path.organization_ids").isArray)
     .andExpect(jsonPath("$path.display_id", `is`(notNullValue())))
+
+fun ResultActions.andExpectObservatoryFilter(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.observatory_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.path", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.range", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.exact", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.featured", `is`(notNullValue())))

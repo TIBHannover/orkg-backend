@@ -9,11 +9,13 @@ dependencies {
     implementation(project(":common"))
 
     implementation(project(":media-storage:media-storage-core-model"))
+    implementation(project(":graph:graph-core-model"))
 
     implementation("org.springframework:spring-web")
     implementation(libs.jackson.core) // for JsonProperty
 
     testFixturesImplementation(project(":common"))
+    testFixturesImplementation(project(":graph:graph-core-model"))
     testFixturesImplementation(project(":media-storage:media-storage-core-model"))
 }
 

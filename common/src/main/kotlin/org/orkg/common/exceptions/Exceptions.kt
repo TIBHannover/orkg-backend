@@ -59,6 +59,9 @@ private fun formatParameters(vararg parameters: String) =
 class InvalidUUID(uuid: String, cause: Throwable?) :
     PropertyValidationException("id", """Value "$uuid" is not a valid UUID.""", cause)
 
+class Forbidden :
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Forbidden.""")
+
 class Unauthorized :
     SimpleMessageException(HttpStatus.UNAUTHORIZED, """Unauthorized.""")
 

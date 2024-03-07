@@ -5,6 +5,8 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.ChildClass
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.ClassHierarchyEntry
+import org.orkg.graph.domain.FuzzySearchString
+import org.orkg.graph.domain.Resource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -24,4 +26,10 @@ interface ClassHierarchyRepository {
     fun findClassHierarchy(id: ThingId, pageable: Pageable): Page<ClassHierarchyEntry>
 
     fun countClassInstances(id: ThingId): Long
+
+    fun findAllResourcesByLabelAndBaseClass(
+        searchString: FuzzySearchString,
+        baseClass: ThingId,
+        pageable: Pageable
+    ): Page<Resource>
 }

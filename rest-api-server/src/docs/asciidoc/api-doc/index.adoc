@@ -191,13 +191,15 @@ They can appear in the subject or object position in <<Statements,statements>>.
 [[resources-list]]
 === Listing resources
 
-A `GET` request lists all resources:
+A `GET` request lists all resources.
 
 operation::resources-get-paged[snippets='curl-request']
 
-The following list of request parameters are supported:
+The following two distinct sets of request parameters are supported:
 
 operation::resources-get-paged-with-parameters[snippets='request-parameters,curl-request']
+
+operation::resources-find-by-label-and-base-class[snippets='request-parameters']
 
 TIP: {pagination_note}
 
@@ -393,6 +395,8 @@ include::parts/organizations.adoc[]
 
 include::parts/observatories.adoc[]
 
+include::parts/observatory-filters.adoc[leveloffset=+1]
+
 include::parts/problems.adoc[]
 
 include::parts/research-fields.adoc[]
@@ -433,6 +437,9 @@ WARNING: The use of these request parameters is deprecated and may be removed at
          Clients are encouraged to transition to using the mechanism described in <<visibility-filter>>.
 
 operation::visibility-legacy-request-params[snippets='request-parameters']
+
+[[filter-config]]
+include::parts/filter-configs.adoc[leveloffset=+1]
 
 [[sorting-and-pagination]]
 == Sorting and Pagination

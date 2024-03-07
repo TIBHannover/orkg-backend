@@ -14,14 +14,18 @@ import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.PredicateUsageCount
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceContributor
+import org.orkg.graph.domain.SearchFilter
+import org.orkg.graph.domain.SearchFilter.Operator
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.Page
@@ -448,6 +452,74 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             .distinct()
             .sortedBy { it.createdAt }
             .paged(pageable)
+
+    override fun findAllPapersByObservatoryIdAndFilters(
+        observatoryId: ObservatoryId?,
+        filters: List<SearchFilter>,
+        visibility: VisibilityFilter,
+        pageable: Pageable
+    ): Page<Resource> =
+        entities.values
+            .filter {
+                it.subject is Resource && it.predicate.id == Predicates.hasContribution && with(it.subject as Resource) {
+                    (observatoryId == null || this.observatoryId == observatoryId) && Classes.paper in classes && when (visibility) {
+                        VisibilityFilter.ALL_LISTED -> this.visibility == Visibility.DEFAULT || this.visibility == Visibility.FEATURED
+                        VisibilityFilter.UNLISTED -> this.visibility == Visibility.UNLISTED
+                        VisibilityFilter.FEATURED -> this.visibility == Visibility.FEATURED
+                        VisibilityFilter.NON_FEATURED -> this.visibility == Visibility.FEATURED
+                        VisibilityFilter.DELETED -> this.visibility == Visibility.DELETED
+                    }
+                } && allFiltersMatch(filters, it.`object` as Resource)
+            }
+            .map { it.subject as Resource }
+            .paged(pageable)
+
+    private fun allFiltersMatch(filters: List<SearchFilter>, contribution: Resource): Boolean =
+        filters.all { filter ->
+            filter.path.fold(listOf<Thing>(contribution)) { acc, predicate ->
+                entities.values
+                    .filter { it.subject in acc && it.predicate.id == predicate }
+                    .map { it.`object` }
+            }.any {
+                when (it) {
+                    is Resource -> filter.range == Classes.resources || filter.range in it.classes
+                    is Literal -> when (it.datatype.toUri()) {
+                        Literals.XSD.INT.uri -> Classes.integer == filter.range
+                        Literals.XSD.STRING.uri -> Classes.string == filter.range
+                        Literals.XSD.DECIMAL.uri, Literals.XSD.FLOAT.uri -> Classes.decimal == filter.range || Classes.float == filter.range
+                        Literals.XSD.DATE.uri -> Classes.date == filter.range
+                        Literals.XSD.BOOLEAN.uri -> Classes.boolean == filter.range
+                        Literals.XSD.URI.uri -> Classes.uri == filter.range
+                        else -> false
+                    }
+                    is Predicate -> Classes.predicates == filter.range
+                    is Class -> Classes.classes == filter.range
+                } && filter.values.any { (op, value) ->
+                    when (it) {
+                        is Literal -> when (it.datatype.toUri()) {
+                            Literals.XSD.INT.uri -> op.matches(it.label.toInt(), value.toInt())
+                            Literals.XSD.DECIMAL.uri, Literals.XSD.FLOAT.uri -> op.matches(it.label.toDouble(), value.toDouble())
+                            Literals.XSD.DATE.uri -> op.matches(OffsetDateTime.parse(it.label), OffsetDateTime.parse(value))
+                            Literals.XSD.BOOLEAN.uri -> op.matches(it.label.toBoolean(), value.toBoolean())
+                            else -> op.matches(it.label, value)
+                        }
+                        else -> op.matches(it.id.value, value)
+                    }
+                }
+            }
+        }
+
+    private fun String.toUri(): String = replace(Regex("^xsd:"), "http://www.w3.org/2001/XMLSchema#")
+
+    private fun <T : Comparable<T>> Operator.matches(a: T, b: T): Boolean =
+        when (this) {
+            Operator.EQ -> a.compareTo(b) == 0
+            Operator.NE -> a.compareTo(b) != 0
+            Operator.LT -> a < b
+            Operator.GT -> b > a
+            Operator.LE -> a <= b
+            Operator.GE -> a >= b
+        }
 
     private fun findSubgraph(
         root: ThingId,

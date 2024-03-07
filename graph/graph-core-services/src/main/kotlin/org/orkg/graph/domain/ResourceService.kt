@@ -4,6 +4,7 @@ import dev.forkhandles.values.ofOrNull
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
+import kotlin.collections.List
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -12,6 +13,7 @@ import org.orkg.community.output.CuratorRepository
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
+import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -26,6 +28,7 @@ class ResourceService(
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val classRepository: ClassRepository,
+    private val classHierarchyRepository: ClassHierarchyRepository,
     private val curatorRepository: CuratorRepository,
     private val clock: Clock,
 ) : ResourceUseCases {
@@ -114,6 +117,14 @@ class ResourceService(
         repository.findById(id)
             .map { statementRepository.findTimelineByResourceId(id, pageable) }
             .orElseThrow { ResourceNotFound.withId(id) }
+
+    override fun findAllPapersByObservatoryIdAndFilters(
+        observatoryId: ObservatoryId?,
+        filters: List<SearchFilter>,
+        visibility: VisibilityFilter,
+        pageable: Pageable
+    ): Page<Resource> =
+        statementRepository.findAllPapersByObservatoryIdAndFilters(observatoryId, filters, visibility, pageable)
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
         repository.findById(id)
@@ -235,6 +246,13 @@ class ResourceService(
         statementRepository.findAllProblemsByOrganizationId(id, pageable)
 
     override fun hasStatements(id: ThingId): Boolean = statementRepository.checkIfResourceHasStatements(id)
+
+    override fun findAllByLabelAndBaseClass(
+        searchString: FuzzySearchString,
+        baseClass: ThingId,
+        pageable: Pageable
+    ): Page<Resource> =
+        classHierarchyRepository.findAllResourcesByLabelAndBaseClass(searchString, baseClass, pageable)
 
     private fun setVerifiedFlag(resourceId: ThingId, verified: Boolean) {
         val result = repository.findById(resourceId)

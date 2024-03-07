@@ -1,5 +1,6 @@
 package org.orkg.community.testing.fixtures
 
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -7,8 +8,12 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.Observatory
+import org.orkg.community.domain.ObservatoryFilter
+import org.orkg.community.domain.ObservatoryFilterId
 import org.orkg.community.domain.Organization
 import org.orkg.community.domain.OrganizationType
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.PredicatePath
 import org.orkg.mediastorage.domain.ImageId
 
 fun createContributor(
@@ -48,3 +53,15 @@ fun createObservatory(
     displayId: String = "test_observatory",
     sustainableDevelopmentGoals: Set<ThingId> = emptySet()
 ) = Observatory(id, name, description, researchField, members, organizationIds, displayId, sustainableDevelopmentGoals)
+
+fun createObservatoryFilter(
+    id: ObservatoryFilterId = ObservatoryFilterId("c6b41f1e-ee46-48ea-8d47-57ce85760831"),
+    observatoryId: ObservatoryId = ObservatoryId("b0c02a5a-e40f-41bb-af93-aebcfb0a58b5"),
+    label: String = "Observatory filter",
+    createdBy: ContributorId = ContributorId("ee06bdf3-d6f3-41d1-8af2-64c583d9057e"),
+    createdAt: LocalDateTime = LocalDateTime.parse("2023-10-17T10:42:48.324973"),
+    path: PredicatePath = listOf(ThingId("P32")),
+    range: ThingId = Classes.resources,
+    exact: Boolean = false,
+    featured: Boolean = false
+): ObservatoryFilter = ObservatoryFilter(id, observatoryId, label, createdBy, createdAt, path, range, exact, featured)

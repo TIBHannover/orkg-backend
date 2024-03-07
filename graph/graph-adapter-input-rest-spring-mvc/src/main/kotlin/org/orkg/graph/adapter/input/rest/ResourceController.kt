@@ -14,6 +14,7 @@ import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.SearchString
@@ -90,6 +91,15 @@ class ResourceController(
             observatoryId = observatoryId,
             organizationId = organizationId
         ).mapToResourceRepresentation()
+
+    @GetMapping(params = ["base_class"])
+    fun findAllByLabelAndBaseClass(
+        @RequestParam("q") string: String,
+        @RequestParam("base_class") baseClass: ThingId,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> =
+        service.findAllByLabelAndBaseClass(SearchString.of(string, exactMatch = false) as FuzzySearchString, baseClass, pageable)
+            .mapToResourceRepresentation()
 
     @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])

@@ -12,8 +12,10 @@ import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.PredicateUsageCount
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceContributor
+import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -72,6 +74,13 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource>
     fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
     fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource>
+
+    fun findAllPapersByObservatoryIdAndFilters(
+        observatoryId: ObservatoryId?,
+        filters: List<SearchFilter>,
+        visibility: VisibilityFilter,
+        pageable: Pageable
+    ): Page<Resource>
 }
 
 data class OwnershipInfo(

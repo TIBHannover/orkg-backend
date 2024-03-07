@@ -18,7 +18,7 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.springframework.data.domain.PageRequest
 
-interface ObservatoryRepositoryContractTest {
+interface ObservatoryRepositoryContractTests {
     val repository: ObservatoryRepository
     val organizationRepository: OrganizationRepository
     val userRepository: UserRepository

@@ -6,8 +6,10 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceContributor
+import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
@@ -38,6 +40,12 @@ interface RetrieveResourceUseCase {
     fun findPaperByTitle(title: String): Optional<Resource>
     fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>
     fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
+    fun findAllPapersByObservatoryIdAndFilters(
+        observatoryId: ObservatoryId?,
+        filters: List<SearchFilter>,
+        visibility: VisibilityFilter,
+        pageable: Pageable
+    ): Page<Resource>
     fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
     fun findAllByClassInAndVisibilityAndObservatoryId(
         classes: Set<ThingId>,
@@ -52,4 +60,9 @@ interface RetrieveResourceUseCase {
     ): Page<Resource>
     fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
     fun hasStatements(id: ThingId): Boolean
+    fun findAllByLabelAndBaseClass(
+        searchString: FuzzySearchString,
+        baseClass: ThingId,
+        pageable: Pageable
+    ): Page<Resource>
 }

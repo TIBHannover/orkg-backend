@@ -1,6 +1,9 @@
 package org.orkg.community.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.orkg.community.domain.ObservatoryFilterId
+import org.orkg.graph.domain.PredicatePath
+import java.time.LocalDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -24,4 +27,19 @@ data class ObservatoryRepresentation(
 data class ResearchFieldRepresentation(
     val id: ThingId?,
     val label: String?
+)
+
+data class ObservatoryFilterRepresentation(
+    val id: ObservatoryFilterId,
+    @get:JsonProperty("observatory_id")
+    val observatoryId: ObservatoryId,
+    val label: String,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    @get:JsonProperty("created_at")
+    val createdAt: LocalDateTime,
+    val path: PredicatePath,
+    val range: ThingId,
+    val exact: Boolean,
+    val featured: Boolean
 )

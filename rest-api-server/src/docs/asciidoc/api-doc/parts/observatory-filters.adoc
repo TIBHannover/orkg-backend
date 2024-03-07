@@ -1,0 +1,49 @@
+= Observatory Filters
+
+Observatory filters are persistent filter configurations (presets) for observatories.
+
+[[observatory-filters-fetch]]
+== Fetching an Observatory Filter
+
+A `GET` request provides information about an observatory filter, which always belongs to a specific <<observatories,observatory>>.
+
+operation::observatory-filters-get-single[snippets='curl-request,path-parameters,response-fields']
+
+[[observatory-filters-list]]
+== Listing Observatory Filters
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<observatory-filters-fetch,observatory filters>> that belong to the specified <<observatories,observatory>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::observatory-filters-get-paged[snippets='curl-request,path-parameters']
+
+[[observatory-filters-create]]
+== Creating Observatory Filters
+
+A `POST` request creates a new observatory filter with the given parameters.
+The response will be `201 Created` when successful.
+The observatory filter can be retrieved by following the URI in the `Location` header field.
+
+NOTE: The user performing the action needs to be a curator or a member of the observatory.
+
+operation::observatory-filters-create[snippets='curl-request,path-parameters,request-fields,http-response']
+
+[[observatory-filters-update]]
+== Updating Observatory Filters
+
+A `PATCH` request updates an existing observatory filter with the given parameters.
+The response will be `204 No Content` when successful.
+
+NOTE: The user performing the action needs to be a curator or a member of the observatory.
+
+operation::observatory-filters-update[snippets='curl-request,path-parameters,request-fields,http-response']
+
+[[observatory-filters-delete]]
+== Deleting Observatory Filters
+
+A `DELETE` request deletes an observatory filter.
+The response will be `204 No Content` when successful.
+
+NOTE: The user performing the action needs to be a curator or a member of the observatory.
+
+operation::observatory-filters-delete[snippets='curl-request,path-parameters,http-response']

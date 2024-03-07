@@ -42,21 +42,27 @@ import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache.Uncached
 import org.orkg.common.neo4jdsl.SingleQueryBuilder.fetchAs
 import org.orkg.common.neo4jdsl.SingleQueryBuilder.mappedBy
+import org.orkg.common.neo4jdsl.sortedWith
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jStatementIdGenerator
 import org.orkg.graph.domain.BundleConfiguration
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.PredicateUsageCount
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceContributor
+import org.orkg.graph.domain.SearchFilter
+import org.orkg.graph.domain.SearchFilter.*
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
 import org.springframework.cache.CacheManager
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
@@ -905,6 +911,115 @@ class SpringDataNeo4jStatementAdapter(
         .countOver("node")
         .mappedBy(ResourceMapper("node"))
         .fetch(pageable)
+
+    override fun findAllPapersByObservatoryIdAndFilters(
+        observatoryId: ObservatoryId?,
+        filters: List<SearchFilter>,
+        visibility: VisibilityFilter,
+        pageable: Pageable
+    ): Page<Resource> {
+        val matchPaper = buildString {
+            append("MATCH (paper:Paper:Resource")
+            if (observatoryId != null) {
+                append(" {observatory_id: ${'$'}observatoryId}")
+            }
+            append(")")
+        }
+        val matchFilters = if (filters.isEmpty()) "" else {
+            filters.mapIndexed { filterIndex, filter ->
+                filter.path.joinToString(
+                    prefix = buildString {
+                        append("""MATCH (ctr)""")
+                        if (!filter.exact) {
+                            append("""-[:RELATED*0..""")
+                            append(0.coerceAtLeast(10 - filter.path.size))
+                            append("""]->(:Thing)""")
+                        }
+                    },
+                    postfix = when (filter.range) {
+                        Classes.string -> """(n$filterIndex:Literal {datatype: "xsd:string"})"""
+                        Classes.integer -> """(n$filterIndex:Literal {datatype: "xsd:integer"})"""
+                        Classes.decimal -> """(n$filterIndex:Literal {datatype: "xsd:decimal"})"""
+                        Classes.boolean -> """(n$filterIndex:Literal {datatype: "xsd:boolean"})"""
+                        Classes.uri -> """(n$filterIndex:Literal {datatype: "xsd:anyURI"})"""
+                        Classes.date -> """(n$filterIndex:Literal {datatype: "xsd:date"})"""
+                        Classes.classes -> """(n$filterIndex:Class)"""
+                        Classes.predicates -> """(n$filterIndex:Predicate)"""
+                        else -> """(n$filterIndex:Resource)"""
+                    },
+                    separator = "(:Thing)"
+                ) { """-[:RELATED {predicate_id: "$it"}]->""" }
+            }.joinToString(
+                separator = " ",
+                // The contribution needs to be matched only when filters exist,
+                // otherwise only papers that have contributions would be returned
+                prefix = """MATCH (paper)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution) """
+            )
+        }
+        val filterValuesWithAlias = if (filters.isEmpty()) "" else {
+            filters.withIndex().joinToString(prefix = ", ") { (filterIndex, filter) ->
+                when (filter.range) {
+                    Classes.string, Classes.integer, Classes.decimal, Classes.boolean, Classes.uri, Classes.date -> "n$filterIndex.label"
+                    else -> "n$filterIndex.id"
+                } + " AS value$filterIndex"
+            }
+        }
+        val withPaperAndValues = """WITH paper$filterValuesWithAlias"""
+        val andFilterValuesMatch = if (filters.isEmpty()) "" else {
+            filters.mapIndexed { filterIndex, filter ->
+                filter.values.withIndex().joinToString(
+                    separator = " OR ",
+                    prefix = "(",
+                    postfix = ")"
+                ) { (valueIndex, value) ->
+                    val op = when (value.op) {
+                        Operator.EQ -> "="
+                        Operator.NE -> "<>"
+                        Operator.LT -> "<"
+                        Operator.GT -> ">"
+                        Operator.LE -> "<="
+                        Operator.GE -> ">="
+                    }
+                    "value$filterIndex $op ${'$'}values[$filterIndex][$valueIndex]"
+                }
+            }.joinToString(prefix = " AND (", separator = " AND ", postfix = ")")
+        }
+        val whereVisibility = when (visibility) {
+            VisibilityFilter.ALL_LISTED -> """WHERE (paper.visibility = "DEFAULT" OR paper.visibility = "FEATURED")"""
+            VisibilityFilter.UNLISTED -> """WHERE paper.visibility = "UNLISTED""""
+            VisibilityFilter.FEATURED -> """WHERE paper.visibility = "FEATURED""""
+            VisibilityFilter.NON_FEATURED -> """WHERE paper.visibility = "DEFAULT""""
+            VisibilityFilter.DELETED -> """WHERE paper.visibility = "DELETED""""
+        }
+        val whereVisibilityAndValues = whereVisibility + andFilterValuesMatch
+        val filterValues = if (filters.isEmpty()) "" else {
+            filters.indices.joinToString(prefix = ", ") { filterIndex -> "value$filterIndex" }
+        }
+        val withNodePropertiesAndValues = """WITH paper, paper.id AS id, paper.created_at AS created_at, paper.created_by AS created_by$filterValues"""
+        val sort = pageable.withDefaultSort { Sort.by(Sort.Direction.DESC, "created_at") }.sort
+        val commonQuery = "$matchPaper $matchFilters $withPaperAndValues $whereVisibilityAndValues $withNodePropertiesAndValues"
+        val query = "$commonQuery RETURN DISTINCT paper SKIP ${'$'}sdnSkip LIMIT ${'$'}sdnLimit".let {
+            it.sortedWith(sort, it.lastIndexOf("RETURN"))
+        }
+        val countQuery = "$commonQuery RETURN COUNT(DISTINCT paper)"
+        val parameters = mapOf(
+            "observatoryId" to observatoryId?.value?.toString(),
+            "values" to filters.map { it.values.map(Value::value) },
+            "sdnSkip" to pageable.offset,
+            "sdnLimit" to pageable.pageSize
+        )
+        val elements = neo4jClient.query(query)
+            .bindAll(parameters)
+            .fetchAs(Resource::class.java)
+            .mappedBy(ResourceMapper("paper"))
+            .all()
+        val count = neo4jClient.query(countQuery)
+            .bindAll(parameters)
+            .fetchAs(Long::class.java)
+            .one()
+            .orElse(0)
+        return PageImpl(elements.toList(), pageable, count)
+    }
 
     private fun findAllFilteredAndPaged(
         parameters: Map<String, Any>,

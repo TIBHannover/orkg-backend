@@ -1,10 +1,14 @@
 package org.orkg.graph.adapter.input.rest
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
+import org.orkg.community.domain.InvalidFilterConfig
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/observatories/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ObservatoryResourceController(
     private val resourceService: ResourceUseCases,
+    private val objectMapper: ObjectMapper,
     override val statementService: StatementUseCases,
     override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
@@ -31,11 +36,14 @@ class ObservatoryResourceController(
     @GetMapping("{id}/papers")
     fun findAllPapersByObservatoryId(
         @PathVariable id: ObservatoryId,
+        @RequestParam("filter_config", required = false) filterConfig: String?,
+        @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
         pageable: Pageable
     ): Page<ResourceRepresentation> =
-        resourceService.findAll(
-            includeClasses = setOf(Classes.paper),
+        resourceService.findAllPapersByObservatoryIdAndFilters(
             observatoryId = id,
+            filters = objectMapper.parseFilterConfig(filterConfig),
+            visibility = visibility ?: VisibilityFilter.ALL_LISTED,
             pageable = pageable
         ).mapToResourceRepresentation()
 
@@ -76,3 +84,12 @@ class ObservatoryResourceController(
             pageable = pageable
         ).mapToResourceRepresentation()
 }
+
+internal fun ObjectMapper.parseFilterConfig(filterConfig: String?): List<SearchFilter> =
+    filterConfig?.let {
+        try {
+            readValue(filterConfig, object : TypeReference<List<SearchFilter>>() {})
+        } catch (_: Exception) {
+            throw InvalidFilterConfig()
+        }
+    }.orEmpty()

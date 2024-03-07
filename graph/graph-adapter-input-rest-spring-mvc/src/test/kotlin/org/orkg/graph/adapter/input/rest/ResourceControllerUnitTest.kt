@@ -198,6 +198,28 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     }
 
     @Test
+    fun `Given several resources, when fetched by label (fuzzy) and base class, then status is 200 OK`() {
+        every { resourceService.findAllByLabelAndBaseClass(any(), ThingId("Problem"), any()) } returns pageOf(
+            createResource(classes = setOf(ThingId("Problem")))
+        )
+        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { flags.isFormattedLabelsEnabled() } returns false
+
+        get("/api/resources")
+            .param("q", "label")
+            .param("base_class", "Problem")
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectResource("$.content[*]")
+
+        verify(exactly = 1) {
+            resourceService.findAllByLabelAndBaseClass(withArg { it.input shouldBe "label" }, ThingId("Problem"), any())
+        }
+        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
+    }
+
+    @Test
     @TestWithMockUser
     fun `When creating a resource, and service reports invalid class collection, then status is 400 BAD REQUEST`() {
         val command = CreateResourceRequest(
@@ -335,6 +357,35 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                 organizationId = organizationId
             )
         }
+        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
+    }
+
+    @Test
+    @DisplayName("Given several resources, when fetched by label and base class, then status is 200 OK and resources are returned")
+    fun findByLabelAndBaseClass() {
+        every { resourceService.findAllByLabelAndBaseClass(any(), any(), any()) } returns pageOf(createResource())
+        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { flags.isFormattedLabelsEnabled() } returns false
+
+        documentedGetRequestTo("/api/resources")
+            .param("q", "example")
+            .param("base_class", "Pattern")
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectResource("$.content[*]")
+            .andDo(
+                documentationHandler.document(
+                    requestParameters(
+                        parameterWithName("q").description("The fuzzy search string for the label of the resource."),
+                        parameterWithName("base_class").description("The id of the base class that every resource has to be an instance of.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { resourceService.findAllByLabelAndBaseClass(any(), any(), any()) }
         verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }

@@ -40,3 +40,18 @@ The updated observatory (object) can be retrieved by following the URI in the `L
 NOTE: This endpoint can only be accessed by curators.
 
 operation::observatories-update[snippets='request-fields,curl-request,http-response']
+
+[[observatories-list-papers]]
+=== Listing papers of an observatory
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of paper <<resources-fetch,resources>>.
+
+operation::observatory-resources-get-paged-with-filter-config[snippets='curl-request,request-parameters']
+
+TIP: This call features filter configs, check the chapter <<filter-config>> for more information on filter configs.
+
+NOTE: Sorting is supported for the following fields: `id`, `created_by`, `created_at`.
+It is also possible to sort by the matched value of each search filter.
+To sort by the first search filter, the parameter `value0` can be used.
+If a second search filter is defined, the parameter `value1` can be used.
+By default, elements are sorted by `created_at` (descending).

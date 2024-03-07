@@ -24,7 +24,7 @@ class SimCompThingRepository(
 ) {
     fun findById(id: ThingId, type: ThingType): Optional<PublishedContentType> {
         val uri = UriComponentsBuilder.fromHttpUrl(host)
-            .path("/thing")
+            .path("/thing/") // The trailing slash is important, otherwise we get a redirect (307)
             .queryParam("thing_type", type.name)
             .queryParam("thing_key", id.value)
             .build()

@@ -133,6 +133,8 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
         resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
         resourceService.createResource(id = "SDG_1", label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal.value))
         resourceService.createResource(id = "SDG_2", label = "Zero hunger", classes = setOf(Classes.sustainableDevelopmentGoal.value))
+        resourceService.createResource(id = "SDG_3", label = "Good health and well-being", classes = setOf(Classes.sustainableDevelopmentGoal.value))
+        resourceService.createResource(id = "SDG_4", label = "Quality education", classes = setOf(Classes.sustainableDevelopmentGoal.value))
 
         statementService.create(
             subject = resourceService.createResource(
@@ -379,6 +381,7 @@ private const val updatePaperJson = """{
       "name": "Another author that just has a name"
     }
   ],
+  "sdgs": ["SDG_3", "SDG_4"],
   "observatories": [
     "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
   ],

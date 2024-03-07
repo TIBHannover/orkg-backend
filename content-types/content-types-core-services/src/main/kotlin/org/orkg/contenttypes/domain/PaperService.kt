@@ -45,6 +45,7 @@ import org.orkg.contenttypes.domain.actions.paper.PaperResearchFieldUpdater
 import org.orkg.contenttypes.domain.actions.paper.PaperResourceCreator
 import org.orkg.contenttypes.domain.actions.paper.PaperResourceUpdater
 import org.orkg.contenttypes.domain.actions.paper.PaperSDGCreator
+import org.orkg.contenttypes.domain.actions.paper.PaperSDGUpdater
 import org.orkg.contenttypes.domain.actions.paper.PaperTempIdValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperTitleCreateValidator
@@ -173,8 +174,10 @@ class PaperService(
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.paper!!.researchFields.map(ObjectIdAndLabel::id) }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.paper!!.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.paper!!.organizations }),
+            SDGValidator({ it.sustainableDevelopmentGoals }, { it.paper!!.sustainableDevelopmentGoals.map(ObjectIdAndLabel::id).toSet() }),
             PaperTitleUpdateValidator(resourceService),
             PaperIdentifierUpdateValidator(statementRepository),
+            PaperSDGUpdater(statementService),
             PaperAuthorUpdateValidator(resourceRepository, statementRepository),
             PaperResourceUpdater(resourceService),
             PaperIdentifierUpdater(statementService, literalService),

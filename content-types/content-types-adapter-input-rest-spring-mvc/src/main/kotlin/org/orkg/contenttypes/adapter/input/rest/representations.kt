@@ -262,6 +262,7 @@ sealed interface TemplatePropertyRepresentation {
     val id: ThingId
     val label: String
     val placeholder: String?
+    val description: String?
     val order: Long
     @get:JsonProperty("min_count")
     val minCount: Int?
@@ -279,6 +280,7 @@ data class LiteralTemplatePropertyRepresentation(
     override val id: ThingId,
     override val label: String,
     override val placeholder: String?,
+    override val description: String?,
     override val order: Long,
     override val minCount: Int?,
     override val maxCount: Int?,
@@ -293,6 +295,7 @@ data class ResourceTemplatePropertyRepresentation(
     override val id: ThingId,
     override val label: String,
     override val placeholder: String?,
+    override val description: String?,
     override val order: Long,
     override val minCount: Int?,
     override val maxCount: Int?,

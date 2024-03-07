@@ -35,6 +35,7 @@ sealed interface TemplateProperty {
     val id: ThingId
     val label: String
     val placeholder: String?
+    val description: String?
     val order: Long
     val minCount: Int?
     val maxCount: Int?
@@ -48,6 +49,7 @@ data class LiteralTemplateProperty(
     override val id: ThingId,
     override val label: String,
     override val placeholder: String?,
+    override val description: String?,
     override val order: Long,
     override val minCount: Int?,
     override val maxCount: Int?,
@@ -62,6 +64,7 @@ data class ResourceTemplateProperty(
     override val id: ThingId,
     override val label: String,
     override val placeholder: String?,
+    override val description: String?,
     override val order: Long,
     override val minCount: Int?,
     override val maxCount: Int?,

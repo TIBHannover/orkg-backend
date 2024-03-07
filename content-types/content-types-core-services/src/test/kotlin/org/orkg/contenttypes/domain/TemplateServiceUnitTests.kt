@@ -108,6 +108,7 @@ class TemplateServiceUnitTests {
             classes = setOf(Classes.propertyShape)
         )
         val literalPropertyPlaceholder = "literal property placeholder"
+        val literalPropertyDescription = "literal property description"
         val literalPropertyOrder = 1
         val literalPropertyMinCount = 1
         val literalPropertyMaxCount = 2
@@ -121,6 +122,7 @@ class TemplateServiceUnitTests {
             classes = setOf(Classes.propertyShape)
         )
         val resourcePropertyPlaceholder = "resource property placeholder"
+        val resourcePropertyDescription = "resource property description"
         val resourcePropertyOrder = 2
         val resourcePropertyMinCount = 3
         val resourcePropertyMaxCount = 4
@@ -204,6 +206,11 @@ class TemplateServiceUnitTests {
             ),
             createStatement(
                 subject = literalProperty,
+                predicate = createPredicate(Predicates.description),
+                `object` = createLiteral(label = literalPropertyDescription)
+            ),
+            createStatement(
+                subject = literalProperty,
                 predicate = createPredicate(Predicates.shOrder),
                 `object` = createLiteral(label = literalPropertyOrder.toString(), datatype = Literals.XSD.INT.prefixedUri)
             ),
@@ -238,6 +245,11 @@ class TemplateServiceUnitTests {
                 subject = resourceProperty,
                 predicate = createPredicate(Predicates.placeholder),
                 `object` = createLiteral(label = resourcePropertyPlaceholder)
+            ),
+            createStatement(
+                subject = resourceProperty,
+                predicate = createPredicate(Predicates.description),
+                `object` = createLiteral(label = resourcePropertyDescription)
             ),
             createStatement(
                 subject = resourceProperty,
@@ -293,6 +305,7 @@ class TemplateServiceUnitTests {
                     id = literalProperty.id,
                     label = literalProperty.label,
                     placeholder = literalPropertyPlaceholder,
+                    description = literalPropertyDescription,
                     order = literalPropertyOrder.toLong(),
                     minCount = literalPropertyMinCount,
                     maxCount = literalPropertyMaxCount,
@@ -306,6 +319,7 @@ class TemplateServiceUnitTests {
                     id = resourceProperty.id,
                     label = resourceProperty.label,
                     placeholder = resourcePropertyPlaceholder,
+                    description = resourcePropertyDescription,
                     order = resourcePropertyOrder.toLong(),
                     minCount = resourcePropertyMinCount,
                     maxCount = resourcePropertyMaxCount,

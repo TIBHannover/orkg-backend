@@ -106,6 +106,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         fieldWithPath("properties[].id").description("The id of the property."),
                         fieldWithPath("properties[].label").description("The label of the property."),
                         fieldWithPath("properties[].placeholder").description("The placeholder of the property."),
+                        fieldWithPath("properties[].description").description("The description of the property."),
                         fieldWithPath("properties[].order").description("The order of the property."),
                         fieldWithPath("properties[].min_count").description("The minimum cardinality of the property."),
                         fieldWithPath("properties[].max_count").description("The maximum cardinality of the property."),
@@ -252,7 +253,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         fieldWithPath("relations.predicate").description("The predicate the template relates to."),
                         fieldWithPath("properties[]").description("The property descriptions of the template. They can either be literal properties or resource properties. This is denoted by the `class` (resource) and `datatype` (literal) properties."),
                         fieldWithPath("properties[].label").description("The label of the property."),
-                        fieldWithPath("properties[].placeholder").description("The placeholder of the property."),
+                        fieldWithPath("properties[].placeholder").description("The placeholder of the property. (optional)"),
+                        fieldWithPath("properties[].description").description("The description of the property. (optional)"),
                         fieldWithPath("properties[].min_count").description("The minimum cardinality of the property. Must be at least one, or zero for infinite cardinality. (optional)").optional(),
                         fieldWithPath("properties[].max_count").description("The maximum cardinality of the property. Must be at least one, or zero for infinite cardinality. Must also be higher than min_count. (optional)").optional(),
                         fieldWithPath("properties[].pattern").description("The pattern (regular expression) of the property. (optional)").optional(),
@@ -508,7 +510,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                     ),
                     requestFields(
                         fieldWithPath("label").description("The label of the property."),
-                        fieldWithPath("placeholder").description("The placeholder of the property."),
+                        fieldWithPath("placeholder").description("The placeholder of the property. (optional)"),
+                        fieldWithPath("description").description("The description of the property. (optional)"),
                         fieldWithPath("min_count").description("The minimum cardinality of the property. Must be at least one, or zero for infinite cardinality. (optional)").optional(),
                         fieldWithPath("max_count").description("The maximum cardinality of the property. Must be at least one, or zero for infinite cardinality. Must also be higher than min_count. (optional)").optional(),
                         fieldWithPath("pattern").description("The pattern (regular expression) of the property. (optional)").optional(),
@@ -713,6 +716,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             TemplateController.CreateLiteralPropertyRequest(
                 label = "literal property label",
                 placeholder = "literal property placeholder",
+                description = "literal property description",
                 minCount = 1,
                 maxCount = 2,
                 pattern = """\d+""",
@@ -725,6 +729,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             TemplateController.CreateResourcePropertyRequest(
                 label = "resource property label",
                 placeholder = "resource property placeholder",
+                description = "resource property description",
                 minCount = 3,
                 maxCount = 4,
                 pattern = """\w+""",

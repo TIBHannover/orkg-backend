@@ -45,6 +45,19 @@ abstract class TemplatePropertyCreator(
                 )
             )
         }
+        property.description?.let { description ->
+            statementService.add(
+                userId = contributorId,
+                subject = propertyId,
+                predicate = Predicates.description,
+                `object` = literalService.create(
+                    CreateCommand(
+                        contributorId = contributorId,
+                        label = description
+                    )
+                )
+            )
+        }
         property.minCount?.let { min ->
             statementService.add(
                 userId = contributorId,

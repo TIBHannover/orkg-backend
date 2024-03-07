@@ -20,10 +20,10 @@ interface TemplatePropertyRelationRepresentationAdapter {
     fun TemplateProperty.toTemplatePropertyRepresentation(): TemplatePropertyRepresentation =
         when (this) {
             is LiteralTemplateProperty -> LiteralTemplatePropertyRepresentation(
-                id, label, placeholder, order, minCount, maxCount, pattern, path, createdAt, createdBy, datatype
+                id, label, placeholder, description, order, minCount, maxCount, pattern, path, createdAt, createdBy, datatype
             )
             is ResourceTemplateProperty -> ResourceTemplatePropertyRepresentation(
-                id, label, placeholder, order, minCount, maxCount, pattern, path, createdAt, createdBy, `class`
+                id, label, placeholder, description, order, minCount, maxCount, pattern, path, createdAt, createdBy, `class`
             )
         }
 }

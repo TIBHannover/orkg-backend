@@ -166,6 +166,7 @@ class TemplateController(
     sealed interface CreateTemplatePropertyRequest {
         val label: String
         val placeholder: String?
+        val description: String?
         val minCount: Int?
         val maxCount: Int?
         val pattern: String?
@@ -182,6 +183,7 @@ class TemplateController(
     data class CreateLiteralPropertyRequest(
         override val label: String,
         override val placeholder: String?,
+        override val description: String?,
         @field:Min(1)
         @JsonProperty("min_count")
         override val minCount: Int?,
@@ -194,7 +196,7 @@ class TemplateController(
     ) : CreateTemplatePropertyRequest {
         override fun toCreateCommand(): TemplatePropertyDefinition =
             CreateTemplateUseCase.CreateCommand.LiteralPropertyDefinition(
-                label, placeholder, minCount, maxCount, pattern, path, datatype
+                label, placeholder, description, minCount, maxCount, pattern, path, datatype
             )
 
         override fun toCreateCommand(
@@ -202,13 +204,14 @@ class TemplateController(
             templateId: ThingId
         ): CreateTemplatePropertyUseCase.CreateCommand =
             CreateTemplatePropertyUseCase.CreateLiteralPropertyCommand(
-                contributorId, templateId, label, placeholder, minCount, maxCount, pattern, path, datatype
+                contributorId, templateId, label, placeholder, description, minCount, maxCount, pattern, path, datatype
             )
     }
 
     data class CreateResourcePropertyRequest(
         override val label: String,
         override val placeholder: String?,
+        override val description: String?,
         @field:Min(1)
         @JsonProperty("min_count")
         override val minCount: Int?,
@@ -221,7 +224,7 @@ class TemplateController(
     ) : CreateTemplatePropertyRequest {
         override fun toCreateCommand(): TemplatePropertyDefinition =
             CreateTemplateUseCase.CreateCommand.ResourcePropertyDefinition(
-                label, placeholder, minCount, maxCount, pattern, path, `class`
+                label, placeholder, description, minCount, maxCount, pattern, path, `class`
             )
 
         override fun toCreateCommand(
@@ -229,7 +232,7 @@ class TemplateController(
             templateId: ThingId
         ): CreateTemplatePropertyUseCase.CreateCommand =
             CreateTemplatePropertyUseCase.CreateResourcePropertyCommand(
-                contributorId, templateId, label, placeholder, minCount, maxCount, pattern, path, `class`
+                contributorId, templateId, label, placeholder, description, minCount, maxCount, pattern, path, `class`
             )
     }
 }

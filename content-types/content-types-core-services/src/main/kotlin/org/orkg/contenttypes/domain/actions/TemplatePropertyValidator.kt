@@ -22,6 +22,7 @@ abstract class TemplatePropertyValidator(
     internal fun validate(property: TemplatePropertyDefinition) {
         Label.ofOrNull(property.label) ?: throw InvalidLabel()
         property.placeholder?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
+        property.description?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
         property.minCount?.let { min ->
             if (min < 0) {
                 throw InvalidMinCount(min)

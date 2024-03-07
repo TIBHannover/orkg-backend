@@ -46,6 +46,7 @@ class TemplatePropertyCreatorUnitTest {
         val order = 5
         val propertyId = ThingId("R1325")
         val placeholderLiteralId = ThingId("L127")
+        val descriptionLiteralId = ThingId("L128")
         val minLiteralId = ThingId("L123")
         val maxLiteralId = ThingId("L124")
         val patternLiteralId = ThingId("L125")
@@ -74,6 +75,22 @@ class TemplatePropertyCreatorUnitTest {
                 subject = propertyId,
                 predicate = Predicates.placeholder,
                 `object` = placeholderLiteralId
+            )
+        } just runs
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = "literal property description"
+                )
+            )
+        } returns descriptionLiteralId
+        every {
+            statementService.add(
+                userId = property.contributorId,
+                subject = propertyId,
+                predicate = Predicates.description,
+                `object` = descriptionLiteralId
             )
         } just runs
         every {
@@ -199,6 +216,22 @@ class TemplatePropertyCreatorUnitTest {
             literalService.create(
                 CreateCommand(
                     contributorId = property.contributorId,
+                    label = "literal property description"
+                )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = property.contributorId,
+                subject = propertyId,
+                predicate = Predicates.description,
+                `object` = descriptionLiteralId
+            )
+        }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = property.contributorId,
                     label = property.minCount.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
                 )
@@ -294,6 +327,7 @@ class TemplatePropertyCreatorUnitTest {
         val order = 5
         val propertyId = ThingId("R1325")
         val placeholderLiteralId = ThingId("L127")
+        val descriptionLiteralId = ThingId("L128")
         val minLiteralId = ThingId("L123")
         val maxLiteralId = ThingId("L124")
         val patternLiteralId = ThingId("L125")
@@ -322,6 +356,22 @@ class TemplatePropertyCreatorUnitTest {
                 subject = propertyId,
                 predicate = Predicates.placeholder,
                 `object` = placeholderLiteralId
+            )
+        } just runs
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = "resource property description"
+                )
+            )
+        } returns descriptionLiteralId
+        every {
+            statementService.add(
+                userId = property.contributorId,
+                subject = propertyId,
+                predicate = Predicates.description,
+                `object` = descriptionLiteralId
             )
         } just runs
         every {
@@ -441,6 +491,22 @@ class TemplatePropertyCreatorUnitTest {
                 subject = propertyId,
                 predicate = Predicates.placeholder,
                 `object` = placeholderLiteralId
+            )
+        }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = "resource property description"
+                )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = property.contributorId,
+                subject = propertyId,
+                predicate = Predicates.description,
+                `object` = descriptionLiteralId
             )
         }
         verify(exactly = 1) {

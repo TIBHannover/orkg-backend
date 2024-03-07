@@ -147,4 +147,10 @@ class TemplatePropertyValidatorUnitTest {
         val property = dummyCreateResourceTemplatePropertyCommand().copy(placeholder = "\n")
         assertThrows<InvalidLabel> { templatePropertyValidator.validate(property) }
     }
+
+    @Test
+    fun `Given a template property definition, when description is invalid, it throws an exception`() {
+        val property = dummyCreateResourceTemplatePropertyCommand().copy(description = "\n")
+        assertThrows<InvalidLabel> { templatePropertyValidator.validate(property) }
+    }
 }

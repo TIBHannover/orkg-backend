@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.output.simcomp.internal
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.io.IOException
 import java.net.http.HttpClient
 import java.net.http.HttpClient.Version.HTTP_1_1
 import java.net.http.HttpRequest
@@ -35,14 +36,18 @@ class SimCompThingRepository(
             .header("Accept", MediaType.APPLICATION_JSON_VALUE)
             .GET()
             .build()
-        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
-        return when (response.statusCode()) {
-            HttpStatus.OK.value() ->
-                with(objectMapper.readValue(response.body(), ThingGetResponse::class.java).payload.thing.data) {
-                    Optional.of(PublishedContentType(rootResource, statements))
-                }
-            HttpStatus.NOT_FOUND.value() -> Optional.empty()
-            else -> throw ServiceUnavailable.create("SimComp", response.statusCode(), response.body())
+        try {
+            val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+            return when (response.statusCode()) {
+                HttpStatus.OK.value() ->
+                    with(objectMapper.readValue(response.body(), ThingGetResponse::class.java).payload.thing.data) {
+                        Optional.of(PublishedContentType(rootResource, statements))
+                    }
+                HttpStatus.NOT_FOUND.value() -> Optional.empty()
+                else -> throw ServiceUnavailable.create("SimComp", response.statusCode(), response.body())
+            }
+        } catch (e: IOException) {
+            throw ServiceUnavailable.create("SimComp", e)
         }
     }
 }

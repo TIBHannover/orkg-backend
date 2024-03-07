@@ -10,6 +10,7 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
@@ -190,6 +191,26 @@ class SimCompThingRepositoryUnitTest {
         }
         verify { response.statusCode() }
         verify { response.body() }
+
+        confirmVerified(response)
+    }
+
+    @Test
+    fun `Given a thing id, when fetching list contents but a connection error occurs, it throws an exception`() {
+        val id = ThingId("R123")
+        // Mock HttpClient dsl
+        val response = mockk<HttpResponse<String>>()
+        val exception = IOException()
+
+        every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } throws exception
+
+        shouldThrow<ServiceUnavailable> { adapter.findById(id, ThingType.LIST) }.asClue {
+            it.message shouldBe "Service unavailable."
+            it.internalMessage shouldBe """SimComp service threw an exception."""
+            it.cause shouldBe exception
+        }
+
+        verify(exactly = 1) { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) }
 
         confirmVerified(response)
     }

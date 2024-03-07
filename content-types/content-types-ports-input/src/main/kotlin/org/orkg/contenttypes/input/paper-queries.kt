@@ -27,7 +27,8 @@ interface RetrievePaperUseCase {
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
         researchField: ThingId?,
-        includeSubfields: Boolean
+        includeSubfields: Boolean,
+        sustainableDevelopmentGoal: ThingId?
     ): Page<Paper>
     fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId>
 }

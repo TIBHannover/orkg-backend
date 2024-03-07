@@ -8,12 +8,12 @@ import org.jetbrains.annotations.Contract
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Conditions
 import org.neo4j.cypherdsl.core.Cypher.call
+import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.FunctionInvocation
 import org.neo4j.cypherdsl.core.Functions
-import org.neo4j.cypherdsl.core.IdentifiableElement
 import org.neo4j.cypherdsl.core.PatternElement
 import org.neo4j.cypherdsl.core.Property
 import org.neo4j.cypherdsl.core.ResultStatement
@@ -249,34 +249,24 @@ fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
 ): StatementBuilder.OrderableOngoingReadingAndWithWithWhere =
     where(conditions.reduceOrNull(Condition::and) ?: Conditions.noCondition())
 
-fun StatementBuilder.OrderableOngoingReadingAndWithWithWhere.matchPatternsNotNull(
-    vararg patternElement: PatternElement?
-): StatementBuilder.OngoingReading {
-    val patterns = patternElement.filterNotNull()
-    if (patterns.isEmpty()) {
-        return this
-    }
-    return match(patterns)
-}
-
 fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere?.call(
     function: String,
     arguments: Array<Expression>,
     yieldItems: Array<String>,
-    condition: Condition,
-    vararg variables: IdentifiableElement?
-): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
-    this?.let {
+    condition: Condition
+): StatementBuilder.OngoingReading =
+    this?.apply {
         call(function)
             .withArgs(*arguments)
             .yield(*yieldItems)
             .where(condition)
-            .with(*variables.filterNotNull().toTypedArray())
     } ?: call(function)
             .withArgs(*arguments)
             .yield(*yieldItems)
             .where(condition)
-            .with(*variables.filterNotNull().toTypedArray())
+
+fun Collection<PatternElement>.toMatchOrNull(node: org.neo4j.cypherdsl.core.Node): StatementBuilder.OngoingReadingWithoutWhere? =
+    if (isEmpty()) null else match(node).match(this)
 
 inline fun Pageable.withDefaultSort(sort: () -> Sort): Pageable =
     if (this.sort.isSorted) this else PageRequest.of(pageNumber, pageSize, sort())

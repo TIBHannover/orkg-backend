@@ -63,6 +63,7 @@ object Predicates {
     val shPattern = ThingId("sh:pattern")
     val shProperty = ThingId("sh:property")
     val shTargetClass = ThingId("sh:targetClass")
+    val sustainableDevelopmentGoal = ThingId("sustainableDevelopmentGoal")
     val templateLabelFormat = ThingId("TemplateLabelFormat")
     val templateOfPredicate = ThingId("TemplateOfPredicate")
     val templateOfResearchField = ThingId("TemplateOfResearchField")

@@ -433,6 +433,10 @@
     {
       "label": "has published version",
       "id": "hasPublishedVersion"
+    },
+    {
+      "id": "sustainableDevelopmentGoal",
+      "label": "sustainable development goal"
     }
   ],
 

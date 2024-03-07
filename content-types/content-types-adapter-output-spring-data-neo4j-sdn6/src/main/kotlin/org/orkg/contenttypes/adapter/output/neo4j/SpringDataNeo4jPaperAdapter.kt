@@ -28,10 +28,10 @@ import org.orkg.graph.adapter.output.neo4j.call
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jPredicate
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResource
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jThing
-import org.orkg.graph.adapter.output.neo4j.matchPatternsNotNull
 import org.orkg.graph.adapter.output.neo4j.node
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
 import org.orkg.graph.adapter.output.neo4j.toCondition
+import org.orkg.graph.adapter.output.neo4j.toMatchOrNull
 import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where
 import org.orkg.graph.adapter.output.neo4j.withDefaultSort
@@ -76,47 +76,55 @@ class SpringDataNeo4jPaperAdapter(
         organizationId: OrganizationId?,
         researchField: ThingId?,
         includeSubfields: Boolean,
+        sustainableDevelopmentGoal: ThingId?
     ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
         .withCommonQuery {
             val node = node("Paper").named("node")
             val nodes = name("nodes")
-            val matchPapersWithResearchField = researchField?.let {
-                val researchFieldNode = node(Classes.researchField).withProperties("id", anonParameter(it.value))
-                if (includeSubfields) {
-                    match(
+            val patterns = listOfNotNull(
+                researchField?.let {
+                    val researchFieldNode = node(Classes.researchField).withProperties("id", anonParameter(it.value))
+                    if (includeSubfields) {
                         node.relationshipTo(node(Classes.researchField), RELATED)
                             .relationshipFrom(researchFieldNode, RELATED)
                             .properties("predicate_id", literalOf<String>(Predicates.hasSubfield.value))
                             .min(0)
-                    )
-                } else {
-                    match(node.relationshipTo(researchFieldNode, RELATED))
+                    } else {
+                        node.relationshipTo(researchFieldNode, RELATED)
+                    }
+                },
+                doi?.let { node.relationshipTo(node("Literal").withProperties("label", anonParameter(doi))) },
+                sustainableDevelopmentGoal?.let {
+                    node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
+                        .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))
                 }
-            }
-            val match = when {
-                label != null -> when (label) {
+            )
+            val match = label?.let {
+                when (label) {
                     is ExactSearchString -> {
-                        matchPapersWithResearchField?.with(collect(node).`as`(nodes)).call(
+                        patterns.toMatchOrNull(node)?.with(collect(node).`as`(nodes)).call(
                             function = "db.index.fulltext.queryNodes",
-                            arguments = arrayOf(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(label.query)),
+                            arguments = arrayOf(
+                                anonParameter(FULLTEXT_INDEX_FOR_LABEL),
+                                anonParameter(label.query)
+                            ),
                             yieldItems = arrayOf("node"),
-                            condition = toLower(node.property("label")).eq(toLower(anonParameter(label.input))),
-                            node, researchField?.let { nodes }
-                        )
+                            condition = toLower(node.property("label")).eq(toLower(anonParameter(label.input)))
+                        ).with(node)
                     }
                     is FuzzySearchString -> {
-                        matchPapersWithResearchField?.with(collect(node).`as`(nodes)).call(
+                        patterns.toMatchOrNull(node)?.with(collect(node).`as`(nodes)).call(
                             function = "db.index.fulltext.queryNodes",
-                            arguments = arrayOf(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(label.query)),
+                            arguments = arrayOf(
+                                anonParameter(FULLTEXT_INDEX_FOR_LABEL),
+                                anonParameter(label.query)
+                            ),
                             yieldItems = arrayOf("node", "score"),
-                            condition = size(node.property("label")).gte(anonParameter(label.input.length)),
-                            node, name("score"), researchField?.let { nodes }
-                        )
+                            condition = size(node.property("label")).gte(anonParameter(label.input.length))
+                        ).with(node, name("score"))
                     }
                 }
-                researchField != null -> matchPapersWithResearchField!!.with(node)
-                else -> match(node).with(node)
-            }
+            } ?: patterns.toMatchOrNull(node)?.with(node) ?: match(node).with(node)
             match.where(
                 visibility.toCondition { filter ->
                     filter.targets.map { node.property("visibility").eq(literalOf<String>(it.name)) }
@@ -128,9 +136,7 @@ class SpringDataNeo4jPaperAdapter(
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
                 organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
-                if (label != null && researchField != null) node.asExpression().`in`(nodes) else Conditions.noCondition()
-            ).matchPatternsNotNull(
-                doi?.let { node.relationshipTo(node("Literal").withProperties("label", anonParameter(doi))) },
+                if (label != null && patterns.isNotEmpty()) node.asExpression().`in`(nodes) else Conditions.noCondition()
             )
         }
         .withQuery { commonQuery ->

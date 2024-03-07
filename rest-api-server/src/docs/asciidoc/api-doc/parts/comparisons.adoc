@@ -25,9 +25,6 @@ operation::comparisons-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-NOTE: Not all request parameters can be used in combination with others.
-      Only `visibility`, `research_field` and optionally `include_subfields` can be used together.
-
 operation::comparisons-get-paged[snippets='request-parameters']
 
 [[comparisons-related-resource-fetch]]

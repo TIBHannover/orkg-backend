@@ -2,14 +2,16 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import org.hamcrest.Matchers.endsWith
-import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -18,7 +20,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.ServiceUnavailable
-import org.orkg.common.exceptions.TooManyParameters
+import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
@@ -35,6 +37,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedFigure
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedResource
 import org.orkg.contenttypes.input.ComparisonUseCases
+import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.VisibilityFilter
@@ -45,14 +48,13 @@ import org.orkg.testing.andExpectComparisonRelatedFigure
 import org.orkg.testing.andExpectComparisonRelatedResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -160,10 +162,55 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @Test
     @DisplayName("Given several comparisons, when they are fetched, then status is 200 OK and comparisons are returned")
     fun getPaged() {
-        val comparisons = listOf(createDummyComparison())
-        every { comparisonService.findAll(any()) } returns PageImpl(comparisons, PageRequest.of(0, 5), 1)
+        every {
+            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        } returns pageOf(createDummyComparison())
 
         documentedGetRequestTo("/api/comparisons")
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectComparison("$.content[*]")
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        }
+    }
+
+    @Test
+    @DisplayName("Given several comparisons, when filtering by several parameters, then status is 200 OK and comparisons are returned")
+    fun getPagedWithParameters() {
+        every {
+            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        } returns pageOf(createDummyComparison())
+
+        val title = "label"
+        val exact = true
+        val doi = "10.123/8764"
+        val visibility = VisibilityFilter.ALL_LISTED
+        val createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
+        val createdAtStart = OffsetDateTime.now(fixedClock).minusHours(1)
+        val createdAtEnd = OffsetDateTime.now(fixedClock).plusHours(1)
+        val observatoryId = ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+        val researchFieldId = ThingId("R456")
+        val includeSubfields = true
+
+        documentedGetRequestTo("/api/comparisons")
+            .param("title", title)
+            .param("exact", exact.toString())
+            .param("doi", doi)
+            .param("visibility", visibility.name)
+            .param("created_by", createdBy.value.toString())
+            .param("created_at_start", createdAtStart.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("created_at_end", createdAtEnd.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("observatory_id", observatoryId.value.toString())
+            .param("organization_id", organizationId.value.toString())
+            .param("research_field", researchFieldId.value)
+            .param("include_subfields", includeSubfields.toString())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -173,130 +220,58 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andDo(
                 documentationHandler.document(
                     requestParameters(
-                        parameterWithName("research_field").description("Optional filter for research field id.").optional(),
-                        parameterWithName("title").description("Optional filter for the title of the comparison. Uses exact matching.").optional(),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),
-                        parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the comparison.").optional(),
-                        parameterWithName("research_field").description("Optional filter for research field id.").optional(),
-                        parameterWithName("include_subfields").description("Optional flag for whether subfields are included in the search or not.").optional(),
+                        parameterWithName("title").description("A search term that must be contained in the title of the comparison. (optional)"),
+                        parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)"),
+                        parameterWithName("doi").description("Filter for the DOI of the comparison. (optional)"),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED"."""),
+                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this comparison. (optional)"),
+                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned resource can have. (optional)"),
+                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)"),
+                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)"),
+                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)"),
+                        parameterWithName("research_field").description("Filter for research field id. (optional)"),
+                        parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
                     )
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { comparisonService.findAll(any()) }
-    }
-
-    @Test
-    fun `Given several comparisons, when they are fetched by doi, then status is 200 OK and comparisons are returned`() {
-        val comparisons = listOf(createDummyComparison())
-        val doi = comparisons.first().identifiers["doi"]!!.first()
-        every { comparisonService.findAllByDOI(doi, any()) } returns PageImpl(comparisons, PageRequest.of(0, 5), 1)
-
-        get("/api/comparisons?doi=$doi")
-            .accept(COMPARISON_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andExpectComparison("$.content[*]")
-
-        verify(exactly = 1) { comparisonService.findAllByDOI(doi, any()) }
-    }
-
-    @Test
-    fun `Given several comparisons, when they are fetched by title, then status is 200 OK and comparisons are returned`() {
-        val comparisons = listOf(createDummyComparison())
-        val title = comparisons.first().title
-        every { comparisonService.findAllByTitle(title, any()) } returns PageImpl(comparisons, PageRequest.of(0, 5), 1)
-
-        get("/api/comparisons?title=$title")
-            .accept(COMPARISON_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andExpectComparison("$.content[*]")
-
-        verify(exactly = 1) { comparisonService.findAllByTitle(title, any()) }
-    }
-
-    @Test
-    fun `Given several comparisons, when they are fetched by visibility, then status is 200 OK and comparisons are returned`() {
-        val comparisons = listOf(createDummyComparison())
-        val visibility = VisibilityFilter.ALL_LISTED
-        every { comparisonService.findAllByVisibility(visibility, any()) } returns PageImpl(comparisons, PageRequest.of(0, 5), 1)
-
-        get("/api/comparisons?visibility=$visibility")
-            .accept(COMPARISON_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andExpectComparison("$.content[*]")
-
-        verify(exactly = 1) { comparisonService.findAllByVisibility(visibility, any()) }
-    }
-
-    @Test
-    fun `Given several comparisons, when they are fetched by contributor id, then status is 200 OK and comparisons are returned`() {
-        val comparisons = listOf(createDummyComparison())
-        val contributorId = comparisons.first().createdBy
-        every { comparisonService.findAllByContributor(contributorId, any()) } returns PageImpl(comparisons, PageRequest.of(0, 5), 1)
-
-        get("/api/comparisons?created_by=$contributorId")
-            .accept(COMPARISON_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
-
-        verify(exactly = 1) { comparisonService.findAllByContributor(contributorId, any()) }
-    }
-
-    @Test
-    fun `Given several comparisons, when they are fetched but multiple query parameters are given, then status is 400 BAD REQUEST`() {
-        val comparisons = listOf(createDummyComparison())
-        val title = comparisons.first().title
-        val contributorId = comparisons.first().createdBy
-        val exception = TooManyParameters.atMostOneOf("doi", "title", "visibility", "created_by")
-
-        get("/api/comparisons?title=$title&created_by=$contributorId")
-            .accept(COMPARISON_JSON_V2)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/comparisons"))
-            .andExpect(jsonPath("$.message").value(exception.message))
-    }
-
-    @Test
-    fun `Given several comparisons, when they are fetched by visibility and research field id, then status is 200 OK and comparisons are returned`() {
-        val comparisons = listOf(createDummyComparison())
-        val researchFieldId = comparisons.first().researchFields.first().id
-        every {
-            comparisonService.findAllByResearchFieldAndVisibility(
-                researchFieldId = researchFieldId,
-                visibility = VisibilityFilter.ALL_LISTED,
-                includeSubfields = true,
-                pageable = any()
+        verify(exactly = 1) {
+            comparisonService.findAll(
+                pageable = any(),
+                label = withArg {
+                    it.shouldBeInstanceOf<ExactSearchString>().input shouldBe title
+                },
+                doi = doi,
+                visibility = visibility,
+                createdBy = createdBy,
+                createdAtStart = createdAtStart,
+                createdAtEnd = createdAtEnd,
+                observatoryId = observatoryId,
+                organizationId = organizationId,
+                researchField = researchFieldId,
+                includeSubfields = includeSubfields
             )
-        } returns PageImpl(comparisons, PageRequest.of(0, 5), 1)
+        }
+    }
 
-        get("/api/comparisons?research_field=$researchFieldId&visibility=ALL_LISTED&include_subfields=true")
-            .accept(COMPARISON_JSON_V2)
-            .contentType(COMPARISON_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
+    @Test
+    fun `Given several comparisons, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
+        val exception = UnknownSortingProperty("unknown")
+        every {
+            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        } throws exception
+
+        mockMvc.perform(get("/api/comparisons?sort=unknown"))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/comparisons"))
 
         verify(exactly = 1) {
-            comparisonService.findAllByResearchFieldAndVisibility(
-                researchFieldId = researchFieldId,
-                visibility = VisibilityFilter.ALL_LISTED,
-                includeSubfields = true,
-                pageable = any()
-            )
+            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 

@@ -2,8 +2,11 @@ package org.orkg.contenttypes.domain
 
 import dev.forkhandles.values.ofOrNull
 import java.net.URI
+import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
@@ -80,9 +83,32 @@ class ComparisonService(
             .filter { Classes.comparison in it.classes }
             .map { it.toComparison() }
 
-    override fun findAll(pageable: Pageable): Page<Comparison> =
-        statementRepository.findAllCurrentComparisons(pageable)
-            .pmap { it.toComparison() }
+    override fun findAll(
+        pageable: Pageable,
+        label: SearchString?,
+        doi: String?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean
+    ): Page<Comparison> =
+        comparisonRepository.findAll(
+            pageable = pageable,
+            label = label,
+            doi = doi,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields
+        ).pmap { it.toComparison() }
 
     override fun findAllByDOI(doi: String, pageable: Pageable): Page<Comparison> =
         statementRepository.findAllBySubjectClassAndDOI(Classes.comparison, doi, pageable)

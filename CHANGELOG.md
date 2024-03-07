@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added content-type endpoints for fetching literature lists.
+  (See: [!767](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/767))
+- Added content-type endpoints for fetching smart reviews.
+  (See: [!816](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/816))
+- Listing comparisons now supports additional filtering parameters in arbitrary combinations: `exact`, `created_at_start`, `created_at_end`, `observatory_id`, `organization_id`.
+  (See: [!819](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/819))
+- It is now possible to assign papers to sustainable development goals.
+  (See: [!830](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/830),
+        [!831](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/831),
+        [!832](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/832))
+- It is now possible to filter papers by sustainable development goals.
+  (See: [!829](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/829))
+- Added support for template property placeholders.
+  (See: [!823](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/823))
+- Added support for template property descriptions.
+  (See: [!824](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/824))
+- It is now possible to define filter configurations for observatories.
+  (See: [!616](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/616))
+- Paper resources can now be fetched using a filter configuration.
+  (See: [!616](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/616))
+- Resources can now be fetched by label and a given base class.
+  (See: [!616](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/616))
+- Added content-type endpoints for fetching template instances.
+  (See: [!758](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/758))
 
 ## [0.48.1] - 2024-03-01
 ### Fixed

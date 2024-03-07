@@ -32,6 +32,19 @@ abstract class TemplatePropertyCreator(
                 contributorId = contributorId
             )
         )
+        property.placeholder?.let { placeholder ->
+            statementService.add(
+                userId = contributorId,
+                subject = propertyId,
+                predicate = Predicates.placeholder,
+                `object` = literalService.create(
+                    CreateCommand(
+                        contributorId = contributorId,
+                        label = placeholder
+                    )
+                )
+            )
+        }
         property.minCount?.let { min ->
             statementService.add(
                 userId = contributorId,

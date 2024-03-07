@@ -29,6 +29,7 @@ interface CreateTemplateUseCase {
 
         data class LiteralPropertyDefinition(
             override val label: String,
+            override val placeholder: String?,
             override val minCount: Int?,
             override val maxCount: Int?,
             override val pattern: String?,
@@ -38,6 +39,7 @@ interface CreateTemplateUseCase {
 
         data class ResourcePropertyDefinition(
             override val label: String,
+            override val placeholder: String?,
             override val minCount: Int?,
             override val maxCount: Int?,
             override val pattern: String?,
@@ -59,6 +61,7 @@ interface CreateTemplatePropertyUseCase {
         override val contributorId: ContributorId,
         override val templateId: ThingId,
         override val label: String,
+        override val placeholder: String?,
         override val minCount: Int?,
         override val maxCount: Int?,
         override val pattern: String?,
@@ -70,16 +73,18 @@ interface CreateTemplatePropertyUseCase {
         override val contributorId: ContributorId,
         override val templateId: ThingId,
         override val label: String,
+        override val placeholder: String?,
         override val minCount: Int?,
         override val maxCount: Int?,
         override val pattern: String?,
         override val path: ThingId,
         override val `class`: ThingId
-    ) :  CreateCommand, ResourceTemplatePropertyDefinition
+    ) : CreateCommand, ResourceTemplatePropertyDefinition
 }
 
 sealed interface TemplatePropertyDefinition {
     val label: String
+    val placeholder: String?
     val minCount: Int?
     val maxCount: Int?
     val pattern: String?

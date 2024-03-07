@@ -164,6 +164,7 @@ class TemplateService(
     }
 
     private fun Resource.toTemplateProperty(statements: Iterable<GeneralStatement>): TemplateProperty? {
+        val placeholder = statements.wherePredicate(Predicates.placeholder).singleOrNull()?.`object`?.label
         val order = statements.wherePredicate(Predicates.shOrder).single().`object`.label.toLong()
         val minCount = statements.wherePredicate(Predicates.shMinCount).singleOrNull()?.`object`?.label?.toInt()
         val maxCount = statements.wherePredicate(Predicates.shMaxCount).singleOrNull()?.`object`?.label?.toInt()
@@ -172,8 +173,8 @@ class TemplateService(
         val datatype = statements.wherePredicate(Predicates.shDatatype).singleOrNull().objectIdAndLabel()
         val `class` = statements.wherePredicate(Predicates.shClass).singleOrNull().objectIdAndLabel()
         return when {
-            datatype != null -> LiteralTemplateProperty(id, label, order, minCount, maxCount, pattern, path, createdBy, createdAt, datatype)
-            `class` != null -> ResourceTemplateProperty(id, label, order, minCount, maxCount, pattern, path, createdBy, createdAt, `class`)
+            datatype != null -> LiteralTemplateProperty(id, label, placeholder, order, minCount, maxCount, pattern, path, createdBy, createdAt, datatype)
+            `class` != null -> ResourceTemplateProperty(id, label, placeholder, order, minCount, maxCount, pattern, path, createdBy, createdAt, `class`)
             else -> null
         }
     }

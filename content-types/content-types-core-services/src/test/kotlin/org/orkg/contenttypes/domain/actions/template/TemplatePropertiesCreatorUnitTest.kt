@@ -54,11 +54,13 @@ class TemplatePropertiesCreatorUnitTest {
             templateId = ThingId("R123")
         )
         val literalPropertyId = ThingId("R1325")
+        val literalPropertyPlaceholderLiteralId = ThingId("L131")
         val literalPropertyMinLiteralId = ThingId("L123")
         val literalPropertyMaxLiteralId = ThingId("L124")
         val literalPropertyPatternLiteralId = ThingId("L125")
         val literalPropertyOrderLiteralId = ThingId("L126")
         val resourcePropertyId = ThingId("R1326")
+        val resourcePropertyPlaceholderLiteralId = ThingId("L132")
         val resourcePropertyMinLiteralId = ThingId("L127")
         val resourcePropertyMaxLiteralId = ThingId("L128")
         val resourcePropertyPatternLiteralId = ThingId("L129")
@@ -74,6 +76,22 @@ class TemplatePropertiesCreatorUnitTest {
                 )
             )
         } returns literalPropertyId
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "literal property placeholder"
+                )
+            )
+        } returns literalPropertyPlaceholderLiteralId
+        every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = literalPropertyId,
+                predicate = Predicates.placeholder,
+                `object` = literalPropertyPlaceholderLiteralId
+            )
+        } just runs
         every {
             literalService.create(
                 CreateCommand(
@@ -167,6 +185,22 @@ class TemplatePropertiesCreatorUnitTest {
                 )
             )
         } returns resourcePropertyId
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "resource property placeholder"
+                )
+            )
+        } returns resourcePropertyPlaceholderLiteralId
+        every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = resourcePropertyId,
+                predicate = Predicates.placeholder,
+                `object` = resourcePropertyPlaceholderLiteralId
+            )
+        } just runs
         every {
             literalService.create(
                 CreateCommand(
@@ -267,6 +301,22 @@ class TemplatePropertiesCreatorUnitTest {
             )
         }
         verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "literal property placeholder"
+                )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = literalPropertyId,
+                predicate = Predicates.placeholder,
+                `object` = literalPropertyPlaceholderLiteralId
+            )
+        }
+        verify(exactly = 1) {
             statementService.add(
                 userId = command.contributorId,
                 subject = literalPropertyId,
@@ -348,6 +398,22 @@ class TemplatePropertiesCreatorUnitTest {
                     classes = setOf(Classes.propertyShape),
                     contributorId = command.contributorId
                 )
+            )
+        }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "resource property placeholder"
+                )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = resourcePropertyId,
+                predicate = Predicates.placeholder,
+                `object` = resourcePropertyPlaceholderLiteralId
             )
         }
         verify(exactly = 1) {
@@ -446,11 +512,13 @@ class TemplatePropertiesCreatorUnitTest {
     @Test
     fun `Given a create template command, when creating template properties, it does not create null values`() {
         val literalProperty = dummyCreateLiteralTemplatePropertyCommand().copy(
+            placeholder = null,
             minCount = null,
             maxCount = null,
             pattern = null
         )
         val resourceProperty = dummyCreateResourceTemplatePropertyCommand().copy(
+            placeholder = null,
             minCount = null,
             maxCount = null,
             pattern = null

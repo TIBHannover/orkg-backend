@@ -11,19 +11,19 @@ import org.springframework.data.domain.Page
 
 interface TemplatePropertyRelationRepresentationAdapter {
 
-    fun Optional<TemplateProperty>.mapToTemplatePropertyRepresentation() : Optional<TemplatePropertyRepresentation> =
+    fun Optional<TemplateProperty>.mapToTemplatePropertyRepresentation(): Optional<TemplatePropertyRepresentation> =
         map { it.toTemplatePropertyRepresentation() }
 
-    fun Page<TemplateProperty>.mapToTemplatePropertyRepresentation() : Page<TemplatePropertyRepresentation> =
+    fun Page<TemplateProperty>.mapToTemplatePropertyRepresentation(): Page<TemplatePropertyRepresentation> =
         map { it.toTemplatePropertyRepresentation() }
 
-    fun TemplateProperty.toTemplatePropertyRepresentation() : TemplatePropertyRepresentation =
+    fun TemplateProperty.toTemplatePropertyRepresentation(): TemplatePropertyRepresentation =
         when (this) {
             is LiteralTemplateProperty -> LiteralTemplatePropertyRepresentation(
-                id, label, order, minCount, maxCount, pattern, path, createdAt, createdBy, datatype
+                id, label, placeholder, order, minCount, maxCount, pattern, path, createdAt, createdBy, datatype
             )
             is ResourceTemplateProperty -> ResourceTemplatePropertyRepresentation(
-                id, label, order, minCount, maxCount, pattern, path, createdAt, createdBy, `class`
+                id, label, placeholder, order, minCount, maxCount, pattern, path, createdAt, createdBy, `class`
             )
         }
 }

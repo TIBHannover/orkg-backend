@@ -50,6 +50,7 @@ class TemplatePropertyValueCreatorUnitTest {
             propertyCount = 4
         )
         val propertyId = ThingId("R1325")
+        val placeholderLiteralId = ThingId("L127")
         val minLiteralId = ThingId("L123")
         val maxLiteralId = ThingId("L124")
         val patternLiteralId = ThingId("L125")
@@ -64,6 +65,22 @@ class TemplatePropertyValueCreatorUnitTest {
                 )
             )
         } returns propertyId
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "literal property placeholder"
+                )
+            )
+        } returns placeholderLiteralId
+        every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = propertyId,
+                predicate = Predicates.placeholder,
+                `object` = placeholderLiteralId
+            )
+        } just runs
         every {
             literalService.create(
                 CreateCommand(
@@ -176,6 +193,22 @@ class TemplatePropertyValueCreatorUnitTest {
             literalService.create(
                 CreateCommand(
                     contributorId = command.contributorId,
+                    label = "literal property placeholder"
+                )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = propertyId,
+                predicate = Predicates.placeholder,
+                `object` = placeholderLiteralId
+            )
+        }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
                     label = command.minCount.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
                 )
@@ -268,6 +301,7 @@ class TemplatePropertyValueCreatorUnitTest {
     @Test
     fun `Given a create literal template property command, when creating, it does not create null values`() {
         val command = dummyCreateLiteralTemplatePropertyCommand().copy(
+            placeholder = null,
             minCount = null,
             maxCount = null,
             pattern = null
@@ -397,6 +431,7 @@ class TemplatePropertyValueCreatorUnitTest {
             propertyCount = 4
         )
         val propertyId = ThingId("R1325")
+        val placeholderLiteralId = ThingId("L127")
         val minLiteralId = ThingId("L123")
         val maxLiteralId = ThingId("L124")
         val patternLiteralId = ThingId("L125")
@@ -411,6 +446,22 @@ class TemplatePropertyValueCreatorUnitTest {
                 )
             )
         } returns propertyId
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "resource property placeholder"
+                )
+            )
+        } returns placeholderLiteralId
+        every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = propertyId,
+                predicate = Predicates.placeholder,
+                `object` = placeholderLiteralId
+            )
+        } just runs
         every {
             literalService.create(
                 CreateCommand(
@@ -523,6 +574,22 @@ class TemplatePropertyValueCreatorUnitTest {
             literalService.create(
                 CreateCommand(
                     contributorId = command.contributorId,
+                    label = "resource property placeholder"
+                )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = propertyId,
+                predicate = Predicates.placeholder,
+                `object` = placeholderLiteralId
+            )
+        }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
                     label = command.minCount.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
                 )
@@ -615,6 +682,7 @@ class TemplatePropertyValueCreatorUnitTest {
     @Test
     fun `Given a create resource template property command, when creating, it does not create null values`() {
         val command = dummyCreateResourceTemplatePropertyCommand().copy(
+            placeholder = null,
             minCount = null,
             maxCount = null,
             pattern = null

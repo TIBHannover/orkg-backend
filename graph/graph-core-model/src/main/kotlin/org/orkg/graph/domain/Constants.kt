@@ -50,6 +50,7 @@ object Predicates {
     val hasWikidataId = ThingId("P76020")
     val isAnonymized = ThingId("IsAnonymized")
     val monthPublished = ThingId("P28")
+    val placeholder = ThingId("placeholder")
     val reference = ThingId("reference")
     val shClass = ThingId("sh:class")
     val shClosed = ThingId("sh:closed")

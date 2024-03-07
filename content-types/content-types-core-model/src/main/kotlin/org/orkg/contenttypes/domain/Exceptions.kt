@@ -120,3 +120,6 @@ class TemplateClosed(id: ThingId) :
 
 class InvalidMonth(month: Int) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid month "$month". Must be in range [1..12].""")
+
+class TemplateNotApplicable(templateId: ThingId, id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Template "$templateId" cannot be applied to resource "$id" because the target resource is not an instance of the template target class.""")

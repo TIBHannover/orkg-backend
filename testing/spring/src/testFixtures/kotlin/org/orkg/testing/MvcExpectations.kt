@@ -216,6 +216,11 @@ fun ResultActions.andExpectTemplate(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.organizations").isArray)
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
 
+fun ResultActions.andExpectTemplateInstance(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.root", `is`(notNullValue())))
+    .andExpectResource("$path.root")
+    .andExpect(jsonPath("$path.statements", `is`(notNullValue())))
+
 fun ResultActions.andExpectResearchFieldWithChildCount(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.child_count", `is`(notNullValue())))
     .andExpect(jsonPath("$path.resource", `is`(notNullValue())))

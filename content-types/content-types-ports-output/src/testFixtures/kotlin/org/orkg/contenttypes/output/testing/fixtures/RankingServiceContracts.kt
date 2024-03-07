@@ -105,7 +105,7 @@ fun <
 
     describe("counting sum of distinct predicates for contributions") {
         val sharedPredicate = fabricator.random<Predicate>()
-        val contribution1 =  fabricator.random<Resource>().copy(
+        val contribution1 = fabricator.random<Resource>().copy(
             classes = setOf(ThingId("Contribution"))
         )
         val statementAboutContribution1 = fabricator.random<GeneralStatement>().copy(
@@ -119,7 +119,7 @@ fun <
         val independentStatementAboutContribution1 = fabricator.random<GeneralStatement>().copy(
             subject = contribution1
         )
-        val contribution2 =  fabricator.random<Resource>().copy(
+        val contribution2 = fabricator.random<Resource>().copy(
             classes = setOf(ThingId("Contribution"))
         )
         val statementAboutContribution2 = fabricator.random<GeneralStatement>().copy(

@@ -8,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
 import org.orkg.contenttypes.domain.InvalidMonth
+import org.orkg.contenttypes.domain.TemplateNotApplicable
 import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.testing.FixedClockConfig
@@ -56,6 +57,23 @@ internal class ExceptionControllerUnitTest {
     }
 
     @Test
+    fun templateNotApplicable() {
+        val templateId = ThingId("R123")
+        val id = ThingId("R456")
+
+        get("/template-not-applicable")
+            .param("templateId", templateId.value)
+            .param("id", id.value)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/template-not-applicable"))
+            .andExpect(jsonPath("$.message").value("""Template "$templateId" cannot be applied to resource "$id" because the target resource is not an instance of the template target class."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
     fun sustainableDevelopmentGoalNotFound() {
         get("/sustainable-development-goal-not-found")
             .param("sdgId", "SDG1")
@@ -99,6 +117,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/errors/literature-list-not-found")
         fun literatureListNotFound(@RequestParam id: ThingId) {
             throw LiteratureListNotFound(id)
+        }
+
+        @GetMapping("/template-not-applicable")
+        fun templateNotApplicable(@RequestParam templateId: ThingId, @RequestParam id: ThingId) {
+            throw TemplateNotApplicable(templateId, id)
         }
     }
 

@@ -23,6 +23,8 @@ import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.input.ResourceRepresentation
+import org.orkg.graph.input.ThingRepresentation
 
 data class PaperRepresentation(
     val id: ThingId,
@@ -307,6 +309,20 @@ data class ResourceTemplatePropertyRepresentation(
     override val createdBy: ContributorId,
     val `class`: ObjectIdAndLabel
 ) : TemplatePropertyRepresentation
+
+data class TemplateInstanceRepresentation(
+    val root: ResourceRepresentation,
+    val statements: Map<ThingId, List<EmbeddedStatementRepresentation>>
+)
+
+data class EmbeddedStatementRepresentation(
+    val thing: ThingRepresentation,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    val statements: Map<ThingId, List<EmbeddedStatementRepresentation>>
+)
 
 data class LiteratureListRepresentation(
     val id: ThingId,

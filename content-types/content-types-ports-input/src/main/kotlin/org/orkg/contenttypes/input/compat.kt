@@ -10,6 +10,8 @@ interface VisualizationUseCases : RetrieveVisualizationUseCase, CreateVisualizat
 
 interface TemplateUseCases : RetrieveTemplateUseCase, CreateTemplateUseCase, CreateTemplatePropertyUseCase
 
+interface TemplateInstanceUseCases : RetrieveTemplateInstanceUseCase
+
 interface ContentTypeResourcesUseCase :
     LoadPaperPort,
     GetPaperFlagQuery,

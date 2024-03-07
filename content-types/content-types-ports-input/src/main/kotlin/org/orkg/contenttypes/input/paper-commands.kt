@@ -19,6 +19,7 @@ interface CreatePaperUseCase {
         val identifiers: Map<String, List<String>>,
         val publicationInfo: PublicationInfoDefinition?,
         val authors: List<Author>,
+        val sustainableDevelopmentGoals: Set<ThingId>,
         val observatories: List<ObservatoryId>,
         val organizations: List<OrganizationId>,
         val contents: PaperContents?,

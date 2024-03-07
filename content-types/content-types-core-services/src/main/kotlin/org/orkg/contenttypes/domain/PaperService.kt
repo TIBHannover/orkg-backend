@@ -17,6 +17,7 @@ import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.PublicationInfoValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
+import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.actions.contribution.ContributionContentsCreator
@@ -43,6 +44,7 @@ import org.orkg.contenttypes.domain.actions.paper.PaperResearchFieldCreator
 import org.orkg.contenttypes.domain.actions.paper.PaperResearchFieldUpdater
 import org.orkg.contenttypes.domain.actions.paper.PaperResourceCreator
 import org.orkg.contenttypes.domain.actions.paper.PaperResourceUpdater
+import org.orkg.contenttypes.domain.actions.paper.PaperSDGCreator
 import org.orkg.contenttypes.domain.actions.paper.PaperTempIdValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperTitleCreateValidator
@@ -137,11 +139,13 @@ class PaperService(
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
+            SDGValidator({ it.sustainableDevelopmentGoals }),
             PaperAuthorCreateValidator(resourceRepository, statementRepository),
             PaperThingDefinitionValidator(thingRepository),
             PaperContributionValidator(thingRepository),
             PaperResourceCreator(resourceService),
             PaperIdentifierCreator(statementService, literalService),
+            PaperSDGCreator(statementService),
             PaperAuthorCreator(resourceService, statementService, literalService, listService),
             PaperResearchFieldCreator(statementService),
             PaperPublicationInfoCreator(resourceService, resourceRepository, statementService, literalService),

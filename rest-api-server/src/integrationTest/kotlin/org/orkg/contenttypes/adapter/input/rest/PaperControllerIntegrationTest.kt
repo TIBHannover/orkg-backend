@@ -99,8 +99,18 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
         predicateService.createPredicate(Predicates.hasWebsite)
         predicateService.createPredicate(Predicates.description)
         predicateService.createPredicate(Predicates.hasListElement)
+        predicateService.createPredicate(Predicates.sustainableDevelopmentGoal)
 
-        classService.createClasses("Paper", "Contribution", "Problem", "ResearchField", "Author", "Venue", "Result")
+        classService.createClasses(
+            "Paper",
+            "Contribution",
+            "Problem",
+            "ResearchField",
+            "Author",
+            "Venue",
+            "Result",
+            Classes.sustainableDevelopmentGoal.value
+        )
 
         resourceService.createResource(
             id = "R12",
@@ -121,6 +131,8 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
         resourceService.createResource(id = "R3004", label = "Some other resource")
 
         resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
+        resourceService.createResource(id = "SDG_1", label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal.value))
+        resourceService.createResource(id = "SDG_2", label = "Zero hunger", classes = setOf(Classes.sustainableDevelopmentGoal.value))
 
         statementService.create(
             subject = resourceService.createResource(
@@ -252,6 +264,7 @@ private const val createPaperJson = """{
       "name": "Author that just has a name"
     }
   ],
+  "sdgs": ["SDG_1", "SDG_2"],
   "observatories": [
     "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
   ],

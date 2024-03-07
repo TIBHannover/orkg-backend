@@ -175,6 +175,8 @@ class PaperController(
         val publicationInfo: PublicationInfoDTO?,
         @field:Valid
         val authors: List<AuthorDTO>,
+        @JsonProperty("sdgs")
+        val sustainableDevelopmentGoals: Set<ThingId>?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)
@@ -243,6 +245,7 @@ class PaperController(
                 identifiers = identifiers.orEmpty(),
                 publicationInfo = publicationInfo?.toPublicationInfoDefinition(),
                 authors = authors.map { it.toAuthor() },
+                sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
                 observatories = observatories,
                 organizations = organizations,
                 contents = contents?.toCreateCommand(),

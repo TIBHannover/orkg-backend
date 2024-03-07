@@ -515,6 +515,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
+                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)").optional(),
                         fieldWithPath("contents").description("Definition of the contents of the paper."),
                         fieldWithPath("contents.resources").description("Definition of resources that need to be created."),
                         fieldWithPath("contents.resources.*.label").description("The label of the resource."),
@@ -1297,6 +1298,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                     homepage = null
                 )
             ),
+            sustainableDevelopmentGoals = setOf(ThingId("SDG_1")),
             observatories = listOf(
                 ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
             ),

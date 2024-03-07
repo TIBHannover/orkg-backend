@@ -151,6 +151,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this paper.").optional()
                     ).and(authorListFields("paper"))
                         .and(publicationInfoFields("paper"))
+                        .and(sustainableDevelopmentGoalsFields("paper"))
                 )
             )
             .andDo(generateDefaultDocSnippets())

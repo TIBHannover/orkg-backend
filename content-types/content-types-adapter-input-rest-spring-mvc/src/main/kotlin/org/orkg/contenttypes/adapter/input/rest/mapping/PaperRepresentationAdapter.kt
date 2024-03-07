@@ -23,6 +23,7 @@ interface PaperRepresentationAdapter : AuthorRepresentationAdapter, LabeledObjec
             publicationInfo = publicationInfo.toPublicationInfoRepresentation(),
             authors = authors.mapToAuthorRepresentation(),
             contributions = contributions.mapToLabeledObjectRepresentation(),
+            sustainableDevelopmentGoals = sustainableDevelopmentGoals.mapToLabeledObjectRepresentation(),
             observatories = observatories,
             organizations = organizations,
             extractionMethod = extractionMethod,

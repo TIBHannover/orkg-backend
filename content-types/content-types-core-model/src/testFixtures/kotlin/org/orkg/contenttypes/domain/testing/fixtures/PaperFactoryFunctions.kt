@@ -61,6 +61,16 @@ fun createDummyPaper() = Paper(
             label = "Contribution 2"
         )
     ),
+    sustainableDevelopmentGoals = setOf(
+        ObjectIdAndLabel(
+            id = ThingId("SDG_1"),
+            label = "No poverty"
+        ),
+        ObjectIdAndLabel(
+            id = ThingId("SDG_2"),
+            label = "Zero hunger"
+        )
+    ),
     observatories = listOf(
         ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
         ObservatoryId("73b2e081-9b50-4d55-b464-22d94e8a25f6")

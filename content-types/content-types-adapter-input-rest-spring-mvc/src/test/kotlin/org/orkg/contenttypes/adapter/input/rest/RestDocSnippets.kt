@@ -26,3 +26,9 @@ fun publicationInfoFields(type: String, path: String = "publication_info"): List
     fieldWithPath("$path.published_in.label").description("The label of the venue."),
     fieldWithPath("$path.url").description("The URL to the original $type. (optional)").optional(),
 )
+
+fun sustainableDevelopmentGoalsFields(type: String, path: String = "sdgs"): List<FieldDescriptor> = listOf(
+    fieldWithPath(path).description("The list of sustainable development goals that the $type belongs to."),
+    fieldWithPath("$path[].id").description("The ID of the sustainable development goal."),
+    fieldWithPath("$path[].label").description("The label of the sustainable development goal."),
+)

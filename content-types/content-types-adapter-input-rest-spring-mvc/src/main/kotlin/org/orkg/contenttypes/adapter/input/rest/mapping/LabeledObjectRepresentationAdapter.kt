@@ -5,9 +5,12 @@ import org.orkg.contenttypes.domain.ObjectIdAndLabel
 
 interface LabeledObjectRepresentationAdapter {
 
-    fun List<ObjectIdAndLabel>.mapToLabeledObjectRepresentation() : List<LabeledObjectRepresentation> =
+    fun List<ObjectIdAndLabel>.mapToLabeledObjectRepresentation(): List<LabeledObjectRepresentation> =
         map { it.toLabeledObjectRepresentation() }
 
-    fun ObjectIdAndLabel.toLabeledObjectRepresentation() : LabeledObjectRepresentation =
+    fun Set<ObjectIdAndLabel>.mapToLabeledObjectRepresentation(): Set<LabeledObjectRepresentation> =
+        mapTo(mutableSetOf()) { it.toLabeledObjectRepresentation() }
+
+    fun ObjectIdAndLabel.toLabeledObjectRepresentation(): LabeledObjectRepresentation =
         LabeledObjectRepresentation(id, label)
 }

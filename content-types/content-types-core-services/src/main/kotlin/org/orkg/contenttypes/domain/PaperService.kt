@@ -232,6 +232,10 @@ class PaperService(
             publicationInfo = PublicationInfo.from(directStatements),
             authors = statements.authors(id),
             contributions = directStatements.wherePredicate(Predicates.hasContribution).objectIdsAndLabel(),
+            sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
+                .objectIdsAndLabel()
+                .sortedBy { it.id }
+                .toSet(),
             observatories = listOf(observatoryId),
             organizations = listOf(organizationId),
             extractionMethod = extractionMethod,

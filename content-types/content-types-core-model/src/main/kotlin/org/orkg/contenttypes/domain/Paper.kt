@@ -16,6 +16,7 @@ data class Paper(
     val publicationInfo: PublicationInfo,
     val authors: List<Author>,
     val contributions: List<ObjectIdAndLabel>,
+    val sustainableDevelopmentGoals: Set<ObjectIdAndLabel>,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
     val extractionMethod: ExtractionMethod,

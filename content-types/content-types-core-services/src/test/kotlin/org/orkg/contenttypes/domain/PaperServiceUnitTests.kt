@@ -180,6 +180,15 @@ class PaperServiceUnitTests {
                 subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasWebsite),
                 `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
+                `object` = createResource(
+                    classes = setOf(Classes.sustainableDevelopmentGoal),
+                    label = "No poverty",
+                    id = ThingId("SDG_1")
+                )
             )
         )
         every {
@@ -256,6 +265,9 @@ class PaperServiceUnitTests {
             paper.contributions shouldNotBe null
             paper.contributions shouldBe listOf(
                 ObjectIdAndLabel(ThingId("Contribution123"), "Contribution")
+            )
+            paper.sustainableDevelopmentGoals shouldBe setOf(
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
             )
             paper.observatories shouldBe setOf(expected.observatoryId)
             paper.organizations shouldBe setOf(expected.organizationId)

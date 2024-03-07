@@ -34,6 +34,8 @@ data class PaperRepresentation(
     val publicationInfo: PublicationInfoRepresentation,
     val authors: List<AuthorRepresentation>,
     val contributions: List<LabeledObjectRepresentation>,
+    @get:JsonProperty("sdgs")
+    val sustainableDevelopmentGoals: Set<LabeledObjectRepresentation>,
     @get:JsonProperty("observatories")
     val observatories: List<ObservatoryId>,
     @get:JsonProperty("organizations")

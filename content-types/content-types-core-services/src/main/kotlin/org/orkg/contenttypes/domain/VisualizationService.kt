@@ -11,10 +11,10 @@ import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.VisualizationState
 import org.orkg.contenttypes.domain.actions.execute
-import org.orkg.contenttypes.domain.actions.visualization.VisualizationAuthorCreator
-import org.orkg.contenttypes.domain.actions.visualization.VisualizationAuthorValidator
-import org.orkg.contenttypes.domain.actions.visualization.VisualizationDescriptionCreator
-import org.orkg.contenttypes.domain.actions.visualization.VisualizationResourceCreator
+import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAuthorCreator
+import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAuthorValidator
+import org.orkg.contenttypes.domain.actions.visualizations.VisualizationDescriptionCreator
+import org.orkg.contenttypes.domain.actions.visualizations.VisualizationResourceCreator
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.graph.domain.BundleConfiguration

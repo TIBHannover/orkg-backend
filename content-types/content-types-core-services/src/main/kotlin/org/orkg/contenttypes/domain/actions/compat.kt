@@ -1,12 +1,12 @@
 package org.orkg.contenttypes.domain.actions
 
-import org.orkg.contenttypes.domain.actions.comparison.ComparisonAction
-import org.orkg.contenttypes.domain.actions.contribution.ContributionAction
-import org.orkg.contenttypes.domain.actions.paper.CreatePaperAction
-import org.orkg.contenttypes.domain.actions.paper.UpdatePaperAction
-import org.orkg.contenttypes.domain.actions.template.TemplateAction
-import org.orkg.contenttypes.domain.actions.template.property.TemplatePropertyAction
-import org.orkg.contenttypes.domain.actions.visualization.VisualizationAction
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAction
+import org.orkg.contenttypes.domain.actions.contributions.ContributionAction
+import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction
+import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
+import org.orkg.contenttypes.domain.actions.templates.TemplateAction
+import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyAction
+import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAction
 import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase

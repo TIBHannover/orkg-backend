@@ -1,0 +1,71 @@
+package org.orkg.contenttypes.domain.actions.comparisons
+
+import io.kotest.assertions.asClue
+import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.runs
+import io.mockk.verify
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.actions.ComparisonState
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
+import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.StatementUseCases
+
+class ComparisonContributionCreatorUnitTest {
+    private val statementService: StatementUseCases = mockk()
+
+    private val contributionCreator = ComparisonContributionCreator(statementService)
+
+    @BeforeEach
+    fun resetState() {
+        clearAllMocks()
+    }
+
+    @AfterEach
+    fun verifyMocks() {
+        confirmVerified(statementService)
+    }
+
+    @Test
+    fun `Given a subject resource, when linking contributions, it returns success`() {
+        val comparisonId = ThingId("R12")
+        val command = dummyCreateComparisonCommand()
+        val state = ComparisonState(
+            comparisonId = comparisonId
+        )
+
+        every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = comparisonId,
+                predicate = Predicates.comparesContribution,
+                `object` = any()
+            )
+        } just runs
+
+        val result = contributionCreator(command, state)
+
+        result.asClue {
+            it.authors.size shouldBe 0
+            it.comparisonId shouldBe state.comparisonId
+        }
+
+        command.contributions.forEach {
+            verify(exactly = 1) {
+                statementService.add(
+                    userId = command.contributorId,
+                    subject = comparisonId,
+                    predicate = Predicates.comparesContribution,
+                    `object` = it
+                )
+            }
+        }
+    }
+}

@@ -121,7 +121,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             it("returns the correct result") {
                 val resource = fabricator.random<Resource>().copy(
                     label = "label to find",
-                    classes = setOf(ThingId("Paper"))
+                    classes = setOf(Classes.paper)
                 )
                 repository.save(resource)
                 val actual = repository.findPaperByLabel("LABEL to find")
@@ -134,7 +134,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
     describe("finding several resources") {
         context("by class and visibility") {
             val size = 3 * Visibility.values().size * 2
-            val classes = setOf(ThingId("Paper"))
+            val classes = setOf(Classes.paper)
             val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
                 resource.copy(
                     visibility = Visibility.values()[index % Visibility.values().size],
@@ -173,7 +173,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         }
         context("by class and listed visibility") {
             val size = 3 * Visibility.values().size * 2
-            val classes = setOf(ThingId("Paper"))
+            val classes = setOf(Classes.paper)
             val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
                 resource.copy(
                     visibility = Visibility.values()[index % Visibility.values().size],
@@ -209,7 +209,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         }
         context("by class and visibility and observatory id") {
             val size = 2 * Visibility.values().size * 2 * 2
-            val classes = setOf(ThingId("Paper"))
+            val classes = setOf(Classes.paper)
             val observatoryId: ObservatoryId = fabricator.random()
             val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
                 resource.copy(
@@ -262,7 +262,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         }
         context("by class and listed visibility and observatory id") {
             val size = 2 * Visibility.values().size * 2 * 2
-            val classes = setOf(ThingId("Paper"))
+            val classes = setOf(Classes.paper)
             val observatoryId: ObservatoryId = fabricator.random()
             val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
                 resource.copy(
@@ -773,7 +773,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 resources[it] = resources[it].copy(label = "label to find")
             }
             repeat(3) {
-                resources[it] = resources[it].copy(classes = resources[it].classes + ThingId("Paper"))
+                resources[it] = resources[it].copy(classes = resources[it].classes + Classes.paper)
             }
             val expected = resources.take(expectedCount)
 
@@ -795,7 +795,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 }.toMutableList()
                 (0 until expectedCount).forEach {
                     resources[it] = resources[it].copy(
-                        classes = resources[it].classes + ThingId("Paper")
+                        classes = resources[it].classes + Classes.paper
                     )
                 }
                 resources.forEach(repository::save)
@@ -836,7 +836,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 }.toMutableList()
                 (0 until expectedCount).forEach {
                     resources[it] = resources[it].copy(
-                        classes = resources[it].classes + ThingId("Paper")
+                        classes = resources[it].classes + Classes.paper
                     )
                 }
                 resources.forEach(repository::save)

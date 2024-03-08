@@ -10,6 +10,8 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ResearchFieldHierarchyEntry
 import org.orkg.contenttypes.domain.ResearchFieldWithChildCount
 import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
@@ -22,8 +24,8 @@ import org.springframework.data.domain.PageRequest
 fun <
     H : ResearchFieldHierarchyRepository,
     S : StatementRepository,
-    R: ResourceRepository,
-    P: PredicateRepository
+    R : ResourceRepository,
+    P : PredicateRepository
 > researchFieldHierarchyRepositoryContract(
     repository: H,
     statementRepository: S,
@@ -44,19 +46,19 @@ fun <
             resourceRepository.save(
                 createResource(
                     id = ThingId("${it + 1}"),
-                    classes = setOf(ThingId("ResearchField")),
+                    classes = setOf(Classes.researchField),
                     createdAt = OffsetDateTime.parse("2023-02-17T12:48:28.709687300+01:00")
                 )
             )
         }
 
-        predicateRepository.save(createPredicate(id = ThingId("P36")))
+        predicateRepository.save(createPredicate(id = Predicates.hasSubfield))
     }
 
     fun createRelation(parentId: ThingId, childId: ThingId) =
         createStatement(
             subject = resourceRepository.findById(parentId).get(),
-            predicate = predicateRepository.findById(ThingId("P36")).get(),
+            predicate = predicateRepository.findById(Predicates.hasSubfield).get(),
             `object` = resourceRepository.findById(childId).get()
         ).copy(id = StatementId("S$parentId-$childId"))
 

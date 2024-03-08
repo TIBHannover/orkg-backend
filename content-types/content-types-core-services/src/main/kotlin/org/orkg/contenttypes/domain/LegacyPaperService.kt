@@ -141,7 +141,7 @@ class LegacyPaperService(
         val paperId = resourceService.create(
             CreateResourceUseCase.CreateCommand(
                 label = request.paper.title,
-                classes = setOf(ThingId("Paper")),
+                classes = setOf(Classes.paper),
                 extractionMethod = request.paper.extractionMethod,
                 contributorId = userId,
                 observatoryId = observatoryId,

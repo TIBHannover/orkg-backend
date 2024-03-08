@@ -250,7 +250,7 @@ class StatementServiceUnitTest : DescribeSpec({
             val id = StatementId("S1")
             val fakeStatement = createStatement(
                 subject = createResource(
-                    classes = setOf(ThingId("List"))
+                    classes = setOf(Classes.list)
                 ),
                 predicate = createPredicate(Predicates.hasListElement),
                 `object` = createResource()
@@ -273,7 +273,7 @@ class StatementServiceUnitTest : DescribeSpec({
             val id = StatementId("S1")
             val fakeStatement = createStatement(
                 subject = createResource(
-                    classes = setOf(ThingId("List"))
+                    classes = setOf(Classes.list)
                 ),
                 `object` = createResource()
             )
@@ -360,7 +360,7 @@ class StatementServiceUnitTest : DescribeSpec({
             val fakeStatements = ids.map {
                 createStatement(
                     subject = createResource(
-                        classes = setOf(ThingId("List"))
+                        classes = setOf(Classes.list)
                     ),
                     predicate = createPredicate(Predicates.hasListElement),
                     `object` = createResource()

@@ -218,7 +218,7 @@ class ComparisonServiceUnitTests {
                 `object` = createResource(
                     classes = setOf(Classes.contribution),
                     label = "Contribution",
-                    id = ThingId("Contribution")
+                    id = ThingId("Contribution123")
                 )
             ),
             createStatement(
@@ -227,7 +227,7 @@ class ComparisonServiceUnitTests {
                 `object` = createResource(
                     classes = setOf(Classes.visualization),
                     label = "Visualization",
-                    id = ThingId("Visualization")
+                    id = ThingId("Visualization123")
                 )
             ),
             createStatement(
@@ -236,7 +236,7 @@ class ComparisonServiceUnitTests {
                 `object` = createResource(
                     classes = setOf(Classes.comparisonRelatedResource),
                     label = "ComparisonRelatedResource",
-                    id = ThingId("ComparisonRelatedResource")
+                    id = ThingId("ComparisonRelatedResource123")
                 )
             ),
             createStatement(
@@ -245,7 +245,7 @@ class ComparisonServiceUnitTests {
                 `object` = createResource(
                     classes = setOf(Classes.comparisonRelatedFigure),
                     label = "ComparisonRelatedFigure",
-                    id = ThingId("ComparisonRelatedFigure")
+                    id = ThingId("ComparisonRelatedFigure123")
                 )
             )
         )
@@ -283,19 +283,19 @@ class ComparisonServiceUnitTests {
             )
             comparison.contributions shouldNotBe null
             comparison.contributions shouldBe listOf(
-                ObjectIdAndLabel(ThingId("Contribution"), "Contribution")
+                ObjectIdAndLabel(ThingId("Contribution123"), "Contribution")
             )
             comparison.visualizations shouldNotBe null
             comparison.visualizations shouldBe listOf(
-                ObjectIdAndLabel(ThingId("Visualization"), "Visualization")
+                ObjectIdAndLabel(ThingId("Visualization123"), "Visualization")
             )
             comparison.relatedFigures shouldNotBe null
             comparison.relatedFigures shouldBe listOf(
-                ObjectIdAndLabel(ThingId("ComparisonRelatedFigure"), "ComparisonRelatedFigure")
+                ObjectIdAndLabel(ThingId("ComparisonRelatedFigure123"), "ComparisonRelatedFigure")
             )
             comparison.relatedResources shouldNotBe null
             comparison.relatedResources shouldBe listOf(
-                ObjectIdAndLabel(ThingId("ComparisonRelatedResource"), "ComparisonRelatedResource")
+                ObjectIdAndLabel(ThingId("ComparisonRelatedResource123"), "ComparisonRelatedResource")
             )
             comparison.references shouldNotBe null
             comparison.references shouldBe listOf(reference)

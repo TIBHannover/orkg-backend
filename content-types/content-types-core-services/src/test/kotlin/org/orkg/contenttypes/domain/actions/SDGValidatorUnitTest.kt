@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
-import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resources
 
 class SDGValidatorUnitTest {
@@ -17,7 +16,7 @@ class SDGValidatorUnitTest {
 
     @Test
     fun `Given a list of sdgs, when sdg is unknown, it throws an exception`() {
-        val id = Classes.paper
+        val id = ThingId("R123")
         assertThrows<SustainableDevelopmentGoalNotFound> { sdgCreateValidator(setOf(id), emptySet()) }
     }
 

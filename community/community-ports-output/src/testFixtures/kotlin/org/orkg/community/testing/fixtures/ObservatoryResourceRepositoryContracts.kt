@@ -230,8 +230,8 @@ fun <
 
                 val filterConfig = listOf(
                     SearchFilter(
-                        path = listOf(ThingId("P32")),
-                        range = ThingId("Resources"),
+                        path = listOf(Predicates.hasResearchProblem),
+                        range = Classes.resources,
                         values = setOf(Value(Operator.EQ, value1.id.value)),
                         exact = false
                     )

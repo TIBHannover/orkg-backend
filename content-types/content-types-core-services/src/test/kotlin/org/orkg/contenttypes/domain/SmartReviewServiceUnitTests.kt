@@ -408,7 +408,7 @@ class SmartReviewServiceUnitTests {
             minLevel = null,
             maxLevel = 2,
             blacklist = emptyList(),
-            whitelist = listOf(Classes.smartReview, Classes.smartReviewPublished, ThingId("Literal"))
+            whitelist = listOf(Classes.smartReview, Classes.smartReviewPublished, Classes.literal)
         )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)

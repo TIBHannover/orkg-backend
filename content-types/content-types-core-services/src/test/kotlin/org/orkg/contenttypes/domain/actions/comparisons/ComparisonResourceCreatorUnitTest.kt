@@ -45,7 +45,7 @@ class ComparisonResourceCreatorUnitTest {
             observatoryId = command.observatories.firstOrNull(),
             organizationId = command.organizations.firstOrNull()
         )
-        val id = ThingId("Comparison")
+        val id = ThingId("R123")
 
         every { resourceService.createUnsafe(resourceCreateCommand) } returns id
 

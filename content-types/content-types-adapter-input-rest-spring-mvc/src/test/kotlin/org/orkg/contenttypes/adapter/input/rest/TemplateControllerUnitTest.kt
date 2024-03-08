@@ -32,6 +32,7 @@ import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.PredicateNotFound
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.ResearchProblemNotFound
 import org.orkg.graph.domain.VisibilityFilter
@@ -720,7 +721,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                 minCount = 1,
                 maxCount = 2,
                 pattern = """\d+""",
-                path = ThingId("P24"),
+                path = Predicates.field,
                 datatype = ThingId("C25"),
             )
 
@@ -733,7 +734,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                 minCount = 3,
                 maxCount = 4,
                 pattern = """\w+""",
-                path = ThingId("P27"),
+                path = Predicates.hasAuthor,
                 `class` = ThingId("C28"),
             )
     }

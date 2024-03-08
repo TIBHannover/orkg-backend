@@ -8,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.Predicates
 
 fun dummyCreateTemplateCommand() = CreateTemplateUseCase.CreateCommand(
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
@@ -44,7 +45,7 @@ fun dummyCreateLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase.
     minCount = 1,
     maxCount = 2,
     pattern = """\d+""",
-    path = ThingId("P24"),
+    path = Predicates.field,
     datatype = ThingId("C25"),
 )
 
@@ -57,6 +58,6 @@ fun dummyCreateResourceTemplatePropertyCommand() = CreateTemplatePropertyUseCase
     minCount = 3,
     maxCount = 4,
     pattern = """\w+""",
-    path = ThingId("P27"),
+    path = Predicates.hasAuthor,
     `class` = ThingId("C28")
 )

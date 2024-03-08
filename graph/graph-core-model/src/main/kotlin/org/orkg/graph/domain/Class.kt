@@ -8,9 +8,9 @@ import org.orkg.common.ThingId
 
 /** The set of classes that can be published, meaning a DOI can be registered for them. */
 val PUBLISHABLE_CLASSES: Set<ThingId> = setOf(
-    ThingId("Paper"),
-    ThingId("Comparison"),
-    ThingId("SmartReviewPublished"),
+    Classes.paper,
+    Classes.comparison,
+    Classes.smartReviewPublished,
 )
 
 data class Class(

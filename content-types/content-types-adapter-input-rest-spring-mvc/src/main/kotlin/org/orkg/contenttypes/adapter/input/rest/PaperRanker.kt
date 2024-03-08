@@ -23,9 +23,6 @@ import org.springframework.data.domain.Sort.Order
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
-private val hasDoi = ThingId("P26")
-private val hasContribution = ThingId("P31")
-
 @Component
 @Profile("production")
 class PaperRanker(
@@ -100,8 +97,8 @@ class PaperRanker(
                         authors += list.elements
                     }
                 }
-                hasDoi -> stats.doi = it.second
-                hasContribution -> contributions += it.second
+                Predicates.hasDOI -> stats.doi = it.second
+                Predicates.hasContribution -> contributions += it.second
             }
         }
         stats.authors = authors.size

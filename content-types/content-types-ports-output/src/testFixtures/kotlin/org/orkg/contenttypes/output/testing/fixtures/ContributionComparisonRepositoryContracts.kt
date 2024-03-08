@@ -10,8 +10,10 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ContributionInfo
 import org.orkg.contenttypes.output.ContributionComparisonRepository
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.output.ClassRepository
@@ -51,11 +53,11 @@ fun <
     val pageable = PageRequest.of(0, 10)
 
     val createRequiredEntities: () -> Unit = {
-        classRepository.save(createClass(ThingId("Paper"), uri = null))
-        classRepository.save(createClass(ThingId("Contribution"), uri = null))
+        classRepository.save(createClass(Classes.paper, uri = null))
+        classRepository.save(createClass(Classes.contribution, uri = null))
 
-        predicateRepository.save(createPredicate(ThingId("P29")))
-        predicateRepository.save(createPredicate(ThingId("P31")))
+        predicateRepository.save(createPredicate(Predicates.yearPublished))
+        predicateRepository.save(createPredicate(Predicates.hasContribution))
     }
 
     beforeTest {
@@ -79,11 +81,11 @@ fun <
     }
 
     val createDummyPaper: () -> Resource = {
-        fabricator.random<Resource>().copy(classes = setOf(ThingId("Paper")))
+        fabricator.random<Resource>().copy(classes = setOf(Classes.paper))
     }
 
     val createDummyContribution: () -> Resource = {
-        fabricator.random<Resource>().copy(classes = setOf(ThingId("Contribution")))
+        fabricator.random<Resource>().copy(classes = setOf(Classes.contribution))
     }
 
     val createDummySubgraph: (year: Thing?) -> List<ContributionInfo> = {
@@ -109,7 +111,7 @@ fun <
                     ThingId(paper.id.value)
                 )
             )
-            val contPredicate = predicateRepository.findById(ThingId("P31")).get()
+            val contPredicate = predicateRepository.findById(Predicates.hasContribution).get()
             statementRepository.save(
                 GeneralStatement(
                     id = fabricator.random(),
@@ -121,7 +123,7 @@ fun <
                 )
             )
             if (year != null) {
-                val yearPredicate = predicateRepository.findById(ThingId("P29")).get()
+                val yearPredicate = predicateRepository.findById(Predicates.yearPublished).get()
                 statementRepository.save(
                     GeneralStatement(
                         id = fabricator.random(),

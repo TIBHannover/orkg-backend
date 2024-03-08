@@ -45,7 +45,7 @@ class PaperResourceCreatorUnitTest {
             observatoryId = command.observatories.firstOrNull(),
             organizationId = command.organizations.firstOrNull()
         )
-        val id = ThingId("Paper")
+        val id = ThingId("R123")
 
         every { resourceService.createUnsafe(resourceCreateCommand) } returns id
 

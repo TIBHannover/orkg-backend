@@ -23,6 +23,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.Contributor
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.InvalidClassCollection
 import org.orkg.graph.domain.ResourceContributor
@@ -199,8 +200,8 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
 
     @Test
     fun `Given several resources, when fetched by label (fuzzy) and base class, then status is 200 OK`() {
-        every { resourceService.findAllByLabelAndBaseClass(any(), ThingId("Problem"), any()) } returns pageOf(
-            createResource(classes = setOf(ThingId("Problem")))
+        every { resourceService.findAllByLabelAndBaseClass(any(), Classes.problem, any()) } returns pageOf(
+            createResource(classes = setOf(Classes.problem))
         )
         every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
@@ -213,7 +214,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpectResource("$.content[*]")
 
         verify(exactly = 1) {
-            resourceService.findAllByLabelAndBaseClass(withArg { it.input shouldBe "label" }, ThingId("Problem"), any())
+            resourceService.findAllByLabelAndBaseClass(withArg { it.input shouldBe "label" }, Classes.problem, any())
         }
         verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
@@ -225,7 +226,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         val command = CreateResourceRequest(
             id = null,
             label = "irrelevant",
-            classes = setOf(ThingId("List"))
+            classes = setOf(Classes.list)
         )
         val exception = InvalidClassCollection(command.classes)
 
@@ -253,7 +254,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         val resource = createResource()
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
-            classes = setOf(ThingId("List"))
+            classes = setOf(Classes.list)
         )
         val exception = InvalidClassCollection(command.classes!!)
 

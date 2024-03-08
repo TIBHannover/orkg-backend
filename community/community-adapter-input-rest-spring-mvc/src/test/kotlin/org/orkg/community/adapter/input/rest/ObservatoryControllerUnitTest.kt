@@ -525,7 +525,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         val resource = createResource(
             id = id,
             label = label,
-            classes = setOf(ThingId("ResearchField"))
+            classes = setOf(Classes.researchField)
         )
 
         every { observatoryUseCases.findAllResearchFields(any()) } returns page

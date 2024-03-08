@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
@@ -12,10 +13,10 @@ import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
 
 private val ReservedClassIds = setOf(
-    ThingId("Literal"),
-    ThingId("Class"),
-    ThingId("Predicate"),
-    ThingId("Resource")
+    Classes.literal,
+    Classes.`class`,
+    Classes.predicate,
+    Classes.resource
 )
 
 @Node("Resource")

@@ -14,6 +14,7 @@ import org.orkg.community.domain.InvalidFilterConfig
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.SearchFilter.Operator
 import org.orkg.graph.domain.SearchFilter.Value
@@ -72,7 +73,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         val id = ObservatoryId(UUID.randomUUID())
         val paperResource = createResource(
             observatoryId = id,
-            classes = setOf(ThingId("Paper"))
+            classes = setOf(Classes.paper)
         )
         every {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.ALL_LISTED, any())
@@ -94,7 +95,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         val id = ObservatoryId(UUID.randomUUID())
         val paperResource = createResource(
             observatoryId = id,
-            classes = setOf(ThingId("Paper")),
+            classes = setOf(Classes.paper),
             visibility = Visibility.FEATURED
         )
         every {
@@ -117,19 +118,19 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         val id = ObservatoryId(UUID.randomUUID())
         val paperResource = createResource(
             observatoryId = id,
-            classes = setOf(ThingId("Paper")),
+            classes = setOf(Classes.paper),
             visibility = Visibility.FEATURED
         )
         val filterConfig = listOf(
             SearchFilter(
                 path = listOf(ThingId("P105027")),
-                range = ThingId("String"),
+                range = Classes.string,
                 values = setOf(Value(Operator.EQ, "yes")),
                 exact = true
             ),
             SearchFilter(
-                path = listOf(ThingId("P32")),
-                range = ThingId("Resources"),
+                path = listOf(Predicates.hasResearchProblem),
+                range = Classes.resources,
                 values = setOf(Value(Operator.EQ, "R1234")),
                 exact = false
             )
@@ -158,19 +159,19 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         val id = ObservatoryId(UUID.randomUUID())
         val paperResource = createResource(
             observatoryId = id,
-            classes = setOf(ThingId("Paper")),
+            classes = setOf(Classes.paper),
             visibility = Visibility.FEATURED
         )
         val filterConfig = listOf(
             SearchFilter(
                 path = listOf(ThingId("P105027")),
-                range = ThingId("String"),
+                range = Classes.string,
                 values = setOf(Value(Operator.EQ, "yes")),
                 exact = true
             ),
             SearchFilter(
-                path = listOf(ThingId("P32")),
-                range = ThingId("Resources"),
+                path = listOf(Predicates.hasResearchProblem),
+                range = Classes.resources,
                 values = setOf(Value(Operator.EQ, "R1234")),
                 exact = false
             )
@@ -225,7 +226,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         val id = ObservatoryId(UUID.randomUUID())
         val comparisonResource = createResource(
             observatoryId = id,
-            classes = setOf(ThingId("Comparison"))
+            classes = setOf(Classes.comparison)
         )
         every {
             resourceService.findAll(
@@ -255,7 +256,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         val id = ObservatoryId(UUID.randomUUID())
         val problemResource = createResource(
             observatoryId = id,
-            classes = setOf(ThingId("Problem"))
+            classes = setOf(Classes.problem)
         )
         every {
             resourceService.findAllProblemsByObservatoryId(id, any())

@@ -7,7 +7,6 @@ import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.common.ThingId
 import org.orkg.createClasses
 import org.orkg.createList
 import org.orkg.createLiteral
@@ -101,23 +100,23 @@ class LegacyComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
         val paper3AuthorsList = listService.createList("Authors", listOf(authorResource))
         val paper4AuthorsList = listService.createList("Authors", listOf(authorNotNeeded))
 
-        statementService.create(paper1, ThingId("hasAuthors"), paper1AuthorsList)
-        statementService.create(paper2, ThingId("hasAuthors"), paper2AuthorsList)
-        statementService.create(paper3, ThingId("hasAuthors"), paper3AuthorsList)
-        statementService.create(paper4, ThingId("hasAuthors"), paper4AuthorsList)
+        statementService.create(paper1, Predicates.hasAuthors, paper1AuthorsList)
+        statementService.create(paper2, Predicates.hasAuthors, paper2AuthorsList)
+        statementService.create(paper3, Predicates.hasAuthors, paper3AuthorsList)
+        statementService.create(paper4, Predicates.hasAuthors, paper4AuthorsList)
 
         // Link paper 1 to year
-        statementService.create(paper1, ThingId("P29"), year)
+        statementService.create(paper1, Predicates.yearPublished, year)
 
         // Link papers to contributions
-        statementService.create(paper1, ThingId("P31"), cont1)
-        statementService.create(paper2, ThingId("P31"), cont2)
-        statementService.create(paper3, ThingId("P31"), cont3)
+        statementService.create(paper1, Predicates.hasContribution, cont1)
+        statementService.create(paper2, Predicates.hasContribution, cont2)
+        statementService.create(paper3, Predicates.hasContribution, cont3)
 
         // Link comparison to contributions
-        statementService.create(comparison, ThingId("compareContribution"), cont1)
-        statementService.create(comparison, ThingId("compareContribution"), cont2)
-        statementService.create(comparison, ThingId("compareContribution"), cont3)
+        statementService.create(comparison, Predicates.comparesContribution, cont1)
+        statementService.create(comparison, Predicates.comparesContribution, cont2)
+        statementService.create(comparison, Predicates.comparesContribution, cont3)
 
         mockMvc
             .perform(getRequestTo("/api/comparisons/$comparison/authors?size=2"))

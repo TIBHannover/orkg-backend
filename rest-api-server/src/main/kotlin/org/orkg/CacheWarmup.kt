@@ -116,7 +116,7 @@ class CacheWarmup(
 
     private fun warmupReviewsList() {
         resourceService.findAll(
-            includeClasses = setOf(ThingId("SmartReviewPublished")),
+            includeClasses = setOf(Classes.smartReviewPublished),
             pageable = PageRequest.of(0, 25)
         ).forEach {
             fetchAssociatedPapers(it.id)
@@ -125,7 +125,7 @@ class CacheWarmup(
 
     private fun warmupListsList() {
         resourceService.findAll(
-            includeClasses = setOf(ThingId("LiteratureListPublished")),
+            includeClasses = setOf(Classes.literatureListPublished),
             pageable = PageRequest.of(0, 25)
         ).forEach {
             fetchAssociatedPapers(it.id)
@@ -135,8 +135,8 @@ class CacheWarmup(
     private fun fetchComparison(id: ThingId) {
         statementService.findAll(subjectId = id, pageable = PageRequests.ALL).forEach {
             val `object` = it.`object`
-            if (`object` is Resource && (ThingId("ComparisonRelatedFigure") in `object`.classes ||
-                    it.predicate.id == ThingId("hasPreviousVersion"))
+            if (`object` is Resource && (Classes.comparisonRelatedFigure in `object`.classes ||
+                    it.predicate.id == Predicates.hasPreviousVersion)
             ) {
                 statementService.findAll(subjectId = `object`.id, pageable = PageRequests.ALL)
             }
@@ -146,12 +146,12 @@ class CacheWarmup(
     private fun fetchVisualization(id: ThingId) {
         statementService.findAll(
             objectId = id,
-            predicateId = ThingId("hasVisualization"),
+            predicateId = Predicates.hasVisualization,
             pageable = PageRequest.of(0, 5)
         )
         statementService.findAll(
             subjectId = id,
-            predicateId = ThingId("hasSubject"),
+            predicateId = Predicates.hasSubject,
             pageable = PageRequest.of(0, 5)
         )
     }
@@ -159,7 +159,7 @@ class CacheWarmup(
     private fun fetchAssociatedPapers(id: ThingId) {
         statementService.findAll(
             subjectId = id,
-            predicateId = ThingId("HasPaper"),
+            predicateId = Predicates.hasPaper,
             pageable = PageRequest.of(0, 9999)
         ).forEach { hasPaperStatement ->
             val paper = hasPaperStatement.`object`

@@ -1,8 +1,8 @@
 package org.orkg.widget.domain
 
-import org.orkg.common.ThingId
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.widget.input.ResolveDOIUseCase
 import org.orkg.widget.input.ResolveDOIUseCase.WidgetInfo
@@ -24,7 +24,7 @@ class ResolveDOIService(
             else -> throw MissingParameter.requiresAtLeastOneOf("doi", "title")
         }
         val totalStatements =
-            if (ThingId("Paper") in resource.classes)
+            if (Classes.paper in resource.classes)
                 statementService.countStatements(resource.id)
             else
                 0

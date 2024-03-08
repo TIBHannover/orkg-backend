@@ -3,16 +3,17 @@ package org.orkg.graph.domain
 import org.orkg.common.ThingId
 
 val reservedClassIds = setOf(
-    ThingId("Literal"),
-    ThingId("Class"),
-    ThingId("Predicate"),
-    ThingId("Resource"),
+    Classes.literal,
+    Classes.`class`,
+    Classes.predicate,
+    Classes.resource,
     Classes.list
 )
 
 object Predicates {
     val comparesContribution = ThingId("compareContribution")
     val description = ThingId("description")
+    val field = ThingId("P24")
     val hasAuthor = ThingId("P27")
     val hasAuthors = ThingId("hasAuthors")
     val hasContent = ThingId("hasContent")
@@ -128,8 +129,6 @@ object Classes {
     val resources = ThingId("Resources")
     val resourceSection = ThingId("ResourceSection")
     val results = ThingId("Results")
-    val review = ThingId("SmartReview")
-    val reviewPublished = ThingId("SmartReviewPublished")
     val scenario = ThingId("Scenario")
     val section = ThingId("Section")
     val smartReview = ThingId("SmartReview")

@@ -14,6 +14,7 @@ import org.orkg.community.domain.Organization
 import org.orkg.community.domain.OrganizationType
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicatePath
+import org.orkg.graph.domain.Predicates
 import org.orkg.mediastorage.domain.ImageId
 
 fun createContributor(
@@ -60,7 +61,7 @@ fun createObservatoryFilter(
     label: String = "Observatory filter",
     createdBy: ContributorId = ContributorId("ee06bdf3-d6f3-41d1-8af2-64c583d9057e"),
     createdAt: LocalDateTime = LocalDateTime.parse("2023-10-17T10:42:48.324973"),
-    path: PredicatePath = listOf(ThingId("P32")),
+    path: PredicatePath = listOf(Predicates.hasResearchProblem),
     range: ThingId = Classes.resources,
     exact: Boolean = false,
     featured: Boolean = false

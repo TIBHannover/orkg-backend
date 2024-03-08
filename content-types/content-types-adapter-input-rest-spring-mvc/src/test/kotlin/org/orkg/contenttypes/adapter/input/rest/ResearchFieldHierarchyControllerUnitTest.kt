@@ -18,6 +18,7 @@ import org.orkg.contenttypes.domain.ResearchFieldHierarchyEntry
 import org.orkg.contenttypes.domain.ResearchFieldWithChildCount
 import org.orkg.contenttypes.input.ResearchFieldHierarchyUseCases
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
@@ -54,7 +55,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var flags: FeatureFlagService
-    
+
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var userRepository: RetrieveContributorUseCase
@@ -188,7 +189,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
         val rootId = ThingId("root")
         val subfieldId = ThingId("subfield")
         val root = createResearchField(rootId)
-        
+
         every { service.findRoots(subfieldId, any()) } returns pageOf(root)
         every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
@@ -315,7 +316,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
     }
 
     private fun get(uri: String) = mockMvc.perform(MockMvcRequestBuilders.get(uri))
-    
+
     private fun createResearchField(id: ThingId = ThingId("R1")) =
-        createResource(id = id, classes = setOf(ThingId("ResearchField")))
+        createResource(id = id, classes = setOf(Classes.researchField))
 }

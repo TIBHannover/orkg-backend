@@ -9,6 +9,7 @@ import org.orkg.contenttypes.domain.ResearchFieldHierarchyEntry
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldHierarchyEntryRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.ResearchFieldHierarchyEntryRepresentation
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -55,7 +56,7 @@ internal class ResearchFieldHierarchyEntryTest : RestDocsTest("research-fields")
         @GetMapping("/hierarchy")
         fun dummyResearchFieldHierarchyEntry(): ResearchFieldHierarchyEntryRepresentation =
             ResearchFieldHierarchyEntry(
-                resource = createResource(classes = setOf(ThingId("ResearchField"))),
+                resource = createResource(classes = setOf(Classes.researchField)),
                 parentIds = setOf(ThingId("R123"))
             ).toResearchFieldHierarchyEntryRepresentation(emptyMap(), emptyMap())
     }

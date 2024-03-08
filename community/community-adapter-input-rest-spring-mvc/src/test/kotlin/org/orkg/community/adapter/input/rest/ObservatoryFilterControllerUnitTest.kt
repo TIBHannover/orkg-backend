@@ -28,6 +28,7 @@ import org.orkg.community.testing.fixtures.createObservatoryFilter
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicateNotFound
+import org.orkg.graph.domain.Predicates
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectObservatoryFilter
@@ -278,7 +279,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         )
         val command = mapOf(
             "label" to "filter",
-            "path" to listOf(ThingId("P32")),
+            "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
             "featured" to false
@@ -325,7 +326,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         )
         val command = mapOf(
             "label" to "filter",
-            "path" to listOf(ThingId("P32")),
+            "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
             "featured" to false
@@ -358,7 +359,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         )
         val command = mapOf(
             "label" to "filter",
-            "path" to listOf(ThingId("P32")),
+            "path" to listOf(Predicates.hasResearchProblem),
             "range" to ThingId("Missing"),
             "exact" to false,
             "featured" to false
@@ -424,7 +425,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         )
         val command = mapOf(
             "label" to "filter",
-            "path" to listOf(ThingId("P32")),
+            "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
             "featured" to false
@@ -455,7 +456,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         )
         val command = mapOf(
             "label" to "filter",
-            "path" to listOf(ThingId("P32")),
+            "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
             "featured" to false
@@ -503,7 +504,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         )
         val command = mapOf(
             "label" to "filter",
-            "path" to listOf(ThingId("P32")),
+            "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
             "featured" to false
@@ -539,7 +540,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         )
         val command = mapOf(
             "label" to "filter",
-            "path" to listOf(ThingId("P32")),
+            "path" to listOf(Predicates.hasResearchProblem),
             "range" to ThingId("Missing"),
             "exact" to false,
             "featured" to false
@@ -611,7 +612,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         )
         val command = mapOf(
             "label" to "filter",
-            "path" to listOf(ThingId("P32")),
+            "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
             "featured" to false
@@ -643,7 +644,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val command = mapOf(
             "label" to "filter",
-            "path" to listOf(ThingId("P32")),
+            "path" to listOf(Predicates.hasResearchProblem),
             "range" to ThingId("Missing"),
             "exact" to false,
             "featured" to false

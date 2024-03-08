@@ -1021,15 +1021,15 @@ fun <
         context("by contribution id") {
             val statements = mutableListOf<GeneralStatement>()
             val hasContribution = createPredicate(
-                id = ThingId("P31")
+                id = Predicates.hasContribution
             )
             val hasDOI = createPredicate(
-                id = ThingId("P26")
+                id = Predicates.hasDOI
             )
             repeat(2) {
                 val paper = createResource(
                     id = fabricator.random(),
-                    classes = setOf(ThingId("Paper"))
+                    classes = setOf(Classes.paper)
                 )
                 val contribution = createResource(
                     id = fabricator.random(),
@@ -1129,7 +1129,7 @@ fun <
 
     describe("finding a resource by DOI") {
         it("always returns the resource") {
-            val hasDOI = createPredicate(id = ThingId("P26"))
+            val hasDOI = createPredicate(id = Predicates.hasDOI)
             val doi = fabricator.random<String>()
             val resource = createResource(classes = setOf(ThingId(fabricator.random())))
             val resourceHasDoi = createStatement(
@@ -1258,7 +1258,7 @@ fun <
 
     describe("finding several papers") {
         val doi = fabricator.random<String>()
-        val hasDoi = createPredicate(id = ThingId("P26"))
+        val hasDoi = createPredicate(id = Predicates.hasDOI)
         context("by class and doi") {
             val doiLiteral = createLiteral(label = doi)
 
@@ -1506,8 +1506,8 @@ fun <
 
                 val filterConfig = listOf(
                     SearchFilter(
-                        path = listOf(ThingId("P32")),
-                        range = ThingId("Resources"),
+                        path = listOf(Predicates.hasResearchProblem),
+                        range = Classes.resources,
                         values = setOf(Value(Operator.EQ, value1.id.value)),
                         exact = false
                     )
@@ -1542,28 +1542,28 @@ fun <
             val expected = (0 until 2).map {
                 val paper = createResource(
                     id = fabricator.random(),
-                    classes = setOf(ThingId("Paper")),
+                    classes = setOf(Classes.paper),
                     observatoryId = observatoryId
                 )
                 val contribution = createResource(
                     id = fabricator.random(),
-                    classes = setOf(ThingId("Contribution"))
+                    classes = setOf(Classes.contribution)
                 )
                 val researchProblem = createResource(
                     id = fabricator.random(),
-                    classes = setOf(ThingId("Problem")),
+                    classes = setOf(Classes.problem),
                     observatoryId = observatoryId
                 )
                 val paperHasContribution = createStatement(
                     id = fabricator.random(),
                     subject = paper,
-                    predicate = createPredicate(ThingId("P31")), // hasContribution
+                    predicate = createPredicate(Predicates.hasContribution), // hasContribution
                     `object` = contribution
                 )
                 val contributionHasResearchProblem = createStatement(
                     id = fabricator.random(),
                     subject = contribution,
-                    predicate = createPredicate(ThingId("P32")), // hasProblem
+                    predicate = createPredicate(Predicates.hasResearchProblem), // hasProblem
                     `object` = researchProblem
                 )
                 saveStatement(paperHasContribution)
@@ -1594,23 +1594,23 @@ fun <
         context("by organization id") {
             val organizationId = fabricator.random<OrganizationId>()
             val compareContribution = fabricator.random<Predicate>().copy(
-                id = ThingId("compareContribution")
+                id = Predicates.comparesContribution
             )
             val hasResearchProblem = fabricator.random<Predicate>().copy(
-                id = ThingId("P32")
+                id = Predicates.hasResearchProblem
             )
             val expected = (0 until 2).map {
                 val contribution = createResource(
                     id = fabricator.random(),
-                    classes = setOf(ThingId("Contribution"))
+                    classes = setOf(Classes.contribution)
                 )
                 val researchProblem = createResource(
                     id = fabricator.random(),
-                    classes = setOf(ThingId("Problem"))
+                    classes = setOf(Classes.problem)
                 )
                 val comparison = createResource(
                     id = fabricator.random(),
-                    classes = setOf(ThingId("Comparison")),
+                    classes = setOf(Classes.comparison),
                     organizationId = organizationId
                 )
                 val comparisonHasContribution = createStatement(

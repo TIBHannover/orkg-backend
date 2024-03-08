@@ -136,21 +136,21 @@ class ExampleData(
         for (field in fields) {
             val newFieldCommand = CreateResourceUseCase.CreateCommand(
                 label = field.name,
-                classes = setOf(ThingId("ResearchField")),
+                classes = setOf(Classes.researchField),
             )
             val newField = resourceService.create(newFieldCommand)
             statementService.create(researchField, subfieldPredicate, newField)
             for (subfield in field.subfields) {
                 val newSubFieldCommand = CreateResourceUseCase.CreateCommand(
                     label = subfield.name,
-                    classes = setOf(ThingId("ResearchField")),
+                    classes = setOf(Classes.researchField),
                 )
                 val newSubfield = resourceService.create(newSubFieldCommand)
                 statementService.create(newField, subfieldPredicate, newSubfield)
                 for (subSubfield in subfield.subfields) {
                     val newSubSubFieldCommand = CreateResourceUseCase.CreateCommand(
                         label = subSubfield.name,
-                        classes = setOf(ThingId("ResearchField")),
+                        classes = setOf(Classes.researchField),
                     )
                     val newSubSubfield = resourceService.create(newSubSubFieldCommand)
                     statementService.create(newSubfield, subfieldPredicate, newSubSubfield)

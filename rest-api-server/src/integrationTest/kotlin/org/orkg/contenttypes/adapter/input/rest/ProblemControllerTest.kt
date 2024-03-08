@@ -6,7 +6,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ContributorId
-import org.orkg.common.ThingId
 import org.orkg.createClasses
 import org.orkg.createList
 import org.orkg.createLiteral
@@ -76,7 +75,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun getUsersPerProblem() {
-        val predicate = ThingId("P32")
+        val predicate = Predicates.hasResearchProblem
 
         val problem = resourceService.createResource(
             classes = setOf("Problem"),
@@ -140,24 +139,24 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
         val paper3AuthorsList = listService.createList("Authors", listOf(author1))
         val paper4AuthorsList = listService.createList("Authors", listOf(author2))
 
-        statementService.create(paper1, ThingId("hasAuthors"), paper1AuthorsList)
-        statementService.create(paper2, ThingId("hasAuthors"), paper2AuthorsList)
-        statementService.create(paper3, ThingId("hasAuthors"), paper3AuthorsList)
-        statementService.create(paper4, ThingId("hasAuthors"), paper4AuthorsList)
+        statementService.create(paper1, Predicates.hasAuthors, paper1AuthorsList)
+        statementService.create(paper2, Predicates.hasAuthors, paper2AuthorsList)
+        statementService.create(paper3, Predicates.hasAuthors, paper3AuthorsList)
+        statementService.create(paper4, Predicates.hasAuthors, paper4AuthorsList)
 
         // Link papers to contributions
-        statementService.create(paper1, ThingId("P31"), cont1)
-        statementService.create(paper1, ThingId("P31"), cont2)
-        statementService.create(paper2, ThingId("P31"), cont3)
-        statementService.create(paper3, ThingId("P31"), cont4)
-        statementService.create(paper4, ThingId("P31"), cont5)
+        statementService.create(paper1, Predicates.hasContribution, cont1)
+        statementService.create(paper1, Predicates.hasContribution, cont2)
+        statementService.create(paper2, Predicates.hasContribution, cont3)
+        statementService.create(paper3, Predicates.hasContribution, cont4)
+        statementService.create(paper4, Predicates.hasContribution, cont5)
 
         // Link problems to contributions
-        statementService.create(cont1, ThingId("P32"), problem1)
-        statementService.create(cont2, ThingId("P32"), problem2)
-        statementService.create(cont3, ThingId("P32"), problem2)
-        statementService.create(cont4, ThingId("P32"), problem1)
-        statementService.create(cont5, ThingId("P32"), problem2)
+        statementService.create(cont1, Predicates.hasResearchProblem, problem1)
+        statementService.create(cont2, Predicates.hasResearchProblem, problem2)
+        statementService.create(cont3, Predicates.hasResearchProblem, problem2)
+        statementService.create(cont4, Predicates.hasResearchProblem, problem1)
+        statementService.create(cont5, Predicates.hasResearchProblem, problem2)
 
         mockMvc
             .perform(getRequestTo("/api/problems/$problem1/authors/?page=0&size=1"))

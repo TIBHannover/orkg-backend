@@ -5,7 +5,6 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.common.ThingId
 import org.orkg.createClasses
 import org.orkg.createLiteral
 import org.orkg.createPredicate
@@ -79,11 +78,11 @@ class ContributionComparisonControllerIntegrationTest : RestDocumentationBaseTes
         val year1 = literalService.createLiteral(label = "2022")
         val year2 = literalService.createLiteral(label = "2023")
 
-        statementService.create(paper1, ThingId("P31"), cont1)
-        statementService.create(paper2, ThingId("P31"), cont2)
+        statementService.create(paper1, Predicates.hasContribution, cont1)
+        statementService.create(paper2, Predicates.hasContribution, cont2)
 
-        statementService.create(paper1, ThingId("P29"), year1)
-        statementService.create(paper2, ThingId("P29"), year2)
+        statementService.create(paper1, Predicates.yearPublished, year1)
+        statementService.create(paper2, Predicates.yearPublished, year2)
 
         val ids = listOf(cont1, cont2)
 
@@ -108,9 +107,9 @@ class ContributionComparisonControllerIntegrationTest : RestDocumentationBaseTes
 
         val year1 = literalService.createLiteral(label = "2022")
 
-        statementService.create(paper1, ThingId("P31"), cont1)
+        statementService.create(paper1, Predicates.hasContribution, cont1)
 
-        statementService.create(paper1, ThingId("P29"), year1)
+        statementService.create(paper1, Predicates.yearPublished, year1)
 
         val ids = listOf(cont1)
 

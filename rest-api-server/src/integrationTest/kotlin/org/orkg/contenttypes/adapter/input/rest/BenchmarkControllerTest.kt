@@ -125,13 +125,13 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val bench1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
         val bench2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 2")
 
-        statementService.create(benchPaper1, ThingId("P30"), fieldWithBenchmark)
-        statementService.create(benchPaper2, ThingId("P30"), fieldWithBenchmark)
-        statementService.create(normalPaper, ThingId("P30"), fieldWithoutBenchmark)
+        statementService.create(benchPaper1, Predicates.hasResearchField, fieldWithBenchmark)
+        statementService.create(benchPaper2, Predicates.hasResearchField, fieldWithBenchmark)
+        statementService.create(normalPaper, Predicates.hasResearchField, fieldWithoutBenchmark)
 
-        statementService.create(benchPaper1, ThingId("P31"), benchCont1)
-        statementService.create(benchPaper2, ThingId("P31"), benchCont2)
-        statementService.create(normalPaper, ThingId("P31"), normalCont1)
+        statementService.create(benchPaper1, Predicates.hasContribution, benchCont1)
+        statementService.create(benchPaper2, Predicates.hasContribution, benchCont2)
+        statementService.create(normalPaper, Predicates.hasContribution, normalCont1)
 
         statementService.create(benchCont1, ThingId(labelsAndClasses.benchmarkPredicate), bench1)
         statementService.create(benchCont2, ThingId(labelsAndClasses.benchmarkPredicate), bench2)
@@ -186,11 +186,11 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
         val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
 
-        statementService.create(benchPaper, ThingId("P30"), fieldWithDataset)
-        statementService.create(benchPaper, ThingId("P31"), benchCont)
+        statementService.create(benchPaper, Predicates.hasResearchField, fieldWithDataset)
+        statementService.create(benchPaper, Predicates.hasContribution, benchCont)
 
-        statementService.create(benchCont, ThingId("P32"), problem1)
-        statementService.create(benchCont, ThingId("P32"), problem2)
+        statementService.create(benchCont, Predicates.hasResearchProblem, problem1)
+        statementService.create(benchCont, Predicates.hasResearchProblem, problem2)
         statementService.create(benchCont, ThingId(labelsAndClasses.benchmarkPredicate), benchmark)
 
         codes.forEach {
@@ -244,11 +244,11 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
         val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
 
-        statementService.create(benchPaper, ThingId("P30"), field1)
-        statementService.create(benchPaper, ThingId("P31"), benchCont)
+        statementService.create(benchPaper, Predicates.hasResearchField, field1)
+        statementService.create(benchPaper, Predicates.hasContribution, benchCont)
 
-        statementService.create(benchCont, ThingId("P32"), problem1)
-        statementService.create(benchCont, ThingId("P32"), problem2)
+        statementService.create(benchCont, Predicates.hasResearchProblem, problem1)
+        statementService.create(benchCont, Predicates.hasResearchProblem, problem2)
         statementService.create(benchCont, ThingId(labelsAndClasses.benchmarkPredicate), benchmark)
 
         codes.forEach {
@@ -303,20 +303,20 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
         val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
 
-        statementService.create(benchPaper, ThingId("P30"), field1)
-        statementService.create(dummyPaper, ThingId("P30"), field2)
+        statementService.create(benchPaper, Predicates.hasResearchField, field1)
+        statementService.create(dummyPaper, Predicates.hasResearchField, field2)
 
-        statementService.create(benchPaper, ThingId("P31"), benchCont)
-        statementService.create(dummyPaper, ThingId("P31"), dummyCont)
+        statementService.create(benchPaper, Predicates.hasContribution, benchCont)
+        statementService.create(dummyPaper, Predicates.hasContribution, dummyCont)
 
-        statementService.create(benchCont, ThingId("P32"), problem1)
-        statementService.create(benchCont, ThingId("P32"), problem2)
+        statementService.create(benchCont, Predicates.hasResearchProblem, problem1)
+        statementService.create(benchCont, Predicates.hasResearchProblem, problem2)
         statementService.create(benchCont, ThingId(labelsAndClasses.benchmarkPredicate), benchmark)
 
-        statementService.create(dummyCont, ThingId("P32"), problem1)
+        statementService.create(dummyCont, Predicates.hasResearchProblem, problem1)
         statementService.create(dummyCont, ThingId(labelsAndClasses.benchmarkPredicate), dummyBenchmark)
 
-        statementService.create(field1, ThingId("P36"), field2)
+        statementService.create(field1, Predicates.hasSubfield, field2)
 
         codes.forEach {
             statementService.create(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it)
@@ -377,12 +377,12 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(cont1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
         statementService.create(cont2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
 
-        statementService.create(cont1, ThingId("P32"), problem1)
-        statementService.create(cont1, ThingId("P32"), problem2)
-        statementService.create(cont2, ThingId("P32"), problem2)
+        statementService.create(cont1, Predicates.hasResearchProblem, problem1)
+        statementService.create(cont1, Predicates.hasResearchProblem, problem2)
+        statementService.create(cont2, Predicates.hasResearchProblem, problem2)
 
-        statementService.create(paper, ThingId("P31"), cont1)
-        statementService.create(paper, ThingId("P31"), cont2)
+        statementService.create(paper, Predicates.hasContribution, cont1)
+        statementService.create(paper, Predicates.hasContribution, cont2)
 
         mockMvc
             .perform(getRequestTo("/api/datasets/$dataset/problems"))
@@ -425,11 +425,11 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val dataset1 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 1")
         val dataset2 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 2")
 
-        statementService.create(paper1, ThingId("P31"), contributionOfPaper1)
-        statementService.create(paper2, ThingId("P31"), contributionOfPaper2)
+        statementService.create(paper1, Predicates.hasContribution, contributionOfPaper1)
+        statementService.create(paper2, Predicates.hasContribution, contributionOfPaper2)
 
-        statementService.create(contributionOfPaper1, ThingId("P32"), problem)
-        statementService.create(contributionOfPaper2, ThingId("P32"), problem)
+        statementService.create(contributionOfPaper1, Predicates.hasResearchProblem, problem)
+        statementService.create(contributionOfPaper2, Predicates.hasResearchProblem, problem)
 
         statementService.create(contributionOfPaper1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
         statementService.create(contributionOfPaper2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
@@ -528,8 +528,8 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
         statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
 
-        statementService.create(paper, ThingId("P31"), contribution1)
-        statementService.create(paper, ThingId("P31"), contribution2)
+        statementService.create(paper, Predicates.hasContribution, contribution1)
+        statementService.create(paper, Predicates.hasContribution, contribution2)
 
         statementService.create(contribution1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
         statementService.create(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
@@ -541,8 +541,8 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             statementService.create(contribution2, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
-        statementService.create(contribution1, ThingId("P32"), problem1)
-        statementService.create(contribution2, ThingId("P32"), problem2)
+        statementService.create(contribution1, Predicates.hasResearchProblem, problem1)
+        statementService.create(contribution2, Predicates.hasResearchProblem, problem2)
 
         statementService.create(contribution1, ThingId(labelsAndClasses.modelPredicate), model1)
         statementService.create(contribution2, ThingId(labelsAndClasses.modelPredicate), model2)
@@ -622,11 +622,11 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
         statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
 
-        statementService.create(paper, ThingId("P31"), contribution1)
-        statementService.create(paper, ThingId("P31"), contribution2)
+        statementService.create(paper, Predicates.hasContribution, contribution1)
+        statementService.create(paper, Predicates.hasContribution, contribution2)
 
-        statementService.create(contribution1, ThingId("P32"), problem1)
-        statementService.create(contribution2, ThingId("P32"), problem2)
+        statementService.create(contribution1, Predicates.hasResearchProblem, problem1)
+        statementService.create(contribution2, Predicates.hasResearchProblem, problem2)
 
         statementService.create(contribution1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
         statementService.create(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
@@ -714,14 +714,14 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
         statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
 
-        statementService.create(paper, ThingId("P31"), contribution1)
-        statementService.create(paper, ThingId("P31"), contribution2)
+        statementService.create(paper, Predicates.hasContribution, contribution1)
+        statementService.create(paper, Predicates.hasContribution, contribution2)
 
         statementService.create(contribution1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
         statementService.create(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
 
-        statementService.create(contribution1, ThingId("P32"), problem1)
-        statementService.create(contribution2, ThingId("P32"), problem2)
+        statementService.create(contribution1, Predicates.hasResearchProblem, problem1)
+        statementService.create(contribution2, Predicates.hasResearchProblem, problem2)
 
         statementService.create(contribution1, ThingId(labelsAndClasses.modelPredicate), model1)
         statementService.create(contribution2, ThingId(labelsAndClasses.modelPredicate), model2)

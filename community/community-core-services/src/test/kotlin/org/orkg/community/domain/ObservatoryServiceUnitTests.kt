@@ -83,7 +83,7 @@ class ObservatoryServiceUnitTests {
     @Test
     fun `Finding several observatories by research field`() {
         val researchField = createResource(
-            classes = setOf(ThingId("ResearchField"))
+            classes = setOf(Classes.researchField)
         )
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID()))).copy(
             researchField = researchField.id

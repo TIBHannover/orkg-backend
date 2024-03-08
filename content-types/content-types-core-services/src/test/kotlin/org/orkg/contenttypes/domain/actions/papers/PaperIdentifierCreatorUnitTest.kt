@@ -38,7 +38,7 @@ class PaperIdentifierCreatorUnitTest {
     @Test
     fun `Given a paper create command, it crates new paper identifiers`() {
         val command = dummyCreatePaperCommand()
-        val paperId = ThingId("Paper")
+        val paperId = ThingId("R123")
         val state = CreatePaperState(paperId = paperId)
 
         val doi = command.identifiers["doi"]!!.first()
@@ -80,7 +80,7 @@ class PaperIdentifierCreatorUnitTest {
         val command = dummyCreatePaperCommand().copy(
             identifiers = mapOf("unknown" to listOf("value"))
         )
-        val paperId = ThingId("Paper")
+        val paperId = ThingId("R123")
         val state = CreatePaperState(paperId = paperId)
 
         val result = paperIdentifierCreator(command, state)

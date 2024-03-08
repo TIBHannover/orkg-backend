@@ -27,6 +27,7 @@ import org.orkg.community.testing.fixtures.createObservatoryFilter
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicateNotFound
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createClass
@@ -52,7 +53,7 @@ class ObservatoryFilterServiceUnitTest {
             observatoryId = ObservatoryId(UUID.randomUUID()),
             label = "label",
             contributorId = ContributorId(UUID.randomUUID()),
-            path = listOf(ThingId("P32")),
+            path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
             featured = false
@@ -96,7 +97,7 @@ class ObservatoryFilterServiceUnitTest {
             observatoryId = ObservatoryId(UUID.randomUUID()),
             label = "label",
             contributorId = ContributorId(UUID.randomUUID()),
-            path = listOf(ThingId("P32")),
+            path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
             featured = false
@@ -139,7 +140,7 @@ class ObservatoryFilterServiceUnitTest {
             observatoryId = ObservatoryId(UUID.randomUUID()),
             label = "label",
             contributorId = ContributorId(UUID.randomUUID()),
-            path = listOf(ThingId("P32")),
+            path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
             featured = false
@@ -158,7 +159,7 @@ class ObservatoryFilterServiceUnitTest {
             observatoryId = ObservatoryId(UUID.randomUUID()),
             label = "label",
             contributorId = ContributorId(UUID.randomUUID()),
-            path = listOf(ThingId("P32")),
+            path = listOf(Predicates.hasResearchProblem),
             range = ThingId("Missing"),
             exact = false,
             featured = false
@@ -180,7 +181,7 @@ class ObservatoryFilterServiceUnitTest {
             observatoryId = ObservatoryId(UUID.randomUUID()),
             label = "label",
             contributorId = ContributorId(UUID.randomUUID()),
-            path = listOf(ThingId("P32")),
+            path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
             featured = false
@@ -206,7 +207,7 @@ class ObservatoryFilterServiceUnitTest {
             observatoryId = ObservatoryId(UUID.randomUUID()),
             label = "label",
             contributorId = ContributorId(UUID.randomUUID()),
-            path = listOf(ThingId("P32")),
+            path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
             featured = false
@@ -235,7 +236,7 @@ class ObservatoryFilterServiceUnitTest {
         val command = UpdateObservatoryFilterUseCase.UpdateCommand(
             id = filter.id,
             label = "label",
-            path = listOf(ThingId("P32")),
+            path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = true,
             featured = true
@@ -274,7 +275,7 @@ class ObservatoryFilterServiceUnitTest {
         val command = UpdateObservatoryFilterUseCase.UpdateCommand(
             id = filter.id,
             label = "label",
-            path = listOf(ThingId("P32")),
+            path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
             featured = false
@@ -293,7 +294,7 @@ class ObservatoryFilterServiceUnitTest {
         val command = UpdateObservatoryFilterUseCase.UpdateCommand(
             id = filter.id,
             label = "label",
-            path = listOf(ThingId("P32")),
+            path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
             featured = false
@@ -314,7 +315,7 @@ class ObservatoryFilterServiceUnitTest {
         val command = UpdateObservatoryFilterUseCase.UpdateCommand(
             id = filter.id,
             label = "label",
-            path = listOf(ThingId("P32")),
+            path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
             featured = false

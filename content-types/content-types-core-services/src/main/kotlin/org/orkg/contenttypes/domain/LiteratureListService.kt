@@ -72,7 +72,7 @@ class LiteratureListService(
                         minLevel = null,
                         maxLevel = 2,
                         blacklist = emptyList(),
-                        whitelist = listOf(Classes.literatureList, Classes.literatureListPublished, ThingId("Literal"))
+                        whitelist = listOf(Classes.literatureList, Classes.literatureListPublished, Classes.literal)
                     ),
                     sort = Sort.unsorted()
                 )

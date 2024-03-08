@@ -297,7 +297,7 @@ class LiteratureListServiceUnitTests {
             minLevel = null,
             maxLevel = 2,
             blacklist = emptyList(),
-            whitelist = listOf(Classes.literatureList, Classes.literatureListPublished, ThingId("Literal"))
+            whitelist = listOf(Classes.literatureList, Classes.literatureListPublished, Classes.literal)
         )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)

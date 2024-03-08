@@ -44,7 +44,7 @@ class IdentifierUpdaterUnitTest {
 
     @Test
     fun `Given a map of identifiers, when updating an identifier with the same key and value, it returns success`() {
-        val subjectId = ThingId("Author")
+        val subjectId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
         val orcid = "0000-0002-1825-0097"
         val oldIdentifiers = mapOf("orcid" to listOf(orcid))
@@ -55,7 +55,7 @@ class IdentifierUpdaterUnitTest {
 
     @Test
     fun `Given a map of identifiers, when updating an identifier with the same key but different value, it replaces the identifier`() {
-        val authorId = ThingId("Author")
+        val authorId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
         val oldOrcid = "0000-0002-1825-0097"
         val newOrcid = "0000-0002-1825-0098"
@@ -95,7 +95,7 @@ class IdentifierUpdaterUnitTest {
 
     @Test
     fun `Given a map of identifiers, when new identifiers are empty, it removes the old identifiers`() {
-        val authorId = ThingId("Author")
+        val authorId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
         val oldOrcid = "0000-0002-1825-0097"
         val oldIdentifiers = mapOf("orcid" to listOf(oldOrcid))
@@ -132,7 +132,7 @@ class IdentifierUpdaterUnitTest {
 
     @Test
     fun `Given a map of identifiers, when there are no old identifiers, it creates the new identifiers`() {
-        val authorId = ThingId("Author")
+        val authorId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
         val orcid = "0000-0002-1825-0097"
         val newIdentifiers = mapOf("orcid" to listOf(orcid))

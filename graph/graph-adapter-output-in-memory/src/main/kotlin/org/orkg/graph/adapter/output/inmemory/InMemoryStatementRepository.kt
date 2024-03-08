@@ -155,21 +155,21 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
                     with(statement.`object` as Resource) {
                         if (configuration.blacklist.isNotEmpty() &&
                             (classes.containsAny(configuration.blacklist) ||
-                                configuration.blacklist.contains(ThingId("Resource")))
+                                configuration.blacklist.contains(Classes.resource))
                         ) {
                             return@findSubgraph false
                         } else if (configuration.whitelist.isNotEmpty() &&
                             !classes.containsAny(configuration.whitelist) &&
-                            configuration.whitelist.contains(ThingId("Resource"))
+                            configuration.whitelist.contains(Classes.resource)
                         ) {
                             return@findSubgraph false
                         }
                     }
                 } else if (configuration.whitelist.isNotEmpty()) {
                     return@findSubgraph when (statement.`object`) {
-                        is Literal -> configuration.whitelist.contains(ThingId("Literal"))
-                        is Predicate -> configuration.whitelist.contains(ThingId("Predicate"))
-                        is Class -> configuration.whitelist.contains(ThingId("Class"))
+                        is Literal -> configuration.whitelist.contains(Classes.literal)
+                        is Predicate -> configuration.whitelist.contains(Classes.predicate)
+                        is Class -> configuration.whitelist.contains(Classes.`class`)
                         else -> false
                     }
                 }

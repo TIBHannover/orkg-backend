@@ -14,6 +14,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
 import org.orkg.contenttypes.output.ResearchFieldRepository
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.pageOf
@@ -172,5 +173,5 @@ class ResearchFieldHierarchyServiceUnitTests {
     }
 
     private fun createResearchField(id: ThingId) =
-        createResource(id = id, classes = setOf(ThingId("ResearchField")))
+        createResource(id = id, classes = setOf(Classes.researchField))
 }

@@ -389,7 +389,7 @@ internal class ClassHierarchyControllerUnitTest {
 
     @Test
     fun `Given a class id, when counting class instances, then status is 200 OK`() {
-        val id = ThingId("class")
+        val id = ThingId("C123")
 
         every { classHierarchyService.countClassInstances(id) } returns 5
 
@@ -400,7 +400,7 @@ internal class ClassHierarchyControllerUnitTest {
 
     @Test
     fun `Given a class id, when service reports missing class while counting class instances, then status is 404 NOT FOUND`() {
-        val id = ThingId("class")
+        val id = ThingId("C123")
 
         every { classHierarchyService.countClassInstances(id) } throws ClassNotFound.withThingId(id)
 

@@ -6,9 +6,9 @@ import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.RankingService
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
@@ -75,7 +75,7 @@ fun <
 
     describe("finding all statements about a paper") {
         val paper = fabricator.random<Resource>().copy(
-            classes = setOf(ThingId("Paper"))
+            classes = setOf(Classes.paper)
         )
         val literalStatements = fabricator.random<List<Literal>>().map {
             fabricator.random<GeneralStatement>().copy(
@@ -106,7 +106,7 @@ fun <
     describe("counting sum of distinct predicates for contributions") {
         val sharedPredicate = fabricator.random<Predicate>()
         val contribution1 = fabricator.random<Resource>().copy(
-            classes = setOf(ThingId("Contribution"))
+            classes = setOf(Classes.contribution)
         )
         val statementAboutContribution1 = fabricator.random<GeneralStatement>().copy(
             subject = contribution1,
@@ -120,7 +120,7 @@ fun <
             subject = contribution1
         )
         val contribution2 = fabricator.random<Resource>().copy(
-            classes = setOf(ThingId("Contribution"))
+            classes = setOf(Classes.contribution)
         )
         val statementAboutContribution2 = fabricator.random<GeneralStatement>().copy(
             subject = contribution2,
@@ -150,25 +150,25 @@ fun <
 
     describe("counting comparisons including a paper") {
         val comparison = fabricator.random<Resource>().copy(
-            classes = setOf(ThingId("Comparison"))
+            classes = setOf(Classes.comparison)
         )
         val contribution = fabricator.random<Resource>().copy(
-            classes = setOf(ThingId("Contribution"))
+            classes = setOf(Classes.contribution)
         )
         val previousVersionComparison = fabricator.random<Resource>().copy(
-            classes = setOf(ThingId("Comparison"))
+            classes = setOf(Classes.comparison)
         )
         val paper = fabricator.random<Resource>().copy(
-            classes = setOf(ThingId("Paper"))
+            classes = setOf(Classes.paper)
         )
         val compareContribution = fabricator.random<Predicate>().copy(
-            id = ThingId("compareContribution")
+            id = Predicates.comparesContribution
         )
         val hasContribution = fabricator.random<Predicate>().copy(
-            id = ThingId("P31")
+            id = Predicates.hasContribution
         )
         val hasPreviousVersion = fabricator.random<Predicate>().copy(
-            id = ThingId("hasPreviousVersion")
+            id = Predicates.hasPreviousVersion
         )
         // create a comparison, with a previous version, that compares one contribution linked by a paper
         saveStatement(fabricator.random<GeneralStatement>().copy(
@@ -202,23 +202,23 @@ fun <
 
     describe("counting literature lists including a paper") {
         val literatureList = fabricator.random<Resource>().copy(
-            classes = setOf(ThingId("LiteratureList"))
+            classes = setOf(Classes.literatureList)
         )
         val listSection = fabricator.random<Resource>().copy(
-            classes = setOf(ThingId("ListSection"))
+            classes = setOf(Classes.listSection)
         )
         val entry = fabricator.random<Resource>()
         val paper = fabricator.random<Resource>().copy(
-            classes = setOf(ThingId("Paper"))
+            classes = setOf(Classes.paper)
         )
         val hasSection = fabricator.random<Predicate>().copy(
-            id = ThingId("HasSection")
+            id = Predicates.hasSection
         )
         val hasEntry = fabricator.random<Predicate>().copy(
-            id = ThingId("HasEntry")
+            id = Predicates.hasEntry
         )
         val hasPaper = fabricator.random<Predicate>().copy(
-            id = ThingId("HasLink")
+            id = Predicates.hasLink
         )
         saveStatement(fabricator.random<GeneralStatement>().copy(
             subject = literatureList,

@@ -97,7 +97,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             Predicates.templateOfResearchField,
             Predicates.templateOfResearchProblem,
             Predicates.hasResearchProblem,
-            ThingId("P24") // field
+            Predicates.field // field
         ).forEach { predicateService.createPredicate(it) }
 
         classService.createClasses(Classes.nodeShape.value, Classes.propertyShape.value, "Problem", "ResearchField")

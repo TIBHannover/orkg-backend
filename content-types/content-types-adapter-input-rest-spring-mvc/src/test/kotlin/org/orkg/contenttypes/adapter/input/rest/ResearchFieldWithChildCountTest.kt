@@ -2,12 +2,12 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.input.rest.ResearchFieldWithChildCountTest.FakeResearchFieldWithChildCountController
 import org.orkg.contenttypes.domain.ResearchFieldWithChildCount
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldWithChildCountRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.ResearchFieldWithChildCountRepresentation
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -52,7 +52,7 @@ internal class ResearchFieldWithChildCountTest : RestDocsTest("research-fields")
     ) : ResearchFieldWithChildCountRepresentationAdapter {
         @GetMapping("/subfield")
         fun dummySubResearchField(): ResearchFieldWithChildCountRepresentation =
-            ResearchFieldWithChildCount(createResource(classes = setOf(ThingId("ResearchField"))), 5)
+            ResearchFieldWithChildCount(createResource(classes = setOf(Classes.researchField)), 5)
                 .toResearchFieldWithChildCountRepresentation(emptyMap(), emptyMap())
     }
 }

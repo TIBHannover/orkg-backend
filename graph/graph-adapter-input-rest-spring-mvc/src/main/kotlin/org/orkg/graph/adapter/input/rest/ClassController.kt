@@ -12,10 +12,8 @@ import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.input.ClassRepresentation
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
-import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateClassUseCase

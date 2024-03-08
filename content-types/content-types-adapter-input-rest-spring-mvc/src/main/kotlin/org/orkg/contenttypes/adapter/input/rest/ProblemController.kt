@@ -14,9 +14,9 @@ import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.visibilityFilterFromFlags
 import org.orkg.graph.domain.DetailsPerProblem
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.input.FieldWithFreqRepresentation
-import org.orkg.graph.input.PaperAuthorRepresentation
-import org.orkg.graph.input.ResourceRepresentation
+import org.orkg.graph.adapter.input.rest.FieldWithFreqRepresentation
+import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
+import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository

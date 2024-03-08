@@ -5,7 +5,7 @@ import org.orkg.graph.domain.PaperResourceWithPath
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
 import org.orkg.graph.domain.Visibility
-import org.orkg.graph.input.PaperResourceWithPathRepresentation
+import org.orkg.graph.adapter.input.rest.PaperResourceWithPathRepresentation
 import org.springframework.data.domain.Page
 
 interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapter {

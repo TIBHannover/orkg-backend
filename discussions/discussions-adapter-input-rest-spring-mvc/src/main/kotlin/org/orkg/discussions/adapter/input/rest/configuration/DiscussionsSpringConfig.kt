@@ -1,7 +1,7 @@
 package org.orkg.discussions.adapter.input.rest.configuration
 
 import com.fasterxml.jackson.databind.Module
-import org.orkg.discussions.adapter.input.spring.json.DiscussionsJacksonModule
+import org.orkg.discussions.adapter.input.rest.json.DiscussionsJacksonModule
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 

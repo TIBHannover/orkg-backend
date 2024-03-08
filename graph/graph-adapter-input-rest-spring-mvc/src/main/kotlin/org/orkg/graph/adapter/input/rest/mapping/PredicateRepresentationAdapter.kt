@@ -2,7 +2,7 @@ package org.orkg.graph.adapter.input.rest.mapping
 
 import java.util.*
 import org.orkg.graph.domain.Predicate
-import org.orkg.graph.input.PredicateRepresentation
+import org.orkg.graph.adapter.input.rest.PredicateRepresentation
 import org.springframework.data.domain.Page
 
 interface PredicateRepresentationAdapter {

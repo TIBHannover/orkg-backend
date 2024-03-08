@@ -1,4 +1,4 @@
-package org.orkg.graph.input
+package org.orkg.widget.input
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ThingId

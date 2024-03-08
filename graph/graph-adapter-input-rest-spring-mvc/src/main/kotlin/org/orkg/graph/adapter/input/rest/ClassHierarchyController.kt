@@ -8,10 +8,7 @@ import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.ChildClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ClassHierarchyEntryRepresentationAdapter
 import org.orkg.graph.domain.EmptyChildIds
-import org.orkg.graph.input.ChildClassRepresentation
-import org.orkg.graph.input.ClassHierarchyEntryRepresentation
 import org.orkg.graph.input.ClassHierarchyUseCases
-import org.orkg.graph.input.ClassRepresentation
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType

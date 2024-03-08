@@ -3,7 +3,7 @@ package org.orkg.graph.adapter.input.rest.mapping
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.PaperCountPerResearchProblem
 import org.orkg.graph.domain.StatementCounts
-import org.orkg.graph.input.PaperCountPerResearchProblemRepresentation
+import org.orkg.graph.adapter.input.rest.PaperCountPerResearchProblemRepresentation
 import org.springframework.data.domain.Page
 
 interface PaperCountPerResearchProblemRepresentationAdapter : ResourceRepresentationAdapter {

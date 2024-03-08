@@ -2,7 +2,7 @@ package org.orkg.graph.adapter.input.rest.mapping
 
 import java.util.*
 import org.orkg.graph.domain.Class
-import org.orkg.graph.input.ClassRepresentation
+import org.orkg.graph.adapter.input.rest.ClassRepresentation
 import org.springframework.data.domain.Page
 
 interface ClassRepresentationAdapter {

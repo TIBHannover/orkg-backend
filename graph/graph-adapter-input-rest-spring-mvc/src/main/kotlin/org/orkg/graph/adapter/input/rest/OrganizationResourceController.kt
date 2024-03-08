@@ -4,7 +4,6 @@ import org.orkg.common.OrganizationId
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository

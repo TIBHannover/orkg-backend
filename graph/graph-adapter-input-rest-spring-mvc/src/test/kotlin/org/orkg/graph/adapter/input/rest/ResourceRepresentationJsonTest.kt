@@ -10,7 +10,6 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.Resource
-import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.beans.factory.annotation.Autowired

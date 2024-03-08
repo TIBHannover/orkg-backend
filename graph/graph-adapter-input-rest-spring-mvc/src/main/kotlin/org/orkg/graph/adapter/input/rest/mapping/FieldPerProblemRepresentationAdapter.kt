@@ -3,7 +3,7 @@ package org.orkg.graph.adapter.input.rest.mapping
 import org.orkg.graph.domain.FieldWithFreq
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.StatementCounts
-import org.orkg.graph.input.FieldWithFreqRepresentation
+import org.orkg.graph.adapter.input.rest.FieldWithFreqRepresentation
 
 interface FieldPerProblemRepresentationAdapter : ResourceRepresentationAdapter {
 

@@ -5,9 +5,9 @@ import org.orkg.contenttypes.input.ResearchFieldHierarchyUseCases
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldHierarchyEntryRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldWithChildCountRepresentationAdapter
-import org.orkg.graph.input.ResearchFieldHierarchyEntryRepresentation
-import org.orkg.graph.input.ResearchFieldWithChildCountRepresentation
-import org.orkg.graph.input.ResourceRepresentation
+import org.orkg.graph.adapter.input.rest.ResearchFieldHierarchyEntryRepresentation
+import org.orkg.graph.adapter.input.rest.ResearchFieldWithChildCountRepresentation
+import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page

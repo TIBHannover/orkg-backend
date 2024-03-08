@@ -8,7 +8,6 @@ import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreatePredicateUseCase
-import org.orkg.graph.input.PredicateRepresentation
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase.ReplaceCommand
 import org.springframework.data.domain.Page

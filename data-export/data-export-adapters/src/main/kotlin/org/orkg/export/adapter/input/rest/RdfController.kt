@@ -6,7 +6,7 @@ import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.input.ThingRepresentation
+import org.orkg.graph.adapter.input.rest.ThingRepresentation
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.output.PredicateRepository

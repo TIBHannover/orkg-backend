@@ -9,10 +9,8 @@ import org.orkg.graph.adapter.input.rest.mapping.ListRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ThingRepresentationAdapter
 import org.orkg.graph.domain.ListNotFound
 import org.orkg.graph.input.CreateListUseCase.CreateCommand
-import org.orkg.graph.input.ListRepresentation
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.input.ThingRepresentation
 import org.orkg.graph.input.UpdateListUseCase.UpdateCommand
 import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page

@@ -7,7 +7,6 @@ import org.orkg.contenttypes.domain.pmap
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.StatementId
-import org.orkg.graph.input.StatementRepresentation
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateStatementUseCase
 import org.orkg.graph.output.FormattedLabelRepository

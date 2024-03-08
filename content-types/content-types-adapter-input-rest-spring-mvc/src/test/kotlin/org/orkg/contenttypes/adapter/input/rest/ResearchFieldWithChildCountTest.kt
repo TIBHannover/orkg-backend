@@ -7,7 +7,7 @@ import org.orkg.contenttypes.adapter.input.rest.ResearchFieldWithChildCountTest.
 import org.orkg.contenttypes.domain.ResearchFieldWithChildCount
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldWithChildCountRepresentationAdapter
-import org.orkg.graph.input.ResearchFieldWithChildCountRepresentation
+import org.orkg.graph.adapter.input.rest.ResearchFieldWithChildCountRepresentation
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource

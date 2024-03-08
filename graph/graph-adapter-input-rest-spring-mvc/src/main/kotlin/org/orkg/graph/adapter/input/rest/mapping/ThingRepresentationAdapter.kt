@@ -8,7 +8,7 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
 import org.orkg.graph.domain.Thing
-import org.orkg.graph.input.ThingRepresentation
+import org.orkg.graph.adapter.input.rest.ThingRepresentation
 import org.springframework.data.domain.Page
 
 interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepresentationAdapter,

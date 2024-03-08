@@ -8,7 +8,6 @@ import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.CreateObjectUseCase
 import org.orkg.graph.input.CreateObjectUseCase.CreateObjectRequest
-import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository

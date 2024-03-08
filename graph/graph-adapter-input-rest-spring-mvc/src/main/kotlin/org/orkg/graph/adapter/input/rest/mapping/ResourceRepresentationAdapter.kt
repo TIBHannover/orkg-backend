@@ -5,7 +5,7 @@ import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
 import org.orkg.graph.domain.Visibility
-import org.orkg.graph.input.ResourceRepresentation
+import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.springframework.data.domain.Page
 
 interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {

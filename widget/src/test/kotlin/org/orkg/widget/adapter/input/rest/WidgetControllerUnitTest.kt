@@ -1,4 +1,4 @@
-package org.orkg.graph.application
+package org.orkg.widget.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -9,13 +9,12 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.graph.input.ResolveDOIUseCase
+import org.orkg.widget.input.ResolveDOIUseCase
 import org.orkg.graph.testing.asciidoc.Asciidoc
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.widget.adapter.input.rest.WidgetController
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields

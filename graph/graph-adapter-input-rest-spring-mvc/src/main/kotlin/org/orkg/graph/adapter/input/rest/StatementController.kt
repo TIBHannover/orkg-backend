@@ -13,8 +13,6 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.CreateStatement
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementNotFound
-import org.orkg.graph.input.BundleRepresentation
-import org.orkg.graph.input.StatementRepresentation
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateStatementUseCase
 import org.orkg.graph.output.FormattedLabelRepository

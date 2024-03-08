@@ -1,7 +1,7 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
 import org.orkg.graph.domain.ClassHierarchyEntry
-import org.orkg.graph.input.ClassHierarchyEntryRepresentation
+import org.orkg.graph.adapter.input.rest.ClassHierarchyEntryRepresentation
 import org.springframework.data.domain.Page
 
 interface ClassHierarchyEntryRepresentationAdapter : ClassRepresentationAdapter {

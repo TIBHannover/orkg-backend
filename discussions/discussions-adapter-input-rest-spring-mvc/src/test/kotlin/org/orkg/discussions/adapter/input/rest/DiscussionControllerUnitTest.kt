@@ -20,7 +20,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
-import org.orkg.discussions.adapter.input.spring.json.DiscussionsJacksonModule
+import org.orkg.discussions.adapter.input.rest.json.DiscussionsJacksonModule
 import org.orkg.discussions.domain.DiscussionComment
 import org.orkg.discussions.domain.DiscussionCommentId
 import org.orkg.discussions.domain.InvalidContent

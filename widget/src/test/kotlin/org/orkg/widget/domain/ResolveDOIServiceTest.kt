@@ -17,7 +17,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.graph.domain.ResourceNotFound
-import org.orkg.graph.input.ResolveDOIUseCase.WidgetInfo
+import org.orkg.widget.input.ResolveDOIUseCase.WidgetInfo
 import org.orkg.graph.input.RetrieveResourceUseCase
 import org.orkg.graph.input.RetrieveStatementUseCase
 import org.orkg.graph.testing.fixtures.createResource

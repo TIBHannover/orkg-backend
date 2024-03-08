@@ -7,8 +7,8 @@ import org.orkg.contenttypes.input.LegacyPaperUseCases
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.PaperResourceWithPathRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
-import org.orkg.graph.input.PaperResourceWithPathRepresentation
-import org.orkg.graph.input.ResourceRepresentation
+import org.orkg.graph.adapter.input.rest.PaperResourceWithPathRepresentation
+import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository

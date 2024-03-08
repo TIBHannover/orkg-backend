@@ -2,7 +2,7 @@ package org.orkg.graph.adapter.input.rest.mapping
 
 import java.util.*
 import org.orkg.graph.domain.Literal
-import org.orkg.graph.input.LiteralRepresentation
+import org.orkg.graph.adapter.input.rest.LiteralRepresentation
 import org.springframework.data.domain.Page
 
 interface LiteralRepresentationAdapter {

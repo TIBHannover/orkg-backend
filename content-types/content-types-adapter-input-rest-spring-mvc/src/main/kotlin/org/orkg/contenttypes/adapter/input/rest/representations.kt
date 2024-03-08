@@ -23,8 +23,8 @@ import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
-import org.orkg.graph.input.ResourceRepresentation
-import org.orkg.graph.input.ThingRepresentation
+import org.orkg.graph.adapter.input.rest.ResourceRepresentation
+import org.orkg.graph.adapter.input.rest.ThingRepresentation
 
 data class PaperRepresentation(
     val id: ThingId,

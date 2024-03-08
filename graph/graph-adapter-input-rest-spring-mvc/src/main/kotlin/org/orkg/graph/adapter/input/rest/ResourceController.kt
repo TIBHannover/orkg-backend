@@ -21,7 +21,6 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase

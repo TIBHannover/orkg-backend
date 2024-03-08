@@ -1,4 +1,4 @@
-package org.orkg.graph.input
+package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include

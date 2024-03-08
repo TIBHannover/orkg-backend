@@ -8,7 +8,7 @@ import org.orkg.contenttypes.adapter.input.rest.ResearchFieldHierarchyEntryTest.
 import org.orkg.contenttypes.domain.ResearchFieldHierarchyEntry
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldHierarchyEntryRepresentationAdapter
-import org.orkg.graph.input.ResearchFieldHierarchyEntryRepresentation
+import org.orkg.graph.adapter.input.rest.ResearchFieldHierarchyEntryRepresentation
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource

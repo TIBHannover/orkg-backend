@@ -5,7 +5,7 @@ import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
-import org.orkg.graph.input.StatementRepresentation
+import org.orkg.graph.adapter.input.rest.StatementRepresentation
 import org.springframework.data.domain.Page
 
 interface StatementRepresentationAdapter : ThingRepresentationAdapter {

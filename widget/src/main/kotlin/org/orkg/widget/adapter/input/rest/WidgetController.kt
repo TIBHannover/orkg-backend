@@ -1,7 +1,7 @@
 package org.orkg.widget.adapter.input.rest
 
-import org.orkg.graph.input.ResolveDOIUseCase
-import org.orkg.graph.input.ResolveDOIUseCase.WidgetInfo
+import org.orkg.widget.input.ResolveDOIUseCase
+import org.orkg.widget.input.ResolveDOIUseCase.WidgetInfo
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

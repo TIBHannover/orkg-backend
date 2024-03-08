@@ -8,7 +8,6 @@ import org.orkg.common.ThingId
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
 import org.orkg.graph.domain.Predicate
-import org.orkg.graph.input.PredicateRepresentation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester

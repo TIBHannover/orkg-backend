@@ -1,4 +1,4 @@
-package org.orkg.discussions.adapter.input.spring.json
+package org.orkg.discussions.adapter.input.rest.json
 
 import com.fasterxml.jackson.databind.module.SimpleDeserializers
 import com.fasterxml.jackson.databind.module.SimpleModule

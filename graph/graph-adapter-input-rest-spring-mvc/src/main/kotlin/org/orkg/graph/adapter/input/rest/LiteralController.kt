@@ -10,7 +10,6 @@ import org.orkg.graph.domain.LiteralNotFound
 import org.orkg.graph.domain.PropertyIsBlank
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
-import org.orkg.graph.input.LiteralRepresentation
 import org.orkg.graph.input.LiteralUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

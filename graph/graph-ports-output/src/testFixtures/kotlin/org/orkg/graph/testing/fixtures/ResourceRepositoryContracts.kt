@@ -17,6 +17,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
@@ -65,11 +66,17 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             val original: Resource = fabricator.random()
             repository.save(original)
             val found = repository.findById(original.id).get()
-            val modified = found.copy(label = "some new label, never seen before")
+            val modified = found.copy(
+                label = "some new label, never seen before",
+                classes = setOf(Classes.paper, Classes.contribution)
+            )
             repository.save(modified)
 
             repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).toSet().size shouldBe 1
-            repository.findById(original.id).get().label shouldBe "some new label, never seen before"
+            repository.findById(original.id).get().asClue {
+                it.label shouldBe "some new label, never seen before"
+                it.classes shouldBe setOf(Classes.paper, Classes.contribution)
+            }
         }
     }
 

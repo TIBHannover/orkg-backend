@@ -11,6 +11,12 @@ import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
+import org.neo4j.cypherdsl.core.Cypher.optionalMatch
+import org.neo4j.cypherdsl.core.Cypher.parameter
+import org.neo4j.cypherdsl.core.Cypher.union
+import org.neo4j.cypherdsl.core.Cypher.unwind
+import org.neo4j.cypherdsl.core.Functions.coalesce
+import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.size
 import org.neo4j.cypherdsl.core.Functions.toLower
 import org.orkg.common.ContributorId
@@ -20,7 +26,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.neo4jdsl.CypherQueryBuilder
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
-import org.orkg.common.neo4jdsl.QueryCache
+import org.orkg.common.neo4jdsl.QueryCache.Uncached
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResource
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResourceIdGenerator
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResourceRepository
@@ -44,6 +50,7 @@ import org.springframework.stereotype.Component
 const val RESOURCE_ID_TO_RESOURCE_CACHE = "resource-id-to-resource"
 const val RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE = "resource-id-to-resource-exists"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_resource_on_label"
+private const val INSTANCE_OF = "INSTANCE_OF"
 
 @Component
 @CacheConfig(cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
@@ -68,7 +75,109 @@ class SpringDataNeo4jResourceAdapter(
         ]
     )
     override fun save(resource: Resource) {
-        neo4jRepository.save(resource.toNeo4jResource())
+        val hlp = name("hlp")
+        val neo4jResource = node("Resource", "Thing").named("neo4jResource")
+        val label = name("label")
+        val c = node("Class").withProperties("id", label).named("c")
+        val e = node("Class").named("e")
+        val classIds = name("classIds")
+        val nextVersion = name("v")
+        val created = name("rc")
+        val deleted = name("rd")
+        val oldResource = neo4jRepository.findById(resource.id)
+        val oldLabels = oldResource.map { it.classes }.orElseGet { emptySet() }
+        val labelsToAdd = (resource.classes - oldLabels).map(ThingId::value)
+        val labelsToRemove = (oldLabels - resource.classes).map(ThingId::value)
+        val query = union(
+            optionalMatch(node("Resource", "Thing").named(hlp))
+                .where(hlp.property("id").eq(parameter("__id__")))
+                .with(hlp)
+                .where(hlp.isNull)
+                .create(neo4jResource.withProperties("version", literalOf<Long>(0L)))
+                .with(neo4jResource)
+                .mutate(neo4jResource, parameter("__properties__"))
+                // cypher dsl does not accept empty label lists
+                .let { if (resource.classes.isNotEmpty()) it.set(neo4jResource, resource.classes.map(ThingId::value)) else it }
+                .let { if (labelsToRemove.isNotEmpty()) it.remove(neo4jResource, labelsToRemove) else it }
+                .with(neo4jResource)
+                .call(
+                    unwind(parameter("__labels__")).`as`(label)
+                        .optionalMatch(c)
+                        .with(neo4jResource, c)
+                        .where(c.isNotNull) // filter for non-null here because there are no classes available in the repository contract test
+                        .create(neo4jResource.relationshipTo(c, INSTANCE_OF).named(created))
+                        .returning(created) // cypher dsl wants something returned
+                        .build(),
+                    neo4jResource
+                )
+                .returning(neo4jResource)
+                .build(),
+            match(neo4jResource)
+                .where(
+                    neo4jResource.property("id").eq(parameter("__id__"))
+                        .and(neo4jResource.property("version").eq(parameter("__version__")))
+                )
+                // we need to compute the next version here, because cypher dsl throws an error if we try to compute it within the SET clause
+                .with(neo4jResource, neo4jResource.property("version").add(literalOf<Long>(1L)).`as`(nextVersion))
+                .set(neo4jResource.property("version"), nextVersion)
+                .with(neo4jResource)
+                .where(
+                    neo4jResource.property("version").eq(coalesce(parameter("__version__"), literalOf<Long>(0L)).add(literalOf<Long>(1L)))
+                )
+                .mutate(neo4jResource, parameter("__properties__"))
+                // cypher dsl does not accept empty label lists
+                .let { if (resource.classes.isNotEmpty()) it.set(neo4jResource, resource.classes.map(ThingId::value)) else it }
+                .let { if (labelsToRemove.isNotEmpty()) it.remove(neo4jResource, labelsToRemove) else it }
+                .with(neo4jResource)
+                .optionalMatch(neo4jResource.relationshipTo(e, INSTANCE_OF))
+                .with(neo4jResource, collect(e.property("id")).`as`(classIds))
+                .call(
+                    unwind(parameter("__labels_to_add__")).`as`(label)
+                        .optionalMatch(c)
+                        .with(neo4jResource, c)
+                        .where(c.isNotNull) // filter for non-null here because there are no classes available in the repository contract test
+                        .create(neo4jResource.relationshipTo(c, INSTANCE_OF).named(created))
+                        .returning(created) // cypher dsl wants something returned
+                        .build(),
+                    neo4jResource, classIds
+                )
+                .call(
+                    unwind(parameter("__labels_to_remove__")).`as`(label)
+                        .match(neo4jResource.relationshipTo(c, INSTANCE_OF).named(deleted))
+                        .with(neo4jResource, deleted)
+                        .where(c.isNotNull)
+                        .delete(deleted)
+                        .returning(deleted) // cypher dsl wants something returned
+                        .build(),
+                    neo4jResource, classIds
+                )
+                .returning(neo4jResource)
+                .build()
+        )
+        neo4jClient.query(query.cypher)
+            .bindAll(
+                mapOf(
+                    "__id__" to resource.id.value,
+                    "__labels__" to resource.classes.map { it.value },
+                    "__labels_to_add__" to labelsToAdd,
+                    "__labels_to_remove__" to labelsToRemove,
+                    "__version__" to oldResource.map { @Suppress("DEPRECATION") it.version }.orElse(0L),
+                    "__properties__" to mapOf(
+                        "id" to resource.id.value,
+                        "label" to resource.label,
+                        "created_by" to resource.createdBy.value.toString(),
+                        "created_at" to resource.createdAt.format(ISO_OFFSET_DATE_TIME),
+                        "observatory_id" to resource.observatoryId.value.toString(),
+                        "organization_id" to resource.organizationId.value.toString(),
+                        "extraction_method" to resource.extractionMethod.name,
+                        "verified" to resource.verified,
+                        "visibility" to resource.visibility.name,
+                        "unlisted_by" to resource.unlistedBy,
+                        "modifiable" to resource.modifiable
+                    )
+                )
+            )
+            .run()
     }
 
     @Caching(
@@ -123,7 +232,7 @@ class SpringDataNeo4jResourceAdapter(
         excludeClasses: Set<ThingId>,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?
-    ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
+    ): Page<Resource> = CypherQueryBuilder(neo4jClient, Uncached)
         .withCommonQuery {
             val node = node("Resource", includeClasses.map { it.value }).named("node")
             val match = label?.let { searchString ->
@@ -240,21 +349,4 @@ class SpringDataNeo4jResourceAdapter(
 
     override fun findAllContributorIds(pageable: Pageable): Page<ContributorId> =
         neo4jRepository.findAllContributorIds(pageable).map(::ContributorId)
-
-    private fun Resource.toNeo4jResource() =
-        // We need to fetch the original resource, so "resources" is set properly.
-        neo4jRepository.findById(this.id).orElseGet(::Neo4jResource).apply {
-            id = this@toNeo4jResource.id
-            label = this@toNeo4jResource.label
-            created_by = this@toNeo4jResource.createdBy
-            created_at = this@toNeo4jResource.createdAt
-            observatory_id = this@toNeo4jResource.observatoryId
-            extraction_method = this@toNeo4jResource.extractionMethod
-            verified = this@toNeo4jResource.verified
-            visibility = this@toNeo4jResource.visibility
-            organization_id = this@toNeo4jResource.organizationId
-            classes = this@toNeo4jResource.classes
-            unlisted_by = this@toNeo4jResource.unlistedBy
-            modifiable = this@toNeo4jResource.modifiable
-        }
 }

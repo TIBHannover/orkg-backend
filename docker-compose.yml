@@ -14,10 +14,13 @@ services:
         -Dcom.sun.management.jmxremote.rmi.port=9090
         -Dcom.sun.management.jmxremote.authenticate=false
         -Dcom.sun.management.jmxremote.ssl=false
+      JAVA_TOOL_OPTIONS: >-
+        -agentlib:jdwp=transport=dt_socket,address=*:9999,server=y,suspend=n
     ports:
       - '127.0.0.1:8080:8080'
       #- '::1:8080:8080'
       - '127.0.0.1:9090:9090' # JMX
+      - '127.0.0.1:9999:9999' # Remote debugging
     networks:
       - auth
       - mail

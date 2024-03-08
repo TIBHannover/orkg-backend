@@ -2,6 +2,7 @@
 
 == Development
 
+* xref:how-to-guides/development/remote-debugging.adoc[]
 * xref:how-to-guides/development/debug-neo4j-tests.adoc[]
 * xref:how-to-guides/development/enable-jpa-support.adoc[]
 * xref:how-to-guides/development/import-database-dump.adoc[]

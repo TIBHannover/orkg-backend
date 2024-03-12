@@ -1,12 +1,28 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Conditions
+import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.call
+import org.neo4j.cypherdsl.core.Cypher.literalOf
+import org.neo4j.cypherdsl.core.Cypher.match
+import org.neo4j.cypherdsl.core.Cypher.name
+import org.neo4j.cypherdsl.core.Cypher.node
+import org.neo4j.cypherdsl.core.Cypher.unionAll
+import org.neo4j.cypherdsl.core.Cypher.valueAt
+import org.neo4j.cypherdsl.core.Functions.collect
+import org.neo4j.cypherdsl.core.Functions.size
+import org.neo4j.cypherdsl.core.Functions.toLower
+import org.neo4j.cypherdsl.core.Node
+import org.neo4j.cypherdsl.core.PatternElement
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.ThingId
 import org.orkg.common.neo4jdsl.CypherQueryBuilder
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
@@ -29,10 +45,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import org.neo4j.cypherdsl.core.Cypher.*
-import org.neo4j.cypherdsl.core.Functions.*
 
 private const val RELATED = "RELATED"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_resource_on_label"
@@ -50,18 +62,27 @@ class SpringDataNeo4jSmartReviewAdapter(
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
-        published: Boolean?
+        published: Boolean?,
+        sustainableDevelopmentGoal: ThingId?
     ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
         .withCommonQuery {
+            val patterns: (Node) -> Collection<PatternElement> = { node ->
+                listOfNotNull(
+                    sustainableDevelopmentGoal?.let {
+                        node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
+                            .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))
+                    }
+                )
+            }
             val node = name("node")
             val nodes = name("nodes")
             val matchSmartReviews = when (published) {
-                true -> matchPublishedSmartReviews(node)
-                false -> matchUnpublishedSmartReviews(node)
+                true -> matchPublishedSmartReviews(node, patterns)
+                false -> matchUnpublishedSmartReviews(node, patterns)
                 else -> call(
                     unionAll(
-                        matchPublishedSmartReviews(node).returning(node).build(),
-                        matchUnpublishedSmartReviews(node).returning(node).build()
+                        matchPublishedSmartReviews(node, patterns).returning(node).build(),
+                        matchUnpublishedSmartReviews(node, patterns).returning(node).build()
                     )
                 ).with(node)
             }
@@ -134,19 +155,31 @@ class SpringDataNeo4jSmartReviewAdapter(
         .mappedBy(ResourceMapper("node"))
         .fetch(pageable, false)
 
-    private fun matchPublishedSmartReviews(symbolicName: SymbolicName): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere {
-        val srp = name("srp")
+    private fun matchPublishedSmartReviews(
+        symbolicName: SymbolicName,
+        patternGenerator: (Node) -> Collection<PatternElement>
+    ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere {
+        val srp = node("SmartReviewPublished").named("srp")
         val srl = name("srl")
+        val patterns = patternGenerator(srp)
         return match(
-            node("SmartReviewPublished").named(srp)
-                .relationshipFrom(node("SmartReview").named(srl), RELATED)
+            srp.relationshipFrom(node("SmartReview").named(srl), RELATED)
                 .withProperties("predicate_id", literalOf<String>(Predicates.hasPublishedVersion.value))
-        ).with(
+        ).let {
+            if (patterns.isNotEmpty()) it.match(patterns) else it
+        }.with(
             srl.asExpression(),
             valueAt(call("apoc.coll.sortNodes").withArgs(collect(srp), literalOf<String>("created_at")).asFunction(), 0).`as`(symbolicName)
         )
     }
 
-    private fun matchUnpublishedSmartReviews(symbolicName: SymbolicName): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
-        match(node("SmartReview").named(symbolicName)).with(symbolicName)
+    private fun matchUnpublishedSmartReviews(
+        symbolicName: SymbolicName,
+        patternGenerator: (Node) -> Collection<PatternElement>
+    ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere {
+        val node = node("SmartReview").named(symbolicName)
+        val patterns = patternGenerator(node)
+        return match(node).let { if (patterns.isNotEmpty()) it.match(patterns) else it }
+            .with(symbolicName)
+    }
 }

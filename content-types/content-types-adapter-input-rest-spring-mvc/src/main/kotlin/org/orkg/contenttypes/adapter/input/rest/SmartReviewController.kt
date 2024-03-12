@@ -45,6 +45,7 @@ class SmartReviewController(
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
         @RequestParam("published", required = false) published: Boolean?,
+        @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
         pageable: Pageable
     ): Page<SmartReviewRepresentation> =
         service.findAll(
@@ -56,6 +57,7 @@ class SmartReviewController(
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
             organizationId = organizationId,
-            published = published
+            published = published,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).mapToSmartReviewRepresentation()
 }

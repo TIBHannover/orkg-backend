@@ -46,7 +46,8 @@ class SmartReviewService(
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
-        published: Boolean?
+        published: Boolean?,
+        sustainableDevelopmentGoal: ThingId?
     ): Page<SmartReview> =
         smartReviewRepository.findAll(
             pageable = pageable,
@@ -57,7 +58,8 @@ class SmartReviewService(
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
             organizationId = organizationId,
-            published = published
+            published = published,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toSmartReview() }
 
     private fun Resource.toSmartReview(): SmartReview {

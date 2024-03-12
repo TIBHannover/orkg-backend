@@ -23,6 +23,7 @@ interface RetrieveSmartReviewUseCase {
         createdAtEnd: OffsetDateTime? = null,
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
-        published: Boolean? = null
+        published: Boolean? = null,
+        sustainableDevelopmentGoal: ThingId? = null
     ): Page<SmartReview>
 }

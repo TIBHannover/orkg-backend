@@ -113,6 +113,10 @@ class SmartReviewService(
                     .objects()
                     .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
             ),
+            sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
+                .objectIdsAndLabel()
+                .sortedBy { it.id }
+                .toSet(),
             observatories = listOf(observatoryId),
             organizations = listOf(organizationId),
             extractionMethod = extractionMethod,

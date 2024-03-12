@@ -140,6 +140,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                         fieldWithPath("sections[].classes").description("The additional classes of the text section.").optional(),
                         fieldWithPath("references").description("The list of bibtex references of the smart review.").optional()
                     ).and(authorListFields("smart review"))
+                        .and(sustainableDevelopmentGoalsFields("smart review"))
                 )
             )
             .andDo(generateDefaultDocSnippets())

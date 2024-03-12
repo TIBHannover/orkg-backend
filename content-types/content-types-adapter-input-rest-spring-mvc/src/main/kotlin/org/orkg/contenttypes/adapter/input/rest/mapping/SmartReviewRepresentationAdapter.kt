@@ -19,7 +19,7 @@ import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.springframework.data.domain.Page
 
-interface SmartReviewRepresentationAdapter : AuthorRepresentationAdapter, VersionRepresentationAdapter {
+interface SmartReviewRepresentationAdapter : AuthorRepresentationAdapter, VersionRepresentationAdapter, LabeledObjectRepresentationAdapter {
 
     fun Optional<SmartReview>.mapToSmartReviewRepresentation(): Optional<SmartReviewRepresentation> =
         map { it.toSmartReviewRepresentation() }
@@ -34,6 +34,7 @@ interface SmartReviewRepresentationAdapter : AuthorRepresentationAdapter, Versio
             researchFields = researchFields,
             authors = authors.mapToAuthorRepresentation(),
             versions = versions.toVersionInfoRepresentation(),
+            sustainableDevelopmentGoals = sustainableDevelopmentGoals.mapToLabeledObjectRepresentation(),
             observatories = observatories,
             organizations = organizations,
             extractionMethod = extractionMethod,

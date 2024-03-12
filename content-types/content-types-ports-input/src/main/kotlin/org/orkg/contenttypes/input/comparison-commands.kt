@@ -18,6 +18,7 @@ interface CreateComparisonUseCase {
         val description: String,
         val researchFields: List<ThingId>,
         val authors: List<Author>,
+        val sustainableDevelopmentGoals: Set<ThingId>,
         val contributions: List<ThingId>,
         val references: List<String>,
         val observatories: List<ObservatoryId>,

@@ -164,7 +164,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @DisplayName("Given several comparisons, when they are fetched, then status is 200 OK and comparisons are returned")
     fun getPaged() {
         every {
-            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createDummyComparison())
 
         documentedGetRequestTo("/api/comparisons")
@@ -177,7 +177,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 
@@ -185,7 +185,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @DisplayName("Given several comparisons, when filtering by several parameters, then status is 200 OK and comparisons are returned")
     fun getPagedWithParameters() {
         every {
-            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createDummyComparison())
 
         val title = "label"
@@ -199,6 +199,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
         val researchFieldId = ThingId("R456")
         val includeSubfields = true
+        val sdg = ThingId("SDG_1")
 
         documentedGetRequestTo("/api/comparisons")
             .param("title", title)
@@ -212,6 +213,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .param("organization_id", organizationId.value.toString())
             .param("research_field", researchFieldId.value)
             .param("include_subfields", includeSubfields.toString())
+            .param("sdg", sdg.value)
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -232,6 +234,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)"),
                         parameterWithName("research_field").description("Filter for research field id. (optional)"),
                         parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
+                        parameterWithName("sdg").description("Filter for the sustainable development goal that the comparison belongs to. (optional)"),
                     )
                 )
             )
@@ -251,7 +254,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                 observatoryId = observatoryId,
                 organizationId = organizationId,
                 researchField = researchFieldId,
-                includeSubfields = includeSubfields
+                includeSubfields = includeSubfields,
+                sustainableDevelopmentGoal = sdg
             )
         }
     }
@@ -260,7 +264,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     fun `Given several comparisons, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
         val exception = UnknownSortingProperty("unknown")
         every {
-            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
         mockMvc.perform(get("/api/comparisons?sort=unknown"))
@@ -272,7 +276,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpect(jsonPath("$.path").value("/api/comparisons"))
 
         verify(exactly = 1) {
-            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 
@@ -619,6 +623,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
+                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the comparison will be assigned to. (optional)").optional(),
                         fieldWithPath("contributions[]").description("The ids of the contributions the comparison compares."),
                         fieldWithPath("references[]").description("The references to external sources that the comparison refers to."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the comparison belongs to."),
@@ -928,6 +933,10 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     identifiers = null,
                     homepage = null
                 )
+            ),
+            sustainableDevelopmentGoals = setOf(
+                ThingId("SDG_1"),
+                ThingId("SDG_2")
             ),
             contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
             references = listOf("https://orkg.org/resources/R1000", "paper citation"),

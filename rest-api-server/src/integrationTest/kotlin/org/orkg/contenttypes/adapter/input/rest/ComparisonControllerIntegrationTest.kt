@@ -96,10 +96,20 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
             Predicates.isAnonymized,
             Predicates.hasWebsite,
             Predicates.description,
-            Predicates.hasListElement
+            Predicates.hasListElement,
+            Predicates.sustainableDevelopmentGoal
         ).forEach { predicateService.createPredicate(it) }
 
-        classService.createClasses("Comparison", "Contribution", "Problem", "ResearchField", "Author", "Venue", "Result")
+        classService.createClasses(
+            "Comparison",
+            "Contribution",
+            "Problem",
+            "ResearchField",
+            "Author",
+            "Venue",
+            "Result",
+            Classes.sustainableDevelopmentGoal.value
+        )
 
         resourceService.createResource(
             id = "R12",
@@ -115,6 +125,9 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
         resourceService.createResource(id = "R3120", label = "Contribution 4", classes = setOf(Classes.contribution.value))
 
         resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
+
+        resourceService.createResource(id = "SDG_1", label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal.value))
+        resourceService.createResource(id = "SDG_2", label = "Zero hunger", classes = setOf(Classes.sustainableDevelopmentGoal.value))
 
         statementService.create(
             subject = resourceService.createResource(
@@ -208,6 +221,7 @@ private const val createComparisonJson = """{
       "name": "Author that just has a name"
     }
   ],
+  "sdgs": ["SDG_1", "SDG_2"],
   "contributions": [
     "R6541", "R5364", "R9786", "R3120"
   ],

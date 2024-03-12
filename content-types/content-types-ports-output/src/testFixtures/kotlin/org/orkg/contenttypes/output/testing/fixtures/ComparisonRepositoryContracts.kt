@@ -24,6 +24,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
+import org.orkg.graph.domain.Resources
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
@@ -600,12 +601,70 @@ fun <
                 }
             }
         }
+        context("by sdg") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toComparisons().toMutableList()
+            val sdgId = Resources.sustainableDevelopmentGoals[0]
+            val sdg = fabricator.random<Resource>().copy(
+                id = sdgId,
+                classes = setOf(Classes.sustainableDevelopmentGoal)
+            )
+            val hasSDG = createPredicate(Predicates.sustainableDevelopmentGoal)
+            val expected = resources.take(expectedCount)
+
+            expected.forEach {
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = it,
+                        predicate = hasSDG,
+                        `object` = sdg
+                    )
+                )
+            }
+
+            resources.drop(expectedCount)
+                .mapIndexed { index, paper ->
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = paper,
+                        predicate = hasSDG,
+                        `object` = fabricator.random<Resource>().copy(
+                            id = Resources.sustainableDevelopmentGoals[index + 1],
+                            classes = setOf(Classes.sustainableDevelopmentGoal)
+                        )
+                    )
+                }
+                .forEach(saveStatement)
+
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                sustainableDevelopmentGoal = sdgId,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
         context("using all parameters") {
             val researchField = fabricator.random<Resource>().copy(
                 classes = setOf(Classes.researchField)
             )
             val hasResearchField = createPredicate(Predicates.hasResearchField)
             val hasDoi = createPredicate(Predicates.hasDOI)
+            val hasSDG = createPredicate(Predicates.sustainableDevelopmentGoal)
             val comparisons = fabricator.random<List<Resource>>().toComparisons()
             comparisons.forEachIndexed { index, comparison ->
                 saveStatement(
@@ -615,6 +674,16 @@ fun <
                         `object` = fabricator.random<Literal>().copy(
                             label = "10.4564/$index",
                             datatype = Literals.XSD.STRING.prefixedUri
+                        )
+                    )
+                )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = comparison,
+                        predicate = hasSDG,
+                        `object` = fabricator.random<Resource>().copy(
+                            id = Resources.sustainableDevelopmentGoals[index],
+                            classes = setOf(Classes.sustainableDevelopmentGoal)
                         )
                     )
                 )
@@ -644,6 +713,17 @@ fun <
                     `object` = researchField
                 )
             )
+            val sdg = Resources.sustainableDevelopmentGoals[5]
+            saveStatement(
+                fabricator.random<GeneralStatement>().copy(
+                    subject = expected,
+                    predicate = hasSDG,
+                    `object` = fabricator.random<Resource>().copy(
+                        id = sdg,
+                        classes = setOf(Classes.sustainableDevelopmentGoal)
+                    )
+                )
+            )
             saveStatement(comparisons[0].hasPreviousVersion(expected))
 
             val result = repository.findAll(
@@ -657,7 +737,8 @@ fun <
                 observatoryId = expected.observatoryId,
                 organizationId = expected.organizationId,
                 researchField = researchField.id,
-                includeSubfields = true
+                includeSubfields = true,
+                sustainableDevelopmentGoal = sdg
             )
 
             it("returns the correct result") {

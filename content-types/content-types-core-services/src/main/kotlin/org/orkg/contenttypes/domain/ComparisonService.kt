@@ -16,6 +16,7 @@ import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
+import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAction
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorValidator
@@ -24,6 +25,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionVa
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResearchFieldCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGCreator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedFigureCommand
@@ -91,7 +93,8 @@ class ComparisonService(
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
         researchField: ThingId?,
-        includeSubfields: Boolean
+        includeSubfields: Boolean,
+        sustainableDevelopmentGoal: ThingId?
     ): Page<Comparison> =
         comparisonRepository.findAll(
             pageable = pageable,
@@ -104,7 +107,8 @@ class ComparisonService(
             observatoryId = observatoryId,
             organizationId = organizationId,
             researchField = researchField,
-            includeSubfields = includeSubfields
+            includeSubfields = includeSubfields,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toComparison() }
 
     override fun findRelatedResourceById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedResource> =
@@ -153,10 +157,12 @@ class ComparisonService(
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
+            SDGValidator({ it.sustainableDevelopmentGoals }),
             ComparisonAuthorValidator(resourceRepository, statementRepository),
             ComparisonResourceCreator(resourceService),
             ComparisonDescriptionCreator(literalService, statementService),
             ComparisonAuthorCreator(resourceService, statementService, literalService, listService),
+            ComparisonSDGCreator(statementService),
             ComparisonResearchFieldCreator(statementService),
             ComparisonContributionCreator(statementService)
         )

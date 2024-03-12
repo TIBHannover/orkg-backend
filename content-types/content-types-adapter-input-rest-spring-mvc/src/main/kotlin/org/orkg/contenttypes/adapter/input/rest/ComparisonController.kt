@@ -73,6 +73,7 @@ class ComparisonController(
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
         @RequestParam("research_field", required = false) researchField: ThingId?,
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
+        @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
         pageable: Pageable
     ): Page<ComparisonRepresentation> =
         service.findAll(
@@ -86,7 +87,8 @@ class ComparisonController(
             observatoryId = observatoryId,
             organizationId = organizationId,
             researchField = researchField,
-            includeSubfields = includeSubfields
+            includeSubfields = includeSubfields,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).mapToComparisonRepresentation()
 
     @PreAuthorizeUser
@@ -200,6 +202,8 @@ class ComparisonController(
         val researchFields: List<ThingId>,
         @field:Valid
         val authors: List<AuthorDTO>,
+        @JsonProperty("sdgs")
+        val sustainableDevelopmentGoals: Set<ThingId>?,
         val contributions: List<ThingId>,
         val references: List<String>,
         @Size(max = 1)
@@ -218,6 +222,7 @@ class ComparisonController(
                 description = description,
                 researchFields = researchFields,
                 authors = authors.map { it.toAuthor() },
+                sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
                 contributions = contributions,
                 references = references,
                 observatories = observatories,

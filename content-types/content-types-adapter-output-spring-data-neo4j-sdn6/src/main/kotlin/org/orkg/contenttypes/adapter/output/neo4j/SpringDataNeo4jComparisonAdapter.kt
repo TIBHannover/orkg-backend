@@ -66,6 +66,7 @@ class SpringDataNeo4jComparisonAdapter(
         organizationId: OrganizationId?,
         researchField: ThingId?,
         includeSubfields: Boolean,
+        sustainableDevelopmentGoal: ThingId?
     ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
         .withCommonQuery {
             val node = node("Comparison").named("node")
@@ -82,7 +83,11 @@ class SpringDataNeo4jComparisonAdapter(
                         node.relationshipTo(researchFieldNode, RELATED)
                     }
                 },
-                doi?.let { node.relationshipTo(node("Literal").withProperties("label", anonParameter(doi))) }
+                doi?.let { node.relationshipTo(node("Literal").withProperties("label", anonParameter(doi))) },
+                sustainableDevelopmentGoal?.let {
+                    node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
+                        .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))
+                }
             )
             val match = label?.let {
                 when (label) {

@@ -26,7 +26,8 @@ interface RetrieveComparisonUseCase {
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
         researchField: ThingId? = null,
-        includeSubfields: Boolean = false
+        includeSubfields: Boolean = false,
+        sustainableDevelopmentGoal: ThingId? = null
     ): Page<Comparison>
     fun findById(id: ThingId): Optional<Comparison>
     fun findRelatedResourceById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedResource>

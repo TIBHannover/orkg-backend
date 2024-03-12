@@ -36,6 +36,7 @@ fun dummyCreateComparisonCommand() = CreateComparisonUseCase.CreateCommand(
             name = "Author that just has a name"
         )
     ),
+    sustainableDevelopmentGoals = setOf(ThingId("SDG_1"), ThingId("SDG_2")),
     contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
     references = listOf("https://orkg.org/resources/R1000", "paper citation"),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),

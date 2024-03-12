@@ -24,7 +24,8 @@ interface ComparisonRepository {
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
         researchField: ThingId? = null,
-        includeSubfields: Boolean = false
+        includeSubfields: Boolean = false,
+        sustainableDevelopmentGoal: ThingId? = null
     ): Page<Resource>
     fun findVersionHistory(id: ThingId): List<HeadVersion>
 }

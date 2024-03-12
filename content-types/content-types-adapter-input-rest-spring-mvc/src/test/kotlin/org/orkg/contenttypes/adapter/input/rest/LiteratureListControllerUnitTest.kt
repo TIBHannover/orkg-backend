@@ -118,6 +118,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                         fieldWithPath("sections[].heading_size").description("The heading size of the text section.").optional(),
                         fieldWithPath("sections[].text").description("The text contents of the text section.").optional()
                     ).and(authorListFields("literature list"))
+                        .and(sustainableDevelopmentGoalsFields("literature list"))
                 )
             )
             .andDo(generateDefaultDocSnippets())

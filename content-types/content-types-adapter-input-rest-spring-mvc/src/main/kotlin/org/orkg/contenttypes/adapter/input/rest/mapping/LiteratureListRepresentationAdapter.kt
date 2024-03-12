@@ -11,7 +11,7 @@ import org.orkg.contenttypes.domain.LiteratureListSection
 import org.orkg.contenttypes.domain.TextSection
 import org.springframework.data.domain.Page
 
-interface LiteratureListRepresentationAdapter : AuthorRepresentationAdapter, VersionRepresentationAdapter {
+interface LiteratureListRepresentationAdapter : AuthorRepresentationAdapter, VersionRepresentationAdapter, LabeledObjectRepresentationAdapter {
 
     fun Optional<LiteratureList>.mapToLiteratureListRepresentation(): Optional<LiteratureListRepresentation> =
         map { it.toLiteratureListRepresentation() }
@@ -26,6 +26,7 @@ interface LiteratureListRepresentationAdapter : AuthorRepresentationAdapter, Ver
             researchFields = researchFields,
             authors = authors.mapToAuthorRepresentation(),
             versions = versions.toVersionInfoRepresentation(),
+            sustainableDevelopmentGoals = sustainableDevelopmentGoals.mapToLabeledObjectRepresentation(),
             observatories = observatories,
             organizations = organizations,
             extractionMethod = extractionMethod,

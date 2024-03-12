@@ -331,6 +331,8 @@ data class LiteratureListRepresentation(
     val researchFields: List<ObjectIdAndLabel>,
     val authors: List<AuthorRepresentation>,
     val versions: VersionInfoRepresentation,
+    @get:JsonProperty("sdgs")
+    val sustainableDevelopmentGoals: Set<LabeledObjectRepresentation>,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
     @get:JsonProperty("extraction_method")

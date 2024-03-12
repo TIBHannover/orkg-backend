@@ -108,6 +108,15 @@ class LiteratureListServiceUnitTests {
         } returns pageOf(
             createStatement(
                 subject = expected,
+                predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
+                `object` = createResource(
+                    classes = setOf(Classes.sustainableDevelopmentGoal),
+                    label = "No poverty",
+                    id = ThingId("SDG_1")
+                )
+            ),
+            createStatement(
+                subject = expected,
                 predicate = createPredicate(Predicates.hasResearchField),
                 `object` = createResource(
                     id = researchFieldId,
@@ -238,6 +247,9 @@ class LiteratureListServiceUnitTests {
                     PublishedVersion(publishedVersion1, changelog1.label)
                 )
             )
+            it.sustainableDevelopmentGoals shouldBe setOf(
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
+            )
             it.observatories shouldBe setOf(expected.observatoryId)
             it.organizations shouldBe setOf(expected.organizationId)
             it.extractionMethod shouldBe expected.extractionMethod
@@ -305,6 +317,15 @@ class LiteratureListServiceUnitTests {
             PublishedContentType(
                 rootId = unpublished.id,
                 subgraph = listOf(
+                    createStatement(
+                        subject = unpublished,
+                        predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
+                        `object` = createResource(
+                            classes = setOf(Classes.sustainableDevelopmentGoal),
+                            label = "No poverty",
+                            id = ThingId("SDG_1")
+                        )
+                    ),
                     createStatement(
                         subject = unpublished,
                         predicate = createPredicate(Predicates.hasResearchField),
@@ -447,6 +468,9 @@ class LiteratureListServiceUnitTests {
                     PublishedVersion(expected, changelog.label),
                     PublishedVersion(publishedVersion1, changelog1.label)
                 )
+            )
+            it.sustainableDevelopmentGoals shouldBe setOf(
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
             )
             it.observatories shouldBe setOf(expected.observatoryId)
             it.organizations shouldBe setOf(expected.organizationId)

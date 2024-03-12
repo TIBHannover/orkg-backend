@@ -18,6 +18,7 @@ data class LiteratureList(
     val researchFields: List<ObjectIdAndLabel>,
     val authors: List<Author>,
     val versions: VersionInfo,
+    val sustainableDevelopmentGoals: Set<ObjectIdAndLabel>,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
     val extractionMethod: ExtractionMethod,

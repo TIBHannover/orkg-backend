@@ -23,6 +23,7 @@ interface ComparisonRepresentationAdapter : AuthorRepresentationAdapter, Labeled
             identifiers = identifiers,
             publicationInfo = publicationInfo.toPublicationInfoRepresentation(),
             authors = authors.mapToAuthorRepresentation(),
+            sustainableDevelopmentGoals = sustainableDevelopmentGoals.mapToLabeledObjectRepresentation(),
             contributions = contributions.mapToLabeledObjectRepresentation(),
             visualizations = visualizations.mapToLabeledObjectRepresentation(),
             relatedFigures = relatedFigures.mapToLabeledObjectRepresentation(),

@@ -16,6 +16,7 @@ data class Comparison(
     val identifiers: Map<String, List<String>>,
     val publicationInfo: PublicationInfo,
     val authors: List<Author>,
+    val sustainableDevelopmentGoals: Set<ObjectIdAndLabel>,
     val contributions: List<ObjectIdAndLabel>,
     val visualizations: List<ObjectIdAndLabel>,
     val relatedFigures: List<ObjectIdAndLabel>,

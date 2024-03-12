@@ -134,7 +134,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("visibility").description("""Visibility of the comparison. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this comparison.").optional()
                     ).and(authorListFields("comparison"))
-                        .and(publicationInfoFields("paper"))
+                        .and(publicationInfoFields("comparison"))
+                        .and(sustainableDevelopmentGoalsFields("comparison"))
                 )
             )
             .andDo(generateDefaultDocSnippets())

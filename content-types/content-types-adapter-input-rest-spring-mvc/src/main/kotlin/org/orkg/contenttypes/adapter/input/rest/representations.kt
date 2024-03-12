@@ -105,6 +105,8 @@ data class ComparisonRepresentation(
     @get:JsonProperty("publication_info")
     val publicationInfo: PublicationInfoRepresentation,
     val authors: List<AuthorRepresentation>,
+    @get:JsonProperty("sdgs")
+    val sustainableDevelopmentGoals: Set<LabeledObjectRepresentation>,
     val contributions: List<LabeledObjectRepresentation>,
     val visualizations: List<LabeledObjectRepresentation>,
     @get:JsonProperty("related_figures")

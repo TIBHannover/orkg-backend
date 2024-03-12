@@ -55,6 +55,16 @@ fun createDummyComparison() = Comparison(
             homepage = null
         )
     ),
+    sustainableDevelopmentGoals = setOf(
+        ObjectIdAndLabel(
+            id = ThingId("SDG_1"),
+            label = "No poverty"
+        ),
+        ObjectIdAndLabel(
+            id = ThingId("SDG_2"),
+            label = "Zero hunger"
+        )
+    ),
     contributions = listOf(
         ObjectIdAndLabel(
             id = ThingId("R258"),

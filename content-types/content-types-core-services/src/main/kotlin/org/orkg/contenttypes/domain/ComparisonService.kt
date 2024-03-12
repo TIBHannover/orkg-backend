@@ -318,7 +318,8 @@ class ComparisonService(
                         Classes.contribution,
                         Classes.visualization,
                         Classes.comparisonRelatedFigure,
-                        Classes.comparisonRelatedResource
+                        Classes.comparisonRelatedResource,
+                        Classes.sustainableDevelopmentGoal
                     ),
                     whitelist = emptyList()
                 ),
@@ -334,7 +335,8 @@ class ComparisonService(
                         Classes.contribution,
                         Classes.visualization,
                         Classes.comparisonRelatedFigure,
-                        Classes.comparisonRelatedResource
+                        Classes.comparisonRelatedResource,
+                        Classes.sustainableDevelopmentGoal
                     )
                 ),
                 sort = Sort.unsorted()
@@ -349,6 +351,10 @@ class ComparisonService(
             identifiers = directStatements.associateIdentifiers(Identifiers.comparison),
             publicationInfo = PublicationInfo.from(directStatements),
             authors = statements.authors(id),
+            sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
+                .objectIdsAndLabel()
+                .sortedBy { it.id }
+                .toSet(),
             contributions = directStatements.wherePredicate(Predicates.comparesContribution).objectIdsAndLabel(),
             visualizations = directStatements.wherePredicate(Predicates.hasVisualization).objectIdsAndLabel(),
             relatedFigures = directStatements.wherePredicate(Predicates.hasRelatedFigure).objectIdsAndLabel(),

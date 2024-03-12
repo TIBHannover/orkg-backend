@@ -128,7 +128,8 @@ class ComparisonServiceUnitTests {
                 Classes.contribution,
                 Classes.visualization,
                 Classes.comparisonRelatedFigure,
-                Classes.comparisonRelatedResource
+                Classes.comparisonRelatedResource,
+                Classes.sustainableDevelopmentGoal
             ),
             whitelist = emptyList()
         )
@@ -141,7 +142,8 @@ class ComparisonServiceUnitTests {
                 Classes.contribution,
                 Classes.visualization,
                 Classes.comparisonRelatedFigure,
-                Classes.comparisonRelatedResource
+                Classes.comparisonRelatedResource,
+                Classes.sustainableDevelopmentGoal
             )
         )
 
@@ -199,6 +201,15 @@ class ComparisonServiceUnitTests {
                 sort = Sort.unsorted()
             )
         } returns pageOf(
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
+                `object` = createResource(
+                    classes = setOf(Classes.sustainableDevelopmentGoal),
+                    label = "No poverty",
+                    id = ThingId("SDG_1")
+                )
+            ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasSubject),
@@ -276,6 +287,9 @@ class ComparisonServiceUnitTests {
                     identifiers = emptyMap(),
                     homepage = null
                 )
+            )
+            comparison.sustainableDevelopmentGoals shouldBe setOf(
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
             )
             comparison.contributions shouldNotBe null
             comparison.contributions shouldBe listOf(

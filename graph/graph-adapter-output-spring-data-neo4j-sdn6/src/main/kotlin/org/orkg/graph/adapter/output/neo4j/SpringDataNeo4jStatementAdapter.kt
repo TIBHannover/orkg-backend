@@ -53,9 +53,9 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.SearchFilter
-import org.orkg.graph.domain.SearchFilter.*
+import org.orkg.graph.domain.SearchFilter.Operator
+import org.orkg.graph.domain.SearchFilter.Value
 import org.orkg.graph.domain.StatementId
-import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.PredicateRepository
@@ -812,75 +812,6 @@ class SpringDataNeo4jStatementAdapter(
             .countDistinctOver("p")
             .withParameters("id" to id.value.toString())
             .mappedBy(ResourceMapper("p"))
-            .fetch(pageable)
-
-    override fun findAllCurrentComparisons(pageable: Pageable): Page<Resource> = CypherQueryBuilder(neo4jClient)
-        .withCommonQuery {
-            val cmp = comparisonNode().named("node")
-            match(cmp).where(
-                exists(
-                    comparisonNode()
-                        .relationshipTo(cmp, "RELATED")
-                        .withProperties("predicate_id", literalOf<String>(Predicates.hasPreviousVersion.value))
-                ).not()
-            )
-        }
-        .withQuery { commonQuery ->
-            commonQuery.withSortableFields("node")
-                .orderBy(sort(name("created_at")))
-                .returning("node")
-        }
-        .countOver("node")
-        .mappedBy(ResourceMapper("node"))
-        .fetch(pageable)
-
-    override fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource> = CypherQueryBuilder(neo4jClient)
-        .withCommonQuery {
-            val cmp = comparisonNode().named("node")
-            match(cmp).where(
-                exists(
-                    comparisonNode()
-                        .relationshipTo(cmp, "RELATED")
-                        .withProperties("predicate_id", literalOf<String>(Predicates.hasPreviousVersion.value))
-                ).not()
-                    .and(
-                        cmp.property("visibility").eq(literalOf<String>("DEFAULT"))
-                            .or(cmp.property("visibility").eq(literalOf<String>("FEATURED")))
-                    )
-            )
-        }
-        .withQuery { commonQuery ->
-            commonQuery.withSortableFields("node")
-                .orderBy(sort(name("created_at")))
-                .returning("node")
-        }
-        .countOver("node")
-        .mappedBy(ResourceMapper("node"))
-        .fetch(pageable)
-
-    override fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
-        CypherQueryBuilder(neo4jClient)
-            .withCommonQuery {
-                val cmp = comparisonNode().named("node")
-                match(cmp).where(
-                    exists(
-                        comparisonNode()
-                            .relationshipTo(cmp, "RELATED")
-                            .withProperties("predicate_id", literalOf<String>(Predicates.hasPreviousVersion.value))
-                    ).not()
-                        .and(
-                            cmp.property("visibility").eq(parameter("visibility"))
-                        )
-                )
-            }
-            .withQuery { commonQuery ->
-                commonQuery.withSortableFields("node")
-                    .orderBy(sort(name("created_at")))
-                    .returning("node")
-            }
-            .countOver("node")
-            .withParameters("visibility" to visibility.name)
-            .mappedBy(ResourceMapper("node"))
             .fetch(pageable)
 
     override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource> = CypherQueryBuilder(neo4jClient)

@@ -26,7 +26,6 @@ import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.input.PublishComparisonUseCase
-import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -61,7 +60,6 @@ class ComparisonServiceUnitTests {
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
-    private val researchFieldService: RetrieveResearchFieldUseCase = mockk()
     private val publishingService: PublishingService = mockk()
     private val comparisonRepository: ComparisonRepository = mockk()
 
@@ -75,7 +73,6 @@ class ComparisonServiceUnitTests {
         statementService = statementService,
         literalService = literalService,
         listService = listService,
-        researchFieldService = researchFieldService,
         publishingService = publishingService,
         comparisonRepository = comparisonRepository,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
@@ -98,7 +95,6 @@ class ComparisonServiceUnitTests {
             statementService,
             literalService,
             listService,
-            researchFieldService,
             publishingService,
             comparisonRepository
         )

@@ -14,7 +14,6 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.StatementId
-import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -70,9 +69,6 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun checkIfResourceHasStatements(id: ThingId): Boolean
     fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
 
-    fun findAllCurrentComparisons(pageable: Pageable): Page<Resource>
-    fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource>
-    fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
     fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource>
 
     fun findAllPapersByObservatoryIdAndFilters(

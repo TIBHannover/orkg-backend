@@ -386,53 +386,6 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
         return id
     }
 
-    override fun findAllCurrentComparisons(pageable: Pageable): Page<Resource> =
-        entities.values
-            .filter {
-                it.subject is Resource && Classes.comparison in (it.subject as Resource).classes &&
-                    findAll(
-                        objectId = it.subject.id,
-                        predicateId = Predicates.hasPreviousVersion,
-                        pageable = PageRequests.SINGLE
-                    ).isEmpty
-            }
-            .map { it.subject as Resource }
-            .distinct()
-            .sortedBy { it.createdAt }
-            .paged(pageable)
-
-    override fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource> =
-        entities.values
-            .filter {
-                it.subject is Resource && with(it.subject as Resource) {
-                    Classes.comparison in classes && (visibility == Visibility.DEFAULT || visibility == Visibility.FEATURED)
-                } && findAll(
-                    objectId = it.subject.id,
-                    predicateId = Predicates.hasPreviousVersion,
-                    pageable = PageRequests.SINGLE
-                ).isEmpty
-            }
-            .map { it.subject as Resource }
-            .distinct()
-            .sortedBy { it.createdAt }
-            .paged(pageable)
-
-    override fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
-        entities.values
-            .filter {
-                it.subject is Resource && with(it.subject as Resource) {
-                    Classes.comparison in classes && this.visibility == visibility
-                } && findAll(
-                    objectId = it.subject.id,
-                    predicateId = Predicates.hasPreviousVersion,
-                    pageable = PageRequests.SINGLE
-                ).isEmpty
-            }
-            .map { it.subject as Resource }
-            .distinct()
-            .sortedBy { it.createdAt }
-            .paged(pageable)
-
     override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource> =
         entities.values
             .filter {

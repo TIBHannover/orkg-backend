@@ -30,7 +30,6 @@ import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelat
 import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedResourceCommand
 import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.RetrieveComparisonContributionsUseCase
-import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -42,7 +41,6 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
@@ -72,7 +70,6 @@ class ComparisonService(
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
-    private val researchFieldService: RetrieveResearchFieldUseCase,
     private val publishingService: PublishingService,
     private val comparisonRepository: ComparisonRepository,
     @Value("\${orkg.publishing.base-url.comparison}")
@@ -110,26 +107,6 @@ class ComparisonService(
             includeSubfields = includeSubfields
         ).pmap { it.toComparison() }
 
-    override fun findAllByDOI(doi: String, pageable: Pageable): Page<Comparison> =
-        statementRepository.findAllBySubjectClassAndDOI(Classes.comparison, doi, pageable)
-            .pmap { it.toComparison() }
-
-    override fun findAllByTitle(title: String, pageable: Pageable): Page<Comparison> =
-        resourceRepository.findAll(
-            includeClasses = setOf(Classes.comparison),
-            label = SearchString.of(title, exactMatch = true),
-            pageable = pageable
-        ).pmap { it.toComparison() }
-
-    override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<Comparison> =
-        when (visibility) {
-            VisibilityFilter.ALL_LISTED -> statementRepository.findAllCurrentListedComparisons(pageable)
-            VisibilityFilter.NON_FEATURED -> statementRepository.findAllCurrentComparisonsByVisibility(Visibility.DEFAULT, pageable)
-            VisibilityFilter.UNLISTED -> statementRepository.findAllCurrentComparisonsByVisibility(Visibility.UNLISTED, pageable)
-            VisibilityFilter.FEATURED -> statementRepository.findAllCurrentComparisonsByVisibility(Visibility.FEATURED, pageable)
-            VisibilityFilter.DELETED -> statementRepository.findAllCurrentComparisonsByVisibility(Visibility.DELETED, pageable)
-        }.pmap { it.toComparison() }
-
     override fun findRelatedResourceById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedResource> =
         statementRepository.findAll(
             subjectId = comparisonId,
@@ -165,22 +142,6 @@ class ComparisonService(
     override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison> =
         statementRepository.findAllCurrentListedAndUnpublishedComparisons(pageable)
             .map { it.toComparison() }
-
-    override fun findAllByResearchFieldAndVisibility(
-        researchFieldId: ThingId,
-        visibility: VisibilityFilter,
-        includeSubfields: Boolean,
-        pageable: Pageable
-    ): Page<Comparison> =
-        researchFieldService.findAllComparisonsByResearchField(researchFieldId, visibility, includeSubfields, pageable)
-            .pmap { it.toComparison() }
-
-    override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<Comparison> =
-        resourceRepository.findAll(
-            includeClasses = setOf(Classes.comparison),
-            createdBy = contributorId,
-            pageable = pageable
-        ).pmap { it.toComparison() }
 
     override fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
         repository.findContributionsDetailsById(ids, pageable)

@@ -45,7 +45,8 @@ class LiteratureListService(
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
-        published: Boolean?
+        published: Boolean?,
+        sustainableDevelopmentGoal: ThingId?
     ): Page<LiteratureList> =
         literatureListRepository.findAll(
             pageable = pageable,
@@ -56,7 +57,8 @@ class LiteratureListService(
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
             organizationId = organizationId,
-            published = published
+            published = published,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toLiteratureList() }
 
     private fun Resource.toLiteratureList(): LiteratureList {

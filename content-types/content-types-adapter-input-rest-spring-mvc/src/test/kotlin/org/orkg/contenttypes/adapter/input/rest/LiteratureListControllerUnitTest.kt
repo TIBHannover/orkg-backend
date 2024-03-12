@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
@@ -130,7 +131,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     @DisplayName("Given several literature lists, when they are fetched, then status is 200 OK and literature lists are returned")
     fun getPaged() {
         every {
-            literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any())
+            literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createDummyLiteratureList())
 
         documentedGetRequestTo("/api/literature-lists")
@@ -143,7 +144,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any())
+            literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 
@@ -151,7 +152,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     @DisplayName("Given several literature lists, when filtering by several parameters, then status is 200 OK and literature lists are returned")
     fun getPagedWithParameters() {
         every {
-            literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any())
+            literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createDummyLiteratureList())
 
         val title = "label"
@@ -163,6 +164,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val organizationId = OrganizationId(UUID.randomUUID())
         val published = true
+        val sdg = ThingId("SDG_1")
 
         documentedGetRequestTo("/api/literature-lists")
             .param("title", title)
@@ -174,6 +176,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .param("observatory_id", observatoryId.value.toString())
             .param("organization_id", organizationId.value.toString())
             .param("published", published.toString())
+            .param("sdg", sdg.value)
             .accept(LITERATURE_LIST_JSON_V1)
             .contentType(LITERATURE_LIST_JSON_V1)
             .perform()
@@ -191,7 +194,8 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                         parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)"),
                         parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)"),
                         parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)"),
-                        parameterWithName("published").description("Filter for the publication status of the literature lists. (optional)")
+                        parameterWithName("published").description("Filter for the publication status of the literature lists. (optional)"),
+                        parameterWithName("sdg").description("Filter for the sustainable development goal that the literature list belongs to. (optional)"),
                     )
                 )
             )
@@ -209,7 +213,8 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                 createdAtEnd = createdAtEnd,
                 observatoryId = observatoryId,
                 organizationId = organizationId,
-                published = published
+                published = published,
+                sustainableDevelopmentGoal = sdg
             )
         }
     }
@@ -218,7 +223,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     fun `Given several literature lists, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
         val exception = UnknownSortingProperty("unknown")
         every {
-            literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any())
+            literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
         mockMvc.perform(get("/api/literature-lists?sort=unknown"))
@@ -230,7 +235,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .andExpect(jsonPath("$.path").value("/api/literature-lists"))
 
         verify(exactly = 1) {
-            literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any())
+            literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 }

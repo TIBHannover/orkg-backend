@@ -14,6 +14,7 @@ import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.LiteratureListRepository
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
@@ -31,6 +32,8 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.testing.fixtures.createPredicate
+import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.withCustomMappings
 import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
@@ -487,9 +490,58 @@ fun <
                     }
                 }
             }
+            context("by sdg") {
+                val sdg = ThingId("SDG_1")
+                val graph = createTestGraph().save()
+
+                val resources = graph.resources.filterIndexed { index, _ -> index % 2 == 0 }
+                resources.forEach {
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = it,
+                            predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
+                            `object` = createResource(sdg, classes = setOf(Classes.sustainableDevelopmentGoal))
+                        )
+                    )
+                }
+
+                val expected = resources - graph.ignored
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 10),
+                    sustainableDevelopmentGoal = sdg
+                )
+
+                expected.size shouldNotBe 0
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThanOrEqualTo b.createdAt
+                    }
+                }
+            }
             context("using all parameters") {
                 val graph = createTestGraph().save()
                 val expected = graph.resources.first()
+
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = expected,
+                        predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
+                        `object` = createResource(ThingId("SDG_1"), classes = setOf(Classes.sustainableDevelopmentGoal))
+                    )
+                )
 
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
@@ -500,7 +552,8 @@ fun <
                     createdAtEnd = expected.createdAt,
                     observatoryId = expected.observatoryId,
                     organizationId = expected.organizationId,
-                    published = false
+                    published = false,
+                    sustainableDevelopmentGoal = ThingId("SDG_1")
                 )
 
                 it("returns the correct result") {

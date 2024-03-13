@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added content-type endpoints for updating template instances.
+  (See: [!762](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/762))
+- Added sustainable development goals field (`sdgs`) to comparison, literature list and smart review content-type representations.
+  (See: [!847](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/847),
+        [!843](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/843),
+        [!845](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/845))
+- Added support for filtering comparisons, literature lists and smart reviews by sustainable development goals field (`sdg`), when using content-type endpoints.
+  (See: [!848](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/848),
+        [!844](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/844),
+        [!846](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/846))
+- The development docker image now provides a way to attach a remote debugger to the rest-api.
+  (See: [!836](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/836))
+- Added local SimComp configuration to docker image.
+  (See: [!817](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/817))
+
+### Fixed
+- Fixed research field endpoints not returning published literature lists and published smart reviews.
+- Fixed publishing of smart reviews.
+  (See: [!851](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/851))
 
 ## [0.49.0] - 2024-03-07
 ### Added

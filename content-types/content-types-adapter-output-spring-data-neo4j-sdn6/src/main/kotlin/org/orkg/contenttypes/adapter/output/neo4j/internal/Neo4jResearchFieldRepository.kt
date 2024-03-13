@@ -45,10 +45,10 @@ private const val MATCH_PROBLEM_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Probl
 private const val MATCH_PROBLEM_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Problem)<-[:RELATED]-(:Contribution)<-[:RELATED]-(:Paper)-[:RELATED]->(:ResearchField {id: $id})"""
 private const val MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Visualization)<-[:RELATED]-(:Comparison)-[:RELATED]->(:ResearchField)"""
 private const val MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Visualization)<-[:RELATED]-(:Comparison)-[:RELATED]->(:ResearchField {id: $id})"""
-private const val MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD = """MATCH (node:SmartReviewPublished)-[:RELATED]->(:SmartReview)-[:RELATED]->(:ResearchField)"""
-private const val MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:SmartReviewPublished)-[:RELATED]->(:SmartReview)-[:RELATED]->(:ResearchField {id: $id})"""
-private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD = """MATCH (node:LiteratureListPublished)-[:RELATED]->(:LiteratureList)-[:RELATED]->(:ResearchField)"""
-private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:LiteratureListPublished)-[:RELATED]->(:LiteratureList)-[:RELATED]->(:ResearchField {id: $id})"""
+private const val MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD = """MATCH (node:SmartReviewPublished)<-[:RELATED]-(:SmartReview)-[:RELATED]->(:ResearchField)"""
+private const val MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:SmartReviewPublished)<-[:RELATED]-(:SmartReview)-[:RELATED]->(:ResearchField {id: $id})"""
+private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD = """MATCH (node:LiteratureListPublished)<-[:RELATED]-(:LiteratureList)-[:RELATED]->(:ResearchField)"""
+private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:LiteratureListPublished)<-[:RELATED]-(:LiteratureList)-[:RELATED]->(:ResearchField {id: $id})"""
 
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 

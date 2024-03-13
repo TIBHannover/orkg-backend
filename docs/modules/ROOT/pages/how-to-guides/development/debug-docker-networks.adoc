@@ -1,0 +1,18 @@
+= How to debug network issues in Docker
+
+In case of network-related issues in Docker, or to verify that a hostname can be resolved and hosts can reach each other, a strategy that is often used is to `docker exec` into one of the containers and execute diagnostic tools from within the container.
+Because of the way the REST API image is built, no operating system tools are available in the container, so this strategy is not available.
+
+To enable network debugging, a special service called `debughost` is defined in the Docker Compose file.
+It can start an interactive container that has `curl` available and is connected to all defined networks.
+Being a Debian-based image, additional tools can be installed via APT, like `iproute2` or `iputils-ping`.
+
+To start the container, run:
+
+[source,sh]
+----
+docker compose --profile debug run debughost
+----
+
+NOTE: The `debug` profile is not included in the default profile, so this host does not interfere with the rest of the configuration.
+It needs to be started on demand.

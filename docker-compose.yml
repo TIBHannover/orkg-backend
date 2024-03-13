@@ -99,6 +99,19 @@ services:
     networks:
       - mail
 
+  debughost:
+    profiles:
+      - debug
+    image: buildpack-deps:curl
+    stdin_open: true
+    tty: true
+    networks:
+      - auth
+      - database
+      - mail
+      - rest-api
+      - simcomp
+
 networks:
   auth:
   database:

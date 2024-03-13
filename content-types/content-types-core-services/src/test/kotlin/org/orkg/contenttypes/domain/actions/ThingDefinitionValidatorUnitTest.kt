@@ -6,6 +6,7 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.net.URI
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -15,11 +16,13 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ThingIsNotAClass
+import org.orkg.contenttypes.input.ClassDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.ListDefinition
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
+import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literals
@@ -27,7 +30,9 @@ import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.ReservedClass
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.ThingNotFound
+import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.reservedClassIds
+import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createResource
@@ -35,8 +40,9 @@ import org.orkg.graph.testing.fixtures.createResource
 @Nested
 class ThingDefinitionValidatorUnitTest {
     private val thingRepository: ThingRepository = mockk()
+    private val classRepository: ClassRepository = mockk()
 
-    private val thingDefinitionValidator = object : ThingDefinitionValidator(thingRepository) {}
+    private val thingDefinitionValidator = object : ThingDefinitionValidator(thingRepository, classRepository) {}
 
     @BeforeEach
     fun resetState() {
@@ -45,7 +51,7 @@ class ThingDefinitionValidatorUnitTest {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(thingRepository)
+        confirmVerified(thingRepository, classRepository)
     }
 
     @Test
@@ -270,6 +276,56 @@ class ThingDefinitionValidatorUnitTest {
         }
     }
 
-    // TODO: implement test "Given paper contents, when label of class is invalid, it throws an exception",
-    //       when implementation for ThingDefinitions with support for classes exists
+    @Test
+    fun `Given template instance contents, when label of list is invalid, it throws an exception`() {
+        val contents = dummyUpdateTemplateInstanceCommand().copy(
+            resources = emptyMap(),
+            literals = emptyMap(),
+            predicates = emptyMap(),
+            lists = emptyMap(),
+            classes = mapOf(
+                "#temp1" to ClassDefinition(
+                    label = "\n"
+                )
+            )
+        )
+
+        assertThrows<InvalidLabel> {
+            thingDefinitionValidator.validateThingDefinitions(
+                thingDefinitions = contents,
+                tempIds = emptySet(),
+                validatedIds = mutableMapOf()
+            )
+        }
+    }
+
+    @Test
+    fun `Given thing definitions, when specified class uri already exists, it throws an exception`() {
+        val uri = URI.create("https://orkg.org/class/C1")
+        val contents = dummyUpdateTemplateInstanceCommand().copy(
+            resources = emptyMap(),
+            literals = emptyMap(),
+            predicates = emptyMap(),
+            lists = emptyMap(),
+            classes = mapOf(
+                "#temp1" to ClassDefinition(
+                    label = "irrelevant",
+                    uri = uri
+                )
+            )
+        )
+        val `class` = createClass(uri = uri)
+
+        every { classRepository.findByUri(uri.toString()) } returns Optional.of(`class`)
+
+        assertThrows<URIAlreadyInUse> {
+            thingDefinitionValidator.validateThingDefinitions(
+                thingDefinitions = contents,
+                tempIds = emptySet(),
+                validatedIds = mutableMapOf()
+            )
+        }
+
+        verify(exactly = 1) { classRepository.findByUri(uri.toString()) }
+    }
 }

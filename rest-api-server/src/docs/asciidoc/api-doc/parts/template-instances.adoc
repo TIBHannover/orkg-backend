@@ -22,3 +22,12 @@ operation::template-instances-get-paged[snippets='curl-request']
 The following list of request parameters are supported:
 
 operation::template-instances-get-paged-with-parameters[snippets='request-parameters,curl-request']
+
+[[template-instances-edit]]
+== Editing a template instance
+
+A `PUT` request updates an existing template instance with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated template instance (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::template-instances-update[snippets='request-fields,curl-request,http-response']

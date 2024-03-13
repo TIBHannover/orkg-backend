@@ -4,10 +4,14 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
+import java.net.URI
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -21,6 +25,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplateInstance
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.StatementUseCases
@@ -28,14 +33,19 @@ import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplateInstance
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -43,6 +53,7 @@ import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -211,4 +222,86 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
         verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a template instance update request, when service succeeds, it updates the template instance")
+    fun update() {
+        val templateId = ThingId("R123")
+        val id = ThingId("R456")
+
+        every { service.update(any()) } just runs
+
+        documentedPutRequestTo("/api/templates/{templateId}/instances/{id}", templateId, id)
+            .content(updateTemplateInstanceRequest())
+            .accept(TEMPLATE_INSTANCE_JSON_V1)
+            .contentType(TEMPLATE_INSTANCE_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/templates/$templateId/instances/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated template instance can be fetched from.")
+                    ),
+                    requestFields(
+                        subsectionWithPath("statements").description("Map of predicate ids to list of object ids that represent the statements of the template instance."),
+                        fieldWithPath("resources").description("Definition of resources that need to be created."),
+                        fieldWithPath("resources.*.label").description("The label of the resource."),
+                        fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
+                        fieldWithPath("literals").description("Definition of literals that need to be created."),
+                        fieldWithPath("literals.*").description("Key value pairs of literal temp ids to literal values. The type will be automatically assigned based on the template."),
+                        fieldWithPath("predicates").description("Definition of predicates that need to be created."),
+                        fieldWithPath("predicates.*.label").description("The label of the predicate."),
+                        fieldWithPath("predicates.*.description").description("The description of the predicate."),
+                        fieldWithPath("lists").description("Definition of lists that need to be created."),
+                        fieldWithPath("lists.*.label").description("The label of the list."),
+                        fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
+                        fieldWithPath("classes").description("Definition of classes that need to be created."),
+                        fieldWithPath("classes.*.label").description("The label of the class."),
+                        fieldWithPath("classes.*.uri").description("The uri of the class."),
+                        fieldWithPath("extraction_method").description("""The method used to extract the template instance. Can be one of "unknown", "manual" or "automatic".""")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { service.update(any()) }
+    }
+
+    private fun updateTemplateInstanceRequest() =
+        TemplateInstanceController.UpdateTemplateInstanceRequest(
+            statements = mapOf(
+                ThingId("P27") to listOf("#temp1", "#temp2", "#temp3"),
+                ThingId("P24") to listOf("#temp4", "#temp5", "R123")
+            ),
+            resources = mapOf(
+                "#temp1" to ResourceDefinitionDTO(
+                    label = "MOTO",
+                    classes = setOf(ThingId("Result"))
+                )
+            ),
+            literals = mapOf(
+                "#temp2" to "0.1"
+            ),
+            predicates = mapOf(
+                "#temp3" to PredicateDefinitionDTO(
+                    label = "hasResult",
+                    description = "has result"
+                )
+            ),
+            lists = mapOf(
+                "#temp4" to ListDefinitionDTO(
+                    label = "list",
+                    elements = listOf("#temp1", "C123")
+                )
+            ),
+            classes = mapOf(
+                "#temp5" to ClassDefinitionDTO(
+                    label = "class",
+                    uri = URI.create("https://orkg.org/class/C1")
+                )
+            ),
+            extractionMethod = ExtractionMethod.MANUAL
+        )
 }

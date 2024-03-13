@@ -123,3 +123,36 @@ class InvalidMonth(month: Int) :
 
 class TemplateNotApplicable(templateId: ThingId, id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Template "$templateId" cannot be applied to resource "$id" because the target resource is not an instance of the template target class.""")
+
+class ObjectIsNotAClass(templatePropertyId: ThingId, predicateId: ThingId, id: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a class.""")
+
+class ObjectIsNotAPredicate(templatePropertyId: ThingId, predicateId: ThingId, id: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a predicate.""")
+
+class ObjectIsNotAList(templatePropertyId: ThingId, predicateId: ThingId, id: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a list.""")
+
+class ObjectIsNotALiteral(templatePropertyId: ThingId, predicateId: ThingId, id: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a literal.""")
+
+class ObjectMustNotBeALiteral(templatePropertyId: ThingId, predicateId: ThingId, id: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" must not be a literal.""")
+
+class ResourceIsNotAnInstanceOfTargetClass(templatePropertyId: ThingId, predicateId: ThingId, id: String, targetClass: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not an instance of target class "$targetClass".""")
+
+class LabelDoesNotMatchPattern(templatePropertyId: ThingId, objectId: String, predicateId: ThingId, label: String, pattern: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Label "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" does not match pattern "$pattern".""")
+
+class UnknownTemplateProperties(templateId: ThingId, unknownProperties: Set<ThingId>) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Unknown properties for template "$templateId": ${unknownProperties.joinToString { "\"$it\"" } }.""")
+
+class MissingPropertyValues(templatePropertyId: ThingId, predicateId: ThingId, min: Int, actual: Int) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Missing values for property "$templatePropertyId" with predicate "$predicateId". min: "$min", found: "$actual".""")
+
+class TooManyPropertyValues(templatePropertyId: ThingId, predicateId: ThingId, max: Int, actual: Int) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Too many values for property "$templatePropertyId" with predicate "$predicateId". max: "$max", found: "$actual".""")
+
+class InvalidLiteral(templatePropertyId: ThingId, predicateId: ThingId, datatype: ThingId, id: String, value: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" with value "$value" for property "$templatePropertyId" with predicate "$predicateId" is not a valid "$datatype".""")

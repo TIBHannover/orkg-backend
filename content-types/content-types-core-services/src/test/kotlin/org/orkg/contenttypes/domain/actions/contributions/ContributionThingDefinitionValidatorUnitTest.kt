@@ -21,14 +21,16 @@ import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateContributionCommand
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
 
 @Nested
 class ContributionThingDefinitionValidatorUnitTest {
     private val thingRepository: ThingRepository = mockk()
+    private val classRepository: ClassRepository = mockk()
 
-    private val contributionThingDefinitionValidator = ContributionThingDefinitionValidator(thingRepository)
+    private val contributionThingDefinitionValidator = ContributionThingDefinitionValidator(thingRepository, classRepository)
 
     @BeforeEach
     fun resetState() {
@@ -37,7 +39,7 @@ class ContributionThingDefinitionValidatorUnitTest {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(thingRepository)
+        confirmVerified(thingRepository, classRepository)
     }
 
     @Test

@@ -64,6 +64,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
@@ -88,6 +89,7 @@ class PaperService(
     private val listService: ListUseCases,
     private val publishingService: PublishingService,
     private val paperRepository: PaperRepository,
+    private val classRepository: ClassRepository,
     @Value("\${orkg.publishing.base-url.paper}")
     private val paperPublishBaseUri: String = "http://localhost/paper/"
 ) : PaperUseCases {
@@ -142,7 +144,7 @@ class PaperService(
             OrganizationValidator(organizationRepository, { it.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }),
             PaperAuthorCreateValidator(resourceRepository, statementRepository),
-            PaperThingDefinitionValidator(thingRepository),
+            PaperThingDefinitionValidator(thingRepository, classRepository),
             PaperContributionValidator(thingRepository),
             PaperResourceCreator(resourceService),
             PaperIdentifierCreator(statementService, literalService),
@@ -159,7 +161,7 @@ class PaperService(
         val steps = listOf(
             ContributionTempIdValidator(),
             ContributionPaperValidator(resourceRepository),
-            ContributionThingDefinitionValidator(thingRepository),
+            ContributionThingDefinitionValidator(thingRepository, classRepository),
             ContributionContentsValidator(thingRepository),
             ContributionContentsCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )

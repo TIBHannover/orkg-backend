@@ -10,7 +10,7 @@ interface VisualizationUseCases : RetrieveVisualizationUseCase, CreateVisualizat
 
 interface TemplateUseCases : RetrieveTemplateUseCase, CreateTemplateUseCase, CreateTemplatePropertyUseCase
 
-interface TemplateInstanceUseCases : RetrieveTemplateInstanceUseCase
+interface TemplateInstanceUseCases : RetrieveTemplateInstanceUseCase, UpdateTemplateInstanceUseCase
 
 interface ContentTypeResourcesUseCase :
     LoadPaperPort,

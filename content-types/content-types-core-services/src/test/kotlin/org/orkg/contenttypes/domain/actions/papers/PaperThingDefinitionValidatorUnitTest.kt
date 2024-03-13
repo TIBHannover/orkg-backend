@@ -17,14 +17,16 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
 
 @Nested
 class PaperThingDefinitionValidatorUnitTest {
     private val thingRepository: ThingRepository = mockk()
+    private val classRepository: ClassRepository = mockk()
 
-    private val paperThingDefinitionValidator = PaperThingDefinitionValidator(thingRepository)
+    private val paperThingDefinitionValidator = PaperThingDefinitionValidator(thingRepository, classRepository)
 
     @BeforeEach
     fun resetState() {
@@ -33,7 +35,7 @@ class PaperThingDefinitionValidatorUnitTest {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(thingRepository)
+        confirmVerified(thingRepository, classRepository)
     }
 
     @Test

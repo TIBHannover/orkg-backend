@@ -63,6 +63,7 @@ class SubgraphCreator(
             }
         }
     }
+
     private fun createLiterals(
         thingDefinitions: ThingDefinitions,
         validatedIds: Map<String, Either<String, Thing>>,

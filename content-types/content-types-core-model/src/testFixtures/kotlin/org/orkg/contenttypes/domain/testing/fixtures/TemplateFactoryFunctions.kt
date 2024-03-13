@@ -10,6 +10,7 @@ import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.ResourceTemplateProperty
 import org.orkg.contenttypes.domain.Template
 import org.orkg.contenttypes.domain.TemplateRelation
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
@@ -55,7 +56,7 @@ fun createDummyLiteralTemplateProperty() = LiteralTemplateProperty(
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.field, "literal property path label"),
-    datatype = ObjectIdAndLabel(ThingId("C25"), "literal property class label")
+    datatype = ObjectIdAndLabel(Classes.integer, "literal property class label")
 )
 
 fun createDummyResourceTemplateProperty() = ResourceTemplateProperty(

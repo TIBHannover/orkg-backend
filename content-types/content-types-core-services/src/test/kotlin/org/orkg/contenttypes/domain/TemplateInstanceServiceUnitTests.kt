@@ -19,8 +19,15 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplateInstance
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
+import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
@@ -30,11 +37,25 @@ class TemplateInstanceServiceUnitTests {
     private val resourceRepository: ResourceRepository = mockk()
     private val templateService: TemplateUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
+    private val thingRepository: ThingRepository = mockk()
+    private val resourceService: ResourceUseCases = mockk()
+    private val literalService: LiteralUseCases = mockk()
+    private val predicateService: PredicateUseCases = mockk()
+    private val listService: ListUseCases = mockk()
+    private val statementRepository: StatementRepository = mockk()
+    private val classRepository: ClassRepository = mockk()
 
     private val service = TemplateInstanceService(
         resourceRepository = resourceRepository,
         templateService = templateService,
-        statementService = statementService
+        statementService = statementService,
+        thingRepository = thingRepository,
+        resourceService = resourceService,
+        literalService = literalService,
+        predicateService = predicateService,
+        listService = listService,
+        classRepository = classRepository,
+        statementRepository = statementRepository
     )
 
     @BeforeEach
@@ -44,7 +65,17 @@ class TemplateInstanceServiceUnitTests {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(resourceRepository, templateService, statementService)
+        confirmVerified(
+            resourceRepository,
+            templateService,
+            statementService,
+            thingRepository,
+            resourceService,
+            literalService,
+            predicateService,
+            listService,
+            statementRepository
+        )
     }
 
     @Test

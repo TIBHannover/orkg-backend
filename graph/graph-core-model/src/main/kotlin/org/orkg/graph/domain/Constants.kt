@@ -1,6 +1,8 @@
 package org.orkg.graph.domain
 
 import org.orkg.common.ThingId
+import org.orkg.common.isValidDate
+import org.orkg.common.isValidURI
 
 val reservedClassIds = setOf(
     Classes.literal,
@@ -144,17 +146,28 @@ object Classes {
 }
 
 object Literals {
-    enum class XSD(private val fragment: String) {
-        STRING("string"),
-        INT("integer"),
-        DECIMAL("decimal"),
-        DATE("date"),
-        BOOLEAN("boolean"),
-        FLOAT("float"),
-        URI("anyURI");
+    enum class XSD(
+        private val fragment: String,
+        val `class`: ThingId,
+        private val predicate: (String) -> Boolean
+    ) {
+        STRING("string", Classes.string, { true }),
+        INT("integer", Classes.integer, { it.toIntOrNull() != null }),
+        DECIMAL("decimal", Classes.decimal, { it.toDoubleOrNull() != null }),
+        DATE("date", Classes.date, { it.isValidDate() }),
+        BOOLEAN("boolean", Classes.boolean, { it.toBooleanStrictOrNull() != null }),
+        FLOAT("float", Classes.float, { it.toFloatOrNull() != null }),
+        URI("anyURI", Classes.uri, { it.isValidURI() });
 
         val prefixedUri: String get() = "xsd:$fragment"
         val uri: String get() = "http://www.w3.org/2001/XMLSchema#$fragment"
+
+        fun canParse(value: String): Boolean = predicate(value)
+
+        companion object {
+            fun fromClass(`class`: ThingId): XSD? =
+                XSD.entries.singleOrNull { it.`class` == `class` }
+        }
     }
 }
 

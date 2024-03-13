@@ -7,10 +7,21 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
+import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.InvalidMonth
-import org.orkg.contenttypes.domain.TemplateNotApplicable
+import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.LiteratureListNotFound
+import org.orkg.contenttypes.domain.MissingPropertyValues
+import org.orkg.contenttypes.domain.ObjectMustNotBeALiteral
+import org.orkg.contenttypes.domain.ObjectIsNotAClass
+import org.orkg.contenttypes.domain.ObjectIsNotAList
+import org.orkg.contenttypes.domain.ObjectIsNotALiteral
+import org.orkg.contenttypes.domain.ObjectIsNotAPredicate
+import org.orkg.contenttypes.domain.ResourceIsNotAnInstanceOfTargetClass
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
+import org.orkg.contenttypes.domain.TemplateNotApplicable
+import org.orkg.contenttypes.domain.TooManyPropertyValues
+import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -57,23 +68,6 @@ internal class ExceptionControllerUnitTest {
     }
 
     @Test
-    fun templateNotApplicable() {
-        val templateId = ThingId("R123")
-        val id = ThingId("R456")
-
-        get("/template-not-applicable")
-            .param("templateId", templateId.value)
-            .param("id", id.value)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/template-not-applicable"))
-            .andExpect(jsonPath("$.message").value("""Template "$templateId" cannot be applied to resource "$id" because the target resource is not an instance of the template target class."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
     fun sustainableDevelopmentGoalNotFound() {
         get("/sustainable-development-goal-not-found")
             .param("sdgId", "SDG1")
@@ -101,6 +95,244 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun templateNotApplicable() {
+        val templateId = ThingId("R123")
+        val id = ThingId("R456")
+
+        get("/template-not-applicable")
+            .param("templateId", templateId.value)
+            .param("id", id.value)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/template-not-applicable"))
+            .andExpect(jsonPath("$.message").value("""Template "$templateId" cannot be applied to resource "$id" because the target resource is not an instance of the template target class."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun objectIsNotAClass() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val id = "#temp1"
+
+        get("/object-is-not-a-class")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/object-is-not-a-class"))
+            .andExpect(jsonPath("$.message").value("""Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a class."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun objectIsNotAPredicate() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val id = "#temp1"
+
+        get("/object-is-not-a-predicate")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/object-is-not-a-predicate"))
+            .andExpect(jsonPath("$.message").value("""Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a predicate."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun objectIsNotAList() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val id = "#temp1"
+
+        get("/object-is-not-a-list")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/object-is-not-a-list"))
+            .andExpect(jsonPath("$.message").value("""Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a list."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun objectIsNotALiteral() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val id = "#temp1"
+
+        get("/object-is-not-a-literal")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/object-is-not-a-literal"))
+            .andExpect(jsonPath("$.message").value("""Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not a literal."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun objectMustNotBeALiteral() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val id = "#temp1"
+
+        get("/object-must-not-be-a-literal")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/object-must-not-be-a-literal"))
+            .andExpect(jsonPath("$.message").value("""Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" must not be a literal."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun resourceIsNotAnInstanceOfTargetClass() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val id = "#temp1"
+        val targetClass = "C123"
+
+        get("/resource-is-not-an-instance-of-target-class")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("id", id)
+            .param("targetClass", targetClass)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/resource-is-not-an-instance-of-target-class"))
+            .andExpect(jsonPath("$.message").value("""Object "$id" for template property "$templatePropertyId" with predicate "$predicateId" is not an instance of target class "$targetClass"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun labelDoesNotMatchPattern() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val objectId = "#temp1"
+        val pattern = "\\d+"
+        val label = "label"
+
+        get("/label-does-not-match-pattern")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("objectId", objectId)
+            .param("pattern", pattern)
+            .param("label", label)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/label-does-not-match-pattern"))
+            .andExpect(jsonPath("$.message").value("""Label "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" does not match pattern "$pattern"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun unknownTemplateProperties() {
+        val templateId = "R123"
+        val unknownProperties = arrayOf("R1", "R2")
+
+        get("/unknown-template-properties")
+            .param("templateId", templateId)
+            .param("unknownProperties", *unknownProperties)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/unknown-template-properties"))
+            .andExpect(jsonPath("$.message").value("""Unknown properties for template "$templateId": ${unknownProperties.joinToString { "\"$it\"" } }."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun missingPropertyValues() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val min = 5
+        val actual = 2
+
+        get("/missing-property-values")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("min", min.toString())
+            .param("actual", actual.toString())
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-property-values"))
+            .andExpect(jsonPath("$.message").value("""Missing values for property "$templatePropertyId" with predicate "$predicateId". min: "$min", found: "$actual"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun tooManyPropertyValues() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val max = 2
+        val actual = 5
+
+        get("/too-many-property-values")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("max", max.toString())
+            .param("actual", actual.toString())
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/too-many-property-values"))
+            .andExpect(jsonPath("$.message").value("""Too many values for property "$templatePropertyId" with predicate "$predicateId". max: "$max", found: "$actual"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidLiteral() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val datatype = "Boolean"
+        val objectId = "#temp1"
+        val value = "0.15"
+
+        get("/invalid-literal")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("datatype", datatype)
+            .param("id", objectId)
+            .param("value", value)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-literal"))
+            .andExpect(jsonPath("$.message").value("""Object "$objectId" with value "$value" for property "$templatePropertyId" with predicate "$predicateId" is not a valid "$datatype"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -122,6 +354,111 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/template-not-applicable")
         fun templateNotApplicable(@RequestParam templateId: ThingId, @RequestParam id: ThingId) {
             throw TemplateNotApplicable(templateId, id)
+        }
+
+        @GetMapping("/object-is-not-a-class")
+        fun objectIsNotAClass(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam predicateId: ThingId,
+            @RequestParam id: String
+        ) {
+            throw ObjectIsNotAClass(templatePropertyId, predicateId, id)
+        }
+
+        @GetMapping("/object-is-not-a-predicate")
+        fun objectIsNotAPredicate(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam predicateId: ThingId,
+            @RequestParam id: String
+        ) {
+            throw ObjectIsNotAPredicate(templatePropertyId, predicateId, id)
+        }
+
+        @GetMapping("/object-is-not-a-list")
+        fun objectIsNotAList(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam predicateId: ThingId,
+            @RequestParam id: String
+        ) {
+            throw ObjectIsNotAList(templatePropertyId, predicateId, id)
+        }
+
+        @GetMapping("/object-is-not-a-literal")
+        fun objectIsNotALiteral(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam predicateId: ThingId,
+            @RequestParam id: String
+        ) {
+            throw ObjectIsNotALiteral(templatePropertyId, predicateId, id)
+        }
+
+        @GetMapping("/object-must-not-be-a-literal")
+        fun objectMustNotBeALiteral(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam predicateId: ThingId,
+            @RequestParam id: String
+        ) {
+            throw ObjectMustNotBeALiteral(templatePropertyId, predicateId, id)
+        }
+
+        @GetMapping("/resource-is-not-an-instance-of-target-class")
+        fun resourceIsNotAnInstanceOfTargetClass(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam predicateId: ThingId,
+            @RequestParam id: String,
+            @RequestParam targetClass: ThingId
+        ) {
+            throw ResourceIsNotAnInstanceOfTargetClass(templatePropertyId, predicateId, id, targetClass)
+        }
+
+        @GetMapping("/label-does-not-match-pattern")
+        fun labelDoesNotMatchPattern(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam objectId: String,
+            @RequestParam predicateId: ThingId,
+            @RequestParam label: String,
+            @RequestParam pattern: String
+        ) {
+            throw LabelDoesNotMatchPattern(templatePropertyId, objectId, predicateId, label, pattern)
+        }
+
+        @GetMapping("/unknown-template-properties")
+        fun unknownTemplateProperties(
+            @RequestParam templateId: ThingId,
+            @RequestParam("unknownProperties") unknownProperties: Set<ThingId>
+        ) {
+            throw UnknownTemplateProperties(templateId, unknownProperties)
+        }
+
+        @GetMapping("/missing-property-values")
+        fun missingPropertyValues(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam predicateId: ThingId,
+            @RequestParam min: Int,
+            @RequestParam actual: Int
+        ) {
+            throw MissingPropertyValues(templatePropertyId, predicateId, min, actual)
+        }
+
+        @GetMapping("/too-many-property-values")
+        fun tooManyPropertyValues(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam predicateId: ThingId,
+            @RequestParam max: Int,
+            @RequestParam actual: Int
+        ) {
+            throw TooManyPropertyValues(templatePropertyId, predicateId, max, actual)
+        }
+
+        @GetMapping("/invalid-literal")
+        fun invalidLiteral(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam predicateId: ThingId,
+            @RequestParam datatype: ThingId,
+            @RequestParam id: String,
+            @RequestParam value: String
+        ) {
+            throw InvalidLiteral(templatePropertyId, predicateId, datatype, id, value)
         }
     }
 

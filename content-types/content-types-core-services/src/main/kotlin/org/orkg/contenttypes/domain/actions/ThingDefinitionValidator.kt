@@ -11,11 +11,14 @@ import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.ReservedClass
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.reservedClassIds
+import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
-abstract class ThingDefinitionValidator(
-    override val thingRepository: ThingRepository
+open class ThingDefinitionValidator(
+    override val thingRepository: ThingRepository,
+    private val classRepository: ClassRepository
 ) : ThingIdValidator {
     internal fun validateThingDefinitions(
         thingDefinitions: ThingDefinitions,
@@ -24,6 +27,17 @@ abstract class ThingDefinitionValidator(
     ) {
         validateIds(thingDefinitions, tempIds, validatedIds)
         validateLabels(thingDefinitions)
+        validateClassURIs(thingDefinitions)
+    }
+
+    internal fun validateThingDefinitions(
+        thingDefinitions: ThingDefinitions,
+        tempIds: Set<String>,
+        validatedIds: Map<String, Either<String, Thing>>
+    ): Map<String, Either<String, Thing>> {
+        val result = validatedIds.toMutableMap()
+        validateThingDefinitions(thingDefinitions, tempIds, result)
+        return result
     }
 
     private fun validateIds(
@@ -66,6 +80,16 @@ abstract class ThingDefinitionValidator(
         }
         thingDefinitions.lists.values.forEach {
             Label.ofOrNull(it.label) ?: throw InvalidLabel()
+        }
+    }
+
+    private fun validateClassURIs(thingDefinitions: ThingDefinitions) {
+        thingDefinitions.classes.values.forEach {
+            if (it.uri != null) {
+                classRepository.findByUri(it.uri.toString()).ifPresent { found ->
+                    throw URIAlreadyInUse(found.uri!!, found.id)
+                }
+            }
         }
     }
 }

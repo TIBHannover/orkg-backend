@@ -23,7 +23,7 @@ val publishableClasses: Set<ThingId> = setOf(
     Classes.paper,
     Classes.paperVersion,
     Classes.comparison,
-    Classes.smartReview
+    Classes.smartReviewPublished
 )
 
 @RestController

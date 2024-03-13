@@ -29,19 +29,6 @@ interface ResearchFieldRepository {
         pageable: Pageable
     ): Page<Resource>
 
-    fun findAllListedComparisonsByResearchField(
-        id: ThingId,
-        includeSubfields: Boolean = false,
-        pageable: Pageable
-    ): Page<Resource>
-
-    fun findAllComparisonsByResearchFieldAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        includeSubfields: Boolean = false,
-        pageable: Pageable
-    ): Page<Resource>
-
     fun findAllListedProblemsByResearchField(
         id: ThingId,
         includeSubfields: Boolean = false,

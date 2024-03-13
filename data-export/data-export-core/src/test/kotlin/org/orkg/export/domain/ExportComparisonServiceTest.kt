@@ -11,18 +11,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
+import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.export.testing.fixtures.verifyThatDirectoryExistsAndIsEmpty
-import org.orkg.graph.output.StatementRepository
 import org.orkg.testing.pageOf
 
 internal class ExportComparisonServiceTest : DescribeSpec({
     val comparisonService: ComparisonUseCases = mockk()
-    val statementRepository: StatementRepository = mockk()
+    val comparisonRepository: ComparisonRepository = mockk()
     val fileExportService = FileExportService()
     val objectMapper = ObjectMapper()
     val service = ExportComparisonService(
         comparisonService = comparisonService,
-        statementRepository = statementRepository,
+        comparisonRepository = comparisonRepository,
         fileExportService = fileExportService,
         objectMapper = objectMapper,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
@@ -41,7 +41,7 @@ internal class ExportComparisonServiceTest : DescribeSpec({
         val comparison = createDummyComparison()
 
         every { comparisonService.findAllCurrentListedAndUnpublishedComparisons(any()) } returns pageOf(comparison, comparison)
-        every { statementRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf("test/doi")
+        every { comparisonRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf("test/doi")
 
         withContext(Dispatchers.IO) {
             service.export(targetFile.absolutePath)

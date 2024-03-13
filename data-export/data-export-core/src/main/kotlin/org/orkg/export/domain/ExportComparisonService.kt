@@ -15,9 +15,9 @@ import org.orkg.contenttypes.domain.json.DataCiteJson.Subject
 import org.orkg.contenttypes.domain.json.DataCiteJson.Title
 import org.orkg.contenttypes.domain.json.DataCiteJson.Type
 import org.orkg.contenttypes.input.ComparisonUseCases
+import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.export.input.ExportUnpublishedComparisonUseCase
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.output.StatementRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -29,7 +29,7 @@ private const val DEFAULT_FILE_NAME = "comparisons.jsonl"
 @Service
 class ExportComparisonService(
     private val comparisonService: ComparisonUseCases,
-    private val statementRepository: StatementRepository,
+    private val comparisonRepository: ComparisonRepository,
     private val fileExportService: FileExportService,
     private val objectMapper: ObjectMapper,
     @Value("\${orkg.publishing.base-url.comparison}")
@@ -60,7 +60,7 @@ class ExportComparisonService(
                 publicationYear = createdAt.year,
                 subjects = researchFields.map { Subject(it.label) },
                 types = Type(Classes.comparison.value, "Dataset"),
-                relatedIdentifiers = statementRepository.findAllDOIsRelatedToComparison(id)
+                relatedIdentifiers = comparisonRepository.findAllDOIsRelatedToComparison(id)
                     .map { RelatedIdentifier.fromDOI(it) },
                 rightsList = listOf(Rights.CC_BY_SA_4_0),
                 descriptions = description?.let { listOf(Description(it)) }.orEmpty(),

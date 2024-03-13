@@ -10,6 +10,7 @@ dependencies {
 
     implementation(project(":content-types:content-types-core-model"))
     implementation(project(":content-types:content-types-ports-input"))
+    implementation(project(":content-types:content-types-ports-output"))
     implementation(project(":data-export:data-export-ports-input"))
 
     implementation("org.springframework:spring-context")

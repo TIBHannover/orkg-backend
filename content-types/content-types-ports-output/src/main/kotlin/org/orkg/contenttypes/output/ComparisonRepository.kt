@@ -8,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -28,4 +29,25 @@ interface ComparisonRepository {
         sustainableDevelopmentGoal: ThingId? = null
     ): Page<Resource>
     fun findVersionHistory(id: ThingId): List<HeadVersion>
+    fun findAllDOIsRelatedToComparison(id: ThingId): Iterable<String>
+    fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource>
+
+    // legacy methods:
+
+    // always returns all head and all previous versions
+    @Deprecated(message = "To be removed", replaceWith = ReplaceWith("findAll"))
+    fun findAllListedComparisonsByResearchField(
+        id: ThingId,
+        includeSubfields: Boolean = false,
+        pageable: Pageable
+    ): Page<Resource>
+
+    // always returns all head and all previous versions
+    @Deprecated(message = "To be removed", replaceWith = ReplaceWith("findAll"))
+    fun findAllComparisonsByResearchFieldAndVisibility(
+        id: ThingId,
+        visibility: Visibility,
+        includeSubfields: Boolean = false,
+        pageable: Pageable
+    ): Page<Resource>
 }

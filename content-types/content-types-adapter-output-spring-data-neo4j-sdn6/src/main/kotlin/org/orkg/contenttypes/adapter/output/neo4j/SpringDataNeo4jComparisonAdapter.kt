@@ -4,11 +4,13 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Conditions
+import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
+import org.neo4j.cypherdsl.core.Functions
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.size
 import org.neo4j.cypherdsl.core.Functions.toLower
@@ -19,26 +21,33 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.neo4jdsl.CypherQueryBuilder
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countDistinctOver
+import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache
+import org.orkg.common.neo4jdsl.SingleQueryBuilder.fetchAs
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jComparisonRepository
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.graph.adapter.output.neo4j.ResourceMapper
 import org.orkg.graph.adapter.output.neo4j.call
+import org.orkg.graph.adapter.output.neo4j.comparisonNode
+import org.orkg.graph.adapter.output.neo4j.contributionNode
 import org.orkg.graph.adapter.output.neo4j.node
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
+import org.orkg.graph.adapter.output.neo4j.paperNode
 import org.orkg.graph.adapter.output.neo4j.toCondition
 import org.orkg.graph.adapter.output.neo4j.toMatchOrNull
 import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where
 import org.orkg.graph.adapter.output.neo4j.withDefaultSort
+import org.orkg.graph.adapter.output.neo4j.withSortableFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -167,4 +176,74 @@ class SpringDataNeo4jComparisonAdapter(
 
     override fun findVersionHistory(id: ThingId): List<HeadVersion> =
         neo4jRepository.findVersionHistory(id)
+
+    override fun findAllDOIsRelatedToComparison(id: ThingId): Iterable<String> = CypherQueryBuilder(neo4jClient)
+        .withQuery {
+            val doi = name("doi")
+            val relations = comparisonNode()
+                .withProperties("id", Cypher.parameter("id"))
+                .relationshipTo(contributionNode(), RELATED)
+                .withProperties("predicate_id", literalOf<String>(Predicates.comparesContribution.value))
+                .relationshipFrom(paperNode(), RELATED)
+                .properties("predicate_id", literalOf<String>(Predicates.hasContribution.value))
+                .relationshipTo(node("Literal").named(doi), RELATED)
+                .properties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
+            match(relations).returningDistinct(Functions.trim(doi.property("label")))
+        }
+        .withParameters("id" to id.value)
+        .fetchAs<String>()
+        .all()
+        .filter { it.isNotBlank() }
+
+    override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource> = CypherQueryBuilder(neo4jClient)
+        .withCommonQuery {
+            val cmp = comparisonNode().named("node")
+            match(cmp).where(
+                exists(
+                    comparisonNode().relationshipTo(cmp, "RELATED")
+                        .withProperties("predicate_id", literalOf<String>(Predicates.hasPreviousVersion.value))
+                ).not()
+                    .and(
+                        cmp.property("visibility").eq(literalOf<String>("DEFAULT"))
+                            .or(cmp.property("visibility").eq(literalOf<String>("FEATURED")))
+                    )
+                    .and(
+                        exists(
+                            cmp.relationshipTo(node("Literal"), "RELATED")
+                                .withProperties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
+                        ).not()
+                    )
+            )
+        }
+        .withQuery { commonQuery ->
+            commonQuery.withSortableFields("node")
+                .orderBy(Cypher.sort(name("created_at")))
+                .returning("node")
+        }
+        .countOver("node")
+        .mappedBy(ResourceMapper("node"))
+        .fetch(pageable)
+
+    @Deprecated("To be removed", replaceWith = ReplaceWith("findAll"))
+    override fun findAllListedComparisonsByResearchField(
+        id: ThingId,
+        includeSubfields: Boolean,
+        pageable: Pageable
+    ): Page<Resource> =
+        when (includeSubfields) {
+            true -> neo4jRepository.findAllListedComparisonsByResearchFieldIncludingSubFields(id, pageable)
+            false -> neo4jRepository.findAllListedComparisonsByResearchFieldExcludingSubFields(id, pageable)
+        }.map { it.toResource() }
+
+    @Deprecated("To be removed", replaceWith = ReplaceWith("findAll"))
+    override fun findAllComparisonsByResearchFieldAndVisibility(
+        id: ThingId,
+        visibility: Visibility,
+        includeSubfields: Boolean,
+        pageable: Pageable
+    ): Page<Resource> =
+        when (includeSubfields) {
+            true -> neo4jRepository.findAllComparisonsByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)
+            false -> neo4jRepository.findAllComparisonsByResearchFieldAndVisibilityExcludingSubFields(id, visibility, pageable)
+        }.map { it.toResource() }
 }

@@ -144,7 +144,7 @@ class ComparisonService(
             .map { (it.`object` as Resource).toComparisonRelatedFigure() }
 
     override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison> =
-        statementRepository.findAllCurrentListedAndUnpublishedComparisons(pageable)
+        comparisonRepository.findAllCurrentListedAndUnpublishedComparisons(pageable)
             .map { it.toComparison() }
 
     override fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
@@ -278,7 +278,7 @@ class ComparisonService(
                 url = URI.create("$comparisonPublishBaseUri/").resolve(comparison.id.value),
                 creators = command.authors,
                 resourceType = Classes.comparison,
-                relatedIdentifiers = statementRepository.findAllDOIsRelatedToComparison(comparison.id).toList()
+                relatedIdentifiers = comparisonRepository.findAllDOIsRelatedToComparison(comparison.id).toList()
             )
         )
     }

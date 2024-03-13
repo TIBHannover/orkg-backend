@@ -7,7 +7,6 @@ import kotlin.jvm.optionals.getOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Class
@@ -258,23 +257,6 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             }
         })
 
-    override fun findAllDOIsRelatedToComparison(id: ThingId): Iterable<String> =
-        entities.values.filter {
-            it.subject.id == id && it.subject is Resource && Classes.comparison in (it.subject as Resource).classes &&
-                it.predicate.id == Predicates.comparesContribution &&
-                it.`object` is Resource && Classes.contribution in (it.`object` as Resource).classes
-        }.map { comparisonHasContribution ->
-            val paperIds = entities.values.filter {
-                it.subject is Resource && Classes.paper in (it.subject as Resource).classes &&
-                    it.predicate.id == Predicates.hasContribution &&
-                    it.`object`.id == comparisonHasContribution.`object`.id
-            }.map { it.subject.id }
-            entities.values
-                .filter { it.subject.id in paperIds && it.predicate.id == Predicates.hasDOI && it.`object` is Literal }
-                .map { (it.`object` as Literal).label.trim() }
-                .filter { it.isNotBlank() }
-        }.flatten().distinct()
-
     override fun countPredicateUsage(id: ThingId): Long =
         entities.values.count {
             (it.subject is Predicate && (it.subject as Predicate).id == id ||
@@ -385,26 +367,6 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
         }
         return id
     }
-
-    override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource> =
-        entities.values
-            .filter {
-                it.subject is Resource && with(it.subject as Resource) {
-                    Classes.comparison in classes && (visibility == Visibility.DEFAULT || visibility == Visibility.FEATURED)
-                } && findAll(
-                    objectId = it.subject.id,
-                    predicateId = Predicates.hasPreviousVersion,
-                    pageable = PageRequests.SINGLE
-                ).isEmpty && findAll(
-                    subjectId = it.subject.id,
-                    predicateId = Predicates.hasDOI,
-                    pageable = PageRequests.SINGLE
-                ).isEmpty
-            }
-            .map { it.subject as Resource }
-            .distinct()
-            .sortedBy { it.createdAt }
-            .paged(pageable)
 
     override fun findAllPapersByObservatoryIdAndFilters(
         observatoryId: ObservatoryId?,

@@ -367,7 +367,7 @@ class ComparisonServiceUnitTests {
         )
 
         every { resourceRepository.findById(comparison.id) } returns Optional.of(comparison)
-        every { statementRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf(relatedDoi)
+        every { comparisonRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf(relatedDoi)
         every { publishingService.publish(any()) } returns DOI.of("10.1234/56789")
 
         service.publish(
@@ -381,7 +381,7 @@ class ComparisonServiceUnitTests {
         )
 
         verify(exactly = 1) { resourceRepository.findById(comparison.id) }
-        verify(exactly = 1) { statementRepository.findAllDOIsRelatedToComparison(comparison.id) }
+        verify(exactly = 1) { comparisonRepository.findAllDOIsRelatedToComparison(comparison.id) }
         verify(exactly = 1) {
             publishingService.publish(
                 withArg {

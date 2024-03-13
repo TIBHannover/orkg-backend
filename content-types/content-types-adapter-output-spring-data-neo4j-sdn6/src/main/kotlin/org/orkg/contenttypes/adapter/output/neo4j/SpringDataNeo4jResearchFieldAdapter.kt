@@ -56,27 +56,6 @@ class SpringDataNeo4jResearchFieldAdapter(
             false -> neo4jRepository.findAllPapersByResearchFieldAndVisibilityExcludingSubFields(id, visibility, pageable)
         }.map { it.toResource() }
 
-    override fun findAllListedComparisonsByResearchField(
-        id: ThingId,
-        includeSubfields: Boolean,
-        pageable: Pageable
-    ): Page<Resource> =
-        when (includeSubfields) {
-            true -> neo4jRepository.findAllListedComparisonsByResearchFieldIncludingSubFields(id, pageable)
-            false -> neo4jRepository.findAllListedComparisonsByResearchFieldExcludingSubFields(id, pageable)
-        }.map { it.toResource() }
-
-    override fun findAllComparisonsByResearchFieldAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        includeSubfields: Boolean,
-        pageable: Pageable
-    ): Page<Resource> =
-        when (includeSubfields) {
-            true -> neo4jRepository.findAllComparisonsByResearchFieldAndVisibilityIncludingSubFields(id, visibility, pageable)
-            false -> neo4jRepository.findAllComparisonsByResearchFieldAndVisibilityExcludingSubFields(id, visibility, pageable)
-        }.map { it.toResource() }
-
     override fun findAllListedProblemsByResearchField(
         id: ThingId,
         includeSubfields: Boolean,

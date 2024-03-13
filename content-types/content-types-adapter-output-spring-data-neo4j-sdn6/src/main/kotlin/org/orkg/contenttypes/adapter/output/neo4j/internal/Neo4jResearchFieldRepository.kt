@@ -41,8 +41,6 @@ private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility AND 
 private const val WITH_DISTINCT_NODE = """WITH DISTINCT node"""
 private const val MATCH_PAPER_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Paper)-[:RELATED]->(:ResearchField)"""
 private const val MATCH_PAPER_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Paper)-[:RELATED]->(:ResearchField {id: $id})"""
-private const val MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Comparison)-[:RELATED]->(:Contribution)<-[:RELATED]-(:Paper)-[:RELATED]->(:ResearchField)"""
-private const val MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Comparison)-[:RELATED]->(:Contribution)<-[:RELATED]-(:Paper)-[:RELATED]->(:ResearchField {id: $id})"""
 private const val MATCH_PROBLEM_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Problem)<-[:RELATED]-(:Contribution)<-[:RELATED]-(:Paper)-[:RELATED]->(:ResearchField)"""
 private const val MATCH_PROBLEM_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Problem)<-[:RELATED]-(:Contribution)<-[:RELATED]-(:Paper)-[:RELATED]->(:ResearchField {id: $id})"""
 private const val MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Visualization)<-[:RELATED]-(:Comparison)-[:RELATED]->(:ResearchField)"""
@@ -103,24 +101,6 @@ interface Neo4jResearchFieldRepository :
     @Query("""$MATCH_PAPER_RELATED_TO_RESEARCH_FIELD_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_PAPER_RELATED_TO_RESEARCH_FIELD_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $RETURN_NODE_COUNT""")
     fun findAllPapersByResearchFieldAndVisibilityExcludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-
-    // Comparisons
-
-    @Query("""$MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $RETURN_NODE_COUNT""")
-    fun findAllListedComparisonsByResearchFieldIncludingSubFields(id: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query("""$MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD_WITH_ID $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD_WITH_ID $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $RETURN_NODE_COUNT""")
-    fun findAllListedComparisonsByResearchFieldExcludingSubFields(id: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query("""$MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WHERE_VISIBILITY $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WHERE_VISIBILITY $WITH_DISTINCT_NODE $RETURN_NODE_COUNT""")
-    fun findAllComparisonsByResearchFieldAndVisibilityIncludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-
-    @Query("""$MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $RETURN_NODE_COUNT""")
-    fun findAllComparisonsByResearchFieldAndVisibilityExcludingSubFields(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 
     // Problems
 

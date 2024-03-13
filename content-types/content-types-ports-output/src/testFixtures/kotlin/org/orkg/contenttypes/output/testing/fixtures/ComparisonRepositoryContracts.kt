@@ -37,6 +37,7 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.withCustomMappings
+import org.orkg.testing.pageOf
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
@@ -772,6 +773,164 @@ fun <
                     a.createdAt shouldBeGreaterThan b.createdAt
                 } else {
                     a.label shouldBeLessThan b.label
+                }
+            }
+        }
+    }
+
+    describe("finding several DOIs") {
+        context("related to comparison") {
+            val comparison = fabricator.random<Resource>()
+                .copy(classes = setOf(Classes.comparison))
+            val contributions = fabricator.random<List<Resource>>()
+                .map { it.copy(classes = setOf(Classes.contribution)) }
+            val papers = fabricator.random<List<Resource>>()
+                .map { it.copy(classes = setOf(Classes.paper)) }
+
+            val comparesContribution = fabricator.random<Predicate>().copy(id = Predicates.comparesContribution)
+            contributions.forEach {
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = comparison,
+                        predicate = comparesContribution,
+                        `object` = it
+                    )
+                )
+            }
+
+            val hasDOI = fabricator.random<Predicate>().copy(id = Predicates.hasDOI)
+            val dois = papers.take(5).map { paper ->
+                val doi = fabricator.random<Literal>()
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = paper,
+                        predicate = hasDOI,
+                        `object` = doi
+                    )
+                )
+                doi.label.trim()
+            }
+            saveStatement(
+                fabricator.random<GeneralStatement>().copy(
+                    subject = papers[5],
+                    predicate = hasDOI,
+                    `object` = fabricator.random<Literal>().copy(label = "")
+                )
+            )
+
+            val hasContribution = fabricator.random<Predicate>().copy(id = Predicates.hasContribution)
+            (papers zip contributions).forEach { (paper, contribution) ->
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = paper,
+                        predicate = hasContribution,
+                        `object` = contribution
+                    )
+                )
+            }
+
+            val result = repository.findAllDOIsRelatedToComparison(comparison.id)
+
+            it("returns the correct result") {
+                result shouldContainAll dois
+                result.toList().size shouldBe dois.size
+            }
+        }
+    }
+
+    describe("finding several current comparisons") {
+        context("by listed visibility") {
+            context("without doi") {
+                val comparisons = fabricator.random<List<Resource>>()
+                    .map { it.copy(visibility = Visibility.UNLISTED, classes = setOf(Classes.comparison)) }
+                    .toMutableList()
+                comparisons[0] = comparisons[0].copy(visibility = Visibility.DEFAULT)
+                comparisons[1] = comparisons[1].copy(visibility = Visibility.DEFAULT)
+                comparisons[2] = comparisons[2].copy(visibility = Visibility.FEATURED)
+                comparisons[3] = comparisons[3].copy(visibility = Visibility.FEATURED)
+                comparisons[4] = comparisons[4].copy(visibility = Visibility.DEFAULT)
+                comparisons[5] = comparisons[5].copy(visibility = Visibility.DEFAULT)
+                comparisons[6] = comparisons[6].copy(visibility = Visibility.FEATURED)
+                comparisons[7] = comparisons[7].copy(visibility = Visibility.FEATURED)
+
+                // Workaround for in-memory repository, because it can only return comparisons that are used in at least one statement
+                val description = fabricator.random<Predicate>().copy(id = Predicates.description)
+                comparisons.forEach {
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = it,
+                            predicate = description,
+                            `object` = fabricator.random<Literal>()
+                        )
+                    )
+                }
+
+                val hasPreviousVersion = fabricator.random<Predicate>().copy(id = Predicates.hasPreviousVersion)
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = comparisons[0],
+                        predicate = hasPreviousVersion,
+                        `object` = comparisons[1]
+                    )
+                )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = comparisons[2],
+                        predicate = hasPreviousVersion,
+                        `object` = comparisons[3]
+                    )
+                )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = comparisons[4],
+                        predicate = hasPreviousVersion,
+                        `object` = comparisons[5]
+                    )
+                )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = comparisons[6],
+                        predicate = hasPreviousVersion,
+                        `object` = comparisons[7]
+                    )
+                )
+
+                val hasDoi = fabricator.random<Predicate>().copy(id = Predicates.hasDOI)
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = comparisons[4],
+                        predicate = hasDoi,
+                        `object` = fabricator.random<Literal>()
+                    )
+                )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = comparisons[6],
+                        predicate = hasDoi,
+                        `object` = fabricator.random<Literal>()
+                    )
+                )
+
+                val pageable = PageRequest.of(0, 5)
+                val expected = pageOf(comparisons[0], comparisons[2], pageable = PageRequest.of(0, 5))
+                val result = repository.findAllCurrentListedAndUnpublishedComparisons(pageable)
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.content.size
+                    result.content shouldContainAll expected.content
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe expected.size
+                    result.number shouldBe expected.number
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.totalElements
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
                 }
             }
         }

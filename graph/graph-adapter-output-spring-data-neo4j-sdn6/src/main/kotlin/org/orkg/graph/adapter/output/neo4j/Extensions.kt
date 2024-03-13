@@ -199,10 +199,21 @@ internal fun toUpper(expression: Expression): FunctionInvocation =
 
 internal operator fun MapAccessor.get(symbolicName: SymbolicName): Value = this[symbolicName.value]
 
-internal fun paperNode() = node("Paper", "Resource")
-internal fun comparisonNode() = node("Comparison", "Resource")
-internal fun problemNode() = node("Problem", "Resource")
-internal fun contributionNode() = node("Contribution", "Resource")
+fun paperNode() = node("Paper", "Resource")
+fun comparisonNode() = node("Comparison", "Resource")
+fun problemNode() = node("Problem", "Resource")
+fun contributionNode() = node("Contribution", "Resource")
+
+fun StatementBuilder.ExposesWith.withSortableFields(node: String) =
+    withSortableFields(name(node))
+
+fun StatementBuilder.ExposesWith.withSortableFields(node: Expression) =
+    with(
+        node,
+        node.property("label").`as`("label"),
+        node.property("id").`as`("id"),
+        node.property("created_at").`as`("created_at")
+    )
 
 internal fun StatementBuilder.TerminalExposesOrderBy.build(pageable: Pageable): ResultStatement =
     orderBy(pageable.sort.toSortItems()).skip(pageable.offset).limit(pageable.pageSize).build()

@@ -8,6 +8,7 @@ services:
       SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres/postgres'
       SPRING_NEO4J_URI: 'bolt://neo4j:7687'
       SPRING_PROFILES_ACTIVE: development
+      #ORKG_SIMCOMP_HOST: 'http://simcomp:4321' # defaults to https://orkg.org/simcomp
       JDK_JAVA_OPTIONS: >-
         -Dcom.sun.management.jmxremote
         -Dcom.sun.management.jmxremote.port=9090
@@ -26,6 +27,7 @@ services:
       - mail
       - database
       - rest-api
+      - simcomp
     depends_on:
       neo4j:
         condition: service_healthy
@@ -102,6 +104,10 @@ networks:
   database:
   mail:
   rest-api:
+  simcomp:
+    # Uncomment the following lines if you want to test against a local SimComp instance:
+    #name: orkg-simcomp-api_orkg_simcomp_api
+    #external: true
 
 volumes:
   neo4j-data:

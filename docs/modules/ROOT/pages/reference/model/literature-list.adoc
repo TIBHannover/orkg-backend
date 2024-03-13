@@ -45,4 +45,5 @@ flowchart LR
 			entry --> |"HasLink"| any[Any \n Resource]
 		end
 	end
+	LiteratureList --> |"sustainableDevelopmentGoal"| sdg[SustainableDevelopmentGoal \n Resource]
 ----

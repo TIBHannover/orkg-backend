@@ -62,4 +62,5 @@ flowchart LR
 			ontologySection --> |"ShowProperty"| showProperty[Predicate]
 		end
 	end
+	SmartReview --> |"sustainableDevelopmentGoal"| sdg[SustainableDevelopmentGoal \n Resource]
 ----

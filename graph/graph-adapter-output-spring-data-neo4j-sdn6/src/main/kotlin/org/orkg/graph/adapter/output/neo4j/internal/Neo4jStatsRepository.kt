@@ -127,7 +127,7 @@ CALL {
     RETURN field
     UNION ALL
     MATCH (field:ResearchField:Resource {id: $id})
-    CALL apoc.path.subgraphAll(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
+    CALL custom.subgraph(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
     YIELD relationships
     UNWIND relationships AS rel
     WITH rel
@@ -157,7 +157,7 @@ CALL {
     RETURN field
     UNION ALL
     MATCH (field:ResearchField:Resource {id: $id})
-    CALL apoc.path.subgraphAll(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
+    CALL custom.subgraph(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
     YIELD relationships
     UNWIND relationships AS rel
     WITH rel
@@ -248,7 +248,7 @@ CALL {
     RETURN field
     UNION ALL
     MATCH (field:ResearchField:Resource {id: $id})
-    CALL apoc.path.subgraphAll(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
+    CALL custom.subgraph(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
     YIELD relationships
     UNWIND relationships AS rel
     WITH rel
@@ -271,7 +271,7 @@ CALL {
     RETURN field
     UNION ALL
     MATCH (field:ResearchField:Resource {id: $id})
-    CALL apoc.path.subgraphAll(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
+    CALL custom.subgraph(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
     YIELD relationships
     UNWIND relationships AS rel
     WITH rel

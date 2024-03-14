@@ -21,7 +21,6 @@ import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateListUseCase
@@ -38,6 +37,7 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 
@@ -606,7 +606,7 @@ class SubgraphCreatorUnitTest {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             contributions = emptyList()
         )
-        val statement = GeneralStatement(
+        val statement = createStatement(
             subject = createResource(ThingId("R1000")),
             predicate = createPredicate(ThingId("R2000")),
             `object` = createLiteral(ThingId("R3000")),

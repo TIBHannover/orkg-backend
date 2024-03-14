@@ -122,7 +122,7 @@ class ListMigrationRunner(
             ),
             UNKNOWN_CONTRIBUTOR
         )
-        statementRepository.deleteByStatementIds(statements.mapTo(mutableSetOf()) { it.id!! })
+        statementRepository.deleteByStatementIds(statements.mapTo(mutableSetOf()) { it.id })
         statementRepository.save(
             GeneralStatement(
                 id = statementRepository.nextIdentity(),
@@ -191,7 +191,7 @@ class ListMigrationRunner(
             ),
             UNKNOWN_CONTRIBUTOR
         )
-        statementRepository.deleteByStatementIds(sectionStatements.mapTo(mutableSetOf()) { it.id!! })
+        statementRepository.deleteByStatementIds(sectionStatements.mapTo(mutableSetOf()) { it.id })
         statementRepository.save(
             GeneralStatement(
                 id = statementRepository.nextIdentity(),

@@ -109,7 +109,7 @@ class SpringDataNeo4jStatementAdapter(
                     )
             }
             .withParameters(
-                "id" to statement.id!!.value,
+                "id" to statement.id.value,
                 "subjectId" to statement.subject.id.value,
                 "objectId" to statement.`object`.id.value,
                 "predicateId" to statement.predicate.id.value,
@@ -148,7 +148,7 @@ class SpringDataNeo4jStatementAdapter(
                     listOf(
                         it.subject.id.value,
                         it.`object`.id.value,
-                        it.id?.value,
+                        it.id.value,
                         it.predicate.id.value,
                         it.createdBy.value.toString(),
                         it.createdAt?.format(ISO_OFFSET_DATE_TIME),
@@ -170,7 +170,7 @@ class SpringDataNeo4jStatementAdapter(
         .one()
         .orElse(0)
 
-    override fun delete(statement: GeneralStatement) = deleteByStatementId(statement.id!!)
+    override fun delete(statement: GeneralStatement) = deleteByStatementId(statement.id)
 
     override fun deleteByStatementId(id: StatementId) {
         CypherQueryBuilder(neo4jClient)

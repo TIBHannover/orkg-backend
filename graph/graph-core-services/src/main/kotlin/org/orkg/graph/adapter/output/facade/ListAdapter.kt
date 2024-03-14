@@ -53,11 +53,11 @@ class ListAdapter(
         val toAdd = list.elements.mapIndexed { index, element -> element to index }.toMap(LinkedHashMap())
         existingStatements.forEachIndexed { index, existingStatement ->
             if (index >= list.elements.size) {
-                toRemove += existingStatement.id!!
+                toRemove += existingStatement.id
             } else {
                 val target = list.elements[index]
                 if (target != existingStatement.`object`.id) {
-                    toRemove += existingStatement.id!!
+                    toRemove += existingStatement.id
                 } else {
                     toAdd.remove(target)
                 }
@@ -107,7 +107,7 @@ class ListAdapter(
         if (exists(id)) {
             val statements = statementRepository.findAll(subjectId = id, pageable = PageRequests.ALL)
             if (!statements.isEmpty) {
-                statementRepository.deleteByStatementIds(statements.map { it.id!! }.toSet())
+                statementRepository.deleteByStatementIds(statements.map { it.id }.toSet())
             }
             resourceRepository.deleteById(id)
         }

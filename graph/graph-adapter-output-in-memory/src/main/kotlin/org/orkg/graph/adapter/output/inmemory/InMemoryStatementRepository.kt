@@ -36,11 +36,11 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
 
     override val entities: InMemoryEntityAdapter<StatementId, GeneralStatement> =
         object : InMemoryEntityAdapter<StatementId, GeneralStatement> {
-            override val keys: Collection<StatementId> get() = inMemoryGraph.findAllStatements().map { it.id!! }
+            override val keys: Collection<StatementId> get() = inMemoryGraph.findAllStatements().map { it.id }
             override val values: MutableCollection<GeneralStatement>
                 get() = inMemoryGraph.findAllStatements().toMutableSet()
 
-            override fun remove(key: StatementId): GeneralStatement? = get(key)?.also { inMemoryGraph.remove(it.id!!) }
+            override fun remove(key: StatementId): GeneralStatement? = get(key)?.also { inMemoryGraph.remove(it.id) }
             override fun clear() = inMemoryGraph.findAllStatements().forEach(inMemoryGraph::remove)
 
             override fun get(key: StatementId): GeneralStatement? = inMemoryGraph.findStatementById(key).getOrNull()
@@ -49,7 +49,7 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
         }
 
     override fun save(statement: GeneralStatement) {
-        entities[statement.id!!] = statement
+        entities[statement.id] = statement
     }
 
     override fun saveAll(statements: Set<GeneralStatement>) {
@@ -59,7 +59,7 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
     override fun count(): Long = entities.size.toLong()
 
     override fun delete(statement: GeneralStatement) {
-        entities.remove(statement.id!!)
+        entities.remove(statement.id)
     }
 
     override fun deleteByStatementId(id: StatementId) {
@@ -240,7 +240,7 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
         resourceIds.associateWith(::countStatementsAboutResource).filter { it.value > 0 }
 
     override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> =
-        entities.filter { it.id in statementIds }.map { OwnershipInfo(it.id!!, it.createdBy) }.toSet()
+        entities.filter { it.id in statementIds }.map { OwnershipInfo(it.id, it.createdBy) }.toSet()
 
     override fun findDOIByContributionId(id: ThingId): Optional<Literal> =
         Optional.ofNullable(entities.values.find {

@@ -4,7 +4,7 @@ import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 
 data class GeneralStatement(
-    val id: StatementId? = null,
+    val id: StatementId,
     val subject: Thing,
     val predicate: Predicate,
     val `object`: Thing,

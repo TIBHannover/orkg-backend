@@ -70,7 +70,7 @@ class PaperPublicationInfoUpdater(
                 predicateId = Predicates.monthPublished,
                 pageable = PageRequests.SINGLE
             ).single()
-            statementService.delete(statement.id!!)
+            statementService.delete(statement.id)
         }
 
         if (newMonth != null) {
@@ -90,7 +90,7 @@ class PaperPublicationInfoUpdater(
                 predicateId = Predicates.yearPublished,
                 pageable = PageRequests.SINGLE
             ).single()
-            statementService.delete(statement.id!!)
+            statementService.delete(statement.id)
         }
 
         if (newYear != null) {
@@ -110,7 +110,7 @@ class PaperPublicationInfoUpdater(
                 predicateId = Predicates.hasVenue,
                 pageable = PageRequests.SINGLE
             ).single()
-            statementService.delete(statement.id!!)
+            statementService.delete(statement.id)
         }
 
         if (newVenue != null) {
@@ -130,7 +130,7 @@ class PaperPublicationInfoUpdater(
                 predicateId = Predicates.hasURL,
                 pageable = PageRequests.SINGLE
             ).single { it.`object` is Literal }
-            statementService.delete(statement.id!!)
+            statementService.delete(statement.id)
         }
 
         if (newUrl != null) {

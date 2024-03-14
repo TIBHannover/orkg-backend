@@ -38,14 +38,14 @@ class InMemoryGraph {
                 result = result.copy(`object` = thing)
             }
             result.takeIf { it != statement }
-        }.forEach { statements[it.id!!] = it }
+        }.forEach { statements[it.id] = it }
     }
 
     fun add(statement: GeneralStatement) {
         add(statement.subject)
         add(statement.predicate)
         add(statement.`object`)
-        statements[statement.id!!] = statement
+        statements[statement.id] = statement
     }
 
     fun findById(thingId: ThingId): Optional<Thing> =
@@ -97,7 +97,7 @@ class InMemoryGraph {
         statements.remove(statementId)
 
     fun remove(statement: GeneralStatement): GeneralStatement? =
-        statement.id?.let { remove(it) }
+        remove(statement.id)
 
     fun removeAll() {
         statements.clear()

@@ -98,7 +98,7 @@ fun <
             val expected: GeneralStatement = fabricator.random()
             saveStatement(expected)
 
-            val actual = repository.findByStatementId(expected.id!!).orElse(null)
+            val actual = repository.findByStatementId(expected.id).orElse(null)
 
             actual shouldNotBe null
             actual.asClue {
@@ -118,7 +118,7 @@ fun <
                 `object` = createResource(ThingId("R2"))
             )
             saveStatement(original)
-            val found = repository.findByStatementId(original.id!!).get()
+            val found = repository.findByStatementId(original.id).get()
             found shouldBe original
 
             val modifiedSubject = createResource(ThingId("R3"))
@@ -126,7 +126,7 @@ fun <
             saveStatement(modified)
 
             repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).toSet().size shouldBe 1
-            repository.findByStatementId(original.id!!).get().subject shouldBe modifiedSubject
+            repository.findByStatementId(original.id).get().subject shouldBe modifiedSubject
         }
     }
 
@@ -220,13 +220,13 @@ fun <
             val expected: GeneralStatement = fabricator.random()
             saveStatement(expected)
             repository.delete(expected)
-            repository.findByStatementId(expected.id!!).isPresent shouldBe false
+            repository.findByStatementId(expected.id).isPresent shouldBe false
         }
         it("by statement id removes it from the repository") {
             val expected: GeneralStatement = fabricator.random()
             saveStatement(expected)
-            repository.deleteByStatementId(expected.id!!)
-            repository.findByStatementId(expected.id!!).isPresent shouldBe false
+            repository.deleteByStatementId(expected.id)
+            repository.findByStatementId(expected.id).isPresent shouldBe false
         }
         it("does not throw if statement does not exist") {
             val id = StatementId("S123456789")
@@ -241,14 +241,14 @@ fun <
             val expected: List<GeneralStatement> = fabricator.random()
             expected.forEach(saveStatement)
             repository.findAll(PageRequest.of(0, 10)).totalElements shouldBe expected.size
-            repository.deleteByStatementIds(expected.map { it.id!! }.toSet())
+            repository.deleteByStatementIds(expected.map { it.id }.toSet())
             repository.findAll(PageRequest.of(0, 10)).totalElements shouldBe 0
         }
         it("by statement id removes them from the repository (singleton)") {
             val expected: GeneralStatement = fabricator.random()
             saveStatement(expected)
-            repository.deleteByStatementIds(setOf(expected.id!!))
-            repository.findByStatementId(expected.id!!).isPresent shouldBe false
+            repository.deleteByStatementIds(setOf(expected.id))
+            repository.findByStatementId(expected.id).isPresent shouldBe false
         }
     }
 
@@ -693,7 +693,7 @@ fun <
                 statements.forEach(saveStatement)
 
                 val result = repository.findAllByStatementIdIn(
-                    expected.map { it.id!! }.toSet(),
+                    expected.map { it.id }.toSet(),
                     PageRequest.of(0, 5)
                 )
 
@@ -723,7 +723,7 @@ fun <
                 statements.forEach(saveStatement)
 
                 val result = repository.findAllByStatementIdIn(
-                    expected.map { it.id!! }.toSet(),
+                    expected.map { it.id }.toSet(),
                     PageRequest.of(0, 5)
                 )
 
@@ -1773,8 +1773,8 @@ fun <
             it("returns the correct result") {
                 val statements = fabricator.random<List<GeneralStatement>>()
                 statements.forEach(saveStatement)
-                val allStatementIds = statements.map { it.id!! }.toSet()
-                val expected = statements.map { OwnershipInfo(it.id!!, it.createdBy) }.toSet()
+                val allStatementIds = statements.map { it.id }.toSet()
+                val expected = statements.map { OwnershipInfo(it.id, it.createdBy) }.toSet()
 
                 val actual = repository.determineOwnership(allStatementIds)
 
@@ -1785,9 +1785,9 @@ fun <
             it("returns the correct result") {
                 val statement = fabricator.random<GeneralStatement>()
                 saveStatement(statement)
-                val expected = setOf(statement).map { OwnershipInfo(it.id!!, it.createdBy) }.toSet()
+                val expected = setOf(statement).map { OwnershipInfo(it.id, it.createdBy) }.toSet()
 
-                val actual = repository.determineOwnership(setOf(statement.id!!))
+                val actual = repository.determineOwnership(setOf(statement.id))
 
                 actual shouldBe expected
             }

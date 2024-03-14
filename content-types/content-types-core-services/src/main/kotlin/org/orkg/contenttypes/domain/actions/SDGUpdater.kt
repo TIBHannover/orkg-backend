@@ -15,7 +15,7 @@ class SDGUpdater(
             predicateId = Predicates.sustainableDevelopmentGoal,
             pageable = PageRequests.ALL
         )
-        val statementsToRemove = statements.content.filter { it.`object`.id !in sdgs }.map { it.id!! }
+        val statementsToRemove = statements.content.filter { it.`object`.id !in sdgs }.map { it.id }
         if (statementsToRemove.isNotEmpty()) {
             statementService.delete(statementsToRemove.toSet())
         }

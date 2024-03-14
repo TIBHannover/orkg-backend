@@ -204,13 +204,13 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         val newO = createResource(ThingId("R5"))
 
         val newS1 = createStatement(
-            id = s1.id!!,
+            id = s1.id,
             subject = s1.subject,
             predicate = newP,
             `object` = newO
         )
         val newS2 = createStatement(
-            id = s2.id!!,
+            id = s2.id,
             subject = s2.subject,
             predicate = newP,
             `object` = newO
@@ -224,8 +224,8 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         )
 
         every { statementService.update(match { it.statementId == s1.id || it.statementId == s2.id }) } just runs
-        every { statementService.findById(s1.id!!) } returns Optional.of(newS1)
-        every { statementService.findById(s2.id!!) } returns Optional.of(newS2)
+        every { statementService.findById(s1.id) } returns Optional.of(newS1)
+        every { statementService.findById(s2.id) } returns Optional.of(newS2)
         every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
@@ -250,8 +250,8 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         verify(exactly = 1) {
             statementService.update(match { it.statementId == s1.id })
             statementService.update(match { it.statementId == s2.id })
-            statementService.findById(s1.id!!)
-            statementService.findById(s2.id!!)
+            statementService.findById(s1.id)
+            statementService.findById(s2.id)
             statementService.countStatementsAboutResources(any())
             flags.isFormattedLabelsEnabled()
         }

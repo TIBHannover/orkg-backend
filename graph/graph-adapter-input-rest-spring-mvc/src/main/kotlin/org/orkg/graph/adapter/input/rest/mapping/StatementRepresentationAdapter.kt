@@ -39,7 +39,7 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
         formattedLabels: FormattedLabels
     ): StatementRepresentation =
         StatementRepresentation(
-            id = id!!,
+            id = id,
             subject = subject.toThingRepresentation(statementCounts, formattedLabels),
             predicate = predicate.toPredicateRepresentation(),
             `object` = `object`.toThingRepresentation(statementCounts, formattedLabels),

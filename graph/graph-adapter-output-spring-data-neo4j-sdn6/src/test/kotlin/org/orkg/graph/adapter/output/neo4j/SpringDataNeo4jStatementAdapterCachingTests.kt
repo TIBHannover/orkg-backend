@@ -121,7 +121,7 @@ internal class SpringDataNeo4jStatementAdapterCachingTests {
         verify(exactly = 1) { mockedNeo4jLiteralRepository.findById(literalId) }
 
         // Delete statement along with literal
-        statementAdapter.deleteByStatementId(statement.id!!)
+        statementAdapter.deleteByStatementId(statement.id)
         // Verify the deletion happened
         verify(exactly = 1) { neo4jClient.query(any<String>()) }
         verify(exactly = 1) { mockUnboundRunnableSpec.bindAll(any()) }

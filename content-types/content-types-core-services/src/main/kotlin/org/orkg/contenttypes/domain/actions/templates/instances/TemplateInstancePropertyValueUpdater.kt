@@ -44,7 +44,7 @@ class TemplateInstancePropertyValueUpdater(
             if (statementsToRemove.isNotEmpty()) {
                 statementService.findAll(subjectId = command.subject, pageable = PageRequests.ALL)
                     .filter { BakedStatement(it.subject.id.value, it.predicate.id.value, it.`object`.id.value) in statementsToRemove }
-                    .mapTo(mutableSetOf()) { it.id!! }
+                    .mapTo(mutableSetOf()) { it.id }
                     .takeIf { it.isNotEmpty() }
                     ?.let(statementService::delete)
             }

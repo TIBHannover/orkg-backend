@@ -65,7 +65,7 @@ class SDGUpdaterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(oldSDGStatements.map { it.id!! }.toSet()) }
+        verify(exactly = 1) { statementService.delete(oldSDGStatements.map { it.id }.toSet()) }
         verify(exactly = 1) {
             statementService.add(
                 userId = contributorId,
@@ -110,7 +110,7 @@ class SDGUpdaterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(oldSDGStatements[0].id!!)) }
+        verify(exactly = 1) { statementService.delete(setOf(oldSDGStatements[0].id)) }
         verify(exactly = 1) {
             statementService.add(
                 userId = contributorId,
@@ -172,7 +172,7 @@ class SDGUpdaterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(oldSDGStatements.map { it.id!! }.toSet()) }
+        verify(exactly = 1) { statementService.delete(oldSDGStatements.map { it.id }.toSet()) }
     }
 
     @Test

@@ -35,7 +35,7 @@ abstract class IdentifierUpdater(
                     subjectId = subjectId,
                     predicateId = key2Identifier[key]!!.predicateId,
                     pageable = PageRequests.ALL
-                ).forEach { statementService.delete(it.id!!) }
+                ).forEach { statementService.delete(it.id) }
             }
         }
 

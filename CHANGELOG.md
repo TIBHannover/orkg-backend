@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.51.0] - 2024-03-19
 ### Added
 - Added content-type endpoints for updating templates and template properties.
   (See: [!854](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/854))
@@ -775,7 +777,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.50.1...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.51.0...master
+[0.51.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.51.0
 [0.50.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.50.1
 [0.50.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.50.0
 [0.49.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.49.0

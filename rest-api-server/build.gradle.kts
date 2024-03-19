@@ -4,7 +4,7 @@ import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
-version = "0.50.1"
+version = "0.51.0"
 
 val springSecurityOAuthVersion = "2.5.2"
 

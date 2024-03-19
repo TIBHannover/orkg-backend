@@ -14,7 +14,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-abstract class TemplatePropertyCreator(
+abstract class AbstractTemplatePropertyCreator(
     private val resourceService: ResourceUseCases,
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases

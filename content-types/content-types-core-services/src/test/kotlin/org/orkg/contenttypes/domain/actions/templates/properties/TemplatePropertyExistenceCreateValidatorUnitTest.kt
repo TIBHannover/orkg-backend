@@ -17,17 +17,17 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
-import org.orkg.contenttypes.domain.actions.TemplatePropertyState
+import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-class TemplatePropertyExistenceValidatorUnitTest {
+class TemplatePropertyExistenceCreateValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
 
-    private val templatePropertyExistenceValidator = TemplatePropertyExistenceValidator(
+    private val templatePropertyExistenceCreateValidator = TemplatePropertyExistenceCreateValidator(
         resourceRepository = resourceRepository
     )
 
@@ -44,12 +44,12 @@ class TemplatePropertyExistenceValidatorUnitTest {
     @ParameterizedTest
     @MethodSource("createTemplatePropertyCommands")
     fun `Given a template property create command, when searching for existing templates, it returns success`(command: CreateTemplatePropertyCommand) {
-        val state = TemplatePropertyState()
+        val state = CreateTemplatePropertyState()
         val template = createResource(id = command.templateId, classes = setOf(Classes.nodeShape))
 
         every { resourceRepository.findById(command.templateId) } returns Optional.of(template)
 
-        val result = templatePropertyExistenceValidator(command, state)
+        val result = templatePropertyExistenceCreateValidator(command, state)
 
         result.asClue {
             it.templatePropertyId shouldBe null
@@ -62,11 +62,11 @@ class TemplatePropertyExistenceValidatorUnitTest {
     @ParameterizedTest
     @MethodSource("createTemplatePropertyCommands")
     fun `Given a template property create command, when template does not exist, it throws an exception`(command: CreateTemplatePropertyCommand) {
-        val state = TemplatePropertyState()
+        val state = CreateTemplatePropertyState()
 
         every { resourceRepository.findById(command.templateId) } returns Optional.empty()
 
-        assertThrows<TemplateNotFound> { templatePropertyExistenceValidator(command, state) }
+        assertThrows<TemplateNotFound> { templatePropertyExistenceCreateValidator(command, state) }
 
         verify(exactly = 1) { resourceRepository.findById(command.templateId) }
     }

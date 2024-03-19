@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain.actions.templates
 
-import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
@@ -11,11 +10,11 @@ import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.PageRequests
+import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
-import org.orkg.contenttypes.domain.actions.TemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ClassRepository
@@ -30,7 +29,8 @@ class TemplateTargetClassValidatorUnitTest {
     private val classRepository: ClassRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
 
-    private val templateTargetClassValidator = TemplateTargetClassValidator(classRepository, statementRepository)
+    private val templateTargetClassValidator =
+        TemplateTargetClassValidator<ThingId?, Unit>(classRepository, statementRepository) { it }
 
     @BeforeEach
     fun resetState() {
@@ -43,29 +43,24 @@ class TemplateTargetClassValidatorUnitTest {
     }
 
     @Test
-    fun `Given a template create command, when validating the target class, it returns success`() {
-        val command = dummyCreateTemplateCommand()
-        val state = TemplateState()
+    fun `Given a target class id, when validating, it returns success`() {
+        val targetClass = ThingId("targetClass")
 
-        every { classRepository.findById(command.targetClass) } returns Optional.of(createClass())
+        every { classRepository.findById(targetClass) } returns Optional.of(createClass())
         every {
             statementRepository.findAll(
-                objectId = command.targetClass,
+                objectId = targetClass,
                 predicateId = Predicates.shTargetClass,
                 pageable = PageRequests.SINGLE
             )
         } returns pageOf()
 
-        val result = templateTargetClassValidator(command, state)
+        assertDoesNotThrow { templateTargetClassValidator(targetClass, Unit) }
 
-        result.asClue {
-            it.templateId shouldBe null
-        }
-
-        verify(exactly = 1) { classRepository.findById(command.targetClass) }
+        verify(exactly = 1) { classRepository.findById(targetClass) }
         verify(exactly = 1) {
             statementRepository.findAll(
-                objectId = command.targetClass,
+                objectId = targetClass,
                 predicateId = Predicates.shTargetClass,
                 pageable = PageRequests.SINGLE
             )
@@ -73,29 +68,32 @@ class TemplateTargetClassValidatorUnitTest {
     }
 
     @Test
-    fun `Given a template create command, when target class does not exist, it throws an exception`() {
-        val command = dummyCreateTemplateCommand()
-        val state = TemplateState()
-
-        every { classRepository.findById(command.targetClass) } returns Optional.empty()
-
-        assertThrows<ClassNotFound> { templateTargetClassValidator(command, state) }
-
-        verify(exactly = 1) { classRepository.findById(command.targetClass) }
+    fun `Given a target class id, when null, it returns success`() {
+        assertDoesNotThrow { templateTargetClassValidator(null, Unit) }
     }
 
     @Test
-    fun `Given a template create command, when target class already has a template, it throws an exception`() {
-        val command = dummyCreateTemplateCommand()
-        val state = TemplateState()
-        val otherTemplate = createResource()
-        val targetClass = createClass(command.targetClass)
-        val exception = TemplateAlreadyExistsForClass(command.targetClass, otherTemplate.id)
+    fun `Given a target class id, when target class does not exist, it throws an exception`() {
+        val targetClass = ThingId("targetClass")
 
-        every { classRepository.findById(command.targetClass) } returns Optional.of(targetClass)
+        every { classRepository.findById(targetClass) } returns Optional.empty()
+
+        assertThrows<ClassNotFound> { templateTargetClassValidator(targetClass, Unit) }
+
+        verify(exactly = 1) { classRepository.findById(targetClass) }
+    }
+
+    @Test
+    fun `Given a target class id, when target class already has a template, it throws an exception`() {
+        val targetClassId = ThingId("targetClass")
+        val otherTemplate = createResource()
+        val targetClass = createClass(targetClassId)
+        val exception = TemplateAlreadyExistsForClass(targetClassId, otherTemplate.id)
+
+        every { classRepository.findById(targetClassId) } returns Optional.of(targetClass)
         every {
             statementRepository.findAll(
-                objectId = command.targetClass,
+                objectId = targetClassId,
                 predicateId = Predicates.shTargetClass,
                 pageable = PageRequests.SINGLE
             )
@@ -107,12 +105,12 @@ class TemplateTargetClassValidatorUnitTest {
             )
         )
 
-        assertThrows<TemplateAlreadyExistsForClass> { templateTargetClassValidator(command, state) } shouldBe exception
+        assertThrows<TemplateAlreadyExistsForClass> { templateTargetClassValidator(targetClassId, Unit) } shouldBe exception
 
-        verify(exactly = 1) { classRepository.findById(command.targetClass) }
+        verify(exactly = 1) { classRepository.findById(targetClassId) }
         verify(exactly = 1) {
             statementRepository.findAll(
-                objectId = command.targetClass,
+                objectId = targetClassId,
                 predicateId = Predicates.shTargetClass,
                 pageable = PageRequests.SINGLE
             )

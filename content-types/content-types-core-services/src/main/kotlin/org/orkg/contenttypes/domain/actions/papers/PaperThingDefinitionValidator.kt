@@ -13,7 +13,7 @@ class PaperThingDefinitionValidator(
     override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
         val validatedIds = state.validatedIds.toMutableMap()
         if (command.contents != null) {
-            validateThingDefinitions(command.contents!!, state.tempIds, validatedIds)
+            validateThingDefinitionsInPlace(command.contents!!, state.tempIds, validatedIds)
         }
         return state.copy(validatedIds = validatedIds)
     }

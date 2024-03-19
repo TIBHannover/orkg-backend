@@ -1,15 +1,21 @@
 package org.orkg.contenttypes.domain.actions
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.orkg.graph.domain.InvalidLabel
 
 class LabelValidatorUnitTest {
-    private val labelValidator = LabelValidator<String, Unit> { it }
+    private val labelValidator = LabelValidator<String?, Unit> { it }
 
     @Test
     fun `Given a label, when valid, it returns success`() {
-        labelValidator("valid", Unit)
+        assertDoesNotThrow { labelValidator("valid", Unit) }
+    }
+
+    @Test
+    fun `Given a label, when null, it returns success`() {
+        assertDoesNotThrow { labelValidator(null, Unit) }
     }
 
     @Test

@@ -3,15 +3,15 @@ package org.orkg.contenttypes.domain.actions.templates.properties
 import org.orkg.common.PageRequests
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
-import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyAction.State
+import org.orkg.contenttypes.domain.actions.templates.properties.CreateTemplatePropertyAction.State
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.StatementRepository
 
-class TemplatePropertyTemplateValidator(
+class TemplatePropertyTemplateCreateValidator(
     private val statementRepository: StatementRepository
-) : TemplatePropertyAction {
+) : CreateTemplatePropertyAction {
     override fun invoke(command: CreateTemplatePropertyCommand, state: State): State {
         val statements = statementRepository.findAll(subjectId = command.templateId, pageable = PageRequests.ALL)
         statements.firstOrNull {

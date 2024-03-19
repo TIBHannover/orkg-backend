@@ -1,14 +1,14 @@
 package org.orkg.contenttypes.domain.actions.templates
 
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
-import org.orkg.contenttypes.domain.actions.templates.TemplateAction.State
+import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 
 class TemplateResourceCreator(
     private val resourceService: ResourceUseCases
-) : TemplateAction {
+) : CreateTemplateAction {
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         val templateId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(

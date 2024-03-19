@@ -11,7 +11,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.TemplateState
+import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
@@ -35,7 +35,7 @@ class TemplateResourceCreatorUnitTest {
     @Test
     fun `Given a template create command, it crates a new template resource`() {
         val command = dummyCreateTemplateCommand()
-        val state = TemplateState()
+        val state = CreateTemplateState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             label = command.label,

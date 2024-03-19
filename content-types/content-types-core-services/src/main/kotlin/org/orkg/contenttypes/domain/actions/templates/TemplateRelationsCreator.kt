@@ -1,38 +1,64 @@
 package org.orkg.contenttypes.domain.actions.templates
 
+import org.orkg.common.ContributorId
+import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
-import org.orkg.contenttypes.domain.actions.templates.TemplateAction.State
+import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
 class TemplateRelationsCreator(
     private val statementUseCases: StatementUseCases
-) : TemplateAction {
+) : CreateTemplateAction {
     override fun invoke(command: CreateTemplateCommand, state: State): State {
-        command.relations.researchFields.forEach { researchFieldId ->
+        linkResearchFields(command.contributorId, state.templateId!!, command.relations.researchFields)
+        linkResearchProblems(command.contributorId, state.templateId, command.relations.researchProblems)
+        command.relations.predicate?.let { predicateId ->
+            linkPredicate(command.contributorId, state.templateId, predicateId)
+        }
+        return state
+    }
+
+    internal fun linkResearchFields(
+        contributorId: ContributorId,
+        subjectId: ThingId,
+        researchFields: List<ThingId>
+    ) {
+        researchFields.forEach { researchFieldId ->
             statementUseCases.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
+                userId = contributorId,
+                subject = subjectId,
                 predicate = Predicates.templateOfResearchField,
                 `object` = researchFieldId
             )
         }
-        command.relations.researchProblems.forEach { researchProblemId ->
+    }
+
+    internal fun linkResearchProblems(
+        contributorId: ContributorId,
+        subjectId: ThingId,
+        researchProblems: List<ThingId>
+    ) {
+        researchProblems.forEach { researchProblemId ->
             statementUseCases.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
+                userId = contributorId,
+                subject = subjectId,
                 predicate = Predicates.templateOfResearchProblem,
                 `object` = researchProblemId
             )
         }
-        command.relations.predicate?.let { predicateId ->
-            statementUseCases.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.templateOfPredicate,
-                `object` = predicateId
-            )
-        }
-        return state
+    }
+
+    internal fun linkPredicate(
+        contributorId: ContributorId,
+        subjectId: ThingId,
+        predicateId: ThingId
+    ) {
+        statementUseCases.add(
+            userId = contributorId,
+            subject = subjectId,
+            predicate = Predicates.templateOfPredicate,
+            `object` = predicateId
+        )
     }
 }

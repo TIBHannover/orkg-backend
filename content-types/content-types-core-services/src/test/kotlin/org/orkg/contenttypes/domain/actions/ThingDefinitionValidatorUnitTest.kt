@@ -93,7 +93,7 @@ class ThingDefinitionValidatorUnitTest {
         val validatedIds = mutableMapOf<String, Either<String, Thing>>()
         val tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4")
 
-        thingDefinitionValidator.validateThingDefinitions(
+        thingDefinitionValidator.validateThingDefinitionsInPlace(
             thingDefinitions = contents,
             tempIds = tempIds,
             validatedIds = validatedIds
@@ -126,7 +126,7 @@ class ThingDefinitionValidatorUnitTest {
         every { thingRepository.findByThingId(any()) } returns Optional.empty()
 
         assertThrows<ThingNotFound> {
-            thingDefinitionValidator.validateThingDefinitions(
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -154,7 +154,7 @@ class ThingDefinitionValidatorUnitTest {
         every { thingRepository.findByThingId(any()) } returns Optional.of(resource)
 
         assertThrows<ThingIsNotAClass> {
-            thingDefinitionValidator.validateThingDefinitions(
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -179,7 +179,7 @@ class ThingDefinitionValidatorUnitTest {
         )
 
         assertThrows<ReservedClass> {
-            thingDefinitionValidator.validateThingDefinitions(
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -201,7 +201,7 @@ class ThingDefinitionValidatorUnitTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitions(
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -223,7 +223,7 @@ class ThingDefinitionValidatorUnitTest {
         )
 
         assertThrows<InvalidLiteralLabel> {
-            thingDefinitionValidator.validateThingDefinitions(
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -245,7 +245,7 @@ class ThingDefinitionValidatorUnitTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitions(
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -268,7 +268,7 @@ class ThingDefinitionValidatorUnitTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitions(
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -291,7 +291,7 @@ class ThingDefinitionValidatorUnitTest {
         )
 
         assertThrows<InvalidLabel> {
-            thingDefinitionValidator.validateThingDefinitions(
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()
@@ -319,7 +319,7 @@ class ThingDefinitionValidatorUnitTest {
         every { classRepository.findByUri(uri.toString()) } returns Optional.of(`class`)
 
         assertThrows<URIAlreadyInUse> {
-            thingDefinitionValidator.validateThingDefinitions(
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
                 thingDefinitions = contents,
                 tempIds = emptySet(),
                 validatedIds = mutableMapOf()

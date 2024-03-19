@@ -22,6 +22,7 @@ import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.TemplateNotApplicable
 import org.orkg.contenttypes.domain.TooManyPropertyValues
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
+import org.orkg.contenttypes.domain.UnrelatedTemplateProperty
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -333,6 +334,23 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun unrelatedTemplateProperty() {
+        val templateId = "R123"
+        val templatePropertyId = "R456"
+
+        get("/unrelated-template-property")
+            .param("templateId", templateId)
+            .param("templatePropertyId", templatePropertyId)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/unrelated-template-property"))
+            .andExpect(jsonPath("$.message").value("""Template property "$templatePropertyId" does not belong to template "$templateId"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -459,6 +477,14 @@ internal class ExceptionControllerUnitTest {
             @RequestParam value: String
         ) {
             throw InvalidLiteral(templatePropertyId, predicateId, datatype, id, value)
+        }
+
+        @GetMapping("/unrelated-template-property")
+        fun invalidLiteral(
+            @RequestParam templateId: ThingId,
+            @RequestParam templatePropertyId: ThingId,
+        ) {
+            throw UnrelatedTemplateProperty(templateId, templatePropertyId)
         }
     }
 

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.TemplateState
+import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
@@ -40,7 +40,7 @@ class TemplateFormattedLabelCreatorUnitTest {
     fun `Given a template create command, when formatted label is not null, it creates a new statement`() {
         val command = dummyCreateTemplateCommand()
         val templateId = ThingId("R123")
-        val state = TemplateState(
+        val state = CreateTemplateState(
             templateId = templateId
         )
         val formattedLabelLiteralId = ThingId("R124")
@@ -92,7 +92,7 @@ class TemplateFormattedLabelCreatorUnitTest {
             formattedLabel = null
         )
         val templateId = ThingId("R123")
-        val state = TemplateState(
+        val state = CreateTemplateState(
             templateId = templateId
         )
 

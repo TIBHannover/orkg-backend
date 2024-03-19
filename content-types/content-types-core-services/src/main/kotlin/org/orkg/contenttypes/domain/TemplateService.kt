@@ -7,26 +7,42 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
+import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
+import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
-import org.orkg.contenttypes.domain.actions.TemplatePropertyState
-import org.orkg.contenttypes.domain.actions.TemplateState
+import org.orkg.contenttypes.domain.actions.UpdateTemplateCommand
+import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyCommand
+import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyState
+import org.orkg.contenttypes.domain.actions.UpdateTemplateState
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.templates.TemplateClosedCreator
+import org.orkg.contenttypes.domain.actions.templates.TemplateClosedUpdater
 import org.orkg.contenttypes.domain.actions.templates.TemplateDescriptionCreator
+import org.orkg.contenttypes.domain.actions.templates.TemplateDescriptionUpdater
+import org.orkg.contenttypes.domain.actions.templates.TemplateExistenceValidator
 import org.orkg.contenttypes.domain.actions.templates.TemplateFormattedLabelCreator
+import org.orkg.contenttypes.domain.actions.templates.TemplateFormattedLabelUpdater
 import org.orkg.contenttypes.domain.actions.templates.TemplatePropertiesCreator
+import org.orkg.contenttypes.domain.actions.templates.TemplatePropertiesUpdater
 import org.orkg.contenttypes.domain.actions.templates.TemplatePropertiesValidator
+import org.orkg.contenttypes.domain.actions.templates.TemplateRelationsCreateValidator
 import org.orkg.contenttypes.domain.actions.templates.TemplateRelationsCreator
-import org.orkg.contenttypes.domain.actions.templates.TemplateRelationsValidator
+import org.orkg.contenttypes.domain.actions.templates.TemplateRelationsUpdateValidator
+import org.orkg.contenttypes.domain.actions.templates.TemplateRelationsUpdater
 import org.orkg.contenttypes.domain.actions.templates.TemplateResourceCreator
+import org.orkg.contenttypes.domain.actions.templates.TemplateResourceUpdater
 import org.orkg.contenttypes.domain.actions.templates.TemplateTargetClassCreator
+import org.orkg.contenttypes.domain.actions.templates.TemplateTargetClassUpdater
 import org.orkg.contenttypes.domain.actions.templates.TemplateTargetClassValidator
-import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyExistenceValidator
-import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyTemplateValidator
-import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyValueCreator
-import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyValueValidator
+import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyCreator
+import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyExistenceCreateValidator
+import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyExistenceUpdateValidator
+import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyTemplateCreateValidator
+import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyTemplateUpdateValidator
+import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyUpdater
+import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyValidator
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -81,9 +97,9 @@ class TemplateService(
     override fun create(command: CreateTemplateCommand): ThingId {
         val steps = listOf(
             LabelValidator { it.label },
-            TemplateTargetClassValidator(classRepository, statementRepository),
-            TemplateRelationsValidator(resourceRepository, predicateRepository),
-            TemplatePropertiesValidator(predicateRepository, classRepository),
+            TemplateTargetClassValidator(classRepository, statementRepository) { it.targetClass },
+            TemplateRelationsCreateValidator(resourceRepository, predicateRepository),
+            TemplatePropertiesValidator(predicateRepository, classRepository) { it.properties },
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             TemplateResourceCreator(resourceService),
@@ -94,17 +110,47 @@ class TemplateService(
             TemplateClosedCreator(literalService, statementService),
             TemplatePropertiesCreator(resourceService, literalService, statementService)
         )
-        return steps.execute(command, TemplateState()).templateId!!
+        return steps.execute(command, CreateTemplateState()).templateId!!
     }
 
     override fun createTemplateProperty(command: CreateTemplatePropertyCommand): ThingId {
         val steps = listOf(
-            TemplatePropertyExistenceValidator(resourceRepository),
-            TemplatePropertyTemplateValidator(statementRepository),
-            TemplatePropertyValueValidator(predicateRepository, classRepository),
-            TemplatePropertyValueCreator(resourceService, literalService, statementService)
+            TemplatePropertyExistenceCreateValidator(resourceRepository),
+            TemplatePropertyTemplateCreateValidator(statementRepository),
+            TemplatePropertyValidator(predicateRepository, classRepository) { it },
+            TemplatePropertyCreator(resourceService, literalService, statementService)
         )
-        return steps.execute(command, TemplatePropertyState()).templatePropertyId!!
+        return steps.execute(command, CreateTemplatePropertyState()).templatePropertyId!!
+    }
+
+    override fun update(command: UpdateTemplateCommand) {
+        val steps = listOf(
+            TemplateExistenceValidator(this),
+            LabelValidator { it.label },
+            TemplateTargetClassValidator(classRepository, statementRepository) { it.targetClass },
+            TemplateRelationsUpdateValidator(resourceRepository, predicateRepository),
+            TemplatePropertiesValidator(predicateRepository, classRepository) { it.properties },
+            OrganizationValidator(organizationRepository, { it.organizations }, { it.template!!.organizations }),
+            ObservatoryValidator(observatoryRepository, { it.observatories }, { it.template!!.observatories }),
+            TemplateResourceUpdater(resourceService),
+            TemplateTargetClassUpdater(statementService),
+            TemplateRelationsUpdater(statementService),
+            TemplateDescriptionUpdater(literalService, statementService),
+            TemplateFormattedLabelUpdater(literalService, statementService),
+            TemplateClosedUpdater(literalService, statementService),
+            TemplatePropertiesUpdater(literalService, resourceService, statementService)
+        )
+        steps.execute(command, UpdateTemplateState())
+    }
+
+    override fun updateTemplateProperty(command: UpdateTemplatePropertyCommand) {
+        val steps = listOf(
+            TemplatePropertyExistenceUpdateValidator(this),
+            TemplatePropertyTemplateUpdateValidator(),
+            TemplatePropertyValidator(predicateRepository, classRepository) { it },
+            TemplatePropertyUpdater(literalService, resourceService, statementService)
+        )
+        steps.execute(command, UpdateTemplatePropertyState())
     }
 
     private fun Resource.toTemplate(): Template {
@@ -132,7 +178,7 @@ class TemplateService(
                 .wherePredicate(Predicates.shTargetClass)
                 .single()
                 .`object`.id,
-            relations = TemplateRelation(
+            relations = TemplateRelations(
                 researchFields = statements[id]!!
                     .wherePredicate(Predicates.templateOfResearchField)
                     .objectIdsAndLabel(),

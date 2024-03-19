@@ -15,6 +15,8 @@ import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.input.CreateTemplateUseCase
+import org.orkg.contenttypes.input.LiteralPropertyDefinition
+import org.orkg.contenttypes.input.TemplateRelationsDefinition
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.createClasses
 import org.orkg.createLiteral
@@ -149,13 +151,13 @@ class TemplateInstanceControllerIntegrationTest : RestDocumentationBaseTest() {
                 description = "Some description about the template",
                 formattedLabel = FormattedLabel.of("{P32}"),
                 targetClass = targetClass,
-                relations = CreateTemplateUseCase.CreateCommand.Relations(
+                relations = TemplateRelationsDefinition(
                     researchFields = listOf(ThingId("R12")),
                     researchProblems = emptyList(),
                     predicate = null
                 ),
                 properties = listOf(
-                    CreateTemplateUseCase.CreateCommand.LiteralPropertyDefinition(
+                    LiteralPropertyDefinition(
                         label = "literal property label",
                         description = "literal property description",
                         placeholder = "literal property placeholder",

@@ -13,8 +13,8 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.TemplateState
-import org.orkg.contenttypes.input.CreateTemplateUseCase
+import org.orkg.contenttypes.domain.actions.CreateTemplateState
+import org.orkg.contenttypes.input.TemplateRelationsDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
@@ -38,13 +38,13 @@ class TemplateRelationsCreatorUnitTest {
     fun `Given a template create command, when a related research field is set, it creates a new statement`() {
         val researchFieldId = ThingId("R41536")
         val command = dummyCreateTemplateCommand().copy(
-            relations = CreateTemplateUseCase.CreateCommand.Relations(
+            relations = TemplateRelationsDefinition(
                 researchFields = listOf(researchFieldId),
                 researchProblems = emptyList(),
                 predicate = null
             )
         )
-        val state = TemplateState(
+        val state = CreateTemplateState(
             templateId = ThingId("R45665")
         )
 
@@ -77,13 +77,13 @@ class TemplateRelationsCreatorUnitTest {
     fun `Given a template create command, when a related research problem is set, it creates a new statement`() {
         val researchProblemId = ThingId("R1456")
         val command = dummyCreateTemplateCommand().copy(
-            relations = CreateTemplateUseCase.CreateCommand.Relations(
+            relations = TemplateRelationsDefinition(
                 researchFields = emptyList(),
                 researchProblems = listOf(researchProblemId),
                 predicate = null
             )
         )
-        val state = TemplateState(
+        val state = CreateTemplateState(
             templateId = ThingId("R45665")
         )
 
@@ -116,13 +116,13 @@ class TemplateRelationsCreatorUnitTest {
     fun `Given a template create command, when a related predicate is set, it creates a new statement`() {
         val predicateId = ThingId("R145236")
         val command = dummyCreateTemplateCommand().copy(
-            relations = CreateTemplateUseCase.CreateCommand.Relations(
+            relations = TemplateRelationsDefinition(
                 researchFields = emptyList(),
                 researchProblems = emptyList(),
                 predicate = predicateId
             )
         )
-        val state = TemplateState(
+        val state = CreateTemplateState(
             templateId = ThingId("R45665")
         )
 
@@ -154,13 +154,13 @@ class TemplateRelationsCreatorUnitTest {
     @Test
     fun `Given a template create command, when relations are empty, then no new statements are created`() {
         val command = dummyCreateTemplateCommand().copy(
-            relations = CreateTemplateUseCase.CreateCommand.Relations(
+            relations = TemplateRelationsDefinition(
                 researchFields = emptyList(),
                 researchProblems = emptyList(),
                 predicate = null
             )
         )
-        val state = TemplateState(
+        val state = CreateTemplateState(
             templateId = ThingId("R45665")
         )
 

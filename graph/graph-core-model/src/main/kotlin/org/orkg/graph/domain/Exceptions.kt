@@ -174,6 +174,11 @@ class EmptyChildIds :
 class ParentClassAlreadyHasChildren(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The class "$id" already has a child classes."""")
 
+class NeitherOwnerNorCurator(contributorId: ContributorId) : SimpleMessageException(
+    status = HttpStatus.FORBIDDEN,
+    message = "Contributor <$contributorId> does not own the entity to be deleted and is not a curator."
+)
+
 /**
  * Exception indicating that a property was blank when it was not supposed to be.
  */

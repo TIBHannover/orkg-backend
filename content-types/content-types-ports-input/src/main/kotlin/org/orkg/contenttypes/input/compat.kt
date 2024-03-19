@@ -8,7 +8,8 @@ interface ComparisonUseCases : RetrieveComparisonUseCase, CreateComparisonUseCas
 
 interface VisualizationUseCases : RetrieveVisualizationUseCase, CreateVisualizationUseCase
 
-interface TemplateUseCases : RetrieveTemplateUseCase, CreateTemplateUseCase, CreateTemplatePropertyUseCase
+interface TemplateUseCases : RetrieveTemplateUseCase, CreateTemplateUseCase, CreateTemplatePropertyUseCase,
+    UpdateTemplateUseCase, UpdateTemplatePropertyUseCase
 
 interface TemplateInstanceUseCases : RetrieveTemplateInstanceUseCase, UpdateTemplateInstanceUseCase
 

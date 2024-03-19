@@ -15,7 +15,7 @@ import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 
-abstract class TemplatePropertyValidator(
+abstract class AbstractTemplatePropertyValidator(
     private val predicateRepository: PredicateRepository,
     private val classRepository: ClassRepository
 ) {

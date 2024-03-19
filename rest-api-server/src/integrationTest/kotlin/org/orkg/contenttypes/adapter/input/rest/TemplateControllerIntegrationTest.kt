@@ -13,6 +13,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
+import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.createClasses
 import org.orkg.createObservatory
 import org.orkg.createOrganization
@@ -35,6 +36,7 @@ import org.springframework.test.web.servlet.RequestBuilder
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -60,6 +62,9 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var observatoryService: ObservatoryUseCases
+
+    @Autowired
+    private lateinit var templateService: TemplateUseCases
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -97,7 +102,8 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             Predicates.templateOfResearchField,
             Predicates.templateOfResearchProblem,
             Predicates.hasResearchProblem,
-            Predicates.field // field
+            Predicates.field,
+            Predicates.hasContribution
         ).forEach { predicateService.createPredicate(it) }
 
         classService.createClasses(Classes.nodeShape.value, Classes.propertyShape.value, "Problem", "ResearchField")
@@ -110,9 +116,15 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
         // Example specific entities
 
-        classService.createClasses("C123", "C25", "C28")
+        classService.createClasses("C123", "C24", "C25", "C27", "C28", "C456")
 
         resourceService.createResource(id = "R15", classes = setOf(Classes.problem.value))
+        resourceService.createResource(id = "R16", classes = setOf(Classes.problem.value))
+        resourceService.createResource(
+            id = "R13",
+            label = "Engineering",
+            classes = setOf("ResearchField")
+        )
 
         val userId = userService.createUser()
 
@@ -140,8 +152,81 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     @TestWithMockUser
-    fun create() {
-        val id = post("/api/templates")
+    fun createAndUpdate() {
+        val id = createTemplate()
+
+        get("/api/templates/{id}", id)
+            .content(createTemplateJson)
+            .accept(TEMPLATE_JSON_V1)
+            .contentType(TEMPLATE_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectTemplate()
+
+        put("/api/templates/{id}", id)
+            .content(updateTemplateJson)
+            .accept(TEMPLATE_JSON_V1)
+            .contentType(TEMPLATE_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
+    @TestWithMockUser
+    fun createAndUpdateLiteralProperty() {
+        val templateId = ThingId(createTemplate())
+
+        post("/api/templates/$templateId/properties")
+            .content(createLiteralTemplatePropertyJson)
+            .accept(TEMPLATE_PROPERTY_JSON_V1)
+            .contentType(TEMPLATE_PROPERTY_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isCreated)
+
+        val template = templateService.findById(templateId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+        val propertyId = template.properties.first().id
+
+        put("/api/templates/$templateId/properties/$propertyId")
+            .content(updateLiteralTemplatePropertyJson)
+            .accept(TEMPLATE_PROPERTY_JSON_V1)
+            .contentType(TEMPLATE_PROPERTY_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
+    @TestWithMockUser
+    fun createAndUpdateResourceProperty() {
+        val templateId = ThingId(createTemplate())
+
+        post("/api/templates/$templateId/properties")
+            .content(createResourceTemplatePropertyJson)
+            .accept(TEMPLATE_PROPERTY_JSON_V1)
+            .contentType(TEMPLATE_PROPERTY_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isCreated)
+
+        val template = templateService.findById(templateId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+        val propertyId = template.properties.first().id
+
+        put("/api/templates/$templateId/properties/$propertyId")
+            .content(updateResourceTemplatePropertyJson)
+            .accept(TEMPLATE_PROPERTY_JSON_V1)
+            .contentType(TEMPLATE_PROPERTY_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+    }
+
+    private fun createTemplate(): String =
+        post("/api/templates")
             .content(createTemplateJson)
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
@@ -153,50 +238,6 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             .getHeaderValue("Location")!!
             .toString()
             .substringAfterLast("/")
-
-        get("/api/templates/{id}", id)
-            .content(createTemplateJson)
-            .accept(TEMPLATE_JSON_V1)
-            .contentType(TEMPLATE_JSON_V1)
-            .characterEncoding("utf-8")
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectTemplate()
-    }
-
-    @Test
-    @TestWithMockUser
-    fun createLiteralProperty() {
-        val templateId = resourceService.createResource(
-            id = "R165487",
-            classes = setOf(Classes.nodeShape.value)
-        )
-
-        post("/api/templates/$templateId/properties")
-            .content(createLiteralTemplatePropertyJson)
-            .accept(TEMPLATE_PROPERTY_JSON_V1)
-            .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
-            .perform()
-            .andExpect(status().isCreated)
-    }
-
-    @Test
-    @TestWithMockUser
-    fun createResourceProperty() {
-        val templateId = resourceService.createResource(
-            id = "R165487",
-            classes = setOf(Classes.nodeShape.value)
-        )
-
-        post("/api/templates/$templateId/properties")
-            .content(createResourceTemplatePropertyJson)
-            .accept(TEMPLATE_PROPERTY_JSON_V1)
-            .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
-            .perform()
-            .andExpect(status().isCreated)
-    }
 
     private fun RequestBuilder.perform(): ResultActions = mockMvc.perform(this)
 }
@@ -226,10 +267,47 @@ private const val createTemplateJson = """{
       "max_count": 4,
       "pattern": "\\w+",
       "path": "P27",
-      "datatype": "C28"
+      "class": "C28"
     }
   ],
-  "is_closed": true,
+  "is_closed": false,
+  "observatories": [
+    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+  ],
+  "organizations": [
+    "edc18168-c4ee-4cb8-a98a-136f748e912e"
+  ]
+}"""
+
+private const val updateTemplateJson = """{
+  "label": "updated example template",
+  "description": "updated template description",
+  "formatted_label": "{P34}",
+  "target_class": "C456",
+  "relations": {
+    "research_fields": ["R13"],
+    "research_problems": ["R16"],
+    "predicate": "P31"
+  },
+  "properties": [
+    {
+      "label": "updated resource property label",
+      "min_count": 3,
+      "max_count": 4,
+      "pattern": "\\w+",
+      "path": "P27",
+      "class": "C28"
+    },
+    {
+      "label": "updated literal property label",
+      "min_count": 1,
+      "max_count": 2,
+      "pattern": "\\d+",
+      "path": "P24",
+      "datatype": "C25"
+    }
+  ],
+  "is_closed": false,
   "observatories": [
     "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
   ],
@@ -247,11 +325,29 @@ private const val createLiteralTemplatePropertyJson = """{
   "datatype": "C25"
 }"""
 
+private const val updateLiteralTemplatePropertyJson = """{
+  "label": "updated literal property label",
+  "min_count": 1,
+  "max_count": 1,
+  "pattern": "\\w+",
+  "path": "P31",
+  "datatype": "C28"
+}"""
+
 private const val createResourceTemplatePropertyJson = """{
   "label": "resource property label",
   "min_count": 3,
   "max_count": 4,
   "pattern": "\\w+",
   "path": "P27",
-  "datatype": "C28"
+  "class": "C27"
+}"""
+
+private const val updateResourceTemplatePropertyJson = """{
+  "label": "updated resource property label",
+  "min_count": 4,
+  "max_count": 5,
+  "pattern": "\\d+",
+  "path": "P27",
+  "class": "C24"
 }"""

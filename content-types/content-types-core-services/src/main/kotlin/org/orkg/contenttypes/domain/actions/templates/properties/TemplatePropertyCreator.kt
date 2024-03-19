@@ -1,17 +1,17 @@
 package org.orkg.contenttypes.domain.actions.templates.properties
 
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
-import org.orkg.contenttypes.domain.actions.TemplatePropertyCreator
-import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropertyAction.State
+import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
+import org.orkg.contenttypes.domain.actions.templates.properties.CreateTemplatePropertyAction.State
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-class TemplatePropertyValueCreator(
+class TemplatePropertyCreator(
     resourceService: ResourceUseCases,
     literalService: LiteralUseCases,
     statementService: StatementUseCases
-) : TemplatePropertyCreator(resourceService, literalService, statementService), TemplatePropertyAction {
+) : AbstractTemplatePropertyCreator(resourceService, literalService, statementService), CreateTemplatePropertyAction {
     override fun invoke(command: CreateTemplatePropertyCommand, state: State): State {
         return state.copy(
             templatePropertyId = create(

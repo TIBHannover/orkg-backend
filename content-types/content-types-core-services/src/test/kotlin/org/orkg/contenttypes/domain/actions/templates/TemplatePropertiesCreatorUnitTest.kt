@@ -13,7 +13,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.TemplateState
+import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
@@ -50,7 +50,7 @@ class TemplatePropertiesCreatorUnitTest {
         val command = dummyCreateTemplateCommand().copy(
             properties = listOf(literalProperty, resourceProperty)
         )
-        val state = TemplateState(
+        val state = CreateTemplateState(
             templateId = ThingId("R123")
         )
         val literalPropertyId = ThingId("R1325")
@@ -594,7 +594,7 @@ class TemplatePropertiesCreatorUnitTest {
         val command = dummyCreateTemplateCommand().copy(
             properties = listOf(literalProperty, resourceProperty)
         )
-        val state = TemplateState(
+        val state = CreateTemplateState(
             templateId = ThingId("R123")
         )
         val literalPropertyId = ThingId("R1325")

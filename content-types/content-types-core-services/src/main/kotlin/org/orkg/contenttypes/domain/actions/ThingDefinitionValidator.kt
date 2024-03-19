@@ -20,7 +20,7 @@ open class ThingDefinitionValidator(
     override val thingRepository: ThingRepository,
     private val classRepository: ClassRepository
 ) : ThingIdValidator {
-    internal fun validateThingDefinitions(
+    internal fun validateThingDefinitionsInPlace(
         thingDefinitions: ThingDefinitions,
         tempIds: Set<String>,
         validatedIds: MutableMap<String, Either<String, Thing>>
@@ -36,7 +36,7 @@ open class ThingDefinitionValidator(
         validatedIds: Map<String, Either<String, Thing>>
     ): Map<String, Either<String, Thing>> {
         val result = validatedIds.toMutableMap()
-        validateThingDefinitions(thingDefinitions, tempIds, result)
+        validateThingDefinitionsInPlace(thingDefinitions, tempIds, result)
         return result
     }
 

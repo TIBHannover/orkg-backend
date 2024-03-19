@@ -5,8 +5,18 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.LiteralTemplateProperty
+import org.orkg.contenttypes.domain.ResourceTemplateProperty
+import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
+import org.orkg.contenttypes.input.LiteralPropertyDefinition
+import org.orkg.contenttypes.input.ResourcePropertyDefinition
+import org.orkg.contenttypes.input.TemplatePropertyDefinition
+import org.orkg.contenttypes.input.TemplateRelationsDefinition
+import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
+import org.orkg.contenttypes.input.UpdateTemplateUseCase
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
 
@@ -16,11 +26,7 @@ fun dummyCreateTemplateCommand() = CreateTemplateUseCase.CreateCommand(
     description = "Some description about the template",
     formattedLabel = FormattedLabel.of("{P32}"),
     targetClass = ThingId("targetClass"),
-    relations = CreateTemplateUseCase.CreateCommand.Relations(
-        researchFields = listOf(ThingId("R20")),
-        researchProblems = listOf(ThingId("R21")),
-        predicate = ThingId("P22")
-    ),
+    relations = createTemplateRelations(),
     properties = listOf(
         dummyCreateLiteralTemplatePropertyCommand(),
         dummyCreateResourceTemplatePropertyCommand()
@@ -36,6 +42,27 @@ fun dummyCreateTemplateCommand() = CreateTemplateUseCase.CreateCommand(
     )
 )
 
+fun dummyUpdateTemplateCommand() = UpdateTemplateUseCase.UpdateCommand(
+    templateId = ThingId("R123"),
+    contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+    label = "Updated dummy Template Label",
+    description = "Updated description about the template",
+    formattedLabel = FormattedLabel.of("{P34}"),
+    targetClass = ThingId("otherClass"),
+    relations = createTemplateRelations(
+        researchFields = listOf(ThingId("R24")),
+        researchProblems = listOf(ThingId("R29")),
+        predicate = ThingId("P23")
+    ),
+    properties = listOf(
+        dummyUpdateLiteralTemplatePropertyCommand(),
+        dummyUpdateResourceTemplatePropertyCommand()
+    ),
+    isClosed = true,
+    observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
+    organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc"))
+)
+
 fun dummyCreateLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateLiteralPropertyCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     templateId = ThingId("R123"),
@@ -47,6 +74,20 @@ fun dummyCreateLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase.
     pattern = """\d+""",
     path = Predicates.field,
     datatype = ThingId("C25"),
+)
+
+fun dummyUpdateLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateLiteralPropertyCommand(
+    templatePropertyId = ThingId("R23"),
+    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+    templateId = ThingId("R123"),
+    label = "updated literal property label",
+    placeholder = "updated literal property placeholder",
+    description = "updated literal property description",
+    minCount = 0,
+    maxCount = 1,
+    pattern = """\w+""",
+    path = Predicates.description,
+    datatype = Classes.string,
 )
 
 fun dummyCreateResourceTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateResourcePropertyCommand(
@@ -61,3 +102,36 @@ fun dummyCreateResourceTemplatePropertyCommand() = CreateTemplatePropertyUseCase
     path = Predicates.hasAuthor,
     `class` = ThingId("C28")
 )
+
+fun dummyUpdateResourceTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateResourcePropertyCommand(
+    templatePropertyId = ThingId("R26"),
+    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+    templateId = ThingId("R123"),
+    label = "updated resource property label",
+    placeholder = "updated resource property placeholder",
+    description = "updated resource property description",
+    minCount = 2,
+    maxCount = 3,
+    pattern = """.*""",
+    path = Predicates.hasPaper,
+    `class` = Classes.paper
+)
+
+fun createTemplateRelations(
+    researchFields: List<ThingId> = listOf(ThingId("R20")),
+    researchProblems: List<ThingId> = listOf(ThingId("R21")),
+    predicate: ThingId? = ThingId("P22")
+): TemplateRelationsDefinition =
+    TemplateRelationsDefinition(researchFields, researchProblems, predicate)
+
+fun TemplateProperty.toTemplatePropertyDefinition(): TemplatePropertyDefinition =
+    when (this) {
+        is LiteralTemplateProperty -> toLiteralTemplatePropertyDefinition()
+        is ResourceTemplateProperty -> toResourceTemplatePropertyDefinition()
+    }
+
+fun LiteralTemplateProperty.toLiteralTemplatePropertyDefinition(): LiteralPropertyDefinition =
+    LiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, pattern, path.id, datatype.id)
+
+fun ResourceTemplateProperty.toResourceTemplatePropertyDefinition(): ResourcePropertyDefinition =
+    ResourcePropertyDefinition(label, placeholder, description, minCount, maxCount, pattern, path.id, `class`.id)

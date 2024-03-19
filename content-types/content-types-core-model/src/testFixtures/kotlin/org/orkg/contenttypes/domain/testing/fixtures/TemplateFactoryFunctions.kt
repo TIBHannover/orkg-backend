@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.LiteralTemplateProperty
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.ResourceTemplateProperty
 import org.orkg.contenttypes.domain.Template
-import org.orkg.contenttypes.domain.TemplateRelation
+import org.orkg.contenttypes.domain.TemplateRelations
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
@@ -21,7 +21,7 @@ fun createDummyTemplate() = Template(
     description = "Some description about the template",
     formattedLabel = FormattedLabel.of("{P32}"),
     targetClass = ThingId("targetClass"),
-    relations = TemplateRelation(
+    relations = TemplateRelations(
         researchFields = listOf(ObjectIdAndLabel(ThingId("R20"), "Research Field 1")),
         researchProblems = listOf(ObjectIdAndLabel(ThingId("R21"), "Research Problem 1")),
         predicate = ObjectIdAndLabel(ThingId("P22"), "Predicate label")

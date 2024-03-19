@@ -17,16 +17,12 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.testing.fixtures.createLiteral
 
-class DescriptionCreatorUnitTest {
+class SingleStatementPropertyCreatorUnitTest {
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 
-    private val descriptionCreator = object : DescriptionCreator(
-        literalService = literalService,
-        statementService = statementService
-    ) {}
+    private val singleStatementPropertyCreator = SingleStatementPropertyCreator(literalService, statementService)
 
     @BeforeEach
     fun resetState() {
@@ -62,7 +58,7 @@ class DescriptionCreatorUnitTest {
             )
         } just runs
 
-        descriptionCreator.create(contributorId, subjectId, description)
+        singleStatementPropertyCreator.create(contributorId, subjectId, Predicates.description, description)
 
         verify(exactly = 1) {
             literalService.create(

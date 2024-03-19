@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.orkg.common.PageRequests
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
-import org.orkg.contenttypes.domain.actions.TemplatePropertyState
+import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
@@ -30,10 +30,10 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-class TemplatePropertyTemplateValidatorUnitTest {
+class TemplatePropertyTemplateCreateValidatorUnitTest {
     private val statementRepository: StatementRepository = mockk()
 
-    private val templatePropertyTemplateValidator = TemplatePropertyTemplateValidator(statementRepository)
+    private val templatePropertyTemplateCreateValidator = TemplatePropertyTemplateCreateValidator(statementRepository)
 
     @BeforeEach
     fun resetState() {
@@ -48,7 +48,7 @@ class TemplatePropertyTemplateValidatorUnitTest {
     @ParameterizedTest
     @MethodSource("createTemplatePropertyCommands")
     fun `Given a template property create command, when validating template metadata, it returns success`(command: CreateTemplatePropertyCommand) {
-        val state = TemplatePropertyState()
+        val state = CreateTemplatePropertyState()
         val template = createResource(id = command.templateId, classes = setOf(Classes.nodeShape))
 
         every {
@@ -69,7 +69,7 @@ class TemplatePropertyTemplateValidatorUnitTest {
             )
         )
 
-        val result = templatePropertyTemplateValidator(command, state)
+        val result = templatePropertyTemplateCreateValidator(command, state)
 
         result.asClue {
             it.templatePropertyId shouldBe null
@@ -87,7 +87,7 @@ class TemplatePropertyTemplateValidatorUnitTest {
     @ParameterizedTest
     @MethodSource("createTemplatePropertyCommands")
     fun `Given a template property create command, when the template has no statements, it returns success`(command: CreateTemplatePropertyCommand) {
-        val state = TemplatePropertyState()
+        val state = CreateTemplatePropertyState()
 
         every {
             statementRepository.findAll(
@@ -96,7 +96,7 @@ class TemplatePropertyTemplateValidatorUnitTest {
             )
         } returns pageOf()
 
-        val result = templatePropertyTemplateValidator(command, state)
+        val result = templatePropertyTemplateCreateValidator(command, state)
 
         result.asClue {
             it.templatePropertyId shouldBe null
@@ -114,7 +114,7 @@ class TemplatePropertyTemplateValidatorUnitTest {
     @ParameterizedTest
     @MethodSource("createTemplatePropertyCommands")
     fun `Given a template property create command, when template is closed, it throws an exception`(command: CreateTemplatePropertyCommand) {
-        val state = TemplatePropertyState()
+        val state = CreateTemplatePropertyState()
         val template = createResource(id = command.templateId, classes = setOf(Classes.nodeShape))
 
         every {
@@ -130,7 +130,7 @@ class TemplatePropertyTemplateValidatorUnitTest {
             )
         )
 
-        assertThrows<TemplateClosed> { templatePropertyTemplateValidator(command, state) }
+        assertThrows<TemplateClosed> { templatePropertyTemplateCreateValidator(command, state) }
 
         verify(exactly = 1) {
             statementRepository.findAll(

@@ -3,6 +3,8 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import java.util.*
 import java.util.regex.PatternSyntaxException
@@ -44,6 +46,7 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
+import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
@@ -226,7 +229,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a template request, when service succeeds, it creates and returns the template")
+    @DisplayName("Given a template create request, when service succeeds, it creates and returns the template")
     fun create() {
         val id = ThingId("R123")
         every { templateService.create(any()) } returns id
@@ -275,7 +278,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports target class, or datatype or class range not found, then status is 404 NOT FOUND`() {
+    fun `Given a template create request, when service reports target class, or datatype or class range not found, then status is 404 NOT FOUND`() {
         val exception = ClassNotFound.withThingId(ThingId("invalid"))
         every { templateService.create(any()) } throws exception
 
@@ -293,7 +296,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports template already exists for class, then status is 400 BAD REQUEST`() {
+    fun `Given a template create request, when service reports template already exists for class, then status is 400 BAD REQUEST`() {
         val exception = TemplateAlreadyExistsForClass(ThingId("R123"), ThingId("R456"))
         every { templateService.create(any()) } throws exception
 
@@ -311,7 +314,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports related research field not found, then status is 404 NOT FOUND`() {
+    fun `Given a template create request, when service reports related research field not found, then status is 404 NOT FOUND`() {
         val exception = ResearchFieldNotFound(ThingId("R22"))
         every { templateService.create(any()) } throws exception
 
@@ -329,7 +332,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports related research problem not found, then status is 404 NOT FOUND`() {
+    fun `Given a template create request, when service reports related research problem not found, then status is 404 NOT FOUND`() {
         val exception = ResearchProblemNotFound(ThingId("R22"))
         every { templateService.create(any()) } throws exception
 
@@ -347,7 +350,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports related predicate not found, then status is 404 NOT FOUND`() {
+    fun `Given a template create request, when service reports related predicate not found, then status is 404 NOT FOUND`() {
         val exception = PredicateNotFound(ThingId("R22"))
         every { templateService.create(any()) } throws exception
 
@@ -365,7 +368,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports invalid min count, then status is 400 BAD REQUEST`() {
+    fun `Given a template create request, when service reports invalid min count, then status is 400 BAD REQUEST`() {
         val exception = InvalidMinCount(-1)
         every { templateService.create(any()) } throws exception
 
@@ -383,7 +386,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports invalid max count, then status is 400 BAD REQUEST`() {
+    fun `Given a template create request, when service reports invalid max count, then status is 400 BAD REQUEST`() {
         val exception = InvalidMaxCount(-1)
         every { templateService.create(any()) } throws exception
 
@@ -401,7 +404,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports invalid cardinality, then status is 400 BAD REQUEST`() {
+    fun `Given a template create request, when service reports invalid cardinality, then status is 400 BAD REQUEST`() {
         val exception = InvalidCardinality(5, 1)
         every { templateService.create(any()) } throws exception
 
@@ -419,7 +422,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports invalid pattern, then status is 400 BAD REQUEST`() {
+    fun `Given a template create request, when service reports invalid pattern, then status is 400 BAD REQUEST`() {
         val exception = InvalidRegexPattern("\\", Exception("Invalid regex pattern"))
         every { templateService.create(any()) } throws exception
 
@@ -437,7 +440,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports path predicate not found, then status is 404 NOT FOUND`() {
+    fun `Given a template create request, when service reports path predicate not found, then status is 404 NOT FOUND`() {
         val exception = PredicateNotFound("P123")
         every { templateService.create(any()) } throws exception
 
@@ -455,7 +458,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports organization not found, then status is 404 NOT FOUND`() {
+    fun `Given a template create request, when service reports organization not found, then status is 404 NOT FOUND`() {
         val exception = OrganizationNotFound(OrganizationId(UUID.randomUUID()))
         every { templateService.create(any()) } throws exception
 
@@ -473,7 +476,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    fun `Given a template request, when service reports observatory not found, then status is 404 NOT FOUND`() {
+    fun `Given a template create request, when service reports observatory not found, then status is 404 NOT FOUND`() {
         val exception = ObservatoryNotFound(ObservatoryId(UUID.randomUUID()))
         every { templateService.create(any()) } throws exception
 
@@ -491,14 +494,63 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a template property request, when service succeeds, it creates the template property")
+    @DisplayName("Given a template update request, when service succeeds, it updates the template")
+    fun update() {
+        val id = ThingId("R123")
+        every { templateService.update(any()) } just runs
+
+        documentedPutRequestTo("/api/templates/{id}", id)
+            .content(updateTemplateRequest())
+            .accept(TEMPLATE_JSON_V1)
+            .contentType(TEMPLATE_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/templates/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The label of the template. (optional)"),
+                        fieldWithPath("description").description("The description of the template. (optional)"),
+                        fieldWithPath("formatted_label").description("The formatted label pattern of the template.").optional(),
+                        fieldWithPath("target_class").description("The target class of the template. (optional)"),
+                        fieldWithPath("relations").description("The related resources of the template. This is used for suggestions. (optional)"),
+                        fieldWithPath("relations.research_fields[]").description("The list of research fields the template relates to."),
+                        fieldWithPath("relations.research_problems[]").description("The list of research problems the template relates to."),
+                        fieldWithPath("relations.predicate").description("The predicate the template relates to."),
+                        fieldWithPath("properties[]").description("The property descriptions of the template. They can either be literal properties or resource properties. This is denoted by the `class` (resource) and `datatype` (literal) properties. (optional)"),
+                        fieldWithPath("properties[].label").description("The label of the property."),
+                        fieldWithPath("properties[].placeholder").description("The placeholder of the property. (optional)"),
+                        fieldWithPath("properties[].description").description("The description of the property. (optional)"),
+                        fieldWithPath("properties[].min_count").description("The minimum cardinality of the property. Must be at least one, or zero for infinite cardinality. (optional)").optional(),
+                        fieldWithPath("properties[].max_count").description("The maximum cardinality of the property. Must be at least one, or zero for infinite cardinality. Must also be higher than min_count. (optional)").optional(),
+                        fieldWithPath("properties[].pattern").description("The pattern (regular expression) of the property. (optional)").optional(),
+                        fieldWithPath("properties[].path").description("The predicate id for the path of the property."),
+                        fieldWithPath("properties[].class").description("The class id of the range of the property, indicating a resource property. Mutually exclusive with `datatype`.").optional(),
+                        fieldWithPath("properties[].datatype").description("The class id of the datatype of the property, indicating a literal property. Mutually exclusive with `class`.").optional(),
+                        fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified. (optional)"),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to. (optional)"),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to. (optional)"),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { templateService.update(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a template property create request, when service succeeds, it creates the template property")
     fun createProperty() {
         val templateId = ThingId("R3541")
         val id = ThingId("R123")
         every { templateService.createTemplateProperty(any()) } returns id
 
         documentedPostRequestTo("/api/templates/{templateId}/properties", templateId)
-            .content(createLiteralTemplatePropertyRequest())
+            .content(literalTemplatePropertyRequest())
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -530,8 +582,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
-    fun `Given a template property request, when service reports datatype or class range not found, then status is 404 NOT FOUND`(
-        request: TemplateController.CreateTemplatePropertyRequest
+    fun `Given a template property create request, when service reports datatype or class range not found, then status is 404 NOT FOUND`(
+        request: TemplateController.TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = ClassNotFound.withThingId(ThingId("invalid"))
@@ -552,8 +604,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
-    fun `Given a template property request, when service reports invalid min count, then status is 400 BAD REQUEST`(
-        request: TemplateController.CreateTemplatePropertyRequest
+    fun `Given a template property create request, when service reports invalid min count, then status is 400 BAD REQUEST`(
+        request: TemplateController.TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidMinCount(-1)
@@ -574,8 +626,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
-    fun `Given a template property request, when service reports invalid max count, then status is 400 BAD REQUEST`(
-        request: TemplateController.CreateTemplatePropertyRequest
+    fun `Given a template property create request, when service reports invalid max count, then status is 400 BAD REQUEST`(
+        request: TemplateController.TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidMaxCount(-1)
@@ -596,8 +648,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
-    fun `Given a template property request, when service reports invalid cardinality, then status is 400 BAD REQUEST`(
-        request: TemplateController.CreateTemplatePropertyRequest
+    fun `Given a template property create request, when service reports invalid cardinality, then status is 400 BAD REQUEST`(
+        request: TemplateController.TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidCardinality(5, 1)
@@ -618,8 +670,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
-    fun `Given a template property request, when service reports invalid pattern, then status is 400 BAD REQUEST`(
-        request: TemplateController.CreateTemplatePropertyRequest
+    fun `Given a template property create request, when service reports invalid pattern, then status is 400 BAD REQUEST`(
+        request: TemplateController.TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidRegexPattern("\\", PatternSyntaxException("Invalid regex pattern", "\\", 1))
@@ -640,8 +692,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
-    fun `Given a template property request, when service reports path predicate not found, then status is 404 NOT FOUND`(
-        request: TemplateController.CreateTemplatePropertyRequest
+    fun `Given a template property create request, when service reports path predicate not found, then status is 404 NOT FOUND`(
+        request: TemplateController.TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = PredicateNotFound("P123")
@@ -662,8 +714,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
-    fun `Given a template property request, when service reports template is closed, then status is 400 BAD REQUEST`(
-        request: TemplateController.CreateTemplatePropertyRequest
+    fun `Given a template property create request, when service reports template is closed, then status is 400 BAD REQUEST`(
+        request: TemplateController.TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = TemplateClosed(ThingId("P123"))
@@ -681,20 +733,82 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         verify(exactly = 1) { templateService.createTemplateProperty(any()) }
     }
 
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a template property update request, when service succeeds, it updates the template property")
+    fun updateProperty() {
+        val templateId = ThingId("R3541")
+        val id = ThingId("R123")
+        every { templateService.updateTemplateProperty(any()) } just runs
+
+        documentedPutRequestTo("/api/templates/{templateId}/properties/{propertyId}", templateId, id)
+            .content(literalTemplatePropertyRequest())
+            .accept(TEMPLATE_PROPERTY_JSON_V1)
+            .contentType(TEMPLATE_PROPERTY_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/templates/$templateId")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated template can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The label of the property."),
+                        fieldWithPath("placeholder").description("The placeholder of the property."),
+                        fieldWithPath("description").description("The description of the property."),
+                        fieldWithPath("min_count").description("The minimum cardinality of the property. Must be at least one, or zero for infinite cardinality.").optional(),
+                        fieldWithPath("max_count").description("The maximum cardinality of the property. Must be at least one, or zero for infinite cardinality. Must also be higher than min_count.").optional(),
+                        fieldWithPath("pattern").description("The pattern (regular expression) of the property.").optional(),
+                        fieldWithPath("path").description("The predicate id for the path of the property."),
+                        fieldWithPath("class").type("String").description("The class id of the range of the property, indicating a resource property. Mutually exclusive with `datatype`.").optional(),
+                        fieldWithPath("datatype").type("String").description("The class id of the datatype of the property, indicating a literal property. Mutually exclusive with `class`.").optional()
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { templateService.updateTemplateProperty(any()) }
+    }
+
     private fun createTemplateRequest() =
         TemplateController.CreateTemplateRequest(
             label = "Dummy Template Label",
             description = "Some description about the template",
             formattedLabel = "{P32}",
             targetClass = ThingId("targetClass"),
-            relations = TemplateController.CreateTemplateRequest.TemplateRelationsDTO(
+            relations = TemplateController.TemplateRelationsDTO(
                 researchFields = listOf(ThingId("R20")),
                 researchProblems = listOf(ThingId("R21")),
                 predicate = ThingId("P22")
             ),
             properties = listOf(
-                createLiteralTemplatePropertyRequest(),
-                createResourceTemplatePropertyRequest()
+                literalTemplatePropertyRequest(),
+                resourceTemplatePropertyRequest()
+            ),
+            isClosed = true,
+            observatories = listOf(
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+            ),
+            organizations = listOf(
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+            )
+        )
+
+    private fun updateTemplateRequest() =
+        TemplateController.UpdateTemplateRequest(
+            label = "Dummy Template Label",
+            description = "Some description about the template",
+            formattedLabel = "{P32}",
+            targetClass = ThingId("targetClass"),
+            relations = TemplateController.TemplateRelationsDTO(
+                researchFields = listOf(ThingId("R20")),
+                researchProblems = listOf(ThingId("R21")),
+                predicate = ThingId("P22")
+            ),
+            properties = listOf(
+                literalTemplatePropertyRequest(),
+                resourceTemplatePropertyRequest()
             ),
             isClosed = true,
             observatories = listOf(
@@ -708,13 +822,13 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     companion object {
         @JvmStatic
         fun templatePropertyRequests(): Stream<Arguments> = Stream.of(
-            Arguments.of(createLiteralTemplatePropertyRequest()),
-            Arguments.of(createResourceTemplatePropertyRequest())
+            Arguments.of(literalTemplatePropertyRequest()),
+            Arguments.of(resourceTemplatePropertyRequest())
         )
 
         @JvmStatic
-        private fun createLiteralTemplatePropertyRequest() =
-            TemplateController.CreateLiteralPropertyRequest(
+        private fun literalTemplatePropertyRequest() =
+            TemplateController.LiteralPropertyRequest(
                 label = "literal property label",
                 placeholder = "literal property placeholder",
                 description = "literal property description",
@@ -726,8 +840,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             )
 
         @JvmStatic
-        private fun createResourceTemplatePropertyRequest() =
-            TemplateController.CreateResourcePropertyRequest(
+        private fun resourceTemplatePropertyRequest() =
+            TemplateController.ResourcePropertyRequest(
                 label = "resource property label",
                 placeholder = "resource property placeholder",
                 description = "resource property description",

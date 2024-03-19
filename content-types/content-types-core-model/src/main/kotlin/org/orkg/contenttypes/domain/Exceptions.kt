@@ -159,3 +159,6 @@ class TooManyPropertyValues(templatePropertyId: ThingId, predicateId: ThingId, m
 
 class InvalidLiteral(templatePropertyId: ThingId, predicateId: ThingId, datatype: ThingId, id: String, value: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" with value "$value" for property "$templatePropertyId" with predicate "$predicateId" is not a valid "$datatype".""")
+
+class UnrelatedTemplateProperty(templateId: ThingId, templatePropertyId: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Template property "$templatePropertyId" does not belong to template "$templateId".""")

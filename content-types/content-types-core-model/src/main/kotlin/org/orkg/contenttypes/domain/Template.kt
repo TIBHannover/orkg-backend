@@ -17,7 +17,7 @@ data class Template(
     val description: String?,
     val formattedLabel: FormattedLabel?,
     val targetClass: ThingId,
-    val relations: TemplateRelation,
+    val relations: TemplateRelations,
     val properties: List<TemplateProperty>,
     val isClosed: Boolean,
     val createdBy: ContributorId,
@@ -28,10 +28,10 @@ data class Template(
     val unlistedBy: ContributorId? = null
 )
 
-data class TemplateRelation(
-    val researchFields: List<ObjectIdAndLabel>,
-    val researchProblems: List<ObjectIdAndLabel>,
-    val predicate: ObjectIdAndLabel?,
+data class TemplateRelations(
+    val researchFields: List<ObjectIdAndLabel> = emptyList(),
+    val researchProblems: List<ObjectIdAndLabel> = emptyList(),
+    val predicate: ObjectIdAndLabel? = null,
 )
 
 sealed interface TemplateProperty {

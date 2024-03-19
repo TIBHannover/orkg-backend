@@ -13,7 +13,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.TemplateState
+import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -41,7 +41,7 @@ class TemplateClosedCreatorUnitTest {
     fun `Given a template create command, when closed is true, it creates a new statement`() {
         val command = dummyCreateTemplateCommand()
         val templateId = ThingId("R123")
-        val state = TemplateState(
+        val state = CreateTemplateState(
             templateId = templateId
         )
         val closedLiteralId = ThingId("R125")
@@ -95,7 +95,7 @@ class TemplateClosedCreatorUnitTest {
             isClosed = false
         )
         val templateId = ThingId("R123")
-        val state = TemplateState(
+        val state = CreateTemplateState(
             templateId = templateId
         )
 

@@ -25,11 +25,11 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 
-class TemplatePropertyValidatorUnitTest {
+class AbstractTemplatePropertyValidatorUnitTest {
     private val predicateRepository: PredicateRepository = mockk()
     private val classRepository: ClassRepository = mockk()
 
-    private val templatePropertyValidator = object : TemplatePropertyValidator(predicateRepository, classRepository) {}
+    private val abstractTemplatePropertyValidator = object : AbstractTemplatePropertyValidator(predicateRepository, classRepository) {}
 
     @BeforeEach
     fun resetState() {
@@ -48,7 +48,7 @@ class TemplatePropertyValidatorUnitTest {
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.datatype) } returns Optional.of(createClass(property.datatype))
 
-        templatePropertyValidator.validate(property)
+        abstractTemplatePropertyValidator.validate(property)
 
         verify(exactly = 1) { predicateRepository.findById(property.path) }
         verify(exactly = 1) { classRepository.findById(property.datatype) }
@@ -61,7 +61,7 @@ class TemplatePropertyValidatorUnitTest {
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.`class`) } returns Optional.of(createClass(property.`class`))
 
-        templatePropertyValidator.validate(property)
+        abstractTemplatePropertyValidator.validate(property)
 
         verify(exactly = 1) { predicateRepository.findById(property.path) }
         verify(exactly = 1) { classRepository.findById(property.`class`) }
@@ -72,7 +72,7 @@ class TemplatePropertyValidatorUnitTest {
         val property = dummyCreateLiteralTemplatePropertyCommand().copy(minCount = -1)
         val exception = InvalidMinCount(property.minCount!!)
 
-        assertThrows<InvalidMinCount> { templatePropertyValidator.validate(property) } shouldBe exception
+        assertThrows<InvalidMinCount> { abstractTemplatePropertyValidator.validate(property) } shouldBe exception
     }
 
     @Test
@@ -80,7 +80,7 @@ class TemplatePropertyValidatorUnitTest {
         val property = dummyCreateLiteralTemplatePropertyCommand().copy(maxCount = -1)
         val exception = InvalidMaxCount(property.maxCount!!)
 
-        assertThrows<InvalidMaxCount> { templatePropertyValidator.validate(property) } shouldBe exception
+        assertThrows<InvalidMaxCount> { abstractTemplatePropertyValidator.validate(property) } shouldBe exception
     }
 
     @Test
@@ -88,7 +88,7 @@ class TemplatePropertyValidatorUnitTest {
         val property = dummyCreateLiteralTemplatePropertyCommand().copy(minCount = 2, maxCount = 1)
         val exception = InvalidCardinality(property.minCount!!, property.maxCount!!)
 
-        assertThrows<InvalidCardinality> { templatePropertyValidator.validate(property) } shouldBe exception
+        assertThrows<InvalidCardinality> { abstractTemplatePropertyValidator.validate(property) } shouldBe exception
     }
 
     @Test
@@ -96,7 +96,7 @@ class TemplatePropertyValidatorUnitTest {
         val property = dummyCreateLiteralTemplatePropertyCommand().copy(pattern = "\\")
         val exception = InvalidRegexPattern(property.pattern!!, RuntimeException())
 
-        assertThrows<InvalidRegexPattern> { templatePropertyValidator.validate(property) }.message shouldBe exception.message
+        assertThrows<InvalidRegexPattern> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message
     }
 
     @Test
@@ -105,7 +105,7 @@ class TemplatePropertyValidatorUnitTest {
 
         every { predicateRepository.findById(property.path) } returns Optional.empty()
 
-        assertThrows<PredicateNotFound> { templatePropertyValidator.validate(property) }
+        assertThrows<PredicateNotFound> { abstractTemplatePropertyValidator.validate(property) }
 
         verify(exactly = 1) { predicateRepository.findById(property.path) }
     }
@@ -117,7 +117,7 @@ class TemplatePropertyValidatorUnitTest {
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.datatype) } returns Optional.empty()
 
-        assertThrows<ClassNotFound> { templatePropertyValidator.validate(property) }
+        assertThrows<ClassNotFound> { abstractTemplatePropertyValidator.validate(property) }
 
         verify(exactly = 1) { predicateRepository.findById(property.path) }
         verify(exactly = 1) { classRepository.findById(property.datatype) }
@@ -130,7 +130,7 @@ class TemplatePropertyValidatorUnitTest {
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.`class`) } returns Optional.empty()
 
-        assertThrows<ClassNotFound> { templatePropertyValidator.validate(property) }
+        assertThrows<ClassNotFound> { abstractTemplatePropertyValidator.validate(property) }
 
         verify(exactly = 1) { predicateRepository.findById(property.path) }
         verify(exactly = 1) { classRepository.findById(property.`class`) }
@@ -139,18 +139,18 @@ class TemplatePropertyValidatorUnitTest {
     @Test
     fun `Given a template property definition, when label is invalid, it throws an exception`() {
         val property = dummyCreateResourceTemplatePropertyCommand().copy(label = "\n")
-        assertThrows<InvalidLabel> { templatePropertyValidator.validate(property) }
+        assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }
     }
 
     @Test
     fun `Given a template property definition, when placeholder is invalid, it throws an exception`() {
         val property = dummyCreateResourceTemplatePropertyCommand().copy(placeholder = "\n")
-        assertThrows<InvalidLabel> { templatePropertyValidator.validate(property) }
+        assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }
     }
 
     @Test
     fun `Given a template property definition, when description is invalid, it throws an exception`() {
         val property = dummyCreateResourceTemplatePropertyCommand().copy(description = "\n")
-        assertThrows<InvalidLabel> { templatePropertyValidator.validate(property) }
+        assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }
     }
 }

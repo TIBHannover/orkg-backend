@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added content-type endpoints for updating templates and template properties.
+  (See: [!854](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/854))
+- Added content-type endpoints for fetching rosetta-stone templates.
+  (See: [!782](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/782))
+
+### Changed
+- Changed database reload script to force-use docker compose plugin.
+  (Closes: [!548](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/548))
+
+### Fixed
+- Fixed error when trying to delete resources as a curator
+  (Closes: [!552](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/552))
 
 ## [0.50.1] - 2024-03-14
 ### Fixed

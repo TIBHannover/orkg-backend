@@ -9,9 +9,14 @@ neo4j_version=4.4-community
 dump_volume=orkg-dumps
 source_dir=orkg-backend
 
-docker_compose=$( command -v docker-compose || ([ -x /usr/libexec/docker/cli-plugins/docker-compose ] && echo "docker compose") || echo "" )
-if [ -z "$docker_compose" ]; then
-    echo "ERROR: Unable to find Docker Compose, either as executable or as Docker plug-in."
+docker_exe=$(which docker >/dev/null && echo found || echo missing)
+if [ "$docker_exe" != "found" ]; then
+    echo "ERROR: Docker client was not found in the path. Please ensure it is installed and can be called."
+    exit 1
+fi
+docker_compose_exe=$(docker compose version 2>/dev/null | grep version >/dev/null && echo found || echo missing)
+if [ "$docker_compose_exe" != "found" ]; then
+    echo "ERROR: Unable to find Docker Compose plug-in. Please ensure that it is installed."
     exit 1
 fi
 
@@ -22,8 +27,8 @@ docker cp -L "${1:-dumps/neo4j-dump-latest.dump}" ${temp_container}:/dumps/neo4j
 docker rm "$temp_container"
 
 # Shutdown and remove Neo4j
-$docker_compose stop neo4j
-$docker_compose rm -f neo4j
+docker compose stop neo4j
+docker compose rm -f neo4j
 
 # Trash old database
 docker volume rm "${source_dir}_neo4j-data"
@@ -32,9 +37,9 @@ docker volume rm "${source_dir}_neo4j-data"
 # We initially used:
 #   ( docker-compose up neo4j & ) | grep -q 'Remote interface available at http:'
 # but that does not seem to work in Windows Subsystem for Linux (WSL).
-$docker_compose up -d neo4j
-until $docker_compose logs neo4j | grep -q 'Remote interface available at http:'; do sleep 1; done
-$docker_compose stop neo4j
+docker compose up -d neo4j
+until docker compose logs neo4j | grep -q 'Remote interface available at http:'; do sleep 1; done
+docker compose stop neo4j
 
 # Load dump.
 # The double dash seems to be required to make the script work with "Git Bash" in Windows. :-/
@@ -43,4 +48,4 @@ neo4j-admin load --from=/dumps/neo4j-dump-latest.dump --database=orkg --force
 EOS
 
 # Bring up database
-$docker_compose up -d neo4j
+docker compose up -d neo4j

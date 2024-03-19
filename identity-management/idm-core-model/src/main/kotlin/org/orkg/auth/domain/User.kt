@@ -14,6 +14,6 @@ data class User(
     val organizationId: UUID?,
     val observatoryId: UUID?,
 ) {
-    val isCurator: Boolean = Role("ROLE_ADMIN") in roles // FIXME: should be its own status
-    val isAdmin: Boolean = Role("ROLE_ADMIN") in roles
+    val isCurator: Boolean = Role.CURATOR in roles
+    val isAdmin: Boolean = Role.ADMIN in roles
 }

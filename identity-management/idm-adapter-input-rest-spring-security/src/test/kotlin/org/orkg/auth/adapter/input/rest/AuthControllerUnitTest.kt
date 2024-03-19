@@ -236,7 +236,7 @@ class AuthControllerUnitTest {
         password = "!invalid, not a hash",
         enabled = true,
         createdAt = LocalDateTime.now(clock),
-        roles = setOf(Role("ROLE_USER")),
+        roles = setOf(Role.USER),
         organizationId = null,
         observatoryId = null,
     )

@@ -15,7 +15,7 @@ class CuratorFromUserAdapter(
 ) : CuratorRepository {
     override fun findById(id: ContributorId): Contributor? =
         userRepository.findById(id.value)
-            .filter { Role("ADMIN") in it.roles }
+            .filter { Role.ADMIN in it.roles }
             .map(User::toContributor)
             .orElse(null)
 }

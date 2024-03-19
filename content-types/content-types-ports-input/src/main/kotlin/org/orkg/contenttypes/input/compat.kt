@@ -12,6 +12,8 @@ interface TemplateUseCases : RetrieveTemplateUseCase, CreateTemplateUseCase, Cre
 
 interface TemplateInstanceUseCases : RetrieveTemplateInstanceUseCase, UpdateTemplateInstanceUseCase
 
+interface RosettaTemplateUseCases : RetrieveRosettaTemplateUseCase
+
 interface ContentTypeResourcesUseCase :
     LoadPaperPort,
     GetPaperFlagQuery,

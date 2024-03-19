@@ -32,7 +32,6 @@ import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
-import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
@@ -148,7 +147,7 @@ class TemplateService(
             properties = statements[id]!!
                 .wherePredicate(Predicates.shProperty)
                 .filter { it.`object` is Resource && Classes.propertyShape in (it.`object` as Resource).classes }
-                .mapNotNull { (it.`object` as Resource).toTemplateProperty(statements[it.`object`.id].orEmpty()) }
+                .mapNotNull { TemplateProperty.from(it.`object` as Resource, statements[it.`object`.id].orEmpty()) }
                 .sortedBy { it.order },
             isClosed = statements[id]!!
                 .wherePredicate(Predicates.shClosed)
@@ -161,48 +160,5 @@ class TemplateService(
             visibility = visibility,
             unlistedBy = unlistedBy
         )
-    }
-
-    private fun Resource.toTemplateProperty(statements: Iterable<GeneralStatement>): TemplateProperty? {
-        val placeholder = statements.wherePredicate(Predicates.placeholder).singleOrNull()?.`object`?.label
-        val description = statements.wherePredicate(Predicates.description).singleOrNull()?.`object`?.label
-        val order = statements.wherePredicate(Predicates.shOrder).single().`object`.label.toLong()
-        val minCount = statements.wherePredicate(Predicates.shMinCount).singleOrNull()?.`object`?.label?.toInt()
-        val maxCount = statements.wherePredicate(Predicates.shMaxCount).singleOrNull()?.`object`?.label?.toInt()
-        val pattern = statements.wherePredicate(Predicates.shPattern).singleOrNull()?.`object`?.label
-        val path = statements.wherePredicate(Predicates.shPath).single().objectIdAndLabel()!!
-        val datatype = statements.wherePredicate(Predicates.shDatatype).singleOrNull().objectIdAndLabel()
-        val `class` = statements.wherePredicate(Predicates.shClass).singleOrNull().objectIdAndLabel()
-        return when {
-            datatype != null -> LiteralTemplateProperty(
-                id = id,
-                label = label,
-                placeholder = placeholder,
-                description = description,
-                order = order,
-                minCount = minCount,
-                maxCount = maxCount,
-                pattern = pattern,
-                path = path,
-                createdBy = createdBy,
-                createdAt = createdAt,
-                datatype = datatype
-            )
-            `class` != null -> ResourceTemplateProperty(
-                id = id,
-                label = label,
-                placeholder = placeholder,
-                description = description,
-                order = order,
-                minCount = minCount,
-                maxCount = maxCount,
-                pattern = pattern,
-                path = path,
-                createdBy = createdBy,
-                createdAt = createdAt,
-                `class` = `class`
-            )
-            else -> null
-        }
     }
 }

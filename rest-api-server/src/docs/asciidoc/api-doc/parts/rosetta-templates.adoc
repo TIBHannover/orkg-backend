@@ -1,0 +1,26 @@
+= Rosetta Templates
+
+Rosetta Templates represent a collection of concepts in the knowledge graph and can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+They can be used to model the structure of statements following the rosetta stone approach.
+The provided endpoints aggregate these concepts into a rosetta template representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[rosetta-templates-fetch]]
+== Fetching a rosetta template
+
+A `GET` request provides information about a template.
+
+operation::templates-get-single[snippets='curl-request,response-fields']
+
+[[rosetta-templates-list]]
+== Listing rosetta templates
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<rosetta-templates-fetch,rosetta templates>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::rosetta-templates-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::rosetta-templates-get-paged[snippets='request-parameters']

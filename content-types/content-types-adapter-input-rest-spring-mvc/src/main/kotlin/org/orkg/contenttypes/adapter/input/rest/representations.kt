@@ -312,6 +312,29 @@ data class ResourceTemplatePropertyRepresentation(
     val `class`: ObjectIdAndLabel
 ) : TemplatePropertyRepresentation
 
+data class RosettaTemplateRepresentation(
+    val id: ThingId,
+    val label: String,
+    val description: String?,
+    @get:JsonProperty("formatted_label")
+    val formattedLabel: FormattedLabel?,
+    @get:JsonProperty("target_class")
+    val targetClass: ThingId,
+    val properties: List<TemplatePropertyRepresentation>,
+    @get:JsonProperty("is_closed")
+    val isClosed: Boolean,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    val observatories: List<ObservatoryId>,
+    val organizations: List<OrganizationId>,
+    val visibility: Visibility,
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("unlisted_by")
+    val unlistedBy: ContributorId?
+)
+
 data class TemplateInstanceRepresentation(
     val root: ResourceRepresentation,
     val statements: Map<ThingId, List<EmbeddedStatementRepresentation>>

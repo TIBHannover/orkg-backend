@@ -131,6 +131,7 @@ object Classes {
     val resources = ThingId("Resources")
     val resourceSection = ThingId("ResourceSection")
     val results = ThingId("Results")
+    val rosettaNodeShape = ThingId("RosettaNodeShape")
     val scenario = ThingId("Scenario")
     val section = ThingId("Section")
     val smartReview = ThingId("SmartReview")

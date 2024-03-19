@@ -6,15 +6,15 @@ import org.orkg.contenttypes.adapter.input.rest.TemplateRepresentation
 import org.springframework.data.domain.Page
 
 interface TemplateRepresentationAdapter : TemplateRelationRepresentationAdapter,
-    TemplatePropertyRelationRepresentationAdapter {
+    TemplatePropertyRepresentationAdapter {
 
-    fun Optional<Template>.mapToTemplateRepresentation() : Optional<TemplateRepresentation> =
+    fun Optional<Template>.mapToTemplateRepresentation(): Optional<TemplateRepresentation> =
         map { it.toTemplateRepresentation() }
 
-    fun Page<Template>.mapToTemplateRepresentation() : Page<TemplateRepresentation> =
+    fun Page<Template>.mapToTemplateRepresentation(): Page<TemplateRepresentation> =
         map { it.toTemplateRepresentation() }
 
-    fun Template.toTemplateRepresentation() : TemplateRepresentation =
+    fun Template.toTemplateRepresentation(): TemplateRepresentation =
         TemplateRepresentation(
             id = id,
             label = label,

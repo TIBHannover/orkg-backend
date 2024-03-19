@@ -15,3 +15,4 @@
 * xref:reference/model/literature-list.adoc[Literature-List]
 * xref:reference/model/smart-review.adoc[Smart Review]
 * xref:reference/model/template.adoc[Template]
+* xref:reference/model/rosetta-template.adoc[Rosetta Template]

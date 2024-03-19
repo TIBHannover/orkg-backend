@@ -9,7 +9,7 @@ import org.orkg.contenttypes.adapter.input.rest.ResourceTemplatePropertyRepresen
 import org.orkg.contenttypes.adapter.input.rest.TemplatePropertyRepresentation
 import org.springframework.data.domain.Page
 
-interface TemplatePropertyRelationRepresentationAdapter {
+interface TemplatePropertyRepresentationAdapter {
 
     fun Optional<TemplateProperty>.mapToTemplatePropertyRepresentation(): Optional<TemplatePropertyRepresentation> =
         map { it.toTemplatePropertyRepresentation() }

@@ -179,13 +179,13 @@ class PaperService(
             SDGValidator({ it.sustainableDevelopmentGoals }, { it.paper!!.sustainableDevelopmentGoals.map(ObjectIdAndLabel::id).toSet() }),
             PaperTitleUpdateValidator(resourceService),
             PaperIdentifierUpdateValidator(statementRepository),
-            PaperSDGUpdater(statementService),
             PaperAuthorUpdateValidator(resourceRepository, statementRepository),
             PaperResourceUpdater(resourceService),
             PaperIdentifierUpdater(statementService, literalService),
             PaperAuthorUpdater(resourceService, statementService, literalService, listService),
             PaperResearchFieldUpdater(statementService),
-            PaperPublicationInfoUpdater(resourceService, resourceRepository, statementService, literalService)
+            PaperPublicationInfoUpdater(resourceService, resourceRepository, statementService, literalService),
+            PaperSDGUpdater(statementService)
         )
         steps.execute(command, UpdatePaperState())
     }

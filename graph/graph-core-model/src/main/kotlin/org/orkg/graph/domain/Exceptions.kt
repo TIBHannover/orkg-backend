@@ -113,7 +113,10 @@ class ReservedClass(id: ThingId) :
 class URIAlreadyInUse(uri: URI, id: ThingId) :
     PropertyValidationException("uri", """The URI <$uri> is already assigned to class with ID "$id".""")
 
-class InvalidLabel : PropertyValidationException("label", "A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long.")
+class InvalidLabel(property: String = "label") : PropertyValidationException(
+    property = property,
+    message = "A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."
+)
 
 class InvalidLiteralLabel : PropertyValidationException("label", "A literal must be at most $MAX_LABEL_LENGTH characters long.")
 

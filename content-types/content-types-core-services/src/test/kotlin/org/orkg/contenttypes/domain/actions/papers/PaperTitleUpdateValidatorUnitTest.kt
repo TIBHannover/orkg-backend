@@ -78,7 +78,9 @@ class PaperTitleUpdateValidatorUnitTest {
         val command = dummyUpdatePaperCommand().copy(title = "\n")
         val state = UpdatePaperState(paper = createDummyPaper())
 
-        assertThrows<InvalidLabel> { paperTitleUpdateValidator(command, state) }
+        assertThrows<InvalidLabel> { paperTitleUpdateValidator(command, state) }.asClue {
+            it.property shouldBe "title"
+        }
     }
 
     @Test

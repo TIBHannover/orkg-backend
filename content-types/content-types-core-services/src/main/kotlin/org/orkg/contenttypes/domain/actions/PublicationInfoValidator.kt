@@ -17,7 +17,7 @@ class PublicationInfoValidator<T, S>(
                 }
             }
             publicationInfo.publishedIn?.also { publishedIn ->
-                Label.ofOrNull(publishedIn) ?: throw InvalidLabel()
+                Label.ofOrNull(publishedIn) ?: throw InvalidLabel("published_in")
             }
         }
         return state

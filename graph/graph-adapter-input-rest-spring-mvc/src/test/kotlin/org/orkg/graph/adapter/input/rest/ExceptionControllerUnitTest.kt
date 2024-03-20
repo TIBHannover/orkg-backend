@@ -143,6 +143,21 @@ internal class ExceptionControllerUnitTest {
     }
 
     @Test
+    fun invalidLabelWithProperty() {
+        get("/invalid-label")
+            .param("property", "title")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("title"))
+            .andExpect(jsonPath("$.errors[0].message").value("""A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."""))
+            .andExpect(jsonPath("$.path").value("/invalid-label"))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
     fun uriAlreadyInUse() {
         val id = ThingId("C123")
         val uri = "http://example.org/C123"
@@ -239,6 +254,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/invalid-label")
         fun invalidLabel() {
             throw InvalidLabel()
+        }
+
+        @GetMapping("/invalid-label", params = ["property"])
+        fun invalidLabel(@RequestParam property: String) {
+            throw InvalidLabel(property)
         }
 
         @GetMapping("/uri-already-in-use")

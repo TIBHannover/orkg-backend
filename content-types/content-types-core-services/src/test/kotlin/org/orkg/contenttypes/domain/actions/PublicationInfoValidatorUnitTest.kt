@@ -1,5 +1,7 @@
 package org.orkg.contenttypes.domain.actions
 
+import io.kotest.assertions.asClue
+import io.kotest.matchers.shouldBe
 import java.net.URI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -35,6 +37,8 @@ class PublicationInfoValidatorUnitTest {
                 ),
                 Unit
             )
+        }.asClue {
+            it.property shouldBe "published_in"
         }
     }
 

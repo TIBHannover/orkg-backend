@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.actions
 
+import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
@@ -139,18 +140,24 @@ class AbstractTemplatePropertyValidatorUnitTest {
     @Test
     fun `Given a template property definition, when label is invalid, it throws an exception`() {
         val property = dummyCreateResourceTemplatePropertyCommand().copy(label = "\n")
-        assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }
+        assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }.asClue {
+            it.property shouldBe "label"
+        }
     }
 
     @Test
     fun `Given a template property definition, when placeholder is invalid, it throws an exception`() {
         val property = dummyCreateResourceTemplatePropertyCommand().copy(placeholder = "\n")
-        assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }
+        assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }.asClue {
+            it.property shouldBe "placeholder"
+        }
     }
 
     @Test
     fun `Given a template property definition, when description is invalid, it throws an exception`() {
         val property = dummyCreateResourceTemplatePropertyCommand().copy(description = "\n")
-        assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }
+        assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }.asClue {
+            it.property shouldBe "description"
+        }
     }
 }

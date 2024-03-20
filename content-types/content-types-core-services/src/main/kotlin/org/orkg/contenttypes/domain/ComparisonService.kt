@@ -152,7 +152,8 @@ class ComparisonService(
 
     override fun create(command: CreateComparisonCommand): ThingId {
         val steps = listOf(
-            LabelValidator { it.title },
+            LabelValidator("title") { it.title },
+            LabelValidator("description") { it.description },
             ComparisonContributionValidator(resourceRepository),
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),

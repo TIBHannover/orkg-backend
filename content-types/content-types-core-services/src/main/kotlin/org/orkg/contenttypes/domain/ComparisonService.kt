@@ -12,6 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
+import org.orkg.contenttypes.domain.actions.LabelCollectionValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
@@ -23,6 +24,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorValidato
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResearchFieldCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGCreator
@@ -154,6 +156,7 @@ class ComparisonService(
         val steps = listOf(
             LabelValidator("title") { it.title },
             LabelValidator("description") { it.description },
+            LabelCollectionValidator("references") { it.references },
             ComparisonContributionValidator(resourceRepository),
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
@@ -165,6 +168,7 @@ class ComparisonService(
             ComparisonAuthorCreator(resourceService, statementService, literalService, listService),
             ComparisonSDGCreator(statementService),
             ComparisonResearchFieldCreator(statementService),
+            ComparisonReferencesCreator(literalService, statementService),
             ComparisonContributionCreator(statementService)
         )
         return steps.execute(command, ComparisonAction.State()).comparisonId!!

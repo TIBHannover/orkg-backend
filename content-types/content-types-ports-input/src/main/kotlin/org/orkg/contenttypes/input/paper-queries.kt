@@ -7,6 +7,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Paper
+import org.orkg.contenttypes.domain.PaperWithStatementCount
 import org.orkg.graph.domain.PaperResourceWithPath
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -31,6 +32,8 @@ interface RetrievePaperUseCase {
         sustainableDevelopmentGoal: ThingId?
     ): Page<Paper>
     fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId>
+
+    fun countAllStatementsAboutPapers(pageable: Pageable): Page<PaperWithStatementCount>
 }
 
 interface LegacyRetrievePaperUseCase {

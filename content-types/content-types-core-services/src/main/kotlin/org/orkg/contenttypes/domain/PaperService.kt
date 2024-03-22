@@ -93,6 +93,14 @@ class PaperService(
     @Value("\${orkg.publishing.base-url.paper}")
     private val paperPublishBaseUri: String = "http://localhost/paper/"
 ) : PaperUseCases {
+
+    override fun countAllStatementsAboutPapers(pageable: Pageable): Page<PaperWithStatementCount> {
+        return paperRepository.findAll(pageable = pageable).pmap { paper ->
+            val totalStatementCount = statementRepository.countByIdRecursive(paper.id)
+            PaperWithStatementCount(paper.id, paper.label, totalStatementCount)
+        }
+    }
+
     override fun findById(id: ThingId): Optional<Paper> =
         resourceRepository.findPaperById(id)
             .map { it.toPaper() }
@@ -229,7 +237,7 @@ class PaperService(
                 ),
                 sort = Sort.unsorted()
             )
-        ).groupBy { it.subject.id }
+            ).groupBy { it.subject.id }
         val directStatements = statements[id].orEmpty()
         return Paper(
             id = id,

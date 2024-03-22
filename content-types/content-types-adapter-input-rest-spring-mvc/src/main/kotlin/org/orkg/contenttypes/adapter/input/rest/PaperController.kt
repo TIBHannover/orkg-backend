@@ -14,6 +14,7 @@ import org.orkg.common.contributorId
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContributionRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
 import org.orkg.contenttypes.domain.PaperNotFound
+import org.orkg.contenttypes.domain.PaperWithStatementCount
 import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
@@ -62,6 +63,11 @@ class PaperController(
         @PathVariable id: ThingId,
         pageable: Pageable
     ): Page<ContributorId> = service.findAllContributorsByPaperId(id, pageable)
+
+    @GetMapping("/statement-counts")
+    fun countAllStatementsAboutPapers(
+        pageable: Pageable
+    ): Page<PaperWithStatementCount> = service.countAllStatementsAboutPapers(pageable)
 
     @GetMapping
     fun findAll(

@@ -12,9 +12,12 @@ It is written in https://kotlinlang.org/[Kotlin] as a proof-of-concept and for e
 === Prerequisites
 
 The backend API can be run stand-alone.
-However, it needs other services in order to start properly.
-Services are managed via https://www.docker.com/community-edition[Docker (CE)] and https://docs.docker.com/compose/[Docker Compose].
+However, it needs other services to start properly.
+Services are managed via https://www.docker.com/community-edition[Docker (CE)] and the https://docs.docker.com/compose/[Docker Compose] plugin.
 Please follow the respective installation instructions for your operating system or distribution.
+
+WARNING: The Docker Compose standalone binary will not work, you need the Docker Compose plugin for the Docker CLI.
+         Users of Docker Desktop will have it installed already, and do not need any additional installation.
 
 === Stand-alone application
 

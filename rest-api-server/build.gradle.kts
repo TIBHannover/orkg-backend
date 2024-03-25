@@ -109,6 +109,7 @@ testing {
                 implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
                     exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
                 }
+                implementation(libs.kotest.assertions.core)
             }
             targets {
                 all {

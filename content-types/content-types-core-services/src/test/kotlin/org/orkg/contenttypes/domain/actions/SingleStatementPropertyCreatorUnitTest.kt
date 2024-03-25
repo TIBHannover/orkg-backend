@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
@@ -35,7 +36,7 @@ class SingleStatementPropertyCreatorUnitTest {
     }
 
     @Test
-    fun `Given a description and a subject id, it creates a new description literal and links it to the subject resource`() {
+    fun `Given a literal value and a subject id, it creates a new literal and links it to the subject resource`() {
         val subjectId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
@@ -73,6 +74,47 @@ class SingleStatementPropertyCreatorUnitTest {
                 userId = contributorId,
                 subject = subjectId,
                 predicate = Predicates.description,
+                `object` = literal
+            )
+        }
+    }
+
+    @Test
+    fun `Given a literal value with a data type and a subject id, it creates a new literal and links it to the subject resource`() {
+        val subjectId = ThingId("R123")
+        val contributorId = ContributorId(UUID.randomUUID())
+        val description = "true"
+        val literal = ThingId("L1")
+        val literalCreateCommand = CreateCommand(
+            contributorId = contributorId,
+            label = description,
+            datatype = Literals.XSD.BOOLEAN.prefixedUri
+        )
+
+        every { literalService.create(literalCreateCommand) } returns literal
+        every {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.isAnonymized,
+                `object` = literal
+            )
+        } just runs
+
+        singleStatementPropertyCreator.create(
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.isAnonymized,
+            label = description,
+            datatype = Literals.XSD.BOOLEAN.prefixedUri
+        )
+
+        verify(exactly = 1) { literalService.create(literalCreateCommand) }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.isAnonymized,
                 `object` = literal
             )
         }

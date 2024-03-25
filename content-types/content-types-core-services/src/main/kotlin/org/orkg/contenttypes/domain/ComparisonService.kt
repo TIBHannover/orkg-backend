@@ -24,6 +24,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorValidato
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResearchFieldCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceCreator
@@ -169,6 +170,7 @@ class ComparisonService(
             ComparisonSDGCreator(statementService),
             ComparisonResearchFieldCreator(statementService),
             ComparisonReferencesCreator(literalService, statementService),
+            ComparisonIsAnonymizedCreator(literalService, statementService),
             ComparisonContributionCreator(statementService)
         )
         return steps.execute(command, ComparisonAction.State()).comparisonId!!

@@ -16,13 +16,13 @@ class SingleStatementPropertyUpdater(
     private val statementService: StatementUseCases,
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = SingleStatementPropertyCreator(literalService, statementService)
 ) {
-    internal fun update(
+    internal fun updateRequiredProperty(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId,
         label: String,
         datatype: String = Literals.XSD.STRING.prefixedUri
-    ) = update(
+    ) = updateRequiredProperty(
         statements = statementService.findAll(
             subjectId = subjectId,
             predicateId = predicateId,
@@ -36,7 +36,7 @@ class SingleStatementPropertyUpdater(
         datatype = datatype
     )
 
-    internal fun update(
+    internal fun updateRequiredProperty(
         statements: List<GeneralStatement>,
         contributorId: ContributorId,
         subjectId: ThingId,
@@ -44,11 +44,11 @@ class SingleStatementPropertyUpdater(
         label: String?,
         datatype: String = Literals.XSD.STRING.prefixedUri
     ) {
-        val toRemove = statements.wherePredicate(predicateId)
-            .filter { it.`object` is Literal }
-            .toMutableSet()
-
         if (label != null) {
+            val toRemove = statements.wherePredicate(predicateId)
+                .filter { it.`object` is Literal }
+                .toMutableSet()
+
             if (toRemove.isEmpty()) {
                 singleStatementPropertyCreator.create(contributorId, subjectId, predicateId, label)
             } else {
@@ -58,10 +58,52 @@ class SingleStatementPropertyUpdater(
                 }
                 toRemove -= statement
             }
-        }
 
-        if (toRemove.isNotEmpty()) {
-            statementService.delete(toRemove.map { it.id }.toSet())
+            if (toRemove.isNotEmpty()) {
+                statementService.delete(toRemove.map { it.id }.toSet())
+            }
+        }
+    }
+
+    internal fun updateOptionalProperty(
+        contributorId: ContributorId,
+        subjectId: ThingId,
+        predicateId: ThingId,
+        label: String?,
+        datatype: String = Literals.XSD.STRING.prefixedUri
+    ) = updateOptionalProperty(
+        statements = statementService.findAll(
+            subjectId = subjectId,
+            predicateId = predicateId,
+            objectClasses = setOf(Classes.literal),
+            pageable = PageRequests.SINGLE
+        ).content,
+        contributorId = contributorId,
+        subjectId = subjectId,
+        predicateId = predicateId,
+        label = label,
+        datatype = datatype
+    )
+
+    internal fun updateOptionalProperty(
+        statements: List<GeneralStatement>,
+        contributorId: ContributorId,
+        subjectId: ThingId,
+        predicateId: ThingId,
+        label: String?,
+        datatype: String = Literals.XSD.STRING.prefixedUri
+    ) {
+        if (label == null) {
+            val toRemove = statements.wherePredicate(predicateId)
+                .filter { it.`object` is Literal }
+                .map { it.id }
+                .toSet()
+
+            if (toRemove.isNotEmpty()) {
+                statementService.delete(toRemove)
+            }
+        } else {
+            updateRequiredProperty(statements, contributorId, subjectId, predicateId, label, datatype)
         }
     }
 

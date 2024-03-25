@@ -46,7 +46,7 @@ class AbstractTemplatePropertyUpdater(
         }
 
         if (newProperty.placeholder != oldProperty.placeholder) {
-            singleStatementPropertyUpdater.update(
+            singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
@@ -56,7 +56,7 @@ class AbstractTemplatePropertyUpdater(
         }
 
         if (newProperty.description != oldProperty.description) {
-            singleStatementPropertyUpdater.update(
+            singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
@@ -66,7 +66,7 @@ class AbstractTemplatePropertyUpdater(
         }
 
         if (newProperty.minCount != oldProperty.minCount) {
-            singleStatementPropertyUpdater.update(
+            singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
@@ -77,7 +77,7 @@ class AbstractTemplatePropertyUpdater(
         }
 
         if (newProperty.maxCount != oldProperty.maxCount) {
-            singleStatementPropertyUpdater.update(
+            singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
@@ -88,7 +88,7 @@ class AbstractTemplatePropertyUpdater(
         }
 
         if (newProperty.pattern != oldProperty.pattern) {
-            singleStatementPropertyUpdater.update(
+            singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
@@ -132,7 +132,7 @@ class AbstractTemplatePropertyUpdater(
         }
 
         if (order.toLong() != oldProperty.order) {
-            singleStatementPropertyUpdater.update(
+            singleStatementPropertyUpdater.updateRequiredProperty(
                 statements = statements,
                 contributorId = contributorId,
                 subjectId = oldProperty.id,

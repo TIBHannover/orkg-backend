@@ -17,12 +17,12 @@ class TemplateClosedUpdater(
     ) : this(SingleStatementPropertyUpdater(literalService, statementService))
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
-        if (command.isClosed != null && command.isClosed != state.template!!.isClosed) {
-            singleStatementPropertyUpdater.update(
+        if (command.isClosed != state.template!!.isClosed) {
+            singleStatementPropertyUpdater.updateOptionalProperty(
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.shClosed,
-                label = command.isClosed!!.toString(),
+                label = command.isClosed?.toString(),
                 datatype = Literals.XSD.BOOLEAN.prefixedUri
             )
         }

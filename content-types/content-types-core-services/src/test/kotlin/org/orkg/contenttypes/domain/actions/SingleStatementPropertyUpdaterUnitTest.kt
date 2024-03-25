@@ -69,7 +69,7 @@ class SingleStatementPropertyUpdaterUnitTest {
         )
         every { literalService.update(updatedLiteral) } just runs
 
-        singleStatementPropertyUpdater.update(contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(contributorId, subjectId, Predicates.description, description)
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -105,7 +105,7 @@ class SingleStatementPropertyUpdaterUnitTest {
             )
         } just runs
 
-        singleStatementPropertyUpdater.update(contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(contributorId, subjectId, Predicates.description, description)
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -157,7 +157,7 @@ class SingleStatementPropertyUpdaterUnitTest {
         every { literalService.update(updatedLiteral) } just runs
         every { statementService.delete(setOf(StatementId("S456"))) } just runs
 
-        singleStatementPropertyUpdater.update(contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(contributorId, subjectId, Predicates.description, description)
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -190,7 +190,7 @@ class SingleStatementPropertyUpdaterUnitTest {
 
         every { literalService.update(updatedLiteral) } just runs
 
-        singleStatementPropertyUpdater.update(statements, contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.description, description)
 
         verify(exactly = 1) { literalService.update(updatedLiteral) }
     }
@@ -211,7 +211,7 @@ class SingleStatementPropertyUpdaterUnitTest {
             )
         } just runs
 
-        singleStatementPropertyUpdater.update(statements, contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.description, description)
 
         verify(exactly = 1) {
             singleStatementPropertyCreator.create(
@@ -248,10 +248,121 @@ class SingleStatementPropertyUpdaterUnitTest {
         every { literalService.update(updatedLiteral) } just runs
         every { statementService.delete(setOf(StatementId("S456"))) } just runs
 
-        singleStatementPropertyUpdater.update(statements, contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.description, description)
 
         verify(exactly = 1) { literalService.update(updatedLiteral) }
         verify(exactly = 1) { statementService.delete(setOf(StatementId("S456"))) }
+    }
+
+    @Test
+    fun `Given a new optional literal label and a list of statements, when a statement already exists, it updates the literal`() {
+        val subjectId = ThingId("R123")
+        val contributorId = ContributorId(UUID.randomUUID())
+        val description = "some description"
+        val literal = createLiteral()
+        val updatedLiteral = literal.copy(
+            label = description,
+            datatype = Literals.XSD.STRING.prefixedUri
+        )
+        val statements = listOf(
+            createStatement(
+                predicate = createPredicate(Predicates.description),
+                `object` = literal
+            )
+        )
+
+        every { literalService.update(updatedLiteral) } just runs
+
+        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, description)
+
+        verify(exactly = 1) { literalService.update(updatedLiteral) }
+    }
+
+    @Test
+    fun `Given a new optional literal label and a list of statements, when no statements exist, it creates a new statement`() {
+        val subjectId = ThingId("R123")
+        val contributorId = ContributorId(UUID.randomUUID())
+        val description = "some description"
+        val statements = emptyList<GeneralStatement>()
+
+        every {
+            singleStatementPropertyCreator.create(
+                contributorId = contributorId,
+                subjectId = subjectId,
+                predicateId = Predicates.description,
+                label = description
+            )
+        } just runs
+
+        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, description)
+
+        verify(exactly = 1) {
+            singleStatementPropertyCreator.create(
+                contributorId = contributorId,
+                subjectId = subjectId,
+                predicateId = Predicates.description,
+                label = description
+            )
+        }
+    }
+
+    @Test
+    fun `Given a new optional literal label and a list of statements, when more than one statement already exist, it deletes all but one and updates the literal`() {
+        val subjectId = ThingId("R123")
+        val contributorId = ContributorId(UUID.randomUUID())
+        val description = "some description"
+        val literal = createLiteral()
+        val updatedLiteral = literal.copy(
+            label = description,
+            datatype = Literals.XSD.STRING.prefixedUri
+        )
+        val statements = listOf(
+            createStatement(
+                predicate = createPredicate(Predicates.description),
+                `object` = literal
+            ),
+            createStatement(
+                id = StatementId("S456"),
+                predicate = createPredicate(Predicates.description),
+                `object` = createLiteral(ThingId("L132"), label = "other")
+            )
+        )
+
+        every { literalService.update(updatedLiteral) } just runs
+        every { statementService.delete(setOf(StatementId("S456"))) } just runs
+
+        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, description)
+
+        verify(exactly = 1) { literalService.update(updatedLiteral) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S456"))) }
+    }
+
+    @Test
+    fun `Given a new optional literal label and a list of statements, when label is null, it deletes all matching statements`() {
+        val subjectId = ThingId("R123")
+        val contributorId = ContributorId(UUID.randomUUID())
+        val statements = listOf(
+            createStatement(StatementId("S159")),
+            createStatement(
+                id = StatementId("S456"),
+                predicate = createPredicate(Predicates.description),
+                `object` = createLiteral(ThingId("L132"), label = "other")
+            )
+        )
+
+        every { statementService.delete(setOf(StatementId("S456"))) } just runs
+
+        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, null)
+
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S456"))) }
+    }
+
+    @Test
+    fun `Given a new optional literal label and a list of statements, when label is null and statements are empty, it does nothing`() {
+        val subjectId = ThingId("R123")
+        val contributorId = ContributorId(UUID.randomUUID())
+
+        singleStatementPropertyUpdater.updateOptionalProperty(emptyList(), contributorId, subjectId, Predicates.description, null)
     }
 
     @Test

@@ -16,12 +16,12 @@ class TemplateDescriptionUpdater(
     ) : this(SingleStatementPropertyUpdater(literalService, statementService))
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
-        if (command.description != null && command.description != state.template!!.description) {
-            singleStatementPropertyUpdater.update(
+        if (command.description != state.template!!.description) {
+            singleStatementPropertyUpdater.updateOptionalProperty(
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.description,
-                label = command.description!!
+                label = command.description
             )
         }
         return state

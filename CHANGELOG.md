@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added a new endpoint to fetch statement counts of papers.
+  (See: [!808](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/808))
+
+### Changed
+- Improved traceability of label constraint violations, when using content type endpoints.
+  (See: [!858](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/858))
+
+### Fixed
+- Fixed optional fields being ignored when updating a template or template property-
+  (See: [!861](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/861))
+- Fixed `is_anonymized` field not being persisted, when using the content-type endpoint for comparisons. 
+  (See: [!862](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/862))
+- All fields of a paper are now validated before the graph is modified, when using the content type endpoint (v2) for papers.
 
 ## [0.51.0] - 2024-03-19
 ### Added
@@ -16,11 +30,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Changed database reload script to force-use docker compose plugin.
-  (Closes: [!548](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/548))
+  (Closes: [#548](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/548))
 
 ### Fixed
 - Fixed error when trying to delete resources as a curator
-  (Closes: [!552](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/552))
+  (Closes: [#552](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/552))
 
 ## [0.50.1] - 2024-03-14
 ### Fixed

@@ -18,16 +18,16 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
-import org.orkg.graph.output.StatsRepository
+import org.orkg.graph.output.LegacyStatisticsRepository
 
 fun <
-    T : StatsRepository,
+    T : LegacyStatisticsRepository,
     S : StatementRepository,
     C : ClassRepository,
     L : LiteralRepository,
     R : ResourceRepository,
     P : PredicateRepository
-> statsRepositoryContract(
+> legacyStatisticsRepositoryContract(
     repository: T,
     statementRepository: S,
     classRepository: C,
@@ -49,7 +49,7 @@ fun <
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
         ).withStandardMappings()
     ).withCustomMappings()
-    
+
     val saveThing: (Thing) -> Unit = {
         when (it) {
             is Class -> classRepository.save(it)

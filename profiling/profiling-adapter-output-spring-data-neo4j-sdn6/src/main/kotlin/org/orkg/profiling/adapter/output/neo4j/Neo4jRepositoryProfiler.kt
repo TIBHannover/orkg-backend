@@ -17,7 +17,7 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
-import org.orkg.graph.output.StatsRepository
+import org.orkg.graph.output.LegacyStatisticsRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.profiling.domain.RepositoryProfiler
 import org.orkg.profiling.output.ProfilingResultWriterFactory
@@ -59,7 +59,7 @@ class Neo4jRepositoryProfiler(
         ResearchProblemRepository::class,
         ResourceRepository::class,
         StatementRepository::class,
-        StatsRepository::class,
+        LegacyStatisticsRepository::class,
         FormattedLabelRepository::class,
         ThingRepository::class
     )

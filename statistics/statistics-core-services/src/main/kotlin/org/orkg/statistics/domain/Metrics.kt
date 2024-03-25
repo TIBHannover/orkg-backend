@@ -3,7 +3,8 @@ package org.orkg.statistics.domain
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.graph.output.StatsRepository
+import org.orkg.graph.output.LegacyStatisticsRepository
+import org.orkg.statistics.output.StatisticsRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -14,51 +15,51 @@ class Metrics {
     //
 
     @Bean
-    fun resourceCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun resourceCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "resource-count",
         description = "Number of resources in the graph.",
         group = "things",
-        supplier = { statsRepository.findNodeCountForLabel("Resource") }
+        supplier = { statisticsRepository.countNodes("Resource") }
     )
 
     @Bean
-    fun predicateCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun predicateCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "predicate-count",
         description = "Number of predicates in the graph.",
         group = "things",
-        supplier = { statsRepository.findNodeCountForLabel("Predicate") }
+        supplier = { statisticsRepository.countNodes("Predicate") }
     )
 
     @Bean
-    fun literalCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun literalCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "literal-count",
         description = "Number of literals in the graph.",
         group = "things",
-        supplier = { statsRepository.findNodeCountForLabel("Literal") }
+        supplier = { statisticsRepository.countNodes("Literal") }
     )
 
     @Bean
-    fun classCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun classCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "class-count",
         description = "Number of classes in the graph.",
         group = "things",
-        supplier = { statsRepository.findNodeCountForLabel("Class") }
+        supplier = { statisticsRepository.countNodes("Class") }
     )
 
     @Bean
-    fun statementCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun statementCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "statement-count",
         description = "Number of statements in the graph.",
         group = "things",
-        supplier = { (statsRepository.getGraphMetaData().first()["relTypesCount"] as Map<*, *>)["RELATED"] as Long }
+        supplier = { statisticsRepository.countRelations("RELATED") }
     )
 
     @Bean
-    fun orphansCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun orphansCountMetric(legacyStatisticsRepository: LegacyStatisticsRepository): Metric = CachedMetric(
         name = "orphan-count",
         description = "Number of orphaned nodes in the graph.",
         group = "things",
-        supplier = statsRepository::getOrphanedNodesCount
+        supplier = legacyStatisticsRepository::getOrphanedNodesCount
     )
 
     //
@@ -66,83 +67,83 @@ class Metrics {
     //
 
     @Bean
-    fun paperCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun paperCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "paper-count",
         description = "Number of papers in the graph.",
         group = "content-types",
-        supplier = { statsRepository.findNodeCountForLabel("Paper") }
+        supplier = { statisticsRepository.countNodes("Paper") }
     )
 
     @Bean
-    fun contributionCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun contributionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "contribution-count",
         description = "Number of contributions in the graph.",
         group = "content-types",
-        supplier = { statsRepository.findNodeCountForLabel("Contribution") }
+        supplier = { statisticsRepository.countNodes("Contribution") }
     )
 
     @Bean
-    fun comparisonCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun comparisonCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "comparison-count",
         description = "Number of comparisons in the graph.",
         group = "content-types",
-        supplier = { statsRepository.findNodeCountForLabel("Comparison") }
+        supplier = { statisticsRepository.countNodes("Comparison") }
     )
 
     @Bean
-    fun visualizationCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun visualizationCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "visualization-count",
         description = "Number of visualizations in the graph.",
         group = "content-types",
-        supplier = { statsRepository.findNodeCountForLabel("Visualization") }
+        supplier = { statisticsRepository.countNodes("Visualization") }
     )
 
     @Bean
-    fun literatureListCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun literatureListCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "literature-list-count",
         description = "Number of literature lists in the graph.",
         group = "content-types",
-        supplier = { statsRepository.findNodeCountForLabel("LiteratureList") }
+        supplier = { statisticsRepository.countNodes("LiteratureList") }
     )
 
     @Bean
-    fun smartReviewCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun smartReviewCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "smart-review-count",
         description = "Number of smart reviews lists in the graph.",
         group = "content-types",
-        supplier = { statsRepository.findNodeCountForLabel("SmartReview") }
+        supplier = { statisticsRepository.countNodes("SmartReview") }
     )
 
     @Bean
-    fun templateCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun templateCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "template-count",
         description = "Number of templates lists in the graph.",
         group = "content-types",
-        supplier = { statsRepository.findNodeCountForLabel("NodeShape") }
+        supplier = { statisticsRepository.countNodes("NodeShape") }
     )
 
     @Bean
-    fun researchFieldCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun researchFieldCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "research-field-count",
         description = "Number of research fields in the graph.",
         group = "content-types",
-        supplier = { statsRepository.findNodeCountForLabel("ResearchField") }
+        supplier = { statisticsRepository.countNodes("ResearchField") }
     )
 
     @Bean
-    fun problemCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun problemCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "problem-count",
         description = "Number of problems in the graph.",
         group = "content-types",
-        supplier = { statsRepository.findNodeCountForLabel("Problem") }
+        supplier = { statisticsRepository.countNodes("Problem") }
     )
 
     @Bean
-    fun benchmarkCountMetric(statsRepository: StatsRepository): Metric = CachedMetric(
+    fun benchmarkCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "benchmark-count",
         description = "Number of benchmarks in the graph.",
         group = "content-types",
-        supplier = { statsRepository.findNodeCountForLabel("C14022") }
+        supplier = { statisticsRepository.countNodes("C14022") }
     )
 
     //
@@ -172,7 +173,4 @@ class Metrics {
         group = "community",
         supplier = observatoryRepository::count
     )
-
-    private fun StatsRepository.findNodeCountForLabel(label: String): Long =
-        (getGraphMetaData().first()["labels"] as Map<*, *>)[label] as Long
 }

@@ -187,6 +187,7 @@ dependencies {
     runtimeOnly(project(":licenses:licenses-core-services"))
 
     runtimeOnly(project(":statistics:statistics-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":statistics:statistics-adapter-output-spring-data-neo4j-sdn6"))
     runtimeOnly(project(":statistics:statistics-core-services"))
 
     implementation(project(":media-storage:media-storage-adapter-input-serialization"))

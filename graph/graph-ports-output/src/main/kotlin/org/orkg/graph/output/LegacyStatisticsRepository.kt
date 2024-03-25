@@ -12,7 +12,7 @@ import org.orkg.graph.domain.TrendingResearchProblems
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface StatsRepository {
+interface LegacyStatisticsRepository {
     fun getGraphMetaData(): Iterable<Map<String, Any?>>
     fun getResearchFieldsPapersCount(): Iterable<FieldsStats>
     fun getObservatoryPapersCount(id: ObservatoryId): Long
@@ -39,4 +39,3 @@ interface StatsRepository {
     fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
     fun getOrphanedNodesCount(): Long
 }
-

@@ -4,24 +4,24 @@ import java.util.*
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResource
-import org.orkg.graph.adapter.output.neo4j.internal.Neo4jStatsRepository
+import org.orkg.graph.adapter.output.neo4j.internal.Neo4jLegacyStatisticsRepository
 import org.orkg.graph.domain.ContributorRecord
 import org.orkg.graph.domain.FieldsStats
 import org.orkg.graph.domain.ObservatoryStats
 import org.orkg.graph.domain.ResearchFieldStats
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.TrendingResearchProblems
-import org.orkg.graph.output.StatsRepository
+import org.orkg.graph.output.LegacyStatisticsRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 @Component
-class SpringDataNeo4jStatsAdapter(
-    private val neo4jRepository: Neo4jStatsRepository,
+class SpringDataNeo4JLegacyStatisticsAdapter(
+    private val neo4jRepository: Neo4jLegacyStatisticsRepository,
     private val neo4jClient: Neo4jClient,
-) : StatsRepository {
+) : LegacyStatisticsRepository {
     override fun getGraphMetaData(): Iterable<Map<String, Any?>> =
         neo4jClient.query("CALL apoc.meta.stats()").fetch().all()
 

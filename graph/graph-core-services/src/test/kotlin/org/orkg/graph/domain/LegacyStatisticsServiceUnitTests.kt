@@ -15,20 +15,20 @@ import org.orkg.community.adapter.output.jpa.internal.PostgresObservatoryReposit
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.output.ResourceRepository
-import org.orkg.graph.output.StatsRepository
+import org.orkg.graph.output.LegacyStatisticsRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.fixedClock
 
 class LegacyStatisticsServiceUnitTests {
 
-    private val statsRepository: StatsRepository = mockk()
+    private val legacyStatisticsRepository: LegacyStatisticsRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
     private val observatoryRepository: PostgresObservatoryRepository = mockk()
     private val organizationRepository: PostgresOrganizationRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
     private val service = LegacyStatisticsService(
-        statsRepository,
+        legacyStatisticsRepository,
         contributorRepository,
         observatoryRepository,
         organizationRepository,
@@ -44,7 +44,7 @@ class LegacyStatisticsServiceUnitTests {
     @AfterEach
     fun verifyMocks() {
         confirmVerified(
-            statsRepository,
+            legacyStatisticsRepository,
             contributorRepository,
             observatoryRepository,
             organizationRepository,
@@ -64,13 +64,13 @@ class LegacyStatisticsServiceUnitTests {
         )
 
         every { resourceRepository.findById(id) } returns Optional.of(researchField)
-        every { statsRepository.findResearchFieldStatsById(id, any()) } returns Optional.of(stats)
+        every { legacyStatisticsRepository.findResearchFieldStatsById(id, any()) } returns Optional.of(stats)
 
         service.findResearchFieldStatsById(id, false)
 
         verify(exactly = 1) {
             resourceRepository.findById(id)
-            statsRepository.findResearchFieldStatsById(id, any())
+            legacyStatisticsRepository.findResearchFieldStatsById(id, any())
         }
     }
 
@@ -83,7 +83,7 @@ class LegacyStatisticsServiceUnitTests {
         assertThrows<ResearchFieldNotFound> { service.findResearchFieldStatsById(id, false) }
 
         verify(exactly = 1) { resourceRepository.findById(id) }
-        verify(exactly = 0) { statsRepository.findResearchFieldStatsById(id, any()) }
+        verify(exactly = 0) { legacyStatisticsRepository.findResearchFieldStatsById(id, any()) }
     }
 
     @Test
@@ -96,6 +96,6 @@ class LegacyStatisticsServiceUnitTests {
         assertThrows<ResearchFieldNotFound> { service.findResearchFieldStatsById(id, false) }
 
         verify(exactly = 1) { resourceRepository.findById(id) }
-        verify(exactly = 0) { statsRepository.findResearchFieldStatsById(id, any()) }
+        verify(exactly = 0) { legacyStatisticsRepository.findResearchFieldStatsById(id, any()) }
     }
 }

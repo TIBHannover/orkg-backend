@@ -99,7 +99,9 @@ include(
     "statistics:statistics-core-model",
     "statistics:statistics-core-services",
     "statistics:statistics-ports-input",
+    "statistics:statistics-ports-output",
     "statistics:statistics-adapter-input-rest-spring-mvc",
+    "statistics:statistics-adapter-output-spring-data-neo4j-sdn6",
 )
 include("widget")
 include("rest-api-server")

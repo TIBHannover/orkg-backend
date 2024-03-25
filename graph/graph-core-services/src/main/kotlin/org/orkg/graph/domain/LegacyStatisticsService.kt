@@ -13,7 +13,7 @@ import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
 import org.orkg.graph.output.ResourceRepository
-import org.orkg.graph.output.StatsRepository
+import org.orkg.graph.output.LegacyStatisticsRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class LegacyStatisticsService(
-    private val statsRepository: StatsRepository,
+    private val legacyStatisticsRepository: LegacyStatisticsRepository,
     private val contributorRepository: ContributorRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository,
@@ -31,7 +31,7 @@ class LegacyStatisticsService(
     private val clock: Clock,
 ) : RetrieveLegacyStatisticsUseCase {
     override fun getStats(extra: List<String>?): Stats {
-        val metadata = statsRepository.getGraphMetaData()
+        val metadata = legacyStatisticsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>
         val resourcesCount = extractValue(labels, "Resource")
         val predicatesCount = extractValue(labels, "Predicate")
@@ -51,7 +51,7 @@ class LegacyStatisticsService(
         val userCount = contributorRepository.countActiveUsers()
         val observatoriesCount = observatoryRepository.count()
         val organizationsCount = organizationRepository.count()
-        val orphanedNodesCount = statsRepository.getOrphanedNodesCount()
+        val orphanedNodesCount = legacyStatisticsRepository.getOrphanedNodesCount()
         return Stats(statementsCount, resourcesCount, predicatesCount,
             literalsCount, papersCount, classesCount, contributionsCount,
             fieldsCount, problemsCount, comparisonsCount, visualizationsCount,
@@ -60,58 +60,58 @@ class LegacyStatisticsService(
     }
 
     override fun getFieldsStats(): Map<ThingId, Int> {
-        val counts = statsRepository.getResearchFieldsPapersCount()
+        val counts = legacyStatisticsRepository.getResearchFieldsPapersCount()
         return counts.associate { it.fieldId to it.papers.toInt() }
     }
 
     override fun getObservatoryPapersCount(id: ObservatoryId): Long =
-        statsRepository.getObservatoryPapersCount(id)
+        legacyStatisticsRepository.getObservatoryPapersCount(id)
 
     override fun getObservatoryComparisonsCount(id: ObservatoryId): Long =
-        statsRepository.getObservatoryComparisonsCount(id)
+        legacyStatisticsRepository.getObservatoryComparisonsCount(id)
 
     override fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats> =
-        statsRepository.findAllObservatoryStats(pageable)
+        legacyStatisticsRepository.findAllObservatoryStats(pageable)
 
     override fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats {
         if (!observatoryRepository.existsById(id.value)) {
             throw ObservatoryNotFound(id)
         }
-        return statsRepository.findObservatoryStatsById(id).orElseGet { ObservatoryStats(id) }
+        return legacyStatisticsRepository.findObservatoryStatsById(id).orElseGet { ObservatoryStats(id) }
     }
 
     override fun findResearchFieldStatsById(id: ThingId, includeSubfields: Boolean): ResearchFieldStats =
         resourceRepository.findById(id)
             .filter { Classes.researchField in it.classes }
-            .map { statsRepository.findResearchFieldStatsById(id, includeSubfields).orElseGet { ResearchFieldStats(id) } }
+            .map { legacyStatisticsRepository.findResearchFieldStatsById(id, includeSubfields).orElseGet { ResearchFieldStats(id) } }
             .orElseThrow { ResearchFieldNotFound(id) }
 
     override fun getTopCurrentContributors(
         days: Long,
         pageable: Pageable
     ): Page<ContributorRecord> =
-        statsRepository.getTopCurrentContributorIdsAndContributionsCount(calculateStartDate(daysAgo = days), pageable)
+        legacyStatisticsRepository.getTopCurrentContributorIdsAndContributionsCount(calculateStartDate(daysAgo = days), pageable)
 
     override fun getRecentChangeLog(pageable: Pageable): Page<ChangeLog> {
-        val changeLogs = statsRepository.getChangeLog(pageable)
+        val changeLogs = legacyStatisticsRepository.getChangeLog(pageable)
 
         return getChangeLogsWithProfile(changeLogs, pageable)
     }
 
     override fun getRecentChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<ChangeLog> {
-        val changeLogs = statsRepository.getChangeLogByResearchField(id, pageable)
+        val changeLogs = legacyStatisticsRepository.getChangeLogByResearchField(id, pageable)
 
         return getChangeLogsWithProfile(changeLogs, pageable)
     }
 
-    override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> = statsRepository.getTrendingResearchProblems(pageable)
+    override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> = legacyStatisticsRepository.getTrendingResearchProblems(pageable)
 
     override fun getTopCurrentContributorsByResearchField(
         id: ThingId,
         days: Long,
         pageable: Pageable
     ): Page<ContributorRecord> =
-        statsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(
+        legacyStatisticsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(
             id,
             calculateStartDate(daysAgo = days),
             pageable
@@ -122,7 +122,7 @@ class LegacyStatisticsService(
         days: Long,
         pageable: Pageable
     ): Page<ContributorRecord> =
-        statsRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
+        legacyStatisticsRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
             id,
             calculateStartDate(daysAgo = days),
             pageable

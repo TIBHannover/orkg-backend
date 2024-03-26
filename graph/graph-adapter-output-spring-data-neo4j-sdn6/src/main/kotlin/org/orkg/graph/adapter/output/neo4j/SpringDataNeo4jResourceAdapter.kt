@@ -161,7 +161,7 @@ class SpringDataNeo4jResourceAdapter(
                     "__labels__" to resource.classes.map { it.value },
                     "__labels_to_add__" to labelsToAdd,
                     "__labels_to_remove__" to labelsToRemove,
-                    "__version__" to oldResource.map { @Suppress("DEPRECATION") it.version }.orElse(0L),
+                    "__version__" to oldResource.map { @Suppress("DEPRECATION") it.version }.orElse(1L),
                     "__properties__" to mapOf(
                         "id" to resource.id.value,
                         "label" to resource.label,

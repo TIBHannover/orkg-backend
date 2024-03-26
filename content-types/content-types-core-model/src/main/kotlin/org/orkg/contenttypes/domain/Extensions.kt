@@ -17,11 +17,10 @@ fun Iterable<GeneralStatement>.wherePredicate(predicateId: ThingId) =
     filter { it.predicate.id == predicateId }
 
 fun List<GeneralStatement>.objectIdsAndLabel(): List<ObjectIdAndLabel> =
-    map { ObjectIdAndLabel(it.`object`.id, it.`object`.label) }
-        .sortedBy { it.id }
+    map { it.objectIdAndLabel() }.sortedBy { it.id }
 
-fun GeneralStatement?.objectIdAndLabel(): ObjectIdAndLabel? =
-    this?.let { ObjectIdAndLabel(it.`object`.id, it.`object`.label) }
+fun GeneralStatement.objectIdAndLabel(): ObjectIdAndLabel =
+    ObjectIdAndLabel(`object`.id, `object`.label)
 
 fun List<GeneralStatement>.objects() = map { it.`object` }
 
@@ -36,8 +35,6 @@ fun List<GeneralStatement>.associateIdentifiers(identifiers: Set<Identifier>): M
     }
         .groupBy({ it.first }, { it.second })
         .mapValues { (_, value) -> value.sortedBy { it.id }.map { it.label }.distinct() }
-
-fun List<GeneralStatement>.firstObjectId(): ThingId? = firstOrNull()?.`object`?.id
 
 fun List<GeneralStatement>.withoutObjectsWithBlankLabels(): List<GeneralStatement> =
     filter { it.`object`.label.isNotBlank() }

@@ -53,7 +53,7 @@ class TemplateInstanceService(
         val template = templateService.findById(templateId)
             .orElseThrow { TemplateNotFound(templateId) }
         return resourceRepository.findById(id).map {
-            if (template.targetClass !in it.classes) {
+            if (template.targetClass.id !in it.classes) {
                 throw TemplateNotApplicable(template.id, id)
             }
             it.toTemplateInstance(template)
@@ -82,7 +82,7 @@ class TemplateInstanceService(
             createdBy = createdBy,
             createdAtStart = createdAtStart,
             createdAtEnd = createdAtEnd,
-            includeClasses = setOf(template.targetClass),
+            includeClasses = setOf(template.targetClass.id),
             observatoryId = observatoryId,
             organizationId = organizationId,
         ).pmap { it.toTemplateInstance(template) }

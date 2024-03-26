@@ -16,7 +16,7 @@ data class Template(
     val label: String,
     val description: String?,
     val formattedLabel: FormattedLabel?,
-    val targetClass: ThingId,
+    val targetClass: ObjectIdAndLabel,
     val relations: TemplateRelations,
     val properties: List<TemplateProperty>,
     val isClosed: Boolean,
@@ -55,9 +55,9 @@ sealed interface TemplateProperty {
             val minCount = statements.wherePredicate(Predicates.shMinCount).singleOrNull()?.`object`?.label?.toInt()
             val maxCount = statements.wherePredicate(Predicates.shMaxCount).singleOrNull()?.`object`?.label?.toInt()
             val pattern = statements.wherePredicate(Predicates.shPattern).singleOrNull()?.`object`?.label
-            val path = statements.wherePredicate(Predicates.shPath).single().objectIdAndLabel()!!
-            val datatype = statements.wherePredicate(Predicates.shDatatype).singleOrNull().objectIdAndLabel()
-            val `class` = statements.wherePredicate(Predicates.shClass).singleOrNull().objectIdAndLabel()
+            val path = statements.wherePredicate(Predicates.shPath).single().objectIdAndLabel()
+            val datatype = statements.wherePredicate(Predicates.shDatatype).singleOrNull()?.objectIdAndLabel()
+            val `class` = statements.wherePredicate(Predicates.shClass).singleOrNull()?.objectIdAndLabel()
             return when {
                 datatype != null -> LiteralTemplateProperty(
                     id = resource.id,

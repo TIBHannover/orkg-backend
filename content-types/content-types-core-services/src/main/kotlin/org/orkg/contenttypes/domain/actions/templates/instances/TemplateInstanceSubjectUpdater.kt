@@ -12,8 +12,8 @@ class TemplateInstanceSubjectUpdater(
         state: UpdateTemplateInstanceState
     ): UpdateTemplateInstanceState {
         val subject = state.templateInstance!!.root
-        if (state.template!!.targetClass !in subject.classes) {
-            val updated = subject.copy(classes = subject.classes + state.template.targetClass)
+        if (state.template!!.targetClass.id !in subject.classes) {
+            val updated = subject.copy(classes = subject.classes + state.template.targetClass.id)
             resourceRepository.save(updated)
             return state.copy(
                 templateInstance = state.templateInstance.copy(

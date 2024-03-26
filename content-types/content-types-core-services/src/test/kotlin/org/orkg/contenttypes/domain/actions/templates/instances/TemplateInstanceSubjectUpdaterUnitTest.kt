@@ -43,7 +43,7 @@ class TemplateInstanceSubjectUpdaterUnitTest {
             ),
             template = createDummyTemplate()
         )
-        val targetResource = state.templateInstance!!.root.copy(classes = setOf(state.template!!.targetClass))
+        val targetResource = state.templateInstance!!.root.copy(classes = setOf(state.template!!.targetClass.id))
 
         every { resourceRepository.save(targetResource) } just runs
 

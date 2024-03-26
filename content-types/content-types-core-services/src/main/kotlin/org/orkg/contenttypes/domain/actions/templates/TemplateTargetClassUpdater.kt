@@ -11,7 +11,7 @@ class TemplateTargetClassUpdater(
     private val statementUseCases: StatementUseCases
 ) : UpdateTemplateAction {
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
-        if (command.targetClass != null && command.targetClass != state.template!!.targetClass) {
+        if (command.targetClass != null && command.targetClass != state.template!!.targetClass.id) {
             statementUseCases.findAll(
                 subjectId = command.templateId,
                 predicateId = Predicates.shTargetClass,

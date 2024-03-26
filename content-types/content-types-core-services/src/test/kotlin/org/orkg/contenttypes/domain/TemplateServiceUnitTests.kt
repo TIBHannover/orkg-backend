@@ -95,6 +95,7 @@ class TemplateServiceUnitTests {
         val description = "template description"
         val formattedLabel = FormattedLabel.of("{P32}")
         val targetClassId = ThingId("targetClass")
+        val targetClassLabel = "Target Class"
         val researchFieldId = ThingId("R20")
         val researchFieldLabel = "Research Field 1"
         val researchProblemId = ThingId("R21")
@@ -157,7 +158,7 @@ class TemplateServiceUnitTests {
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.shTargetClass),
-                `object` = createClass(targetClassId)
+                `object` = createClass(targetClassId, label = targetClassLabel)
             ),
             createStatement(
                 subject = expected,
@@ -291,7 +292,7 @@ class TemplateServiceUnitTests {
             template.label shouldBe expected.label
             template.description shouldBe description
             template.formattedLabel shouldBe formattedLabel
-            template.targetClass shouldBe targetClassId
+            template.targetClass shouldBe ObjectIdAndLabel(targetClassId, targetClassLabel)
             template.relations.asClue {
                 it.researchFields.size shouldBe 1
                 it.researchFields.single() shouldBe ObjectIdAndLabel(researchFieldId, researchFieldLabel)

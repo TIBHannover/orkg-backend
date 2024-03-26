@@ -239,7 +239,7 @@ data class TemplateRepresentation(
     @get:JsonProperty("formatted_label")
     val formattedLabel: FormattedLabel?,
     @get:JsonProperty("target_class")
-    val targetClass: ThingId,
+    val targetClass: ObjectIdAndLabel,
     val relations: TemplateRelationRepresentation,
     val properties: List<TemplatePropertyRepresentation>,
     @get:JsonProperty("is_closed")

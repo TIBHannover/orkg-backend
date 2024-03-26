@@ -177,7 +177,7 @@ class TemplateService(
             targetClass = statements[id]!!
                 .wherePredicate(Predicates.shTargetClass)
                 .single()
-                .`object`.id,
+                .objectIdAndLabel(),
             relations = TemplateRelations(
                 researchFields = statements[id]!!
                     .wherePredicate(Predicates.templateOfResearchField)
@@ -188,7 +188,7 @@ class TemplateService(
                 predicate = statements[id]!!
                     .wherePredicate(Predicates.templateOfPredicate)
                     .singleOrNull()
-                    .objectIdAndLabel()
+                    ?.objectIdAndLabel()
             ),
             properties = statements[id]!!
                 .wherePredicate(Predicates.shProperty)

@@ -3,7 +3,6 @@ package org.orkg.statistics.domain
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.graph.output.LegacyStatisticsRepository
 import org.orkg.statistics.output.StatisticsRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -55,11 +54,75 @@ class Metrics {
     )
 
     @Bean
-    fun orphansCountMetric(legacyStatisticsRepository: LegacyStatisticsRepository): Metric = CachedMetric(
+    fun orphansCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "orphan-count",
         description = "Number of orphaned nodes in the graph.",
         group = "things",
-        supplier = legacyStatisticsRepository::getOrphanedNodesCount
+        supplier = { statisticsRepository.countOrphanNodes("Thing") }
+    )
+
+    @Bean
+    fun orphanResourceCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "orphan-resource-count",
+        description = "Number of orphan resources in the graph.",
+        group = "things",
+        supplier = { statisticsRepository.countOrphanNodes("Resource") }
+    )
+
+    @Bean
+    fun orphanPredicateCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "orphan-predicate-count",
+        description = "Number of orphan predicates in the graph.",
+        group = "things",
+        supplier = { statisticsRepository.countOrphanNodes("Predicate") }
+    )
+
+    @Bean
+    fun orphanLiteralCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "orphan-literal-count",
+        description = "Number of orphan literals in the graph.",
+        group = "things",
+        supplier = { statisticsRepository.countOrphanNodes("Literal") }
+    )
+
+    @Bean
+    fun orphanClassCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "orphan-class-count",
+        description = "Number of orphan class in the graph.",
+        group = "things",
+        supplier = { statisticsRepository.countOrphanNodes("Class") }
+    )
+
+    @Bean
+    fun unusedResourceCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "unused-resource-count",
+        description = "Number of unused resources in the graph.",
+        group = "things",
+        supplier = { statisticsRepository.countUnusedNodes("Resource") }
+    )
+
+    @Bean
+    fun unusedPredicateCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "unused-predicate-count",
+        description = "Number of unused predicates in the graph.",
+        group = "things",
+        supplier = { statisticsRepository.countUnusedNodes("Predicate") }
+    )
+
+    @Bean
+    fun unusedLiteralCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "unused-literal-count",
+        description = "Number of unused literals in the graph.",
+        group = "things",
+        supplier = { statisticsRepository.countUnusedNodes("Literal") }
+    )
+
+    @Bean
+    fun unusedClassCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "unused-class-count",
+        description = "Number of unused class in the graph.",
+        group = "things",
+        supplier = { statisticsRepository.countUnusedNodes("Class") }
     )
 
     //

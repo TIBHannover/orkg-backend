@@ -5,11 +5,15 @@ import dev.forkhandles.fabrikate.Fabrikate
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
@@ -31,6 +35,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.graph.testing.fixtures.withCustomMappings
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 
 fun <
     T : TemplateRepository,
@@ -77,9 +82,11 @@ fun <
         statementRepository.save(it)
     }
 
+    fun List<Resource>.toTemplates(): List<Resource> = map { it.copy(classes = setOf(Classes.nodeShape)) }
+
     describe("finding several templates") {
         context("without parameters") {
-            val resources = fabricator.random<List<Resource>>().map { it.copy(classes = setOf(Classes.nodeShape)) }
+            val resources = fabricator.random<List<Resource>>().toTemplates()
             resources.forEach(resourceRepository::save)
             val expected = resources.sortedBy { it.createdAt }.drop(5).take(5)
             val result = repository.findAll(pageable = PageRequest.of(1, 5))
@@ -116,7 +123,7 @@ fun <
             context("with exact matching") {
                 resources.forEach(resourceRepository::save)
                 val result = repository.findAll(
-                    searchString = SearchString.of(label, exactMatch = true),
+                    label = SearchString.of(label, exactMatch = true),
                     pageable = PageRequest.of(0, 5)
                 )
 
@@ -136,7 +143,7 @@ fun <
             context("with fuzzy matching") {
                 resources.forEach(resourceRepository::save)
                 val result = repository.findAll(
-                    searchString = SearchString.of("label find", exactMatch = false),
+                    label = SearchString.of("label find", exactMatch = false),
                     pageable = PageRequest.of(0, 5)
                 )
 
@@ -158,10 +165,10 @@ fun <
             val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
                 resource.copy(
                     classes = setOf(Classes.nodeShape),
-                    visibility = Visibility.values()[index % Visibility.values().size]
+                    visibility = Visibility.entries[index % Visibility.entries.size]
                 )
             }
-            VisibilityFilter.values().forEach { visibilityFilter ->
+            VisibilityFilter.entries.forEach { visibilityFilter ->
                 context("when visibility is $visibilityFilter") {
                     resources.forEach(resourceRepository::save)
                     val expected = resources.filter { it.visibility in visibilityFilter.targets }
@@ -225,39 +232,32 @@ fun <
                 }
             }
         }
-        context("by research field") {
+        context("by created at start") {
             val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().map { it.copy(classes = setOf(Classes.nodeShape)) }
-            resources.forEach(resourceRepository::save)
-            val researchField = fabricator.random<Resource>().copy(classes = setOf(Classes.researchField))
-            (0 until expectedCount).forEach {
-                saveStatement(
-                    createStatement(
-                        id = fabricator.random(),
-                        subject = resources[it],
-                        predicate = createPredicate(Predicates.templateOfResearchField),
-                        `object` = researchField
-                    )
+            val resources = fabricator.random<List<Resource>>().toTemplates().mapIndexed { index, resource ->
+                resource.copy(
+                    createdAt = OffsetDateTime.now().minusHours(index.toLong())
                 )
             }
-            val expected = resources.take(expectedCount)
+            resources.forEach(resourceRepository::save)
 
+            val expected = resources.take(expectedCount)
             val result = repository.findAll(
-                researchFieldId = researchField.id,
-                pageable = PageRequest.of(0, 5)
+                pageable = PageRequest.of(0, 5),
+                createdAtStart = expected.last().createdAt
             )
 
             it("returns the correct result") {
                 result shouldNotBe null
                 result.content shouldNotBe null
-                result.content.size shouldBe expected.size
+                result.content.size shouldBe expectedCount
                 result.content shouldContainAll expected
             }
             it("pages the result correctly") {
                 result.size shouldBe 5
                 result.number shouldBe 0
                 result.totalPages shouldBe 1
-                result.totalElements shouldBe expected.size
+                result.totalElements shouldBe expectedCount
             }
             it("sorts the results by creation date by default") {
                 result.content.zipWithNext { a, b ->
@@ -265,9 +265,234 @@ fun <
                 }
             }
         }
+        context("by created at end") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toTemplates().mapIndexed { index, resource ->
+                resource.copy(
+                    createdAt = OffsetDateTime.now().plusHours(index.toLong())
+                )
+            }
+            resources.forEach(resourceRepository::save)
+
+            val expected = resources.take(expectedCount)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                createdAtEnd = expected.last().createdAt
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by observatory id") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toTemplates().toMutableList()
+            val observatoryId = ObservatoryId(UUID.randomUUID())
+            (0 until 3).forEach {
+                resources[it] = resources[it].copy(observatoryId = observatoryId)
+            }
+            resources.forEach(resourceRepository::save)
+
+            val expected = resources.take(expectedCount)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                observatoryId = observatoryId
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by organization id") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toTemplates().toMutableList()
+            val organizationId = OrganizationId(UUID.randomUUID())
+            (0 until 3).forEach {
+                resources[it] = resources[it].copy(organizationId = organizationId)
+            }
+            resources.forEach(resourceRepository::save)
+
+            val expected = resources.take(expectedCount)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                organizationId = organizationId
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by research field") {
+            context("excluding subfields") {
+                val expectedCount = 3
+                val resources = fabricator.random<List<Resource>>().toTemplates().toMutableList()
+                val researchField = fabricator.random<Resource>().copy(
+                    classes = setOf(Classes.researchField)
+                )
+                val hasResearchField = createPredicate(Predicates.templateOfResearchField)
+
+                resources.forEachIndexed { index, template ->
+                    val field = if (index < expectedCount) {
+                        researchField
+                    } else {
+                        fabricator.random<Resource>().copy(
+                            classes = setOf(Classes.researchField)
+                        )
+                    }
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = template,
+                            predicate = hasResearchField,
+                            `object` = field
+                        )
+                    )
+                }
+
+                val expected = resources.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    researchField = researchField.id
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("including subfields") {
+                val expectedCount = 2
+                val resources = fabricator.random<List<Resource>>().toTemplates().toMutableList()
+                val researchField = fabricator.random<Resource>().copy(
+                    classes = setOf(Classes.researchField)
+                )
+                val hasResearchField = createPredicate(Predicates.templateOfResearchField)
+
+                // directly attached
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = resources[0],
+                        predicate = hasResearchField,
+                        `object` = researchField
+                    )
+                )
+
+                // indirectly attached
+                val subfield = fabricator.random<Resource>().copy(
+                    classes = setOf(Classes.researchField)
+                )
+                val hasSubfield = createPredicate(Predicates.hasSubfield)
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = resources[1],
+                        predicate = hasResearchField,
+                        `object` = subfield
+                    )
+                )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = researchField,
+                        predicate = hasSubfield,
+                        `object` = subfield
+                    )
+                )
+
+                // attach random research field to other templates
+                resources.drop(expectedCount).forEach {
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = it,
+                            predicate = hasResearchField,
+                            `object` = fabricator.random<Resource>().copy(
+                                classes = setOf(Classes.researchField)
+                            )
+                        )
+                    )
+                }
+
+                val expected = resources.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    researchField = researchField.id,
+                    includeSubfields = true
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+        }
         context("by research problem") {
             val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().map { it.copy(classes = setOf(Classes.nodeShape)) }
+            val resources = fabricator.random<List<Resource>>().toTemplates()
             resources.forEach(resourceRepository::save)
             val researchProblem = fabricator.random<Resource>().copy(classes = setOf(Classes.problem))
             (0 until expectedCount).forEach {
@@ -283,7 +508,7 @@ fun <
             val expected = resources.take(expectedCount)
 
             val result = repository.findAll(
-                researchProblemId = researchProblem.id,
+                researchProblem = researchProblem.id,
                 pageable = PageRequest.of(0, 5)
             )
 
@@ -307,7 +532,7 @@ fun <
         }
         context("by target class") {
             val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().map { it.copy(classes = setOf(Classes.nodeShape)) }
+            val resources = fabricator.random<List<Resource>>().toTemplates()
             resources.forEach(resourceRepository::save)
             val targetClass = fabricator.random<Class>()
             (0 until expectedCount).forEach {
@@ -345,20 +570,14 @@ fun <
                 }
             }
         }
-        context("with all parameters at once") {
-            val resources = fabricator.random<List<Resource>>()
-                .map { it.copy(classes = setOf(Classes.nodeShape)) }
-                .toMutableList()
+        context("using all parameters") {
+            val resources = fabricator.random<List<Resource>>().toTemplates().toMutableList()
             val label = "label-to-find"
             val createdBy = ContributorId(UUID.randomUUID())
             val researchField = fabricator.random<Resource>().copy(classes = setOf(Classes.researchField))
             val researchProblem = fabricator.random<Resource>().copy(classes = setOf(Classes.problem))
             val targetClass = fabricator.random<Class>()
-            resources[0] = resources[0].copy(
-                label = label,
-                visibility = Visibility.FEATURED,
-                createdBy = createdBy
-            ).also {
+            resources.forEach {
                 saveStatement(
                     createStatement(
                         id = fabricator.random(),
@@ -367,6 +586,12 @@ fun <
                         `object` = researchField
                     )
                 )
+            }
+            resources[0] = resources[0].copy(
+                label = label,
+                visibility = Visibility.FEATURED,
+                createdBy = createdBy
+            ).also {
                 saveStatement(
                     createStatement(
                         id = fabricator.random(),
@@ -389,11 +614,16 @@ fun <
             val expected = resources[0]
 
             val result = repository.findAll(
-                searchString = SearchString.of(label, exactMatch = false),
+                label = SearchString.of(label, exactMatch = false),
                 createdBy = createdBy,
+                createdAtStart = expected.createdAt,
+                createdAtEnd = expected.createdAt,
+                observatoryId = expected.observatoryId,
+                organizationId = expected.organizationId,
                 visibility = VisibilityFilter.ALL_LISTED,
-                researchFieldId = researchField.id,
-                researchProblemId = researchProblem.id,
+                researchField = researchField.id,
+                includeSubfields = true,
+                researchProblem = researchProblem.id,
                 targetClassId = targetClass.id,
                 pageable = PageRequest.of(0, 5)
             )
@@ -413,6 +643,22 @@ fun <
             it("sorts the results by creation date by default") {
                 result.content.zipWithNext { a, b ->
                     a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        it("sorts the results by multiple properties") {
+            val resources = fabricator.random<List<Resource>>().toTemplates().toMutableList()
+            resources[1] = resources[1].copy(label = resources[0].label)
+            resources.forEach(resourceRepository::save)
+
+            val sort = Sort.by("label").ascending().and(Sort.by("created_at").descending())
+            val result = repository.findAll(pageable = PageRequest.of(0, 12, sort))
+
+            result.content.zipWithNext { a, b ->
+                if (a.label == b.label) {
+                    a.createdAt shouldBeGreaterThan b.createdAt
+                } else {
+                    a.label shouldBeLessThan b.label
                 }
             }
         }

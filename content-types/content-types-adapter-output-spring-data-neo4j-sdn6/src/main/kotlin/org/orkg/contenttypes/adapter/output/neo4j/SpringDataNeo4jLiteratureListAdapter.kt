@@ -29,6 +29,7 @@ import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.contenttypes.output.LiteratureListRepository
 import org.orkg.graph.adapter.output.neo4j.ResourceMapper
+import org.orkg.graph.adapter.output.neo4j.match
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
 import org.orkg.graph.adapter.output.neo4j.toCondition
 import org.orkg.graph.adapter.output.neo4j.toSortItems
@@ -176,10 +177,6 @@ class SpringDataNeo4jLiteratureListAdapter(
     private fun matchUnpublishedLiteratureLists(
         symbolicName: SymbolicName,
         patternGenerator: (Node) -> Collection<PatternElement>
-    ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere {
-        val node = node("LiteratureList").named(symbolicName)
-        val patterns = patternGenerator(node)
-        return match(node).let { if (patterns.isNotEmpty()) it.match(patterns) else it }
-            .with(symbolicName)
-    }
+    ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
+        match(node("LiteratureList").named(symbolicName), patternGenerator)
 }

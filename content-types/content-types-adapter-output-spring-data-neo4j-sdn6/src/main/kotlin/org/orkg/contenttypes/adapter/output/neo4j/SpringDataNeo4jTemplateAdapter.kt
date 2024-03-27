@@ -1,112 +1,162 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.sortedWith
+import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.graph.adapter.output.neo4j.ResourceMapper
-import org.orkg.graph.adapter.output.neo4j.internal.Neo4jFormattedLabelRepository
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.domain.Sort.Direction
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
+import org.neo4j.cypherdsl.core.Condition
+import org.neo4j.cypherdsl.core.Conditions
+import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.literalOf
+import org.neo4j.cypherdsl.core.Cypher.name
+import org.neo4j.cypherdsl.core.Cypher.node
+import org.neo4j.cypherdsl.core.Functions.collect
+import org.neo4j.cypherdsl.core.Functions.size
+import org.neo4j.cypherdsl.core.Functions.toLower
+import org.neo4j.cypherdsl.core.Node
+import org.neo4j.cypherdsl.core.PatternElement
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
+import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
+import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
+import org.orkg.graph.adapter.output.neo4j.match
+import org.orkg.graph.adapter.output.neo4j.node
+import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
+import org.orkg.graph.adapter.output.neo4j.toCondition
+import org.orkg.graph.adapter.output.neo4j.toSortItems
+import org.orkg.graph.adapter.output.neo4j.where
+import org.orkg.graph.adapter.output.neo4j.withDefaultSort
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Predicates
 
+private const val RELATED = "RELATED"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_template_on_label"
 
 @Component
 class SpringDataNeo4jTemplateAdapter(
-    private val neo4jRepository: Neo4jFormattedLabelRepository,
     private val neo4jClient: Neo4jClient
 ) : TemplateRepository {
     override fun findAll(
-        searchString: SearchString?,
+        label: SearchString?,
         visibility: VisibilityFilter?,
         createdBy: ContributorId?,
-        researchFieldId: ThingId?,
-        researchProblemId: ThingId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
+        researchProblem: ThingId?,
         targetClassId: ThingId?,
         pageable: Pageable
-    ): Page<Resource> {
-        val match = when (searchString) {
-            null -> """MATCH (template:NodeShape)"""
-            else -> buildString {
-                append("""CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", ${'$'}query) YIELD node, score """)
-                append(
-                    when (searchString) {
-                        is ExactSearchString -> """WHERE toLower(node.label) = toLower(${'$'}label)"""
-                        is FuzzySearchString -> """WHERE SIZE(node.label) >= ${'$'}minLabelLength"""
+    ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
+        .withCommonQuery {
+            val patterns: (Node) -> Collection<PatternElement> = { node ->
+                listOfNotNull(
+                    targetClassId?.let {
+                        node.relationshipTo(node("Class").withProperties("id", anonParameter(it.value)), RELATED)
+                            .withProperties("predicate_id", literalOf<String>(Predicates.shTargetClass.value))
+                    },
+                    researchField?.let {
+                        val researchFieldNode = node(Classes.researchField).withProperties("id", anonParameter(it.value))
+                        if (includeSubfields) {
+                            node.relationshipTo(node(Classes.researchField), RELATED)
+                                .relationshipFrom(researchFieldNode, RELATED)
+                                .properties("predicate_id", literalOf<String>(Predicates.hasSubfield.value))
+                                .min(0)
+                        } else {
+                            node.relationshipTo(researchFieldNode, RELATED)
+                        }
+                    },
+                    researchProblem?.let {
+                        node.relationshipTo(node("Problem").withProperties("id", anonParameter(it.value)), RELATED)
+                            .withProperties("predicate_id", literalOf<String>(Predicates.templateOfResearchProblem.value))
                     }
                 )
-                append(""" WITH node AS template, score""")
             }
+            val node = name("node")
+            val nodes = name("nodes")
+            val matchTemplates = match(node("NodeShape").named(node), patterns)
+            val match = label?.let { searchString ->
+                when (searchString) {
+                    is ExactSearchString -> {
+                        matchTemplates
+                            .with(collect(node).`as`(nodes))
+                            .call("db.index.fulltext.queryNodes")
+                            .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                            .yield("node")
+                            .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))).and(node.`in`(nodes)))
+                            .with(node)
+                    }
+                    is FuzzySearchString -> {
+                        matchTemplates
+                            .with(collect(node).`as`(nodes))
+                            .call("db.index.fulltext.queryNodes")
+                            .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                            .yield("node", "score")
+                            .where(size(node.property("label")).gte(anonParameter(searchString.input.length)).and(node.`in`(nodes)))
+                            .with(node, name("score"))
+                    }
+                }
+            } ?: matchTemplates
+            match.where(
+                visibility.toCondition { filter ->
+                    filter.targets.map { node.property("visibility").eq(literalOf<String>(it.name)) }
+                        .reduceOrNull(Condition::or) ?: Conditions.noCondition()
+                },
+                createdBy.toCondition { node.property("created_by").eq(anonParameter(it.value.toString())) },
+                createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))) },
+                createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))) },
+                observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
+                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) }
+            )
         }
-        val where = buildString {
-            if (visibility != null) {
-                append(
-                    visibility.targets.joinToString(
-                        prefix = " AND (",
-                        separator = " OR ",
-                        postfix = ")"
-                    ) { """template.visibility = "$it"""" }
+        .withQuery { commonQuery ->
+            val node = name("node")
+            val score = if (label != null && label is FuzzySearchString) name("score") else null
+            val variables = listOfNotNull(node, score)
+            val pageableWithDefaultSort = pageable.withDefaultSort { Sort.by("created_at") }
+            commonQuery
+                .with(variables) // "with" is required because cypher dsl reorders "orderBy" and "where" clauses sometimes, decreasing performance
+                .where(
+                    orderByOptimizations(
+                        node = node,
+                        sort = pageableWithDefaultSort.sort,
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                    )
                 )
-            }
-            if (createdBy != null) {
-                append(""" AND template.created_by = ${'$'}createdBy""")
-            }
-            if (researchFieldId != null) {
-                append(""" AND EXISTS((template)-[:RELATED {predicate_id: "TemplateOfResearchField"}]->(:ResearchField {id: ${'$'}researchFieldId}))""")
-            }
-            if (researchProblemId != null) {
-                append(""" AND EXISTS((template)-[:RELATED {predicate_id: "TemplateOfResearchProblem"}]->(:Problem {id: ${'$'}researchProblemId}))""")
-            }
-            if (targetClassId != null) {
-                append(""" AND EXISTS((template)-[:RELATED {predicate_id: "sh:targetClass"}]->(:Class {id: ${'$'}targetClassId}))""")
-            }
-        }.replaceFirst(" AND", "WHERE")
-        val with = when (searchString) {
-            is FuzzySearchString -> """WITH template, template.id AS id, template.label AS label, template.created_at AS created_at, score"""
-            else -> """WITH template, template.id AS id, template.label AS label, template.created_at AS created_at"""
+                .with(variables)
+                .orderBy(
+                    if (score != null) {
+                        listOf(
+                            size(node.property("label")).ascending(),
+                            score.descending(),
+                            node.property("created_at").ascending()
+                        )
+                    } else {
+                        pageableWithDefaultSort.sort.toSortItems(
+                            node = node,
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                        )
+                    }
+                )
+                .returning(node)
         }
-        val sort = when (searchString) {
-            is FuzzySearchString -> Sort.by(Direction.ASC, "SIZE(label)")
-                .and(Sort.by(Direction.DESC, "score"))
-                .and(Sort.by(Direction.DESC, "created_at"))
-            else -> if (pageable.sort.isSorted) pageable.sort else Sort.by(Direction.ASC, "created_at")
-        }
-        val commonQuery = "$match $where"
-        val query = "$commonQuery $with RETURN DISTINCT template SKIP ${'$'}skip LIMIT ${'$'}limit".let {
-            it.sortedWith(sort, it.lastIndexOf("RETURN"))
-        }
-        val countQuery = "$commonQuery RETURN COUNT(DISTINCT template)"
-        val parameters = mapOf(
-            "query" to searchString?.query,
-            "label" to searchString?.input,
-            "minLabelLength" to searchString?.input?.length,
-            "createdBy" to createdBy?.value?.toString(),
-            "researchFieldId" to researchFieldId?.value,
-            "researchProblemId" to researchProblemId?.value,
-            "targetClassId" to targetClassId?.value,
-            "skip" to pageable.offset,
-            "limit" to pageable.pageSize
-        )
-        val elements = neo4jClient.query(query)
-            .bindAll(parameters)
-            .fetchAs(Resource::class.java)
-            .mappedBy(ResourceMapper("template"))
-            .all()
-        val count = neo4jClient.query(countQuery)
-            .bindAll(parameters)
-            .fetchAs(Long::class.java)
-            .one()
-            .orElse(0)
-        return PageImpl(elements.toList(), pageable, count)
-    }
+        .countOver("node")
+        .mappedBy(ResourceMapper("node"))
+        .fetch(pageable, false)
 }

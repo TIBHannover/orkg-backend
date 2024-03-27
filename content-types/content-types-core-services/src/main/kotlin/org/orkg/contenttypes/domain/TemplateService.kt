@@ -1,7 +1,10 @@
 package org.orkg.contenttypes.domain
 
+import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -83,16 +86,33 @@ class TemplateService(
             .map { it.toTemplate() }
 
     override fun findAll(
-        searchString: SearchString?,
+        label: SearchString?,
         visibility: VisibilityFilter?,
         createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
         researchField: ThingId?,
+        includeSubfields: Boolean,
         researchProblem: ThingId?,
         targetClass: ThingId?,
         pageable: Pageable
     ): Page<Template> =
-        templateRepository.findAll(searchString, visibility, createdBy, researchField, researchProblem, targetClass, pageable)
-            .pmap { it.toTemplate() }
+        templateRepository.findAll(
+            label = label,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            researchProblem = researchProblem,
+            targetClassId = targetClass,
+            pageable = pageable
+        ).pmap { it.toTemplate() }
 
     override fun create(command: CreateTemplateCommand): ThingId {
         val steps = listOf(

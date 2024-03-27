@@ -2,10 +2,13 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.regex.PatternSyntaxException
 import java.util.stream.Stream
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -42,6 +46,7 @@ import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplate
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -165,10 +170,56 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @Test
     @DisplayName("Given several templates, when they are fetched, then status is 200 OK and templates are returned")
     fun getPaged() {
-        val template = createDummyTemplate()
-        every { templateService.findAll(pageable = any()) } returns pageOf(template)
+        every {
+            templateService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        } returns pageOf(createDummyTemplate())
 
         documentedGetRequestTo("/api/templates")
+            .accept(TEMPLATE_JSON_V1)
+            .contentType(TEMPLATE_JSON_V1)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectTemplate("$.content[*]")
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            templateService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        }
+    }
+
+    @Test
+    @DisplayName("Given several templates, when filtering by several parameters, then status is 200 OK and templates are returned")
+    fun getPagedWithParameters() {
+        val template = createDummyTemplate()
+        every { templateService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(template)
+
+        val label = "label"
+        val exact = true
+        val visibility = VisibilityFilter.ALL_LISTED
+        val createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
+        val createdAtStart = OffsetDateTime.now(fixedClock).minusHours(1)
+        val createdAtEnd = OffsetDateTime.now(fixedClock).plusHours(1)
+        val observatoryId = ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+        val researchFieldId = ThingId("R456")
+        val includeSubfields = true
+        val researchProblemId = ThingId("R789")
+        val targetClass = ThingId("targetClass")
+
+        documentedGetRequestTo("/api/templates")
+            .param("q", label)
+            .param("exact", exact.toString())
+            .param("visibility", visibility.name)
+            .param("created_by", createdBy.value.toString())
+            .param("created_at_start", createdAtStart.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("created_at_end", createdAtEnd.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("observatory_id", observatoryId.value.toString())
+            .param("organization_id", organizationId.value.toString())
+            .param("research_field", researchFieldId.value)
+            .param("include_subfields", includeSubfields.toString())
+            .param("research_problem", researchProblemId.value)
+            .param("target_class", targetClass.value)
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -178,19 +229,41 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             .andDo(
                 documentationHandler.document(
                     requestParameters(
-                        parameterWithName("q").description("Optional filter for the template label.").optional(),
-                        parameterWithName("exact").description("Optional flag for whether label matching should be exact. (default: false)").optional(),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),
-                        parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the template.").optional(),
-                        parameterWithName("research_field").description("Optional filter for related research field id.").optional(),
-                        parameterWithName("research_problem").description("Optional filter for related research problem id.").optional(),
-                        parameterWithName("target_class").description("Optional filter for the target class.").optional()
+                        parameterWithName("q").description("A search term that must be contained in the label of the template. (optional)."),
+                        parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
+                        parameterWithName("visibility").description("""Filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED". (optional)"""),
+                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created the template. (optional)"),
+                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned template can have. (optional)"),
+                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned template can have. (optional)"),
+                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the template belongs to. (optional)"),
+                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the template belongs to. (optional)"),
+                        parameterWithName("research_field").description("Filter for research field id. (optional)"),
+                        parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
+                        parameterWithName("research_problem").description("Filter for related research problem id. (optional)"),
+                        parameterWithName("target_class").description("Filter for the target class. (optional)"),
                     )
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { templateService.findAll(pageable = any()) }
+        verify(exactly = 1) {
+            templateService.findAll(
+                pageable = any(),
+                label = withArg {
+                    it.shouldBeInstanceOf<ExactSearchString>().input shouldBe label
+                },
+                visibility = visibility,
+                createdBy = createdBy,
+                createdAtStart = createdAtStart,
+                createdAtEnd = createdAtEnd,
+                observatoryId = observatoryId,
+                organizationId = organizationId,
+                researchField = researchFieldId,
+                includeSubfields = includeSubfields,
+                researchProblem = researchProblemId,
+                targetClass = targetClass
+            )
+        }
     }
 
     @Test
@@ -199,7 +272,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val createdBy = template.createdBy
         every {
             templateService.findAll(
-                searchString = any(),
+                label = any(),
                 visibility = VisibilityFilter.ALL_LISTED,
                 createdBy = createdBy,
                 researchField = ThingId("R11"),
@@ -218,7 +291,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
         verify(exactly = 1) {
             templateService.findAll(
-                searchString = withArg<ExactSearchString> { it.input shouldBe "example" },
+                label = withArg<ExactSearchString> { it.input shouldBe "example" },
                 visibility = VisibilityFilter.ALL_LISTED,
                 createdBy = createdBy,
                 researchField = ThingId("R11"),

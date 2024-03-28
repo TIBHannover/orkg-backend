@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.OffsetDateTime
 import javax.validation.Valid
-import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.PositiveOrZero
 import javax.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -14,6 +14,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
+import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.TemplateRepresentationAdapter
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
@@ -166,9 +167,9 @@ class TemplateController(
     data class CreateTemplateRequest(
         @field:NotBlank
         val label: String,
-        @field:NotBlank
+        @field:NullableNotBlank
         val description: String?,
-        @field:NotBlank
+        @field:NullableNotBlank
         @JsonProperty("formatted_label")
         val formattedLabel: String?,
         @JsonProperty("target_class")
@@ -232,10 +233,10 @@ class TemplateController(
         override val label: String,
         override val placeholder: String?,
         override val description: String?,
-        @field:Min(1)
+        @field:PositiveOrZero
         @JsonProperty("min_count")
         override val minCount: Int?,
-        @field:Min(1)
+        @field:PositiveOrZero
         @JsonProperty("max_count")
         override val maxCount: Int?,
         override val pattern: String?,
@@ -267,10 +268,10 @@ class TemplateController(
         override val label: String,
         override val placeholder: String?,
         override val description: String?,
-        @field:Min(1)
+        @field:PositiveOrZero
         @JsonProperty("min_count")
         override val minCount: Int?,
-        @field:Min(1)
+        @field:PositiveOrZero
         @JsonProperty("max_count")
         override val maxCount: Int?,
         override val pattern: String?,
@@ -301,9 +302,9 @@ class TemplateController(
     data class UpdateTemplateRequest(
         @field:NotBlank
         val label: String?,
-        @field:NotBlank
+        @field:NullableNotBlank
         val description: String?,
-        @field:NotBlank
+        @field:NullableNotBlank
         @JsonProperty("formatted_label")
         val formattedLabel: String?,
         @JsonProperty("target_class")

@@ -11,6 +11,7 @@ dependencies {
     api(libs.jackson.databind)
     implementation("org.springframework:spring-web")
     implementation(libs.jackson.kotlin)
+    implementation("jakarta.validation:jakarta.validation-api")
 }
 
 testing {

@@ -79,7 +79,7 @@ class SmartReviewService(
                     ),
                     sort = Sort.unsorted()
                 )
-                published.subgraph + versions
+                published.subgraph.filter { it.predicate.id != Predicates.hasPublishedVersion } + versions
             }
             Classes.smartReview in classes -> {
                 statementRepository.fetchAsBundle(

@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.53.0] - 2024-04-02
 ### Added
 - Listing templates (content-type) now supports the following additional filtering parameters: `created_at_start`, `created_at_end`, `observatory_id`, `organization_id`, `include_subfields`.
   (See: [!866](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/866))
@@ -847,7 +849,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.52.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.53.0...master
+[0.53.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.53.0
 [0.52.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.52.0
 [0.51.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.51.0
 [0.50.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.50.1

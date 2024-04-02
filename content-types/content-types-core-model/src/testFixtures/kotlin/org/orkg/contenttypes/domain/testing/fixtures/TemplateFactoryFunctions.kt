@@ -1,10 +1,12 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
+import java.net.URI
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.LiteralTemplateProperty
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.ResourceTemplateProperty
@@ -20,7 +22,11 @@ fun createDummyTemplate() = Template(
     label = "Dummy Template Label",
     description = "Some description about the template",
     formattedLabel = FormattedLabel.of("{P32}"),
-    targetClass = ObjectIdAndLabel(ThingId("targetClass"), "Target Class"),
+    targetClass = ClassReference(
+        id = ThingId("targetClass"),
+        label = "Target Class",
+        uri = URI("https://orkg.org/class/targetClass")
+    ),
     relations = TemplateRelations(
         researchFields = listOf(ObjectIdAndLabel(ThingId("R20"), "Research Field 1")),
         researchProblems = listOf(ObjectIdAndLabel(ThingId("R21"), "Research Problem 1")),

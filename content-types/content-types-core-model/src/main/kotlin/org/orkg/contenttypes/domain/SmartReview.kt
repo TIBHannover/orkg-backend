@@ -5,6 +5,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
@@ -133,6 +134,7 @@ data class SmartReviewOntologySection(
                         when (val `object` = it.`object`) {
                             is Resource -> ResourceReference(`object`)
                             is Predicate -> PredicateReference(`object`)
+                            is Class -> ClassReference(`object`)
                             else -> throw IllegalStateException("Cannot convert section ${`object`.id} to smart review ontology section entity. This is a bug.")
                         }
                     }

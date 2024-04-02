@@ -16,7 +16,7 @@ data class Template(
     val label: String,
     val description: String?,
     val formattedLabel: FormattedLabel?,
-    val targetClass: ObjectIdAndLabel,
+    val targetClass: ClassReference,
     val relations: TemplateRelations,
     val properties: List<TemplateProperty>,
     val isClosed: Boolean,

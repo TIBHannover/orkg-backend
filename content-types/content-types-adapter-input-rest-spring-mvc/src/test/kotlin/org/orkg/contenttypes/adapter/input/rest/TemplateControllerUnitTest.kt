@@ -103,6 +103,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         fieldWithPath("target_class").description("The target class of the template."),
                         fieldWithPath("target_class.id").description("The id of the target class."),
                         fieldWithPath("target_class.label").description("The label of the target class."),
+                        fieldWithPath("target_class.uri").description("The uri of the target class. (optional)").optional(),
                         fieldWithPath("relations").description("The relations class of the template. Used for suggestions."),
                         fieldWithPath("relations.research_fields[]").description("The research fields that this template relates to."),
                         fieldWithPath("relations.research_fields[].id").description("The id of the research field that this template relates to."),

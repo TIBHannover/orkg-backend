@@ -15,6 +15,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
+import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PredicateReference
 import org.orkg.contenttypes.domain.ResourceReference
@@ -239,7 +240,7 @@ data class TemplateRepresentation(
     @get:JsonProperty("formatted_label")
     val formattedLabel: FormattedLabel?,
     @get:JsonProperty("target_class")
-    val targetClass: ObjectIdAndLabel,
+    val targetClass: ClassReference,
     val relations: TemplateRelationRepresentation,
     val properties: List<TemplatePropertyRepresentation>,
     @get:JsonProperty("is_closed")

@@ -49,6 +49,7 @@ import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropert
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.graph.domain.BundleConfiguration
+import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
@@ -196,8 +197,8 @@ class TemplateService(
                 ?.let { FormattedLabel.of(it.`object`.label) },
             targetClass = statements[id]!!
                 .wherePredicate(Predicates.shTargetClass)
-                .single()
-                .objectIdAndLabel(),
+                .single { it.`object` is Class }
+                .let { ClassReference(it.`object` as Class) },
             relations = TemplateRelations(
                 researchFields = statements[id]!!
                     .wherePredicate(Predicates.templateOfResearchField)

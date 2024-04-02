@@ -8,6 +8,7 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.net.URI
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -96,6 +97,7 @@ class TemplateServiceUnitTests {
         val formattedLabel = FormattedLabel.of("{P32}")
         val targetClassId = ThingId("targetClass")
         val targetClassLabel = "Target Class"
+        val targetClassURI = URI("https://orkg.org/class/targetClass")
         val researchFieldId = ThingId("R20")
         val researchFieldLabel = "Research Field 1"
         val researchProblemId = ThingId("R21")
@@ -158,7 +160,7 @@ class TemplateServiceUnitTests {
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.shTargetClass),
-                `object` = createClass(targetClassId, label = targetClassLabel)
+                `object` = createClass(targetClassId, label = targetClassLabel, uri = targetClassURI)
             ),
             createStatement(
                 subject = expected,
@@ -292,7 +294,7 @@ class TemplateServiceUnitTests {
             template.label shouldBe expected.label
             template.description shouldBe description
             template.formattedLabel shouldBe formattedLabel
-            template.targetClass shouldBe ObjectIdAndLabel(targetClassId, targetClassLabel)
+            template.targetClass shouldBe ClassReference(targetClassId, targetClassLabel, targetClassURI)
             template.relations.asClue {
                 it.researchFields.size shouldBe 1
                 it.researchFields.single() shouldBe ObjectIdAndLabel(researchFieldId, researchFieldLabel)

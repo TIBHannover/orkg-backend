@@ -185,6 +185,7 @@ fun ResultActions.andExpectTemplate(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.target_class", `is`(notNullValue())))
     .andExpect(jsonPath("$path.target_class.id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.target_class.label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.target_class.uri").hasJsonPath())
     .andExpect(jsonPath("$path.relations", `is`(notNullValue())))
     .andExpect(jsonPath("$path.relations.research_fields").isArray)
     .andExpect(jsonPath("$path.relations.research_fields[*].id", `is`(notNullValue())))

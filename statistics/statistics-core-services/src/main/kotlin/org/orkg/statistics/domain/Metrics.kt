@@ -88,7 +88,7 @@ class Metrics {
     @Bean
     fun orphanClassCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "orphan-class-count",
-        description = "Number of orphan class in the graph.",
+        description = "Number of orphan classes in the graph.",
         group = "things",
         supplier = { statisticsRepository.countOrphanNodes("Class") }
     )
@@ -120,7 +120,7 @@ class Metrics {
     @Bean
     fun unusedClassCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "unused-class-count",
-        description = "Number of unused class in the graph.",
+        description = "Number of unused classes in the graph.",
         group = "things",
         supplier = { statisticsRepository.countUnusedNodes("Class") }
     )

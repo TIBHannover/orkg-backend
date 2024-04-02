@@ -6,6 +6,60 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Listing templates (content-type) now supports the following additional filtering parameters: `created_at_start`, `created_at_end`, `observatory_id`, `organization_id`, `include_subfields`.
+  (See: [!866](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/866))
+- The following new metrics were added to the `/api/statistics` endpoint:
+  (See: [!868](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/868))
+  - orphan-resource-count
+  - orphan-predicate-count
+  - orphan-literal-count
+  - orphan-class-count
+  - unused-resource-count
+  - unused-predicate-count
+  - unused-literal-count
+  - unused-class-count
+
+### Changed
+- Changed template target class representation to include `label` and `uri`.
+  (See: [!867](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/867),
+        [!871](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/871))
+
+### Fixed
+- It is now possible to create and update templates without a `description` or `formatted_label`.
+  (See: [!870](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/870))
+- It is now possible to create and update templates with a `min_count` and `max_count` of `0`.
+  (See: [!870](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/870))
+- Fixed request parameter documentation for listing comparisons.
+
+### Removed
+- The following endpoints have been removed from the api:
+  (Closes: [#546](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/546))
+  - `/api/classes/Paper/featured/resources/?featured={featured}`
+  - `/api/classes/Paper/resources/?verified={verified}`
+  - `/api/classes/Paper/unlisted/resources/?unlisted={unlisted}`
+  - `/api/classes/{id}/resources`
+  - `/api/comparisons/metadata/featured?featured={featured}`
+  - `/api/comparisons/metadata/featured`
+  - `/api/comparisons/metadata/unlisted?unlisted={unlisted}`
+  - `/api/comparisons/metadata/unlisted`
+  - `/api/contributions/metadata/featured?featured={featured}`
+  - `/api/contributions/metadata/featured`
+  - `/api/contributions/metadata/unlisted?unlisted={unlisted}`
+  - `/api/contributions/metadata/unlisted`
+  - `/api/observatories/{id}/comparisons`
+  - `/api/organizations/{id}/comparisons`
+  - `/api/papers/{id}/metadata/featured`
+  - `/api/papers/{id}/metadata/unlisted`
+  - `/api/papers/{id}/metadata/verified`
+  - `/api/problems/metadata/featured?featured={featured}`
+  - `/api/problems/metadata/unlisted?unlisted={unlisted}`
+  - `/api/problems/{id}/metadata/featured`
+  - `/api/problems/{id}/metadata/unlisted`
+  - `/api/resources/metadata/featured?featured={featured}`
+  - `/api/resources/metadata/featured`
+  - `/api/resources/metadata/unlisted?unlisted={unlisted}`
+  - `/api/resources/metadata/unlisted`
 
 ## [0.52.0] - 2024-03-25
 ### Added

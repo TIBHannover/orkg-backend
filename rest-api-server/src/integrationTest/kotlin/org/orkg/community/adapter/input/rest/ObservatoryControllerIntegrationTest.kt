@@ -151,35 +151,6 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    fun lookUpComparisonsByObservatoryId() {
-        val userId = userService.createUser()
-        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
-        val researchField = resourceService.createResource(
-            classes = setOf("ResearchField")
-        )
-        val observatoryId = observatoryService.createObservatory(
-            organizations = setOf(organizationId),
-            researchField = researchField
-        )
-        resourceService.createResource(
-            classes = setOf("Comparison"),
-            organizationId = organizationId,
-            observatoryId = observatoryId
-        )
-
-        mockMvc
-            .perform(getRequestTo("/api/observatories/$observatoryId/comparisons"))
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    pageOfDetailedResourcesResponseFields()
-                )
-            )
-    }
-
-    @Test
     fun lookUpProblemsByObservatoryId() {
         val userId = userService.createUser()
         val organizationId = service.createOrganization(createdBy = ContributorId(userId))

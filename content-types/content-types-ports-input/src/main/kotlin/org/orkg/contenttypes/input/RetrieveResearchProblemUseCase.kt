@@ -11,7 +11,7 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface RetrieveResearchProblemUseCase : GetProblemFlagQuery, LoadProblemPort {
+interface RetrieveResearchProblemUseCase {
     fun findById(id: ThingId): Optional<Resource>
 
     fun findFieldsPerProblem(problemId: ThingId): List<FieldWithFreq>
@@ -28,5 +28,4 @@ interface RetrieveResearchProblemUseCase : GetProblemFlagQuery, LoadProblemPort 
     fun findContributorsPerProblem(problemId: ThingId, pageable: Pageable): List<ContributorPerProblem>
 
     fun forDataset(id: ThingId, pageable: Pageable): Optional<Page<ResearchProblem>>
-
 }

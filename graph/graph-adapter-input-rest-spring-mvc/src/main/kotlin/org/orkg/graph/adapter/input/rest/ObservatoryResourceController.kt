@@ -7,7 +7,6 @@ import org.orkg.common.ThingId
 import org.orkg.community.domain.InvalidFilterConfig
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
-import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ResourceUseCases
@@ -43,17 +42,6 @@ class ObservatoryResourceController(
             observatoryId = id,
             filters = objectMapper.parseFilterConfig(filterConfig),
             visibility = visibility ?: VisibilityFilter.ALL_LISTED,
-            pageable = pageable
-        ).mapToResourceRepresentation()
-
-    @GetMapping("{id}/comparisons")
-    fun findAllComparisonsByObservatoryId(
-        @PathVariable id: ObservatoryId,
-        pageable: Pageable
-    ): Page<ResourceRepresentation> =
-        resourceService.findAll(
-            includeClasses = setOf(Classes.comparison),
-            observatoryId = id,
             pageable = pageable
         ).mapToResourceRepresentation()
 

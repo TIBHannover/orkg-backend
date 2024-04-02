@@ -15,18 +15,6 @@ interface TemplateInstanceUseCases : RetrieveTemplateInstanceUseCase, UpdateTemp
 
 interface RosettaTemplateUseCases : RetrieveRosettaTemplateUseCase
 
-interface ContentTypeResourcesUseCase :
-    LoadPaperPort,
-    GetPaperFlagQuery,
-    LoadComparisonPort,
-    LoadContributionPort,
-    LoadVisualizationPort,
-    LoadSmartReviewPort,
-    GetContributionFlagQuery,
-    GetComparisonFlagQuery,
-    GetVisualizationFlagQuery,
-    GetSmartReviewFlagQuery
-
 interface LegacyPaperUseCases : LegacyRetrievePaperUseCase, LegacyCreatePaperUseCase
 
 interface ResearchFieldHierarchyUseCases : RetrieveResearchFieldHierarchyUseCase

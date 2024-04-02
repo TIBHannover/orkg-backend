@@ -8,15 +8,15 @@ import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.contenttypes.input.RetrieveAuthorUseCase
 import org.orkg.contenttypes.input.RetrieveResearchProblemUseCase
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.adapter.input.rest.FieldWithFreqRepresentation
+import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
+import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.AuthorRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.FieldPerProblemRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.visibilityFilterFromFlags
 import org.orkg.graph.domain.DetailsPerProblem
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.adapter.input.rest.FieldWithFreqRepresentation
-import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
-import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
@@ -98,14 +98,6 @@ class ProblemController(
     ): Page<PaperAuthorRepresentation> =
         authorService.findAuthorsPerProblem(problemId, pageable).mapToPaperAuthorRepresentation()
 
-    @GetMapping("/metadata/featured", params = ["featured=true"])
-    fun getFeaturedProblems(pageable: Pageable) =
-        service.loadFeaturedProblems(pageable)
-
-    @GetMapping("/metadata/featured", params = ["featured=false"])
-    fun getNonFeaturedProblems(pageable: Pageable) =
-        service.loadNonFeaturedProblems(pageable)
-
     @PutMapping("/{id}/metadata/featured")
     @PreAuthorizeCurator
     @ResponseStatus(HttpStatus.OK)
@@ -119,17 +111,6 @@ class ProblemController(
         resourceService.markAsNonFeatured(id)
     }
 
-    @GetMapping("/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ThingId): Boolean = service.getFeaturedProblemFlag(id)
-
-    @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
-    fun getUnlistedContributions(pageable: Pageable) =
-        service.loadUnlistedProblems(pageable)
-
-    @GetMapping("/metadata/unlisted", params = ["unlisted=false"])
-    fun getListedContributions(pageable: Pageable) =
-        service.loadListedProblems(pageable)
-
     @PutMapping("/{id}/metadata/unlisted")
     @PreAuthorizeCurator
     @ResponseStatus(HttpStatus.OK)
@@ -142,7 +123,4 @@ class ProblemController(
     fun unmarkUnlisted(@PathVariable id: ThingId) {
         resourceService.markAsListed(id)
     }
-
-    @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ThingId): Boolean? = service.getUnlistedProblemFlag(id)
 }

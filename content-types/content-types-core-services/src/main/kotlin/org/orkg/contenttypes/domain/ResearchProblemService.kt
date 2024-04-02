@@ -11,7 +11,6 @@ import org.orkg.graph.domain.ContributorPerProblem
 import org.orkg.graph.domain.DetailsPerProblem
 import org.orkg.graph.domain.FieldWithFreq
 import org.orkg.graph.domain.Resource
-import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ResourceUseCases
@@ -110,28 +109,6 @@ class ResearchProblemService(
         if (!dataset.isPresent) return Optional.empty()
         return Optional.of(researchProblemQueries.findResearchProblemForDataset(id, pageable))
     }
-
-    override fun getFeaturedProblemFlag(id: ThingId): Boolean =
-        researchProblemRepository.findById(id)
-            .map { it.visibility == Visibility.FEATURED }
-            .orElseThrow { ResourceNotFound.withId(id) }
-
-    override fun getUnlistedProblemFlag(id: ThingId): Boolean =
-        researchProblemRepository.findById(id)
-            .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
-            .orElseThrow { ResourceNotFound.withId(id) }
-
-    override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =
-        researchProblemRepository.findAllProblemsByVisibility(Visibility.FEATURED, pageable)
-
-    override fun loadNonFeaturedProblems(pageable: Pageable): Page<Resource> =
-        researchProblemRepository.findAllProblemsByVisibility(Visibility.DEFAULT, pageable)
-
-    override fun loadUnlistedProblems(pageable: Pageable): Page<Resource> =
-        researchProblemRepository.findAllProblemsByVisibility(Visibility.UNLISTED, pageable)
-
-    override fun loadListedProblems(pageable: Pageable): Page<Resource> =
-        researchProblemRepository.findAllListedProblems(pageable)
 
     private fun findAllListedEntitiesBasedOnClassByProblem(
         classesList: List<String>,

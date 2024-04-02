@@ -41,13 +41,6 @@ Classes can be looked up by label by providing a search fragment.
 
 operation::class-controller-integration-test-lookup[snippets='curl-request,http-response']
 
-[[resources-lookup-by-classes]]
-=== Lookup resources by class
-
-List all resources that are of the provided class type
-
-operation::class-controller-integration-test-lookup-by-class[snippets='curl-request,http-response']
-
 [[classes-edit]]
 === Editing a class
 

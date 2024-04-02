@@ -27,7 +27,6 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
-import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -219,36 +218,6 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
             .andExpect(jsonPath("$.error").value("Bad Request"))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/observatories/$id/papers"))
-    }
-
-    @Test
-    fun `Given the observatory id, when service succeeds, then status is 200 OK and comparisons list is returned`() {
-        val id = ObservatoryId(UUID.randomUUID())
-        val comparisonResource = createResource(
-            observatoryId = id,
-            classes = setOf(Classes.comparison)
-        )
-        every {
-            resourceService.findAll(
-                includeClasses = setOf(Classes.comparison),
-                observatoryId = id,
-                pageable = any()
-            )
-        } returns pageOf(comparisonResource)
-
-        get("/api/observatories/$id/comparisons")
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andExpectResource("$.content[*]")
-
-        verify(exactly = 1) {
-            resourceService.findAll(
-                includeClasses = setOf(Classes.comparison),
-                observatoryId = id,
-                pageable = any()
-            )
-        }
     }
 
     @Test

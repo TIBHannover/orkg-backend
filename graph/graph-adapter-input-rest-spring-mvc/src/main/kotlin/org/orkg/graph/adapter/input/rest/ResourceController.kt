@@ -18,7 +18,6 @@ import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
@@ -182,14 +181,6 @@ class ResourceController(
         return ResponseEntity.noContent().build()
     }
 
-    @GetMapping("/metadata/featured", params = ["featured=true"])
-    fun getFeaturedResources(pageable: Pageable) =
-        service.findAll(visibility = VisibilityFilter.FEATURED, pageable = pageable)
-
-    @GetMapping("/metadata/featured", params = ["featured=false"])
-    fun getNonFeaturedResources(pageable: Pageable) =
-        service.findAll(visibility = VisibilityFilter.NON_FEATURED, pageable = pageable)
-
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorizeCurator
@@ -203,20 +194,6 @@ class ResourceController(
         service.markAsNonFeatured(id)
     }
 
-    @GetMapping("/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ThingId): Boolean =
-        service.findById(id)
-            .map { it.visibility == Visibility.FEATURED }
-            .orElseThrow { ResourceNotFound.withId(id) }
-
-    @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
-    fun getUnlistedResources(pageable: Pageable) =
-        service.findAll(visibility = VisibilityFilter.UNLISTED, pageable = pageable)
-
-    @GetMapping("/metadata/unlisted", params = ["unlisted=false"])
-    fun getListedResources(pageable: Pageable) =
-        service.findAll(visibility = VisibilityFilter.ALL_LISTED, pageable = pageable)
-
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorizeCurator
@@ -229,12 +206,6 @@ class ResourceController(
     fun unmarkUnlisted(@PathVariable id: ThingId) {
         service.markAsListed(id)
     }
-
-    @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ThingId): Boolean =
-        service.findById(id)
-            .map { it.visibility == Visibility.UNLISTED }
-            .orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping("/classes")
     fun getResourcesByClass(

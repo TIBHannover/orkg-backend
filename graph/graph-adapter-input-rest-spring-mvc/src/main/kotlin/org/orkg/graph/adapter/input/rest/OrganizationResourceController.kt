@@ -3,7 +3,6 @@ package org.orkg.graph.adapter.input.rest
 import org.orkg.common.OrganizationId
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
-import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.FormattedLabelRepository
@@ -23,15 +22,6 @@ class OrganizationResourceController(
     override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter {
-
-    @GetMapping("{id}/comparisons")
-    fun findComparisonsByOrganizationId(@PathVariable id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
-        resourceService.findAll(
-            includeClasses = setOf(Classes.comparison),
-            organizationId = id,
-            pageable = pageable
-        ).mapToResourceRepresentation()
-
     @GetMapping("{id}/problems")
     fun findProblemsByOrganizationId(@PathVariable id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
         resourceService.findAllProblemsByOrganizationId(id, pageable).mapToResourceRepresentation()

@@ -2,7 +2,6 @@ package org.orkg.graph.adapter.input.rest
 
 import java.net.URI
 import javax.validation.Valid
-import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
@@ -11,7 +10,6 @@ import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.ResourceUseCases
@@ -60,24 +58,6 @@ class ClassController(
     @GetMapping("/", params = ["ids"])
     fun findByIds(@RequestParam ids: List<ThingId>, pageable: Pageable): Page<ClassRepresentation> =
         service.findAllById(ids, pageable).mapToClassRepresentation()
-
-    @GetMapping("/{id}/resources/")
-    fun findResourcesWithClass(
-        @PathVariable id: ThingId,
-        @RequestParam("q", required = false) string: String?,
-        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
-        @RequestParam("creator", required = false) creator: ContributorId?,
-        @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
-        pageable: Pageable
-    ): Page<ResourceRepresentation> {
-        return resourceService.findAll(
-            includeClasses = setOf(id),
-            label = string?.let { SearchString.of(it, exactMatch) },
-            createdBy = creator,
-            visibility = visibility,
-            pageable = pageable
-        ).mapToResourceRepresentation()
-    }
 
     @GetMapping("/")
     fun findByLabel(

@@ -3,7 +3,6 @@ package org.orkg.contenttypes.adapter.input.rest
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeCurator
 import org.orkg.common.contributorId
-import org.orkg.contenttypes.input.ContentTypeResourcesUseCase
 import org.orkg.contenttypes.input.RetrieveAuthorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.AuthorRepresentationAdapter
@@ -26,21 +25,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/comparisons", produces = [MediaType.APPLICATION_JSON_VALUE])
 class LegacyComparisonController(
-    private val service: ContentTypeResourcesUseCase,
     private val resourceService: ResourceUseCases,
     private val authorService: RetrieveAuthorUseCase,
     override val statementService: StatementUseCases,
     override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
 ) : AuthorRepresentationAdapter {
-    @GetMapping("/metadata/featured", params = ["featured=true"])
-    fun getFeaturedComparisons(pageable: Pageable) =
-        service.loadFeaturedComparisons(pageable)
-
-    @GetMapping("/metadata/featured", params = ["featured=false"])
-    fun getNonFeaturedComparisons(pageable: Pageable) =
-        service.loadNonFeaturedComparisons(pageable)
-
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorizeCurator
@@ -54,18 +44,6 @@ class LegacyComparisonController(
         resourceService.markAsNonFeatured(id)
     }
 
-    @GetMapping("/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ThingId): Boolean? =
-        resourceService.getFeaturedResourceFlag(id)
-
-    @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
-    fun getUnlistedComparisons(pageable: Pageable) =
-        service.loadUnlistedComparisons(pageable)
-
-    @GetMapping("/metadata/unlisted", params = ["unlisted=false"])
-    fun getListedComparisons(pageable: Pageable) =
-        service.loadListedComparisons(pageable)
-
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorizeCurator
@@ -78,9 +56,6 @@ class LegacyComparisonController(
     fun unmarkUnlisted(@PathVariable id: ThingId) {
         resourceService.markAsListed(id)
     }
-
-    @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ThingId): Boolean = resourceService.getUnlistedResourceFlag(id)
 
     @GetMapping("/{id}/authors")
     fun getTopAuthors(@PathVariable id: ThingId, pageable: Pageable) =

@@ -26,4 +26,4 @@ data class Paper(
     val visibility: Visibility,
     val modifiable: Boolean,
     val unlistedBy: ContributorId? = null
-)
+) : ContentType

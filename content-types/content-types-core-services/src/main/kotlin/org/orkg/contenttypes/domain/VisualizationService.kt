@@ -101,7 +101,7 @@ class VisualizationService(
             pageable = pageable
         ).pmap { it.toVisualization() }
 
-    private fun Resource.toVisualization(): Visualization {
+    internal fun Resource.toVisualization(): Visualization {
         val statements = statementRepository.fetchAsBundle(
             id = id,
             configuration = BundleConfiguration(

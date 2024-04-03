@@ -216,7 +216,7 @@ class PaperService(
         )
     }
 
-    private fun Resource.toPaper(): Paper {
+    internal fun Resource.toPaper(): Paper {
         val statements = (
             statementRepository.fetchAsBundle(
                 id = id,

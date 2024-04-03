@@ -174,7 +174,7 @@ class TemplateService(
         steps.execute(command, UpdateTemplatePropertyState())
     }
 
-    private fun Resource.toTemplate(): Template {
+    internal fun Resource.toTemplate(): Template {
         val statements = statementRepository.fetchAsBundle(
             id = id,
             configuration = BundleConfiguration(

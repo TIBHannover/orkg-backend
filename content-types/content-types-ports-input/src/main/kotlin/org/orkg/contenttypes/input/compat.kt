@@ -22,3 +22,5 @@ interface ResearchFieldHierarchyUseCases : RetrieveResearchFieldHierarchyUseCase
 interface LiteratureListUseCases : RetrieveLiteratureListUseCase
 
 interface SmartReviewUseCases : RetrieveSmartReviewUseCase
+
+interface ContentTypeUseCases : RetrieveContentTypeUseCase

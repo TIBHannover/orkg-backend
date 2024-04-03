@@ -148,7 +148,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("verified").description("Determines if the paper was verified by a curator."),
                         fieldWithPath("visibility").description("""Visibility of the paper. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
                         fieldWithPath("modifiable").description("Whether this paper can be modified."),
-                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this paper.").optional()
+                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this paper.").optional(),
+                        fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `paper`."),
                     ).and(authorListFields("paper"))
                         .and(publicationInfoFields("paper"))
                         .and(sustainableDevelopmentGoalsFields("paper"))

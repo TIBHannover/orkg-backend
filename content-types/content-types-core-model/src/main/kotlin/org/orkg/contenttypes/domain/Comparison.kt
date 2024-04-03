@@ -31,7 +31,7 @@ data class Comparison(
     val isAnonymized: Boolean,
     val visibility: Visibility,
     val unlistedBy: ContributorId? = null
-)
+) : ContentType
 
 data class ComparisonRelatedResource(
     val id: ThingId,

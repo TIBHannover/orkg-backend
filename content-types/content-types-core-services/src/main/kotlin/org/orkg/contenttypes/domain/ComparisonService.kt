@@ -319,7 +319,7 @@ class ComparisonService(
         )
     }
 
-    private fun Resource.toComparison(): Comparison {
+    internal fun Resource.toComparison(): Comparison {
         val statements = (
             statementRepository.fetchAsBundle(
                 id = id,

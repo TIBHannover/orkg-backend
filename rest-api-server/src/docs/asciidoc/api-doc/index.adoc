@@ -388,6 +388,9 @@ include::parts/templates.adoc[leveloffset=+1]
 [[template-instances]]
 include::parts/template-instances.adoc[leveloffset=+1]
 
+[[content-types]]
+include::parts/content-types.adoc[leveloffset=+1]
+
 [[rdf-integration]]
 include::parts/rdf.adoc[leveloffset=+1]
 

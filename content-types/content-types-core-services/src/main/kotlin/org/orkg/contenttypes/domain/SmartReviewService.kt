@@ -62,7 +62,7 @@ class SmartReviewService(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toSmartReview() }
 
-    private fun Resource.toSmartReview(): SmartReview {
+    internal fun Resource.toSmartReview(): SmartReview {
         var root = id
         val statements = when {
             Classes.smartReviewPublished in classes -> {

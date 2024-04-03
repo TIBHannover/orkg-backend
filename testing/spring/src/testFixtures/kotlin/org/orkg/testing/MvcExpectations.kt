@@ -60,6 +60,7 @@ fun ResultActions.andExpectPaper(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.verified", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
     .andExpect(jsonPath("$path.modifiable", `is`(notNullValue())))
+    .andExpect(jsonPath("$path._class").value("paper"))
 
 fun ResultActions.andExpectResource(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
@@ -140,6 +141,7 @@ fun ResultActions.andExpectComparison(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.versions[*].created_at", `is`(notNullValue())))
     .andExpect(jsonPath("$path.is_anonymized", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
+    .andExpect(jsonPath("$path._class").value("comparison"))
 
 fun ResultActions.andExpectContribution(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
@@ -176,6 +178,7 @@ fun ResultActions.andExpectVisualization(path: String = "$"): ResultActions = th
     .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
+    .andExpect(jsonPath("$path._class").value("visualization"))
 
 fun ResultActions.andExpectTemplate(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
@@ -219,6 +222,7 @@ fun ResultActions.andExpectTemplate(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.observatories").isArray)
     .andExpect(jsonPath("$path.organizations").isArray)
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
+    .andExpect(jsonPath("$path._class").value("template"))
 
 fun ResultActions.andExpectRosettaTemplate(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
@@ -301,6 +305,7 @@ fun ResultActions.andExpectLiteratureList(path: String = "$"): ResultActions = t
     .andExpect(jsonPath("$path.sections[*].heading", `is`(notNullValue())))
     .andExpect(jsonPath("$path.sections[*].heading_size", `is`(notNullValue())))
     .andExpect(jsonPath("$path.sections[*].text", `is`(notNullValue())))
+    .andExpect(jsonPath("$path._class").value("literature-list"))
 
 fun ResultActions.andExpectSmartReview(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
@@ -360,6 +365,7 @@ fun ResultActions.andExpectSmartReview(path: String = "$"): ResultActions = this
     // text section specific
     .andExpect(jsonPath("$path.sections[*].text", `is`(notNullValue())))
     .andExpect(jsonPath("$path.references").isArray)
+    .andExpect(jsonPath("$path._class").value("smart-review"))
 
 fun ResultActions.andExpectObservatory(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))

@@ -26,7 +26,7 @@ data class Template(
     val organizations: List<OrganizationId>,
     val visibility: Visibility,
     val unlistedBy: ContributorId? = null
-)
+) : ContentType
 
 data class TemplateRelations(
     val researchFields: List<ObjectIdAndLabel> = emptyList(),

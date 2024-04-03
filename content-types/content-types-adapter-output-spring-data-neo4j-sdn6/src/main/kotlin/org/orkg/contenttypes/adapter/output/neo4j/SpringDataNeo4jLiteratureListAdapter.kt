@@ -10,15 +10,11 @@ import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Cypher.unionAll
-import org.neo4j.cypherdsl.core.Cypher.valueAt
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.size
 import org.neo4j.cypherdsl.core.Functions.toLower
 import org.neo4j.cypherdsl.core.Node
-import org.neo4j.cypherdsl.core.PatternElement
-import org.neo4j.cypherdsl.core.StatementBuilder
-import org.neo4j.cypherdsl.core.SymbolicName
+import org.neo4j.cypherdsl.core.RelationshipPattern
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -67,7 +63,7 @@ class SpringDataNeo4jLiteratureListAdapter(
         sustainableDevelopmentGoal: ThingId?
     ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
         .withCommonQuery {
-            val patterns: (Node) -> Collection<PatternElement> = { node ->
+            val patterns: (Node) -> Collection<RelationshipPattern> = { node ->
                 listOfNotNull(
                     sustainableDevelopmentGoal?.let {
                         node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
@@ -77,16 +73,7 @@ class SpringDataNeo4jLiteratureListAdapter(
             }
             val node = name("node")
             val nodes = name("nodes")
-            val matchLiteratureLists = when (published) {
-                true -> matchPublishedLiteratureLists(node, patterns)
-                false -> matchUnpublishedLiteratureLists(node, patterns)
-                else -> call(
-                    unionAll(
-                        matchPublishedLiteratureLists(node, patterns).returning(node).build(),
-                        matchUnpublishedLiteratureLists(node, patterns).returning(node).build()
-                    )
-                ).with(node)
-            }
+            val matchLiteratureLists = matchLiteratureList(node, patterns, published)
             val match = label?.let { searchString ->
                 when (searchString) {
                     is ExactSearchString -> {
@@ -155,28 +142,4 @@ class SpringDataNeo4jLiteratureListAdapter(
         .countOver("node")
         .mappedBy(ResourceMapper("node"))
         .fetch(pageable, false)
-
-    private fun matchPublishedLiteratureLists(
-        symbolicName: SymbolicName,
-        patternGenerator: (Node) -> Collection<PatternElement>
-    ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere {
-        val llp = node("LiteratureListPublished").named("llp")
-        val lll = name("lll")
-        val patterns = patternGenerator(llp)
-        return match(
-            llp.relationshipFrom(node("LiteratureList").named(lll), RELATED)
-                .withProperties("predicate_id", literalOf<String>(Predicates.hasPublishedVersion.value))
-        ).let {
-            if (patterns.isNotEmpty()) it.match(patterns) else it
-        }.with(
-            lll.asExpression(),
-            valueAt(call("apoc.coll.sortNodes").withArgs(collect(llp), literalOf<String>("created_at")).asFunction(), 0).`as`(symbolicName)
-        )
-    }
-
-    private fun matchUnpublishedLiteratureLists(
-        symbolicName: SymbolicName,
-        patternGenerator: (Node) -> Collection<PatternElement>
-    ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
-        match(node("LiteratureList").named(symbolicName), patternGenerator)
 }

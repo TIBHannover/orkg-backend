@@ -139,7 +139,8 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                         fieldWithPath("sections[].predicates[].description").description("The description of the predicate.").optional(),
                         fieldWithPath("sections[].text").description("The text contents of the text section.").optional(),
                         fieldWithPath("sections[].classes").description("The additional classes of the text section.").optional(),
-                        fieldWithPath("references").description("The list of bibtex references of the smart review.").optional()
+                        fieldWithPath("references").description("The list of bibtex references of the smart review.").optional(),
+                        fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `smart-review`."),
                     ).and(authorListFields("smart review"))
                         .and(sustainableDevelopmentGoalsFields("smart review"))
                 )

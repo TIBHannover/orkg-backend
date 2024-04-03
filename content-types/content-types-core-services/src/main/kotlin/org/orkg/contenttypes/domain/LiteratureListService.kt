@@ -61,7 +61,7 @@ class LiteratureListService(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toLiteratureList() }
 
-    private fun Resource.toLiteratureList(): LiteratureList {
+    internal fun Resource.toLiteratureList(): LiteratureList {
         var root = id
         val statements = when {
             Classes.literatureListPublished in classes -> {

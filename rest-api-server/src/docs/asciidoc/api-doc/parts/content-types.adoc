@@ -1,0 +1,19 @@
+= Content-Types
+
+Content-Types represent a collection of concepts in the knowledge graph.
+They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+The provided endpoints allow to operate across multiple concepts.
+
+[[content-types-list]]
+== Listing Content-Types
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of content-types.
+If no paging request parameters are provided, the default values will be used.
+
+NOTE: Whenever possible, individual content-type endpoints should be used, to optimize performance.
+
+operation::content-types-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::content-types-get-paged-with-parameters[snippets='request-parameters']

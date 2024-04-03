@@ -20,4 +20,4 @@ data class Visualization(
     val createdBy: ContributorId,
     val visibility: Visibility,
     val unlistedBy: ContributorId? = null
-)
+) : ContentType

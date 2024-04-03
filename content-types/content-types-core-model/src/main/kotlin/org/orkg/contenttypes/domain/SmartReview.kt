@@ -32,7 +32,7 @@ data class SmartReview(
     val published: Boolean,
     val sections: List<SmartReviewSection>,
     val references: List<String>
-)
+) : ContentType
 
 sealed interface SmartReviewSection {
     val id: ThingId

@@ -27,6 +27,11 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
 
+sealed interface ContentTypeRepresentation {
+    @get:JsonProperty("_class")
+    val jsonClass: String
+}
+
 data class PaperRepresentation(
     val id: ThingId,
     val title: String,
@@ -54,8 +59,9 @@ data class PaperRepresentation(
     val modifiable: Boolean,
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
-    val unlistedBy: ContributorId?
-)
+    val unlistedBy: ContributorId?,
+    override val jsonClass: String = "paper"
+) : ContentTypeRepresentation
 
 data class PublicationInfoRepresentation(
     @get:JsonProperty("published_month")
@@ -130,8 +136,9 @@ data class ComparisonRepresentation(
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
-    val unlistedBy: ContributorId?
-)
+    val unlistedBy: ContributorId?,
+    override val jsonClass: String = "comparison"
+) : ContentTypeRepresentation
 
 data class ComparisonRelatedResourceRepresentation(
     val id: ThingId,
@@ -192,8 +199,9 @@ data class VisualizationRepresentation(
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
-    val unlistedBy: ContributorId?
-)
+    val unlistedBy: ContributorId?,
+    override val jsonClass: String = "visualization"
+) : ContentTypeRepresentation
 
 data class AuthorDTO(
     val id: ThingId?,
@@ -254,8 +262,9 @@ data class TemplateRepresentation(
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
-    val unlistedBy: ContributorId?
-)
+    val unlistedBy: ContributorId?,
+    override val jsonClass: String = "template"
+) : ContentTypeRepresentation
 
 data class TemplateRelationRepresentation(
     @get:JsonProperty("research_fields")
@@ -372,8 +381,9 @@ data class LiteratureListRepresentation(
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId? = null,
     val published: Boolean,
-    val sections: List<LiteratureListSectionRepresentation>
-)
+    val sections: List<LiteratureListSectionRepresentation>,
+    override val jsonClass: String = "literature-list"
+) : ContentTypeRepresentation
 
 sealed interface LiteratureListSectionRepresentation {
     val id: ThingId
@@ -418,8 +428,9 @@ data class SmartReviewRepresentation(
     val unlistedBy: ContributorId? = null,
     val published: Boolean,
     val sections: List<SmartReviewSectionRepresentation>,
-    val references: List<String>
-)
+    val references: List<String>,
+    override val jsonClass: String = "smart-review"
+) : ContentTypeRepresentation
 
 sealed interface SmartReviewSectionRepresentation {
     val id: ThingId

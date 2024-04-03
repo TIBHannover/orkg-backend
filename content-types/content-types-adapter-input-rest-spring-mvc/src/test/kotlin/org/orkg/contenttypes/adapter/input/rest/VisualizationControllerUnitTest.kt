@@ -88,7 +88,8 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this visualization."),
                         fieldWithPath("visibility").description("""Visibility of the visualization. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
-                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this visualization.").optional()
+                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this visualization.").optional(),
+                        fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `visualization`."),
                     ).and(authorListFields("visualization"))
                 )
             )

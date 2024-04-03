@@ -10,13 +10,13 @@ import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Cypher.unionAll
 import org.neo4j.cypherdsl.core.Cypher.valueAt
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.size
 import org.neo4j.cypherdsl.core.Functions.toLower
 import org.neo4j.cypherdsl.core.Node
 import org.neo4j.cypherdsl.core.PatternElement
+import org.neo4j.cypherdsl.core.RelationshipPattern
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
 import org.orkg.common.ContributorId
@@ -66,7 +66,7 @@ class SpringDataNeo4jSmartReviewAdapter(
         sustainableDevelopmentGoal: ThingId?
     ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
         .withCommonQuery {
-            val patterns: (Node) -> Collection<PatternElement> = { node ->
+            val patterns: (Node) -> Collection<RelationshipPattern> = { node ->
                 listOfNotNull(
                     sustainableDevelopmentGoal?.let {
                         node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
@@ -76,16 +76,7 @@ class SpringDataNeo4jSmartReviewAdapter(
             }
             val node = name("node")
             val nodes = name("nodes")
-            val matchSmartReviews = when (published) {
-                true -> matchPublishedSmartReviews(node, patterns)
-                false -> matchUnpublishedSmartReviews(node, patterns)
-                else -> call(
-                    unionAll(
-                        matchPublishedSmartReviews(node, patterns).returning(node).build(),
-                        matchUnpublishedSmartReviews(node, patterns).returning(node).build()
-                    )
-                ).with(node)
-            }
+            val matchSmartReviews = matchSmartReview(node, patterns, published)
             val match = label?.let { searchString ->
                 when (searchString) {
                     is ExactSearchString -> {

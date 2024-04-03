@@ -28,7 +28,7 @@ data class LiteratureList(
     val unlistedBy: ContributorId? = null,
     val published: Boolean,
     val sections: List<LiteratureListSection>
-)
+) : ContentType
 
 sealed interface LiteratureListSection {
     val id: ThingId

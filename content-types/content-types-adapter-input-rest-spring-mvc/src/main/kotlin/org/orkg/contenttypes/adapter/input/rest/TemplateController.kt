@@ -178,7 +178,6 @@ class TemplateController(
         @field:Valid
         val relations: TemplateRelationsDTO,
         @field:Valid
-        @field:Size(min = 1)
         val properties: List<TemplatePropertyRequest>,
         @JsonProperty("is_closed")
         val isClosed: Boolean,

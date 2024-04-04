@@ -30,7 +30,7 @@ class TemplateTargetClassValidatorUnitTest {
     private val statementRepository: StatementRepository = mockk()
 
     private val templateTargetClassValidator =
-        TemplateTargetClassValidator<ThingId?, Unit>(classRepository, statementRepository) { it }
+        TemplateTargetClassValidator<ThingId?, ThingId?>(classRepository, statementRepository, { it }, { it })
 
     @BeforeEach
     fun resetState() {
@@ -55,7 +55,7 @@ class TemplateTargetClassValidatorUnitTest {
             )
         } returns pageOf()
 
-        assertDoesNotThrow { templateTargetClassValidator(targetClass, Unit) }
+        assertDoesNotThrow { templateTargetClassValidator(targetClass, null) }
 
         verify(exactly = 1) { classRepository.findById(targetClass) }
         verify(exactly = 1) {
@@ -69,7 +69,7 @@ class TemplateTargetClassValidatorUnitTest {
 
     @Test
     fun `Given a target class id, when null, it returns success`() {
-        assertDoesNotThrow { templateTargetClassValidator(null, Unit) }
+        assertDoesNotThrow { templateTargetClassValidator(null, null) }
     }
 
     @Test
@@ -78,7 +78,7 @@ class TemplateTargetClassValidatorUnitTest {
 
         every { classRepository.findById(targetClass) } returns Optional.empty()
 
-        assertThrows<ClassNotFound> { templateTargetClassValidator(targetClass, Unit) }
+        assertThrows<ClassNotFound> { templateTargetClassValidator(targetClass, null) }
 
         verify(exactly = 1) { classRepository.findById(targetClass) }
     }
@@ -105,7 +105,7 @@ class TemplateTargetClassValidatorUnitTest {
             )
         )
 
-        assertThrows<TemplateAlreadyExistsForClass> { templateTargetClassValidator(targetClassId, Unit) } shouldBe exception
+        assertThrows<TemplateAlreadyExistsForClass> { templateTargetClassValidator(targetClassId, null) } shouldBe exception
 
         verify(exactly = 1) { classRepository.findById(targetClassId) }
         verify(exactly = 1) {
@@ -115,5 +115,11 @@ class TemplateTargetClassValidatorUnitTest {
                 pageable = PageRequests.SINGLE
             )
         }
+    }
+
+    @Test
+    fun `Given a target class id, when it is identical to old target class, it returns success`() {
+        val targetClass = ThingId("targetClass")
+        assertDoesNotThrow { templateTargetClassValidator(targetClass, targetClass) }
     }
 }

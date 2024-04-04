@@ -12,18 +12,21 @@ import org.orkg.graph.output.StatementRepository
 class TemplateTargetClassValidator<T, S>(
     private val classRepository: ClassRepository,
     private val statementRepository: StatementRepository,
-    private val valueSelector: (T) -> ThingId?
+    private val newValueSelector: (T) -> ThingId?,
+    private val oldValueSelector: (S) -> ThingId? = { null }
 ) : Action<T, S> {
     override fun invoke(command: T, state: S): S {
-        valueSelector(command)?.let { targetClass ->
-            classRepository.findById(targetClass).orElseThrow { ClassNotFound.withThingId(targetClass) }
+        val newTargetClass = newValueSelector(command)
+        val oldTargetClass = oldValueSelector(state)
+        if (newTargetClass != null && newTargetClass != oldTargetClass) {
+            classRepository.findById(newTargetClass).orElseThrow { ClassNotFound.withThingId(newTargetClass) }
             val statements = statementRepository.findAll(
                 predicateId = Predicates.shTargetClass,
-                objectId = targetClass,
+                objectId = newTargetClass,
                 pageable = PageRequests.SINGLE
             )
             if (statements.numberOfElements > 0) {
-                throw TemplateAlreadyExistsForClass(targetClass, statements.single().subject.id)
+                throw TemplateAlreadyExistsForClass(newTargetClass, statements.single().subject.id)
             }
         }
         return state

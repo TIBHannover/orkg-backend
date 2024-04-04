@@ -118,7 +118,7 @@ class TemplateService(
     override fun create(command: CreateTemplateCommand): ThingId {
         val steps = listOf(
             LabelValidator { it.label },
-            TemplateTargetClassValidator(classRepository, statementRepository) { it.targetClass },
+            TemplateTargetClassValidator(classRepository, statementRepository, { it.targetClass }),
             TemplateRelationsCreateValidator(resourceRepository, predicateRepository),
             TemplatePropertiesValidator(predicateRepository, classRepository) { it.properties },
             OrganizationValidator(organizationRepository, { it.organizations }),
@@ -136,6 +136,7 @@ class TemplateService(
 
     override fun createTemplateProperty(command: CreateTemplatePropertyCommand): ThingId {
         val steps = listOf(
+
             TemplatePropertyExistenceCreateValidator(resourceRepository),
             TemplatePropertyTemplateCreateValidator(statementRepository),
             TemplatePropertyValidator(predicateRepository, classRepository) { it },
@@ -148,7 +149,7 @@ class TemplateService(
         val steps = listOf(
             TemplateExistenceValidator(this),
             LabelValidator { it.label },
-            TemplateTargetClassValidator(classRepository, statementRepository) { it.targetClass },
+            TemplateTargetClassValidator(classRepository, statementRepository, { it.targetClass }, { it.template!!.targetClass.id }),
             TemplateRelationsUpdateValidator(resourceRepository, predicateRepository),
             TemplatePropertiesValidator(predicateRepository, classRepository) { it.properties },
             OrganizationValidator(organizationRepository, { it.organizations }, { it.template!!.organizations }),

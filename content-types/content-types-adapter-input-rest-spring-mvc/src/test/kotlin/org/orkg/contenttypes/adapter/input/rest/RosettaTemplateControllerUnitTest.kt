@@ -24,6 +24,7 @@ import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
+import org.springframework.restdocs.payload.PayloadDocumentation
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -66,27 +67,7 @@ internal class RosettaTemplateControllerUnitTest : RestDocsTest("rosetta-templat
                         fieldWithPath("description").description("The description of the rosetta template."),
                         fieldWithPath("formatted_label").description("The formatted label pattern of the rosetta template."),
                         fieldWithPath("target_class").description("The target class of the rosetta template."),
-                        fieldWithPath("properties").description("The properties of the rosetta template."),
-                        fieldWithPath("properties[].id").description("The id of the property."),
-                        fieldWithPath("properties[].label").description("The label of the property."),
-                        fieldWithPath("properties[].placeholder").description("The placeholder of the property."),
-                        fieldWithPath("properties[].description").description("The description of the property."),
-                        fieldWithPath("properties[].order").description("The order of the property."),
-                        fieldWithPath("properties[].min_count").description("The minimum cardinality of the property."),
-                        fieldWithPath("properties[].max_count").description("The maximum cardinality of the property."),
-                        fieldWithPath("properties[].pattern").description("The pattern (regex) of the property."),
-                        fieldWithPath("properties[].path").description("The predicate path of the property."),
-                        fieldWithPath("properties[].path.id").description("The id of the predicate."),
-                        fieldWithPath("properties[].path.label").description("The label of the predicate."),
-                        fieldWithPath("properties[].datatype").description("The data type of the property, if the property is a literal property.").optional(),
-                        timestampFieldWithPath("properties[].created_at", "the property was created."),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("properties[].created_by").description("The UUID of the user or service who created this property."),
-                        fieldWithPath("properties[].datatype.id").description("The id of the data type.").optional(),
-                        fieldWithPath("properties[].datatype.label").description("The label of the data type.").optional(),
-                        fieldWithPath("properties[].class").description("The class range of the property, if the property is a literal property.").optional(),
-                        fieldWithPath("properties[].class.id").description("The id of the class.").optional(),
-                        fieldWithPath("properties[].class.label").description("The label of the class.").optional(),
+                        PayloadDocumentation.subsectionWithPath("properties").description("The list of properties of the rosetta template. See <<template-properties,template properties>> for more information."),
                         fieldWithPath("is_closed").description("Whether the rosetta template is closed or not. When a rosetta template is closed, its properties cannot be modified."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta template belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta template belongs to."),

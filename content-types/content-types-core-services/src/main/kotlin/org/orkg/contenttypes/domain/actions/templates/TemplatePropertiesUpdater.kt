@@ -19,7 +19,7 @@ class TemplatePropertiesUpdater(
         resourceService: ResourceUseCases,
         statementService: StatementUseCases,
     ) : this(
-        object : AbstractTemplatePropertyCreator(resourceService, literalService, statementService) {},
+        AbstractTemplatePropertyCreator(resourceService, literalService, statementService),
         AbstractTemplatePropertyUpdater(literalService, resourceService, statementService),
         AbstractTemplatePropertyDeleter(resourceService, statementService)
     )

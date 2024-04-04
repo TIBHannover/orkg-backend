@@ -7,11 +7,15 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
+import org.orkg.contenttypes.domain.InvalidBounds
+import org.orkg.contenttypes.domain.InvalidDatatype
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.InvalidMonth
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.MissingPropertyValues
+import org.orkg.contenttypes.domain.NumberTooHigh
+import org.orkg.contenttypes.domain.NumberTooLow
 import org.orkg.contenttypes.domain.ObjectMustNotBeALiteral
 import org.orkg.contenttypes.domain.ObjectIsNotAClass
 import org.orkg.contenttypes.domain.ObjectIsNotAList
@@ -351,6 +355,106 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun invalidBounds() {
+        val min = "5"
+        val max = "4"
+
+        get("/invalid-bounds")
+            .param("min", min)
+            .param("max", max)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-bounds"))
+            .andExpect(jsonPath("$.message").value("""Invalid bounds. Min bound must be less than or equal to max bound. Found: min: "$min", max: "$max"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidDatatype() {
+        val actual = "int"
+        val expected = "string"
+
+        get("/invalid-datatype")
+            .param("actual", actual)
+            .param("expected", expected)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-datatype"))
+            .andExpect(jsonPath("$.message").value("""Invalid datatype. Found "$actual", expected "$expected"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidDatatypeWithSeveralPossibleTypes() {
+        val actual = "int"
+        val expected1 = "string"
+        val expected2 = "date"
+        val expected3 = "uri"
+        val expected4 = "float"
+
+        get("/invalid-datatype-several")
+            .param("actual", actual)
+            .param("expected", expected1, expected2, expected3, expected4)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-datatype-several"))
+            .andExpect(jsonPath("$.message").value("""Invalid datatype. Found "$actual", expected either of "$expected1", "$expected2", "$expected3", "$expected4"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun numberTooLow() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val objectId = "#temp1"
+        val minInclusive = "10"
+        val label = "5"
+
+        get("/number-too-low")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("objectId", objectId)
+            .param("minInclusive", minInclusive)
+            .param("label", label)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/number-too-low"))
+            .andExpect(jsonPath("$.message").value("""Number "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" must be at least "$minInclusive"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun numberTooHigh() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val objectId = "#temp1"
+        val maxInclusive = "10"
+        val label = "5"
+
+        get("/number-too-high")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("objectId", objectId)
+            .param("maxInclusive", maxInclusive)
+            .param("label", label)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/number-too-high"))
+            .andExpect(jsonPath("$.message").value("""Number "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" must be at most "$maxInclusive"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -485,6 +589,52 @@ internal class ExceptionControllerUnitTest {
             @RequestParam templatePropertyId: ThingId,
         ) {
             throw UnrelatedTemplateProperty(templateId, templatePropertyId)
+        }
+
+        @GetMapping("/invalid-bounds")
+        fun invalidBounds(
+            @RequestParam min: Number,
+            @RequestParam max: Number,
+        ) {
+            throw InvalidBounds(min, max)
+        }
+
+        @GetMapping("/invalid-datatype")
+        fun invalidDatatype(
+            @RequestParam actual: ThingId,
+            @RequestParam expected: ThingId,
+        ) {
+            throw InvalidDatatype(actual, expected)
+        }
+
+        @GetMapping("/invalid-datatype-several")
+        fun invalidDatatype(
+            @RequestParam actual: ThingId,
+            @RequestParam expected: List<ThingId>,
+        ) {
+            throw InvalidDatatype(actual, expected[0], expected[1], *expected.drop(2).toTypedArray())
+        }
+
+        @GetMapping("/number-too-low")
+        fun numberTooLow(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam objectId: String,
+            @RequestParam predicateId: ThingId,
+            @RequestParam label: String,
+            @RequestParam minInclusive: Number
+        ) {
+            throw NumberTooLow(templatePropertyId, objectId, predicateId, label, minInclusive)
+        }
+
+        @GetMapping("/number-too-high")
+        fun numberTooHigh(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam objectId: String,
+            @RequestParam predicateId: ThingId,
+            @RequestParam label: String,
+            @RequestParam maxInclusive: Number
+        ) {
+            throw NumberTooHigh(templatePropertyId, objectId, predicateId, label, maxInclusive)
         }
     }
 

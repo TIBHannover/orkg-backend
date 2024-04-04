@@ -44,23 +44,3 @@ The updated template (object) can be retrieved by following the URI in the `Loca
 NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields such as `formatted_label`, meaning that the corresponding fields should not be updated.
 
 operation::templates-update[snippets='request-fields,curl-request,http-response']
-
-[[templates-create-properties]]
-== Creating template properties
-
-A `POST` request creates a new template property with all the given parameters.
-The response will be `201 Created` when successful.
-The updated template (object) can be retrieved by following the URI in the `Location` header field.
-
-operation::templates-create-property[snippets='request-fields,curl-request,http-response']
-
-[[templates-edit-properties]]
-== Editing a template property
-
-A `PUT` request updates an existing template property with all the given parameters.
-The response will be `204 No Content` when successful.
-The updated template property (object) can be retrieved by following the URI in the `Location` header field.
-
-NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields, meaning that the corresponding fields should not be updated.
-
-operation::templates-update-property[snippets='request-fields,curl-request,http-response']

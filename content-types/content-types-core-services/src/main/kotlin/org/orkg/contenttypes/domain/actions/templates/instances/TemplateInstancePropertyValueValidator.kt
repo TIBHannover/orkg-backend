@@ -5,6 +5,9 @@ import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.LiteralTemplateProperty
 import org.orkg.contenttypes.domain.MissingPropertyValues
+import org.orkg.contenttypes.domain.NumberLiteralTemplateProperty
+import org.orkg.contenttypes.domain.NumberTooHigh
+import org.orkg.contenttypes.domain.NumberTooLow
 import org.orkg.contenttypes.domain.ObjectIsNotAClass
 import org.orkg.contenttypes.domain.ObjectIsNotAList
 import org.orkg.contenttypes.domain.ObjectIsNotALiteral
@@ -12,10 +15,12 @@ import org.orkg.contenttypes.domain.ObjectIsNotAPredicate
 import org.orkg.contenttypes.domain.ObjectMustNotBeALiteral
 import org.orkg.contenttypes.domain.ResourceIsNotAnInstanceOfTargetClass
 import org.orkg.contenttypes.domain.ResourceTemplateProperty
+import org.orkg.contenttypes.domain.StringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.Template
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.TooManyPropertyValues
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
+import org.orkg.contenttypes.domain.UntypedTemplateProperty
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ThingIdValidator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceCommand
@@ -139,13 +144,39 @@ class TemplateInstancePropertyValueValidator(
                     }
                 }
             }
+            is UntypedTemplateProperty -> {}
         }
     }
 
     private fun validateObjectLabel(property: TemplateProperty, objectId: String, label: String) {
-        property.pattern?.let { pattern ->
-            if (!label.matches(Regex(pattern))) {
-                throw LabelDoesNotMatchPattern(property.id, objectId, property.path.id, label, pattern)
+        if (property is StringLiteralTemplateProperty) {
+            property.pattern?.let { pattern ->
+                if (!label.matches(Regex(pattern))) {
+                    throw LabelDoesNotMatchPattern(property.id, objectId, property.path.id, label, pattern)
+                }
+            }
+        } else if (property is NumberLiteralTemplateProperty<*>) {
+            property.minInclusive?.let { minInclusive ->
+                val invalid = when (property.datatype.id) {
+                    Classes.decimal -> label.toDouble() < minInclusive.toDouble()
+                    Classes.integer -> label.toInt() < minInclusive.toInt()
+                    Classes.float -> label.toFloat() < minInclusive.toFloat()
+                    else -> throw IllegalStateException("""Encountered number literal template property "${property.id}" with invalid datatype "${property.datatype}". This is a bug!""")
+                }
+                if (invalid) {
+                    throw NumberTooLow(property.id, objectId, property.path.id, label, minInclusive)
+                }
+            }
+            property.maxInclusive?.let { maxInclusive ->
+                val invalid = when (property.datatype.id) {
+                    Classes.decimal -> maxInclusive.toDouble() < label.toDouble()
+                    Classes.integer -> maxInclusive.toInt() < label.toInt()
+                    Classes.float -> maxInclusive.toFloat() < label.toFloat()
+                    else -> throw IllegalStateException("""Encountered number literal template property "${property.id}" with invalid datatype "${property.datatype}". This is a bug!""")
+                }
+                if (invalid) {
+                    throw NumberTooHigh(property.id, objectId, property.path.id, label, maxInclusive)
+                }
             }
         }
     }

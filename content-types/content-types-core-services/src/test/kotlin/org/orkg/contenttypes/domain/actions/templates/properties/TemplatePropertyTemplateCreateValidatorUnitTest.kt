@@ -18,8 +18,11 @@ import org.orkg.common.PageRequests
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateNumberLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateOtherLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateStringLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateUntypedTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -143,7 +146,10 @@ class TemplatePropertyTemplateCreateValidatorUnitTest {
     companion object {
         @JvmStatic
         fun createTemplatePropertyCommands(): Stream<Arguments> = Stream.of(
-            Arguments.of(dummyCreateLiteralTemplatePropertyCommand()),
+            Arguments.of(dummyCreateUntypedTemplatePropertyCommand()),
+            Arguments.of(dummyCreateStringLiteralTemplatePropertyCommand()),
+            Arguments.of(dummyCreateNumberLiteralTemplatePropertyCommand()),
+            Arguments.of(dummyCreateOtherLiteralTemplatePropertyCommand()),
             Arguments.of(dummyCreateResourceTemplatePropertyCommand())
         )
     }

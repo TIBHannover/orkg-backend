@@ -284,7 +284,6 @@ sealed interface TemplatePropertyRepresentation {
     val minCount: Int?
     @get:JsonProperty("max_count")
     val maxCount: Int?
-    val pattern: String?
     val path: ObjectIdAndLabel
     @get:JsonProperty("created_at")
     val createdAt: OffsetDateTime
@@ -292,7 +291,7 @@ sealed interface TemplatePropertyRepresentation {
     val createdBy: ContributorId
 }
 
-data class LiteralTemplatePropertyRepresentation(
+data class UntypedTemplatePropertyRepresentation(
     override val id: ThingId,
     override val label: String,
     override val placeholder: String?,
@@ -300,12 +299,61 @@ data class LiteralTemplatePropertyRepresentation(
     override val order: Long,
     override val minCount: Int?,
     override val maxCount: Int?,
-    override val pattern: String?,
+    override val path: ObjectIdAndLabel,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId
+) : TemplatePropertyRepresentation
+
+sealed interface LiteralTemplatePropertyRepresentation : TemplatePropertyRepresentation {
+    val datatype: ObjectIdAndLabel
+}
+
+data class StringLiteralTemplatePropertyRepresentation(
+    override val id: ThingId,
+    override val label: String,
+    override val placeholder: String?,
+    override val description: String?,
+    override val order: Long,
+    override val minCount: Int?,
+    override val maxCount: Int?,
+    val pattern: String?,
     override val path: ObjectIdAndLabel,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
-    val datatype: ObjectIdAndLabel
-) : TemplatePropertyRepresentation
+    override val datatype: ObjectIdAndLabel,
+) : LiteralTemplatePropertyRepresentation
+
+data class NumberLiteralTemplatePropertyRepresentation<T : Number>(
+    override val id: ThingId,
+    override val label: String,
+    override val placeholder: String?,
+    override val description: String?,
+    override val order: Long,
+    override val minCount: Int?,
+    override val maxCount: Int?,
+    @JsonProperty("min_inclusive")
+    val minInclusive: T?,
+    @JsonProperty("max_inclusive")
+    val maxInclusive: T?,
+    override val path: ObjectIdAndLabel,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    override val datatype: ObjectIdAndLabel
+) : LiteralTemplatePropertyRepresentation
+
+data class OtherLiteralTemplatePropertyRepresentation(
+    override val id: ThingId,
+    override val label: String,
+    override val placeholder: String?,
+    override val description: String?,
+    override val order: Long,
+    override val minCount: Int?,
+    override val maxCount: Int?,
+    override val path: ObjectIdAndLabel,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    override val datatype: ObjectIdAndLabel
+) : LiteralTemplatePropertyRepresentation
 
 data class ResourceTemplatePropertyRepresentation(
     override val id: ThingId,
@@ -315,7 +363,6 @@ data class ResourceTemplatePropertyRepresentation(
     override val order: Long,
     override val minCount: Int?,
     override val maxCount: Int?,
-    override val pattern: String?,
     override val path: ObjectIdAndLabel,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,

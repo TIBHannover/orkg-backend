@@ -26,6 +26,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.OrganizationNotFound
+import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.InvalidCardinality
 import org.orkg.contenttypes.domain.InvalidMaxCount
 import org.orkg.contenttypes.domain.InvalidMinCount
@@ -34,8 +35,21 @@ import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
+import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateCommand
+import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateNumberLiteralPropertyCommand
+import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateOtherLiteralPropertyCommand
+import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateResourcePropertyCommand
+import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateStringLiteralPropertyCommand
+import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateUntypedPropertyCommand
 import org.orkg.contenttypes.input.TemplateUseCases
+import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateCommand
+import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateNumberLiteralPropertyCommand
+import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateOtherLiteralPropertyCommand
+import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateResourcePropertyCommand
+import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateStringLiteralPropertyCommand
+import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand
 import org.orkg.graph.domain.ClassNotFound
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.Predicates
@@ -57,9 +71,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
+import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
@@ -69,7 +85,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [TemplateController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(
+    classes = [
+        TemplateController::class,
+        ExceptionHandler::class,
+        CommonJacksonModule::class,
+        ContentTypeJacksonModule::class,
+        FixedClockConfig::class
+    ]
+)
 @WebMvcTest(controllers = [TemplateController::class])
 @DisplayName("Given a Template controller")
 internal class TemplateControllerUnitTest : RestDocsTest("templates") {
@@ -114,27 +138,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         fieldWithPath("relations.predicate").description("The predicate that this template relates to. (optional)").optional(),
                         fieldWithPath("relations.predicate.id").description("The id of the predicate that this template relates to.").optional(),
                         fieldWithPath("relations.predicate.label").description("The label of the predicate that this template relates to.").optional(),
-                        fieldWithPath("properties").description("The properties of the template."),
-                        fieldWithPath("properties[].id").description("The id of the property."),
-                        fieldWithPath("properties[].label").description("The label of the property."),
-                        fieldWithPath("properties[].placeholder").description("The placeholder of the property."),
-                        fieldWithPath("properties[].description").description("The description of the property."),
-                        fieldWithPath("properties[].order").description("The order of the property."),
-                        fieldWithPath("properties[].min_count").description("The minimum cardinality of the property."),
-                        fieldWithPath("properties[].max_count").description("The maximum cardinality of the property."),
-                        fieldWithPath("properties[].pattern").description("The pattern (regex) of the property."),
-                        fieldWithPath("properties[].path").description("The predicate path of the property."),
-                        fieldWithPath("properties[].path.id").description("The id of the predicate."),
-                        fieldWithPath("properties[].path.label").description("The label of the predicate."),
-                        fieldWithPath("properties[].datatype").description("The data type of the property, if the property is a literal property.").optional(),
-                        timestampFieldWithPath("properties[].created_at", "the property was created."),
-                        // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("properties[].created_by").description("The UUID of the user or service who created this property."),
-                        fieldWithPath("properties[].datatype.id").description("The id of the data type.").optional(),
-                        fieldWithPath("properties[].datatype.label").description("The label of the data type.").optional(),
-                        fieldWithPath("properties[].class").description("The class range of the property, if the property is a literal property.").optional(),
-                        fieldWithPath("properties[].class.id").description("The id of the class.").optional(),
-                        fieldWithPath("properties[].class.label").description("The label of the class.").optional(),
+                        subsectionWithPath("properties").description("The list of properties of the template. See <<template-properties,template properties>> for more information."),
                         fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to."),
@@ -332,16 +336,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         fieldWithPath("relations.research_fields[]").description("The list of research fields the template relates to."),
                         fieldWithPath("relations.research_problems[]").description("The list of research problems the template relates to."),
                         fieldWithPath("relations.predicate").description("The predicate the template relates to."),
-                        fieldWithPath("properties[]").description("The property descriptions of the template. They can either be literal properties or resource properties. This is denoted by the `class` (resource) and `datatype` (literal) properties."),
-                        fieldWithPath("properties[].label").description("The label of the property."),
-                        fieldWithPath("properties[].placeholder").description("The placeholder of the property. (optional)"),
-                        fieldWithPath("properties[].description").description("The description of the property. (optional)"),
-                        fieldWithPath("properties[].min_count").description("The minimum cardinality of the property. Must be at least one, or zero for infinite cardinality. (optional)").optional(),
-                        fieldWithPath("properties[].max_count").description("The maximum cardinality of the property. Must be at least one, or zero for infinite cardinality. Must also be higher than min_count. (optional)").optional(),
-                        fieldWithPath("properties[].pattern").description("The pattern (regular expression) of the property. (optional)").optional(),
-                        fieldWithPath("properties[].path").description("The predicate id for the path of the property."),
-                        fieldWithPath("properties[].class").description("The class id of the range of the property, indicating a resource property. Mutually exclusive with `datatype`.").optional(),
-                        fieldWithPath("properties[].datatype").description("The class id of the datatype of the property, indicating a literal property. Mutually exclusive with `class`.").optional(),
+                        subsectionWithPath("properties").description("The list of properties of the template. See <<template-properties,template properties>> for more information."),
                         fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to."),
@@ -597,16 +592,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         fieldWithPath("relations.research_fields[]").description("The list of research fields the template relates to."),
                         fieldWithPath("relations.research_problems[]").description("The list of research problems the template relates to."),
                         fieldWithPath("relations.predicate").description("The predicate the template relates to."),
-                        fieldWithPath("properties[]").description("The property descriptions of the template. They can either be literal properties or resource properties. This is denoted by the `class` (resource) and `datatype` (literal) properties. (optional)"),
-                        fieldWithPath("properties[].label").description("The label of the property."),
-                        fieldWithPath("properties[].placeholder").description("The placeholder of the property. (optional)"),
-                        fieldWithPath("properties[].description").description("The description of the property. (optional)"),
-                        fieldWithPath("properties[].min_count").description("The minimum cardinality of the property. Must be at least one, or zero for infinite cardinality. (optional)").optional(),
-                        fieldWithPath("properties[].max_count").description("The maximum cardinality of the property. Must be at least one, or zero for infinite cardinality. Must also be higher than min_count. (optional)").optional(),
-                        fieldWithPath("properties[].pattern").description("The pattern (regular expression) of the property. (optional)").optional(),
-                        fieldWithPath("properties[].path").description("The predicate id for the path of the property."),
-                        fieldWithPath("properties[].class").description("The class id of the range of the property, indicating a resource property. Mutually exclusive with `datatype`.").optional(),
-                        fieldWithPath("properties[].datatype").description("The class id of the datatype of the property, indicating a literal property. Mutually exclusive with `class`.").optional(),
+                        subsectionWithPath("properties").description("The list of updated properties of the template (optional). See <<template-properties,template properties>> for more information."),
                         fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified. (optional)"),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to. (optional)"),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to. (optional)"),
@@ -618,16 +604,16 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         verify(exactly = 1) { templateService.update(any()) }
     }
 
-    @Test
-    @TestWithMockUser
-    @DisplayName("Given a template property create request, when service succeeds, it creates the template property")
-    fun createProperty() {
+    private inline fun <reified T : CreateCommand> createProperty(
+        request: TemplateController.TemplatePropertyRequest,
+        additionalRequestFieldDescriptors: List<FieldDescriptor> = emptyList()
+    ) {
         val templateId = ThingId("R3541")
         val id = ThingId("R123")
         every { templateService.createTemplateProperty(any()) } returns id
 
         documentedPostRequestTo("/api/templates/{templateId}/properties", templateId)
-            .content(literalTemplatePropertyRequest())
+            .content(request)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -644,17 +630,66 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         fieldWithPath("description").description("The description of the property. (optional)"),
                         fieldWithPath("min_count").description("The minimum cardinality of the property. Must be at least one, or zero for infinite cardinality. (optional)").optional(),
                         fieldWithPath("max_count").description("The maximum cardinality of the property. Must be at least one, or zero for infinite cardinality. Must also be higher than min_count. (optional)").optional(),
-                        fieldWithPath("pattern").description("The pattern (regular expression) of the property. (optional)").optional(),
                         fieldWithPath("path").description("The predicate id for the path of the property."),
-                        fieldWithPath("class").type("String").description("The class id of the range of the property, indicating a resource property. Mutually exclusive with `datatype`.").optional(),
-                        fieldWithPath("datatype").type("String").description("The class id of the datatype of the property, indicating a literal property. Mutually exclusive with `class`.").optional()
-                    )
+                    ).and(additionalRequestFieldDescriptors)
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { templateService.createTemplateProperty(any()) }
+        verify(exactly = 1) {
+            templateService.createTemplateProperty(withArg {
+                it.shouldBeInstanceOf<T>()
+            })
+        }
     }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given an untyped template property create request, when service succeeds, it creates the template property")
+    fun createUntypedProperty() = createProperty<CreateUntypedPropertyCommand>(untypedTemplatePropertyRequest())
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a string literal template property create request, when service succeeds, it creates the template property")
+    fun createStringLiteralProperty() = createProperty<CreateStringLiteralPropertyCommand>(
+        stringLiteralTemplatePropertyRequest(),
+        listOf(
+            fieldWithPath("pattern").description("The pattern (regular expression) of the property. (optional)").optional(),
+            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be "String".""")
+        )
+    )
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a number literal template property create request, when service succeeds, it creates the template property")
+    fun createNumberLiteralProperty() = createProperty<CreateNumberLiteralPropertyCommand<*>>(
+        numberLiteralTemplatePropertyRequest(),
+        listOf(
+            fieldWithPath("min_inclusive").description("The minimum value (inclusive) that the number can have (optional).").optional(),
+            fieldWithPath("max_inclusive").description("The maximum value (inclusive) that the number can have (optional).").optional(),
+            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be either of "Integer", "Decimal" or "Float".""")
+        )
+    )
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a literal template property create request, when service succeeds, it creates the template property")
+    fun createOtherLiteralProperty() = createProperty<CreateOtherLiteralPropertyCommand>(
+        otherLiteralTemplatePropertyRequest(),
+        listOf(
+            fieldWithPath("datatype").type("String").description("The class id of the datatype of the property, indicating a literal property.")
+        )
+    )
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a resource template property create request, when service succeeds, it creates the template property")
+    fun createResourceProperty() = createProperty<CreateResourcePropertyCommand>(
+        resourceTemplatePropertyRequest(),
+        listOf(
+            fieldWithPath("class").type("String").description("The class id of the range of the property, indicating a resource property.")
+        )
+    )
 
     @ParameterizedTest
     @MethodSource("templatePropertyRequests")
@@ -810,16 +845,16 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         verify(exactly = 1) { templateService.createTemplateProperty(any()) }
     }
 
-    @Test
-    @TestWithMockUser
-    @DisplayName("Given a template property update request, when service succeeds, it updates the template property")
-    fun updateProperty() {
+    private inline fun <reified T : UpdateCommand> updateProperty(
+        request: TemplateController.TemplatePropertyRequest,
+        additionalRequestFieldDescriptors: List<FieldDescriptor> = emptyList()
+    ) {
         val templateId = ThingId("R3541")
         val id = ThingId("R123")
         every { templateService.updateTemplateProperty(any()) } just runs
 
         documentedPutRequestTo("/api/templates/{templateId}/properties/{propertyId}", templateId, id)
-            .content(literalTemplatePropertyRequest())
+            .content(request)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -836,17 +871,66 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         fieldWithPath("description").description("The description of the property."),
                         fieldWithPath("min_count").description("The minimum cardinality of the property. Must be at least one, or zero for infinite cardinality.").optional(),
                         fieldWithPath("max_count").description("The maximum cardinality of the property. Must be at least one, or zero for infinite cardinality. Must also be higher than min_count.").optional(),
-                        fieldWithPath("pattern").description("The pattern (regular expression) of the property.").optional(),
                         fieldWithPath("path").description("The predicate id for the path of the property."),
-                        fieldWithPath("class").type("String").description("The class id of the range of the property, indicating a resource property. Mutually exclusive with `datatype`.").optional(),
-                        fieldWithPath("datatype").type("String").description("The class id of the datatype of the property, indicating a literal property. Mutually exclusive with `class`.").optional()
-                    )
+                    ).and(additionalRequestFieldDescriptors)
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { templateService.updateTemplateProperty(any()) }
+        verify(exactly = 1) {
+            templateService.updateTemplateProperty(withArg {
+                it.shouldBeInstanceOf<T>()
+            })
+        }
     }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given an untyped template property update request, when service succeeds, it updates the template property")
+    fun updateUntypedProperty() = updateProperty<UpdateUntypedPropertyCommand>(untypedTemplatePropertyRequest())
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a string literal template property update request, when service succeeds, it updates the template property")
+    fun updateStringLiteralProperty() = updateProperty<UpdateStringLiteralPropertyCommand>(
+        stringLiteralTemplatePropertyRequest(),
+        listOf(
+            fieldWithPath("pattern").description("The pattern (regular expression) of the property."),
+            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be "String".""")
+        )
+    )
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a number literal template property update request, when service succeeds, it updates the template property")
+    fun updateNumberLiteralProperty() = updateProperty<UpdateNumberLiteralPropertyCommand<*>>(
+        numberLiteralTemplatePropertyRequest(),
+        listOf(
+            fieldWithPath("min_inclusive").description("The minimum value (inclusive) that the number can have."),
+            fieldWithPath("max_inclusive").description("The maximum value (inclusive) that the number can have."),
+            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be either of "Integer", "Decimal" or "Float".""")
+        )
+    )
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a literal template property update request, when service succeeds, it updates the template property")
+    fun updateOtherLiteralProperty() = updateProperty<UpdateOtherLiteralPropertyCommand>(
+        otherLiteralTemplatePropertyRequest(),
+        listOf(
+            fieldWithPath("datatype").type("String").description("The class id of the datatype of the property, indicating a literal property.")
+        )
+    )
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a resource template property update request, when service succeeds, it updates the template property")
+    fun updateResourceProperty() = updateProperty<UpdateResourcePropertyCommand>(
+        resourceTemplatePropertyRequest(),
+        listOf(
+            fieldWithPath("class").type("String").description("The class id of the range of the property, indicating a resource property.")
+        )
+    )
 
     private fun createTemplateRequest() =
         TemplateController.CreateTemplateRequest(
@@ -860,7 +944,10 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                 predicate = ThingId("P22")
             ),
             properties = listOf(
-                literalTemplatePropertyRequest(),
+                untypedTemplatePropertyRequest(),
+                stringLiteralTemplatePropertyRequest(),
+                numberLiteralTemplatePropertyRequest(),
+                otherLiteralTemplatePropertyRequest(),
                 resourceTemplatePropertyRequest()
             ),
             isClosed = true,
@@ -884,7 +971,10 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                 predicate = ThingId("P22")
             ),
             properties = listOf(
-                literalTemplatePropertyRequest(),
+                untypedTemplatePropertyRequest(),
+                stringLiteralTemplatePropertyRequest(),
+                numberLiteralTemplatePropertyRequest(),
+                otherLiteralTemplatePropertyRequest(),
                 resourceTemplatePropertyRequest()
             ),
             isClosed = true,
@@ -899,19 +989,59 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     companion object {
         @JvmStatic
         fun templatePropertyRequests(): Stream<Arguments> = Stream.of(
-            Arguments.of(literalTemplatePropertyRequest()),
+            Arguments.of(untypedTemplatePropertyRequest()),
+            Arguments.of(stringLiteralTemplatePropertyRequest()),
+            Arguments.of(numberLiteralTemplatePropertyRequest()),
+            Arguments.of(otherLiteralTemplatePropertyRequest()),
             Arguments.of(resourceTemplatePropertyRequest())
         )
 
         @JvmStatic
-        private fun literalTemplatePropertyRequest() =
-            TemplateController.LiteralPropertyRequest(
+        private fun untypedTemplatePropertyRequest() =
+            TemplateController.UntypedPropertyRequest(
+                label = "property label",
+                placeholder = "property placeholder",
+                description = "property description",
+                minCount = 1,
+                maxCount = 2,
+                path = Predicates.field
+            )
+
+        @JvmStatic
+        private fun stringLiteralTemplatePropertyRequest() =
+            TemplateController.StringLiteralPropertyRequest(
+                label = "string literal property label",
+                placeholder = "string literal property placeholder",
+                description = "string literal property description",
+                minCount = 1,
+                maxCount = 2,
+                pattern = """\d+""",
+                path = Predicates.field,
+                datatype = Classes.string,
+            )
+
+        @JvmStatic
+        private fun numberLiteralTemplatePropertyRequest() =
+            TemplateController.NumberLiteralPropertyRequest(
+                label = "number literal property label",
+                placeholder = "number literal property placeholder",
+                description = "number literal property description",
+                minCount = 1,
+                maxCount = 2,
+                minInclusive = 5,
+                maxInclusive = 10,
+                path = Predicates.field,
+                datatype = Classes.integer,
+            )
+
+        @JvmStatic
+        private fun otherLiteralTemplatePropertyRequest() =
+            TemplateController.OtherLiteralPropertyRequest(
                 label = "literal property label",
                 placeholder = "literal property placeholder",
                 description = "literal property description",
                 minCount = 1,
                 maxCount = 2,
-                pattern = """\d+""",
                 path = Predicates.field,
                 datatype = ThingId("C25"),
             )
@@ -924,7 +1054,6 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                 description = "resource property description",
                 minCount = 3,
                 maxCount = 4,
-                pattern = """\w+""",
                 path = Predicates.hasAuthor,
                 `class` = ThingId("C28"),
             )

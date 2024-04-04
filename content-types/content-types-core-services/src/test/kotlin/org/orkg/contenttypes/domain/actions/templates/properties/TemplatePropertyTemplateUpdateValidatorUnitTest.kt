@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.UnrelatedTemplateProperty
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateUntypedTemplatePropertyCommand
 
 class TemplatePropertyTemplateUpdateValidatorUnitTest {
     private val templatePropertyTemplateUpdateValidator = TemplatePropertyTemplateUpdateValidator()
@@ -18,7 +18,7 @@ class TemplatePropertyTemplateUpdateValidatorUnitTest {
     fun `Given a template property update command, when validating template metadata, it returns success`() {
         val template = createDummyTemplate().copy(isClosed = false)
         val state = UpdateTemplatePropertyState().copy(template = template)
-        val command = dummyUpdateLiteralTemplatePropertyCommand()
+        val command = dummyUpdateUntypedTemplatePropertyCommand()
 
         val result = templatePropertyTemplateUpdateValidator(command, state)
 
@@ -32,7 +32,7 @@ class TemplatePropertyTemplateUpdateValidatorUnitTest {
     fun `Given a template property update command, when template is closed, it throws an exception`() {
         val template = createDummyTemplate().copy(isClosed = true)
         val state = UpdateTemplatePropertyState().copy(template = template)
-        val command = dummyUpdateLiteralTemplatePropertyCommand()
+        val command = dummyUpdateUntypedTemplatePropertyCommand()
 
         assertThrows<TemplateClosed> { templatePropertyTemplateUpdateValidator(command, state) }
     }
@@ -41,7 +41,7 @@ class TemplatePropertyTemplateUpdateValidatorUnitTest {
     fun `Given a template property update command, when template property does not belong to template, it throws an exception`() {
         val template = createDummyTemplate().copy(isClosed = false)
         val state = UpdateTemplatePropertyState().copy(template = template)
-        val command = dummyUpdateLiteralTemplatePropertyCommand().copy(templatePropertyId = ThingId("missing"))
+        val command = dummyUpdateUntypedTemplatePropertyCommand().copy(templatePropertyId = ThingId("missing"))
 
         assertThrows<UnrelatedTemplateProperty> { templatePropertyTemplateUpdateValidator(command, state) }
     }

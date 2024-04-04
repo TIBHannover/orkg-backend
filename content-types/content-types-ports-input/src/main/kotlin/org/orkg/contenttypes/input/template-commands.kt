@@ -5,8 +5,11 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.LiteralTemplateProperty
+import org.orkg.contenttypes.domain.NumberLiteralTemplateProperty
 import org.orkg.contenttypes.domain.ResourceTemplateProperty
+import org.orkg.contenttypes.domain.StringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.TemplateProperty
+import org.orkg.contenttypes.domain.UntypedTemplateProperty
 import org.orkg.graph.domain.FormattedLabel
 
 interface CreateTemplateUseCase {
@@ -34,7 +37,18 @@ interface CreateTemplatePropertyUseCase {
         val templateId: ThingId
     }
 
-    data class CreateLiteralPropertyCommand(
+    data class CreateUntypedPropertyCommand(
+        override val contributorId: ContributorId,
+        override val templateId: ThingId,
+        override val label: String,
+        override val placeholder: String?,
+        override val description: String?,
+        override val minCount: Int?,
+        override val maxCount: Int?,
+        override val path: ThingId
+    ) : CreateCommand, TemplatePropertyDefinition
+
+    data class CreateStringLiteralPropertyCommand(
         override val contributorId: ContributorId,
         override val templateId: ThingId,
         override val label: String,
@@ -43,6 +57,32 @@ interface CreateTemplatePropertyUseCase {
         override val minCount: Int?,
         override val maxCount: Int?,
         override val pattern: String?,
+        override val path: ThingId,
+        override val datatype: ThingId
+    ) : CreateCommand, StringLiteralTemplatePropertyDefinition
+
+    data class CreateNumberLiteralPropertyCommand<T : Number>(
+        override val contributorId: ContributorId,
+        override val templateId: ThingId,
+        override val label: String,
+        override val placeholder: String?,
+        override val description: String?,
+        override val minCount: Int?,
+        override val maxCount: Int?,
+        override val minInclusive: T?,
+        override val maxInclusive: T?,
+        override val path: ThingId,
+        override val datatype: ThingId
+    ) : CreateCommand, NumberLiteralTemplatePropertyDefinition<T>
+
+    data class CreateOtherLiteralPropertyCommand(
+        override val contributorId: ContributorId,
+        override val templateId: ThingId,
+        override val label: String,
+        override val placeholder: String?,
+        override val description: String?,
+        override val minCount: Int?,
+        override val maxCount: Int?,
         override val path: ThingId,
         override val datatype: ThingId
     ) : CreateCommand, LiteralTemplatePropertyDefinition
@@ -55,7 +95,6 @@ interface CreateTemplatePropertyUseCase {
         override val description: String?,
         override val minCount: Int?,
         override val maxCount: Int?,
-        override val pattern: String?,
         override val path: ThingId,
         override val `class`: ThingId
     ) : CreateCommand, ResourceTemplatePropertyDefinition
@@ -88,7 +127,19 @@ interface UpdateTemplatePropertyUseCase {
         val templateId: ThingId
     }
 
-    data class UpdateLiteralPropertyCommand(
+    data class UpdateUntypedPropertyCommand(
+        override val templatePropertyId: ThingId,
+        override val contributorId: ContributorId,
+        override val templateId: ThingId,
+        override val label: String,
+        override val placeholder: String?,
+        override val description: String?,
+        override val minCount: Int?,
+        override val maxCount: Int?,
+        override val path: ThingId,
+    ) : UpdateCommand, TemplatePropertyDefinition
+
+    data class UpdateStringLiteralPropertyCommand(
         override val templatePropertyId: ThingId,
         override val contributorId: ContributorId,
         override val templateId: ThingId,
@@ -98,6 +149,34 @@ interface UpdateTemplatePropertyUseCase {
         override val minCount: Int?,
         override val maxCount: Int?,
         override val pattern: String?,
+        override val path: ThingId,
+        override val datatype: ThingId
+    ) : UpdateCommand, StringLiteralTemplatePropertyDefinition
+
+    data class UpdateNumberLiteralPropertyCommand<T : Number>(
+        override val templatePropertyId: ThingId,
+        override val contributorId: ContributorId,
+        override val templateId: ThingId,
+        override val label: String,
+        override val placeholder: String?,
+        override val description: String?,
+        override val minCount: Int?,
+        override val maxCount: Int?,
+        override val minInclusive: T?,
+        override val maxInclusive: T?,
+        override val path: ThingId,
+        override val datatype: ThingId
+    ) : UpdateCommand, NumberLiteralTemplatePropertyDefinition<T>
+
+    data class UpdateOtherLiteralPropertyCommand(
+        override val templatePropertyId: ThingId,
+        override val contributorId: ContributorId,
+        override val templateId: ThingId,
+        override val label: String,
+        override val placeholder: String?,
+        override val description: String?,
+        override val minCount: Int?,
+        override val maxCount: Int?,
         override val path: ThingId,
         override val datatype: ThingId
     ) : UpdateCommand, LiteralTemplatePropertyDefinition
@@ -111,7 +190,6 @@ interface UpdateTemplatePropertyUseCase {
         override val description: String?,
         override val minCount: Int?,
         override val maxCount: Int?,
-        override val pattern: String?,
         override val path: ThingId,
         override val `class`: ThingId
     ) : UpdateCommand, ResourceTemplatePropertyDefinition
@@ -123,12 +201,11 @@ sealed interface TemplatePropertyDefinition {
     val description: String?
     val minCount: Int?
     val maxCount: Int?
-    val pattern: String?
     val path: ThingId
 
     fun matchesProperty(property: TemplateProperty): Boolean =
         label == property.label && placeholder == property.placeholder && description == property.description &&
-            minCount == property.minCount && maxCount == property.maxCount && pattern == property.pattern && path == property.path.id
+            minCount == property.minCount && maxCount == property.maxCount && path == property.path.id
 }
 
 sealed interface LiteralTemplatePropertyDefinition : TemplatePropertyDefinition {
@@ -138,6 +215,22 @@ sealed interface LiteralTemplatePropertyDefinition : TemplatePropertyDefinition 
         property is LiteralTemplateProperty && datatype == property.datatype.id && super.matchesProperty(property)
 }
 
+sealed interface StringLiteralTemplatePropertyDefinition : LiteralTemplatePropertyDefinition {
+    val pattern: String?
+
+    override fun matchesProperty(property: TemplateProperty): Boolean =
+        property is StringLiteralTemplateProperty && pattern == property.pattern && super.matchesProperty(property)
+}
+
+sealed interface NumberLiteralTemplatePropertyDefinition<T : Number> : LiteralTemplatePropertyDefinition {
+    val minInclusive: T?
+    val maxInclusive: T?
+
+    override fun matchesProperty(property: TemplateProperty): Boolean =
+        property is NumberLiteralTemplateProperty<*> && minInclusive == property.minInclusive &&
+            maxInclusive == property.maxInclusive && super.matchesProperty(property)
+}
+
 sealed interface ResourceTemplatePropertyDefinition : TemplatePropertyDefinition {
     val `class`: ThingId
 
@@ -145,13 +238,48 @@ sealed interface ResourceTemplatePropertyDefinition : TemplatePropertyDefinition
         property is ResourceTemplateProperty && `class` == property.`class`.id && super.matchesProperty(property)
 }
 
-data class LiteralPropertyDefinition(
+data class UntypedPropertyDefinition(
+    override val label: String,
+    override val placeholder: String?,
+    override val description: String?,
+    override val minCount: Int?,
+    override val maxCount: Int?,
+    override val path: ThingId,
+) : TemplatePropertyDefinition {
+    override fun matchesProperty(property: TemplateProperty): Boolean {
+        return property is UntypedTemplateProperty && super.matchesProperty(property)
+    }
+}
+
+data class StringLiteralPropertyDefinition(
     override val label: String,
     override val placeholder: String?,
     override val description: String?,
     override val minCount: Int?,
     override val maxCount: Int?,
     override val pattern: String?,
+    override val path: ThingId,
+    override val datatype: ThingId
+) : StringLiteralTemplatePropertyDefinition
+
+data class NumberLiteralPropertyDefinition<T : Number>(
+    override val label: String,
+    override val placeholder: String?,
+    override val description: String?,
+    override val minCount: Int?,
+    override val maxCount: Int?,
+    override val minInclusive: T?,
+    override val maxInclusive: T?,
+    override val path: ThingId,
+    override val datatype: ThingId
+) : NumberLiteralTemplatePropertyDefinition<T>
+
+data class OtherLiteralPropertyDefinition(
+    override val label: String,
+    override val placeholder: String?,
+    override val description: String?,
+    override val minCount: Int?,
+    override val maxCount: Int?,
     override val path: ThingId,
     override val datatype: ThingId
 ) : LiteralTemplatePropertyDefinition
@@ -162,7 +290,6 @@ data class ResourcePropertyDefinition(
     override val description: String?,
     override val minCount: Int?,
     override val maxCount: Int?,
-    override val pattern: String?,
     override val path: ThingId,
     override val `class`: ThingId
 ) : ResourceTemplatePropertyDefinition

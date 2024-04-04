@@ -16,7 +16,9 @@ fun createDummyRosettaTemplate() = RosettaTemplate(
     formattedLabel = FormattedLabel.of("{P32}"),
     targetClass = ThingId("targetClass"),
     properties = listOf(
-        createDummyLiteralTemplateProperty(),
+        createDummyStringLiteralTemplateProperty(),
+        createDummyNumberLiteralTemplateProperty(),
+        createDummyOtherLiteralTemplateProperty(),
         createDummyResourceTemplateProperty()
     ),
     isClosed = true,

@@ -20,8 +20,11 @@ import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
 import org.orkg.contenttypes.input.TemplateUseCases
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateNumberLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateOtherLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateStringLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateUntypedTemplatePropertyCommand
 
 class TemplatePropertyExistenceUpdateValidatorUnitTest {
     private val templateUseCases: TemplateUseCases = mockk()
@@ -70,7 +73,10 @@ class TemplatePropertyExistenceUpdateValidatorUnitTest {
     companion object {
         @JvmStatic
         fun updateTemplatePropertyCommands(): Stream<Arguments> = Stream.of(
-            Arguments.of(dummyUpdateLiteralTemplatePropertyCommand()),
+            Arguments.of(dummyUpdateUntypedTemplatePropertyCommand()),
+            Arguments.of(dummyUpdateStringLiteralTemplatePropertyCommand()),
+            Arguments.of(dummyUpdateNumberLiteralTemplatePropertyCommand()),
+            Arguments.of(dummyUpdateOtherLiteralTemplatePropertyCommand()),
             Arguments.of(dummyUpdateResourceTemplatePropertyCommand())
         )
     }

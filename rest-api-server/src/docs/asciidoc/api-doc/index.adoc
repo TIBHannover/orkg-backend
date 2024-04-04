@@ -385,6 +385,9 @@ include::parts/smart-reviews.adoc[leveloffset=+1]
 [[templates]]
 include::parts/templates.adoc[leveloffset=+1]
 
+[[template-properties]]
+include::parts/template-properties.adoc[leveloffset=+1]
+
 [[template-instances]]
 include::parts/template-instances.adoc[leveloffset=+1]
 

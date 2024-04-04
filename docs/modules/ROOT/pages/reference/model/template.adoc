@@ -14,23 +14,29 @@ flowchart LR
 		problem
 		predicate
 	end
-	Template --> |"sh:property"| TemplatePopoerty
-	subgraph TemplatePopoerty[Template Popoerty]
+	Template --> |"sh:property"| TemplateProperty
+	subgraph TemplateProperty[Template Property]
+        Property[PropertyShape \n Resource] --> |"sh:order"| order[Literal \n xsd:integer]
+        Property --> |"sh:minCount"| minCount[Literal \n xsd:integer]
+        Property --> |"sh:maxCount"| maxCount[Literal \n xsd:integer]
+        Property --> |"sh:path"| path[Predicate]
+        Property --> |"sh:class"| klass
+        Property --> |"sh:pattern"| pattern
+        Property --> |"sh:datatype"| datatype
+        Property --> |"sh:minInclusive"| minInclusive
+        Property --> |"sh:maxInclusive"| maxInclusive
 		subgraph Resource Property
-			ResourceProperty[PropertyShape \n Resource] --> |"sh:class"| klass[Class]
-			ResourceProperty --> |"sh:order"| order[Literal \n xsd:integer]
-			ResourceProperty --> |"sh:minCount"| minCount[Literal \n xsd:integer]
-			ResourceProperty --> |"sh:maxCount"| maxCount[Literal \n xsd:integer]
-			ResourceProperty --> |"sh:pattern"| pattern[Literal \n xsd:integer]
-			ResourceProperty --> |"sh:path"| path[Predicate]
+            klass[Class]
 		end
 		subgraph Literal Property
-			LiteralProperty[PropertyShape \n Resource] --> |"sh:datatype"| datatype[Class]
-			LiteralProperty --> |"sh:order"| literalOrder[Literal \n xsd:integer]
-			LiteralProperty --> |"sh:minCount"| literalMinCount[Literal \n xsd:integer]
-			LiteralProperty --> |"sh:maxCount"| literalMaxCount[Literal \n xsd:integer]
-			LiteralProperty --> |"sh:pattern"| literalPattern[Literal \n xsd:integer]
-			LiteralProperty --> |"sh:path"| literalPath[Predicate]
+            datatype[Class]
+            subgraph String Property
+			    pattern[Literal \n xsd:string]
+            end
+            subgraph Number Property
+			    minInclusive[Literal \n xsd:integer/xsd:float/xsd:decimal]
+			    maxInclusive[Literal \n xsd:integer/xsd:float/xsd:decimal]
+            end
 		end
 	end
 	Template --> |"sh:closed"| closed[Literal \n xsd:boolean]

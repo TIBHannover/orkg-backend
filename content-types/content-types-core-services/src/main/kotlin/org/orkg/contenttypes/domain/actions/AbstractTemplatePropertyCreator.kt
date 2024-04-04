@@ -3,7 +3,9 @@ package org.orkg.contenttypes.domain.actions
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.LiteralTemplatePropertyDefinition
+import org.orkg.contenttypes.input.NumberLiteralTemplatePropertyDefinition
 import org.orkg.contenttypes.input.ResourceTemplatePropertyDefinition
+import org.orkg.contenttypes.input.StringLiteralTemplatePropertyDefinition
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
@@ -14,7 +16,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-abstract class AbstractTemplatePropertyCreator(
+class AbstractTemplatePropertyCreator(
     private val resourceService: ResourceUseCases,
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases
@@ -86,36 +88,66 @@ abstract class AbstractTemplatePropertyCreator(
                 )
             )
         }
-        property.pattern?.let { pattern ->
+        if (property is StringLiteralTemplatePropertyDefinition) {
+            property.pattern?.let { pattern ->
+                statementService.add(
+                    userId = contributorId,
+                    subject = propertyId,
+                    predicate = Predicates.shPattern,
+                    `object` = literalService.create(
+                        CreateCommand(
+                            contributorId = contributorId,
+                            label = pattern
+                        )
+                    )
+                )
+            }
+        } else if (property is NumberLiteralTemplatePropertyDefinition<*>) {
+            property.minInclusive?.let { minInclusive ->
+                statementService.add(
+                    userId = contributorId,
+                    subject = propertyId,
+                    predicate = Predicates.shMinInclusive,
+                    `object` = literalService.create(
+                        CreateCommand(
+                            contributorId = contributorId,
+                            label = minInclusive.toString(),
+                            datatype = Literals.XSD.fromClass(property.datatype)?.prefixedUri
+                                ?: Literals.XSD.DECIMAL.prefixedUri
+                        )
+                    )
+                )
+            }
+            property.maxInclusive?.let { maxInclusive ->
+                statementService.add(
+                    userId = contributorId,
+                    subject = propertyId,
+                    predicate = Predicates.shMaxInclusive,
+                    `object` = literalService.create(
+                        CreateCommand(
+                            contributorId = contributorId,
+                            label = maxInclusive.toString(),
+                            datatype = Literals.XSD.fromClass(property.datatype)?.prefixedUri
+                                ?: Literals.XSD.DECIMAL.prefixedUri
+                        )
+                    )
+                )
+            }
+        }
+        if (property is LiteralTemplatePropertyDefinition) {
             statementService.add(
                 userId = contributorId,
                 subject = propertyId,
-                predicate = Predicates.shPattern,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = contributorId,
-                        label = pattern
-                    )
-                )
+                predicate = Predicates.shDatatype,
+                `object` = property.datatype
             )
-        }
-        when (property) {
-            is LiteralTemplatePropertyDefinition -> {
-                statementService.add(
-                    userId = contributorId,
-                    subject = propertyId,
-                    predicate = Predicates.shDatatype,
-                    `object` = property.datatype
-                )
-            }
-            is ResourceTemplatePropertyDefinition -> {
-                statementService.add(
-                    userId = contributorId,
-                    subject = propertyId,
-                    predicate = Predicates.shClass,
-                    `object` = property.`class`
-                )
-            }
+        } else if (property is ResourceTemplatePropertyDefinition) {
+            statementService.add(
+                userId = contributorId,
+                subject = propertyId,
+                predicate = Predicates.shClass,
+                `object` = property.`class`
+            )
         }
         statementService.add(
             userId = contributorId,

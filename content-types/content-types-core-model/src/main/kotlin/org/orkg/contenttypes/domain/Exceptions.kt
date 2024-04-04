@@ -115,6 +115,15 @@ class InvalidMaxCount(count: Int) :
 class InvalidCardinality(min: Int, max: Int) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid cardinality. Min count must be less than max count. Found: min: "$min", max: "$max".""")
 
+class InvalidBounds(min: Number, max: Number) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid bounds. Min bound must be less than or equal to max bound. Found: min: "$min", max: "$max".""")
+
+class InvalidDatatype : SimpleMessageException {
+    constructor(actual: ThingId, expected: ThingId) : super(HttpStatus.BAD_REQUEST, """Invalid datatype. Found "$actual", expected "$expected".""")
+    constructor(actual: ThingId, expected1: ThingId, expected2: ThingId, vararg expected: ThingId) :
+        super(HttpStatus.BAD_REQUEST, """Invalid datatype. Found "$actual", expected either of ${(listOf(expected1, expected2) + expected).joinToString { "\"$it\"" }}.""")
+}
+
 class InvalidRegexPattern(pattern: String, cause: Throwable) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid regex pattern "$pattern".""", cause)
 
@@ -162,3 +171,9 @@ class InvalidLiteral(templatePropertyId: ThingId, predicateId: ThingId, datatype
 
 class UnrelatedTemplateProperty(templateId: ThingId, templatePropertyId: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Template property "$templatePropertyId" does not belong to template "$templateId".""")
+
+class NumberTooLow(templatePropertyId: ThingId, objectId: String, predicateId: ThingId, label: String, minInclusive: Number) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Number "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" must be at least "$minInclusive".""")
+
+class NumberTooHigh(templatePropertyId: ThingId, objectId: String, predicateId: ThingId, label: String, maxInclusive: Number) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Number "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" must be at most "$maxInclusive".""")

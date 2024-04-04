@@ -83,15 +83,21 @@ class TemplateInstanceServiceUnitTests {
         val template = createDummyTemplate()
         val expected = createDummyTemplateInstance()
 
-        val literalPropertyId = template.properties[0].path.id
-        val resourcePropertyId = template.properties[1].path.id
+        val untypedPropertyId = template.properties[0].path.id
+        val stringLiteralPropertyId = template.properties[1].path.id
+        val numberLiteralPropertyId = template.properties[2].path.id
+        val otherLiteralPropertyId = template.properties[3].path.id
+        val resourcePropertyId = template.properties[4].path.id
 
         every { templateService.findById(template.id) } returns Optional.of(template)
         every { resourceRepository.findById(expected.root.id) } returns Optional.of(expected.root)
         every {
             statementService.findAll(subjectId = expected.root.id, pageable = PageRequests.ALL)
         } returns pageOf(
-            expected.statements[literalPropertyId]!!.single().toStatement(expected.root, literalPropertyId),
+            expected.statements[untypedPropertyId]!!.single().toStatement(expected.root, untypedPropertyId),
+            expected.statements[stringLiteralPropertyId]!!.single().toStatement(expected.root, stringLiteralPropertyId),
+            expected.statements[numberLiteralPropertyId]!!.single().toStatement(expected.root, numberLiteralPropertyId),
+            expected.statements[otherLiteralPropertyId]!!.single().toStatement(expected.root, otherLiteralPropertyId),
             expected.statements[resourcePropertyId]!!.single().toStatement(expected.root, resourcePropertyId)
         )
 

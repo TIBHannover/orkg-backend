@@ -15,7 +15,7 @@ import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.input.CreateTemplateUseCase
-import org.orkg.contenttypes.input.LiteralPropertyDefinition
+import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
 import org.orkg.contenttypes.input.TemplateRelationsDefinition
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.createClasses
@@ -157,7 +157,7 @@ class TemplateInstanceControllerIntegrationTest : RestDocumentationBaseTest() {
                     predicate = null
                 ),
                 properties = listOf(
-                    LiteralPropertyDefinition(
+                    StringLiteralPropertyDefinition(
                         label = "literal property label",
                         description = "literal property description",
                         placeholder = "literal property placeholder",

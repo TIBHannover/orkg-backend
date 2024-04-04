@@ -15,9 +15,11 @@ import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyDeleter
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyOtherLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyUntypedTemplateProperty
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateOtherLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateResourceTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
 import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
@@ -75,26 +77,31 @@ class TemplatePropertiesUpdaterUnitTest {
     fun `Given a template update command, when a property is removed, it deletes the old property`() {
         val template = createDummyTemplate()
         val command = dummyUpdateTemplateCommand().copy(
-            properties = template.properties.take(1).map { it.toTemplatePropertyDefinition() }
+            properties = template.properties.dropLast(1).map { it.toTemplatePropertyDefinition() }
         )
         val state = UpdateTemplateState(
             template = template
         )
 
         every {
-            abstractTemplatePropertyDeleter.delete(command.contributorId, command.templateId, template.properties[1].id)
+            abstractTemplatePropertyDeleter.delete(command.contributorId, command.templateId, template.properties.last().id)
         } just runs
 
         templatePropertiesUpdater(command, state)
 
         verify(exactly = 1) {
-            abstractTemplatePropertyDeleter.delete(command.contributorId, command.templateId, template.properties[1].id)
+            abstractTemplatePropertyDeleter.delete(command.contributorId, command.templateId, template.properties.last().id)
         }
     }
 
     @Test
     fun `Given a template update command, when a property is removed, it deletes the old property and updates the order of the following properties`() {
-        val template = createDummyTemplate()
+        val template = createDummyTemplate().copy(
+            properties = listOf(
+                createDummyUntypedTemplateProperty(),
+                createDummyStringLiteralTemplateProperty()
+            )
+        )
         val command = dummyUpdateTemplateCommand().copy(
             properties = template.properties.drop(1).map { it.toTemplatePropertyDefinition() }
         )
@@ -133,7 +140,7 @@ class TemplatePropertiesUpdaterUnitTest {
     fun `Given a template update command, when a property is added, it creates a new property`() {
         val template = createDummyTemplate()
         val command = dummyUpdateTemplateCommand().copy(
-            properties = template.properties.map { it.toTemplatePropertyDefinition() } + dummyCreateLiteralTemplatePropertyCommand()
+            properties = template.properties.map { it.toTemplatePropertyDefinition() } + dummyCreateOtherLiteralTemplatePropertyCommand()
         )
         val state = UpdateTemplateState(
             template = template
@@ -143,8 +150,8 @@ class TemplatePropertiesUpdaterUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = 3,
-                property = command.properties!![2]
+                order = 6,
+                property = command.properties!![5]
             )
         } returns ThingId("irrelevant")
 
@@ -154,8 +161,8 @@ class TemplatePropertiesUpdaterUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = 3,
-                property = command.properties!![2]
+                order = 6,
+                property = command.properties!![5]
             )
         }
     }
@@ -163,7 +170,7 @@ class TemplatePropertiesUpdaterUnitTest {
     @Test
     fun `Given a template update command, when a property is added, it creates a new property and updates the order of the following properties`() {
         val template = createDummyTemplate().copy(
-            properties = listOf(createDummyLiteralTemplateProperty())
+            properties = listOf(createDummyOtherLiteralTemplateProperty())
         )
         val command = dummyUpdateTemplateCommand().copy(
             properties = listOf(dummyUpdateResourceTemplatePropertyCommand(), template.properties.single().toTemplatePropertyDefinition())
@@ -213,7 +220,7 @@ class TemplatePropertiesUpdaterUnitTest {
     fun `Given a template update command, when a property is replaced, it deletes the old property and creates a new one`() {
         val template = createDummyTemplate()
         val command = dummyUpdateTemplateCommand().copy(
-            properties = listOf(template.properties.first().toTemplatePropertyDefinition(), dummyUpdateResourceTemplatePropertyCommand())
+            properties = template.properties.dropLast(1).map { it.toTemplatePropertyDefinition() } + dummyUpdateResourceTemplatePropertyCommand()
         )
         val state = UpdateTemplateState(
             template = template
@@ -223,12 +230,12 @@ class TemplatePropertiesUpdaterUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = 2,
-                property = command.properties!![1]
+                order = 5,
+                property = command.properties!![4]
             )
         } returns ThingId("irrelevant")
         every {
-            abstractTemplatePropertyDeleter.delete(command.contributorId, command.templateId, template.properties[1].id)
+            abstractTemplatePropertyDeleter.delete(command.contributorId, command.templateId, template.properties[4].id)
         } just runs
 
         templatePropertiesUpdater(command, state)
@@ -237,12 +244,12 @@ class TemplatePropertiesUpdaterUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = 2,
-                property = command.properties!![1]
+                order = 5,
+                property = command.properties!![4]
             )
         }
         verify(exactly = 1) {
-            abstractTemplatePropertyDeleter.delete(command.contributorId, command.templateId, template.properties[1].id)
+            abstractTemplatePropertyDeleter.delete(command.contributorId, command.templateId, template.properties[4].id)
         }
     }
 }

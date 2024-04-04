@@ -205,17 +205,19 @@ fun ResultActions.andExpectTemplate(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.properties[*].order", `is`(notNullValue())))
     .andExpect(jsonPath("$path.properties[*].min_count").exists())
     .andExpect(jsonPath("$path.properties[*].max_count").exists())
-    .andExpect(jsonPath("$path.properties[*].pattern").exists())
     .andExpect(jsonPath("$path.properties[*].path", `is`(notNullValue())))
     .andExpect(jsonPath("$path.properties[*].path.id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.properties[*].path.label", `is`(notNullValue())))
-//    `datatype` and `class` might not both be present in the response, as they are property dependent
+//    only literal properties have a "datatype" field
 //    .andExpect(jsonPath("$path.properties[*].datatype", `is`(notNullValue())))
 //    .andExpect(jsonPath("$path.properties[*].datatype.id", `is`(notNullValue())))
 //    .andExpect(jsonPath("$path.properties[*].datatype.label", `is`(notNullValue())))
+//    only resource properties have a "class" field
 //    .andExpect(jsonPath("$path.properties[*].class", `is`(notNullValue())))
 //    .andExpect(jsonPath("$path.properties[*].class.id", `is`(notNullValue())))
 //    .andExpect(jsonPath("$path.properties[*].class.label", `is`(notNullValue())))
+//    only string literal properties have a "pattern" field
+//    .andExpect(jsonPath("$path.properties[*].pattern").exists())
     .andExpect(jsonPath("$path.is_closed", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))

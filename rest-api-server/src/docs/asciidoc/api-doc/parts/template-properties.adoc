@@ -1,0 +1,123 @@
+= Template Properties
+
+Template properties represent a collection of concepts in the knowledge graph and can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+They can be used to define constraints for a single value of a template.
+The provided endpoints aggregate these concepts into a template property representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[template-properties-untyped-properties]]
+== Untyped template properties
+
+[[template-properties-create-untyped-property]]
+=== Creating an untyped template property
+
+A `POST` request creates a new template property without any type constraints.
+The response will be `201 Created` when successful.
+The updated template (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::templates-create-untyped-property[snippets='request-fields,curl-request,http-response']
+
+[[template-properties-edit-untyped-property]]
+=== Editing an untyped template property
+
+A `PUT` request updates an existing template property of any type with all the given parameters and converts it to an untyped template property if necessary.
+If the previous template property had a type constraint, it will be removed in the process.
+The response will be `204 No Content` when successful.
+The updated template property (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields, meaning that the corresponding fields should not be updated.
+
+operation::templates-update-untyped-property[snippets='request-fields,curl-request,http-response']
+
+[[template-properties-other-literal-properties]]
+== Literal template properties
+
+[[template-properties-create-other-literal-property]]
+=== Creating a literal template property
+
+A `POST` request creates a new literal template property for the given datatype, without any additional constraints.
+The response will be `201 Created` when successful.
+The updated template (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::templates-create-other-literal-property[snippets='request-fields,curl-request,http-response']
+
+[[template-properties-edit-other-literal-property]]
+=== Editing a literal template property
+
+A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a literal template property if necessary.
+The response will be `204 No Content` when successful.
+The updated template property (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields, meaning that the corresponding fields should not be updated.
+
+operation::templates-update-other-literal-property[snippets='request-fields,curl-request,http-response']
+
+[[template-properties-string-literal-properties]]
+== String literal template properties
+
+[[template-properties-create-string-literal-property]]
+=== Creating a string literal template property
+
+A `POST` request creates a new string template property, with an optional `pattern` constraint.
+The response will be `201 Created` when successful.
+The updated template (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::templates-create-string-literal-property[snippets='request-fields,curl-request,http-response']
+
+[[template-properties-edit-string-literal-property]]
+=== Editing a string literal template property
+
+A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a string literal template property if necessary.
+The response will be `204 No Content` when successful.
+The updated template property (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields, meaning that the corresponding fields should not be updated.
+
+operation::templates-update-string-literal-property[snippets='request-fields,curl-request,http-response']
+
+[[template-properties-number-literal-properties]]
+== Number literal template properties
+
+[[template-properties-create-number-literal-property]]
+=== Creating a number literal template property
+
+A `POST` request creates a new number template property, with optional boundary constraints.
+The response will be `201 Created` when successful.
+The updated template (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::templates-create-number-literal-property[snippets='request-fields,curl-request,http-response']
+
+[[template-properties-edit-number-literal-property]]
+=== Editing a number literal template property
+
+A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a number literal template property if necessary.
+The response will be `204 No Content` when successful.
+The updated template property (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields, meaning that the corresponding fields should not be updated.
+
+operation::templates-update-untyped-property[snippets='request-fields,curl-request,http-response']
+
+[[template-properties-resource-properties]]
+== Resource template properties
+
+[[template-properties-create-resource-property]]
+=== Creating a resource template property
+
+A `POST` request creates a new resource template property for the given datatype, without any additional constraints.
+The response will be `201 Created` when successful.
+The updated template (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::templates-create-resource-property[snippets='request-fields,curl-request,http-response']
+
+[[template-properties-edit-resource-property]]
+=== Editing a resource template property
+
+A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a resource template property if necessary.
+The response will be `204 No Content` when successful.
+The updated template property (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields, meaning that the corresponding fields should not be updated.
+
+operation::templates-update-resource-property[snippets='request-fields,curl-request,http-response']

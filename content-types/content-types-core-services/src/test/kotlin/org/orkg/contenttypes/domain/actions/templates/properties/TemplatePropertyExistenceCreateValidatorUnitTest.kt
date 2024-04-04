@@ -18,8 +18,11 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateNumberLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateOtherLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateStringLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateUntypedTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -74,7 +77,10 @@ class TemplatePropertyExistenceCreateValidatorUnitTest {
     companion object {
         @JvmStatic
         fun createTemplatePropertyCommands(): Stream<Arguments> = Stream.of(
-            Arguments.of(dummyCreateLiteralTemplatePropertyCommand()),
+            Arguments.of(dummyCreateUntypedTemplatePropertyCommand()),
+            Arguments.of(dummyCreateStringLiteralTemplatePropertyCommand()),
+            Arguments.of(dummyCreateNumberLiteralTemplatePropertyCommand()),
+            Arguments.of(dummyCreateOtherLiteralTemplatePropertyCommand()),
             Arguments.of(dummyCreateResourceTemplatePropertyCommand())
         )
     }

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -37,6 +38,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
 class TemplateServiceUnitTests {
@@ -173,7 +175,21 @@ class TemplateServiceUnitTests {
         val resourcePropertyPath = createPredicate(ThingId("R39"), label = "resource property path label")
         val resourcePropertyClass = createClass(ThingId("R40"), label = "resource property class label")
 
-        every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
+        every {
+            statementRepository.findAll(
+                subjectId = expected.id,
+                subjectClasses = setOf(Classes.resource, Classes.nodeShape),
+                predicateId = Predicates.shTargetClass,
+                objectClasses = setOf(Classes.`class`),
+                pageable = PageRequests.SINGLE
+            )
+        } returns pageOf(
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.shTargetClass),
+                `object` = createClass(targetClassId)
+            )
+        )
         every {
             statementRepository.fetchAsBundle(
                 id = expected.id,
@@ -594,7 +610,15 @@ class TemplateServiceUnitTests {
             template.unlistedBy shouldBe expected.unlistedBy
         }
 
-        verify(exactly = 1) { resourceRepository.findById(expected.id) }
+        verify(exactly = 1) {
+            statementRepository.findAll(
+                subjectId = expected.id,
+                subjectClasses = setOf(Classes.resource, Classes.nodeShape),
+                predicateId = Predicates.shTargetClass,
+                objectClasses = setOf(Classes.`class`),
+                pageable = PageRequests.SINGLE
+            )
+        }
         verify(exactly = 1) { statementRepository.fetchAsBundle(expected.id, any(), any()) }
     }
 }

@@ -70,7 +70,7 @@ class RosettaTemplateService(
             properties = statements[id]!!
                 .wherePredicate(Predicates.shProperty)
                 .filter { it.`object` is Resource && Classes.propertyShape in (it.`object` as Resource).classes }
-                .map { TemplateProperty.from(it.`object` as Resource, statements[it.`object`.id].orEmpty()) }
+                .mapNotNull { TemplateProperty.from(it.`object` as Resource, statements[it.`object`.id].orEmpty()) }
                 .sortedBy { it.order },
             isClosed = statements[id]!!
                 .wherePredicate(Predicates.shClosed)

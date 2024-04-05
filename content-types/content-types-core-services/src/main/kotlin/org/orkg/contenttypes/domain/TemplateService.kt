@@ -5,6 +5,7 @@ import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -82,9 +83,16 @@ class TemplateService(
     private val templateRepository: TemplateRepository
 ) : TemplateUseCases {
     override fun findById(id: ThingId): Optional<Template> =
-        resourceRepository.findById(id)
-            .filter { it is Resource && Classes.nodeShape in it.classes }
-            .map { it.toTemplate() }
+        statementRepository.findAll(
+            subjectId = id,
+            subjectClasses = setOf(Classes.resource, Classes.nodeShape),
+            predicateId = Predicates.shTargetClass,
+            objectClasses = setOf(Classes.`class`),
+            pageable = PageRequests.SINGLE
+        ).content
+            .singleOrNull()
+            .let { Optional.ofNullable(it) }
+            .map { (it.subject as Resource).toTemplate() }
 
     override fun findAll(
         label: SearchString?,
@@ -136,7 +144,6 @@ class TemplateService(
 
     override fun createTemplateProperty(command: CreateTemplatePropertyCommand): ThingId {
         val steps = listOf(
-
             TemplatePropertyExistenceCreateValidator(resourceRepository),
             TemplatePropertyTemplateCreateValidator(statementRepository),
             TemplatePropertyValidator(predicateRepository, classRepository) { it },
@@ -215,7 +222,7 @@ class TemplateService(
             properties = statements[id]!!
                 .wherePredicate(Predicates.shProperty)
                 .filter { it.`object` is Resource && Classes.propertyShape in (it.`object` as Resource).classes }
-                .map { TemplateProperty.from(it.`object` as Resource, statements[it.`object`.id].orEmpty()) }
+                .mapNotNull { TemplateProperty.from(it.`object` as Resource, statements[it.`object`.id].orEmpty()) }
                 .sortedBy { it.order },
             isClosed = statements[id]!!
                 .wherePredicate(Predicates.shClosed)

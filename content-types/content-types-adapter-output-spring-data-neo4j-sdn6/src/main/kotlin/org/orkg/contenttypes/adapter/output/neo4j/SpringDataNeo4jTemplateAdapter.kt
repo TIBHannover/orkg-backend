@@ -67,10 +67,13 @@ class SpringDataNeo4jTemplateAdapter(
         .withCommonQuery {
             val patterns: (Node) -> Collection<PatternElement> = { node ->
                 listOfNotNull(
-                    targetClassId?.let {
-                        node.relationshipTo(node("Class").withProperties("id", anonParameter(it.value)), RELATED)
-                            .withProperties("predicate_id", literalOf<String>(Predicates.shTargetClass.value))
-                    },
+                    node.relationshipTo(
+                        when (targetClassId) {
+                            null -> node("Class")
+                            else -> node("Class").withProperties("id", anonParameter(targetClassId.value))
+                        },
+                        RELATED
+                    ).withProperties("predicate_id", literalOf<String>(Predicates.shTargetClass.value)),
                     researchField?.let {
                         val researchFieldNode = node(Classes.researchField).withProperties("id", anonParameter(it.value))
                         if (includeSubfields) {

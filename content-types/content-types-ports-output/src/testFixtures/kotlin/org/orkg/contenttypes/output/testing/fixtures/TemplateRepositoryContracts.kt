@@ -84,10 +84,19 @@ fun <
 
     fun List<Resource>.toTemplates(): List<Resource> = map { it.copy(classes = setOf(Classes.nodeShape)) }
 
+    fun saveWithRandomTargetClass(resource: Resource) =
+        saveStatement(
+            fabricator.random<GeneralStatement>().copy(
+                subject = resource,
+                predicate = createPredicate(Predicates.shTargetClass),
+                `object` = fabricator.random<Class>()
+            )
+        )
+
     describe("finding several templates") {
         context("without parameters") {
             val resources = fabricator.random<List<Resource>>().toTemplates()
-            resources.forEach(resourceRepository::save)
+            resources.forEach(::saveWithRandomTargetClass)
             val expected = resources.sortedBy { it.createdAt }.drop(5).take(5)
             val result = repository.findAll(pageable = PageRequest.of(1, 5))
 
@@ -121,7 +130,7 @@ fun <
             val expected = resources.take(expectedCount)
 
             context("with exact matching") {
-                resources.forEach(resourceRepository::save)
+                resources.forEach(::saveWithRandomTargetClass)
                 val result = repository.findAll(
                     label = SearchString.of(label, exactMatch = true),
                     pageable = PageRequest.of(0, 5)
@@ -141,7 +150,7 @@ fun <
                 }
             }
             context("with fuzzy matching") {
-                resources.forEach(resourceRepository::save)
+                resources.forEach(::saveWithRandomTargetClass)
                 val result = repository.findAll(
                     label = SearchString.of("label find", exactMatch = false),
                     pageable = PageRequest.of(0, 5)
@@ -170,7 +179,7 @@ fun <
             }
             VisibilityFilter.entries.forEach { visibilityFilter ->
                 context("when visibility is $visibilityFilter") {
-                    resources.forEach(resourceRepository::save)
+                    resources.forEach(::saveWithRandomTargetClass)
                     val expected = resources.filter { it.visibility in visibilityFilter.targets }
                     val result = repository.findAll(
                         visibility = visibilityFilter,
@@ -206,7 +215,7 @@ fun <
                     createdBy = if (index >= expectedCount) resource.createdBy else createdBy
                 )
             }
-            resources.forEach(resourceRepository::save)
+            resources.forEach(::saveWithRandomTargetClass)
             val expected = resources.take(expectedCount)
 
             val result = repository.findAll(
@@ -239,7 +248,7 @@ fun <
                     createdAt = OffsetDateTime.now().minusHours(index.toLong())
                 )
             }
-            resources.forEach(resourceRepository::save)
+            resources.forEach(::saveWithRandomTargetClass)
 
             val expected = resources.take(expectedCount)
             val result = repository.findAll(
@@ -272,7 +281,7 @@ fun <
                     createdAt = OffsetDateTime.now().plusHours(index.toLong())
                 )
             }
-            resources.forEach(resourceRepository::save)
+            resources.forEach(::saveWithRandomTargetClass)
 
             val expected = resources.take(expectedCount)
             val result = repository.findAll(
@@ -302,10 +311,10 @@ fun <
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toTemplates().toMutableList()
             val observatoryId = ObservatoryId(UUID.randomUUID())
-            (0 until 3).forEach {
-                resources[it] = resources[it].copy(observatoryId = observatoryId)
+            resources.take(expectedCount).forEachIndexed { index, resource ->
+                resources[index] = resource.copy(observatoryId = observatoryId)
             }
-            resources.forEach(resourceRepository::save)
+            resources.forEach(::saveWithRandomTargetClass)
 
             val expected = resources.take(expectedCount)
             val result = repository.findAll(
@@ -335,10 +344,10 @@ fun <
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toTemplates().toMutableList()
             val organizationId = OrganizationId(UUID.randomUUID())
-            (0 until 3).forEach {
-                resources[it] = resources[it].copy(organizationId = organizationId)
+            resources.take(expectedCount).forEachIndexed { index, resource ->
+                resources[index] = resource.copy(organizationId = organizationId)
             }
-            resources.forEach(resourceRepository::save)
+            resources.forEach(::saveWithRandomTargetClass)
 
             val expected = resources.take(expectedCount)
             val result = repository.findAll(
@@ -389,6 +398,8 @@ fun <
                         )
                     )
                 }
+
+                resources.forEach(::saveWithRandomTargetClass)
 
                 val expected = resources.take(expectedCount)
                 val result = repository.findAll(
@@ -464,6 +475,8 @@ fun <
                     )
                 }
 
+                resources.forEach(::saveWithRandomTargetClass)
+
                 val expected = resources.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
@@ -493,13 +506,13 @@ fun <
         context("by research problem") {
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toTemplates()
-            resources.forEach(resourceRepository::save)
+            resources.forEach(::saveWithRandomTargetClass)
             val researchProblem = fabricator.random<Resource>().copy(classes = setOf(Classes.problem))
-            (0 until expectedCount).forEach {
+            resources.take(expectedCount).forEach {
                 saveStatement(
                     createStatement(
                         id = fabricator.random(),
-                        subject = resources[it],
+                        subject = it,
                         predicate = createPredicate(Predicates.templateOfResearchProblem),
                         `object` = researchProblem
                     )
@@ -533,18 +546,18 @@ fun <
         context("by target class") {
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toTemplates()
-            resources.forEach(resourceRepository::save)
             val targetClass = fabricator.random<Class>()
-            (0 until expectedCount).forEach {
+            resources.take(expectedCount).forEach {
                 saveStatement(
                     createStatement(
                         id = fabricator.random(),
-                        subject = resources[it],
+                        subject = it,
                         predicate = createPredicate(Predicates.shTargetClass),
                         `object` = targetClass
                     )
                 )
             }
+            resources.drop(expectedCount).forEach(::saveWithRandomTargetClass)
             val expected = resources.take(expectedCount)
 
             val result = repository.findAll(
@@ -609,7 +622,7 @@ fun <
                     )
                 )
             }
-            resources.forEach(resourceRepository::save)
+            resources.drop(1).forEach(::saveWithRandomTargetClass)
 
             val expected = resources[0]
 
@@ -649,7 +662,7 @@ fun <
         it("sorts the results by multiple properties") {
             val resources = fabricator.random<List<Resource>>().toTemplates().toMutableList()
             resources[1] = resources[1].copy(label = resources[0].label)
-            resources.forEach(resourceRepository::save)
+            resources.forEach(::saveWithRandomTargetClass)
 
             val sort = Sort.by("label").ascending().and(Sort.by("created_at").descending())
             val result = repository.findAll(pageable = PageRequest.of(0, 12, sort))

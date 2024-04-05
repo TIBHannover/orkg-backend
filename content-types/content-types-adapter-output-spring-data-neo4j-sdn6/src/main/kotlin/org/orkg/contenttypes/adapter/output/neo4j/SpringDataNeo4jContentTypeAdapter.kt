@@ -128,7 +128,14 @@ class SpringDataNeo4jContentTypeAdapter(
                     .with(node)
             }
             ContentTypeClass.VISUALIZATION -> match(node("Visualization").named(node), patternGenerator)
-            ContentTypeClass.TEMPLATE -> match(node("NodeShape").named(node), patternGenerator)
+            ContentTypeClass.TEMPLATE -> {
+                val n = node("NodeShape").named(node)
+                val patterns = listOf(
+                    n.relationshipTo(node("Class"), RELATED)
+                        .withProperties("predicate_id", literalOf<String>(Predicates.shTargetClass.value)),
+                ) + patternGenerator(n)
+                match(n).match(patterns).with(node)
+            }
             ContentTypeClass.LITERATURE_LIST -> matchLiteratureList(node, patternGenerator)
             ContentTypeClass.SMART_REVIEW -> matchSmartReview(node, patternGenerator)
         }

@@ -48,16 +48,17 @@ sealed interface TemplateProperty {
     val createdAt: OffsetDateTime
 
     companion object {
-        fun from(resource: Resource, statements: Iterable<GeneralStatement>): TemplateProperty {
+        fun from(resource: Resource, statements: Iterable<GeneralStatement>): TemplateProperty? {
             val placeholder = statements.wherePredicate(Predicates.placeholder).singleOrNull()?.`object`?.label
             val description = statements.wherePredicate(Predicates.description).singleOrNull()?.`object`?.label
-            val order = statements.wherePredicate(Predicates.shOrder).single().`object`.label.toLong()
+            val order = statements.wherePredicate(Predicates.shOrder).singleOrNull()?.`object`?.label?.toLong()
             val minCount = statements.wherePredicate(Predicates.shMinCount).singleOrNull()?.`object`?.label?.toInt()
             val maxCount = statements.wherePredicate(Predicates.shMaxCount).singleOrNull()?.`object`?.label?.toInt()
-            val path = statements.wherePredicate(Predicates.shPath).single().objectIdAndLabel()
+            val path = statements.wherePredicate(Predicates.shPath).singleOrNull()?.objectIdAndLabel()
             val datatype = statements.wherePredicate(Predicates.shDatatype).singleOrNull()?.objectIdAndLabel()
             val `class` = statements.wherePredicate(Predicates.shClass).singleOrNull()?.objectIdAndLabel()
             return when {
+                order == null || path == null -> null
                 datatype != null -> {
                     when (datatype.id) {
                         Classes.string -> StringLiteralTemplateProperty(

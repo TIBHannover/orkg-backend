@@ -64,7 +64,7 @@ fun <
 
     val fabricator = Fabrikate(
         FabricatorConfig(
-            collectionSizes = 21..21,
+            collectionSizes = 22..22,
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
         ).withStandardMappings()
     ).withCustomMappings()
@@ -169,7 +169,14 @@ fun <
         statements += resources[18].hasPublishedVersion(resources[19])
         statements += resources[18].hasPublishedVersion(resources[20])
 
-        val ignored = listOf(3, 5, 6, 14, 20).map { resources[it] }.toSet()
+        resources[21] = resources[21].copy(classes = setOf(Classes.nodeShape))
+        statements += fabricator.random<GeneralStatement>().copy(
+            subject = resources[21],
+            predicate = createPredicate(Predicates.shTargetClass),
+            `object` = fabricator.random<Class>()
+        )
+
+        val ignored = listOf(3, 5, 6, 8, 14, 20).map { resources[it] }.toSet()
 
         return TestGraph(resources, statements, ignored)
     }

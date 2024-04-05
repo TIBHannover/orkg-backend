@@ -20,6 +20,7 @@ import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.input.PublishComparisonUseCase
+import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -36,6 +37,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -107,6 +109,23 @@ class ComparisonController(
         return created(location).build()
     }
 
+    @PreAuthorizeUser
+    @PutMapping("/{id}", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
+    fun update(
+        @PathVariable id: ThingId,
+        @RequestBody @Valid request: UpdateComparisonRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.update(request.toUpdateCommand(id, userId))
+        val location = uriComponentsBuilder
+            .path("api/comparisons/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
     @GetMapping("/{id}/related-resources/{resourceId}", produces = [COMPARISON_JSON_V2])
     fun findRelatedResourceById(
         @PathVariable("id") id: ThingId,
@@ -141,6 +160,24 @@ class ComparisonController(
         return created(location).build()
     }
 
+    @PreAuthorizeUser
+    @PutMapping("/{comparisonId}/related-resources/{comparisonRelatedResourceId}", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
+    fun updateRelatedResource(
+        @PathVariable("comparisonId") comparisonId: ThingId,
+        @PathVariable("comparisonRelatedResourceId") comparisonRelatedResourceId: ThingId,
+        @RequestBody @Valid request: UpdateComparisonRelatedResourceRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.updateComparisonRelatedResource(request.toUpdateCommand(comparisonId, comparisonRelatedResourceId, userId))
+        val location = uriComponentsBuilder
+            .path("api/comparisons/{comparisonId}/related-resources/{id}")
+            .buildAndExpand(comparisonId, comparisonRelatedResourceId)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
     @GetMapping("/{id}/related-figures/{figureId}", produces = [COMPARISON_JSON_V2])
     fun findRelatedFigureById(
         @PathVariable("id") id: ThingId,
@@ -173,6 +210,24 @@ class ComparisonController(
             .buildAndExpand(comparisonId, id)
             .toUri()
         return created(location).build()
+    }
+
+    @PreAuthorizeUser
+    @PutMapping("/{comparisonId}/related-figures/{comparisonRelatedFigureId}", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
+    fun updateRelatedFigure(
+        @PathVariable("comparisonId") comparisonId: ThingId,
+        @PathVariable("comparisonRelatedFigureId") comparisonRelatedFigureId: ThingId,
+        @RequestBody @Valid request: UpdateComparisonRelatedFigureRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.updateComparisonRelatedFigure(request.toUpdateCommand(comparisonId, comparisonRelatedFigureId, userId))
+        val location = uriComponentsBuilder
+            .path("api/comparisons/{comparisonId}/related-figures/{id}")
+            .buildAndExpand(comparisonId, comparisonRelatedFigureId)
+            .toUri()
+        return noContent().location(location).build()
     }
 
     @PreAuthorizeUser
@@ -232,6 +287,47 @@ class ComparisonController(
             )
     }
 
+    data class UpdateComparisonRequest(
+        @NotBlank
+        val title: String?,
+        @NotBlank
+        val description: String?,
+        @Size(min = 1, max = 1)
+        @JsonProperty("research_fields")
+        val researchFields: List<ThingId>?,
+        @field:Valid
+        val authors: List<AuthorDTO>?,
+        @JsonProperty("sdgs")
+        val sustainableDevelopmentGoals: Set<ThingId>?,
+        val contributions: List<ThingId>?,
+        val references: List<String>?,
+        @Size(max = 1)
+        val observatories: List<ObservatoryId>?,
+        @Size(max = 1)
+        val organizations: List<OrganizationId>?,
+        @JsonProperty("is_anonymized")
+        val isAnonymized: Boolean?,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod?
+    ) {
+        fun toUpdateCommand(comparisonId: ThingId, contributorId: ContributorId): UpdateComparisonUseCase.UpdateCommand =
+            UpdateComparisonUseCase.UpdateCommand(
+                comparisonId = comparisonId,
+                contributorId = contributorId,
+                title = title,
+                description = description,
+                researchFields = researchFields,
+                authors = authors?.map { it.toAuthor() },
+                sustainableDevelopmentGoals = sustainableDevelopmentGoals,
+                contributions = contributions,
+                references = references,
+                observatories = observatories,
+                organizations = organizations,
+                isAnonymized = isAnonymized,
+                extractionMethod = extractionMethod
+            )
+    }
+
     data class CreateComparisonRelatedResourceRequest(
         val label: String,
         @field:NotBlank
@@ -252,6 +348,21 @@ class ComparisonController(
             )
     }
 
+    data class UpdateComparisonRelatedResourceRequest(
+        val label: String?,
+        @field:NotBlank
+        val image: String?,
+        @field:NotBlank
+        val url: String?,
+        @field:NotBlank
+        val description: String?
+    ) {
+        fun toUpdateCommand(comparisonId: ThingId, comparisonRelatedResourceId: ThingId, contributorId: ContributorId) =
+            UpdateComparisonUseCase.UpdateComparisonRelatedResourceCommand(
+                comparisonId, comparisonRelatedResourceId, contributorId, label, image, url, description
+            )
+    }
+
     data class CreateComparisonRelatedFigureRequest(
         val label: String,
         @field:NotBlank
@@ -266,6 +377,19 @@ class ComparisonController(
                 label = label,
                 image = image,
                 description = description
+            )
+    }
+
+    data class UpdateComparisonRelatedFigureRequest(
+        val label: String?,
+        @field:NotBlank
+        val image: String,
+        @field:NotBlank
+        val description: String
+    ) {
+        fun toUpdateCommand(comparisonId: ThingId, comparisonRelatedFigureId: ThingId, contributorId: ContributorId) =
+            UpdateComparisonUseCase.UpdateComparisonRelatedFigureCommand(
+                comparisonId, comparisonRelatedFigureId, contributorId, label, image, description
             )
     }
 

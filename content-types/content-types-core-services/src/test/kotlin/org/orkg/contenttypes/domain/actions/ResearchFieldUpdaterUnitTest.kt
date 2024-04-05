@@ -48,22 +48,22 @@ class ResearchFieldUpdaterUnitTest {
         every {
             statementService.findAll(
                 subjectId = subjectId,
-                predicateId = Predicates.hasResearchField,
+                predicateId = Predicates.hasSubject,
                 pageable = PageRequests.ALL
             )
         } returns pageOf()
-        every { researchFieldCreator.create(contributorId, listOf(id), subjectId) } just runs
+        every { researchFieldCreator.create(contributorId, listOf(id), subjectId, Predicates.hasSubject) } just runs
 
-        researchFieldUpdater.update(contributorId, listOf(id), subjectId)
+        researchFieldUpdater.update(contributorId, listOf(id), subjectId, Predicates.hasSubject)
 
         verify(exactly = 1) {
             statementService.findAll(
                 subjectId = subjectId,
-                predicateId = Predicates.hasResearchField,
+                predicateId = Predicates.hasSubject,
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { researchFieldCreator.create(contributorId, listOf(id), subjectId) }
+        verify(exactly = 1) { researchFieldCreator.create(contributorId, listOf(id), subjectId, Predicates.hasSubject) }
     }
 
     @Test
@@ -75,25 +75,25 @@ class ResearchFieldUpdaterUnitTest {
         every {
             statementService.findAll(
                 subjectId = subjectId,
-                predicateId = Predicates.hasResearchField,
+                predicateId = Predicates.hasSubject,
                 pageable = PageRequests.ALL
             )
         } returns pageOf(
             createStatement(
                 id = statementId,
                 subject = createResource(subjectId),
-                predicate = createPredicate(Predicates.hasResearchField),
+                predicate = createPredicate(Predicates.hasSubject),
                 `object` = createResource(classes = setOf(Classes.researchField))
             )
         )
         every { statementService.delete(statementId) } just runs
 
-        researchFieldUpdater.update(contributorId, emptyList(), subjectId)
+        researchFieldUpdater.update(contributorId, emptyList(), subjectId, Predicates.hasSubject)
 
         verify(exactly = 1) {
             statementService.findAll(
                 subjectId = subjectId,
-                predicateId = Predicates.hasResearchField,
+                predicateId = Predicates.hasSubject,
                 pageable = PageRequests.ALL
             )
         }
@@ -110,30 +110,30 @@ class ResearchFieldUpdaterUnitTest {
         every {
             statementService.findAll(
                 subjectId = subjectId,
-                predicateId = Predicates.hasResearchField,
+                predicateId = Predicates.hasSubject,
                 pageable = PageRequests.ALL
             )
         } returns pageOf(
             createStatement(
                 id = statementId,
                 subject = createResource(subjectId),
-                predicate = createPredicate(Predicates.hasResearchField),
+                predicate = createPredicate(Predicates.hasSubject),
                 `object` = createResource(classes = setOf(Classes.researchField))
             )
         )
         every { statementService.delete(statementId) } just runs
-        every { researchFieldCreator.create(contributorId, listOf(id), subjectId) } just runs
+        every { researchFieldCreator.create(contributorId, listOf(id), subjectId, Predicates.hasSubject) } just runs
 
-        researchFieldUpdater.update(contributorId, listOf(id), subjectId)
+        researchFieldUpdater.update(contributorId, listOf(id), subjectId, Predicates.hasSubject)
 
         verify(exactly = 1) {
             statementService.findAll(
                 subjectId = subjectId,
-                predicateId = Predicates.hasResearchField,
+                predicateId = Predicates.hasSubject,
                 pageable = PageRequests.ALL
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }
-        verify(exactly = 1) { researchFieldCreator.create(contributorId, listOf(id), subjectId) }
+        verify(exactly = 1) { researchFieldCreator.create(contributorId, listOf(id), subjectId, Predicates.hasSubject) }
     }
 }

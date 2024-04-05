@@ -31,7 +31,9 @@ class SingleStatementPropertyUpdaterUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()
 
-    private val singleStatementPropertyUpdater = SingleStatementPropertyUpdater(literalService, statementService, singleStatementPropertyCreator)
+    private val singleStatementPropertyUpdater = SingleStatementPropertyUpdater(
+        literalService, statementService, singleStatementPropertyCreator
+    )
 
     @BeforeEach
     fun resetState() {
@@ -51,7 +53,7 @@ class SingleStatementPropertyUpdaterUnitTest {
         val literal = createLiteral()
         val updatedLiteral = literal.copy(
             label = description,
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri
         )
 
         every {
@@ -69,7 +71,13 @@ class SingleStatementPropertyUpdaterUnitTest {
         )
         every { literalService.update(updatedLiteral) } just runs
 
-        singleStatementPropertyUpdater.updateRequiredProperty(contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = description,
+            datatype = Literals.XSD.INT.prefixedUri
+        )
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -101,11 +109,18 @@ class SingleStatementPropertyUpdaterUnitTest {
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.description,
-                label = description
+                label = description,
+                datatype = Literals.XSD.INT.prefixedUri
             )
         } just runs
 
-        singleStatementPropertyUpdater.updateRequiredProperty(contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = description,
+            datatype = Literals.XSD.INT.prefixedUri
+        )
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -120,7 +135,8 @@ class SingleStatementPropertyUpdaterUnitTest {
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.description,
-                label = description
+                label = description,
+                datatype = Literals.XSD.INT.prefixedUri
             )
         }
     }
@@ -133,7 +149,7 @@ class SingleStatementPropertyUpdaterUnitTest {
         val literal = createLiteral()
         val updatedLiteral = literal.copy(
             label = description,
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri
         )
 
         every {
@@ -157,7 +173,13 @@ class SingleStatementPropertyUpdaterUnitTest {
         every { literalService.update(updatedLiteral) } just runs
         every { statementService.delete(setOf(StatementId("S456"))) } just runs
 
-        singleStatementPropertyUpdater.updateRequiredProperty(contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = description,
+            datatype = Literals.XSD.INT.prefixedUri
+        )
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -179,7 +201,7 @@ class SingleStatementPropertyUpdaterUnitTest {
         val literal = createLiteral()
         val updatedLiteral = literal.copy(
             label = description,
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri
         )
         val statements = listOf(
             createStatement(
@@ -190,7 +212,14 @@ class SingleStatementPropertyUpdaterUnitTest {
 
         every { literalService.update(updatedLiteral) } just runs
 
-        singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = description,
+            datatype = Literals.XSD.INT.prefixedUri
+        )
 
         verify(exactly = 1) { literalService.update(updatedLiteral) }
     }
@@ -207,18 +236,27 @@ class SingleStatementPropertyUpdaterUnitTest {
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.description,
-                label = description
+                label = description,
+                datatype = Literals.XSD.INT.prefixedUri
             )
         } just runs
 
-        singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = description,
+            datatype = Literals.XSD.INT.prefixedUri
+        )
 
         verify(exactly = 1) {
             singleStatementPropertyCreator.create(
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.description,
-                label = description
+                label = description,
+                datatype = Literals.XSD.INT.prefixedUri
             )
         }
     }
@@ -231,7 +269,7 @@ class SingleStatementPropertyUpdaterUnitTest {
         val literal = createLiteral()
         val updatedLiteral = literal.copy(
             label = description,
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri
         )
         val statements = listOf(
             createStatement(
@@ -248,7 +286,14 @@ class SingleStatementPropertyUpdaterUnitTest {
         every { literalService.update(updatedLiteral) } just runs
         every { statementService.delete(setOf(StatementId("S456"))) } just runs
 
-        singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateRequiredProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = description,
+            datatype = Literals.XSD.INT.prefixedUri
+        )
 
         verify(exactly = 1) { literalService.update(updatedLiteral) }
         verify(exactly = 1) { statementService.delete(setOf(StatementId("S456"))) }

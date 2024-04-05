@@ -12,29 +12,46 @@ import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
+import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.domain.actions.LabelCollectionValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAction
+import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
+import org.orkg.contenttypes.domain.actions.UpdateComparisonState
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorCreateValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorCreator
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorValidator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorUpdateValidator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonExistenceValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonModifiableValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourceUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResearchFieldCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResearchFieldUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGUpdater
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedFigureCommand
 import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedResourceCommand
 import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.RetrieveComparisonContributionsUseCase
+import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedFigureCommand
+import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedResourceCommand
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -158,12 +175,12 @@ class ComparisonService(
             LabelValidator("title") { it.title },
             LabelValidator("description") { it.description },
             LabelCollectionValidator("references") { it.references },
-            ComparisonContributionValidator(resourceRepository),
+            ComparisonContributionValidator(resourceRepository) { it.contributions },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }),
-            ComparisonAuthorValidator(resourceRepository, statementRepository),
+            ComparisonAuthorCreateValidator(resourceRepository, statementRepository),
             ComparisonResourceCreator(resourceService),
             ComparisonDescriptionCreator(literalService, statementService),
             ComparisonAuthorCreator(resourceService, statementService, literalService, listService),
@@ -173,7 +190,7 @@ class ComparisonService(
             ComparisonIsAnonymizedCreator(literalService, statementService),
             ComparisonContributionCreator(statementService)
         )
-        return steps.execute(command, ComparisonAction.State()).comparisonId!!
+        return steps.execute(command, CreateComparisonState()).comparisonId!!
     }
 
     override fun createComparisonRelatedResource(command: CreateComparisonRelatedResourceCommand): ThingId {
@@ -269,6 +286,49 @@ class ComparisonService(
             )
         }
         return figureId
+    }
+
+    override fun update(command: UpdateComparisonCommand) {
+        val steps = listOf(
+            LabelValidator("title") { it.title },
+            LabelValidator("description") { it.description },
+            LabelCollectionValidator("references") { it.references },
+            ComparisonExistenceValidator(this),
+            ComparisonModifiableValidator(statementService),
+            ComparisonContributionValidator(resourceRepository) { it.contributions },
+            ResearchFieldValidator(resourceRepository, { it.researchFields }),
+            ObservatoryValidator(observatoryRepository, { it.observatories }),
+            OrganizationValidator(organizationRepository, { it.organizations }),
+            SDGValidator({ it.sustainableDevelopmentGoals }),
+            ComparisonAuthorUpdateValidator(resourceRepository, statementRepository),
+            ComparisonResourceUpdater(resourceService),
+            ComparisonDescriptionUpdater(literalService, statementService),
+            ComparisonResearchFieldUpdater(statementService),
+            ComparisonAuthorUpdater(resourceService, statementService, literalService, listService),
+            ComparisonSDGUpdater(statementService),
+            ComparisonContributionUpdater(literalService, statementService),
+            ComparisonReferencesUpdater(literalService, statementService),
+            ComparisonIsAnonymizedUpdater(literalService, statementService)
+        )
+        steps.execute(command, UpdateComparisonState())
+    }
+
+    override fun updateComparisonRelatedResource(command: UpdateComparisonRelatedResourceCommand) {
+        ComparisonRelatedResourceUpdater(
+            comparisonService = this,
+            resourceService = resourceService,
+            literalService = literalService,
+            statementService = statementService
+        ).execute(command)
+    }
+
+    override fun updateComparisonRelatedFigure(command: UpdateComparisonRelatedFigureCommand) {
+        ComparisonRelatedFigureUpdater(
+            comparisonService = this,
+            resourceService = resourceService,
+            literalService = literalService,
+            statementService = statementService
+        ).execute(command)
     }
 
     override fun publish(command: PublishComparisonUseCase.PublishCommand) {

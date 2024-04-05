@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
-import io.kotest.assertions.asClue
-import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -11,12 +9,11 @@ import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
-import org.orkg.contenttypes.domain.actions.ComparisonState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -24,7 +21,7 @@ import org.orkg.graph.testing.fixtures.createResource
 class ComparisonContributionValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
 
-    private val contributionValidator = ComparisonContributionValidator(resourceRepository)
+    private val contributionValidator = ComparisonContributionValidator<List<ThingId>?, Unit>(resourceRepository) { it }
 
     @BeforeEach
     fun resetState() {
@@ -37,61 +34,49 @@ class ComparisonContributionValidatorUnitTest {
     }
 
     @Test
-    fun `Given a comparison create command, when validating its contributions, it returns success`() {
-        val command = dummyCreateComparisonCommand()
-        val state = ComparisonState()
-        val contribution = createResource(
-            classes = setOf(Classes.contribution)
-        )
+    fun `Given a list of contributions, when validating its contributions, it returns success`() {
+        val command = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120"))
+        val contribution = createResource(classes = setOf(Classes.contribution))
 
         every { resourceRepository.findById(any()) } returns Optional.of(contribution)
 
-        val result = contributionValidator(command, state)
+        contributionValidator(command, Unit)
 
-        result.asClue {
-            it.authors.size shouldBe 0
-            it.comparisonId shouldBe null
-        }
-
-        command.contributions.forEach {
+        command.forEach {
             verify(exactly = 1) { resourceRepository.findById(it) }
         }
     }
 
     @Test
-    fun `Given a comparison create command, when contribution is missing, it throws an exception`() {
-        val command = dummyCreateComparisonCommand()
-        val state = ComparisonState()
+    fun `Given a list of contributions, when contribution is missing, it throws an exception`() {
+        val command = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120"))
 
-        every { resourceRepository.findById(command.contributions.first()) } returns Optional.empty()
+        every { resourceRepository.findById(command.first()) } returns Optional.empty()
 
-        assertThrows<ContributionNotFound> { contributionValidator(command, state) }
+        assertThrows<ContributionNotFound> { contributionValidator(command, Unit) }
 
-        verify(exactly = 1) { resourceRepository.findById(command.contributions.first()) }
+        verify(exactly = 1) { resourceRepository.findById(command.first()) }
     }
 
     @Test
-    fun `Given a comparison create command, when resource its not a contribution, it throws an exception`() {
-        val command = dummyCreateComparisonCommand()
-        val state = ComparisonState()
-        val contribution = createResource(
-            id = command.contributions.first()
-        )
+    fun `Given a list of contributions, when resource its not a contribution, it throws an exception`() {
+        val command = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120"))
+        val contribution = createResource(id = command.first())
 
         every { resourceRepository.findById(contribution.id) } returns Optional.of(contribution)
 
-        assertThrows<ContributionNotFound> { contributionValidator(command, state) }
+        assertThrows<ContributionNotFound> { contributionValidator(command, Unit) }
 
         verify(exactly = 1) { resourceRepository.findById(contribution.id) }
     }
 
     @Test
-    fun `Given a comparison create command, when less than two contributions are specified, it throws an exception`() {
-        val command = dummyCreateComparisonCommand().copy(
-            contributions = listOf(ThingId("R12"))
-        )
-        val state = ComparisonState()
+    fun `Given a list of contributions, when less than two contributions are specified, it throws an exception`() {
+        assertThrows<RequiresAtLeastTwoContributions> { contributionValidator(listOf(ThingId("R12")), Unit) }
+    }
 
-        assertThrows<RequiresAtLeastTwoContributions> { contributionValidator(command, state) }
+    @Test
+    fun `Given a list of contributions, when null, it returns success`() {
+        assertDoesNotThrow { contributionValidator(null, Unit) }
     }
 }

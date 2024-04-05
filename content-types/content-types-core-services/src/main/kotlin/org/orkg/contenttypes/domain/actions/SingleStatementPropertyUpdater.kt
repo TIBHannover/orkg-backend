@@ -50,7 +50,7 @@ class SingleStatementPropertyUpdater(
                 .toMutableSet()
 
             if (toRemove.isEmpty()) {
-                singleStatementPropertyCreator.create(contributorId, subjectId, predicateId, label)
+                singleStatementPropertyCreator.create(contributorId, subjectId, predicateId, label, datatype)
             } else {
                 val statement = toRemove.first()
                 with(statement.`object` as Literal) {

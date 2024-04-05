@@ -2,14 +2,14 @@ package org.orkg.contenttypes.domain.actions.comparisons
 
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAction.State
+import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction.State
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
 class ComparisonDescriptionCreator(
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator
-) : ComparisonAction {
+) : CreateComparisonAction {
     constructor(
         literalService: LiteralUseCases,
         statementService: StatementUseCases

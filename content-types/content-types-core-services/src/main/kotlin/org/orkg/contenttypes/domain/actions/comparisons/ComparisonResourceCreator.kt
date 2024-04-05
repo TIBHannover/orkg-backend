@@ -1,14 +1,14 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAction.State
+import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction.State
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 
 class ComparisonResourceCreator(
     private val resourceService: ResourceUseCases
-) : ComparisonAction {
+) : CreateComparisonAction {
     override operator fun invoke(command: CreateComparisonCommand, state: State): State {
         val comparisonId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(

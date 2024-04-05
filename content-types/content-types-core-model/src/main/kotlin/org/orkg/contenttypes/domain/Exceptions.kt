@@ -40,6 +40,15 @@ class SustainableDevelopmentGoalNotFound(id: ThingId) :
 class PaperNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Paper "$id" is not modifiable.""")
 
+class ComparisonNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Comparison "$id" is not modifiable.""")
+
+class ComparisonRelatedResourceNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Comparison related resource "$id" is not modifiable.""")
+
+class ComparisonRelatedFigureNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Comparison related figure "$id" is not modifiable.""")
+
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")
 

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.ComparisonState
+import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
@@ -35,7 +35,7 @@ class ComparisonResourceCreatorUnitTest {
     @Test
     fun `Given a comparison create command, it crates a new comparison resource`() {
         val command = dummyCreateComparisonCommand()
-        val state = ComparisonState()
+        val state = CreateComparisonState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             label = command.title,

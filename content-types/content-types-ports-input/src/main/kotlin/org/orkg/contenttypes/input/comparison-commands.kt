@@ -45,6 +45,47 @@ interface CreateComparisonUseCase {
     )
 }
 
+interface UpdateComparisonUseCase {
+    fun update(command: UpdateCommand)
+    fun updateComparisonRelatedResource(command: UpdateComparisonRelatedResourceCommand)
+    fun updateComparisonRelatedFigure(command: UpdateComparisonRelatedFigureCommand)
+
+    data class UpdateCommand(
+        val comparisonId: ThingId,
+        val contributorId: ContributorId,
+        val title: String?,
+        val description: String?,
+        val researchFields: List<ThingId>?,
+        val authors: List<Author>?,
+        val sustainableDevelopmentGoals: Set<ThingId>?,
+        val contributions: List<ThingId>?,
+        val references: List<String>?,
+        val observatories: List<ObservatoryId>?,
+        val organizations: List<OrganizationId>?,
+        val isAnonymized: Boolean?,
+        val extractionMethod: ExtractionMethod?
+    )
+
+    data class UpdateComparisonRelatedResourceCommand(
+        val comparisonId: ThingId,
+        val comparisonRelatedResourceId: ThingId,
+        val contributorId: ContributorId,
+        val label: String?,
+        val image: String?,
+        val url: String?,
+        val description: String?
+    )
+
+    data class UpdateComparisonRelatedFigureCommand(
+        val comparisonId: ThingId,
+        val comparisonRelatedFigureId: ThingId,
+        val contributorId: ContributorId,
+        val label: String?,
+        val image: String?,
+        val description: String?
+    )
+}
+
 interface PublishComparisonUseCase {
     fun publish(command: PublishCommand)
 

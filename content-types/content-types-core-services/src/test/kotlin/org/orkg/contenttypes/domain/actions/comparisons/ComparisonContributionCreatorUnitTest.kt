@@ -13,7 +13,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.ComparisonState
+import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
@@ -37,7 +37,7 @@ class ComparisonContributionCreatorUnitTest {
     fun `Given a subject resource, when linking contributions, it returns success`() {
         val comparisonId = ThingId("R12")
         val command = dummyCreateComparisonCommand()
-        val state = ComparisonState(
+        val state = CreateComparisonState(
             comparisonId = comparisonId
         )
 

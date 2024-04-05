@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.domain.actions
 
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAction
+import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction
+import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction
 import org.orkg.contenttypes.domain.actions.contributions.ContributionAction
 import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
@@ -16,6 +17,7 @@ import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
+import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
@@ -31,6 +33,7 @@ internal typealias CreateTemplateCommand = CreateTemplateUseCase.CreateCommand
 internal typealias CreateTemplatePropertyCommand = CreateTemplatePropertyUseCase.CreateCommand
 
 internal typealias UpdatePaperCommand = UpdatePaperUseCase.UpdateCommand
+internal typealias UpdateComparisonCommand = UpdateComparisonUseCase.UpdateCommand
 internal typealias UpdateTemplateCommand = UpdateTemplateUseCase.UpdateCommand
 internal typealias UpdateTemplatePropertyCommand = UpdateTemplatePropertyUseCase.UpdateCommand
 internal typealias UpdateTemplateInstanceCommand = UpdateTemplateInstanceUseCase.UpdateCommand
@@ -44,8 +47,10 @@ internal typealias UpdateTemplateState = UpdateTemplateAction.State
 internal typealias CreateTemplatePropertyState = CreateTemplatePropertyAction.State
 internal typealias UpdateTemplatePropertyState = UpdateTemplatePropertyAction.State
 
+internal typealias CreateComparisonState = CreateComparisonAction.State
+internal typealias UpdateComparisonState = UpdateComparisonAction.State
+
 internal typealias ContributionState = ContributionAction.State
-internal typealias ComparisonState = ComparisonAction.State
 internal typealias VisualizationState = VisualizationAction.State
 
 internal typealias UpdateTemplateInstanceState = UpdateTemplateInstanceAction.State

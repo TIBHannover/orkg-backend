@@ -64,6 +64,19 @@ The comparison (object) can be retrieved by following the URI in the `Location` 
 
 operation::comparisons-create[snippets='request-fields,curl-request,http-response']
 
+[[comparisons-edit]]
+== Editing a comparison
+
+A `PUT` request updates an existing comparison with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
+
+WARNING: Author names will not be updated if a resource id is specified for a given author.
+
+operation::comparisons-update[snippets='request-fields,curl-request,http-response']
+
 [[comparisons-related-resource-create]]
 == Creating comparison related resources
 
@@ -73,6 +86,17 @@ The comparison related resource (object) can be retrieved by following the URI i
 
 operation::comparisons-create-comparison-related-resource[snippets='request-fields,path-parameters,curl-request,http-response']
 
+[[comparisons-related-resource-edit]]
+== Editing a comparison related resource
+
+A `PUT` request updates an existing comparison related resource with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated comparison related resource (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: Top level fields that were mandatory when creating the comparison related resource can be omitted or `null`, meaning that the corresponding fields should not be updated.
+
+operation::comparisons-update-comparison-related-resource[snippets='request-fields,curl-request,http-response']
+
 [[comparisons-related-figure-create]]
 == Creating comparison related figures
 
@@ -81,6 +105,17 @@ The response will be `201 Created` when successful.
 The comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
 
 operation::comparisons-create-comparison-related-figure[snippets='request-fields,path-parameters,curl-request,http-response']
+
+[[comparisons-related-figure-edit]]
+== Editing a comparison related figure
+
+A `PUT` request updates an existing comparison related figure with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: Top level fields that were mandatory when creating the comparison related figure can be omitted or `null`, meaning that the corresponding fields should not be updated.
+
+operation::comparisons-update-comparison-related-figure[snippets='request-fields,curl-request,http-response']
 
 [[comparisons-publish]]
 == Publishing comparisons

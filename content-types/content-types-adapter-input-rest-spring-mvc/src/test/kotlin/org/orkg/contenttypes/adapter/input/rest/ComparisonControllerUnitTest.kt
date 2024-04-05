@@ -53,6 +53,7 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
+import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
@@ -607,7 +608,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the newly created comparison can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("title").description("The title of the comparison."),
@@ -898,8 +899,179 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         verify(exactly = 1) { comparisonService.createComparisonRelatedFigure(any()) }
     }
 
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a update comparison request, when service succeeds, it updates the comparison")
+    fun update() {
+        val id = ThingId("R123")
+        every { comparisonService.update(any()) } just runs
+
+        documentedPutRequestTo("/api/comparisons/{id}", id)
+            .content(updateComparisonRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/comparisons/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated comparison can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("title").description("The title of the comparison. (optional)"),
+                        fieldWithPath("description").description("The description of the comparison. (optional)"),
+                        fieldWithPath("research_fields").description("The list of research fields the comparison will be assigned to. (optional)"),
+                        fieldWithPath("authors").description("The list of authors that originally contributed to the comparison. (optional)"),
+                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
+                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
+                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
+                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the comparison will be assigned to. (optional)").optional(),
+                        fieldWithPath("contributions[]").description("The ids of the contributions the comparison compares. (optional)"),
+                        fieldWithPath("references[]").description("The references to external sources that the comparison refers to. (optional)"),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the comparison belongs to. (optional)"),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to. (optional)"),
+                        fieldWithPath("is_anonymized").description("Whether or not the comparison should be displayed as anonymous. (optional)"),
+                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { comparisonService.update(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a comparison related resource request, when service succeeds, it updates the comparison related resource")
+    fun updateComparisonRelatedResource() {
+        val id = ThingId("R123")
+        val comparisonId = ThingId("R100")
+        every { comparisonService.updateComparisonRelatedResource(any()) } just runs
+
+        documentedPutRequestTo("/api/comparisons/{comparisonId}/related-resources/{id}", comparisonId, id)
+            .content(updateComparisonRelatedResourceRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-resources/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated comparison related resource can be fetched from.")
+                    ),
+                    pathParameters(
+                        parameterWithName("comparisonId").description("The id of the comparison the comparison related resource belongs to."),
+                        parameterWithName("id").description("The identifier of the comparison related resource to update.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The label of the comparison related resource. (optional)"),
+                        fieldWithPath("image").description("The url to the image of the comparison related resource."),
+                        fieldWithPath("url").description("The url of the comparison related resource."),
+                        fieldWithPath("description").description("The description of the comparison related resource.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { comparisonService.updateComparisonRelatedResource(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a comparison related figure request, when service succeeds, it updates the comparison related figure")
+    fun updateComparisonRelatedFigure() {
+        val id = ThingId("R123")
+        val comparisonId = ThingId("R100")
+        every { comparisonService.updateComparisonRelatedFigure(any()) } just runs
+
+        documentedPutRequestTo("/api/comparisons/{comparisonId}/related-figures/{id}", comparisonId, id)
+            .content(updateComparisonRelatedFigureRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-figures/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated comparison related figure can be fetched from.")
+                    ),
+                    pathParameters(
+                        parameterWithName("comparisonId").description("The id of the comparison the comparison related figure belongs to."),
+                        parameterWithName("id").description("The identifier of the comparison related figure to update.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The label of the comparison related figure. (optional)"),
+                        fieldWithPath("image").description("The url to the image of the comparison related figure."),
+                        fieldWithPath("description").description("The description of the comparison related figure.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { comparisonService.updateComparisonRelatedFigure(any()) }
+    }
+
     private fun createComparisonRequest() =
         ComparisonController.CreateComparisonRequest(
+            title = "test",
+            description = "comparison description",
+            researchFields = listOf(ThingId("R12")),
+            authors = listOf(
+                AuthorDTO(
+                    id = ThingId("R123"),
+                    name = "Author with id",
+                    identifiers = null,
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with orcid",
+                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = ThingId("R456"),
+                    name = "Author with id and orcid",
+                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with homepage",
+                    identifiers = null,
+                    homepage = URI.create("http://example.org/author")
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author that just has a name",
+                    identifiers = null,
+                    homepage = null
+                )
+            ),
+            sustainableDevelopmentGoals = setOf(
+                ThingId("SDG_1"),
+                ThingId("SDG_2")
+            ),
+            contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
+            references = listOf("https://orkg.org/resources/R1000", "paper citation"),
+            observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
+            organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
+            isAnonymized = false,
+            extractionMethod = ExtractionMethod.UNKNOWN
+        )
+
+    private fun updateComparisonRequest() =
+        ComparisonController.UpdateComparisonRequest(
             title = "test",
             description = "comparison description",
             researchFields = listOf(ThingId("R12")),
@@ -955,8 +1127,23 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             description = "comparison related resource description"
         )
 
+    private fun updateComparisonRelatedResourceRequest() =
+        ComparisonController.UpdateComparisonRelatedResourceRequest(
+            label = "related resource",
+            image = "https://example.org/test.png",
+            url = "https://orkg.org/resources/R1000",
+            description = "comparison related resource description"
+        )
+
     private fun createComparisonRelatedFigureRequest() =
         ComparisonController.CreateComparisonRelatedFigureRequest(
+            label = "related resource",
+            image = "https://example.org/test.png",
+            description = "comparison related resource description"
+        )
+
+    private fun updateComparisonRelatedFigureRequest() =
+        ComparisonController.UpdateComparisonRelatedFigureRequest(
             label = "related resource",
             image = "https://example.org/test.png",
             description = "comparison related resource description"

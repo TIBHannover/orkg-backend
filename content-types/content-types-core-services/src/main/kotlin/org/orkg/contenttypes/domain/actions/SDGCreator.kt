@@ -5,6 +5,7 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
+@Deprecated("To be replaced", replaceWith = ReplaceWith("StatementCollectionPropertyCreator"))
 class SDGCreator(
     private val statementService: StatementUseCases
 ) {

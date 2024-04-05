@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
+import org.orkg.contenttypes.domain.ComparisonNotModifiable
+import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotModifiable
+import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
 import org.orkg.contenttypes.domain.InvalidBounds
 import org.orkg.contenttypes.domain.InvalidDatatype
 import org.orkg.contenttypes.domain.InvalidLiteral
@@ -16,11 +19,12 @@ import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.MissingPropertyValues
 import org.orkg.contenttypes.domain.NumberTooHigh
 import org.orkg.contenttypes.domain.NumberTooLow
-import org.orkg.contenttypes.domain.ObjectMustNotBeALiteral
 import org.orkg.contenttypes.domain.ObjectIsNotAClass
 import org.orkg.contenttypes.domain.ObjectIsNotAList
 import org.orkg.contenttypes.domain.ObjectIsNotALiteral
 import org.orkg.contenttypes.domain.ObjectIsNotAPredicate
+import org.orkg.contenttypes.domain.ObjectMustNotBeALiteral
+import org.orkg.contenttypes.domain.PaperNotModifiable
 import org.orkg.contenttypes.domain.ResourceIsNotAnInstanceOfTargetClass
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.TemplateNotApplicable
@@ -455,6 +459,66 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun paperNotModifiable() {
+        val id = "R123"
+
+        get("/paper-not-modifiable")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/paper-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Paper "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun comparisonNotModifiable() {
+        val id = "R123"
+
+        get("/comparison-not-modifiable")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/comparison-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Comparison "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun comparisonRelatedResourceNotModifiable() {
+        val id = "R123"
+
+        get("/comparison-related-resource-not-modifiable")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/comparison-related-resource-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Comparison related resource "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun comparisonRelatedFigureNotModifiable() {
+        val id = "R123"
+
+        get("/comparison-related-figure-not-modifiable")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/comparison-related-figure-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Comparison related figure "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -635,6 +699,26 @@ internal class ExceptionControllerUnitTest {
             @RequestParam maxInclusive: Number
         ) {
             throw NumberTooHigh(templatePropertyId, objectId, predicateId, label, maxInclusive)
+        }
+
+        @GetMapping("/paper-not-modifiable")
+        fun paperNotModifiable(@RequestParam id: ThingId) {
+            throw PaperNotModifiable(id)
+        }
+
+        @GetMapping("/comparison-not-modifiable")
+        fun comparisonNotModifiable(@RequestParam id: ThingId) {
+            throw ComparisonNotModifiable(id)
+        }
+
+        @GetMapping("/comparison-related-resource-not-modifiable")
+        fun comparisonRelatedResourceNotModifiable(@RequestParam id: ThingId) {
+            throw ComparisonRelatedResourceNotModifiable(id)
+        }
+
+        @GetMapping("/comparison-related-figure-not-modifiable")
+        fun comparisonRelatedFigureNotModifiable(@RequestParam id: ThingId) {
+            throw ComparisonRelatedFigureNotModifiable(id)
         }
     }
 

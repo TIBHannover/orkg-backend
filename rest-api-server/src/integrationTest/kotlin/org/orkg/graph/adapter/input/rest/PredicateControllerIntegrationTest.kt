@@ -5,12 +5,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.orkg.common.ContributorId
 import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
+import org.orkg.testing.MockUserId
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -165,7 +167,7 @@ class PredicateControllerIntegrationTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deletePredicateSuccess() {
-        val id = service.createPredicate(label = "bye bye")
+        val id = service.createPredicate(label = "bye bye", contributorId = ContributorId(MockUserId.ADMIN))
 
         mockMvc
             .perform(deleteRequest("/api/predicates/$id"))

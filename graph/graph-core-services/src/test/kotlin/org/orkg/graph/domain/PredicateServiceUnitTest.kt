@@ -13,18 +13,22 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.community.output.CuratorRepository
+import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
+import org.orkg.testing.MockUserId
 import org.orkg.testing.fixedClock
 
 class PredicateServiceUnitTest {
 
     private val repository: PredicateRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
-    private val service = PredicateService(repository, statementRepository, fixedClock)
+    private val curatorRepository: CuratorRepository = mockk()
+    private val service = PredicateService(repository, statementRepository, curatorRepository, fixedClock)
 
     @Test
     fun `given a predicate is created, when no id is given, then it gets an id from the repository`() {
@@ -145,37 +149,84 @@ class PredicateServiceUnitTest {
     @Test
     fun `given a predicate is being deleted, when it is still used in a statement, an appropriate error is thrown`() {
         val mockPredicate = createPredicate()
+        val couldBeAnyone = ContributorId(MockUserId.USER)
 
         every { repository.findById(mockPredicate.id) } returns Optional.of(mockPredicate)
         every { statementRepository.countPredicateUsage(mockPredicate.id) } returns 1
 
         shouldThrow<PredicateUsedInStatement> {
-            service.delete(mockPredicate.id)
+            service.delete(mockPredicate.id, couldBeAnyone)
         }
 
         verify(exactly = 0) { repository.deleteById(any()) }
     }
 
     @Test
-    fun `given a predicate is being deleted, when it is not used in a statement, it gets deleted`() {
-        val mockPredicate = createPredicate()
+    fun `given a predicate is being deleted, when it is not used in a statement, and it is owned by the user, it gets deleted`() {
+        val theOwningContributorId = ContributorId(MockUserId.USER)
+        val theOwningContributor = createContributor(id = theOwningContributorId)
+        val predicate = createPredicate(createdBy = theOwningContributorId)
 
-        every { repository.findById(mockPredicate.id) } returns Optional.of(mockPredicate)
-        every { statementRepository.countPredicateUsage(mockPredicate.id) } returns 0
-        every { repository.deleteById(mockPredicate.id) } returns Unit
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+        every { statementRepository.countPredicateUsage(predicate.id) } returns 0
+        every { curatorRepository.findById(theOwningContributorId) } returns theOwningContributor
+        every { repository.deleteById(predicate.id) } returns Unit
 
-        service.delete(mockPredicate.id)
+        service.delete(predicate.id, theOwningContributorId)
 
-        verify(exactly = 1) { repository.deleteById(mockPredicate.id) }
+        verify(exactly = 1) { repository.findById(predicate.id) }
+        verify(exactly = 1) { statementRepository.countPredicateUsage(predicate.id) }
+        verify(exactly = 1) { repository.deleteById(predicate.id) }
+    }
+
+    @Test
+    fun `given a predicate is being deleted, when it is not used in a statement, and it is not owned by the user, but the user is a curator, it gets deleted`() {
+        val theOwningContributorId = ContributorId(MockUserId.USER)
+        val aCurator = createContributor(id = ContributorId(MockUserId.CURATOR))
+        val predicate = createPredicate(createdBy = theOwningContributorId)
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+        every { statementRepository.countPredicateUsage(predicate.id) } returns 0
+        every { curatorRepository.findById(aCurator.id) } returns aCurator
+        every { repository.deleteById(predicate.id) } returns Unit
+
+        service.delete(predicate.id, aCurator.id)
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+        verify(exactly = 1) { statementRepository.countPredicateUsage(predicate.id) }
+        verify(exactly = 1) { repository.deleteById(predicate.id) }
+        verify(exactly = 1) { curatorRepository.findById(aCurator.id) }
+    }
+
+    @Test
+    fun `given a predicate is being deleted, when it is not used in a statement, and it is not owned by the user, and the user is not a curator, it throws an exception`() {
+        val theOwningContributorId = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
+        val loggedInUserId = ContributorId(MockUserId.USER)
+        val predicate = createPredicate(createdBy = theOwningContributorId)
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+        every { statementRepository.countPredicateUsage(predicate.id) } returns 0
+        every { curatorRepository.findById(loggedInUserId) } returns null
+        every { repository.deleteById(predicate.id) } returns Unit
+
+        shouldThrow<NeitherOwnerNorCurator> {
+            service.delete(predicate.id, loggedInUserId)
+        }
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+        verify(exactly = 1) { statementRepository.countPredicateUsage(predicate.id) }
+        verify(exactly = 0) { repository.deleteById(predicate.id) }
+        verify(exactly = 1) { curatorRepository.findById(loggedInUserId) }
     }
 
     @Test
     fun `given a predicate is being deleted, when it is unmodifiable, it throws an exception`() {
         val predicate = createPredicate(modifiable = false)
+        val loggedInUser = ContributorId("89b13df4-22ae-4685-bed0-4bb1f1873c78")
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
 
-        shouldThrow<PredicateNotModifiable> { service.delete(predicate.id) }.asClue {
+        shouldThrow<PredicateNotModifiable> { service.delete(predicate.id, loggedInUser) }.asClue {
             it.message shouldBe """Predicate "${predicate.id}" is not modifiable."""
         }
 

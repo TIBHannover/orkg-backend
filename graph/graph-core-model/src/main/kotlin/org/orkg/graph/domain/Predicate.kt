@@ -11,4 +11,6 @@ data class Predicate(
     override val createdBy: ContributorId = ContributorId.UNKNOWN,
     val description: String? = null,
     override val modifiable: Boolean = true
-) : Thing
+) : Thing {
+    fun isOwnedBy(contributorId: ContributorId): Boolean = createdBy == contributorId
+}

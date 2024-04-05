@@ -1,8 +1,8 @@
 package org.orkg.graph.adapter.input.rest
 
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeCurator
 import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
 import org.orkg.graph.domain.PredicateNotFound
@@ -86,9 +86,9 @@ class PredicateController(
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorizeCurator
-    fun delete(@PathVariable id: ThingId): ResponseEntity<Unit> {
-        service.delete(id)
+    @RequireLogin
+    fun delete(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails?): ResponseEntity<Unit> {
+        service.delete(id, currentUser.contributorId())
         return ResponseEntity.noContent().build()
     }
 

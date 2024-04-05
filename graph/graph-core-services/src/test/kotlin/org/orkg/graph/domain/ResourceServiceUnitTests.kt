@@ -351,7 +351,7 @@ class ResourceServiceUnitTests {
     }
 
     @Test
-    fun `given a resource is being deleted, when it is not used in a statement, and it is not owned by the user, and the user is not a curator, it gets deleted`() {
+    fun `given a resource is being deleted, when it is not used in a statement, and it is not owned by the user, and the user is not a curator, it throws an exception`() {
         val theOwningContributorId = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
         val loggedInUserId = ContributorId("89b13df4-22ae-4685-bed0-4bb1f1873c78")
         val mockResource = createResource(createdBy = theOwningContributorId)

@@ -6,6 +6,7 @@ import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.community.output.CuratorRepository
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 class PredicateService(
     private val repository: PredicateRepository,
     private val statementRepository: StatementRepository,
+    private val curatorRepository: CuratorRepository,
     private val clock: Clock,
 ) : PredicateUseCases {
     @Transactional(readOnly = true)
@@ -62,7 +64,7 @@ class PredicateService(
         repository.save(found)
     }
 
-    override fun delete(predicateId: ThingId) {
+    override fun delete(predicateId: ThingId, contributorId: ContributorId) {
         val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId) }
 
         if (!predicate.modifiable)
@@ -70,6 +72,9 @@ class PredicateService(
 
         if (statementRepository.countPredicateUsage(predicate.id) > 0)
             throw PredicateUsedInStatement(predicate.id)
+
+        if (!predicate.isOwnedBy(contributorId))
+            curatorRepository.findById(contributorId) ?: throw NeitherOwnerNorCurator(contributorId)
 
         repository.deleteById(predicate.id)
     }

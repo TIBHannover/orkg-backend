@@ -155,16 +155,14 @@ class ResourceService(
     override fun delete(id: ThingId, contributorId: ContributorId) {
         val resource = repository.findById(id).orElseThrow { ResourceNotFound.withId(id) }
 
-        if (!resource.modifiable) {
+        if (!resource.modifiable)
             throw ResourceNotModifiable(resource.id)
-        }
 
         if (statementRepository.checkIfResourceHasStatements(resource.id))
             throw ResourceUsedInStatement(resource.id)
 
-        if (!resource.isOwnedBy(contributorId)) {
+        if (!resource.isOwnedBy(contributorId))
             curatorRepository.findById(contributorId) ?: throw NeitherOwnerNorCurator(contributorId)
-        }
 
         repository.deleteById(resource.id)
     }

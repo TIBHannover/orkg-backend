@@ -9,7 +9,6 @@ dependencies {
     implementation(project(":statistics:statistics-ports-input"))
     implementation(project(":statistics:statistics-ports-output"))
     implementation(project(":statistics:statistics-core-model"))
-    implementation(project(":graph:graph-ports-output"))
     implementation(project(":community:community-ports-input"))
     implementation(project(":community:community-ports-output"))
 

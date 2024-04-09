@@ -34,7 +34,7 @@ class AuthorValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
 
-    private val authorValidator = object : AuthorValidator(resourceRepository, statementRepository) {}
+    private val authorValidator = AuthorValidator(resourceRepository, statementRepository)
 
     @BeforeEach
     fun resetState() {

@@ -7,9 +7,13 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
 class VisualizationAuthorValidator(
-    resourceRepository: ResourceRepository,
-    statementRepository: StatementRepository
-) : AuthorValidator(resourceRepository, statementRepository), VisualizationAction {
+    private val authorValidator: AuthorValidator
+) : VisualizationAction {
+    constructor(
+        resourceRepository: ResourceRepository,
+        statementRepository: StatementRepository
+    ) : this(AuthorValidator(resourceRepository, statementRepository))
+
     override operator fun invoke(command: CreateVisualizationCommand, state: State): State =
-        state.copy(authors = validate(command.authors))
+        state.copy(authors = authorValidator.validate(command.authors))
 }

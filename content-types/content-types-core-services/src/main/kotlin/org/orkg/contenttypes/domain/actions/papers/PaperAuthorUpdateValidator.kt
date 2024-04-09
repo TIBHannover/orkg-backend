@@ -7,12 +7,16 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
 class PaperAuthorUpdateValidator(
-    resourceRepository: ResourceRepository,
-    statementRepository: StatementRepository
-) : AuthorValidator(resourceRepository, statementRepository), UpdatePaperAction {
+    private val authorValidator: AuthorValidator
+) : UpdatePaperAction {
+    constructor(
+        resourceRepository: ResourceRepository,
+        statementRepository: StatementRepository
+    ) : this(AuthorValidator(resourceRepository, statementRepository))
+
     override operator fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
         if (command.authors != null && command.authors != state.paper!!.authors) {
-            return state.copy(authors = validate(command.authors!!))
+            return state.copy(authors = authorValidator.validate(command.authors!!))
         }
         return state
     }

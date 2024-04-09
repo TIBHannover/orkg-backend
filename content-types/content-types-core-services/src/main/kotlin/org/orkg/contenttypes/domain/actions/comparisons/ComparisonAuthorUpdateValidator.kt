@@ -12,7 +12,7 @@ class ComparisonAuthorUpdateValidator(
     constructor(
         resourceRepository: ResourceRepository,
         statementRepository: StatementRepository
-    ) : this(object : AuthorValidator(resourceRepository, statementRepository) {})
+    ) : this(AuthorValidator(resourceRepository, statementRepository))
 
     override operator fun invoke(command: UpdateComparisonCommand, state: UpdateComparisonState): UpdateComparisonState {
         if (command.authors != null && command.authors != state.comparison!!.authors) {

@@ -11,7 +11,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
-abstract class AuthorValidator(
+class AuthorValidator(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository
 ) {

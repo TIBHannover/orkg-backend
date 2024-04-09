@@ -7,9 +7,13 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
 class ComparisonAuthorCreateValidator(
-    resourceRepository: ResourceRepository,
-    statementRepository: StatementRepository
-) : AuthorValidator(resourceRepository, statementRepository), CreateComparisonAction {
+    private val authorValidator: AuthorValidator
+) : CreateComparisonAction {
+    constructor(
+        resourceRepository: ResourceRepository,
+        statementRepository: StatementRepository
+    ) : this(AuthorValidator(resourceRepository, statementRepository))
+
     override operator fun invoke(command: CreateComparisonCommand, state: State): State =
-        state.copy(authors = validate(command.authors))
+        state.copy(authors = authorValidator.validate(command.authors))
 }

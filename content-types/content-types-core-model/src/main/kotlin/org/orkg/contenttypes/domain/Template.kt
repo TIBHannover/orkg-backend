@@ -109,6 +109,23 @@ sealed interface TemplateProperty {
                             createdAt = resource.createdAt,
                             datatype = datatype
                         )
+                        Classes.float -> NumberLiteralTemplateProperty(
+                            id = resource.id,
+                            label = resource.label,
+                            placeholder = placeholder,
+                            description = description,
+                            order = order,
+                            minCount = minCount,
+                            maxCount = maxCount,
+                            minInclusive = statements.wherePredicate(Predicates.shMinInclusive)
+                                .singleOrNull()?.`object`?.label?.toFloatOrNull(),
+                            maxInclusive = statements.wherePredicate(Predicates.shMaxInclusive)
+                                .singleOrNull()?.`object`?.label?.toFloatOrNull(),
+                            path = path,
+                            createdBy = resource.createdBy,
+                            createdAt = resource.createdAt,
+                            datatype = datatype
+                        )
                         else -> OtherLiteralTemplateProperty(
                             id = resource.id,
                             label = resource.label,

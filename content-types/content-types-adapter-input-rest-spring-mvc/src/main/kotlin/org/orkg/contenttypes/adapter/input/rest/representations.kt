@@ -24,7 +24,6 @@ import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.ThingRepresentation
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
 
 sealed interface ContentTypeRepresentation {
@@ -246,7 +245,7 @@ data class TemplateRepresentation(
     val label: String,
     val description: String?,
     @get:JsonProperty("formatted_label")
-    val formattedLabel: FormattedLabel?,
+    val formattedLabel: String?, // FIXME: The type should be FormattedLabel, but value classes cannot be parsed by jackson
     @get:JsonProperty("target_class")
     val targetClass: ClassReference,
     val relations: TemplateRelationRepresentation,
@@ -374,7 +373,7 @@ data class RosettaTemplateRepresentation(
     val label: String,
     val description: String?,
     @get:JsonProperty("formatted_label")
-    val formattedLabel: FormattedLabel?,
+    val formattedLabel: String?, // FIXME: The type should be FormattedLabel, but value classes cannot be parsed by jackson
     @get:JsonProperty("target_class")
     val targetClass: ThingId,
     val properties: List<TemplatePropertyRepresentation>,

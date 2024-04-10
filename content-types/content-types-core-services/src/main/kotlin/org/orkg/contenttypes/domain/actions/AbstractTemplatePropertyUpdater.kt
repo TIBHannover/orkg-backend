@@ -10,7 +10,7 @@ import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.UntypedTemplateProperty
 import org.orkg.contenttypes.domain.wherePredicate
 import org.orkg.contenttypes.input.LiteralTemplatePropertyDefinition
-import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
+import org.orkg.contenttypes.input.NumberLiteralTemplatePropertyDefinition
 import org.orkg.contenttypes.input.ResourceTemplatePropertyDefinition
 import org.orkg.contenttypes.input.StringLiteralTemplatePropertyDefinition
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
@@ -112,7 +112,7 @@ class AbstractTemplatePropertyUpdater(
             }
         }
 
-        if (newProperty is NumberLiteralPropertyDefinition<*>) {
+        if (newProperty is NumberLiteralTemplatePropertyDefinition<*>) {
             val oldMinInclusive = if (oldProperty is NumberLiteralTemplateProperty<*>) oldProperty.minInclusive else null
             if (newProperty.minInclusive != oldMinInclusive || oldProperty is NumberLiteralTemplateProperty<*> && oldProperty.datatype.id != newProperty.datatype) {
                 singleStatementPropertyUpdater.updateOptionalProperty(

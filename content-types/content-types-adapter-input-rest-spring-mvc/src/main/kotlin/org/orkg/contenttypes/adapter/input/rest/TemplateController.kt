@@ -309,14 +309,14 @@ class TemplateController(
         val datatype: ThingId
     ) : TemplatePropertyRequest {
         override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
-            NumberLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, minInclusive, minInclusive, path, datatype)
+            NumberLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype)
 
         override fun toCreateCommand(
             contributorId: ContributorId,
             templateId: ThingId
         ): CreateTemplatePropertyUseCase.CreateCommand =
             CreateTemplatePropertyUseCase.CreateNumberLiteralPropertyCommand(
-                contributorId, templateId, label, placeholder, description, minCount, maxCount, minInclusive, minInclusive, path, datatype
+                contributorId, templateId, label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype
             )
 
         override fun toUpdateCommand(
@@ -325,7 +325,7 @@ class TemplateController(
             templateId: ThingId
         ): UpdateTemplatePropertyUseCase.UpdateCommand =
             UpdateTemplatePropertyUseCase.UpdateNumberLiteralPropertyCommand(
-                templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, minInclusive, minInclusive, path, datatype
+                templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype
             )
     }
 

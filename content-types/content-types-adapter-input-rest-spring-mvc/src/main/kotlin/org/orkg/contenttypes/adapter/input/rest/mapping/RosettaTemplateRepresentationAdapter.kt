@@ -18,7 +18,7 @@ interface RosettaTemplateRepresentationAdapter : TemplatePropertyRepresentationA
             id = id,
             label = label,
             description = description,
-            formattedLabel = formattedLabel,
+            formattedLabel = formattedLabel?.value,
             targetClass = targetClass,
             properties = properties.map { it.toTemplatePropertyRepresentation() },
             isClosed = isClosed,

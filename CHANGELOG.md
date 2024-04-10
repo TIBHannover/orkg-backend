@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added generic content-type endpoint that can fetch papers, comparisons, visualizations, templates, literature lists and smart reviews at once.
+  (See: [!869](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/869))
+- Added content-type endpoints for updating comparisons, comparison related resources and comparison related figures.
+  (See: [!863](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/863))
+
+### Changed
+- Aligned template property model with front-end implementation.
+  (See: [!874](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/874))
+- Users can now delete their own predicates, as long as they are not used in any statement.
+  (Closes: [#559](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/559))
+
+### Fixed
+- The template update endpoint no longer returns an error when updating a template with same target class that it is already assigned to.
+  (See: [!875](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/875))
+- The template listing endpoint no longer throws an error when trying to parse malformed templated, instead they are filtered out.
+  (See: [!877](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/877))
 
 ## [0.53.0] - 2024-04-02
 ### Added

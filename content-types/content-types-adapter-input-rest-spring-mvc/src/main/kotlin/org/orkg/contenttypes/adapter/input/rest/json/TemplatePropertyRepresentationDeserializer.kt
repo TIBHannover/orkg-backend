@@ -10,6 +10,7 @@ import org.orkg.contenttypes.adapter.input.rest.ResourceTemplatePropertyRepresen
 import org.orkg.contenttypes.adapter.input.rest.StringLiteralTemplatePropertyRepresentation
 import org.orkg.contenttypes.adapter.input.rest.TemplatePropertyRepresentation
 import org.orkg.contenttypes.adapter.input.rest.UntypedTemplatePropertyRepresentation
+import org.orkg.graph.domain.Literals
 
 class TemplatePropertyRepresentationDeserializer : JsonDeserializer<TemplatePropertyRepresentation>() {
     override fun deserialize(
@@ -19,14 +20,21 @@ class TemplatePropertyRepresentationDeserializer : JsonDeserializer<TemplateProp
         val node = readTree<JsonNode>(p)
         when {
             node.has("datatype") -> when {
-                node.has("pattern") -> treeToValue(node, StringLiteralTemplatePropertyRepresentation::class.java)
-                node.has("min_inclusive") || node.has("max_inclusive") -> {
-                    treeToValue(node, NumberLiteralTemplatePropertyRepresentation::class.java)
-                }
+                isStringLiteralNode(node) -> treeToValue(node, StringLiteralTemplatePropertyRepresentation::class.java)
+                isNumberLiteralNode(node) -> treeToValue(node, NumberLiteralTemplatePropertyRepresentation::class.java)
                 else -> treeToValue(node, OtherLiteralTemplatePropertyRepresentation::class.java)
             }
             node.has("class") -> treeToValue(node, ResourceTemplatePropertyRepresentation::class.java)
             else -> treeToValue(node, UntypedTemplatePropertyRepresentation::class.java)
         }
     }
+
+    private fun isStringLiteralNode(node: JsonNode): Boolean =
+        node.has("pattern") || node.get("datatype").asText() == Literals.XSD.STRING.`class`.value
+
+    private fun isNumberLiteralNode(node: JsonNode): Boolean =
+        node.has("min_inclusive") || node.has("max_inclusive") ||
+            node.get("datatype").asText() == Literals.XSD.DECIMAL.`class`.value ||
+            node.get("datatype").asText() == Literals.XSD.FLOAT.`class`.value ||
+            node.get("datatype").asText() == Literals.XSD.INT.`class`.value
 }

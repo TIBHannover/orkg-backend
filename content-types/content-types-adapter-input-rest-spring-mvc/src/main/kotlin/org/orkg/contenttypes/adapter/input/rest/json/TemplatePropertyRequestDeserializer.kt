@@ -10,6 +10,7 @@ import org.orkg.contenttypes.adapter.input.rest.TemplateController.ResourcePrope
 import org.orkg.contenttypes.adapter.input.rest.TemplateController.StringLiteralPropertyRequest
 import org.orkg.contenttypes.adapter.input.rest.TemplateController.TemplatePropertyRequest
 import org.orkg.contenttypes.adapter.input.rest.TemplateController.UntypedPropertyRequest
+import org.orkg.graph.domain.Literals
 
 class TemplatePropertyRequestDeserializer : JsonDeserializer<TemplatePropertyRequest>() {
     override fun deserialize(
@@ -19,14 +20,21 @@ class TemplatePropertyRequestDeserializer : JsonDeserializer<TemplatePropertyReq
         val node = readTree<JsonNode>(p)
         when {
             node.has("datatype") -> when {
-                node.has("pattern") -> treeToValue(node, StringLiteralPropertyRequest::class.java)
-                node.has("min_inclusive") || node.has("max_inclusive") -> {
-                    treeToValue(node, NumberLiteralPropertyRequest::class.java)
-                }
+                isStringLiteralNode(node) -> treeToValue(node, StringLiteralPropertyRequest::class.java)
+                isNumberLiteralNode(node) -> treeToValue(node, NumberLiteralPropertyRequest::class.java)
                 else -> treeToValue(node, OtherLiteralPropertyRequest::class.java)
             }
             node.has("class") -> treeToValue(node, ResourcePropertyRequest::class.java)
             else -> treeToValue(node, UntypedPropertyRequest::class.java)
         }
     }
+
+    private fun isStringLiteralNode(node: JsonNode): Boolean =
+        node.has("pattern") || node.get("datatype").asText() == Literals.XSD.STRING.`class`.value
+
+    private fun isNumberLiteralNode(node: JsonNode): Boolean =
+        node.has("min_inclusive") || node.has("max_inclusive") ||
+            node.get("datatype").asText() == Literals.XSD.DECIMAL.`class`.value ||
+            node.get("datatype").asText() == Literals.XSD.FLOAT.`class`.value ||
+            node.get("datatype").asText() == Literals.XSD.INT.`class`.value
 }

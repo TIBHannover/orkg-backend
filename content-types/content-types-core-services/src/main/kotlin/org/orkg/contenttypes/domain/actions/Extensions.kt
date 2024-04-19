@@ -1,5 +1,7 @@
 package org.orkg.contenttypes.domain.actions
 
+import org.orkg.common.ContributorId
+import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ClassDefinition
 import org.orkg.contenttypes.input.ListDefinition
 import org.orkg.contenttypes.input.LiteralDefinition
@@ -12,6 +14,7 @@ import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.input.ResourceUseCases
 
 internal val String.isTempId: Boolean get() = startsWith('#') || startsWith('^')
 
@@ -27,3 +30,12 @@ internal fun Thing.toThingDefinition(): ThingDefinition =
         is Predicate -> PredicateDefinition(label, description)
         is Literal -> LiteralDefinition(label, datatype)
     }
+
+internal fun ResourceUseCases.tryDelete(id: ThingId, contributorId: ContributorId): Boolean {
+    try {
+        delete(id, contributorId)
+    } catch (e: Exception) {
+        return false
+    }
+    return true
+}

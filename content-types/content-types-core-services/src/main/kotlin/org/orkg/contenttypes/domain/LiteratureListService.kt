@@ -6,6 +6,25 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.domain.actions.LabelValidator
+import org.orkg.contenttypes.domain.actions.ObservatoryValidator
+import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
+import org.orkg.contenttypes.domain.actions.SDGValidator
+import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
+import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
+import org.orkg.contenttypes.domain.actions.execute
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorUpdateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListExistenceValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListModifiableValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListResearchFieldUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListResourceUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSDGUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsUpdateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsUpdater
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.output.LiteratureListPublishedRepository
 import org.orkg.contenttypes.output.LiteratureListRepository
@@ -15,10 +34,12 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
-import org.orkg.graph.output.authors
-import org.orkg.graph.output.legacyAuthors
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -29,7 +50,13 @@ class LiteratureListService(
     private val resourceRepository: ResourceRepository,
     private val literatureListRepository: LiteratureListRepository,
     private val literatureListPublishedRepository: LiteratureListPublishedRepository,
-    private val statementRepository: StatementRepository
+    private val statementRepository: StatementRepository,
+    private val observatoryRepository: ObservatoryRepository,
+    private val organizationRepository: OrganizationRepository,
+    private val resourceService: ResourceUseCases,
+    private val literalService: LiteralUseCases,
+    private val statementService: StatementUseCases,
+    private val listService: ListUseCases
 ) : LiteratureListUseCases {
     override fun findById(id: ThingId): Optional<LiteratureList> =
         resourceRepository.findById(id)
@@ -61,12 +88,32 @@ class LiteratureListService(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toLiteratureList() }
 
-    internal fun Resource.toLiteratureList(): LiteratureList {
-        var root = id
+    override fun update(command: UpdateLiteratureListCommand) {
+        val steps = listOf(
+            LiteratureListExistenceValidator(this, resourceRepository),
+            LiteratureListModifiableValidator(),
+            LabelValidator("title") { it.title },
+            ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.literatureList!!.researchFields.ids }),
+            LiteratureListAuthorUpdateValidator(resourceRepository, statementRepository),
+            SDGValidator({ it.sustainableDevelopmentGoals }, { it.literatureList!!.sustainableDevelopmentGoals.ids }),
+            OrganizationValidator(organizationRepository, { it.organizations }, { it.literatureList!!.organizations }),
+            ObservatoryValidator(observatoryRepository, { it.observatories }, { it.literatureList!!.observatories }),
+            LiteratureListSectionsUpdateValidator(resourceRepository),
+            LiteratureListResourceUpdater(resourceService),
+            LiteratureListResearchFieldUpdater(literalService, statementService),
+            LiteratureListAuthorUpdater(resourceService, statementService, literalService, listService),
+            LiteratureListSDGUpdater(literalService, statementService),
+            LiteratureListSectionsUpdater(literalService, resourceService, statementService)
+        )
+        steps.execute(command, UpdateLiteratureListState())
+    }
+
+    internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
+        var root = resource.id
         val statements = when {
-            Classes.literatureListPublished in classes -> {
-                val published = literatureListPublishedRepository.findById(id)
-                    .orElseThrow { LiteratureListNotFound(id) }
+            Classes.literatureListPublished in resource.classes -> {
+                val published = literatureListPublishedRepository.findById(resource.id)
+                    .orElseThrow { LiteratureListNotFound(resource.id) }
                 root = published.rootId
                 val versions = statementRepository.fetchAsBundle(
                     id = root,
@@ -80,9 +127,9 @@ class LiteratureListService(
                 )
                 published.subgraph.filter { it.predicate.id != Predicates.hasPublishedVersion } + versions
             }
-            Classes.literatureList in classes -> {
+            Classes.literatureList in resource.classes -> {
                 statementRepository.fetchAsBundle(
-                    id = id,
+                    id = resource.id,
                     configuration = BundleConfiguration(
                         minLevel = null,
                         maxLevel = 3,
@@ -92,39 +139,11 @@ class LiteratureListService(
                     sort = Sort.unsorted()
                 )
             }
-            else -> throw IllegalStateException("""Unable to convert resource "$id" to literature list. This is a bug.""")
-        }.groupBy { it.subject.id }
-        val directStatements = statements[root].orEmpty()
-        return LiteratureList(
-            id = id,
-            title = label,
-            researchFields = directStatements.wherePredicate(Predicates.hasResearchField)
-                .objectIdsAndLabel()
-                .sortedBy { it.id },
-            authors = statements.authors(root).ifEmpty { statements.legacyAuthors(root) },
-            versions = VersionInfo(
-                head = HeadVersion(directStatements.first().subject as Resource),
-                published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
-                    .sortedByDescending { it.createdAt }
-                    .objects()
-                    .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
-            ),
-            sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
-                .objectIdsAndLabel()
-                .sortedBy { it.id }
-                .toSet(),
-            observatories = listOf(observatoryId),
-            organizations = listOf(organizationId),
-            extractionMethod = extractionMethod,
-            createdAt = createdAt,
-            createdBy = createdBy,
-            visibility = visibility,
-            unlistedBy = unlistedBy,
-            published = Classes.literatureListPublished in classes,
-            sections = directStatements.wherePredicate(Predicates.hasSection)
-                .filter { it.`object` is Resource }
-                .sortedBy { it.createdAt }
-                .map { LiteratureListSection.from(it.`object` as Resource, statements) }
-        )
+            else -> throw IllegalStateException("""Unable to convert resource "${resource.id}" to literature list. This is a bug.""")
+        }
+        return ContentTypeSubgraph(root, statements.groupBy { it.subject.id })
     }
+
+    internal fun Resource.toLiteratureList(): LiteratureList =
+        findSubgraph(this).let { LiteratureList.from(this, it.root, it.statements) }
 }

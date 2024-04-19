@@ -6,14 +6,20 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
+import java.net.URI
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.stream.Stream
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.provider.Arguments
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -25,23 +31,31 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectLiteratureList
 import org.orkg.testing.andExpectPage
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -238,5 +252,115 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         verify(exactly = 1) {
             literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a literature list update request, when service succeeds, it updates the literature list")
+    fun update() {
+        val id = ThingId("R123")
+        every { literatureListService.update(any()) } just runs
+
+        documentedPutRequestTo("/api/literature-lists/{id}", id)
+            .content(updateLiteratureListRequest())
+            .accept(LITERATURE_LIST_JSON_V1)
+            .contentType(LITERATURE_LIST_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("title").description("The title of the literature list. (optional)"),
+                        fieldWithPath("research_fields").description("The list of research fields the literature list will be assigned to. (optional)"),
+                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the literature list will be assigned to. (optional)"),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the literature list belongs to. (optional)").optional(),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the literature list belongs to. (optional)").optional(),
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
+                        subsectionWithPath("sections").description("The list of updated sections of the literature list (optional). See <<literature-list-sections,literature list sections>> for more information."),
+                    ).and(authorListFields("literature list"))
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { literatureListService.update(any()) }
+    }
+
+    private fun updateLiteratureListRequest() =
+        LiteratureListController.UpdateLiteratureListRequest(
+            title = "Dummy Literature List Label",
+            researchFields = listOf(ThingId("R14")),
+            authors = listOf(
+                AuthorDTO(
+                    id = ThingId("R123"),
+                    name = "Author with id",
+                    identifiers = null,
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with orcid",
+                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = ThingId("R456"),
+                    name = "Author with id and orcid",
+                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with homepage",
+                    identifiers = null,
+                    homepage = URI.create("http://example.org/author")
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author that just has a name",
+                    identifiers = null,
+                    homepage = null
+                )
+            ),
+            sustainableDevelopmentGoals = setOf(
+                ThingId("SDG_3"),
+                ThingId("SDG_4")
+            ),
+            observatories = listOf(
+                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            ),
+            organizations = listOf(
+                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            ),
+            extractionMethod = ExtractionMethod.MANUAL,
+            sections = listOf(
+                textSectionRequest(),
+                listSectionRequest()
+            )
+        )
+
+    companion object {
+        @JvmStatic
+        fun literatureListSectionRequests(): Stream<Arguments> = Stream.of(
+            Arguments.of(textSectionRequest()),
+            Arguments.of(listSectionRequest())
+        )
+
+        @JvmStatic
+        private fun textSectionRequest() =
+            LiteratureListController.TextSectionRequest(
+                heading = "heading",
+                headingSize = 1,
+                text = "text contents"
+            )
+
+        @JvmStatic
+        private fun listSectionRequest() =
+            LiteratureListController.ListSectionRequest(
+                entries = listOf(ThingId("R123"), ThingId("R456"))
+            )
     }
 }

@@ -7,6 +7,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
+import java.time.OffsetDateTime
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -25,6 +26,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 
 class StatementCollectionPropertyUpdaterUnitTest {
@@ -431,12 +433,190 @@ class StatementCollectionPropertyUpdaterUnitTest {
         }
     }
 
-    private fun Collection<ThingId>.toReferenceStatements(subjectId: ThingId): List<GeneralStatement> = map {
+    @Test
+    fun `Given list of objects, it replaces the all object statements`() {
+        val subjectId = ThingId("R123")
+        val objects = listOf(ThingId("R3"), ThingId("R4"))
+        val oldObjectStatements = setOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
+        val contributorId = ContributorId(UUID.randomUUID())
+
+        every {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        } returns pageOf(oldObjectStatements)
+        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.add(any(), any(), any(), any()) } just runs
+
+        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
+
+        verify(exactly = 1) {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        }
+        verify(exactly = 1) { statementService.delete(oldObjectStatements.map { it.id }.toSet()) }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.reference,
+                `object` = objects[0]
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.reference,
+                `object` = objects[1]
+            )
+        }
+    }
+
+    @Test
+    fun `Given list of objects, when some objects are identical to old objects, it reuses existing statements`() {
+        val subjectId = ThingId("R123")
+        val objects = listOf(ThingId("R2"), ThingId("R3"))
+        val oldObjectStatements = setOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
+        val contributorId = ContributorId(UUID.randomUUID())
+
+        every {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        } returns pageOf(oldObjectStatements)
+        every { statementService.delete(any<Set<StatementId>>()) } just runs
+        every { statementService.add(any(), any(), any(), any()) } just runs
+
+        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
+
+        verify(exactly = 1) {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        }
+        verify(exactly = 1) { statementService.delete(setOf(oldObjectStatements[0].id)) }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.reference,
+                `object` = objects[1]
+            )
+        }
+    }
+
+    @Test
+    fun `Given a list of objects, when new objects are identical to old objects, it does not modify any statements`() {
+        val subjectId = ThingId("R123")
+        val objects = listOf(ThingId("R1"), ThingId("R2"))
+        val oldObjectStatements = objects.toReferenceStatements(subjectId)
+        val contributorId = ContributorId(UUID.randomUUID())
+
+        every {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        } returns pageOf(oldObjectStatements)
+
+        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
+
+        verify(exactly = 1) {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        }
+    }
+
+    @Test
+    fun `Given a list of objects, when new list of objects is empty, it removes all old object statements`() {
+        val subjectId = ThingId("R123")
+        val objects = emptySet<ThingId>()
+        val oldObjectStatements = listOf(ThingId("R1"), ThingId("R2")).toReferenceStatements(subjectId)
+        val contributorId = ContributorId(UUID.randomUUID())
+
+        every {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        } returns pageOf(oldObjectStatements)
+        every { statementService.delete(any<Set<StatementId>>()) } just runs
+
+        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
+
+        verify(exactly = 1) {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        }
+        verify(exactly = 1) { statementService.delete(oldObjectStatements.map { it.id }.toSet()) }
+    }
+
+    @Test
+    fun `Given a list of objects, when old list of objects is empty, it creates new objects statements`() {
+        val subjectId = ThingId("R123")
+        val objects = listOf(ThingId("R1"), ThingId("R2"))
+        val contributorId = ContributorId(UUID.randomUUID())
+
+        every {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        } returns pageOf()
+        every { statementService.add(any(), any(), any(), any()) } just runs
+
+        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
+
+        verify(exactly = 1) {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.reference,
+                `object` = objects[0]
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.reference,
+                `object` = objects[1]
+            )
+        }
+    }
+
+    private fun Collection<ThingId>.toReferenceStatements(subjectId: ThingId): List<GeneralStatement> = mapIndexed { index, id ->
         createStatement(
-            id = StatementId("S${it.value}"),
-            subject = createResource(subjectId),
+            id = StatementId("S$id"),
+            subject = createResource(subjectId, createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())),
             predicate = createPredicate(Predicates.reference),
-            `object` = createResource(it, classes = setOf(Classes.paper))
+            `object` = createResource(id, classes = setOf(Classes.paper))
         )
     }
 

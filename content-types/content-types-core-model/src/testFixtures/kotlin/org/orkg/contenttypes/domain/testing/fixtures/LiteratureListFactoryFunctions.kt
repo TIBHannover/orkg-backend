@@ -10,6 +10,7 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.ListSection
 import org.orkg.contenttypes.domain.LiteratureList
+import org.orkg.contenttypes.domain.LiteratureListSection
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PublishedVersion
 import org.orkg.contenttypes.domain.ResourceReference
@@ -17,7 +18,15 @@ import org.orkg.contenttypes.domain.TextSection
 import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Literals
+import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.testing.fixtures.createLiteral
+import org.orkg.graph.testing.fixtures.createPredicate
+import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.createStatement
 
 fun createDummyLiteratureList() = LiteratureList(
     id = ThingId("R658946"),
@@ -94,26 +103,78 @@ fun createDummyLiteratureList() = LiteratureList(
     unlistedBy = null,
     published = false,
     sections = listOf(
-        TextSection(
-            id = ThingId("R154686"),
-            heading = "Heading",
-            headingSize = 2,
-            text = "text section contents"
-        ),
-        ListSection(
-            id = ThingId("R456351"),
-            entries = listOf(
-                ResourceReference(
-                    id = ThingId("R154686"),
-                    label = "Paper",
-                    classes = setOf(Classes.paper)
-                ),
-                ResourceReference(
-                    id = ThingId("R6416"),
-                    label = "Comparison",
-                    classes = setOf(Classes.comparison)
-                )
+        createDummyTextSection(),
+        createDummyListSection()
+    )
+)
+
+fun createDummyTextSection(): TextSection =
+    TextSection(
+        id = ThingId("R154686"),
+        heading = "Heading",
+        headingSize = 2,
+        text = "text section contents"
+    )
+
+fun createDummyListSection(): ListSection =
+    ListSection(
+        id = ThingId("R456351"),
+        entries = listOf(
+            ResourceReference(
+                id = ThingId("R154686"),
+                label = "Paper",
+                classes = setOf(Classes.paper)
+            ),
+            ResourceReference(
+                id = ThingId("R6416"),
+                label = "Comparison",
+                classes = setOf(Classes.comparison)
             )
         )
     )
-)
+
+fun LiteratureListSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> =
+    when (this) {
+        is ListSection -> toGroupedStatements()
+        is TextSection -> toGroupedStatements()
+    }
+
+fun ListSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
+    val statements = mutableSetOf<GeneralStatement>()
+    val root = createResource(id)
+    entries.forEachIndexed { index, `object` ->
+        val entry = createResource(ThingId("R$index"))
+        statements += createStatement(
+            id = StatementId("S$index"),
+            subject = root,
+            predicate = createPredicate(Predicates.hasEntry),
+            `object` = entry
+        )
+        statements += createStatement(
+            id = StatementId("S${index}_${entries.size}"),
+            subject = entry,
+            predicate = createPredicate(Predicates.hasLink),
+            `object` = createResource(`object`.id, classes = `object`.classes)
+        )
+    }
+    return statements.groupBy { it.subject.id }
+}
+
+fun TextSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
+    val root = createResource(id, label = heading)
+    val statements = listOf(
+        createStatement(
+            id = StatementId("S1"),
+            subject = root,
+            predicate = createPredicate(Predicates.hasHeadingLevel),
+            `object` = createLiteral(label = headingSize.toString(), datatype = Literals.XSD.INT.prefixedUri)
+        ),
+        createStatement(
+            id = StatementId("S2"),
+            subject = root,
+            predicate = createPredicate(Predicates.hasContent),
+            `object` = createLiteral(label = text)
+        )
+    )
+    return statements.groupBy { it.subject.id }
+}

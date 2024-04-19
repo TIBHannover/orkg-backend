@@ -8,29 +8,21 @@ import org.orkg.graph.input.StatementUseCases
 
 class AbstractTemplatePropertyDeleter(
     private val resourceService: ResourceUseCases,
-    private val statementService: StatementUseCases
+    private val statementService: StatementUseCases,
+    private val contentTypePartDeleter: ContentTypePartDeleter
 ) {
-    internal fun delete(contributorId: ContributorId, templateId: ThingId, propertyId: ThingId) {
-        val incomingStatements = statementService.findAll(
-            objectId = propertyId,
-            pageable = PageRequests.ALL
-        ).content
-        if (incomingStatements.isNotEmpty() && incomingStatements.all { it.subject.id == templateId }) {
+    constructor(
+        resourceService: ResourceUseCases,
+        statementService: StatementUseCases
+    ) : this(resourceService, statementService, ContentTypePartDeleter(statementService))
+
+    internal fun delete(contributorId: ContributorId, templateId: ThingId, propertyId: ThingId) =
+        contentTypePartDeleter.delete(templateId, propertyId) { incomingStatements ->
             val outgoingStatements = statementService.findAll(
                 subjectId = propertyId,
                 pageable = PageRequests.ALL
             )
             statementService.delete(outgoingStatements.map { it.id }.toSet() + incomingStatements.single().id)
-            try {
-                resourceService.delete(propertyId, contributorId)
-            } catch (e: Exception) {
-                // ignore
-            }
-        } else {
-            val statements = incomingStatements.filter { it.subject.id == templateId }.map { it.id }
-            if (statements.isNotEmpty()) {
-                statementService.delete(statements.toSet())
-            }
+            resourceService.tryDelete(propertyId, contributorId)
         }
-    }
 }

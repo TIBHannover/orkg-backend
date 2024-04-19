@@ -177,10 +177,23 @@ class EmptyChildIds :
 class ParentClassAlreadyHasChildren(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The class "$id" already has a child classes."""")
 
-class NeitherOwnerNorCurator(contributorId: ContributorId) : SimpleMessageException(
-    status = HttpStatus.FORBIDDEN,
-    message = "Contributor <$contributorId> does not own the entity to be deleted and is not a curator."
-)
+class NeitherOwnerNorCurator private constructor(
+    override val status: HttpStatus,
+    override val message: String,
+) : SimpleMessageException(status, message) {
+    constructor(contributorId: ContributorId) : this(
+        status = HttpStatus.FORBIDDEN,
+        message = "Contributor <$contributorId> does not own the entity to be deleted and is not a curator."
+    )
+
+    companion object {
+        fun changeVisibility(id: ThingId): NeitherOwnerNorCurator =
+            NeitherOwnerNorCurator(
+                status = HttpStatus.FORBIDDEN,
+                message = """Insufficient permissions to change visibility of entity "$id". User must be a curator or the owner of the entity."""
+            )
+    }
+}
 
 /**
  * Exception indicating that a property was blank when it was not supposed to be.

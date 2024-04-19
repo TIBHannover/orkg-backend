@@ -12,10 +12,13 @@ import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotModifiable
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
 import org.orkg.contenttypes.domain.InvalidBounds
 import org.orkg.contenttypes.domain.InvalidDatatype
+import org.orkg.contenttypes.domain.InvalidHeadingSize
+import org.orkg.contenttypes.domain.InvalidListSectionEntry
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.InvalidMonth
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.LiteratureListNotFound
+import org.orkg.contenttypes.domain.LiteratureListNotModifiable
 import org.orkg.contenttypes.domain.MissingPropertyValues
 import org.orkg.contenttypes.domain.NumberTooHigh
 import org.orkg.contenttypes.domain.NumberTooLow
@@ -519,6 +522,53 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun literatureListNotModifiable() {
+        val id = "R123"
+
+        get("/literature-list-not-modifiable")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/literature-list-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Literature list "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidListSectionEntry() {
+        val id = "R123"
+        val expectedAnyInstanceOf = arrayOf("C1", "C2")
+
+        get("/invalid-list-section-entry")
+            .param("id", id)
+            .param("expectedAnyInstanceOf", *expectedAnyInstanceOf)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-list-section-entry"))
+            .andExpect(jsonPath("$.message").value("""Invalid list section entry "$id". Must be an instance of either "C1", "C2"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidHeadingSize() {
+        val headingSize = "5"
+
+        get("/invalid-heading-size")
+            .param("headingSize", headingSize)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-heading-size"))
+            .andExpect(jsonPath("$.message").value("""Invalid heading size "$headingSize". Must be at least 1."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -719,6 +769,21 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/comparison-related-figure-not-modifiable")
         fun comparisonRelatedFigureNotModifiable(@RequestParam id: ThingId) {
             throw ComparisonRelatedFigureNotModifiable(id)
+        }
+
+        @GetMapping("/literature-list-not-modifiable")
+        fun literatureListNotModifiable(@RequestParam id: ThingId) {
+            throw LiteratureListNotModifiable(id)
+        }
+
+        @GetMapping("/invalid-list-section-entry")
+        fun invalidListSectionEntry(@RequestParam id: ThingId, @RequestParam expectedAnyInstanceOf: Set<ThingId>) {
+            throw InvalidListSectionEntry(id, expectedAnyInstanceOf)
+        }
+
+        @GetMapping("/invalid-heading-size")
+        fun invalidHeadingSize(@RequestParam headingSize: Int) {
+            throw InvalidHeadingSize(headingSize)
         }
     }
 

@@ -28,7 +28,44 @@ data class LiteratureList(
     val unlistedBy: ContributorId? = null,
     val published: Boolean,
     val sections: List<LiteratureListSection>
-) : ContentType
+) : ContentType {
+    companion object {
+        fun from(resource: Resource, root: ThingId, statements: Map<ThingId, List<GeneralStatement>>): LiteratureList {
+            val directStatements = statements[root].orEmpty()
+            return LiteratureList(
+                id = resource.id,
+                title = resource.label,
+                researchFields = directStatements.wherePredicate(Predicates.hasResearchField)
+                    .objectIdsAndLabel()
+                    .sortedBy { it.id },
+                authors = statements.authors(root).ifEmpty { statements.legacyAuthors(root) },
+                versions = VersionInfo(
+                    head = HeadVersion(directStatements.first().subject as Resource),
+                    published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
+                        .sortedByDescending { it.createdAt }
+                        .objects()
+                        .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
+                ),
+                sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
+                    .objectIdsAndLabel()
+                    .sortedBy { it.id }
+                    .toSet(),
+                observatories = listOf(resource.observatoryId),
+                organizations = listOf(resource.organizationId),
+                extractionMethod = resource.extractionMethod,
+                createdAt = resource.createdAt,
+                createdBy = resource.createdBy,
+                visibility = resource.visibility,
+                unlistedBy = resource.unlistedBy,
+                published = Classes.literatureListPublished in resource.classes,
+                sections = directStatements.wherePredicate(Predicates.hasSection)
+                    .filter { it.`object` is Resource }
+                    .sortedBy { it.createdAt }
+                    .map { LiteratureListSection.from(it.`object` as Resource, statements) }
+            )
+        }
+    }
+}
 
 sealed interface LiteratureListSection {
     val id: ThingId

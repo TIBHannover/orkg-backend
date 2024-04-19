@@ -49,6 +49,9 @@ class ComparisonRelatedResourceNotModifiable(id: ThingId) :
 class ComparisonRelatedFigureNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Comparison related figure "$id" is not modifiable.""")
 
+class LiteratureListNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Literature list "$id" is not modifiable.""")
+
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")
 
@@ -186,3 +189,9 @@ class NumberTooLow(templatePropertyId: ThingId, objectId: String, predicateId: T
 
 class NumberTooHigh(templatePropertyId: ThingId, objectId: String, predicateId: ThingId, label: String, maxInclusive: Number) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Number "$label" for object "$objectId" for property "$templatePropertyId" with predicate "$predicateId" must be at most "$maxInclusive".""")
+
+class InvalidListSectionEntry(id: ThingId, expectedAnyInstanceOf: Set<ThingId>) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid list section entry "$id". Must be an instance of either ${expectedAnyInstanceOf.joinToString { "\"$it\"" }}.""")
+
+class InvalidHeadingSize(headingSize: Int) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid heading size "$headingSize". Must be at least 1.""")

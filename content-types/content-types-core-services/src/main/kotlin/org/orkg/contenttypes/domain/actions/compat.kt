@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions
 import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction
 import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction
 import org.orkg.contenttypes.domain.actions.contributions.ContributionAction
+import org.orkg.contenttypes.domain.actions.literaturelists.UpdateLiteratureListAction
 import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction
@@ -18,6 +19,7 @@ import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
+import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
@@ -37,6 +39,7 @@ internal typealias UpdateComparisonCommand = UpdateComparisonUseCase.UpdateComma
 internal typealias UpdateTemplateCommand = UpdateTemplateUseCase.UpdateCommand
 internal typealias UpdateTemplatePropertyCommand = UpdateTemplatePropertyUseCase.UpdateCommand
 internal typealias UpdateTemplateInstanceCommand = UpdateTemplateInstanceUseCase.UpdateCommand
+internal typealias UpdateLiteratureListCommand = UpdateLiteratureListUseCase.UpdateCommand
 
 internal typealias CreatePaperState = CreatePaperAction.State
 internal typealias UpdatePaperState = UpdatePaperAction.State
@@ -54,3 +57,5 @@ internal typealias ContributionState = ContributionAction.State
 internal typealias VisualizationState = VisualizationAction.State
 
 internal typealias UpdateTemplateInstanceState = UpdateTemplateInstanceAction.State
+
+internal typealias UpdateLiteratureListState = UpdateLiteratureListAction.State

@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.output.LiteratureListPublishedRepository
 import org.orkg.contenttypes.output.LiteratureListRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -24,6 +26,10 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -39,12 +45,24 @@ class LiteratureListServiceUnitTests {
     private val literatureListRepository: LiteratureListRepository = mockk()
     private val literatureListPublishedRepository: LiteratureListPublishedRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
+    private val observatoryRepository: ObservatoryRepository = mockk()
+    private val organizationRepository: OrganizationRepository = mockk()
+    private val resourceService: ResourceUseCases = mockk()
+    private val literalService: LiteralUseCases = mockk()
+    private val statementService: StatementUseCases = mockk()
+    private val listService: ListUseCases = mockk()
 
     private val service = LiteratureListService(
-        resourceRepository = resourceRepository,
-        literatureListRepository = literatureListRepository,
-        literatureListPublishedRepository = literatureListPublishedRepository,
-        statementRepository = statementRepository
+        resourceRepository,
+        literatureListRepository,
+        literatureListPublishedRepository,
+        statementRepository,
+        observatoryRepository,
+        organizationRepository,
+        resourceService,
+        literalService,
+        statementService,
+        listService
     )
 
     @BeforeEach
@@ -58,7 +76,13 @@ class LiteratureListServiceUnitTests {
             resourceRepository,
             literatureListRepository,
             literatureListPublishedRepository,
-            statementRepository
+            statementRepository,
+            observatoryRepository,
+            organizationRepository,
+            resourceService,
+            literalService,
+            statementService,
+            listService
         )
     }
 

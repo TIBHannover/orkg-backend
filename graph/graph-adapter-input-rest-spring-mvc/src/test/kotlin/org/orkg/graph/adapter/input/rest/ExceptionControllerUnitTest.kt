@@ -5,6 +5,7 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.graph.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
@@ -16,12 +17,14 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.LiteralNotModifiable
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
+import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementNotModifiable
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.MockUserId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
@@ -223,6 +226,36 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun neitherOwnerNorCuratorDelete() {
+        val contributorId = ContributorId(MockUserId.USER)
+
+        get("/neither-owner-nor-creator-delete")
+            .param("contributorId", contributorId.toString())
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.error", `is`("Forbidden")))
+            .andExpect(jsonPath("$.path").value("/neither-owner-nor-creator-delete"))
+            .andExpect(jsonPath("$.message").value("""Contributor <$contributorId> does not own the entity to be deleted and is not a curator."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun neitherOwnerNorCuratorVisibility() {
+        val id = "R123"
+
+        get("/neither-owner-nor-creator-visibility")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.error", `is`("Forbidden")))
+            .andExpect(jsonPath("$.path").value("/neither-owner-nor-creator-visibility"))
+            .andExpect(jsonPath("$.message").value("""Insufficient permissions to change visibility of entity "$id". User must be a curator or the owner of the entity."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -279,6 +312,16 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/cannot-reset-uri")
         fun cannotResetURI(@RequestParam id: ThingId) {
             throw CannotResetURI(id)
+        }
+
+        @GetMapping("/neither-owner-nor-creator-delete")
+        fun neitherOwnerNorCuratorDelete(@RequestParam contributorId: ContributorId) {
+            throw NeitherOwnerNorCurator(contributorId)
+        }
+
+        @GetMapping("/neither-owner-nor-creator-visibility")
+        fun neitherOwnerNorCuratorVisibility(@RequestParam id: ThingId) {
+            throw NeitherOwnerNorCurator.changeVisibility(id)
         }
     }
 

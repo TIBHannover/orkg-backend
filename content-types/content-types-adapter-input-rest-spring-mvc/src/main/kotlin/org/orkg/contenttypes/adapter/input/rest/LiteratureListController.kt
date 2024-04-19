@@ -17,6 +17,7 @@ import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.LiteratureListRepresentationAdapter
 import org.orkg.contenttypes.domain.LiteratureListNotFound
+import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.ListSectionCommand
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListUseCases
@@ -30,11 +31,13 @@ import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -84,6 +87,22 @@ class LiteratureListController(
         ).mapToLiteratureListRepresentation()
 
     @PreAuthorizeUser
+    @PostMapping(consumes = [LITERATURE_LIST_JSON_V1])
+    fun create(
+        @RequestBody @Valid request: CreateLiteratureListRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        val id = service.create(request.toCreateCommand(userId))
+        val location = uriComponentsBuilder
+            .path("api/literature-lists/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return created(location).build()
+    }
+
+    @PreAuthorizeUser
     @PutMapping("/{id}", consumes = [LITERATURE_LIST_JSON_V1])
     fun update(
         @PathVariable id: ThingId,
@@ -100,9 +119,43 @@ class LiteratureListController(
         return noContent().location(location).build()
     }
 
+    data class CreateLiteratureListRequest(
+        @field:NotBlank
+        val title: String,
+        @field:Size(min = 1, max = 1)
+        @JsonProperty("research_fields")
+        val researchFields: List<ThingId>,
+        @field:Valid
+        val authors: List<AuthorDTO>,
+        @JsonProperty("sdgs")
+        val sustainableDevelopmentGoals: Set<ThingId>,
+        @field:Size(max = 1)
+        val observatories: List<ObservatoryId>,
+        @field:Size(max = 1)
+        val organizations: List<OrganizationId>,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+        @field:Valid
+        val sections: List<LiteratureListSectionRequest>
+    ) {
+        fun toCreateCommand(contributorId: ContributorId): CreateLiteratureListUseCase.CreateCommand =
+            CreateLiteratureListUseCase.CreateCommand(
+                contributorId = contributorId,
+                title = title,
+                researchFields = researchFields,
+                authors = authors.map { it.toAuthor() },
+                sustainableDevelopmentGoals = sustainableDevelopmentGoals,
+                observatories = observatories,
+                organizations = organizations,
+                extractionMethod = extractionMethod,
+                sections = sections.map { it.toLiteratureListSectionDefinition() }
+            )
+    }
+
     data class UpdateLiteratureListRequest(
         @field:NotBlank
         val title: String?,
+        @field:Size(min = 1, max = 1)
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
         @field:Valid

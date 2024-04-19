@@ -10,6 +10,22 @@ import org.orkg.contenttypes.domain.LiteratureListSection
 import org.orkg.contenttypes.domain.TextSection
 import org.orkg.graph.domain.ExtractionMethod
 
+interface CreateLiteratureListUseCase {
+    fun create(command: CreateCommand): ThingId
+
+    data class CreateCommand(
+        val contributorId: ContributorId,
+        val title: String,
+        val researchFields: List<ThingId>,
+        val authors: List<Author>,
+        val sustainableDevelopmentGoals: Set<ThingId>,
+        val observatories: List<ObservatoryId>,
+        val organizations: List<OrganizationId>,
+        val extractionMethod: ExtractionMethod,
+        val sections: List<LiteratureListSectionDefinition>
+    )
+}
+
 interface UpdateLiteratureListUseCase {
     fun update(command: UpdateCommand)
 

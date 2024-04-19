@@ -5,9 +5,12 @@ import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.domain.actions.CreateLiteratureListCommand
+import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
@@ -16,13 +19,20 @@ import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.domain.actions.execute
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorCreateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorUpdateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListExistenceValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListModifiableValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListResearchFieldCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListResearchFieldUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListResourceCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListResourceUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSDGCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSDGUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsCreateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsUpdateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsUpdater
 import org.orkg.contenttypes.input.LiteratureListUseCases
@@ -88,6 +98,24 @@ class LiteratureListService(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toLiteratureList() }
 
+    override fun create(command: CreateLiteratureListCommand): ThingId {
+        val steps = listOf(
+            LabelValidator("title") { it.title },
+            ResearchFieldValidator(resourceRepository, { it.researchFields }),
+            LiteratureListAuthorCreateValidator(resourceRepository, statementRepository),
+            SDGValidator({ it.sustainableDevelopmentGoals }),
+            OrganizationValidator(organizationRepository, { it.organizations }),
+            ObservatoryValidator(observatoryRepository, { it.observatories }),
+            LiteratureListSectionsCreateValidator(resourceRepository),
+            LiteratureListResourceCreator(resourceService),
+            LiteratureListResearchFieldCreator(literalService, statementService),
+            LiteratureListAuthorCreator(resourceService, statementService, literalService, listService),
+            LiteratureListSDGCreator(literalService, statementService),
+            LiteratureListSectionsCreator(literalService, resourceService, statementService)
+        )
+        return steps.execute(command, CreateLiteratureListState()).literatureListId!!
+    }
+
     override fun update(command: UpdateLiteratureListCommand) {
         val steps = listOf(
             LiteratureListExistenceValidator(this, resourceRepository),
@@ -137,6 +165,10 @@ class LiteratureListService(
                         whitelist = emptyList()
                     ),
                     sort = Sort.unsorted()
+                ) + statementRepository.findAll(
+                    subjectId = resource.id,
+                    objectClasses = setOf(Classes.researchField),
+                    pageable = PageRequests.ALL
                 )
             }
             else -> throw IllegalStateException("""Unable to convert resource "${resource.id}" to literature list. This is a bug.""")

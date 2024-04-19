@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -141,15 +142,6 @@ class LiteratureListServiceUnitTests {
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(Predicates.hasResearchField),
-                `object` = createResource(
-                    id = researchFieldId,
-                    classes = setOf(Classes.researchField),
-                    label = "Research Field 1"
-                )
-            ),
-            createStatement(
-                subject = expected,
                 predicate = createPredicate(Predicates.hasPublishedVersion),
                 `object` = publishedVersion1,
                 createdAt = OffsetDateTime.now(fixedClock).minusDays(2)
@@ -236,6 +228,23 @@ class LiteratureListServiceUnitTests {
                 `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
             )
         )
+        every {
+            statementRepository.findAll(
+                subjectId = expected.id,
+                objectClasses = setOf(Classes.researchField),
+                pageable = PageRequests.ALL
+            )
+        } returns pageOf(
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasResearchField),
+                `object` = createResource(
+                    id = researchFieldId,
+                    classes = setOf(Classes.researchField),
+                    label = "Research Field 1"
+                )
+            )
+        )
 
         val actual = service.findById(expected.id)
 
@@ -294,6 +303,13 @@ class LiteratureListServiceUnitTests {
                 id = expected.id,
                 configuration = bundleConfiguration,
                 sort = Sort.unsorted()
+            )
+        }
+        verify(exactly = 1) {
+            statementRepository.findAll(
+                subjectId = expected.id,
+                objectClasses = setOf(Classes.researchField),
+                pageable = PageRequests.ALL
             )
         }
     }

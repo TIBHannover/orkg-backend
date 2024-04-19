@@ -87,4 +87,39 @@ class StatementCollectionPropertyCreatorUnitTest {
             )
         }
     }
+
+    @Test
+    fun `Given a list of thing ids and a subject id, it creates a statement from the subject resource to all objects`() {
+        val ids = listOf(ThingId("R12"), ThingId("R13"))
+        val contributorId = ContributorId(UUID.randomUUID())
+        val subjectId = ThingId("R123")
+
+        every {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.hasLink,
+                `object` = any()
+            )
+        } just runs
+
+        statementCollectionPropertyCreator.create(contributorId, subjectId, Predicates.hasLink, ids)
+
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.hasLink,
+                `object` = ids.first()
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.hasLink,
+                `object` = ids.last()
+            )
+        }
+    }
 }

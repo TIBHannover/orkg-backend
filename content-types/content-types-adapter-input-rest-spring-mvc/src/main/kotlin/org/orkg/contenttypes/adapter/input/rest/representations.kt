@@ -3,6 +3,9 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.annotation.JsonTypeName
 import java.net.URI
 import java.time.OffsetDateTime
 import javax.validation.Valid
@@ -14,6 +17,8 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.ListSectionRequest
+import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.TextSectionRequest
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
@@ -431,24 +436,32 @@ data class LiteratureListRepresentation(
     override val jsonClass: String = "literature-list"
 ) : ContentTypeRepresentation
 
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
+)
+@JsonSubTypes(value = [
+    JsonSubTypes.Type(ListSectionRequest::class),
+    JsonSubTypes.Type(TextSectionRequest::class)
+])
 sealed interface LiteratureListSectionRepresentation {
     val id: ThingId
-    val type: String
 }
 
+@JsonTypeName("list")
 data class ListSectionRepresentation(
     override val id: ThingId,
-    val entries: List<ResourceReference>,
-    override val type: String = "list"
+    val entries: List<ResourceReference>
 ) : LiteratureListSectionRepresentation
 
+@JsonTypeName("text")
 data class TextSectionRepresentation(
     override val id: ThingId,
     val heading: String,
     @get:JsonProperty("heading_size")
     val headingSize: Int,
-    val text: String,
-    override val type: String = "text"
+    val text: String
 ) : LiteratureListSectionRepresentation
 
 data class SmartReviewRepresentation(

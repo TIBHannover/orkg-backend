@@ -394,6 +394,9 @@ include::parts/template-properties.adoc[leveloffset=+1]
 [[template-instances]]
 include::parts/template-instances.adoc[leveloffset=+1]
 
+[[rosetta-stone-templates]]
+include::parts/rosetta-stone-templates.adoc[leveloffset=+1]
+
 [[content-types]]
 include::parts/content-types.adoc[leveloffset=+1]
 

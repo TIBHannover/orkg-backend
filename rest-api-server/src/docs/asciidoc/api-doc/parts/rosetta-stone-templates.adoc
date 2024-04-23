@@ -23,4 +23,4 @@ operation::rosetta-stone-templates-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::rosetta-stone-templates-get-paged[snippets='request-parameters']
+operation::rosetta-stone-templates-get-paged-with-parameters[snippets='request-parameters']

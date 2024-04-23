@@ -106,19 +106,21 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
         val template = createDummyRosettaStoneTemplate()
         every { templateService.findAll(pageable = any()) } returns pageOf(template)
 
-        get("/api/rosetta-stone/templates")
+        documentedGetRequestTo("/api/rosetta-stone/templates")
             .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .contentType(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectRosettaStoneTemplate("$.content[*]")
+            .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { templateService.findAll(pageable = any()) }
     }
 
     @Test
-    fun `Given several rosetta stone templates, when they are fetched, then status is 200 OK and rosetta stone templates are returned`() {
+    @DisplayName("Given several rosetta stone templates, when filtering by several parameters, then status is 200 OK and rosetta stone templates are returned")
+    fun getPagedWithParameters() {
         val template = createDummyRosettaStoneTemplate()
         val createdBy = template.createdBy
         val q = "example"

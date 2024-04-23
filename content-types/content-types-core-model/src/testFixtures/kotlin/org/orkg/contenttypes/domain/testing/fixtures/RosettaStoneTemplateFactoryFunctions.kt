@@ -5,14 +5,14 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.RosettaTemplate
+import org.orkg.contenttypes.domain.RosettaStoneTemplate
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
 
-fun createDummyRosettaTemplate() = RosettaTemplate(
+fun createDummyRosettaStoneTemplate() = RosettaStoneTemplate(
     id = ThingId("R21325"),
-    label = "Dummy Rosetta Template Label",
-    description = "Some description about the rosetta template",
+    label = "Dummy Rosetta Stone Template Label",
+    description = "Some description about the rosetta stone template",
     formattedLabel = FormattedLabel.of("{P32}"),
     targetClass = ThingId("targetClass"),
     properties = listOf(

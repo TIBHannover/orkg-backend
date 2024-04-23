@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.contenttypes.domain.RosettaTemplateNotFound
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaTemplate
-import org.orkg.contenttypes.input.RosettaTemplateUseCases
+import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
-import org.orkg.testing.andExpectRosettaTemplate
+import org.orkg.testing.andExpectRosettaStoneTemplate
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -35,46 +35,46 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [RosettaTemplateController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
-@WebMvcTest(controllers = [RosettaTemplateController::class])
-@DisplayName("Given a Rosetta Template controller")
-internal class RosettaTemplateControllerUnitTest : RestDocsTest("rosetta-templates") {
+@ContextConfiguration(classes = [RosettaStoneTemplateController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@WebMvcTest(controllers = [RosettaStoneTemplateController::class])
+@DisplayName("Given a Rosetta Stone Template controller")
+internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-stone-templates") {
 
     @MockkBean
-    private lateinit var templateService: RosettaTemplateUseCases
+    private lateinit var templateService: RosettaStoneTemplateUseCases
 
     @Test
     @DisplayName("Given a template, when it is fetched by id and service succeeds, then status is 200 OK and template is returned")
     fun getSingle() {
-        val template = createDummyRosettaTemplate()
+        val template = createDummyRosettaStoneTemplate()
         every { templateService.findById(template.id) } returns Optional.of(template)
 
-        documentedGetRequestTo("/api/rosetta/templates/{id}", template.id)
-            .accept(ROSETTA_TEMPLATE_JSON_V1)
-            .contentType(ROSETTA_TEMPLATE_JSON_V1)
+        documentedGetRequestTo("/api/rosetta-stone/templates/{id}", template.id)
+            .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
+            .contentType(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .perform()
             .andExpect(status().isOk)
-            .andExpectRosettaTemplate()
+            .andExpectRosettaStoneTemplate()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("id").description("The identifier of the rosetta template to retrieve.")
+                        parameterWithName("id").description("The identifier of the rosetta stone template to retrieve.")
                     ),
                     responseFields(
                         // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the rosetta template."),
-                        fieldWithPath("label").description("The label of the rosetta template."),
-                        fieldWithPath("description").description("The description of the rosetta template."),
-                        fieldWithPath("formatted_label").description("The formatted label pattern of the rosetta template."),
-                        fieldWithPath("target_class").description("The target class of the rosetta template."),
-                        PayloadDocumentation.subsectionWithPath("properties").description("The list of properties of the rosetta template. See <<template-properties,template properties>> for more information."),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta template belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta template belongs to."),
-                        timestampFieldWithPath("created_at", "the rosetta template resource was created"),
+                        fieldWithPath("id").description("The identifier of the rosetta stone template."),
+                        fieldWithPath("label").description("The label of the rosetta stone template."),
+                        fieldWithPath("description").description("The description of the rosetta stone template."),
+                        fieldWithPath("formatted_label").description("The formatted label pattern of the rosetta stone template."),
+                        fieldWithPath("target_class").description("The target class of the rosetta stone template."),
+                        PayloadDocumentation.subsectionWithPath("properties").description("The list of properties of the rosetta stone template. See <<template-properties,template properties>> for more information."),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone template belongs to."),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone template belongs to."),
+                        timestampFieldWithPath("created_at", "the rosetta stone template resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this rosetta template."),
-                        fieldWithPath("visibility").description("""Visibility of the rosetta template. Can be one of "default", "featured", "unlisted" or "deleted"."""),
-                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this rosetta template.").optional()
+                        fieldWithPath("created_by").description("The UUID of the user or service who created this rosetta stone template."),
+                        fieldWithPath("visibility").description("""Visibility of the rosetta stone template. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this rosetta stone template.").optional()
                     )
                 )
             )
@@ -84,42 +84,42 @@ internal class RosettaTemplateControllerUnitTest : RestDocsTest("rosetta-templat
     }
 
     @Test
-    fun `Given a rosetta template, when it is fetched by id and service reports missing rosetta template, then status is 404 NOT FOUND`() {
+    fun `Given a rosetta stone template, when it is fetched by id and service reports missing rosetta stone template, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
-        val exception = RosettaTemplateNotFound(id)
+        val exception = RosettaStoneTemplateNotFound(id)
         every { templateService.findById(id) } returns Optional.empty()
 
-        get("/api/rosetta/templates/$id")
-            .accept(ROSETTA_TEMPLATE_JSON_V1)
+        get("/api/rosetta-stone/templates/$id")
+            .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/rosetta/templates/$id"))
+            .andExpect(jsonPath("$.path").value("/api/rosetta-stone/templates/$id"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
         verify(exactly = 1) { templateService.findById(id) }
     }
 
     @Test
-    @DisplayName("Given several rosetta templates, when they are fetched, then status is 200 OK and rosetta templates are returned")
+    @DisplayName("Given several rosetta stone templates, when they are fetched, then status is 200 OK and rosetta stone templates are returned")
     fun getPaged() {
-        val template = createDummyRosettaTemplate()
+        val template = createDummyRosettaStoneTemplate()
         every { templateService.findAll(pageable = any()) } returns pageOf(template)
 
-        get("/api/rosetta/templates")
-            .accept(ROSETTA_TEMPLATE_JSON_V1)
-            .contentType(ROSETTA_TEMPLATE_JSON_V1)
+        get("/api/rosetta-stone/templates")
+            .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
+            .contentType(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
-            .andExpectRosettaTemplate("$.content[*]")
+            .andExpectRosettaStoneTemplate("$.content[*]")
 
         verify(exactly = 1) { templateService.findAll(pageable = any()) }
     }
 
     @Test
-    fun `Given several rosetta templates, when they are fetched, then status is 200 OK and rosetta templates are returned`() {
-        val template = createDummyRosettaTemplate()
+    fun `Given several rosetta stone templates, when they are fetched, then status is 200 OK and rosetta stone templates are returned`() {
+        val template = createDummyRosettaStoneTemplate()
         val createdBy = template.createdBy
         val q = "example"
         val exact = true
@@ -134,23 +134,23 @@ internal class RosettaTemplateControllerUnitTest : RestDocsTest("rosetta-templat
             )
         } returns pageOf(template)
 
-        documentedGetRequestTo("/api/rosetta/templates")
+        documentedGetRequestTo("/api/rosetta-stone/templates")
             .param("q", q)
             .param("exact", exact.toString())
             .param("visibility", visibility.name)
             .param("created_by", createdBy.value.toString())
-            .accept(ROSETTA_TEMPLATE_JSON_V1)
+            .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
-            .andExpectRosettaTemplate("$.content[*]")
+            .andExpectRosettaStoneTemplate("$.content[*]")
             .andDo(
                 documentationHandler.document(
                     requestParameters(
-                        parameterWithName("q").description("Optional filter for the rosetta template label.").optional(),
+                        parameterWithName("q").description("Optional filter for the rosetta stone template label.").optional(),
                         parameterWithName("exact").description("Optional flag for whether label matching should be exact. (default: false)").optional(),
                         parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),
-                        parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the rosetta template.").optional()
+                        parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the rosetta stone template.").optional()
                     )
                 )
             )

@@ -373,7 +373,7 @@ data class ResourceTemplatePropertyRepresentation(
     val `class`: ObjectIdAndLabel
 ) : TemplatePropertyRepresentation
 
-data class RosettaTemplateRepresentation(
+data class RosettaStoneTemplateRepresentation(
     val id: ThingId,
     val label: String,
     val description: String?,

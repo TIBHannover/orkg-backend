@@ -8,7 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
 
-data class RosettaTemplate(
+data class RosettaStoneTemplate(
     val id: ThingId,
     val label: String,
     val description: String?,

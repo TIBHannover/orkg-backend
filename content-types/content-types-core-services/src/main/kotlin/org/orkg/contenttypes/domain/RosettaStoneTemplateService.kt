@@ -3,7 +3,7 @@ package org.orkg.contenttypes.domain
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.RosettaTemplateUseCases
+import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
@@ -19,30 +19,30 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 
 @Component
-class RosettaTemplateService(
+class RosettaStoneTemplateService(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository
-) : RosettaTemplateUseCases {
-    override fun findById(id: ThingId): Optional<RosettaTemplate> =
+) : RosettaStoneTemplateUseCases {
+    override fun findById(id: ThingId): Optional<RosettaStoneTemplate> =
         resourceRepository.findById(id)
             .filter { it is Resource && Classes.rosettaNodeShape in it.classes }
-            .map { it.toRosettaTemplate() }
+            .map { it.toRosettaStoneTemplate() }
 
     override fun findAll(
         searchString: SearchString?,
         visibility: VisibilityFilter?,
         createdBy: ContributorId?,
         pageable: Pageable
-    ): Page<RosettaTemplate> =
+    ): Page<RosettaStoneTemplate> =
         resourceRepository.findAll(
             label = searchString,
             visibility = visibility,
             createdBy = createdBy,
             includeClasses = setOf(Classes.rosettaNodeShape),
             pageable = pageable
-        ).pmap { it.toRosettaTemplate() }
+        ).pmap { it.toRosettaStoneTemplate() }
 
-    private fun Resource.toRosettaTemplate(): RosettaTemplate {
+    private fun Resource.toRosettaStoneTemplate(): RosettaStoneTemplate {
         val statements = statementRepository.fetchAsBundle(
             id = id,
             configuration = BundleConfiguration(
@@ -53,7 +53,7 @@ class RosettaTemplateService(
             ),
             sort = Sort.unsorted()
         ).groupBy { it.subject.id }
-        return RosettaTemplate(
+        return RosettaStoneTemplate(
             id = id,
             label = label,
             description = statements[id]!!

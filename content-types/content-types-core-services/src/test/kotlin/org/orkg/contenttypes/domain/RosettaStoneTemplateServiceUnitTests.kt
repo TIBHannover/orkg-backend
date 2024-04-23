@@ -30,11 +30,11 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.springframework.data.domain.Sort
 
-class RosettaTemplateServiceUnitTests {
+class RosettaStoneTemplateServiceUnitTests {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
 
-    private val service = RosettaTemplateService(resourceRepository, statementRepository)
+    private val service = RosettaStoneTemplateService(resourceRepository, statementRepository)
 
     @BeforeEach
     fun resetState() {
@@ -47,14 +47,14 @@ class RosettaTemplateServiceUnitTests {
     }
 
     @Test
-    fun `Given a rosetta template, when fetching it by id, it is returned`() {
+    fun `Given a rosetta stone template, when fetching it by id, it is returned`() {
         val expected = createResource(
-            label = "rosetta template label",
+            label = "rosetta stone template label",
             classes = setOf(Classes.rosettaNodeShape),
             organizationId = OrganizationId(UUID.randomUUID()),
             observatoryId = ObservatoryId(UUID.randomUUID())
         )
-        val description = "rosetta template description"
+        val description = "rosetta stone template description"
         val formattedLabel = FormattedLabel.of("{P32}")
         val targetClassId = ThingId("targetClass")
         val predicateId = ThingId("P22")

@@ -226,7 +226,7 @@ fun ResultActions.andExpectTemplate(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
     .andExpect(jsonPath("$path._class").value("template"))
 
-fun ResultActions.andExpectRosettaTemplate(path: String = "$"): ResultActions = this
+fun ResultActions.andExpectRosettaStoneTemplate(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.label", `is`(notNullValue())))
     .andExpect(jsonPath("$path.description", `is`(notNullValue())))

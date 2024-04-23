@@ -2,9 +2,9 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.adapter.input.rest.mapping.RosettaTemplateRepresentationAdapter
-import org.orkg.contenttypes.domain.RosettaTemplateNotFound
-import org.orkg.contenttypes.input.RosettaTemplateUseCases
+import org.orkg.contenttypes.adapter.input.rest.mapping.RosettaStoneTemplateRepresentationAdapter
+import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
+import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
@@ -15,21 +15,21 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-const val ROSETTA_TEMPLATE_JSON_V1 = "application/vnd.orkg.rosetta-template.v1+json"
+const val ROSETTA_STONE_TEMPLATE_JSON_V1 = "application/vnd.orkg.rosetta-stone-template.v1+json"
 
 @RestController
-@RequestMapping("/api/rosetta/templates", produces = [ROSETTA_TEMPLATE_JSON_V1])
-class RosettaTemplateController(
-    private val service: RosettaTemplateUseCases
-) : RosettaTemplateRepresentationAdapter {
+@RequestMapping("/api/rosetta-stone/templates", produces = [ROSETTA_STONE_TEMPLATE_JSON_V1])
+class RosettaStoneTemplateController(
+    private val service: RosettaStoneTemplateUseCases
+) : RosettaStoneTemplateRepresentationAdapter {
 
     @GetMapping("/{id}")
     fun findById(
         @PathVariable id: ThingId
-    ): RosettaTemplateRepresentation =
+    ): RosettaStoneTemplateRepresentation =
         service.findById(id)
-            .mapToTemplateRepresentation()
-            .orElseThrow { RosettaTemplateNotFound(id) }
+            .mapToRosettaStoneTemplateRepresentation()
+            .orElseThrow { RosettaStoneTemplateNotFound(id) }
 
     @GetMapping
     fun findAll(
@@ -38,11 +38,11 @@ class RosettaTemplateController(
         @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
         pageable: Pageable
-    ): Page<RosettaTemplateRepresentation> =
+    ): Page<RosettaStoneTemplateRepresentation> =
         service.findAll(
             searchString = string?.let { SearchString.of(string, exactMatch = exactMatch) },
             visibility = visibility,
             createdBy = createdBy,
             pageable = pageable
-        ).mapToTemplateRepresentation()
+        ).mapToRosettaStoneTemplateRepresentation()
 }

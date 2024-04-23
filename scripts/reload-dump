@@ -20,10 +20,13 @@ if [ "$docker_compose_exe" != "found" ]; then
     exit 1
 fi
 
+# Find the root/project directory
+root_dir="$(git rev-parse --show-toplevel)"
+
 # Load dump into separate volume
 docker volume create "$dump_volume"
 temp_container=$(docker container create --volume "${dump_volume}:/dumps" alpine)
-docker cp -L "${1:-dumps/neo4j-dump-latest.dump}" ${temp_container}:/dumps/neo4j-dump-latest.dump
+docker cp -L "${1:-"${root_dir}/dumps/neo4j-dump-latest.dump"}" "${temp_container}:/dumps/neo4j-dump-latest.dump"
 docker rm "$temp_container"
 
 # Shutdown and remove Neo4j
@@ -47,5 +50,16 @@ docker run -i --rm --entrypoint //bin/bash --volumes-from "${source_dir}-neo4j-1
 neo4j-admin load --from=/dumps/neo4j-dump-latest.dump --database=orkg --force
 EOS
 
+# Destroy database container. This is required to get rid of the logs, so the next step can wait successfully.
+# Data is already stored in the volume, so this only affects the container.
+docker compose rm -f neo4j
+
 # Bring up database
 docker compose up -d neo4j
+until docker compose logs neo4j | grep -q 'Remote interface available at http:'; do sleep 1; done
+
+# Apply some migrations that already ran, containing custom procedures. This is a work-around because we cannot share
+# the "system" database.
+# shellcheck disable=SC2002
+cat "${root_dir}/migrations/neo4j-migrations/src/main/resources/neo4j/migrations/R0027__create_custom_subgraph_procedure.cypher" \
+  | docker compose exec -T neo4j cypher-shell

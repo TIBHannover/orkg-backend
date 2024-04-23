@@ -19,6 +19,8 @@ import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
+import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionCommand
+import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorCreateValidator
@@ -40,6 +42,9 @@ import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectio
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionCreateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionExistenceCreateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionExistenceUpdateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionUpdateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionUpdater
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.output.LiteratureListPublishedRepository
 import org.orkg.contenttypes.output.LiteratureListRepository
@@ -128,6 +133,15 @@ class LiteratureListService(
             LiteratureListSectionCreator(literalService, resourceService, statementService)
         )
         return steps.execute(command, CreateLiteratureListSectionState()).literatureListSectionId!!
+    }
+
+    override fun updateSection(command: UpdateLiteratureListSectionCommand) {
+        val steps = listOf(
+            LiteratureListSectionExistenceUpdateValidator(this, resourceRepository),
+            LiteratureListSectionUpdateValidator(resourceRepository),
+            LiteratureListSectionUpdater(literalService, resourceService, statementService)
+        )
+        steps.execute(command, UpdateLiteratureListSectionState())
     }
 
     override fun update(command: UpdateLiteratureListCommand) {

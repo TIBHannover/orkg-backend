@@ -6,6 +6,7 @@ import org.orkg.contenttypes.domain.actions.contributions.ContributionAction
 import org.orkg.contenttypes.domain.actions.literaturelists.CreateLiteratureListAction
 import org.orkg.contenttypes.domain.actions.literaturelists.UpdateLiteratureListAction
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.CreateLiteratureListSectionAction
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.UpdateLiteratureListSectionAction
 import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction
@@ -23,6 +24,7 @@ import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
+import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
@@ -46,6 +48,7 @@ internal typealias UpdateTemplateCommand = UpdateTemplateUseCase.UpdateCommand
 internal typealias UpdateTemplatePropertyCommand = UpdateTemplatePropertyUseCase.UpdateCommand
 internal typealias UpdateTemplateInstanceCommand = UpdateTemplateInstanceUseCase.UpdateCommand
 internal typealias UpdateLiteratureListCommand = UpdateLiteratureListUseCase.UpdateCommand
+internal typealias UpdateLiteratureListSectionCommand = UpdateLiteratureListSectionUseCase.UpdateCommand
 
 internal typealias CreatePaperState = CreatePaperAction.State
 internal typealias UpdatePaperState = UpdatePaperAction.State
@@ -68,3 +71,4 @@ internal typealias CreateLiteratureListState = CreateLiteratureListAction.State
 internal typealias UpdateLiteratureListState = UpdateLiteratureListAction.State
 
 internal typealias CreateLiteratureListSectionState = CreateLiteratureListSectionAction.State
+internal typealias UpdateLiteratureListSectionState = UpdateLiteratureListSectionAction.State

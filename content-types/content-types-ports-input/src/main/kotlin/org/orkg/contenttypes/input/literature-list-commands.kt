@@ -66,6 +66,32 @@ interface UpdateLiteratureListUseCase {
     )
 }
 
+interface UpdateLiteratureListSectionUseCase {
+    fun updateSection(command: UpdateCommand)
+
+    sealed interface UpdateCommand {
+        val literatureListSectionId: ThingId
+        val contributorId: ContributorId
+        val literatureListId: ThingId
+    }
+
+    data class UpdateListSectionCommand(
+        override val literatureListSectionId: ThingId,
+        override val contributorId: ContributorId,
+        override val literatureListId: ThingId,
+        override val entries: List<ThingId>
+    ) : UpdateCommand, ListSectionDefinition
+
+    data class UpdateTextSectionCommand(
+        override val literatureListSectionId: ThingId,
+        override val contributorId: ContributorId,
+        override val literatureListId: ThingId,
+        override val heading: String,
+        override val headingSize: Int,
+        override val text: String
+    ) : UpdateCommand, TextSectionDefinition
+}
+
 sealed interface LiteratureListSectionDefinition {
     fun matchesListSection(section: LiteratureListSection): Boolean
 }

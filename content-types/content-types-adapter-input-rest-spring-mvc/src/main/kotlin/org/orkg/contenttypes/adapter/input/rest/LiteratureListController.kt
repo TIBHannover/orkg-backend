@@ -23,6 +23,7 @@ import org.orkg.contenttypes.input.ListSectionCommand
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.TextSectionCommand
+import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
@@ -138,6 +139,24 @@ class LiteratureListController(
         return created(location).build()
     }
 
+    @PreAuthorizeUser
+    @PutMapping("/{literatureListId}/sections/{sectionId}", consumes = [LITERATURE_LIST_SECTION_JSON_V1], produces = [LITERATURE_LIST_SECTION_JSON_V1])
+    fun updateSection(
+        @PathVariable literatureListId: ThingId,
+        @PathVariable sectionId: ThingId,
+        @RequestBody @Valid request: LiteratureListSectionRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.updateSection(request.toUpdateCommand(sectionId, userId, literatureListId))
+        val location = uriComponentsBuilder
+            .path("api/literature-lists/{id}")
+            .buildAndExpand(literatureListId)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
     data class CreateLiteratureListRequest(
         @field:NotBlank
         val title: String,
@@ -217,6 +236,12 @@ class LiteratureListController(
             contributorId: ContributorId,
             literatureListId: ThingId
         ): CreateLiteratureListSectionUseCase.CreateCommand
+
+        fun toUpdateCommand(
+            literatureListSectionId: ThingId,
+            contributorId: ContributorId,
+            literatureListId: ThingId
+        ): UpdateLiteratureListSectionUseCase.UpdateCommand
     }
 
     data class ListSectionRequest(
@@ -230,6 +255,15 @@ class LiteratureListController(
             literatureListId: ThingId
         ): CreateLiteratureListSectionUseCase.CreateCommand =
             CreateLiteratureListSectionUseCase.CreateListSectionCommand(contributorId, literatureListId, entries)
+
+        override fun toUpdateCommand(
+            literatureListSectionId: ThingId,
+            contributorId: ContributorId,
+            literatureListId: ThingId
+        ): UpdateLiteratureListSectionUseCase.UpdateCommand =
+            UpdateLiteratureListSectionUseCase.UpdateListSectionCommand(
+                literatureListSectionId, contributorId, literatureListId, entries
+            )
     }
 
     data class TextSectionRequest(
@@ -250,6 +284,15 @@ class LiteratureListController(
         ): CreateLiteratureListSectionUseCase.CreateCommand =
             CreateLiteratureListSectionUseCase.CreateTextSectionCommand(
                 contributorId, literatureListId, heading, headingSize, text
+            )
+
+        override fun toUpdateCommand(
+            literatureListSectionId: ThingId,
+            contributorId: ContributorId,
+            literatureListId: ThingId
+        ): UpdateLiteratureListSectionUseCase.UpdateCommand =
+            UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand(
+                literatureListSectionId, contributorId, literatureListId, heading, headingSize, text
             )
     }
 }

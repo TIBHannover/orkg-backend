@@ -18,6 +18,15 @@ The updated literature list (object) can be retrieved by following the URI in th
 
 operation::literature-lists-create-text-section[snippets='request-fields,curl-request,http-response']
 
+[[literature-list-sections-edit-text-section]]
+=== Editing a text section
+
+A `PUT` request updates an existing text section with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::literature-lists-update-text-section[snippets='request-fields,curl-request,http-response']
+
 [[literature-list-sections-list-sections]]
 == List Sections
 
@@ -29,3 +38,12 @@ The response will be `201 Created` when successful.
 The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
 
 operation::literature-lists-create-list-section[snippets='request-fields,curl-request,http-response']
+
+[[literature-list-sections-edit-list-section]]
+=== Editing a list section
+
+A `PUT` request updates an existing list section with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::literature-lists-update-list-section[snippets='request-fields,curl-request,http-response']

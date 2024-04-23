@@ -357,7 +357,7 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     @TestWithMockUser
-    fun createAndFetchTextSection() {
+    fun createAndFetchAndUpdateTextSection() {
         val literatureListId = createLiteratureList()
 
         post("/api/literature-lists/$literatureListId/sections")
@@ -378,11 +378,31 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
             it.headingSize shouldBe 2
             it.text shouldBe "text section contents"
         }
+
+        val literatureListSectionId = literatureList.sections.last().id
+
+        put("/api/literature-lists/$literatureListId/sections/$literatureListSectionId")
+            .content(updateTextSectionJson)
+            .accept(LITERATURE_LIST_SECTION_JSON_V1)
+            .contentType(LITERATURE_LIST_SECTION_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedLiteratureList = literatureListService.findById(literatureListId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+
+        updatedLiteratureList.sections.last().shouldBeInstanceOf<TextSection>().asClue {
+            it.id shouldBe literatureListSectionId
+            it.heading shouldBe "updated text section heading"
+            it.headingSize shouldBe 3
+            it.text shouldBe "updated text section contents"
+        }
     }
 
     @Test
     @TestWithMockUser
-    fun createAndFetchListSection() {
+    fun createAndFetchAndUpdateListSection() {
         val literatureListId = createLiteratureList()
 
         post("/api/literature-lists/$literatureListId/sections")
@@ -403,6 +423,28 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
                 ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(ThingId("Dataset"))),
                 ResourceReference(ThingId("R3004"), "Some other resource", setOf(ThingId("Software"))),
                 ResourceReference(ThingId("R3003"), "Some resource", setOf(ThingId("Paper")))
+            )
+        }
+
+        val literatureListSectionId = literatureList.sections.last().id
+
+        put("/api/literature-lists/$literatureListId/sections/$literatureListSectionId")
+            .content(updateListSectionJson)
+            .accept(LITERATURE_LIST_SECTION_JSON_V1)
+            .contentType(LITERATURE_LIST_SECTION_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedLiteratureList = literatureListService.findById(literatureListId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+
+        updatedLiteratureList.sections.last().shouldBeInstanceOf<ListSection>().asClue {
+            it.id shouldBe literatureListSectionId
+            it.entries shouldBe listOf(
+                ResourceReference(ThingId("R3003"), "Some resource", setOf(ThingId("Paper"))),
+                ResourceReference(ThingId("R3004"), "Some other resource", setOf(ThingId("Software"))),
+                ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(ThingId("Dataset")))
             )
         }
     }
@@ -539,10 +581,24 @@ private const val createTextSectionJson = """{
   "text": "text section contents"
 }"""
 
+private const val updateTextSectionJson = """{
+  "heading": "updated text section heading",
+  "heading_size": 3,
+  "text": "updated text section contents"
+}"""
+
 private const val createListSectionJson = """{
   "entries": [
     "R3005",
     "R3004",
     "R3003"
+  ]
+}"""
+
+private const val updateListSectionJson = """{
+  "entries": [
+    "R3003",
+    "R3004",
+    "R3005"
   ]
 }"""

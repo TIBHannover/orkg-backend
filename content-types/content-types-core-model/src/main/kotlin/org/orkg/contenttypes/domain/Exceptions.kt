@@ -195,3 +195,15 @@ class InvalidListSectionEntry(id: ThingId, expectedAnyInstanceOf: Set<ThingId>) 
 
 class InvalidHeadingSize(headingSize: Int) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid heading size "$headingSize". Must be at least 1.""")
+
+class UnrelatedLiteratureListSection(literatureListId: ThingId, literatureListSectionId: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Literature list section "$literatureListSectionId" does not belong to literature list "$literatureListId".""")
+
+class LiteratureListSectionTypeMismatch private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message) {
+    companion object {
+        fun mustBeTextSection() = LiteratureListSectionTypeMismatch("""Invalid literature list section type. Must be a text section.""")
+        fun mustBeListSection() = LiteratureListSectionTypeMismatch("""Invalid literature list section type. Must be a list section.""")
+    }
+}

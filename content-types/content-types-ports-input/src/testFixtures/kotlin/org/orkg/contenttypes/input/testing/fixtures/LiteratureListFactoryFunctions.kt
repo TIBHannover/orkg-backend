@@ -15,6 +15,7 @@ import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.ListSectionCommand
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.TextSectionCommand
+import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.graph.domain.ExtractionMethod
 
@@ -101,6 +102,25 @@ fun dummyCreateListSectionCommand() = CreateLiteratureListSectionUseCase.CreateL
 )
 
 fun dummyCreateTextSectionCommand() = CreateLiteratureListSectionUseCase.CreateTextSectionCommand(
+    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+    literatureListId = ThingId("R123"),
+    heading = "Updated Heading",
+    headingSize = 3,
+    text = "updated text section contents"
+)
+
+fun dummyUpdateListSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateListSectionCommand(
+    literatureListSectionId = ThingId("R456"),
+    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+    literatureListId = ThingId("R123"),
+    entries = listOf(
+        ThingId("R2315"),
+        ThingId("R3512"),
+    )
+)
+
+fun dummyUpdateTextSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand(
+    literatureListSectionId = ThingId("R456"),
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
     heading = "Updated Heading",

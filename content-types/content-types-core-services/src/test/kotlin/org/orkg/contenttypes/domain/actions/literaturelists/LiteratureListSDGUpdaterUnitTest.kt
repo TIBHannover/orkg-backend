@@ -54,6 +54,8 @@ class LiteratureListSDGUpdaterUnitTest {
             it.authors.size shouldBe 0
             it.statements shouldBe state.statements
             it.authors.size shouldBe 0
+            it.statements shouldBe state.statements
+            it.authors.size shouldBe 0
         }
     }
 
@@ -69,6 +71,8 @@ class LiteratureListSDGUpdaterUnitTest {
 
         result.asClue {
             it.literatureList shouldBe state.literatureList
+            it.statements shouldBe state.statements
+            it.authors.size shouldBe 0
             it.statements shouldBe state.statements
             it.authors.size shouldBe 0
             it.statements shouldBe state.statements
@@ -105,6 +109,8 @@ class LiteratureListSDGUpdaterUnitTest {
 
         result.asClue {
             it.literatureList shouldBe state.literatureList
+            it.statements shouldBe state.statements
+            it.authors.size shouldBe 0
             it.statements shouldBe state.statements
             it.authors.size shouldBe 0
             it.statements shouldBe state.statements

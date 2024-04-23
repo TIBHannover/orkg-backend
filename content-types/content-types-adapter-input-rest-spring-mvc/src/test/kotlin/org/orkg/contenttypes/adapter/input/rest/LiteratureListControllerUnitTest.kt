@@ -31,6 +31,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.LiteratureListUseCases
+import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
@@ -400,6 +401,84 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { literatureListService.update(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a list section update request, when service succeeds, it updates the list section")
+    fun updateListSection() {
+        val literatureListId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = LiteratureListController.ListSectionRequest(
+            entries = listOf(ThingId("R123"), ThingId("R456"))
+        )
+        every { literatureListService.updateSection(any()) } just runs
+
+        documentedPutRequestTo("/api/literature-lists/{literatureListId}/sections/{sectionId}", literatureListId, id)
+            .content(request)
+            .accept(LITERATURE_LIST_SECTION_JSON_V1)
+            .contentType(LITERATURE_LIST_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("literatureListId").description("The id of the literature list the section belongs to."),
+                        parameterWithName("sectionId").description("The id of the section.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("entries").description("""The updated list of ids of resources that should be part of this section. Every resource must either be an instance of "Paper", "Dataset" or "Software".""")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { literatureListService.updateSection(any<UpdateLiteratureListSectionUseCase.UpdateListSectionCommand>()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a text section update request, when service succeeds, it updates the text section")
+    fun updateTextSection() {
+        val literatureListId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = LiteratureListController.TextSectionRequest(
+            heading = "updated heading",
+            headingSize = 3,
+            text = "updated text contents"
+        )
+        every { literatureListService.updateSection(any()) } just runs
+
+        documentedPutRequestTo("/api/literature-lists/{literatureListId}/sections/{sectionId}", literatureListId, id)
+            .content(request)
+            .accept(LITERATURE_LIST_SECTION_JSON_V1)
+            .contentType(LITERATURE_LIST_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("literatureListId").description("The id of the literature list the section belongs to."),
+                        parameterWithName("sectionId").description("The id of the section.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("""The updated heading of the text section."""),
+                        fieldWithPath("heading_size").description("""The updated heading size of the text section."""),
+                        fieldWithPath("text").description("""The updated text contents of the text section.""")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { literatureListService.updateSection(any<UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand>()) }
     }
 
     private fun createLiteratureListRequest() =

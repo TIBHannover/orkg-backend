@@ -19,6 +19,7 @@ import org.orkg.contenttypes.domain.InvalidMonth
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.LiteratureListNotModifiable
+import org.orkg.contenttypes.domain.LiteratureListSectionTypeMismatch
 import org.orkg.contenttypes.domain.MissingPropertyValues
 import org.orkg.contenttypes.domain.NumberTooHigh
 import org.orkg.contenttypes.domain.NumberTooLow
@@ -33,6 +34,7 @@ import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.TemplateNotApplicable
 import org.orkg.contenttypes.domain.TooManyPropertyValues
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
+import org.orkg.contenttypes.domain.UnrelatedLiteratureListSection
 import org.orkg.contenttypes.domain.UnrelatedTemplateProperty
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
@@ -569,6 +571,47 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun unrelatedLiteratureListSection() {
+        val literatureListId = "R123"
+        val literatureListSectionId = "R456"
+
+        get("/unrelated-literature-list-section")
+            .param("literatureListId", literatureListId)
+            .param("literatureListSectionId", literatureListSectionId)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/unrelated-literature-list-section"))
+            .andExpect(jsonPath("$.message").value("""Literature list section "$literatureListSectionId" does not belong to literature list "$literatureListId"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun literatureListSectionTypeMismatchMustBeTextSection() {
+        get("/literature-list-section-type-mismatch-must-be-text-section")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/literature-list-section-type-mismatch-must-be-text-section"))
+            .andExpect(jsonPath("$.message").value("""Invalid literature list section type. Must be a text section."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun literatureListSectionTypeMismatchMustBeListSection() {
+        get("/literature-list-section-type-mismatch-must-be-list-section")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/literature-list-section-type-mismatch-must-be-list-section"))
+            .andExpect(jsonPath("$.message").value("""Invalid literature list section type. Must be a list section."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -784,6 +827,24 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/invalid-heading-size")
         fun invalidHeadingSize(@RequestParam headingSize: Int) {
             throw InvalidHeadingSize(headingSize)
+        }
+
+        @GetMapping("/unrelated-literature-list-section")
+        fun unrelatedLiteratureListSection(
+            @RequestParam literatureListId: ThingId,
+            @RequestParam literatureListSectionId: ThingId
+        ) {
+            throw UnrelatedLiteratureListSection(literatureListId, literatureListSectionId)
+        }
+
+        @GetMapping("/literature-list-section-type-mismatch-must-be-text-section")
+        fun literatureListSectionTypeMismatchMustBeTextSection() {
+            throw LiteratureListSectionTypeMismatch.mustBeTextSection()
+        }
+
+        @GetMapping("/literature-list-section-type-mismatch-must-be-list-section")
+        fun literatureListSectionTypeMismatchMustBeListSection() {
+            throw LiteratureListSectionTypeMismatch.mustBeListSection()
         }
     }
 

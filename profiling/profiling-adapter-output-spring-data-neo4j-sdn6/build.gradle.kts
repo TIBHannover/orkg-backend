@@ -8,6 +8,7 @@ plugins {
 dependencies {
     implementation(project(":graph:graph-ports-output"))
     implementation(project(":content-types:content-types-ports-output"))
+    implementation(project(":statistics:statistics-ports-output"))
     implementation(project(":profiling:profiling-core-services"))
     implementation(project(":profiling:profiling-ports-output"))
 

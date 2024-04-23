@@ -10,8 +10,13 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.contenttypes.domain.ContentTypeClass
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.FuzzySearchString
+import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
@@ -178,7 +183,7 @@ class VisibilityFilterValueGenerator : ValueGenerator<VisibilityFilter> {
         name: String,
         type: KType,
         randomInstances: (Random, String, KType) -> List<Any>
-    ): List<VisibilityFilter> = VisibilityFilter.values().toList()
+    ): List<VisibilityFilter> = VisibilityFilter.entries
 }
 
 @Component
@@ -189,7 +194,52 @@ class VisibilityValueGenerator : ValueGenerator<Visibility> {
         name: String,
         type: KType,
         randomInstances: (Random, String, KType) -> List<Any>
-    ): List<Visibility> = Visibility.values().toList()
+    ): List<Visibility> = Visibility.entries
+}
+
+@Component
+@Profile("profileRepositories")
+class ContentTypeClassValueGenerator : ValueGenerator<ContentTypeClass> {
+    override operator fun invoke(
+        random: Random,
+        name: String,
+        type: KType,
+        randomInstances: (Random, String, KType) -> List<Any>
+    ): List<ContentTypeClass> = ContentTypeClass.entries
+}
+
+@Component
+@Profile("profileRepositories")
+class SearchFilterValueGenerator : ValueGenerator<SearchFilter> {
+    override operator fun invoke(
+        random: Random,
+        name: String,
+        type: KType,
+        randomInstances: (Random, String, KType) -> List<Any>
+    ): List<SearchFilter> = listOf(
+        SearchFilter(
+            path = listOf(Predicates.hasResearchProblem),
+            range = Classes.problem,
+            values = setOf(
+                SearchFilter.Value(
+                    op = SearchFilter.Operator.NE,
+                    value = "R182085"
+                )
+            ),
+            exact = true
+        ),
+        SearchFilter(
+            path = listOf(Predicates.hasResearchProblem),
+            range = Classes.problem,
+            values = setOf(
+                SearchFilter.Value(
+                    op = SearchFilter.Operator.NE,
+                    value = "R182085"
+                )
+            ),
+            exact = false
+        )
+    )
 }
 
 @Component
@@ -264,7 +314,7 @@ class StatementIdValueGenerator(
         type: KType,
         randomInstances: (Random, String, KType) -> List<Any>
     ): List<StatementId> =
-        listOf(statementRepository.findAll(PageRequest.of(random.nextInt(count), 1)).first().id!!)
+        listOf(statementRepository.findAll(PageRequest.of(random.nextInt(count), 1)).first().id)
 }
 
 @Component
@@ -285,16 +335,48 @@ class ContributorIdValueGenerator(
 
 @Component
 @Profile("profileRepositories")
-class SearchStringValueGenerator : ValueGenerator<SearchString> {
+class SearchStringValueGenerator(
+    private val exactStringValueGenerator: ExactStringValueGenerator,
+    private val fuzzyStringValueGenerator: FuzzyStringValueGenerator
+) : ValueGenerator<SearchString> {
     override operator fun invoke(
         random: Random,
         name: String,
         type: KType,
         randomInstances: (Random, String, KType) -> List<Any>
-    ): List<SearchString> = listOf(
-        SearchString.of(string = "covid", exactMatch = true),
-        SearchString.of(string = "covid", exactMatch = false)
+    ): List<SearchString> =
+        exactStringValueGenerator(random, name, type, randomInstances) +
+            fuzzyStringValueGenerator(random, name, type, randomInstances)
+}
+
+@Component
+@Profile("profileRepositories")
+class FuzzyStringValueGenerator : ValueGenerator<FuzzySearchString> {
+    private val instances = listOf(
+        SearchString.of(string = "covid", exactMatch = false) as FuzzySearchString
     )
+
+    override operator fun invoke(
+        random: Random,
+        name: String,
+        type: KType,
+        randomInstances: (Random, String, KType) -> List<Any>
+    ): List<FuzzySearchString> = instances
+}
+
+@Component
+@Profile("profileRepositories")
+class ExactStringValueGenerator : ValueGenerator<ExactSearchString> {
+    private val instances = listOf(
+        SearchString.of(string = "covid", exactMatch = true) as ExactSearchString
+    )
+
+    override operator fun invoke(
+        random: Random,
+        name: String,
+        type: KType,
+        randomInstances: (Random, String, KType) -> List<Any>
+    ): List<ExactSearchString> = instances
 }
 
 @Component

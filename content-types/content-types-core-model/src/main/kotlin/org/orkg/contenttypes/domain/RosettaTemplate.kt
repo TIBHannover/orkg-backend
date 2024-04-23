@@ -15,7 +15,6 @@ data class RosettaTemplate(
     val formattedLabel: FormattedLabel?,
     val targetClass: ThingId,
     val properties: List<TemplateProperty>,
-    val isClosed: Boolean,
     val createdBy: ContributorId,
     val createdAt: OffsetDateTime,
     val observatories: List<ObservatoryId>,

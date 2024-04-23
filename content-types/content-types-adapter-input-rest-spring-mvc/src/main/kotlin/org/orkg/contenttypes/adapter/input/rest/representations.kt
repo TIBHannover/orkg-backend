@@ -382,8 +382,6 @@ data class RosettaTemplateRepresentation(
     @get:JsonProperty("target_class")
     val targetClass: ThingId,
     val properties: List<TemplatePropertyRepresentation>,
-    @get:JsonProperty("is_closed")
-    val isClosed: Boolean,
     @get:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
     @get:JsonProperty("created_by")

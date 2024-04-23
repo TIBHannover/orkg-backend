@@ -68,7 +68,6 @@ internal class RosettaTemplateControllerUnitTest : RestDocsTest("rosetta-templat
                         fieldWithPath("formatted_label").description("The formatted label pattern of the rosetta template."),
                         fieldWithPath("target_class").description("The target class of the rosetta template."),
                         PayloadDocumentation.subsectionWithPath("properties").description("The list of properties of the rosetta template. See <<template-properties,template properties>> for more information."),
-                        fieldWithPath("is_closed").description("Whether the rosetta template is closed or not. When a rosetta template is closed, its properties cannot be modified."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta template belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta template belongs to."),
                         timestampFieldWithPath("created_at", "the rosetta template resource was created"),

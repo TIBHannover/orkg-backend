@@ -21,7 +21,6 @@ interface RosettaTemplateRepresentationAdapter : TemplatePropertyRepresentationA
             formattedLabel = formattedLabel?.value,
             targetClass = targetClass,
             properties = properties.map { it.toTemplatePropertyRepresentation() },
-            isClosed = isClosed,
             createdAt = createdAt,
             createdBy = createdBy,
             organizations = organizations,

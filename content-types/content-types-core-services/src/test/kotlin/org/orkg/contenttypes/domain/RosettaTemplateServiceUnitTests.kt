@@ -515,7 +515,6 @@ class RosettaTemplateServiceUnitTests {
                     `class` = ObjectIdAndLabel(resourcePropertyClass.id, resourcePropertyClass.label)
                 )
             )
-            template.isClosed shouldBe true
             template.createdBy shouldBe expected.createdBy
             template.createdAt shouldBe expected.createdAt
             template.observatories shouldBe setOf(expected.observatoryId)

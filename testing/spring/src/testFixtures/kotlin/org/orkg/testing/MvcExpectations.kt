@@ -249,7 +249,6 @@ fun ResultActions.andExpectRosettaTemplate(path: String = "$"): ResultActions = 
 //    .andExpect(jsonPath("$path.properties[*].class", `is`(notNullValue())))
 //    .andExpect(jsonPath("$path.properties[*].class.id", `is`(notNullValue())))
 //    .andExpect(jsonPath("$path.properties[*].class.label", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.is_closed", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
     .andExpect(jsonPath("$path.observatories").isArray)

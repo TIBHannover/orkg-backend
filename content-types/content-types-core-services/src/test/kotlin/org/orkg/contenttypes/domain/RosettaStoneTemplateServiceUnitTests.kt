@@ -15,12 +15,20 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createClass
@@ -33,8 +41,27 @@ import org.springframework.data.domain.Sort
 class RosettaStoneTemplateServiceUnitTests {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
+    private val predicateRepository: PredicateRepository = mockk()
+    private val classRepository: ClassRepository = mockk()
+    private val observatoryRepository: ObservatoryRepository = mockk()
+    private val organizationRepository: OrganizationRepository = mockk()
+    private val resourceService: ResourceUseCases = mockk()
+    private val classService: ClassUseCases = mockk()
+    private val statementService: StatementUseCases = mockk()
+    private val literalService: LiteralUseCases = mockk()
 
-    private val service = RosettaStoneTemplateService(resourceRepository, statementRepository)
+    private val service = RosettaStoneTemplateService(
+        resourceRepository,
+        statementRepository,
+        predicateRepository,
+        classRepository,
+        observatoryRepository,
+        organizationRepository,
+        resourceService,
+        classService,
+        statementService,
+        literalService
+    )
 
     @BeforeEach
     fun resetState() {
@@ -43,7 +70,18 @@ class RosettaStoneTemplateServiceUnitTests {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(resourceRepository, statementRepository)
+        confirmVerified(
+            resourceRepository,
+            statementRepository,
+            predicateRepository,
+            classRepository,
+            observatoryRepository,
+            organizationRepository,
+            resourceService,
+            classService,
+            statementService,
+            literalService
+        )
     }
 
     @Test

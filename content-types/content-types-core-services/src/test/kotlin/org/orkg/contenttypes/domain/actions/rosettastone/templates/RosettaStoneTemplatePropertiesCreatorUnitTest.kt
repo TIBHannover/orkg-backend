@@ -1,0 +1,56 @@
+package org.orkg.contenttypes.domain.actions.rosettastone.templates
+
+import io.kotest.assertions.asClue
+import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
+import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneTemplateCommand
+
+class RosettaStoneTemplatePropertiesCreatorUnitTest {
+    private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator = mockk()
+
+    private val rosettaStoneTemplatePropertiesCreator = RosettaStoneTemplatePropertiesCreator(abstractTemplatePropertyCreator)
+
+    @BeforeEach
+    fun resetState() {
+        clearAllMocks()
+    }
+
+    @AfterEach
+    fun verifyMocks() {
+        confirmVerified(abstractTemplatePropertyCreator)
+    }
+
+    @Test
+    fun `Given a rosetta stone create template command, when creating template properties, it returns success`() {
+        val command = dummyCreateRosettaStoneTemplateCommand()
+        val state = CreateRosettaStoneTemplateState(
+            rosettaStoneTemplateId = ThingId("R123")
+        )
+
+        every {
+            abstractTemplatePropertyCreator.create(command.contributorId, state.rosettaStoneTemplateId!!, any(), any())
+        } returns ThingId("R456")
+
+        val result = rosettaStoneTemplatePropertiesCreator(command, state)
+
+        result.asClue {
+            it.rosettaStoneTemplateId shouldBe state.rosettaStoneTemplateId
+        }
+
+        command.properties.forEachIndexed { index, property ->
+            verify(exactly = 1) {
+                abstractTemplatePropertyCreator.create(command.contributorId, state.rosettaStoneTemplateId!!, index + 1, property)
+            }
+        }
+    }
+}

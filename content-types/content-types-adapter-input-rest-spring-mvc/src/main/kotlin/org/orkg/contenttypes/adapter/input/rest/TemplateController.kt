@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.OffsetDateTime
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.PositiveOrZero
 import javax.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -17,14 +16,8 @@ import org.orkg.contenttypes.adapter.input.rest.mapping.TemplateRepresentationAd
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
-import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
-import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
-import org.orkg.contenttypes.input.ResourcePropertyDefinition
-import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
-import org.orkg.contenttypes.input.TemplatePropertyDefinition
 import org.orkg.contenttypes.input.TemplateRelationsDefinition
 import org.orkg.contenttypes.input.TemplateUseCases
-import org.orkg.contenttypes.input.UntypedPropertyDefinition
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.UpdateTemplateUseCase
 import org.orkg.graph.domain.FormattedLabel
@@ -201,202 +194,6 @@ class TemplateController(
             )
     }
 
-    sealed interface TemplatePropertyRequest {
-        val label: String
-        val placeholder: String?
-        val description: String?
-        val minCount: Int?
-        val maxCount: Int?
-        val path: ThingId
-
-        fun toTemplatePropertyDefinition(): TemplatePropertyDefinition
-
-        fun toCreateCommand(
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): CreateTemplatePropertyUseCase.CreateCommand
-
-        fun toUpdateCommand(
-            templatePropertyId: ThingId,
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): UpdateTemplatePropertyUseCase.UpdateCommand
-    }
-
-    data class UntypedPropertyRequest(
-        override val label: String,
-        override val placeholder: String?,
-        override val description: String?,
-        @field:PositiveOrZero
-        @JsonProperty("min_count")
-        override val minCount: Int?,
-        @field:PositiveOrZero
-        @JsonProperty("max_count")
-        override val maxCount: Int?,
-        override val path: ThingId
-    ) : TemplatePropertyRequest {
-        override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
-            UntypedPropertyDefinition(label, placeholder, description, minCount, maxCount, path)
-
-        override fun toCreateCommand(
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): CreateTemplatePropertyUseCase.CreateCommand =
-            CreateTemplatePropertyUseCase.CreateUntypedPropertyCommand(
-                contributorId, templateId, label, placeholder, description, minCount, maxCount, path
-            )
-
-        override fun toUpdateCommand(
-            templatePropertyId: ThingId,
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): UpdateTemplatePropertyUseCase.UpdateCommand =
-            UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand(
-                templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, path
-            )
-    }
-
-    data class StringLiteralPropertyRequest(
-        override val label: String,
-        override val placeholder: String?,
-        override val description: String?,
-        @field:PositiveOrZero
-        @JsonProperty("min_count")
-        override val minCount: Int?,
-        @field:PositiveOrZero
-        @JsonProperty("max_count")
-        override val maxCount: Int?,
-        val pattern: String?,
-        override val path: ThingId,
-        val datatype: ThingId
-    ) : TemplatePropertyRequest {
-        override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
-            StringLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, pattern, path, datatype)
-
-        override fun toCreateCommand(
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): CreateTemplatePropertyUseCase.CreateCommand =
-            CreateTemplatePropertyUseCase.CreateStringLiteralPropertyCommand(
-                contributorId, templateId, label, placeholder, description, minCount, maxCount, pattern, path, datatype
-            )
-
-        override fun toUpdateCommand(
-            templatePropertyId: ThingId,
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): UpdateTemplatePropertyUseCase.UpdateCommand =
-            UpdateTemplatePropertyUseCase.UpdateStringLiteralPropertyCommand(
-                templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, pattern, path, datatype
-            )
-    }
-
-    data class NumberLiteralPropertyRequest<T : Number>(
-        override val label: String,
-        override val placeholder: String?,
-        override val description: String?,
-        @field:PositiveOrZero
-        @JsonProperty("min_count")
-        override val minCount: Int?,
-        @field:PositiveOrZero
-        @JsonProperty("max_count")
-        override val maxCount: Int?,
-        @JsonProperty("min_inclusive")
-        val minInclusive: T?,
-        @JsonProperty("max_inclusive")
-        val maxInclusive: T?,
-        override val path: ThingId,
-        val datatype: ThingId
-    ) : TemplatePropertyRequest {
-        override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
-            NumberLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype)
-
-        override fun toCreateCommand(
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): CreateTemplatePropertyUseCase.CreateCommand =
-            CreateTemplatePropertyUseCase.CreateNumberLiteralPropertyCommand(
-                contributorId, templateId, label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype
-            )
-
-        override fun toUpdateCommand(
-            templatePropertyId: ThingId,
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): UpdateTemplatePropertyUseCase.UpdateCommand =
-            UpdateTemplatePropertyUseCase.UpdateNumberLiteralPropertyCommand(
-                templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype
-            )
-    }
-
-    data class OtherLiteralPropertyRequest(
-        override val label: String,
-        override val placeholder: String?,
-        override val description: String?,
-        @field:PositiveOrZero
-        @JsonProperty("min_count")
-        override val minCount: Int?,
-        @field:PositiveOrZero
-        @JsonProperty("max_count")
-        override val maxCount: Int?,
-        override val path: ThingId,
-        val datatype: ThingId
-    ) : TemplatePropertyRequest {
-        override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
-            OtherLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, path, datatype)
-
-        override fun toCreateCommand(
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): CreateTemplatePropertyUseCase.CreateCommand =
-            CreateTemplatePropertyUseCase.CreateOtherLiteralPropertyCommand(
-                contributorId, templateId, label, placeholder, description, minCount, maxCount, path, datatype
-            )
-
-        override fun toUpdateCommand(
-            templatePropertyId: ThingId,
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): UpdateTemplatePropertyUseCase.UpdateCommand =
-            UpdateTemplatePropertyUseCase.UpdateOtherLiteralPropertyCommand(
-                templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, path, datatype
-            )
-    }
-
-    data class ResourcePropertyRequest(
-        override val label: String,
-        override val placeholder: String?,
-        override val description: String?,
-        @field:PositiveOrZero
-        @JsonProperty("min_count")
-        override val minCount: Int?,
-        @field:PositiveOrZero
-        @JsonProperty("max_count")
-        override val maxCount: Int?,
-        override val path: ThingId,
-        val `class`: ThingId
-    ) : TemplatePropertyRequest {
-        override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
-            ResourcePropertyDefinition(label, placeholder, description, minCount, maxCount, path, `class`)
-
-        override fun toCreateCommand(
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): CreateTemplatePropertyUseCase.CreateCommand =
-            CreateTemplatePropertyUseCase.CreateResourcePropertyCommand(
-                contributorId, templateId, label, placeholder, description, minCount, maxCount, path, `class`
-            )
-
-        override fun toUpdateCommand(
-            templatePropertyId: ThingId,
-            contributorId: ContributorId,
-            templateId: ThingId
-        ): UpdateTemplatePropertyUseCase.UpdateCommand =
-            UpdateTemplatePropertyUseCase.UpdateResourcePropertyCommand(
-                templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, path, `class`
-            )
-    }
-
     data class UpdateTemplateRequest(
         @field:NotBlank
         val label: String?,
@@ -434,6 +231,116 @@ class TemplateController(
                 organizations = organizations
             )
     }
+
+    private fun TemplatePropertyRequest.toCreateCommand(
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): CreateTemplatePropertyUseCase.CreateCommand =
+        when (this) {
+            is NumberLiteralPropertyRequest<*> -> toCreateCommand(contributorId, templateId)
+            is OtherLiteralPropertyRequest -> toCreateCommand(contributorId, templateId)
+            is ResourcePropertyRequest -> toCreateCommand(contributorId, templateId)
+            is StringLiteralPropertyRequest -> toCreateCommand(contributorId, templateId)
+            is UntypedPropertyRequest -> toCreateCommand(contributorId, templateId)
+        }
+
+    private fun TemplatePropertyRequest.toUpdateCommand(
+        templatePropertyId: ThingId,
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): UpdateTemplatePropertyUseCase.UpdateCommand =
+        when (this) {
+            is NumberLiteralPropertyRequest<*> -> toUpdateCommand(templatePropertyId, contributorId, templateId)
+            is OtherLiteralPropertyRequest -> toUpdateCommand(templatePropertyId, contributorId, templateId)
+            is ResourcePropertyRequest -> toUpdateCommand(templatePropertyId, contributorId, templateId)
+            is StringLiteralPropertyRequest -> toUpdateCommand(templatePropertyId, contributorId, templateId)
+            is UntypedPropertyRequest -> toUpdateCommand(templatePropertyId, contributorId, templateId)
+        }
+
+    private fun UntypedPropertyRequest.toCreateCommand(
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): CreateTemplatePropertyUseCase.CreateCommand =
+        CreateTemplatePropertyUseCase.CreateUntypedPropertyCommand(
+            contributorId, templateId, label, placeholder, description, minCount, maxCount, path
+        )
+
+    private fun UntypedPropertyRequest.toUpdateCommand(
+        templatePropertyId: ThingId,
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): UpdateTemplatePropertyUseCase.UpdateCommand =
+        UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand(
+            templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, path
+        )
+
+    private fun StringLiteralPropertyRequest.toCreateCommand(
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): CreateTemplatePropertyUseCase.CreateCommand =
+        CreateTemplatePropertyUseCase.CreateStringLiteralPropertyCommand(
+            contributorId, templateId, label, placeholder, description, minCount, maxCount, pattern, path, datatype
+        )
+
+    private fun StringLiteralPropertyRequest.toUpdateCommand(
+        templatePropertyId: ThingId,
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): UpdateTemplatePropertyUseCase.UpdateCommand =
+        UpdateTemplatePropertyUseCase.UpdateStringLiteralPropertyCommand(
+            templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, pattern, path, datatype
+        )
+
+    private fun <T : Number> NumberLiteralPropertyRequest<T>.toCreateCommand(
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): CreateTemplatePropertyUseCase.CreateCommand =
+        CreateTemplatePropertyUseCase.CreateNumberLiteralPropertyCommand(
+            contributorId, templateId, label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype
+        )
+
+    private fun <T : Number> NumberLiteralPropertyRequest<T>.toUpdateCommand(
+        templatePropertyId: ThingId,
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): UpdateTemplatePropertyUseCase.UpdateCommand =
+        UpdateTemplatePropertyUseCase.UpdateNumberLiteralPropertyCommand(
+            templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype
+        )
+
+    private fun OtherLiteralPropertyRequest.toCreateCommand(
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): CreateTemplatePropertyUseCase.CreateCommand =
+        CreateTemplatePropertyUseCase.CreateOtherLiteralPropertyCommand(
+            contributorId, templateId, label, placeholder, description, minCount, maxCount, path, datatype
+        )
+
+    private fun OtherLiteralPropertyRequest.toUpdateCommand(
+        templatePropertyId: ThingId,
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): UpdateTemplatePropertyUseCase.UpdateCommand =
+        UpdateTemplatePropertyUseCase.UpdateOtherLiteralPropertyCommand(
+            templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, path, datatype
+        )
+
+    private fun ResourcePropertyRequest.toCreateCommand(
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): CreateTemplatePropertyUseCase.CreateCommand =
+        CreateTemplatePropertyUseCase.CreateResourcePropertyCommand(
+            contributorId, templateId, label, placeholder, description, minCount, maxCount, path, `class`
+        )
+
+    private fun ResourcePropertyRequest.toUpdateCommand(
+        templatePropertyId: ThingId,
+        contributorId: ContributorId,
+        templateId: ThingId
+    ): UpdateTemplatePropertyUseCase.UpdateCommand =
+        UpdateTemplatePropertyUseCase.UpdateResourcePropertyCommand(
+            templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, path, `class`
+        )
 
     data class TemplateRelationsDTO(
         @JsonProperty("research_fields")

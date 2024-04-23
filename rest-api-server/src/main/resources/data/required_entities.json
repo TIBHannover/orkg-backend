@@ -210,6 +210,10 @@
     {
       "id": "SustainableDevelopmentGoal",
       "label": "Sustainable Development Goal"
+    },
+    {
+      "id": "RosettaNodeShape",
+      "label": "Rosetta Stone Node Shape"
     }
   ],
 
@@ -437,6 +441,14 @@
     {
       "id": "sustainableDevelopmentGoal",
       "label": "sustainable development goal"
+    },
+    {
+      "id": "hasSubjectPosition",
+      "label": "subject position"
+    },
+    {
+      "id": "hasObjectPosition",
+      "label": "object position"
     }
   ],
 

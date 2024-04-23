@@ -24,3 +24,15 @@ operation::rosetta-stone-templates-get-paged[snippets='curl-request']
 The following list of request parameters are supported:
 
 operation::rosetta-stone-templates-get-paged-with-parameters[snippets='request-parameters']
+
+[[rosetta-stone-templates-create]]
+== Creating rosetta stone templates
+
+A `POST` request creates a new rosetta stone template with all the given parameters.
+The response will be `201 Created` when successful.
+The rosetta stone template (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: A rosetta stone template must have exactly one <<template-properties,template property>> with path `hasSubjectPosition` that has a minimum cardinality of at least one and is not a literal template property.
+      All other properties must have a path of `hasObjectPosition`, one of which must have a minimum cardinality of at least one.
+
+operation::rosetta-stone-templates-create[snippets='request-fields,curl-request,http-response']

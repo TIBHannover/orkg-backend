@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain
 
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.SimpleMessageException
+import org.orkg.graph.domain.Predicates
 import org.springframework.http.HttpStatus
 
 class PaperNotFound(id: ThingId) :
@@ -207,3 +208,38 @@ class LiteratureListSectionTypeMismatch private constructor(
         fun mustBeListSection() = LiteratureListSectionTypeMismatch("""Invalid literature list section type. Must be a list section.""")
     }
 }
+
+class TooManySubjectPositions : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Too many subject positions. There can only be exactly one property with path "${Predicates.hasSubjectPosition}"."""
+)
+
+class InvalidSubjectPositionCardinality : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Invalid subject position cardinality. Minimum cardinality must be at least one."""
+)
+
+class InvalidSubjectPositionType : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Invalid subject position type. Subject position must not be a literal property."""
+)
+
+class MissingSubjectPosition : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Missing subject position. There must be at least one property with path "${Predicates.hasSubjectPosition}" that has a minimum cardinality of at least one."""
+)
+
+class MissingRequiredObjectPosition : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Missing required object position. There must be at least one property with path "${Predicates.hasObjectPosition}" that has a minimum cardinality of at least one."""
+)
+
+class MissingPropertyPlaceholder(index: Int) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Missing placeholder for property at index "$index"."""
+)
+
+class MissingFormattedLabelPlaceholder(index: Int) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Missing formatted label placeholder "{$index}"."""
+)

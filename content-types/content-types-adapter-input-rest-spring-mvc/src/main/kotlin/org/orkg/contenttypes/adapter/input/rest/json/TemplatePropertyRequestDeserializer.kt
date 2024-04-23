@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
-import org.orkg.contenttypes.adapter.input.rest.TemplateController.NumberLiteralPropertyRequest
-import org.orkg.contenttypes.adapter.input.rest.TemplateController.OtherLiteralPropertyRequest
-import org.orkg.contenttypes.adapter.input.rest.TemplateController.ResourcePropertyRequest
-import org.orkg.contenttypes.adapter.input.rest.TemplateController.StringLiteralPropertyRequest
-import org.orkg.contenttypes.adapter.input.rest.TemplateController.TemplatePropertyRequest
-import org.orkg.contenttypes.adapter.input.rest.TemplateController.UntypedPropertyRequest
+import org.orkg.contenttypes.adapter.input.rest.NumberLiteralPropertyRequest
+import org.orkg.contenttypes.adapter.input.rest.OtherLiteralPropertyRequest
+import org.orkg.contenttypes.adapter.input.rest.ResourcePropertyRequest
+import org.orkg.contenttypes.adapter.input.rest.StringLiteralPropertyRequest
+import org.orkg.contenttypes.adapter.input.rest.TemplatePropertyRequest
+import org.orkg.contenttypes.adapter.input.rest.UntypedPropertyRequest
 import org.orkg.graph.domain.Literals
 
 class TemplatePropertyRequestDeserializer : JsonDeserializer<TemplatePropertyRequest>() {

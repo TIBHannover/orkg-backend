@@ -16,11 +16,17 @@ import org.orkg.contenttypes.domain.InvalidHeadingSize
 import org.orkg.contenttypes.domain.InvalidListSectionEntry
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.InvalidMonth
+import org.orkg.contenttypes.domain.InvalidSubjectPositionCardinality
+import org.orkg.contenttypes.domain.InvalidSubjectPositionType
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.LiteratureListNotModifiable
 import org.orkg.contenttypes.domain.LiteratureListSectionTypeMismatch
+import org.orkg.contenttypes.domain.MissingFormattedLabelPlaceholder
+import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
 import org.orkg.contenttypes.domain.MissingPropertyValues
+import org.orkg.contenttypes.domain.MissingRequiredObjectPosition
+import org.orkg.contenttypes.domain.MissingSubjectPosition
 import org.orkg.contenttypes.domain.NumberTooHigh
 import org.orkg.contenttypes.domain.NumberTooLow
 import org.orkg.contenttypes.domain.ObjectIsNotAClass
@@ -33,9 +39,11 @@ import org.orkg.contenttypes.domain.ResourceIsNotAnInstanceOfTargetClass
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.TemplateNotApplicable
 import org.orkg.contenttypes.domain.TooManyPropertyValues
+import org.orkg.contenttypes.domain.TooManySubjectPositions
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.contenttypes.domain.UnrelatedLiteratureListSection
 import org.orkg.contenttypes.domain.UnrelatedTemplateProperty
+import org.orkg.graph.domain.Predicates
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -612,6 +620,96 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun tooManySubjectPositions() {
+        get("/too-many-subject-positions")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/too-many-subject-positions"))
+            .andExpect(jsonPath("$.message").value("""Too many subject positions. There can only be exactly one property with path "${Predicates.hasSubjectPosition}"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidSubjectPositionCardinality() {
+        get("/invalid-subject-position-cardinality")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-subject-position-cardinality"))
+            .andExpect(jsonPath("$.message").value("""Invalid subject position cardinality. Minimum cardinality must be at least one."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidSubjectPositionType() {
+        get("/invalid-subject-position-type")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-subject-position-type"))
+            .andExpect(jsonPath("$.message").value("""Invalid subject position type. Subject position must not be a literal property."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun missingSubjectPosition() {
+        get("/missing-subject-position")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-subject-position"))
+            .andExpect(jsonPath("$.message").value("""Missing subject position. There must be at least one property with path "${Predicates.hasSubjectPosition}" that has a minimum cardinality of at least one."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun missingRequiredObjectPosition() {
+        get("/missing-required-object-position")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-required-object-position"))
+            .andExpect(jsonPath("$.message").value("""Missing required object position. There must be at least one property with path "${Predicates.hasObjectPosition}" that has a minimum cardinality of at least one."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun missingPropertyPlaceholder() {
+        val index = "4"
+
+        get("/missing-property-placeholder")
+            .param("index", index)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-property-placeholder"))
+            .andExpect(jsonPath("$.message").value("""Missing placeholder for property at index "$index"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun missingFormattedLabelPlaceholder() {
+        val index = "4"
+
+        get("/missing-formatted-label-placeholder")
+            .param("index", index)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-formatted-label-placeholder"))
+            .andExpect(jsonPath("$.message").value("""Missing formatted label placeholder "{$index}"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -845,6 +943,41 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/literature-list-section-type-mismatch-must-be-list-section")
         fun literatureListSectionTypeMismatchMustBeListSection() {
             throw LiteratureListSectionTypeMismatch.mustBeListSection()
+        }
+
+        @GetMapping("/too-many-subject-positions")
+        fun tooManySubjectPositions() {
+            throw TooManySubjectPositions()
+        }
+
+        @GetMapping("/invalid-subject-position-cardinality")
+        fun invalidSubjectPositionCardinality() {
+            throw InvalidSubjectPositionCardinality()
+        }
+
+        @GetMapping("/invalid-subject-position-type")
+        fun invalidSubjectPositionType() {
+            throw InvalidSubjectPositionType()
+        }
+
+        @GetMapping("/missing-subject-position")
+        fun missingSubjectPosition() {
+            throw MissingSubjectPosition()
+        }
+
+        @GetMapping("/missing-required-object-position")
+        fun missingRequiredObjectPosition() {
+            throw MissingRequiredObjectPosition()
+        }
+
+        @GetMapping("/missing-property-placeholder")
+        fun missingPropertyPlaceholder(@RequestParam index: Int) {
+            throw MissingPropertyPlaceholder(index)
+        }
+
+        @GetMapping("/missing-formatted-label-placeholder")
+        fun missingFormattedLabelPlaceholder(@RequestParam index: Int) {
+            throw MissingFormattedLabelPlaceholder(index)
         }
     }
 

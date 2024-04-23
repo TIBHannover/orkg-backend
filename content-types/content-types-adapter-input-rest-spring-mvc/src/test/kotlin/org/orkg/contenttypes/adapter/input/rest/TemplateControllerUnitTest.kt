@@ -48,11 +48,14 @@ import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateOtherLite
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateResourcePropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateStringLiteralPropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.numberLiteralTemplatePropertyRequest
+import org.orkg.contenttypes.input.testing.fixtures.otherLiteralTemplatePropertyRequest
+import org.orkg.contenttypes.input.testing.fixtures.resourceTemplatePropertyRequest
+import org.orkg.contenttypes.input.testing.fixtures.stringLiteralTemplatePropertyRequest
+import org.orkg.contenttypes.input.testing.fixtures.untypedTemplatePropertyRequest
 import org.orkg.graph.domain.ClassNotFound
-import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.PredicateNotFound
-import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.ResearchProblemNotFound
 import org.orkg.graph.domain.VisibilityFilter
@@ -605,7 +608,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     private inline fun <reified T : CreateCommand> createProperty(
-        request: TemplateController.TemplatePropertyRequest,
+        request: TemplatePropertyRequest,
         additionalRequestFieldDescriptors: List<FieldDescriptor> = emptyList()
     ) {
         val templateId = ThingId("R3541")
@@ -695,7 +698,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports datatype or class range not found, then status is 404 NOT FOUND`(
-        request: TemplateController.TemplatePropertyRequest
+        request: TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = ClassNotFound.withThingId(ThingId("invalid"))
@@ -717,7 +720,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports invalid min count, then status is 400 BAD REQUEST`(
-        request: TemplateController.TemplatePropertyRequest
+        request: TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidMinCount(-1)
@@ -739,7 +742,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports invalid max count, then status is 400 BAD REQUEST`(
-        request: TemplateController.TemplatePropertyRequest
+        request: TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidMaxCount(-1)
@@ -761,7 +764,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports invalid cardinality, then status is 400 BAD REQUEST`(
-        request: TemplateController.TemplatePropertyRequest
+        request: TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidCardinality(5, 1)
@@ -783,7 +786,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports invalid pattern, then status is 400 BAD REQUEST`(
-        request: TemplateController.TemplatePropertyRequest
+        request: TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = InvalidRegexPattern("\\", PatternSyntaxException("Invalid regex pattern", "\\", 1))
@@ -805,7 +808,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports path predicate not found, then status is 404 NOT FOUND`(
-        request: TemplateController.TemplatePropertyRequest
+        request: TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = PredicateNotFound("P123")
@@ -827,7 +830,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @MethodSource("templatePropertyRequests")
     @TestWithMockUser
     fun `Given a template property create request, when service reports template is closed, then status is 400 BAD REQUEST`(
-        request: TemplateController.TemplatePropertyRequest
+        request: TemplatePropertyRequest
     ) {
         val templateId = ThingId("R123")
         val exception = TemplateClosed(ThingId("P123"))
@@ -846,7 +849,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     private inline fun <reified T : UpdateCommand> updateProperty(
-        request: TemplateController.TemplatePropertyRequest,
+        request: TemplatePropertyRequest,
         additionalRequestFieldDescriptors: List<FieldDescriptor> = emptyList()
     ) {
         val templateId = ThingId("R3541")
@@ -995,67 +998,5 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             Arguments.of(otherLiteralTemplatePropertyRequest()),
             Arguments.of(resourceTemplatePropertyRequest())
         )
-
-        @JvmStatic
-        private fun untypedTemplatePropertyRequest() =
-            TemplateController.UntypedPropertyRequest(
-                label = "property label",
-                placeholder = "property placeholder",
-                description = "property description",
-                minCount = 1,
-                maxCount = 2,
-                path = Predicates.field
-            )
-
-        @JvmStatic
-        private fun stringLiteralTemplatePropertyRequest() =
-            TemplateController.StringLiteralPropertyRequest(
-                label = "string literal property label",
-                placeholder = "string literal property placeholder",
-                description = "string literal property description",
-                minCount = 1,
-                maxCount = 2,
-                pattern = """\d+""",
-                path = Predicates.field,
-                datatype = Classes.string,
-            )
-
-        @JvmStatic
-        private fun numberLiteralTemplatePropertyRequest() =
-            TemplateController.NumberLiteralPropertyRequest(
-                label = "number literal property label",
-                placeholder = "number literal property placeholder",
-                description = "number literal property description",
-                minCount = 1,
-                maxCount = 2,
-                minInclusive = 5,
-                maxInclusive = 10,
-                path = Predicates.field,
-                datatype = Classes.integer,
-            )
-
-        @JvmStatic
-        private fun otherLiteralTemplatePropertyRequest() =
-            TemplateController.OtherLiteralPropertyRequest(
-                label = "literal property label",
-                placeholder = "literal property placeholder",
-                description = "literal property description",
-                minCount = 1,
-                maxCount = 2,
-                path = Predicates.field,
-                datatype = ThingId("C25"),
-            )
-
-        @JvmStatic
-        private fun resourceTemplatePropertyRequest() =
-            TemplateController.ResourcePropertyRequest(
-                label = "resource property label",
-                placeholder = "resource property placeholder",
-                description = "resource property description",
-                minCount = 3,
-                maxCount = 4,
-                path = Predicates.hasAuthor,
-                `class` = ThingId("C28"),
-            )
     }
 }

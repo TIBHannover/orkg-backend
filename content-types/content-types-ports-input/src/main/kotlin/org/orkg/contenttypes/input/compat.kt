@@ -13,7 +13,7 @@ interface TemplateUseCases : RetrieveTemplateUseCase, CreateTemplateUseCase, Cre
 
 interface TemplateInstanceUseCases : RetrieveTemplateInstanceUseCase, UpdateTemplateInstanceUseCase
 
-interface RosettaStoneTemplateUseCases : RetrieveRosettaStoneTemplateUseCase
+interface RosettaStoneTemplateUseCases : RetrieveRosettaStoneTemplateUseCase, CreateRosettaStoneTemplateUseCase
 
 interface LegacyPaperUseCases : LegacyRetrievePaperUseCase, LegacyCreatePaperUseCase
 

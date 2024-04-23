@@ -2,6 +2,7 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
+    id("java-test-fixtures")
     id("org.orkg.gradle.input-adapter-spring-web")
 }
 

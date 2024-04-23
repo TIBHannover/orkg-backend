@@ -12,7 +12,7 @@ class ComparisonResearchFieldUpdater(
     constructor(statementService: StatementUseCases) : this(object : ResearchFieldUpdater(statementService) {})
 
     override operator fun invoke(command: UpdateComparisonCommand, state: UpdateComparisonState): UpdateComparisonState {
-        if (command.researchFields != null && command.researchFields != state.comparison!!.researchFields) {
+        if (command.researchFields != null && command.researchFields != state.comparison!!.researchFields.map { it.id }) {
             researchFieldUpdater.update(
                 contributorId = command.contributorId,
                 researchFields = command.researchFields!!,

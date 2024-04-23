@@ -10,7 +10,7 @@ class RosettaStoneTemplateFormattedLabelValidator : CreateRosettaStoneTemplateAc
         state: CreateRosettaStoneTemplateState
     ): CreateRosettaStoneTemplateState {
         command.properties.forEachIndexed { index, _ ->
-            if (!command.formattedLabel.value.contains("{${index + 1}}")) {
+            if (!command.formattedLabel.value.contains("{$index}")) {
                 throw MissingFormattedLabelPlaceholder(index)
             }
         }

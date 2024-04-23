@@ -30,7 +30,7 @@ class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : AbstractTem
         val oldProperty = createDummyStringLiteralTemplateProperty()
         val newProperty = oldProperty.toStringLiteralTemplatePropertyDefinition()
 
-        abstractTemplatePropertyUpdater.update(contributorId, 2, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 1, newProperty, oldProperty)
     }
 
     @Test
@@ -59,7 +59,7 @@ class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : AbstractTem
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 2, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 1, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
@@ -106,7 +106,7 @@ class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : AbstractTem
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 4, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 3, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
@@ -148,7 +148,7 @@ class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : AbstractTem
         every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every { statementService.delete(setOf(statementToRemove)) } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 2, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 1, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) { statementService.delete(setOf(statementToRemove)) }

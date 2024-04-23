@@ -112,7 +112,7 @@ class TemplatePropertiesUpdaterUnitTest {
         every {
             abstractTemplatePropertyUpdater.update(
                 contributorId = command.contributorId,
-                order = 1,
+                order = 0,
                 newProperty = command.properties!![0],
                 oldProperty = template.properties[1]
             )
@@ -126,7 +126,7 @@ class TemplatePropertiesUpdaterUnitTest {
         verify(exactly = 1) {
             abstractTemplatePropertyUpdater.update(
                 contributorId = command.contributorId,
-                order = 1,
+                order = 0,
                 newProperty = command.properties!![0],
                 oldProperty = template.properties[1]
             )
@@ -150,7 +150,7 @@ class TemplatePropertiesUpdaterUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = 6,
+                order = 5,
                 property = command.properties!![5]
             )
         } returns ThingId("irrelevant")
@@ -161,7 +161,7 @@ class TemplatePropertiesUpdaterUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = 6,
+                order = 5,
                 property = command.properties!![5]
             )
         }
@@ -183,14 +183,14 @@ class TemplatePropertiesUpdaterUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = 1,
+                order = 0,
                 property = command.properties!![0]
             )
         } returns ThingId("irrelevant")
         every {
             abstractTemplatePropertyUpdater.update(
                 contributorId = command.contributorId,
-                order = 2,
+                order = 1,
                 newProperty = command.properties!![1],
                 oldProperty = template.properties[0]
             )
@@ -202,14 +202,14 @@ class TemplatePropertiesUpdaterUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = 1,
+                order = 0,
                 property = command.properties!![0]
             )
         }
         verify(exactly = 1) {
             abstractTemplatePropertyUpdater.update(
                 contributorId = command.contributorId,
-                order = 2,
+                order = 1,
                 newProperty = command.properties!![1],
                 oldProperty = template.properties[0]
             )
@@ -230,7 +230,7 @@ class TemplatePropertiesUpdaterUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = 5,
+                order = 4,
                 property = command.properties!![4]
             )
         } returns ThingId("irrelevant")
@@ -244,7 +244,7 @@ class TemplatePropertiesUpdaterUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = 5,
+                order = 4,
                 property = command.properties!![4]
             )
         }

@@ -49,7 +49,7 @@ class TemplatePropertiesCreatorUnitTest {
 
         command.properties.forEachIndexed { index, property ->
             verify(exactly = 1) {
-                abstractTemplatePropertyCreator.create(command.contributorId, state.templateId!!, index + 1, property)
+                abstractTemplatePropertyCreator.create(command.contributorId, state.templateId!!, index, property)
             }
         }
     }

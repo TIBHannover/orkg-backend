@@ -31,7 +31,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
         val oldProperty = createDummyNumberLiteralTemplateProperty()
         val newProperty = oldProperty.toNumberLiteralTemplatePropertyDefinition()
 
-        abstractTemplatePropertyUpdater.update(contributorId, 3, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 2, newProperty, oldProperty)
     }
 
     @Test
@@ -61,7 +61,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 3, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 2, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
@@ -111,7 +111,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 4, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 3, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
@@ -152,7 +152,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
         every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every { statementService.delete(setOf(statementToRemove)) } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 3, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 2, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) { statementService.delete(setOf(statementToRemove)) }
@@ -185,7 +185,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 3, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 2, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
@@ -235,7 +235,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 4, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 3, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
@@ -276,7 +276,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
         every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every { statementService.delete(setOf(statementToRemove)) } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 3, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 2, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) { statementService.delete(setOf(statementToRemove)) }
@@ -332,7 +332,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 3, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 2, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {

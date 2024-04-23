@@ -46,7 +46,7 @@ class AbstractTemplatePropertyCreatorUnitTest {
     @Test
     fun `Given an untyped template property definition, when creating, it returns success`() {
         val property = dummyCreateUntypedTemplatePropertyCommand()
-        val order = 4
+        val order = 3
         val propertyId = ThingId("R1325")
         val placeholderLiteralId = ThingId("L127")
         val descriptionLiteralId = ThingId("L128")
@@ -82,7 +82,7 @@ class AbstractTemplatePropertyCreatorUnitTest {
     @Test
     fun `Given a string literal template property definition, when creating, it returns success`() {
         val property = dummyCreateStringLiteralTemplatePropertyCommand()
-        val order = 5
+        val order = 4
         val propertyId = ThingId("R1325")
         val placeholderLiteralId = ThingId("L127")
         val descriptionLiteralId = ThingId("L128")
@@ -167,7 +167,7 @@ class AbstractTemplatePropertyCreatorUnitTest {
     @Test
     fun `Given a string literal template property definition, when pattern is not set, it does not create a statement for it`() {
         val property = dummyCreateStringLiteralTemplatePropertyCommand().copy(pattern = null)
-        val order = 5
+        val order = 4
         val propertyId = ThingId("R1325")
         val placeholderLiteralId = ThingId("L127")
         val descriptionLiteralId = ThingId("L128")
@@ -219,7 +219,7 @@ class AbstractTemplatePropertyCreatorUnitTest {
     @Test
     fun `Given a literal template property definition, when creating, it returns success`() {
         val property = dummyCreateOtherLiteralTemplatePropertyCommand()
-        val order = 5
+        val order = 4
         val propertyId = ThingId("R1325")
         val placeholderLiteralId = ThingId("L127")
         val descriptionLiteralId = ThingId("L128")
@@ -271,7 +271,7 @@ class AbstractTemplatePropertyCreatorUnitTest {
     @Test
     fun `Given a number literal template property definition, when creating, it returns success`() {
         val property = dummyCreateNumberLiteralTemplatePropertyCommand()
-        val order = 5
+        val order = 4
         val propertyId = ThingId("R1325")
         val placeholderLiteralId = ThingId("L127")
         val descriptionLiteralId = ThingId("L128")
@@ -396,7 +396,7 @@ class AbstractTemplatePropertyCreatorUnitTest {
             minInclusive = null,
             maxInclusive = null
         )
-        val order = 5
+        val order = 4
         val propertyId = ThingId("R1325")
         val placeholderLiteralId = ThingId("L127")
         val descriptionLiteralId = ThingId("L128")
@@ -448,7 +448,7 @@ class AbstractTemplatePropertyCreatorUnitTest {
     @Test
     fun `Given a resource template property definition, when creating, it returns success`() {
         val property = dummyCreateResourceTemplatePropertyCommand()
-        val order = 2
+        val order = 1
         val propertyId = ThingId("R1325")
         val placeholderLiteralId = ThingId("L127")
         val descriptionLiteralId = ThingId("L128")

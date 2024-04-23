@@ -21,7 +21,7 @@ class RosettaStoneTemplatePropertiesCreator(
         state: CreateRosettaStoneTemplateState
     ): CreateRosettaStoneTemplateState {
         command.properties.forEachIndexed { index, property ->
-            abstractTemplatePropertyCreator.create(command.contributorId, state.rosettaStoneTemplateId!!, index + 1, property)
+            abstractTemplatePropertyCreator.create(command.contributorId, state.rosettaStoneTemplateId!!, index, property)
         }
         return state
     }

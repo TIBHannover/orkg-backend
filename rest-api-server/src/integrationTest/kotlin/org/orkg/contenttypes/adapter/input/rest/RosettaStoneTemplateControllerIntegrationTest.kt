@@ -188,7 +188,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
             it.id shouldBe id
             it.label shouldBe "rosetta stone template"
             it.description shouldBe "rosetta stone template description"
-            it.formattedLabel shouldBe "{1} {2} {3} {4} {5} {6}"
+            it.formattedLabel shouldBe "{0} {1} {2} {3} {4} {5}"
             it.targetClass shouldNotBe null
             it.properties.size shouldBe 6
             it.properties[0].shouldBeInstanceOf<ResourceTemplatePropertyRepresentation>().asClue { property ->
@@ -196,7 +196,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.label shouldBe "subject position"
                 property.placeholder shouldBe "subject"
                 property.description shouldBe "subject"
-                property.order shouldBe 1
+                property.order shouldBe 0
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 4
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasSubjectPosition, "label")
@@ -209,7 +209,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.label shouldBe "property label"
                 property.placeholder shouldBe "property placeholder"
                 property.description shouldBe "property description"
-                property.order shouldBe 2
+                property.order shouldBe 1
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
@@ -221,7 +221,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.label shouldBe "string literal property label"
                 property.placeholder shouldBe "string literal property placeholder"
                 property.description shouldBe "string literal property description"
-                property.order shouldBe 3
+                property.order shouldBe 2
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\d+"
@@ -235,7 +235,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.label shouldBe "number literal property label"
                 property.placeholder shouldBe "number literal property placeholder"
                 property.description shouldBe "number literal property description"
-                property.order shouldBe 4
+                property.order shouldBe 3
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.minInclusive shouldBe -1
@@ -250,7 +250,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.label shouldBe "literal property label"
                 property.placeholder shouldBe "literal property placeholder"
                 property.description shouldBe "literal property description"
-                property.order shouldBe 5
+                property.order shouldBe 4
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
@@ -263,7 +263,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.label shouldBe "resource property label"
                 property.placeholder shouldBe "resource property placeholder"
                 property.description shouldBe "resource property description"
-                property.order shouldBe 6
+                property.order shouldBe 5
                 property.minCount shouldBe 3
                 property.maxCount shouldBe 4
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
@@ -301,7 +301,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
 private const val createRosettaStoneTemplateJson = """{
   "label": "rosetta stone template",
   "description": "rosetta stone template description",
-  "formatted_label": "{1} {2} {3} {4} {5} {6}",
+  "formatted_label": "{0} {1} {2} {3} {4} {5}",
   "properties": [
     {
       "label": "subject position",

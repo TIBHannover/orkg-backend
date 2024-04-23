@@ -32,12 +32,11 @@ class TemplatePropertiesUpdater(
             }
             properties.forEachIndexed { index, newProperty ->
                 val oldProperty = new2old[newProperty]
-                val order = index + 1
                 if (oldProperty != null) {
-                    if (oldProperty.order != order.toLong()) {
+                    if (oldProperty.order != index.toLong()) {
                         abstractTemplatePropertyUpdater.update(
                             contributorId = command.contributorId,
-                            order = order,
+                            order = index,
                             newProperty = newProperty,
                             oldProperty = oldProperty
                         )
@@ -46,7 +45,7 @@ class TemplatePropertiesUpdater(
                     abstractTemplatePropertyCreator.create(
                         contributorId = command.contributorId,
                         templateId = command.templateId,
-                        order = order,
+                        order = index,
                         property = newProperty
                     )
                 }

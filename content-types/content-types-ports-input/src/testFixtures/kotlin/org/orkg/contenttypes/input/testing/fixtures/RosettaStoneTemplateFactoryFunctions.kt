@@ -18,7 +18,7 @@ fun dummyCreateRosettaStoneTemplateCommand() = CreateRosettaStoneTemplateUseCase
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     label = "Dummy Rosetta Stone Template Label",
     description = "Some description about the rosetta stone template",
-    formattedLabel = FormattedLabel.of("{1} {2} {3} {4} {5} {6}"),
+    formattedLabel = FormattedLabel.of("{0} {1} {2} {3} {4} {5}"),
     properties = listOf(
         dummyCreateSubjectPositionTemplatePropertyCommand(),
         dummyCreateUntypedObjectPositionTemplatePropertyCommand(),

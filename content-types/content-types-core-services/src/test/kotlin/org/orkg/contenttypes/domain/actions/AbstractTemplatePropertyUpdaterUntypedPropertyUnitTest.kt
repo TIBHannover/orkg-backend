@@ -31,7 +31,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
         val oldProperty = createDummyUntypedTemplateProperty()
         val newProperty = oldProperty.toUntypedTemplatePropertyDefinition()
 
-        abstractTemplatePropertyUpdater.update(contributorId, 1, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
     }
 
     @Test
@@ -51,7 +51,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 1, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
 
         verify(exactly = 1) {
             resourceService.update(
@@ -89,7 +89,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 1, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
@@ -129,7 +129,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 1, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
@@ -154,7 +154,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMinCount),
-                `object` = createLiteral(label = "5", datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = "4", datatype = Literals.XSD.INT.prefixedUri)
             )
         )
 
@@ -170,7 +170,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 1, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
@@ -196,7 +196,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMaxCount),
-                `object` = createLiteral(label = "5", datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = "4", datatype = Literals.XSD.INT.prefixedUri)
             )
         )
 
@@ -212,7 +212,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 1, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
@@ -258,7 +258,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
         every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every { statementService.delete(statementsToRemove) } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 4, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 3, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) { statementService.delete(statementsToRemove) }
@@ -290,7 +290,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 1, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
@@ -313,10 +313,10 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shOrder),
-                `object` = createLiteral(label = "1", datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = "0", datatype = Literals.XSD.INT.prefixedUri)
             )
         )
-        val newOrder = 3
+        val newOrder = 2
 
         every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every {

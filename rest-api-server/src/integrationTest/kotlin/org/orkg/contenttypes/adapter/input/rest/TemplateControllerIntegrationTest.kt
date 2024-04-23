@@ -214,7 +214,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.label shouldBe "property label"
                 property.placeholder shouldBe "property placeholder"
                 property.description shouldBe "property description"
-                property.order shouldBe 1
+                property.order shouldBe 0
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
@@ -226,7 +226,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.label shouldBe "string literal property label"
                 property.placeholder shouldBe "string literal property placeholder"
                 property.description shouldBe "string literal property description"
-                property.order shouldBe 2
+                property.order shouldBe 1
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\d+"
@@ -240,7 +240,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.label shouldBe "number literal property label"
                 property.placeholder shouldBe "number literal property placeholder"
                 property.description shouldBe "number literal property description"
-                property.order shouldBe 3
+                property.order shouldBe 2
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.minInclusive shouldBe -1
@@ -255,7 +255,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.label shouldBe "literal property label"
                 property.placeholder shouldBe "literal property placeholder"
                 property.description shouldBe "literal property description"
-                property.order shouldBe 4
+                property.order shouldBe 3
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
@@ -268,7 +268,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.label shouldBe "resource property label"
                 property.placeholder shouldBe "resource property placeholder"
                 property.description shouldBe "resource property description"
-                property.order shouldBe 5
+                property.order shouldBe 4
                 property.minCount shouldBe 3
                 property.maxCount shouldBe 4
                 property.path shouldBe ObjectIdAndLabel(ThingId("P27"), "label")
@@ -312,7 +312,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.label shouldBe "updated property label"
                 property.placeholder shouldBe null
                 property.description shouldBe null
-                property.order shouldBe 1
+                property.order shouldBe 0
                 property.minCount shouldBe 4
                 property.maxCount shouldBe 7
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
@@ -324,7 +324,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.label shouldBe "updated resource property label"
                 property.placeholder shouldBe "updated resource property placeholder"
                 property.description shouldBe "updated resource property description"
-                property.order shouldBe 2
+                property.order shouldBe 1
                 property.minCount shouldBe 3
                 property.maxCount shouldBe 4
                 property.path shouldBe ObjectIdAndLabel(ThingId("P27"), "label")
@@ -337,7 +337,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.label shouldBe "updated string literal property label"
                 property.placeholder shouldBe "updated string literal property placeholder"
                 property.description shouldBe "updated string literal property description"
-                property.order shouldBe 3
+                property.order shouldBe 2
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\w+"
@@ -351,7 +351,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.label shouldBe "updated literal property label"
                 property.placeholder shouldBe "updated literal property placeholder"
                 property.description shouldBe "updated literal property description"
-                property.order shouldBe 4
+                property.order shouldBe 3
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
@@ -364,7 +364,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.label shouldBe "updated number literal property label"
                 property.placeholder shouldBe "updated number literal property placeholder"
                 property.description shouldBe "updated number literal property description"
-                property.order shouldBe 5
+                property.order shouldBe 4
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.minInclusive shouldBe -5.0
@@ -405,7 +405,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.label shouldBe "property label"
             it.placeholder shouldBe "property placeholder"
             it.description shouldBe "property description"
-            it.order shouldBe template.properties.size
+            it.order shouldBe template.properties.size - 1
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
             it.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
@@ -431,7 +431,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.label shouldBe "updated property label"
             it.placeholder shouldBe null
             it.description shouldBe null
-            it.order shouldBe 1
+            it.order shouldBe 0
             it.minCount shouldBe 4
             it.maxCount shouldBe 7
             it.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
@@ -461,7 +461,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.label shouldBe "string literal property label"
             it.placeholder shouldBe "string literal property placeholder"
             it.description shouldBe "string literal property description"
-            it.order shouldBe template.properties.size
+            it.order shouldBe template.properties.size - 1
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
             it.pattern shouldBe "\\d+"
@@ -489,7 +489,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.label shouldBe "updated string literal property label"
             it.placeholder shouldBe "updated string literal property placeholder"
             it.description shouldBe "updated string literal property description"
-            it.order shouldBe 1
+            it.order shouldBe 0
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
             it.pattern shouldBe "\\w+"
@@ -521,7 +521,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.label shouldBe "number literal property label"
             it.placeholder shouldBe "number literal property placeholder"
             it.description shouldBe "number literal property description"
-            it.order shouldBe template.properties.size
+            it.order shouldBe template.properties.size - 1
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
             it.minInclusive shouldBe -1
@@ -550,7 +550,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.label shouldBe "updated number literal property label"
             it.placeholder shouldBe "updated number literal property placeholder"
             it.description shouldBe "updated number literal property description"
-            it.order shouldBe 1
+            it.order shouldBe 0
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
             it.minInclusive shouldBe -5.0
@@ -583,7 +583,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.label shouldBe "literal property label"
             it.placeholder shouldBe "literal property placeholder"
             it.description shouldBe "literal property description"
-            it.order shouldBe template.properties.size
+            it.order shouldBe template.properties.size - 1
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
             it.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
@@ -610,7 +610,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.label shouldBe "updated literal property label"
             it.placeholder shouldBe "updated literal property placeholder"
             it.description shouldBe "updated literal property description"
-            it.order shouldBe 1
+            it.order shouldBe 0
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
             it.path shouldBe ObjectIdAndLabel(ThingId("description"), "label")
@@ -641,7 +641,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.label shouldBe "resource property label"
             it.placeholder shouldBe "resource property placeholder"
             it.description shouldBe "resource property description"
-            it.order shouldBe template.properties.size
+            it.order shouldBe template.properties.size - 1
             it.minCount shouldBe 3
             it.maxCount shouldBe 4
             it.path shouldBe ObjectIdAndLabel(ThingId("P27"), "label")
@@ -668,7 +668,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.label shouldBe "updated resource property label"
             it.placeholder shouldBe "updated resource property placeholder"
             it.description shouldBe "updated resource property description"
-            it.order shouldBe 1
+            it.order shouldBe 0
             it.minCount shouldBe 2
             it.maxCount shouldBe 5
             it.path shouldBe ObjectIdAndLabel(ThingId("P27"), "label")

@@ -43,7 +43,7 @@ class TemplatePropertyCreatorUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = state.propertyCount!! + 1,
+                order = state.propertyCount!!,
                 property = command
             )
         } returns templatePropertyId
@@ -59,7 +59,7 @@ class TemplatePropertyCreatorUnitTest {
             abstractTemplatePropertyCreator.create(
                 contributorId = command.contributorId,
                 templateId = command.templateId,
-                order = state.propertyCount!! + 1,
+                order = state.propertyCount!!,
                 property = command
             )
         }

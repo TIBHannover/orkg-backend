@@ -10,6 +10,8 @@ import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListCommand
+import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionCommand
+import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
@@ -35,6 +37,9 @@ import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectio
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsUpdateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionCreateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionCreator
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionExistenceCreateValidator
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.output.LiteratureListPublishedRepository
 import org.orkg.contenttypes.output.LiteratureListRepository
@@ -114,6 +119,15 @@ class LiteratureListService(
             LiteratureListSectionsCreator(literalService, resourceService, statementService)
         )
         return steps.execute(command, CreateLiteratureListState()).literatureListId!!
+    }
+
+    override fun createSection(command: CreateLiteratureListSectionCommand): ThingId {
+        val steps = listOf(
+            LiteratureListSectionExistenceCreateValidator(resourceRepository),
+            LiteratureListSectionCreateValidator(resourceRepository),
+            LiteratureListSectionCreator(literalService, resourceService, statementService)
+        )
+        return steps.execute(command, CreateLiteratureListSectionState()).literatureListSectionId!!
     }
 
     override fun update(command: UpdateLiteratureListCommand) {

@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
 import java.net.URI
+import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -9,6 +10,7 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ListSection
 import org.orkg.contenttypes.domain.LiteratureListSection
 import org.orkg.contenttypes.domain.TextSection
+import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.ListSectionCommand
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
@@ -87,6 +89,23 @@ fun dummyUpdateLiteratureListCommand() = UpdateLiteratureListUseCase.UpdateComma
         dummyTextSectionDefinition(),
         dummyListSectionDefinition()
     )
+)
+
+fun dummyCreateListSectionCommand() = CreateLiteratureListSectionUseCase.CreateListSectionCommand(
+    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+    literatureListId = ThingId("R123"),
+    entries = listOf(
+        ThingId("R2315"),
+        ThingId("R3512"),
+    )
+)
+
+fun dummyCreateTextSectionCommand() = CreateLiteratureListSectionUseCase.CreateTextSectionCommand(
+    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+    literatureListId = ThingId("R123"),
+    heading = "Updated Heading",
+    headingSize = 3,
+    text = "updated text section contents"
 )
 
 fun dummyListSectionDefinition(): ListSectionCommand =

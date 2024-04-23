@@ -26,6 +26,29 @@ interface CreateLiteratureListUseCase {
     )
 }
 
+interface CreateLiteratureListSectionUseCase {
+    fun createSection(command: CreateCommand): ThingId
+
+    sealed interface CreateCommand {
+        val contributorId: ContributorId
+        val literatureListId: ThingId
+    }
+
+    data class CreateListSectionCommand(
+        override val contributorId: ContributorId,
+        override val literatureListId: ThingId,
+        override val entries: List<ThingId>
+    ) : CreateCommand, ListSectionDefinition
+
+    data class CreateTextSectionCommand(
+        override val contributorId: ContributorId,
+        override val literatureListId: ThingId,
+        override val heading: String,
+        override val headingSize: Int,
+        override val text: String
+    ) : CreateCommand, TextSectionDefinition
+}
+
 interface UpdateLiteratureListUseCase {
     fun update(command: UpdateCommand)
 

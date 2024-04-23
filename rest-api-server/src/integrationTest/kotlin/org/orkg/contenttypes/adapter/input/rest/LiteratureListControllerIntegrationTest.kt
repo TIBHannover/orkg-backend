@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import java.net.URI
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -43,6 +43,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.MockUserId
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -202,19 +203,7 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails(userDetailsServiceBeanName = "mockUserDetailsService")
     fun createAndFetchAndUpdate() {
-        val id = post("/api/literature-lists")
-            .content(createLiteratureListJson)
-            .accept(LITERATURE_LIST_JSON_V1)
-            .contentType(LITERATURE_LIST_JSON_V1)
-            .characterEncoding("utf-8")
-            .perform()
-            .andExpect(status().isCreated)
-            .andReturn()
-            .response
-            .getHeaderValue("Location")!!
-            .toString()
-            .substringAfterLast("/")
-            .let(::ThingId)
+        val id = createLiteratureList()
 
         val literatureList = get("/api/literature-lists/{id}", id)
             .accept(LITERATURE_LIST_JSON_V1)
@@ -366,6 +355,72 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
         }
     }
 
+    @Test
+    @TestWithMockUser
+    fun createAndFetchTextSection() {
+        val literatureListId = createLiteratureList()
+
+        post("/api/literature-lists/$literatureListId/sections")
+            .content(createTextSectionJson)
+            .accept(LITERATURE_LIST_SECTION_JSON_V1)
+            .contentType(LITERATURE_LIST_SECTION_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isCreated)
+
+        val literatureList = literatureListService.findById(literatureListId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+
+        literatureList.sections.size shouldBe 3
+        literatureList.sections.last().shouldBeInstanceOf<TextSection>().asClue {
+            it.id shouldNotBe null
+            it.heading shouldBe "text section heading"
+            it.headingSize shouldBe 2
+            it.text shouldBe "text section contents"
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    fun createAndFetchListSection() {
+        val literatureListId = createLiteratureList()
+
+        post("/api/literature-lists/$literatureListId/sections")
+            .content(createListSectionJson)
+            .accept(LITERATURE_LIST_SECTION_JSON_V1)
+            .contentType(LITERATURE_LIST_SECTION_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isCreated)
+
+        val literatureList = literatureListService.findById(literatureListId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+
+        literatureList.sections.size shouldBe 3
+        literatureList.sections.last().shouldBeInstanceOf<ListSection>().asClue {
+            it.id shouldNotBe null
+            it.entries shouldBe listOf(
+                ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(ThingId("Dataset"))),
+                ResourceReference(ThingId("R3004"), "Some other resource", setOf(ThingId("Software"))),
+                ResourceReference(ThingId("R3003"), "Some resource", setOf(ThingId("Paper")))
+            )
+        }
+    }
+
+    private fun createLiteratureList() = post("/api/literature-lists")
+        .content(createLiteratureListJson)
+        .accept(LITERATURE_LIST_JSON_V1)
+        .contentType(LITERATURE_LIST_JSON_V1)
+        .characterEncoding("utf-8")
+        .perform()
+        .andExpect(status().isCreated)
+        .andReturn()
+        .response
+        .getHeaderValue("Location")!!
+        .toString()
+        .substringAfterLast("/")
+        .let(::ThingId)
+
     private fun RequestBuilder.perform(): ResultActions = mockMvc.perform(this)
 }
 
@@ -475,5 +530,19 @@ private const val updateLiteratureListJson = """{
         "R3005"
       ]
     }
+  ]
+}"""
+
+private const val createTextSectionJson = """{
+  "heading": "text section heading",
+  "heading_size": 2,
+  "text": "text section contents"
+}"""
+
+private const val createListSectionJson = """{
+  "entries": [
+    "R3005",
+    "R3004",
+    "R3003"
   ]
 }"""

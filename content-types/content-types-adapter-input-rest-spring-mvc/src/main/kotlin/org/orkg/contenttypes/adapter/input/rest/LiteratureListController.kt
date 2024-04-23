@@ -17,6 +17,7 @@ import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.LiteratureListRepresentationAdapter
 import org.orkg.contenttypes.domain.LiteratureListNotFound
+import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.ListSectionCommand
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
@@ -46,6 +47,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 const val LITERATURE_LIST_JSON_V1 = "application/vnd.orkg.literature-list.v1+json"
+const val LITERATURE_LIST_SECTION_JSON_V1 = "application/vnd.orkg.literature-list-section.v1+json"
 
 @RestController
 @RequestMapping("/api/literature-lists", produces = [LITERATURE_LIST_JSON_V1])
@@ -117,6 +119,23 @@ class LiteratureListController(
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
+    }
+
+    @PreAuthorizeUser
+    @PostMapping("/{id}/sections", consumes = [LITERATURE_LIST_SECTION_JSON_V1], produces = [LITERATURE_LIST_SECTION_JSON_V1])
+    fun createSection(
+        @PathVariable id: ThingId,
+        @RequestBody @Valid request: LiteratureListSectionRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.createSection(request.toCreateCommand(userId, id))
+        val location = uriComponentsBuilder
+            .path("api/literature-lists/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return created(location).build()
     }
 
     data class CreateLiteratureListRequest(
@@ -193,6 +212,11 @@ class LiteratureListController(
     ])
     sealed interface LiteratureListSectionRequest {
         fun toLiteratureListSectionDefinition(): LiteratureListSectionDefinition
+
+        fun toCreateCommand(
+            contributorId: ContributorId,
+            literatureListId: ThingId
+        ): CreateLiteratureListSectionUseCase.CreateCommand
     }
 
     data class ListSectionRequest(
@@ -200,6 +224,12 @@ class LiteratureListController(
     ) : LiteratureListSectionRequest {
         override fun toLiteratureListSectionDefinition(): LiteratureListSectionDefinition =
             ListSectionCommand(entries)
+
+        override fun toCreateCommand(
+            contributorId: ContributorId,
+            literatureListId: ThingId
+        ): CreateLiteratureListSectionUseCase.CreateCommand =
+            CreateLiteratureListSectionUseCase.CreateListSectionCommand(contributorId, literatureListId, entries)
     }
 
     data class TextSectionRequest(
@@ -213,5 +243,13 @@ class LiteratureListController(
     ) : LiteratureListSectionRequest {
         override fun toLiteratureListSectionDefinition(): LiteratureListSectionDefinition =
             TextSectionCommand(heading, headingSize, text)
+
+        override fun toCreateCommand(
+            contributorId: ContributorId,
+            literatureListId: ThingId
+        ): CreateLiteratureListSectionUseCase.CreateCommand =
+            CreateLiteratureListSectionUseCase.CreateTextSectionCommand(
+                contributorId, literatureListId, heading, headingSize, text
+            )
     }
 }

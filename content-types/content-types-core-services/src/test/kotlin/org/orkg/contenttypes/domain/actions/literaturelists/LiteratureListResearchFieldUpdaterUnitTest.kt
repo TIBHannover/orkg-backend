@@ -52,6 +52,8 @@ class LiteratureListResearchFieldUpdaterUnitTest {
             it.authors.size shouldBe 0
             it.statements shouldBe state.statements
             it.authors.size shouldBe 0
+            it.statements shouldBe state.statements
+            it.authors.size shouldBe 0
         }
     }
 
@@ -67,6 +69,8 @@ class LiteratureListResearchFieldUpdaterUnitTest {
 
         result.asClue {
             it.literatureList shouldBe state.literatureList
+            it.statements shouldBe state.statements
+            it.authors.size shouldBe 0
             it.statements shouldBe state.statements
             it.authors.size shouldBe 0
             it.statements shouldBe state.statements
@@ -101,6 +105,8 @@ class LiteratureListResearchFieldUpdaterUnitTest {
 
         result.asClue {
             it.literatureList shouldBe state.literatureList
+            it.statements shouldBe state.statements
+            it.authors.size shouldBe 0
             it.statements shouldBe state.statements
             it.authors.size shouldBe 0
             it.statements shouldBe state.statements

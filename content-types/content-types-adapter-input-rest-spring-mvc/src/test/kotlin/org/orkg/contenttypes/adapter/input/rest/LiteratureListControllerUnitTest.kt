@@ -29,6 +29,7 @@ import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.input.ContributionUseCases
+import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -288,6 +289,82 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { literatureListService.create(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a list section create request, when service succeeds, it creates the list section")
+    fun createListSection() {
+        val literatureListId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = LiteratureListController.ListSectionRequest(
+            entries = listOf(ThingId("R123"), ThingId("R456"))
+        )
+        every { literatureListService.createSection(any()) } returns id
+
+        documentedPostRequestTo("/api/literature-lists/{literatureListId}/sections", literatureListId)
+            .content(request)
+            .accept(LITERATURE_LIST_SECTION_JSON_V1)
+            .contentType(LITERATURE_LIST_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("literatureListId").description("The id of the literature list to which the new section should be appended to.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("entries").description("""The list of ids of resources that should be part of this section. Every resource must either be an instance of "Paper", "Dataset" or "Software".""")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { literatureListService.createSection(any<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a text section create request, when service succeeds, it creates the text section")
+    fun createTextSection() {
+        val literatureListId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = LiteratureListController.TextSectionRequest(
+            heading = "heading",
+            headingSize = 2,
+            text = "text contents"
+        )
+        every { literatureListService.createSection(any()) } returns id
+
+        documentedPostRequestTo("/api/literature-lists/{literatureListId}/sections", literatureListId)
+            .content(request)
+            .accept(LITERATURE_LIST_SECTION_JSON_V1)
+            .contentType(LITERATURE_LIST_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("literatureListId").description("The id of the literature list to which the new section should be appended to.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("""The heading of the text section."""),
+                        fieldWithPath("heading_size").description("""The heading size of the text section."""),
+                        fieldWithPath("text").description("""The text contents of the text section.""")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { literatureListService.createSection(any<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()) }
     }
 
     @Test

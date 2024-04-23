@@ -379,6 +379,9 @@ include::parts/visualizations.adoc[leveloffset=+1]
 [[literature-lists]]
 include::parts/literature-lists.adoc[leveloffset=+1]
 
+[[literature-list-sections]]
+include::parts/literature-list-sections.adoc[leveloffset=+1]
+
 [[smart-reviews]]
 include::parts/smart-reviews.adoc[leveloffset=+1]
 

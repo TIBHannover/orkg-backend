@@ -32,5 +32,4 @@ interface OtherResourceUseCases :
     MarkAsVerifiedUseCase,
     MarkFeaturedService,
     MarkAsUnlistedService,
-    GetResourceFlagQuery,
     GetContributorsQuery

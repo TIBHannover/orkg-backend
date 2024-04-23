@@ -230,16 +230,6 @@ class ResourceService(
         repository.save(modified)
     }
 
-    override fun getFeaturedResourceFlag(id: ThingId): Boolean =
-        repository.findById(id)
-            .map { it.visibility == Visibility.FEATURED }
-            .orElseThrow { ResourceNotFound.withId(id) }
-
-    override fun getUnlistedResourceFlag(id: ThingId): Boolean =
-        repository.findById(id)
-            .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
-            .orElseThrow { ResourceNotFound.withId(id) }
-
     override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         statementRepository.findAllProblemsByOrganizationId(id, pageable)
 

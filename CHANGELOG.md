@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added content-type endpoints for creating and updating literature lists and literature list sections.
+  (See: [!884](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/884),
+        [!885](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/885),
+        [!886](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/886),
+        [!887](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/887))
+- Added content-type endpoint for creating rosetta-stone templates.
+  (See: [!891](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/891))
+
+### Fixed
+- Template properties created using the template content-type endpoint are now 0-indexed.
+  (See: [!896](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/896))
+- Updating the research field of a comparison or paper now only updates the graph if it has changed.
+  (See: [!897](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/897))
 
 ## [0.54.0] - 2024-04-10
 ### Added

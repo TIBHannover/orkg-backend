@@ -6,17 +6,16 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
-
-    implementation(project(":media-storage:media-storage-core-model"))
+    api("com.fasterxml.jackson.core:jackson-annotations")
+    api("org.springframework:spring-web")
+    api(project(":common"))
+    api(project(":media-storage:media-storage-core-model"))
     implementation(project(":graph:graph-core-model"))
+    runtimeOnly(libs.jackson.databind)
 
-    implementation("org.springframework:spring-web")
-    implementation(libs.jackson.core) // for JsonProperty
-
-    testFixturesImplementation(project(":common"))
+    testFixturesApi(project(":common"))
+    testFixturesApi(project(":media-storage:media-storage-core-model"))
     testFixturesImplementation(project(":graph:graph-core-model"))
-    testFixturesImplementation(project(":media-storage:media-storage-core-model"))
 }
 
 testing {
@@ -24,6 +23,8 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation("org.assertj:assertj-core")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation(project(":community:community-core-model"))
             }
         }
     }

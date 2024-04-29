@@ -3,10 +3,8 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":feature-flags:feature-flags-ports"))
-
-    implementation("org.springframework:spring-context")
+    api("org.springframework.boot:spring-boot")
+    api("org.springframework:spring-context")
+    api(project(":feature-flags:feature-flags-ports"))
     implementation("org.springframework.boot:spring-boot-starter")
-
-    implementation(libs.bundles.jaxb)
 }

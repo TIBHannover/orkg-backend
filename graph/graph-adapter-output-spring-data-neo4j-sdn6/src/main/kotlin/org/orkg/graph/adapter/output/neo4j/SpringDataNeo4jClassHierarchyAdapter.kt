@@ -11,6 +11,7 @@ import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
+import org.neo4j.cypherdsl.core.Functions.countDistinct
 import org.neo4j.cypherdsl.core.Functions.id
 import org.neo4j.cypherdsl.core.Functions.labels
 import org.neo4j.cypherdsl.core.Functions.size
@@ -36,6 +37,7 @@ import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 private const val SUBCLASS_OF = "SUBCLASS_OF"
+private const val INSTANCE_OF = "INSTANCE_OF"
 
 @Component
 class SpringDataNeo4jClassHierarchyAdapter(
@@ -245,26 +247,12 @@ class SpringDataNeo4jClassHierarchyAdapter(
 
     override fun countClassInstances(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
         .withQuery {
-            val c = name("c")
-            val ids = name("ids")
-            val i = name("i")
-            val label = name("label")
-            val instance = node("Thing")
-                .named(i)
-            val idLiteral = parameter("id")
+            val node = node("Resource")
             match(
-                node("Class")
-                    .named(c)
-                    .relationshipTo(
-                        node("Class")
-                            .withProperties("id", idLiteral),
-                        SUBCLASS_OF
-                    )
+                node.relationshipTo(node("Class"), INSTANCE_OF)
+                    .relationshipTo(node("Class").withProperties("id", parameter("id")), SUBCLASS_OF)
                     .length(0, null)
-            ).with(collect(c.property("id")).`as`(ids))
-                .match(instance)
-                .where(any(label).`in`(labels(instance)).where(label.`in`(ids)))
-                .returning(count(i))
+            ).returning(countDistinct(node))
         }
         .withParameters("id" to id.value)
         .fetchAs<Long>()

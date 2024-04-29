@@ -3,18 +3,13 @@ plugins {
 }
 
 dependencies {
-
-    implementation(project(":common"))
-
-    implementation("org.springframework:spring-context")
+    api(libs.javax.activation)
+    api(project(":common"))
     implementation("org.springframework:spring-web")
 
-    implementation(libs.jackson.databind)
-    implementation(libs.javax.activation)
-
-    testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
-    testFixturesImplementation(project(":common"))
-    testFixturesImplementation(project(":community:community-ports-input"))
+    testFixturesApi(project(":common"))
+    testFixturesApi(project(":community:community-ports-input"))
+    testFixturesImplementation("org.springframework:spring-core")
     testFixturesImplementation(libs.javax.activation)
-    testFixturesImplementation("org.springframework:spring-web")
+    testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
 }

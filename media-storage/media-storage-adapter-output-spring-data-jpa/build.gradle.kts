@@ -4,16 +4,25 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":media-storage:media-storage-core-model"))
-    implementation(project(":media-storage:media-storage-ports-output"))
-
-    implementation(project(":common"))
-
-    implementation("org.springframework:spring-context")
+    api("jakarta.persistence:jakarta.persistence-api")
+    api("org.springframework.boot:spring-boot-autoconfigure")
+    api("org.springframework.data:spring-data-jpa")
+    api("org.springframework:spring-context")
+    api(project(":media-storage:media-storage-core-model"))
+    api(project(":media-storage:media-storage-ports-output"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-
     implementation(libs.bundles.jaxb)
+    implementation(libs.jakarta.validation)
+    implementation(project(":common"))
+
+    containerTestApi("org.junit.jupiter:junit-jupiter-api")
+    containerTestApi("org.springframework.boot:spring-boot-test-autoconfigure")
+    containerTestApi("org.springframework:spring-test")
+    containerTestApi(project(":media-storage:media-storage-ports-output"))
+    containerTestApi(testFixtures(project(":media-storage:media-storage-ports-output")))
+    containerTestApi(testFixtures(project(":testing:spring")))
+    containerTestImplementation("org.springframework:spring-beans")
 }
 
 testing {
@@ -21,21 +30,17 @@ testing {
         val containerTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project())
-                implementation(libs.kotest.extensions.spring)
-                implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":media-storage:media-storage-ports-output")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     exclude(module = "mockito-core")
                 }
-                implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-                implementation("org.springframework.data:spring-data-jpa")
-                runtimeOnly(libs.postgres.driver)
-                runtimeOnly(libs.liquibase)
                 implementation(project(":migrations:liquibase"))
-                implementation("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
+                runtimeOnly(libs.kotest.extensions.spring)
+                runtimeOnly(libs.liquibase)
+                runtimeOnly(libs.postgres.driver)
+                runtimeOnly("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
             }
         }
     }

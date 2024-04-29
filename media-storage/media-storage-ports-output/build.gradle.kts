@@ -5,8 +5,12 @@ plugins {
 dependencies {
     api(project(":media-storage:media-storage-core-model"))
 
-    testFixturesImplementation(project(":common"))
-    testFixturesImplementation(testFixtures(project(":media-storage:media-storage-core-model")))
-    testFixturesImplementation(libs.kotest.runner)
+    testFixturesApi("org.junit.jupiter:junit-jupiter-api")
+    testFixturesImplementation("io.kotest:kotest-assertions-shared")
+    testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     testFixturesImplementation(libs.javax.activation)
+    testFixturesImplementation(libs.kotest.runner)
+    testFixturesImplementation(project(":common"))
+    testFixturesImplementation(project(":media-storage:media-storage-core-model"))
+    testFixturesImplementation(testFixtures(project(":media-storage:media-storage-core-model")))
 }

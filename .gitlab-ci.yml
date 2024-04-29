@@ -85,6 +85,7 @@ dummy-doc-build:
 
 # Deploy documentation to GitLab Pages.
 pages:
+  resource_group: gitlab-pages
   extends: .build-documentation
   only:
     - master

@@ -1,23 +1,30 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
-import org.orkg.contenttypes.domain.actions.ResearchFieldUpdater
+import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.contenttypes.domain.actions.UpdateComparisonState
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
 class ComparisonResearchFieldUpdater(
-    private val researchFieldUpdater: ResearchFieldUpdater
+    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
 ) : UpdateComparisonAction {
-    constructor(statementService: StatementUseCases) : this(object : ResearchFieldUpdater(statementService) {})
+    constructor(
+        literalService: LiteralUseCases,
+        statementService: StatementUseCases
+    ) : this(StatementCollectionPropertyUpdater(literalService, statementService))
 
-    override operator fun invoke(command: UpdateComparisonCommand, state: UpdateComparisonState): UpdateComparisonState {
+    override operator fun invoke(
+        command: UpdateComparisonCommand,
+        state: UpdateComparisonState
+    ): UpdateComparisonState {
         if (command.researchFields != null && command.researchFields != state.comparison!!.researchFields.map { it.id }) {
-            researchFieldUpdater.update(
+            statementCollectionPropertyUpdater.update(
                 contributorId = command.contributorId,
-                researchFields = command.researchFields!!,
                 subjectId = command.comparisonId,
-                predicateId = Predicates.hasSubject
+                predicateId = Predicates.hasSubject,
+                objects = command.researchFields!!
             )
         }
         return state

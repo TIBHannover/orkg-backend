@@ -302,7 +302,7 @@ class ComparisonService(
             ComparisonAuthorUpdateValidator(resourceRepository, statementRepository),
             ComparisonResourceUpdater(resourceService),
             ComparisonDescriptionUpdater(literalService, statementService),
-            ComparisonResearchFieldUpdater(statementService),
+            ComparisonResearchFieldUpdater(literalService, statementService),
             ComparisonAuthorUpdater(resourceService, statementService, literalService, listService),
             ComparisonSDGUpdater(statementService),
             ComparisonContributionUpdater(literalService, statementService),

@@ -190,7 +190,7 @@ class PaperService(
             PaperResourceUpdater(resourceService),
             PaperIdentifierUpdater(statementService, literalService),
             PaperAuthorUpdater(resourceService, statementService, literalService, listService),
-            PaperResearchFieldUpdater(statementService),
+            PaperResearchFieldUpdater(literalService, statementService),
             PaperPublicationInfoUpdater(resourceService, resourceRepository, statementService, literalService),
             PaperSDGUpdater(statementService)
         )

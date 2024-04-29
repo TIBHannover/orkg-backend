@@ -1,0 +1,49 @@
+= Literature List Model Diagram
+
+[mermaid,width=100%]
+----
+flowchart LR
+    LiteratureListPublished[LiteratureListPublished \n Resource] --> |"description"| description[Literal \n xsd:string]
+	LiteratureList[LiteratureList \n Resource] --> |"hasPublishedVersion"| LiteratureListPublished
+    LiteratureList --> |"hasAuthors"| authorList[List \n Resource]
+	LiteratureList --> |"P30 \n has research field"| researchField[ResearchField \n Resource]
+    subgraph Author List
+        authorList --> |"hasListElement"| Author
+		subgraph Author
+			subgraph Literal Author
+				literalAuthor[Literal \n xsd:string]
+			end
+			subgraph Resource Author
+				resourceAuthor[Author \n Resource] --> |"website"| resourceAuthorWebsite[Literal \n xsd:anyURI]
+				resourceAuthor --> |"HAS_ORCID"| orcid[Literal \n xsd:string]
+				resourceAuthor --> |"googleScholarID"| googleScholarID[Literal \n xsd:string]
+				resourceAuthor --> |"researchGateID"| researchGateID[Literal \n xsd:string]
+				resourceAuthor --> |"linkedInID"| linkedInID[Literal \n xsd:string]
+				resourceAuthor --> |"P76020 \n wikidata id"| wikidataId[Literal \n xsd:string]
+				resourceAuthor --> |"P58083 \n web of science id"| webOfScienceId[Literal \n xsd:string]
+				subgraph Identifiers
+					orcid
+					googleScholarID
+					researchGateID
+					linkedInID
+					wikidataId
+					webOfScienceId
+				end
+			end
+		end
+    end
+	LiteratureList --> |"HasSection"| literatureListSections
+	subgraph literatureListSections[Literature List Sections]
+		listSection[ListSection \n Resource]
+		textSection[TextSection \n Resource]
+		subgraph Text Section
+			textSection --> |"HasHeadingLevel"| headingLevel[Literal \n xsd:string]
+			textSection --> |"hasContent"| content[Literal \n xsd:string]
+		end
+		subgraph List Section
+			listSection --> |"HasEntry"| entry[Resource]
+			entry --> |"HasLink"| any[Any \n Resource]
+		end
+	end
+	LiteratureList --> |"sustainableDevelopmentGoal"| sdg[SustainableDevelopmentGoal \n Resource]
+----

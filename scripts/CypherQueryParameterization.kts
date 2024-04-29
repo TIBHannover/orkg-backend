@@ -1,10 +1,7 @@
 #!/usr/bin/env kscript
 
-import java.io.*
-import java.lang.RuntimeException
-import java.lang.StringBuilder
-import java.util.*
-import java.util.regex.*
+import java.io.File
+import java.util.regex.Pattern
 
 val root : String = args[0]
 val queryRegex = Regex("""@Query\(\s*?(?:value\s*?=\s*?)?("{1,3}[\s\S]*?"{1,3})(?:\s*?,\s*?countQuery\s*?=\s*?("{1,3}[\s\S]*?"{1,3})\s*?)?\s*?\)\s*?fun [\w0-9<,>]+?\(\s*?([\w0-9<,>`?:\s]*?)\s*?\):""")

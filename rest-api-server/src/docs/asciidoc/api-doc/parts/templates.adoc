@@ -1,0 +1,46 @@
+= Templates
+
+Templates represent a collection of concepts in the knowledge graph and can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+They can be used to define structures to research contribution data and can help illustrate what kind of data is needed to make the paper comparable.
+The provided endpoints aggregate these concepts into a template representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[templates-fetch]]
+== Fetching a template
+
+A `GET` request provides information about a template.
+
+operation::templates-get-single[snippets='curl-request,response-fields']
+
+[[templates-list]]
+== Listing templates
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<templates-fetch,templates>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::templates-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::templates-get-paged-with-parameters[snippets='request-parameters,curl-request']
+
+[[templates-create]]
+== Creating templates
+
+A `POST` request creates a new template with all the given parameters.
+The response will be `201 Created` when successful.
+The template (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::templates-create[snippets='request-fields,curl-request,http-response']
+
+[[templates-edit]]
+== Editing a template
+
+A `PUT` request updates an existing template with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated template (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields such as `formatted_label`, meaning that the corresponding fields should not be updated.
+
+operation::templates-update[snippets='request-fields,curl-request,http-response']

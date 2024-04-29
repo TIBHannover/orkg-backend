@@ -12,9 +12,12 @@ It is written in https://kotlinlang.org/[Kotlin] as a proof-of-concept and for e
 === Prerequisites
 
 The backend API can be run stand-alone.
-However, it needs other services in order to start properly.
-Services are managed via https://www.docker.com/community-edition[Docker (CE)] and https://docs.docker.com/compose/[Docker Compose].
+However, it needs other services to start properly.
+Services are managed via https://www.docker.com/community-edition[Docker (CE)] and the https://docs.docker.com/compose/[Docker Compose] plugin.
 Please follow the respective installation instructions for your operating system or distribution.
+
+WARNING: The Docker Compose standalone binary will not work, you need the Docker Compose plugin for the Docker CLI.
+         Users of Docker Desktop will have it installed already, and do not need any additional installation.
 
 === Stand-alone application
 
@@ -43,7 +46,10 @@ Run:
 The application can be run via https://docs.docker.com/compose/[Docker Compose].
 After installing it, run:
 
-    docker-compose up -d
+    docker compose up -d
+
+WARNING: In the past, it was possible to use this software with the standalone Docker Compose binary, which is deprecated by Docker Inc. for quite a while now.
+We only support using the Docker Compose plug-in now, which is installed by default in most Docker installations.
 
 This will start the application image and all dependent containers.
 It will take care of linking all containers so the services can see each other.
@@ -54,12 +60,11 @@ The other services can be accessed via the URLs described in the table "<<endpoi
 
 To diagnose problems, check the logs with:
 
-    docker-compose logs -f
+    docker compose logs -f
 
 To restart from scratch, run:
 
-    docker-compose stop
-    docker-compose rm
+    docker compose down
 
 Data is saved to named volumes for Neo4j and Postgres, respectively, and persists even if you destroy the containers.
 If you also need to get rid of the data use the `docker volume` sub-commands to locate and remove them.

@@ -1,13 +1,12 @@
 import org.orkg.gradle.plugins.PrintCoverageTask
 
 plugins {
-    id("com.diffplug.spotless") version "6.2.1" apply false
-    id("com.diffplug.spotless-changelog") version "2.4.0"
+    id("org.orkg.gradle.root")
 
     base // required, otherwise report aggregation plugins will not work
     id("test-report-aggregation")
     id("jacoco-report-aggregation")
-    id("org.orkg.print-coverage")
+    id("org.orkg.gradle.print-coverage")
 }
 
 dependencies {
@@ -40,7 +39,6 @@ reporting {
             testType.set(TestSuiteType.UNIT_TEST)
         }
     }
-
 }
 
 val testCodeCoverageReport by tasks.getting(JacocoReport::class) {

@@ -21,11 +21,11 @@ The class can be retrieved by following the URI in the `Location` header field.
 
 NOTE: The created class is returned in the body for convenience. This might be subject to change.
 
-operation::class-controller-integration-test-add[snippets='request-fields,curl-request,http-response']
+operation::classes-create[snippets='request-fields,curl-request,http-response']
 
 The response body consists of the following fields:
 
-operation::class-controller-integration-test-add[snippets='response-fields']
+operation::classes-create[snippets='response-fields']
 
 [[classes-fetch]]
 === Fetching a class
@@ -41,9 +41,18 @@ Classes can be looked up by label by providing a search fragment.
 
 operation::class-controller-integration-test-lookup[snippets='curl-request,http-response']
 
-[[resources-lookup-by-classes]]
-=== Lookup resources by class
+[[classes-edit]]
+=== Editing a class
 
-List all resources that are of the provided class type
+A `PATCH` request updates a class with a new given label and URI.
+Only fields provided in the response, and therefore non-null, will be updated.
+The response will be `200 OK` when successful.
 
-operation::class-controller-integration-test-lookup-by-class[snippets='curl-request,http-response']
+operation::classes-update[snippets='request-fields,curl-request,http-response']
+
+A `PUT` request updates a class with a new given label and URI.
+All fields will be updated in the process.
+The response will be `200 OK` when successful.
+The updated class is returned in the body for convenience.
+
+operation::classes-replace[snippets='request-fields,curl-request,http-response']

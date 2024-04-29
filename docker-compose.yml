@@ -6,23 +6,28 @@ services:
     image: registry.gitlab.com/tibhannover/orkg/orkg-backend
     environment:
       SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres/postgres'
-      SPRING_DATA_NEO4J_URI: 'bolt://neo4j:7687'
+      SPRING_NEO4J_URI: 'bolt://neo4j:7687'
       SPRING_PROFILES_ACTIVE: development
+      #ORKG_SIMCOMP_HOST: 'http://simcomp:4321' # defaults to https://orkg.org/simcomp
       JDK_JAVA_OPTIONS: >-
         -Dcom.sun.management.jmxremote
         -Dcom.sun.management.jmxremote.port=9090
         -Dcom.sun.management.jmxremote.rmi.port=9090
         -Dcom.sun.management.jmxremote.authenticate=false
         -Dcom.sun.management.jmxremote.ssl=false
+      JAVA_TOOL_OPTIONS: >-
+        -agentlib:jdwp=transport=dt_socket,address=*:9999,server=y,suspend=n
     ports:
       - '127.0.0.1:8080:8080'
       #- '::1:8080:8080'
       - '127.0.0.1:9090:9090' # JMX
+      - '127.0.0.1:9999:9999' # Remote debugging
     networks:
       - auth
       - mail
       - database
       - rest-api
+      - simcomp
     depends_on:
       neo4j:
         condition: service_healthy
@@ -41,7 +46,7 @@ services:
       NEO4J_AUTH: none
       NEO4J_dbms_mode: SINGLE
       NEO4J_dbms_default__database: orkg
-      NEO4J_dbms_memory_heap_max__size: 8G
+      NEO4J_dbms_memory_heap_max__size: 4G
       NEO4J_dbms_transaction_timeout: 30s
     healthcheck:
       test: [ "CMD", "/var/lib/neo4j/bin/cypher-shell", "-u", "$${NEO4J_USERNAME}", "-p", "$${NEO4J_PASSWORD}", "MATCH () RETURN count(*) as count" ]
@@ -61,10 +66,11 @@ services:
       - '127.0.0.1:5432:5432'
       #- '::1:5432:5432'
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /var/lib/postgresql/data/pgdata
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: [ "CMD-SHELL", "pg_isready", "-U", "$$POSTGRES_USER" ]
       interval: 5s
       timeout: 10s
       retries: 10
@@ -127,11 +133,28 @@ services:
     networks:
       - mail
 
+  debughost:
+    profiles:
+      - debug
+    image: buildpack-deps:curl
+    stdin_open: true
+    tty: true
+    networks:
+      - auth
+      - database
+      - mail
+      - rest-api
+      - simcomp
+
 networks:
   auth:
   database:
   mail:
   rest-api:
+  simcomp:
+    # Uncomment the following lines if you want to test against a local SimComp instance:
+    #name: orkg-simcomp-api_orkg_simcomp_api
+    #external: true
 
 volumes:
   neo4j-data:

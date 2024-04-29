@@ -2,31 +2,33 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.neo4j-conventions")
-    id("java-test-fixtures")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
+    id("org.orkg.gradle.spring-library")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
-    testFixturesApi(libs.bundles.testcontainers)
+    testFixturesApi("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
+    testFixturesApi("jakarta.persistence:jakarta.persistence-api")
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
+    testFixturesApi("org.springframework.boot:spring-boot-autoconfigure")
+    testFixturesApi("org.springframework.boot:spring-boot-test")
+    testFixturesApi("org.springframework.boot:spring-boot-test-autoconfigure")
+    testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
+    testFixturesApi("org.springframework.security:spring-security-core")
+    testFixturesApi("org.springframework.security:spring-security-test")
+    testFixturesApi("org.springframework:spring-beans")
+    testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework:spring-test")
+    testFixturesApi("org.springframework:spring-web")
+    testFixturesApi(libs.jackson.databind)
+    testFixturesApi(libs.spring.boot.starter.neo4j.migrations)
+    testFixturesApi(libs.spring.restdocs)
+    testFixturesApi(libs.testcontainers.junit5)
+    testFixturesApi(libs.testcontainers.neo4j)
+    testFixturesApi(libs.testcontainers.postgresql)
+    testFixturesImplementation("org.hamcrest:hamcrest:2.2")
+    testFixturesImplementation(libs.assertj.core)
+    testFixturesImplementation(libs.testcontainers.core)
 
-    // TODO: These might be "downgraded" to only use the specific package used to declare the API
-    testFixturesImplementation("org.springframework.boot:spring-boot-starter-data-jpa"){
-        exclude(group = "org.springframework.data", module ="spring-data-commons")
-        exclude(group = "org.springframework.data", module="spring-data-jpa")
-    }
-
-    testFixturesImplementation("org.springframework.data:spring-data-commons:2.6.10")
-    testFixturesImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(group = "junit", module = "junit")
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-        exclude(module = "mockito-core")
-    }
-    testFixturesImplementation(libs.spring.mockk)
-    testFixturesImplementation(libs.spring.restdocs)
     testFixturesApi("com.github.dasniko:testcontainers-keycloak:3.0.0")
 }

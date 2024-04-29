@@ -3,11 +3,11 @@ forkhandles = "2.0.0.0"
 junit5 = "5.8.2"
 kotest = "5.4.0"
 kotlinx-coroutines = "1.6.4"
-testcontainers = "1.19.0"
+liquibase = "4.20.0"
+testcontainers = "1.17.3"
 spotless = "6.2.1"
 spring-boot = "2.4.13"
 spring-dependency-management = "1.0.11.RELEASE"
-jackson = "2.13.4"
 
 [libraries]
 # BOMs
@@ -16,24 +16,29 @@ forkhandles-bom = { module = "dev.forkhandles:forkhandles-bom", version.ref = "f
 junit5-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
 kotlinx-coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom", version.ref = "kotlinx-coroutines" }
 spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
-jackson-bom = { module = "com.fasterxml.jackson:jackson-bom", version.ref = "jackson" }
 # Libraries
 annotations-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
+assertj-core = { module = "org.assertj:assertj-core", version = "" }
 contractual = { module = "com.redfin:contractual", version = "3.0.0" }
 forkhandles-fabrikate4k = { module = "dev.forkhandles:fabrikate4k", version.ref = "forkhandles" }
 forkhandles-result4k = { module = "dev.forkhandles:result4k", version.ref = "forkhandles" }
 forkhandles-values4k = { module = "dev.forkhandles:values4k", version.ref = "forkhandles" }
-javax-activation = { module = "javax.activation:activation", version = "1.1" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-databind", version = "" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "" }
+jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version = "" }
+jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "" }
+javax-activation = { module = "com.sun.activation:jakarta.activation", version = "" }
 jaxb-api = { module = "javax.xml.bind:jaxb-api", version = "2.3.0" }
-jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version = "2.3.7" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-extensions-spring = { module = "io.kotest.extensions:kotest-extensions-spring", version = "1.1.2" }
 kotest-extensions-testcontainers = { module = "io.kotest.extensions:kotest-extensions-testcontainers", version = "1.3.4" }
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+liquibase = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
+postgres-driver = { module = "org.postgresql:postgresql", version = "" }
 spring-boot-starter-neo4j-migrations = { module = "eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter", version = "1.16.1" }
-spring-mockk = { module = "com.ninja-squad:springmockk", version = "4.0.2" }
+spring-mockk = { module = "com.ninja-squad:springmockk", version = "" }
 spring-restdocs = { module = "org.springframework.restdocs:spring-restdocs-mockmvc", version = "" } # Provided by Spring
 testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
@@ -41,7 +46,7 @@ testcontainers-neo4j = { module = "org.testcontainers:neo4j", version.ref = "tes
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 
 [bundles]
-jaxb = ["javax-activation", "jaxb-api", "jaxb-runtime"]
+jaxb = ["javax-activation", "jaxb-api"]
 kotest = ["kotest-runner", "kotest-assertions-core", "kotest-property", "kotest-extensions-spring", "kotest-extensions-testcontainers", "kotest-framework-datatest"]
 testcontainers = ["testcontainers-core", "testcontainers-junit5", "testcontainers-postgresql", "testcontainers-neo4j"]
 

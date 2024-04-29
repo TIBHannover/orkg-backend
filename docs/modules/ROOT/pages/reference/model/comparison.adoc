@@ -1,0 +1,62 @@
+= Comparison Model Diagram
+
+[mermaid,width=100%]
+----
+flowchart LR
+    Comparison --> |"description"| description[Literal \n xsd:string]
+    Comparison --> |"hasSubject"| subject[ResearchField \n Resource]
+    Comparison --> |"P26 \n has DOI"| doi[Literal \n xsd:string]
+    subgraph Publication Info
+        monthPublished
+        yearPublished
+        publishedIn
+        url
+    end
+    Comparison --> |"P28 \n month published"| monthPublished[Literal \n xsd:integer]
+    Comparison --> |"P29 \n year published"| yearPublished[Literal \n xsd:integer]
+    Comparison --> |"HAS_VENUE"| publishedIn[Venue \n Resource]
+    Comparison --> |"url"| url[Literal \n xsd:anyURI]
+    Comparison --> |"hasAuthors"| authorList[List \n Resource]
+    subgraph Author List
+        authorList --> |"hasListElement"| Author
+		subgraph Author
+			subgraph Literal Author
+				literalAuthor[Literal \n xsd:string]
+			end
+			subgraph Resource Author
+				resourceAuthor[Author \n Resource] --> |"website"| resourceAuthorWebsite[Literal \n xsd:anyURI]
+				resourceAuthor --> |"HAS_ORCID"| orcid[Literal \n xsd:string]
+				resourceAuthor --> |"googleScholarID"| googleScholarID[Literal \n xsd:string]
+				resourceAuthor --> |"researchGateID"| researchGateID[Literal \n xsd:string]
+				resourceAuthor --> |"linkedInID"| linkedInID[Literal \n xsd:string]
+				resourceAuthor --> |"P76020 \n wikidata id"| wikidataId[Literal \n xsd:string]
+				resourceAuthor --> |"P58083 \n web of science id"| webOfScienceId[Literal \n xsd:string]
+				subgraph Identifiers
+					orcid
+					googleScholarID
+					researchGateID
+					linkedInID
+					wikidataId
+					webOfScienceId
+				end
+			end
+		end
+    end
+    Comparison --> |"compareContribution"| Contribution
+    Contribution[Contribution \n Resource] --> |"Any"| Any
+    Comparison --> |"hasVisualization"| visualization[Visualization \n Resource]
+    Comparison --> |"RelatedFigure"| relatedFigure[ComparisonRelatedFigure \n Resource]
+    subgraph Related Figure
+        relatedFigure --> |"Image"| relatedFigureImage[Literal \n xsd:string]
+        relatedFigure --> |"description"| relatedFigureDescription[Literal \n xsd:string]
+    end
+    Comparison --> |"RelatedResource"| relatedResource[ComparisonRelatedResource \n Resource]
+    subgraph Related Resource
+        relatedResource --> |"Image"| relatedResourceImage[Literal \n xsd:string]
+        relatedResource --> |"description"| relatedFigureImageDescription[Literal \n xsd:string]
+        relatedResource --> |"url"| relatedFigureImageUrl[Literal \n xsd:string]
+    end
+	Comparison --> |"reference"| reference[Literal \n xsd:string]
+	Comparison --> |"IsAnonymized"| isAnonymized[Literal \n xsd:boolean]
+	Comparison --> |"sustainableDevelopmentGoal"| sdg[SustainableDevelopmentGoal \n Resource]
+----

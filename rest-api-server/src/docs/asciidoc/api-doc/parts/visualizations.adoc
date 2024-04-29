@@ -23,6 +23,16 @@ operation::visualizations-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-NOTE: Only one request parameter can be used at a time.
+NOTE: Not all request parameters can be used in combination with others.
+      Only `visibility`, `research_field` and optionally `include_subfields` can be used together.
 
 operation::visualizations-get-paged[snippets='request-parameters']
+
+[[visualizations-create]]
+== Creating visualizations
+
+A `POST` request creates a new visualization with all the given parameters.
+The response will be `201 Created` when successful.
+The visualization (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::visualizations-create[snippets='request-fields,curl-request,http-response']

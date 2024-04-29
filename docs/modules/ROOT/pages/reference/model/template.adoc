@@ -1,0 +1,43 @@
+= Template Model Diagram
+
+[mermaid,width=100%]
+----
+flowchart LR
+    Template[NodeShape \n Resource] --> |"description"| description[Literal \n xsd:string]
+    Template --> |"TemplateLabelFormat"| formattedLabel[Literal \n xsd:string]
+	Template --> |"sh:targetClass"| targetClass[Class]
+	Template --> |"TemplateOfResearchField"| researchField[ResearchField \n Resource]
+	Template --> |"TemplateOfResearchProblem"| problem[Problem \n Resource]
+	Template --> |"TemplateOfPredicate"| predicate[Predicate]
+	subgraph Relations
+		researchField
+		problem
+		predicate
+	end
+	Template --> |"sh:property"| TemplateProperty
+	subgraph TemplateProperty[Template Property]
+        Property[PropertyShape \n Resource] --> |"sh:order"| order[Literal \n xsd:integer]
+        Property --> |"sh:minCount"| minCount[Literal \n xsd:integer]
+        Property --> |"sh:maxCount"| maxCount[Literal \n xsd:integer]
+        Property --> |"sh:path"| path[Predicate]
+        Property --> |"sh:class"| klass
+        Property --> |"sh:pattern"| pattern
+        Property --> |"sh:datatype"| datatype
+        Property --> |"sh:minInclusive"| minInclusive
+        Property --> |"sh:maxInclusive"| maxInclusive
+		subgraph Resource Property
+            klass[Class]
+		end
+		subgraph Literal Property
+            datatype[Class]
+            subgraph String Property
+			    pattern[Literal \n xsd:string]
+            end
+            subgraph Number Property
+			    minInclusive[Literal \n xsd:integer/xsd:float/xsd:decimal]
+			    maxInclusive[Literal \n xsd:integer/xsd:float/xsd:decimal]
+            end
+		end
+	end
+	Template --> |"sh:closed"| closed[Literal \n xsd:boolean]
+----

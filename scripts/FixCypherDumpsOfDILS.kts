@@ -1,6 +1,6 @@
 #!/usr/bin/env kscript
 
-import java.io.*
+import java.io.File
 
 interface CypherStatement {
     fun toCypher(): String

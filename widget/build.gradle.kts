@@ -1,17 +1,14 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.spring-restdocs-producer")
-    alias(libs.plugins.spring.boot) apply false
-    kotlin("plugin.spring")
+    id("org.orkg.gradle.input-adapter-spring-web")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
-    implementation(project(":common:exceptions"))
-    implementation(project(":graph:graph-application"))
+    implementation(project(":common"))
+    implementation(project(":common:serialization"))
+    implementation(project(":graph:graph-core-model"))
+    implementation(project(":graph:graph-ports-input"))
 
     implementation("org.springframework:spring-context")
     implementation("com.fasterxml.jackson.core:jackson-databind")
@@ -23,15 +20,13 @@ dependencies {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
-                implementation(testFixtures(project(":testing:kotest")))
-                implementation(testFixtures(project(":graph:graph-application")))
+                implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(libs.kotest.runner)
                 implementation(libs.spring.mockk)
                 implementation(libs.kotest.framework.datatest)
 
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // because of ExceptionHandler
                 implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
                 implementation("org.springframework.boot:spring-boot-starter-web")
                 implementation("org.springframework.boot:spring-boot-starter-test") {

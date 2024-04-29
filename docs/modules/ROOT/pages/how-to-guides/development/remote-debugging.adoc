@@ -1,0 +1,30 @@
+= How to debug remotely
+
+When using the Docker container to run the API locally, it is possible to debug the code by attaching a debugger via the Java Debug Interface (JDI), which is part of the https://docs.oracle.com/javase/8/docs/technotes/guides/jpda/[Java Platform Debugger Architecture (JPDA)].
+
+You can use any IDE or tool to connect to port `9999` on `localhost` to start a debugging session.
+If you are using IntelliJ IDEA, you will find a predefined run configuration named "Debug remotely" that is set up already.
+Breakpoints can be defined before or during a debug session, as necessary.
+After calling the endpoint you would like to test, the program will halt at the first breakpoint reached in the code path.
+
+== Debugging testing systems
+
+NOTE: This section is specific to TIB, and may be ignored by everyone not having direct access to the deployment servers.
+
+For all testing servers, remote debugging is also exposed, although on port `8002`.
+To start a debugging session, you first need to establish a SSH tunnel to the testing server.
+If you work remotely, this needs to be tunneled through the jump host.
+Configuring the tunnel may look like this:
+
+[source,sh]
+----
+ssh -J tib-jumphost -L 9999:localhost:8002 orkg-incubating
+----
+
+This will tunnel through the jump host, and bind port 8002 on incubating to the local port 9999.
+The run configuration mentioned above will work exactly the same.
+
+NOTE: The hostnames `tib-jumphost` and `orkg-incubating` are locally defined hostnames and serve as an example for creating the tunnel.
+To obtain the real hostnames involved, please check the internal documentation or talk to the development directly.
+
+In case you need to have a local Docker container running at the same time, you may bind to another local port and adjust the run configuration accordingly.

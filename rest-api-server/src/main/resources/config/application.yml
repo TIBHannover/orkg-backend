@@ -1,7 +1,4 @@
 spring:
-  # Get rid of "org.postgresql.jdbc.PgConnection.createClob() not implemented" error, see
-  # https://hibernate.atlassian.net/browse/HHH-12368
-  jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
   data.web.pageable.max-page-size: 2500
   rdf:
     # Vocab prefix not used, still hard coded
@@ -14,12 +11,22 @@ coffee-boots:
   cache:
     basic-spec: maximumSize=5000,expireAfterAccess=10m,recordStats
 orkg:
-  rdf:
-    dump:
+  export:
+    rdf:
       # cron schedule for the rdf-dump
       # use "-" to disable
       schedule: "-"
       file-name: rdf-export-orkg.nt
+    unpublished-comparisons:
+      # cron schedule for the unpublished comparisons export
+      # use "-" to disable
+      schedule: "-"
+      file-name: comparisons.jsonl
+    predicate-id-to-label:
+      # cron schedule for the predicate id to label export
+      # use "-" to disable
+      schedule: "-"
+      file-name: predicate-ids_to_label.json
   ranking:
     papers:
       # cron schedule for paper-ranking
@@ -27,6 +34,7 @@ orkg:
       schedule: "-"
       workers: 10
       chunk-size: 1000
+      log-file: 'paper-ranking.log'
   init:
     setup:
       entities-file: "data/required_entities.json"
@@ -40,6 +48,8 @@ orkg:
     base-url:
       paper: "http://localhost/paper/"
       comparison: "http://localhost/comparison/"
+  simcomp:
+    host: "https://orkg.org/simcomp"
 keycloak:
   realm: orkg-dev
   auth-server-url: http://localhost:8888
@@ -50,8 +60,8 @@ keycloak:
   use-resource-role-mappings: true
   security-constraints:
     - auth-roles:
-       - admin
-       - user
+        - admin
+        - user
       security-collections:
         - name: insecure stuff
           patterns:
@@ -90,11 +100,12 @@ hawtio:
   authenticationEnabled: false
 ---
 spring:
-  profiles: development
-  data:
-    neo4j:
-      uri: 'bolt://localhost:7687'
-      #auto-index: validate
+  config:
+    activate:
+      on-profile:
+        - development
+  neo4j:
+    uri: 'bolt://localhost:7687'
   datasource:
     url: 'jdbc:postgresql://localhost/postgres'
     username: postgres

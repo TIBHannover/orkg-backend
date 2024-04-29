@@ -1,15 +1,10 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.spring-restdocs-producer")
-    id("org.orkg.neo4j-conventions")
-    alias(libs.plugins.spring.boot) apply false
-    kotlin("plugin.spring")
+    id("org.orkg.gradle.input-adapter-spring-web")
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -27,11 +22,9 @@ testing {
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
-    implementation(project(":common:exceptions"))
-    implementation(project(":licenses:licenses-application"))
-    implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // TODO: break dependency
+    implementation(project(":common"))
+    implementation(project(":licenses:licenses-ports-input"))
+    implementation(project(":licenses:licenses-core-model"))
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.data:spring-data-commons")

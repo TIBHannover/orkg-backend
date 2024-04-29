@@ -3,23 +3,25 @@
 
 
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.neo4j-conventions")
+    id("org.orkg.gradle.kotlin-library")
+}
+
+dependencies {
+    api(project(":common"))
+    api(project(":graph:graph-core-model"))
+    api(project(":graph:graph-ports-output"))
+
+    api("org.springframework.data:spring-data-commons")
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
-                implementation(testFixtures(project(":graph:graph-application")))
+                implementation(testFixtures(project(":graph:graph-ports-output")))
+                implementation("io.kotest:kotest-framework-api")
+                runtimeOnly(libs.kotest.runner)
             }
         }
     }
-}
-
-dependencies {
-    implementation(project(":graph:graph-application"))
-    implementation("org.springframework.data:spring-data-commons")
-    implementation(libs.forkhandles.values4k)
 }

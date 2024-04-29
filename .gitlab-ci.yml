@@ -50,7 +50,7 @@ build:
   artifacts:
     when: always
     paths:
-      - rest-api-server/build/reports/
+      - '**/build/reports/'
       - rest-api-server/build/libs/rest-api-server-*.jar
     reports:
       junit: rest-api-server/build/test-results/**/TEST-*.xml
@@ -85,6 +85,7 @@ dummy-doc-build:
 
 # Deploy documentation to GitLab Pages.
 pages:
+  resource_group: gitlab-pages
   extends: .build-documentation
   only:
     - master

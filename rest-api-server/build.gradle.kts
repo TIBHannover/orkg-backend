@@ -1,53 +1,50 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
-import org.orkg.gradle.withSnippets
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
-group = "eu.tib"
-version = "0.38.0"
+version = "0.55.0"
 
 val springSecurityOAuthVersion = "2.5.2"
-
-val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
-val dockerImageTag: String? by project
 
 // Support downloading JavaDoc artifacts by enabling it via Gradle properties
 val downloadJavadoc: String? by project
 
+fun withSnippets(path: String): Map<String, String> = mapOf("path" to path, "configuration" to "restdocs")
+
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("org.orkg.neo4j-conventions")
-    kotlin("kapt")
-    kotlin("plugin.spring")
-    kotlin("plugin.jpa")
+    id("org.orkg.gradle.spring-boot-application")
     id("idea")
     id("jacoco-report-aggregation")
-    alias(libs.plugins.spring.boot)
+    id("org.orkg.gradle.asciidoctor")
+    id("org.orkg.gradle.docker-image")
 
-    id("org.jetbrains.dokka") version "0.10.1"
-    id("org.asciidoctor.jvm.convert") version "3.3.2"
-    id("org.asciidoctor.jvm.gems") version "3.3.2"
-    id("com.google.cloud.tools.jib") version "3.1.1"
     // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
     // It was used only occasionally for debugging, and can be re-enabled again later (if needed).
     // id("org.barfuin.gradle.taskinfo") version "1.2.0"
     id("com.diffplug.spotless")
 }
 
-allOpen {
-    annotation("javax.persistence.Entity")
-    annotation("javax.persistence.MappedSuperclass")
-    annotation("javax.persistence.Embeddable")
-}
-
-val restdocs by configurations.creating {
+val restdocs: Configuration by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
 
-val asciidoctor by configurations.creating
+val liquibase: Configuration by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+val neo4jMigrations: Configuration by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+val runtimeClasspath by configurations.getting {
+    extendsFrom(liquibase)
+    extendsFrom(neo4jMigrations)
+}
 
 idea {
     module {
@@ -58,10 +55,7 @@ idea {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
             dependencies {
-                implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-application")))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -76,15 +70,29 @@ testing {
         }
         val integrationTest by registering(JvmTestSuite::class) {
             testType.set(TestSuiteType.INTEGRATION_TEST)
-            useJUnitJupiter()
             dependencies {
                 implementation(project())
+                implementation(project(":common"))
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-application")))
-                implementation(project(":identity-management:idm-application"))
+                implementation(project(":migrations:liquibase"))
+                implementation(project(":migrations:neo4j-migrations"))
+                implementation(project(":graph:graph-core-model"))
+                implementation(project(":graph:graph-core-services"))
+                implementation(project(":graph:graph-ports-input"))
+                implementation(project(":graph:graph-ports-output"))
+                implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
+                implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
+                implementation(project(":content-types:content-types-ports-input"))
+                implementation(project(":content-types:content-types-ports-output"))
+                implementation(project(":identity-management:idm-ports-input"))
+                implementation(project(":identity-management:idm-ports-output"))
+                implementation(project(":identity-management:idm-core-model"))
                 implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter
-                implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
-                implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
+                implementation(project(":community:community-core-model"))
+                implementation(project(":community:community-ports-input"))
+                implementation(project(":community:community-ports-output")) // for CuratorRepository
+                implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
+                implementation(project(":media-storage:media-storage-core-model"))
                 implementation(project(":feature-flags:feature-flags-ports"))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
@@ -101,9 +109,7 @@ testing {
                 implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
                     exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
                 }
-                implementation(libs.spring.boot.starter.neo4j.migrations)
-                implementation("org.keycloak:keycloak-admin-client:22.0.3")
-                implementation("io.rest-assured:rest-assured") // for Keycloak tests
+                implementation(libs.kotest.assertions.core)
             }
             targets {
                 all {
@@ -127,35 +133,82 @@ val jar by tasks.getting(Jar::class) {
 }
 
 dependencies {
-    // Platform alignment for ORKG components
-    api(platform(project(":platform")))
     testApi(enforcedPlatform(libs.junit5.bom))
-    "integrationTestApi"(platform(project(":platform")))
     "integrationTestApi"(enforcedPlatform(libs.junit5.bom))
 
-    kapt(platform(project(":platform")))
+    kapt(platform("org.orkg:platform"))
 
     // Upgrade for security reasons. Can be removed after Spring upgrade.
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
 
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
-    implementation(project(":common:exceptions"))
-    compileOnly(project(":identity-management:idm-application")) // only ports used, replace later
-    runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))
-    runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
-    implementation(project(":graph:graph-application"))
-    implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
+    implementation(project(":common"))
+    implementation(project(":common:serialization"))
+
+    runtimeOnly(project(":community:community-adapter-input-rest-spring-mvc"))
+    implementation(project(":community:community-ports-input"))
+    implementation(project(":community:community-core-model"))
+    runtimeOnly(project(":community:community-core-services"))
+    implementation(project(":community:community-ports-output"))
+    runtimeOnly(project(":community:community-adapter-output-spring-data-jpa"))
+
+    implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
+    implementation(project(":content-types:content-types-adapter-output-simcomp"))
+    implementation(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
+    implementation(project(":content-types:content-types-adapter-output-web"))
+    implementation(project(":content-types:content-types-core-model"))
+    implementation(project(":content-types:content-types-core-services"))
+    implementation(project(":content-types:content-types-ports-input"))
+    implementation(project(":content-types:content-types-ports-output"))
+
+    implementation(project(":data-export:data-export-adapters"))
+    implementation(project(":data-export:data-export-core"))
+    implementation(project(":data-export:data-export-ports-input"))
+
+    runtimeOnly(project(":discussions:discussions-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":discussions:discussions-core-services"))
+    runtimeOnly(project(":discussions:discussions-adapter-output-spring-data-jpa"))
+
+    implementation(project(":feature-flags:feature-flags-ports")) // for cache warmup
+    runtimeOnly(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
+
+    runtimeOnly(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
-    implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
-    implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
-    implementation(project(":feature-flags:feature-flags-ports"))
-    implementation(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
-    implementation(project(":rdf-export:rdf-export-application"))
-    implementation(project(":rdf-export:rdf-export-adapter-input-rest-spring-mvc"))
-    implementation(project(":licenses:licenses-application"))
-    implementation(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
-    implementation(project(":licenses:licenses-adapter-output-spring"))
-    implementation(project(":widget"))
+    implementation(project(":graph:graph-core-model"))
+    implementation(project(":graph:graph-core-services"))
+    implementation(project(":graph:graph-ports-input"))
+    implementation(project(":graph:graph-ports-output"))
+
+    implementation(project(":identity-management:idm-ports-input")) // for PostgresDummyDataSetup
+    runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))
+    runtimeOnly(project(":identity-management:idm-core-services"))
+    runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
+
+    runtimeOnly(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":licenses:licenses-core-services"))
+
+    runtimeOnly(project(":statistics:statistics-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":statistics:statistics-adapter-output-spring-data-neo4j-sdn6"))
+    runtimeOnly(project(":statistics:statistics-core-services"))
+
+    implementation(project(":media-storage:media-storage-adapter-input-serialization"))
+    implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
+    implementation(project(":media-storage:media-storage-core-model"))
+    implementation(project(":media-storage:media-storage-ports-input"))
+    implementation(project(":media-storage:media-storage-ports-output"))
+    implementation(project(":media-storage:media-storage-core-services"))
+
+    runtimeOnly(project(":profiling:profiling-adapter-output"))
+    runtimeOnly(project(":profiling:profiling-adapter-output-spring-data-neo4j-sdn6"))
+    runtimeOnly(project(":profiling:profiling-core-model"))
+    runtimeOnly(project(":profiling:profiling-core-services"))
+    runtimeOnly(project(":profiling:profiling-ports-output"))
+
+    runtimeOnly(project(":widget"))
+
+    // Migrations
+    liquibase(project(mapOf("path" to ":migrations:liquibase", "configuration" to "liquibase")))
+    neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
 
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)
@@ -164,15 +217,13 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
-    implementation("org.postgresql:postgresql")
-    implementation("org.liquibase:liquibase-core")
+    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly(libs.liquibase)
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
         exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
     }
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
-    implementation("org.keycloak:keycloak-spring-boot-starter")
-    implementation(platform("org.keycloak.bom:keycloak-adapter-bom:21.1.1"))
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-cache")
@@ -181,16 +232,10 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
     implementation(libs.bundles.jaxb)
+    implementation(libs.javax.activation)
     implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations
     // File uploads
     implementation("commons-fileupload:commons-fileupload:1.5")
-    // RDF
-    implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
-        exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
-    }
-    implementation("io.github.config4k:config4k:0.4.2") {
-        because("Required for parsing the essential entity configuration")
-    }
     // Caching
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("org.springframework.boot:spring-boot-starter-cache")
@@ -205,15 +250,20 @@ dependencies {
     // Testing
     //
     // Note: Version Catalogs are not yet supported in the test suites plugin
-    "integrationTestImplementation"(libs.bundles.testcontainers)
-    "integrationTestImplementation"(libs.bundles.kotest)
+    "integrationTestRuntimeOnly"(libs.bundles.testcontainers)
+    "integrationTestRuntimeOnly"(libs.bundles.kotest)
+    "integrationTestApi"("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
     //
     // Documentation
     //
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
+    restdocs(project(withSnippets(":common")))
     restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
-    restdocs(project(withSnippets(":rdf-export:rdf-export-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":data-export:data-export-adapters")))
     restdocs(project(withSnippets(":licenses:licenses-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":content-types:content-types-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":community:community-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":statistics:statistics-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":widget")))
 }
 
@@ -254,6 +304,17 @@ tasks {
         finalizedBy("bootRun")
     }
 
+    register("profileNeo4jRepositories").configure {
+        group = "profiling"
+        description = "Profiles neo4j repositories."
+        doFirst {
+            named<BootRun>("bootRun").configure {
+                args("--spring.profiles.active=development,profileRepositories,profileNeo4jRepositories")
+            }
+        }
+        finalizedBy("bootRun")
+    }
+
     register("runListMigrations").configure {
         group = "migration"
         description = "Migrates the current database to use list entities."
@@ -263,13 +324,6 @@ tasks {
             }
         }
         finalizedBy("bootRun")
-    }
-
-    named("dokka", org.jetbrains.dokka.gradle.DokkaTask::class).configure {
-        outputFormat = "html"
-        configuration {
-            includes = listOf("packages.md")
-        }
     }
 
     withType<JacocoReport>().configureEach {
@@ -361,30 +415,6 @@ tasks {
                 include("references/*.adoc")
             }
         )
-    }
-}
-
-jib {
-    from.image = "gcr.io/distroless/java17"
-    to {
-        image = containerRegistryLocation
-    }
-}
-
-spotless {
-    kotlin {
-        ktlint().userData(
-            // TODO: This should be moved to .editorconfig once the Gradle plug-in supports that.
-            mapOf(
-                "ij_kotlin_code_style_defaults" to "KOTLIN_OFFICIAL",
-                // Disable some rules to keep the changes minimal
-                "disabled_rules" to "no-wildcard-imports,filename,import-ordering,indent",
-                "ij_kotlin_imports_layout" to "*,^",
-            )
-        )
-    }
-    kotlinGradle {
-        ktlint()
     }
 }
 

@@ -6,6 +6,378 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.55.0] - 2024-04-24
+### Added
+- Added content-type endpoints for creating and updating literature lists and literature list sections.
+  (See: [!884](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/884),
+        [!885](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/885),
+        [!886](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/886),
+        [!887](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/887))
+- Added content-type endpoint for creating rosetta-stone templates.
+  (See: [!891](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/891))
+
+### Fixed
+- Template properties created using the template content-type endpoint are now 0-indexed.
+  (See: [!896](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/896))
+- Updating the research field of a comparison or paper now only updates the graph if it has changed.
+  (See: [!897](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/897))
+
+## [0.54.0] - 2024-04-10
+### Added
+- Added generic content-type endpoint that can fetch papers, comparisons, visualizations, templates, literature lists and smart reviews at once.
+  (See: [!869](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/869))
+- Added content-type endpoints for updating comparisons, comparison related resources and comparison related figures.
+  (See: [!863](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/863))
+
+### Changed
+- Aligned template property model with front-end implementation.
+  (See: [!874](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/874))
+- Users can now delete their own predicates, as long as they are not used in any statement.
+  (Closes: [#559](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/559))
+
+### Fixed
+- The template update endpoint no longer returns an error when updating a template with same target class that it is already assigned to.
+  (See: [!875](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/875))
+- The template listing endpoint no longer throws an error when trying to parse malformed templated, instead they are filtered out.
+  (See: [!877](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/877))
+
+## [0.53.0] - 2024-04-02
+### Added
+- Listing templates (content-type) now supports the following additional filtering parameters: `created_at_start`, `created_at_end`, `observatory_id`, `organization_id`, `include_subfields`.
+  (See: [!866](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/866))
+- The following new metrics were added to the `/api/statistics` endpoint:
+  (See: [!868](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/868))
+  - orphan-resource-count
+  - orphan-predicate-count
+  - orphan-literal-count
+  - orphan-class-count
+  - unused-resource-count
+  - unused-predicate-count
+  - unused-literal-count
+  - unused-class-count
+
+### Changed
+- Changed template target class representation to include `label` and `uri`.
+  (See: [!867](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/867),
+        [!871](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/871))
+
+### Fixed
+- It is now possible to create and update templates without a `description` or `formatted_label`.
+  (See: [!870](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/870))
+- It is now possible to create and update templates with a `min_count` and `max_count` of `0`.
+  (See: [!870](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/870))
+- Fixed request parameter documentation for listing comparisons.
+
+### Removed
+- The following endpoints have been removed from the api:
+  (Closes: [#546](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/546))
+  - `/api/classes/Paper/featured/resources/?featured={featured}`
+  - `/api/classes/Paper/resources/?verified={verified}`
+  - `/api/classes/Paper/unlisted/resources/?unlisted={unlisted}`
+  - `/api/classes/{id}/resources`
+  - `/api/comparisons/metadata/featured?featured={featured}`
+  - `/api/comparisons/metadata/featured`
+  - `/api/comparisons/metadata/unlisted?unlisted={unlisted}`
+  - `/api/comparisons/metadata/unlisted`
+  - `/api/contributions/metadata/featured?featured={featured}`
+  - `/api/contributions/metadata/featured`
+  - `/api/contributions/metadata/unlisted?unlisted={unlisted}`
+  - `/api/contributions/metadata/unlisted`
+  - `/api/observatories/{id}/comparisons`
+  - `/api/organizations/{id}/comparisons`
+  - `/api/papers/{id}/metadata/featured`
+  - `/api/papers/{id}/metadata/unlisted`
+  - `/api/papers/{id}/metadata/verified`
+  - `/api/problems/metadata/featured?featured={featured}`
+  - `/api/problems/metadata/unlisted?unlisted={unlisted}`
+  - `/api/problems/{id}/metadata/featured`
+  - `/api/problems/{id}/metadata/unlisted`
+  - `/api/resources/metadata/featured?featured={featured}`
+  - `/api/resources/metadata/featured`
+  - `/api/resources/metadata/unlisted?unlisted={unlisted}`
+  - `/api/resources/metadata/unlisted`
+
+## [0.52.0] - 2024-03-25
+### Added
+- Added a new endpoint to fetch statement counts of papers.
+  (See: [!808](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/808))
+
+### Changed
+- Improved traceability of label constraint violations, when using content type endpoints.
+  (See: [!858](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/858))
+
+### Fixed
+- Fixed optional fields being ignored when updating a template or template property-
+  (See: [!861](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/861))
+- Fixed `is_anonymized` field not being persisted, when using the content-type endpoint for comparisons. 
+  (See: [!862](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/862))
+- All fields of a paper are now validated before the graph is modified, when using the content type endpoint (v2) for papers.
+
+## [0.51.0] - 2024-03-19
+### Added
+- Added content-type endpoints for updating templates and template properties.
+  (See: [!854](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/854))
+- Added content-type endpoints for fetching rosetta-stone templates.
+  (See: [!782](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/782))
+
+### Changed
+- Changed database reload script to force-use docker compose plugin.
+  (Closes: [#548](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/548))
+
+### Fixed
+- Fixed error when trying to delete resources as a curator
+  (Closes: [#552](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/552))
+
+## [0.50.1] - 2024-03-14
+### Fixed
+- Fixed some endpoints unexpectedly returning status 500.
+  (See: [!853](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/853))
+
+## [0.50.0] - 2024-03-13
+### Added
+- Added content-type endpoints for updating template instances.
+  (See: [!762](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/762))
+- Added sustainable development goals field (`sdgs`) to comparison, literature list and smart review content-type representations.
+  (See: [!847](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/847),
+        [!843](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/843),
+        [!845](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/845))
+- Added support for filtering comparisons, literature lists and smart reviews by sustainable development goals field (`sdg`), when using content-type endpoints.
+  (See: [!848](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/848),
+        [!844](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/844),
+        [!846](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/846))
+- The development docker image now provides a way to attach a remote debugger to the rest-api.
+  (See: [!836](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/836))
+- Added local SimComp configuration to docker image.
+  (See: [!817](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/817))
+
+### Fixed
+- Fixed research field endpoints not returning published literature lists and published smart reviews.
+- Fixed publishing of smart reviews.
+  (See: [!851](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/851))
+
+## [0.49.0] - 2024-03-07
+### Added
+- Added content-type endpoints for fetching literature lists.
+  (See: [!767](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/767))
+- Added content-type endpoints for fetching smart reviews.
+  (See: [!816](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/816))
+- Listing comparisons now supports additional filtering parameters in arbitrary combinations: `exact`, `created_at_start`, `created_at_end`, `observatory_id`, `organization_id`.
+  (See: [!819](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/819))
+- It is now possible to assign papers to sustainable development goals.
+  (See: [!830](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/830),
+        [!831](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/831),
+        [!832](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/832))
+- It is now possible to filter papers by sustainable development goals.
+  (See: [!829](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/829))
+- Added support for template property placeholders.
+  (See: [!823](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/823))
+- Added support for template property descriptions.
+  (See: [!824](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/824))
+- It is now possible to define filter configurations for observatories.
+  (See: [!616](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/616))
+- Paper resources can now be fetched using a filter configuration.
+  (See: [!616](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/616))
+- Resources can now be fetched by label and a given base class.
+  (See: [!616](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/616))
+- Added content-type endpoints for fetching template instances.
+  (See: [!758](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/758))
+
+## [0.48.1] - 2024-03-01
+### Fixed
+- Fixed benchmark quality kind class alignment.
+  (See: [!825](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/825))
+
+## [0.48.0] - 2024-02-28
+### Added
+- Added `modifiable` field to papers (read-only).
+  (See: [!806](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/806))
+- Added new statistics endpoints.
+  (See: [!803](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/803))
+- Added new observatory update endpoint.
+  (See: [!812](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/812))
+- Added a new endpoint for fetching statements.
+  (See: [!809](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/809))
+- Added support for assigning sustainable development goals to observatories.
+  (See: [!815](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/815))
+
+### Changed
+- It is now possible to use the field `name` instead of `observatory_name` when creating a new observatory.
+  (See: [!813](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/813))
+- Fields for paper update requests are now only evaluated when they are different to the existing fields of the paper.
+  (See: [!818](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/818))
+
+### Fixed
+- The publication info is now properly validated when creating a paper.
+  (See: [!801](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/801))
+- Fixed benchmark related queries using the wrong quantity kind class.
+  (Closes: [#530](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/530))
+- Fixed startup crash when neo4j database was empty.
+  (See: [!814](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/814))
+
+## [0.47.0] - 2024-02-09
+### Added
+- Added `modifiable` field for classes, predicates, literals, statements and lists (read-only).
+  (See: [!777](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/777),
+        [!786](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/786),
+        [!787](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/787),
+        [!788](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/788),
+        [!789](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/789))
+- Added visibility filter parameter to `/api/classes/{id}/resources` endpoint.
+  (See: [!790](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/790))
+
+### Changed
+- The venue of papers and comparison responses now contains an additional id of the resource.
+  (See: [!772](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/772))
+- Multiple headers are now exposed to browser scripts.
+  (See: [!774](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/774))
+- It is again possible to assign research field R11 (Science) to content-types.
+  (See [!781](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/781))
+
+### Fixed
+- The author list of papers and comparisons is no longer being deleted when updating with `null` author list.
+  (See [!773](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/773))
+- Fixed missing label validation for content-type endpoints.
+  (See: [!776](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/776),
+        [!780](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/780),
+        [!800](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/800))
+
+## [0.46.0] - 2024-01-29
+### Added
+- Added graph model documentation for content-types
+  (See: [!751](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/751))
+
+### Changed
+- Content-type responses now support multiple identifiers per type
+  (See: [!756](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/756))
+
+### Fixed
+- Fixed metadata creation for templates
+  (See: [!761](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/761))
+- Reserved classes can no longer be used in paper and contribution requests
+  (See: [!764](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/764))
+- Fixed comparison endpoints returning status 500
+  (See: [!771](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/771))
+- Fixed paper and comparison endpoints not returning all available data
+
+## [0.45.0] - 2024-01-23
+### Added
+- Added `modifiable` field to resources (read-only).
+  (See: [!757](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/757))
+- Listing papers (content-type) now supports additional filtering parameters in arbitrary combinations: `exact`, `verified`, `created_at_start`, `created_at_end`, `observatory_id`, `organization_id`.
+  (See: [!732](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/732))
+
+### Changed
+- Comparison content-type endpoints now return a full list of previous versions.
+  (Closes: [!537](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/537))
+
+### Fixed
+- It is no longer possible to assign research field "Science" (R11) using content-type endpoints.
+  (Closes: [!538](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/538))
+- It is now possible to assign multiple DOIs to a single resource.
+  (Closes: [!540](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/540))
+- Fixed documentation for visibility field.
+  (See: [!753](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/753))
+
+## [0.44.0] - 2023-12-20
+### Fixed
+- Users can again delete resources which they created.
+  (Closes: [#535](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/535))
+- All container tests are run again.
+  (Closes: [#532](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/532))
+### Added
+- Documentation for all endpoints related to research fields was added.
+  (Closes: [#531](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/531))
+- Author information can be added when publishing a paper or comparison.
+  (See: [!738](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/738))
+
+## [0.43.0] - 2023-12-13
+### Added
+- Added a new endpoint for updating papers.
+  (See: [!716](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/716))
+- Added new endpoints for fetching templates and template properties.
+  (See: [!683](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/683))
+- Added new endpoints for creating templates and template properties.
+  (See: [!684](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/684))
+- Added a new endpoint for creating visualizations.
+  (See: [!677](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/677))
+- The endpoint `/api/resources/` now supports additional filtering parameters (`visibility`, `created_by`, `created_at_start`, `created_at_end`, `observatory_id`, `organization_id`).
+  (Closes [#351](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/351),
+  See: [!694](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/694))
+- Added new metadata field for paper content-type: `unlisted_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+- Added new metadata fields for contribution content-type: `extraction_method`, `created_at`, `created_by`, `unlisted_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+- Added new metadata field for comparison content-type: `unlisted_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+- Added new metadata fields for comparison related resource content-type: `created_at`, `created_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+- Added new metadata fields for comparison related figure content-type: `created_at`, `created_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+- Added new metadata field for visualization content-type: `unlisted_by`.
+  (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
+
+### Changed
+- All endpoints with write access to the graph now require authentication.
+  (See: [!706](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/706),
+  [!709](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/709))
+- The endpoint `/api/resources/` now throws an error when queried with invalid sorting parameters.
+  (See: [!694](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/694))
+
+### Fixed
+- All content-type endpoints now return status `201 CREATED` instead of `204 NO CONTENT`, as per documentation.
+  (See: [!724](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/724))
+- Domain constraints are now properly enforced across all endpoints.
+  (Closes [#524](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/524),
+  See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688),
+  [!713](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/713),
+  [!714](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/714),
+  [!699](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/699))
+- Fixed contributor attribution for publishing endpoints.
+  (See: [!711](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/711))
+- Fixed error responses being empty in some cases.
+  (See: [!704](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/704))
+- Fixed identifiers having no contributor id set when using content-type endpoints.
+  (See: [!721](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/721))
+- Fixed incorrect predicate used when referring a comparison to a research field, using content-type endpoints.
+  (See: [!715](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/715))
+- Fixed missing sorting parameters for `/api/papers/` (legacy).
+  (See: [!703](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/703))
+
+## [0.42.0] - 2023-11-22
+### Added
+- Added new endpoints for creating comparisons
+  (See: [!672](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/672))
+- Added new endpoints for creating comparison related resources and figures
+  (See: [!673](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/673))
+- Predicate ids are now exported to json, along with their label.
+  (See: [!685](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/685))
+
+## [0.41.0] - 2023-11-10
+### Added
+- It is now possible to update the extraction method for resources.
+  (Closes: [#520](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/520))
+### Fixed
+- Fixed `/api/stats/top/contributors` only returning contributions.
+  (Closes: [#517](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/517))
+- Fixed request field name for extraction method not being snake case when updating resources.
+  (Closes: [#520](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/520))
+- Fixed list endpoints returning results for non-list resources
+  (See: [!692](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/692))
+
+## [0.40.0] - 2023-10-19
+### Added
+- It is now possible to filter papers by `visibility`, `research_field` and optionally `include_subfields`
+  (See: [!668](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/668))
+- It is now possible to filter comparisons by `visibility`, `research_field` and optionally `include_subfields`
+  (See: [!669](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/669))
+- It is now possible to filter visualizations by `visibility`, `research_field` and optionally `include_subfields`
+  (See: [!670](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/670))
+
+## [0.39.0] - 2023-10-16
+### Added
+- Added export of unpublished comparisons.
+  (Closes: [#499](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/499))
 ### Fixed
 - The new paper endpoint now creates pre-existing identifiers.
   (Closes: [#509](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/509))
@@ -512,7 +884,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.38.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.55.0...master
+[0.55.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.55.0
+[0.54.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.54.0
+[0.53.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.53.0
+[0.52.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.52.0
+[0.51.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.51.0
+[0.50.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.50.1
+[0.50.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.50.0
+[0.49.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.49.0
+[0.48.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.48.1
+[0.48.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.48.0
+[0.47.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.47.0
+[0.46.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.46.0
+[0.45.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.45.0
+[0.44.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.44.0
+[0.43.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.43.0
+[0.42.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.42.0
+[0.41.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.41.0
+[0.40.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.40.0
+[0.39.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.39.0
 [0.38.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.38.0
 [0.37.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.37.0
 [0.36.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.36.0

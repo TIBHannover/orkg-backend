@@ -7,6 +7,16 @@
 * xref:reference/development/testing.adoc[]
 * xref:reference/development/monitoring.adoc[]
 
+== Model
+
+* xref:reference/model/paper.adoc[Paper]
+* xref:reference/model/comparison.adoc[Comparison]
+* xref:reference/model/visualization.adoc[Visualization]
+* xref:reference/model/literature-list.adoc[Literature-List]
+* xref:reference/model/smart-review.adoc[Smart Review]
+* xref:reference/model/template.adoc[Template]
+* xref:reference/model/rosetta-stone-template.adoc[Rosetta Stone Template]
+
 == Infrastructure
 
 * xref:reference/infrastructure/keycloak.adoc[]

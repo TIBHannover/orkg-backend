@@ -1,12 +1,8 @@
 plugins {
-    id("org.orkg.kotlin-conventions")
-    id("java-test-fixtures")
-    alias(libs.plugins.spotless)
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {
-    api(platform(project(":platform")))
-
-    testFixturesImplementation(libs.kotest.runner)
+    testFixturesApi("io.kotest:kotest-framework-api")
     testFixturesImplementation("org.apache.commons:commons-lang3")
 }

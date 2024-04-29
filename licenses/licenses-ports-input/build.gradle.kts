@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":licenses:licenses-core-model"))
+    api(project(":licenses:licenses-core-model"))
 }

@@ -157,7 +157,7 @@ class PaperService(
             PaperIdentifierCreator(statementService, literalService),
             PaperSDGCreator(statementService),
             PaperAuthorCreator(resourceService, statementService, literalService, listService),
-            PaperResearchFieldCreator(statementService),
+            PaperResearchFieldCreator(literalService, statementService),
             PaperPublicationInfoCreator(resourceService, resourceRepository, statementService, literalService),
             PaperContributionCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )

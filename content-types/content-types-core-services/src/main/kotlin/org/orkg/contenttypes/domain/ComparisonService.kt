@@ -184,7 +184,7 @@ class ComparisonService(
             ComparisonDescriptionCreator(literalService, statementService),
             ComparisonAuthorCreator(resourceService, statementService, literalService, listService),
             ComparisonSDGCreator(statementService),
-            ComparisonResearchFieldCreator(statementService),
+            ComparisonResearchFieldCreator(literalService, statementService),
             ComparisonReferencesCreator(literalService, statementService),
             ComparisonIsAnonymizedCreator(literalService, statementService),
             ComparisonContributionCreator(statementService)

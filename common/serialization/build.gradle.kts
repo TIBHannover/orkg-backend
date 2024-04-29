@@ -6,12 +6,12 @@ dependencies {
     api(project(":common"))
 
     api("com.fasterxml.jackson.core:jackson-core")
+    api("jakarta.validation:jakarta.validation-api")
     api("org.springframework.boot:spring-boot-autoconfigure")
     api("org.springframework:spring-context")
     api(libs.jackson.databind)
     implementation("org.springframework:spring-web")
     implementation(libs.jackson.kotlin)
-    implementation("jakarta.validation:jakarta.validation-api")
 }
 
 testing {

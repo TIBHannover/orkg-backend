@@ -172,7 +172,7 @@ class SpringDataNeo4jResourceAdapter(
                         "extraction_method" to resource.extractionMethod.name,
                         "verified" to resource.verified,
                         "visibility" to resource.visibility.name,
-                        "unlisted_by" to resource.unlistedBy,
+                        "unlisted_by" to resource.unlistedBy?.value?.toString(),
                         "modifiable" to resource.modifiable
                     )
                 )

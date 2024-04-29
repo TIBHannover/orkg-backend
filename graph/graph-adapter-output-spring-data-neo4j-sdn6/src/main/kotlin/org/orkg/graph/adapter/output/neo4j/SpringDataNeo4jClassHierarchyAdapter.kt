@@ -13,9 +13,7 @@ import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
 import org.neo4j.cypherdsl.core.Functions.id
-import org.neo4j.cypherdsl.core.Functions.labels
 import org.neo4j.cypherdsl.core.Functions.size
-import org.neo4j.cypherdsl.core.Predicates.any
 import org.neo4j.cypherdsl.core.Predicates.exists
 import org.orkg.common.ThingId
 import org.orkg.common.neo4jdsl.CypherQueryBuilder
@@ -297,27 +295,23 @@ class SpringDataNeo4jClassHierarchyAdapter(
         pageable: Pageable
     ): Page<Resource> = CypherQueryBuilder(neo4jClient)
         .withCommonQuery {
-            val c = name("c")
-            val ids = name("ids")
             val node = name("node")
+            val nodes = name("nodes")
             val score = name("score")
-            val labels = name("labels")
             match(
-                node("Class").named(c)
-                    .relationshipTo(
-                        node("Class")
-                            .withProperties("id", parameter("baseClass")),
-                        "SUBCLASS_OF"
-                    ).length(0, null)
+                node("Resource").named(node)
+                    .relationshipTo(node("Class"), INSTANCE_OF)
+                    .relationshipTo(node("Class").withProperties("id", parameter("baseClass")), SUBCLASS_OF)
+                    .length(0, null)
             )
-                .with(collect(c.property("id")).`as`(ids))
+                .with(collect(node).`as`(nodes))
                 .call("db.index.fulltext.queryNodes")
                 .withArgs(literalOf<String>("fulltext_idx_for_resource_on_label"), parameter("label"))
                 .yield(node, score)
-                .with(labels(anyNode().named(node)).`as`(labels), node.asExpression(), score)
+                .with(node, score)
                 .where(
                     size(node.property("label")).gte(parameter("minLabelLength"))
-                        .and(any("label").`in`(labels).where(name("label").`in`(ids)))
+                        .and(node.`in`(nodes))
                 )
         }
         .withQuery { commonQuery ->

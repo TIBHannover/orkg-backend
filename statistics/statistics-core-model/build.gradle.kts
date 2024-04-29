@@ -8,10 +8,7 @@ plugins {
 
 dependencies {
     api(project(":common"))
-
-    implementation("org.springframework:spring-context")
     implementation("org.springframework:spring-web")
-    implementation(libs.jackson.databind)
 }
 
 testing {
@@ -19,8 +16,10 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation("io.kotest:kotest-assertions-shared")
-                implementation(libs.spring.mockk)
-                implementation("org.assertj:assertj-core")
+                implementation("io.mockk:mockk-dsl")
+                implementation("io.mockk:mockk-jvm")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation(project(":statistics:statistics-core-model"))
             }
         }
     }

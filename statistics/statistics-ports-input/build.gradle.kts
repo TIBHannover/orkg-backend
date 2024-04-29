@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":statistics:statistics-core-model"))
+    api(project(":statistics:statistics-core-model"))
 }

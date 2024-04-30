@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     api(project(":common")) // for exceptions
+    api("org.springframework:spring-web")
 
     testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
 }

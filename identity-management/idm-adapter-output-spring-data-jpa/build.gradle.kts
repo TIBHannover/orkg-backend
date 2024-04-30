@@ -7,12 +7,21 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":identity-management:idm-ports-output"))
+    api(project(":identity-management:idm-ports-output"))
 
-    implementation("org.springframework:spring-context")
+    api("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    api("jakarta.persistence:jakarta.persistence-api")
+    api("org.springframework.boot:spring-boot-autoconfigure")
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework.data:spring-data-jpa")
+    api("org.springframework.security:spring-security-core")
+    api("org.springframework:spring-tx")
+    api(project(":identity-management:idm-core-model"))
+    implementation(libs.jakarta.validation)
 }
 
 testing {

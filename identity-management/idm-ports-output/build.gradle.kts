@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
+    api("org.springframework.data:spring-data-commons")
     api(project(":identity-management:idm-core-model"))
-
-    implementation("org.springframework.data:spring-data-commons")
 }

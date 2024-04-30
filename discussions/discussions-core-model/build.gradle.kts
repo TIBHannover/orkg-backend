@@ -3,8 +3,6 @@ plugins {
 }
 
 dependencies {
-
-    implementation(project(":common"))
-
+    api(project(":common"))
     implementation("org.springframework:spring-web")
 }

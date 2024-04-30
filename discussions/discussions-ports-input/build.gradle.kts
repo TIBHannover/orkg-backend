@@ -3,18 +3,7 @@ plugins {
 }
 
 dependencies {
+    api("org.springframework.data:spring-data-commons")
+    api(project(":common"))
     api(project(":discussions:discussions-core-model"))
-
-    implementation(project(":common"))
-
-    implementation("org.springframework.data:spring-data-commons")
-    implementation(libs.jackson.core)
-}
-
-testing {
-    suites {
-        val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter()
-        }
-    }
 }

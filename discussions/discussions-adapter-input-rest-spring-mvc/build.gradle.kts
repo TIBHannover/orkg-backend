@@ -9,40 +9,41 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":community:community-core-model")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     // exclude(module = "mockito-core") // TODO: uncomment when migrated to MockK
                 }
-                implementation("org.springframework.security:spring-security-test")
+                implementation("io.mockk:mockk-dsl")
+                implementation("io.mockk:mockk-jvm")
+                implementation("org.hamcrest:hamcrest")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework:spring-beans")
+                implementation("org.springframework:spring-test")
                 implementation(libs.spring.mockk)
-                implementation(libs.spring.restdocs)
-                implementation(libs.forkhandles.fabrikate4k)
+                implementation(project(":common:serialization"))
+                implementation(testFixtures(project(":community:community-core-model")))
+                implementation(testFixtures(project(":testing:spring")))
             }
         }
     }
 }
 
 dependencies {
-    implementation(project(":discussions:discussions-ports-input"))
-
-    implementation(project(":common"))
-    implementation(project(":common:serialization"))
-    implementation(project(":graph:graph-core-model"))
-    implementation(project(":community:community-ports-output"))
+    api("com.fasterxml.jackson.core:jackson-annotations")
+    api("com.fasterxml.jackson.core:jackson-core")
+    api("jakarta.validation:jakarta.validation-api")
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework:spring-context")
+    api("org.springframework:spring-web")
+    api(libs.jackson.databind)
+    api(project(":common"))
+    api(project(":community:community-ports-output"))
+    api(project(":discussions:discussions-core-model"))
+    api(project(":discussions:discussions-ports-input"))
     implementation(project(":community:community-core-model"))
-
-    implementation("org.springframework.data:spring-data-commons")
-    implementation("org.springframework:spring-web")
-    implementation(libs.jackson.databind)
-
-    implementation("jakarta.validation:jakarta.validation-api")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
-
-    implementation(libs.forkhandles.result4k)
-    implementation(libs.forkhandles.values4k)
+    implementation(project(":graph:graph-core-model"))
 
     testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }

@@ -4,16 +4,17 @@ plugins {
 }
 
 dependencies {
+    api("org.springframework.data:spring-data-commons")
+    api(project(":common"))
     api(project(":discussions:discussions-core-model"))
 
-    implementation(project(":common"))
-
-    implementation("org.springframework.data:spring-data-commons")
-
-    testFixturesApi(libs.kotest.runner) {
-        exclude(group = "org.jetbrains.kotlin")
-    }
+    testFixturesApi(libs.kotest.runner)
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(project(":discussions:discussions-core-model"))
     testFixturesImplementation("org.springframework.data:spring-data-commons")
+    testFixturesApi("org.junit.jupiter:junit-jupiter-api")
+    testFixturesImplementation("io.kotest:kotest-assertions-shared")
+    testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    testFixturesImplementation("org.springframework:spring-beans")
+    testFixturesImplementation(libs.kotest.assertions.core)
 }

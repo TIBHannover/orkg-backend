@@ -13,14 +13,24 @@ val implementation: Configuration by configurations.getting {
 }
 
 dependencies {
-    implementation(project(":discussions:discussions-ports-output"))
-
-    implementation(project(":common"))
-
-    implementation("org.springframework:spring-context")
+    api("jakarta.persistence:jakarta.persistence-api")
+    api("org.springframework.boot:spring-boot-autoconfigure")
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework.data:spring-data-jpa")
+    api("org.springframework:spring-context")
+    api(project(":common"))
+    api(project(":discussions:discussions-core-model"))
+    api(project(":discussions:discussions-ports-output"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation(libs.jakarta.validation)
+
+    containerTestApi("org.springframework.boot:spring-boot-test-autoconfigure")
+    containerTestApi("org.springframework:spring-test")
+    containerTestApi(project(":discussions:discussions-ports-output"))
+    containerTestApi(testFixtures(project(":discussions:discussions-ports-output")))
+    containerTestApi(testFixtures(project(":testing:spring")))
 
     liquibase(project(mapOf("path" to ":migrations:liquibase", "configuration" to "liquibase")))
 }
@@ -30,19 +40,17 @@ testing {
         val containerTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project())
-                implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":discussions:discussions-ports-output")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     exclude(module = "mockito-core")
                 }
-                implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-                runtimeOnly(libs.postgres.driver)
-                runtimeOnly(libs.liquibase)
+                implementation("org.springframework:spring-beans")
                 implementation(project(":migrations:liquibase"))
-                implementation("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
+                runtimeOnly("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
+                runtimeOnly(libs.liquibase)
+                runtimeOnly(libs.postgres.driver)
             }
         }
     }

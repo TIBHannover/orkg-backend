@@ -3,27 +3,29 @@ plugins {
 }
 
 dependencies {
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework:spring-context")
+    api(project(":common"))
+    api(project(":community:community-ports-output"))
+    api(project(":discussions:discussions-core-model"))
     api(project(":discussions:discussions-ports-input"))
     api(project(":discussions:discussions-ports-output"))
-
-    implementation(project(":common"))
+    api(project(":graph:graph-ports-output"))
+    implementation(project(":community:community-core-model"))
     implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-ports-output"))
-    implementation(project(":community:community-ports-output"))
-
-    implementation("org.springframework.data:spring-data-commons")
-    implementation("org.springframework:spring-web")
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.mockk:mockk-dsl")
+                implementation("io.mockk:mockk-jvm")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.junit.jupiter:junit-jupiter-params")
                 implementation(testFixtures(project(":community:community-core-model")))
-                implementation(libs.spring.mockk)
-                implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-                implementation(libs.kotest.assertions.core)
+                implementation(testFixtures(project(":graph:graph-core-model")))
             }
         }
     }

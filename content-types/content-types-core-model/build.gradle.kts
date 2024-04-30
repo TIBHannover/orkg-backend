@@ -7,27 +7,30 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation(project(":graph:graph-core-model"))
-
-    implementation("org.springframework.data:spring-data-commons")
-    implementation("org.springframework.boot:spring-boot")
+    api("com.fasterxml.jackson.core:jackson-annotations")
+    api("org.springframework.boot:spring-boot")
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework:spring-context")
+    api(libs.forkhandles.values4k)
+    api(project(":common"))
+    api(project(":graph:graph-core-model"))
     implementation("org.springframework:spring-web")
-    implementation(libs.jackson.core)
-    implementation(libs.forkhandles.values4k)
 
-    testFixturesImplementation(project(":common"))
-    testFixturesImplementation(project(":graph:graph-core-model"))
-    testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
+    testFixturesApi(project(":common"))
+    testFixturesApi(project(":graph:graph-core-model"))
     testFixturesImplementation(libs.forkhandles.values4k)
+    testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("org.assertj:assertj-core")
+                implementation("io.kotest:kotest-assertions-shared")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.junit.jupiter:junit-jupiter-params")
                 implementation(libs.kotest.runner)
+                implementation(project(":content-types:content-types-core-model"))
             }
         }
     }

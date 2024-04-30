@@ -7,15 +7,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":common"))
-    api(project(":community:community-ports-input"))
-    api(project(":content-types:content-types-core-model"))
-    api(project(":feature-flags:feature-flags-ports"))
-    api(project(":graph:graph-ports-input"))
-    api(project(":graph:graph-ports-output")) // for FormattedLabelRepository
-
-    implementation(project(":community:community-core-model"))
-
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-core")
     api("org.springframework.data:spring-data-commons")
@@ -24,14 +15,19 @@ dependencies {
     api("org.springframework:spring-web")
     api(libs.jackson.databind)
     api(libs.jakarta.validation)
+    api(project(":common"))
+    api(project(":community:community-ports-input"))
+    api(project(":content-types:content-types-core-model"))
+    api(project(":feature-flags:feature-flags-ports"))
     api(project(":graph:graph-core-model"))
+    api(project(":graph:graph-ports-input"))
+    api(project(":graph:graph-ports-output")) // for FormattedLabelRepository
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation(libs.forkhandles.result4k)
-    implementation(libs.forkhandles.values4k)
+    implementation(project(":community:community-core-model"))
 
-    testFixturesImplementation(libs.spring.restdocs)
+    testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
 }
 
 testing {

@@ -7,11 +7,10 @@ plugins {
 }
 
 dependencies {
+    api("org.springframework.data:spring-data-commons")
     api(project(":common"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-output"))
-
-    api("org.springframework.data:spring-data-commons")
 }
 
 testing {

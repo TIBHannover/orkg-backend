@@ -3,19 +3,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":common"))
-
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("org.springframework.data:spring-data-commons")
+    api("org.springframework:spring-web")
     api(libs.forkhandles.values4k)
+    api(project(":common"))
     implementation("org.apache.lucene:lucene-queryparser") // Search string parsing
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework.data:spring-data-commons")
-    implementation(libs.jackson.databind) // for JsonProperty
-    // Search string parsing
-    implementation("org.apache.lucene:lucene-queryparser:9.5.0")
-
-    api(libs.forkhandles.values4k)
 
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
     testFixturesApi(libs.forkhandles.fabrikate4k)

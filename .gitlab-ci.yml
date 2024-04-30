@@ -69,9 +69,9 @@ build:
   services: []    # Disable Docker-in-Docker
   script:
     - apt update && apt install --assume-yes graphviz
-    - ./gradlew --build-cache asciidoctor
+    - ./gradlew --build-cache :documentation:asciidoctor
     - mkdir -p public
-    - cp -r rest-api-server/build/docs/asciidoc/* public/
+    - cp -r documentation/build/docs/asciidoc/* public/
   artifacts:
     paths:
       - public

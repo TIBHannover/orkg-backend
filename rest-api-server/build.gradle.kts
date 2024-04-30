@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
@@ -11,24 +10,16 @@ val springSecurityOAuthVersion = "2.5.2"
 // Support downloading JavaDoc artifacts by enabling it via Gradle properties
 val downloadJavadoc: String? by project
 
-fun withSnippets(path: String): Map<String, String> = mapOf("path" to path, "configuration" to "restdocs")
-
 plugins {
     id("org.orkg.gradle.spring-boot-application")
     id("idea")
     id("jacoco-report-aggregation")
-    id("org.orkg.gradle.asciidoctor")
     id("org.orkg.gradle.docker-image")
 
     // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
     // It was used only occasionally for debugging, and can be re-enabled again later (if needed).
     // id("org.barfuin.gradle.taskinfo") version "1.2.0"
     id("com.diffplug.spotless")
-}
-
-val restdocs: Configuration by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
 }
 
 val liquibase: Configuration by configurations.creating {
@@ -205,6 +196,9 @@ dependencies {
 
     runtimeOnly(project(":widget"))
 
+    // TODO: uncomment once test issues are resolved (docs in unit tests only, and idempotent)
+    // runtimeOnly(project(mapOf("path" to ":documentation", "configuration" to "staticFiles")))
+
     // Migrations
     liquibase(project(mapOf("path" to ":migrations:liquibase", "configuration" to "liquibase")))
     neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
@@ -251,18 +245,6 @@ dependencies {
     "integrationTestRuntimeOnly"(libs.bundles.testcontainers)
     "integrationTestRuntimeOnly"(libs.bundles.kotest)
     "integrationTestApi"("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
-    //
-    // Documentation
-    //
-    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
-    restdocs(project(withSnippets(":common")))
-    restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
-    restdocs(project(withSnippets(":data-export:data-export-adapters")))
-    restdocs(project(withSnippets(":licenses:licenses-adapter-input-rest-spring-mvc")))
-    restdocs(project(withSnippets(":content-types:content-types-adapter-input-rest-spring-mvc")))
-    restdocs(project(withSnippets(":community:community-adapter-input-rest-spring-mvc")))
-    restdocs(project(withSnippets(":statistics:statistics-adapter-input-rest-spring-mvc")))
-    restdocs(project(withSnippets(":widget")))
 }
 
 tasks.named("check") {
@@ -329,91 +311,6 @@ tasks {
             html.required.set(true)
         }
     }
-
-    val generatedSnippets = fileTree(layout.buildDirectory.dir("generated-snippets")) {
-        include("**/*.adoc")
-        builtBy(integrationTest)
-    }
-
-    val aggregatedSnippetsDir = layout.buildDirectory.dir("restdocs-snippets")
-
-    val aggregateRestDocsSnippets by registering(Copy::class) {
-        group = "documentation"
-
-        // Explicitly add a dependency on the configuration, because it will not resolve otherwise.
-        dependsOn(restdocs)
-
-        // Obtain the list of ZIP files (and extract them). This only works if the configuration was resolved.
-        restdocs.files.forEach {
-            from(zipTree(it)) {
-                include("**/*.adoc")
-            }
-        }
-        from(generatedSnippets)
-        into(aggregatedSnippetsDir)
-    }
-
-    named("asciidoctor", AsciidoctorTask::class).configure {
-        // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
-        // Other outputs are filtered, because they do not affect the output of this task.
-        val docSources = files(sourceDir).asFileTree.matching { include("**/*.adoc") }
-        inputs.files(docSources, aggregateRestDocsSnippets)
-            .withPathSensitivity(PathSensitivity.RELATIVE)
-            .ignoreEmptyDirectories()
-            .withPropertyName("asciidocFiles")
-
-        configurations("asciidoctor")
-        // TODO: Use {includedir} in documentation, change strategy afterwards
-        baseDirFollowsSourceFile()
-
-        asciidoctorj {
-            modules {
-                diagram.use()
-                diagram.version("2.2.10")
-            }
-            fatalWarnings(missingIncludes())
-
-            // Work-around for JRE 16+, because Java's internal APIs are no longer available due to JPMS.
-            // This should be fixed in the Asciidoctor plugin, but never was.
-            inProcess = org.asciidoctor.gradle.base.process.ProcessMode.JAVA_EXEC
-            forkOptions {
-                jvmArgs(
-                    "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
-                    "--add-opens", "java.base/java.io=ALL-UNNAMED",
-                    "--add-opens", "java.base/java.security=ALL-UNNAMED",
-                )
-            }
-        }
-
-        // outputs.upToDateWhen { false }
-        outputOptions {
-            backends("html5")
-        }
-
-        options(mapOf("doctype" to "book"))
-
-        attributes(
-            mapOf(
-                "source-highlighter" to "rouge",
-                "coderay-linenums-mode" to "table",
-                "toc" to "left",
-                "icons" to "font",
-                "linkattrs" to "true",
-                "encoding" to "utf-8",
-                "snippets" to aggregatedSnippetsDir,
-            )
-        )
-
-        sources(
-            delegateClosureOf<PatternSet> {
-                exclude("parts/**")
-                include("*.adoc")
-                include("api-doc/*.adoc")
-                include("architecture/*.adoc")
-                include("references/*.adoc")
-            }
-        )
-    }
 }
 
 kapt {
@@ -433,4 +330,32 @@ normalization {
         // This only affects build cache key calculation. The file will be included in the build.
         ignore("**/build-info.properties")
     }
+}
+
+// Duplicated configuration because of conflicts with Gradle, and adjustments needed for integration tests
+
+val restdocsSnippetsDir = layout.buildDirectory.dir("generated-snippets")
+
+// Add consumable configuration for RestDocs snippets
+val restdocs: Configuration by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+}
+
+val integrationTest by tasks.getting {
+    outputs.dir(restdocsSnippetsDir).withPropertyName("restdocsSnippetsDirectory")
+}
+
+tasks {
+    register<Zip>("restdocsSnippetsZip") {
+        archiveClassifier.set("restdocs")
+        from(integrationTest.outputs) {
+            include("**/*.adoc")
+        }
+        includeEmptyDirs = false
+    }
+}
+
+artifacts {
+    add("restdocs", tasks.named("restdocsSnippetsZip"))
 }

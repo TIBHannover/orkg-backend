@@ -1,0 +1,38 @@
+= Rosetta Stone Templates
+
+Rosetta Stone Templates represent a collection of concepts in the knowledge graph and can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+They can be used to model the structure of statements following the rosetta stone approach.
+The provided endpoints aggregate these concepts into a rosetta stone template representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[rosetta-stone-templates-fetch]]
+== Fetching a rosetta stone template
+
+A `GET` request provides information about a template.
+
+operation::rosetta-stone-templates-get-single[snippets='curl-request,response-fields']
+
+[[rosetta-stone-templates-list]]
+== Listing rosetta stone templates
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<rosetta-stone-templates-fetch,rosetta stone templates>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::rosetta-stone-templates-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::rosetta-stone-templates-get-paged-with-parameters[snippets='request-parameters']
+
+[[rosetta-stone-templates-create]]
+== Creating rosetta stone templates
+
+A `POST` request creates a new rosetta stone template with all the given parameters.
+The response will be `201 Created` when successful.
+The rosetta stone template (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: A rosetta stone template must have exactly one <<template-properties,template property>> with path `hasSubjectPosition` that has a minimum cardinality of at least one and is not a literal template property.
+      All other properties must have a path of `hasObjectPosition`, one of which must have a minimum cardinality of at least one.
+
+operation::rosetta-stone-templates-create[snippets='request-fields,curl-request,http-response']

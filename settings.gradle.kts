@@ -7,6 +7,7 @@ plugins {
 
 rootProject.name = "orkg-backend"
 
+include("documentation")
 include(
     "common",
     "common:serialization",

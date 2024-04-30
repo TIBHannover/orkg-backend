@@ -156,6 +156,7 @@ internal fun Node.toResource() = Resource(
     organizationId = this["organization_id"].toOrganizationId(),
     extractionMethod = this["extraction_method"].toExtractionMethod(),
     visibility = this["visibility"].toVisibility(),
+    unlistedBy = this["unlisted_by"].toNullableContributorId(),
     verified = this["verified"].asNullableBoolean(),
     modifiable = this["modifiable"].asBoolean()
 )
@@ -173,6 +174,7 @@ internal fun Value.toOffsetDateTime() = OffsetDateTime.parse(asString(), DateTim
 internal fun Value.toURI() = if (isNull) null else URI.create(asString())
 internal fun Value.toStatementId() = StatementId(asString())
 internal fun Value.toContributorId() = if (isNull) ContributorId.UNKNOWN else ContributorId(asString())
+internal fun Value.toNullableContributorId() = if (isNull) null else ContributorId(asString())
 internal fun Value.toObservatoryId() = if (isNull) ObservatoryId.UNKNOWN else ObservatoryId(asString())
 internal fun Value.toOrganizationId() = if (isNull) OrganizationId.UNKNOWN else OrganizationId(asString())
 internal fun Value.toExtractionMethod() = if (isNull) ExtractionMethod.UNKNOWN else ExtractionMethod.valueOf(asString())

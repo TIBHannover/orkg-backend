@@ -56,8 +56,6 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("org.springframework.security:spring-security-test")
-                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     // Disable JUnit 4 (aka Vintage)
                     exclude(group = "junit", module = "junit")
@@ -65,7 +63,10 @@ testing {
                     // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
                     // exclude(module = "mockito-core")
                 }
-                implementation(libs.spring.mockk)
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework:spring-test")
+                implementation(project(":common:serialization"))
             }
         }
         val integrationTest by registering(JvmTestSuite::class) {
@@ -110,6 +111,7 @@ testing {
                     exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
                 }
                 implementation(libs.kotest.assertions.core)
+                implementation(libs.forkhandles.values4k)
             }
             targets {
                 all {
@@ -138,12 +140,9 @@ dependencies {
 
     kapt(platform("org.orkg:platform"))
 
-    // Upgrade for security reasons. Can be removed after Spring upgrade.
-    implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
-
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
     implementation(project(":common"))
-    implementation(project(":common:serialization"))
+    runtimeOnly(project(":common:serialization"))
 
     runtimeOnly(project(":community:community-adapter-input-rest-spring-mvc"))
     implementation(project(":community:community-ports-input"))
@@ -152,18 +151,18 @@ dependencies {
     implementation(project(":community:community-ports-output"))
     runtimeOnly(project(":community:community-adapter-output-spring-data-jpa"))
 
-    implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
     implementation(project(":content-types:content-types-adapter-output-simcomp"))
-    implementation(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
-    implementation(project(":content-types:content-types-adapter-output-web"))
+    runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
+    runtimeOnly(project(":content-types:content-types-adapter-output-web"))
     implementation(project(":content-types:content-types-core-model"))
-    implementation(project(":content-types:content-types-core-services"))
+    runtimeOnly(project(":content-types:content-types-core-services"))
     implementation(project(":content-types:content-types-ports-input"))
-    implementation(project(":content-types:content-types-ports-output"))
+    runtimeOnly(project(":content-types:content-types-ports-output"))
 
-    implementation(project(":data-export:data-export-adapters"))
-    implementation(project(":data-export:data-export-core"))
-    implementation(project(":data-export:data-export-ports-input"))
+    runtimeOnly(project(":data-export:data-export-adapters"))
+    runtimeOnly(project(":data-export:data-export-core"))
+    runtimeOnly(project(":data-export:data-export-ports-input"))
 
     runtimeOnly(project(":discussions:discussions-adapter-input-rest-spring-mvc"))
     runtimeOnly(project(":discussions:discussions-core-services"))
@@ -191,12 +190,12 @@ dependencies {
     runtimeOnly(project(":statistics:statistics-adapter-output-spring-data-neo4j-sdn6"))
     runtimeOnly(project(":statistics:statistics-core-services"))
 
-    implementation(project(":media-storage:media-storage-adapter-input-serialization"))
-    implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
+    runtimeOnly(project(":media-storage:media-storage-adapter-input-serialization"))
+    runtimeOnly(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
     implementation(project(":media-storage:media-storage-core-model"))
-    implementation(project(":media-storage:media-storage-ports-input"))
-    implementation(project(":media-storage:media-storage-ports-output"))
-    implementation(project(":media-storage:media-storage-core-services"))
+    runtimeOnly(project(":media-storage:media-storage-ports-input"))
+    runtimeOnly(project(":media-storage:media-storage-ports-output"))
+    runtimeOnly(project(":media-storage:media-storage-core-services"))
 
     runtimeOnly(project(":profiling:profiling-adapter-output"))
     runtimeOnly(project(":profiling:profiling-adapter-output-spring-data-neo4j-sdn6"))
@@ -211,13 +210,12 @@ dependencies {
     neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
 
     implementation(libs.forkhandles.result4k)
-    implementation(libs.forkhandles.values4k)
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7 or make version-less ???
     runtimeOnly(libs.liquibase)
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
         exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
@@ -237,15 +235,15 @@ dependencies {
     // File uploads
     implementation("commons-fileupload:commons-fileupload:1.5")
     // Caching
-    implementation("com.github.ben-manes.caffeine:caffeine")
-    implementation("org.springframework.boot:spring-boot-starter-cache")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
+    runtimeOnly("com.github.ben-manes.caffeine:caffeine")
     implementation("io.github.stepio.coffee-boots:coffee-boots:3.0.0")
     // Data Faker
     implementation("net.datafaker:datafaker:1.7.0")
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.jolokia:jolokia-core")
-    implementation("io.micrometer:micrometer-registry-jmx")
+    runtimeOnly("org.jolokia:jolokia-core")
+    runtimeOnly("io.micrometer:micrometer-registry-jmx")
     //
     // Testing
     //

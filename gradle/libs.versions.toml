@@ -23,7 +23,7 @@ contractual = { module = "com.redfin:contractual", version = "3.0.0" }
 forkhandles-fabrikate4k = { module = "dev.forkhandles:fabrikate4k", version.ref = "forkhandles" }
 forkhandles-result4k = { module = "dev.forkhandles:result4k", version.ref = "forkhandles" }
 forkhandles-values4k = { module = "dev.forkhandles:values4k", version.ref = "forkhandles" }
-jackson-core = { module = "com.fasterxml.jackson.core:jackson-databind", version = "" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version = "" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "" }
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version = "" }
 jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "" }

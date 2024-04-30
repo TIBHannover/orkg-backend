@@ -2,7 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
-import org.junit.Assume.assumeTrue
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName

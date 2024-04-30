@@ -12,6 +12,7 @@ dependencies {
     // Use the virtual platform defined in the alignment rule to manage Jackson versions
     api(enforcedPlatform("com.fasterxml.jackson:jackson-bom:2.15.3"))
     api(platform("io.kotest:kotest-bom:5.4.0"))
+    api(platform("org.eclipse.rdf4j:rdf4j-bom:3.7.7"))
 
     // Force certain version upgrades
     api("org.springframework.data:spring-data-commons:2.7.16!!")

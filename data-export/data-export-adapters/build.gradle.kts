@@ -13,33 +13,41 @@ testing {
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     exclude(module = "mockito-core")
                 }
-                implementation("org.springframework.security:spring-security-test")
+                implementation("io.mockk:mockk-dsl")
+                implementation("io.mockk:mockk-jvm")
+                implementation("org.hamcrest:hamcrest")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.restdocs:spring-restdocs-core")
+                implementation("org.springframework:spring-test")
                 implementation(libs.spring.mockk)
                 implementation(libs.spring.restdocs)
-                implementation(libs.forkhandles.fabrikate4k)
+                implementation(project(":data-export:data-export-core"))
             }
         }
     }
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation(project(":data-export:data-export-core"))
-    implementation(project(":data-export:data-export-ports-input"))
-    implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-ports-input"))
-    implementation(project(":graph:graph-ports-output"))
-    implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // for representation adapters, TODO: break dependency
-    implementation(project(":feature-flags:feature-flags-ports"))
-
-    implementation("org.springframework:spring-context")
-    implementation("org.springframework.data:spring-data-commons")
+    api("org.springframework.boot:spring-boot")
+    api("org.springframework.data:spring-data-commons")
+    api("org.springframework:spring-context")
+    api("org.springframework:spring-web")
+    api(project(":common"))
+    api(project(":data-export:data-export-ports-input"))
+    api(project(":feature-flags:feature-flags-ports"))
+    api(project(":graph:graph-adapter-input-rest-spring-mvc")) // for representation adapters, TODO: break dependency
+    api(project(":graph:graph-core-model"))
+    api(project(":graph:graph-ports-input"))
+    api(project(":graph:graph-ports-output"))
+    implementation("org.eclipse.rdf4j:rdf4j-model-api")
+    implementation("org.eclipse.rdf4j:rdf4j-rio-api")
+    implementation("org.slf4j:slf4j-api")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
-
-    implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
-        exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
-    }
+    implementation("org.springframework:spring-beans")
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-n3")
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-rdfxml")
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-trig")
 
     testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }

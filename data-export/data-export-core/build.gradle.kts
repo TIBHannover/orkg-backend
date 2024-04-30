@@ -4,35 +4,43 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-ports-output"))
-
-    implementation(project(":content-types:content-types-core-model"))
-    implementation(project(":content-types:content-types-ports-input"))
-    implementation(project(":content-types:content-types-ports-output"))
-    implementation(project(":data-export:data-export-ports-input"))
-
-    implementation("org.springframework:spring-context")
-    implementation("org.springframework:spring-tx")
+    api("org.eclipse.rdf4j:rdf4j-model-api")
+    api("org.springframework:spring-beans")
+    api("org.springframework:spring-context")
+    api(libs.jackson.databind)
+    api(project(":common"))
+    api(project(":content-types:content-types-ports-input"))
+    api(project(":content-types:content-types-ports-output"))
+    api(project(":data-export:data-export-ports-input"))
+    api(project(":graph:graph-core-model"))
+    api(project(":graph:graph-ports-output"))
+    implementation("com.fasterxml.jackson.core:jackson-core")
+    implementation("org.eclipse.rdf4j:rdf4j-model")
+    implementation("org.eclipse.rdf4j:rdf4j-model-vocabulary")
     implementation("org.springframework.data:spring-data-commons")
-    implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
-        exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
-    }
+    implementation(project(":content-types:content-types-core-model"))
 
     testFixturesImplementation(libs.kotest.runner)
+    testFixturesImplementation("io.kotest:kotest-assertions-shared")
 }
 
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(testFixtures(project(":data-export:data-export-core")))
-                implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(testFixtures(project(":content-types:content-types-core-model")))
-                implementation(libs.spring.mockk)
+                implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.kotest:kotest-common")
+                implementation("io.kotest:kotest-framework-api")
+                implementation("io.kotest:kotest-framework-engine")
+                implementation("io.mockk:mockk-dsl")
+                implementation("io.mockk:mockk-jvm")
                 implementation("org.assertj:assertj-core")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation(testFixtures(project(":content-types:content-types-core-model")))
+                implementation(testFixtures(project(":data-export:data-export-core")))
+                implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(testFixtures(project(":testing:spring")))
             }
         }
     }

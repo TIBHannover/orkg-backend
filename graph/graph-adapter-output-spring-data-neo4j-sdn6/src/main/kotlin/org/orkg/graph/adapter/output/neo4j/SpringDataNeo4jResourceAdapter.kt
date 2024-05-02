@@ -17,6 +17,7 @@ import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Functions.coalesce
 import org.neo4j.cypherdsl.core.Functions.collect
+import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.size
 import org.neo4j.cypherdsl.core.Functions.toLower
 import org.orkg.common.ContributorId
@@ -106,7 +107,7 @@ class SpringDataNeo4jResourceAdapter(
                         .with(neo4jResource, c)
                         .where(c.isNotNull) // filter for non-null here because there are no classes available in the repository contract test
                         .create(neo4jResource.relationshipTo(c, INSTANCE_OF).named(created))
-                        .returning(created) // cypher dsl wants something returned
+                        .returning(count(neo4jResource).`as`("add_instance_of_create_subquery")) // always return a value, so the outer query continues execution
                         .build(),
                     neo4jResource
                 )
@@ -137,7 +138,7 @@ class SpringDataNeo4jResourceAdapter(
                         .with(neo4jResource, c)
                         .where(c.isNotNull) // filter for non-null here because there are no classes available in the repository contract test
                         .create(neo4jResource.relationshipTo(c, INSTANCE_OF).named(created))
-                        .returning(created) // cypher dsl wants something returned
+                        .returning(count(neo4jResource).`as`("add_instance_of_update_subquery")) // always return a value, so the outer query continues execution
                         .build(),
                     neo4jResource, classIds
                 )
@@ -147,7 +148,7 @@ class SpringDataNeo4jResourceAdapter(
                         .with(neo4jResource, deleted)
                         .where(c.isNotNull)
                         .delete(deleted)
-                        .returning(deleted) // cypher dsl wants something returned
+                        .returning(count(neo4jResource).`as`("remove_instance_of_update_subquery")) // always return a value, so the outer query continues execution
                         .build(),
                     neo4jResource, classIds
                 )

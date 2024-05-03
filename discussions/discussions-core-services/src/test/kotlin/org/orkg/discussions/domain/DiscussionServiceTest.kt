@@ -16,7 +16,6 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.Unauthorized
-import org.orkg.community.output.AdminRepository
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.discussions.input.CreateDiscussionCommentUseCase
@@ -33,11 +32,10 @@ class DiscussionServiceTest {
     private val repository: DiscussionCommentRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
-    private val adminRepository: AdminRepository = mockk()
     private val fixedTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
     private val staticClock = Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
     private val service =
-        DiscussionService(repository, thingRepository, contributorRepository, adminRepository, staticClock)
+        DiscussionService(repository, thingRepository, contributorRepository, staticClock)
 
     @Test
     fun `given a discussion comment is created, then it gets an id and is saved to the repository`() {
@@ -481,7 +479,6 @@ class DiscussionServiceTest {
         val contributor = createContributor(id = contributorId)
 
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
-        every { adminRepository.hasAdminPriviledges(contributorId) } returns false // should not be required, but is?!
         every { repository.findById(comment.id) } returns Optional.of(comment)
         every { repository.deleteById(comment.id) } returns Unit
 
@@ -493,7 +490,7 @@ class DiscussionServiceTest {
     }
 
     @Test
-    fun `given a discussion comment is deleted, when the user did not author the comment but is an admin, then it returns success`() {
+    fun `given a discussion comment is deleted, when the user did not author the comment but is a curator, then it returns success`() {
         val topic = ThingId("C123")
         val contributorId = ContributorId(UUID.randomUUID())
         val comment = DiscussionComment(
@@ -503,10 +500,9 @@ class DiscussionServiceTest {
             createdBy = ContributorId(UUID.randomUUID()),
             createdAt = OffsetDateTime.now(staticClock),
         )
-        val contributor = createContributor(id = contributorId)
+        val contributor = createContributor(id = contributorId, isCurator = true)
 
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
-        every { adminRepository.hasAdminPriviledges(contributorId) } returns true
         every { repository.findById(comment.id) } returns Optional.of(comment)
         every { repository.deleteById(comment.id) } returns Unit
 

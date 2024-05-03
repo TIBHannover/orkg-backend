@@ -7,7 +7,6 @@ import java.util.regex.Pattern
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.Unauthorized
-import org.orkg.community.output.AdminRepository
 import org.orkg.community.output.ContributorRepository
 import org.orkg.discussions.input.CreateDiscussionCommentUseCase
 import org.orkg.discussions.input.DiscussionUseCases
@@ -27,7 +26,6 @@ class DiscussionService(
     private val repository: DiscussionCommentRepository,
     private val thingRepository: ThingRepository,
     private val contributorRepository: ContributorRepository,
-    private val adminRepository: AdminRepository,
     private val clock: Clock = Clock.systemDefaultZone(),
 ) : DiscussionUseCases {
     override fun create(command: CreateDiscussionCommentUseCase.CreateCommand): DiscussionCommentId {
@@ -58,7 +56,7 @@ class DiscussionService(
         val contributor = contributorRepository.findById(contributorId)
             .orElseThrow { UserNotFound(contributorId.value) }
         repository.findById(id).ifPresent { comment ->
-            if (!comment.isOwnedBy(contributor.id) && !adminRepository.hasAdminPriviledges(contributor.id)) {
+            if (!comment.isOwnedBy(contributor.id) && !contributor.isCurator) {
                 throw Unauthorized()
             }
             repository.deleteById(id)

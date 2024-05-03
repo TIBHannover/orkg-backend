@@ -17,6 +17,7 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.validation.constraints.NotBlank
 import org.orkg.auth.adapter.output.jpa.internal.UserEntity
+import org.orkg.auth.domain.Role
 import org.orkg.auth.domain.User
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -84,4 +85,6 @@ fun User.toContributor() =
         joinedAt = OffsetDateTime.of(this.createdAt, ZoneOffset.UTC),
         organizationId = this.organizationId?.let(::OrganizationId) ?: OrganizationId.UNKNOWN,
         observatoryId = this.observatoryId?.let(::ObservatoryId) ?: ObservatoryId.UNKNOWN,
+        isCurator = (roles intersect setOf(Role.CURATOR, Role.ADMIN)).isNotEmpty(), // FIXME: might need changing when split
+        isAdmin = Role.ADMIN in this.roles,
     )

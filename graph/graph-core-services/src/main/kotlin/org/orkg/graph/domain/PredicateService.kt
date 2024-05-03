@@ -6,7 +6,7 @@ import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.community.output.CuratorRepository
+import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 class PredicateService(
     private val repository: PredicateRepository,
     private val statementRepository: StatementRepository,
-    private val curatorRepository: CuratorRepository,
+    private val contributorRepository: ContributorRepository,
     private val clock: Clock,
 ) : PredicateUseCases {
     @Transactional(readOnly = true)
@@ -66,15 +66,17 @@ class PredicateService(
 
     override fun delete(predicateId: ThingId, contributorId: ContributorId) {
         val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId) }
-
         if (!predicate.modifiable)
             throw PredicateNotModifiable(predicate.id)
 
         if (statementRepository.countPredicateUsage(predicate.id) > 0)
             throw PredicateUsedInStatement(predicate.id)
 
-        if (!predicate.isOwnedBy(contributorId))
-            curatorRepository.findById(contributorId) ?: throw NeitherOwnerNorCurator(contributorId)
+        if (!predicate.isOwnedBy(contributorId)) {
+            val contributor =
+                contributorRepository.findById(contributorId).orElseThrow { ContributorNotFound(contributorId) }
+            if (!contributor.isCurator) throw NeitherOwnerNorCurator(contributorId)
+        }
 
         repository.deleteById(predicate.id)
     }

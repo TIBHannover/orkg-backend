@@ -24,6 +24,8 @@ fun createContributor(
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     organizationId: OrganizationId = OrganizationId.UNKNOWN,
     joinedAt: OffsetDateTime = OffsetDateTime.parse("2023-10-06T10:37:17.055493+01:00"),
+    isCurator: Boolean = false,
+    isAdmin: Boolean = false,
 ): Contributor = Contributor(
     id = id,
     name = name,
@@ -31,6 +33,8 @@ fun createContributor(
     observatoryId = observatoryId,
     organizationId = organizationId,
     email = email,
+    isCurator = isCurator,
+    isAdmin = isAdmin,
 )
 
 fun createOrganization(

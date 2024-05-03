@@ -9,7 +9,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.output.CuratorRepository
+import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -29,7 +29,7 @@ class ResourceService(
     private val statementRepository: StatementRepository,
     private val classRepository: ClassRepository,
     private val classHierarchyRepository: ClassHierarchyRepository,
-    private val curatorRepository: CuratorRepository,
+    private val contributorRepository: ContributorRepository,
     private val clock: Clock,
 ) : ResourceUseCases {
     @Transactional(readOnly = true)
@@ -161,8 +161,11 @@ class ResourceService(
         if (statementRepository.checkIfResourceHasStatements(resource.id))
             throw ResourceUsedInStatement(resource.id)
 
-        if (!resource.isOwnedBy(contributorId))
-            curatorRepository.findById(contributorId) ?: throw NeitherOwnerNorCurator(contributorId)
+        if (!resource.isOwnedBy(contributorId)) {
+            val contributor =
+                contributorRepository.findById(contributorId).orElseThrow { ContributorNotFound(contributorId) }
+            if (!contributor.isCurator) throw NeitherOwnerNorCurator(contributorId)
+        }
 
         repository.deleteById(resource.id)
     }

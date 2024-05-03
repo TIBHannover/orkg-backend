@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.community.output.CuratorRepository
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.UpdatePredicateUseCase
@@ -27,8 +27,8 @@ class PredicateServiceUnitTest {
 
     private val repository: PredicateRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
-    private val curatorRepository: CuratorRepository = mockk()
-    private val service = PredicateService(repository, statementRepository, curatorRepository, fixedClock)
+    private val contributorRepository: ContributorRepository = mockk()
+    private val service = PredicateService(repository, statementRepository, contributorRepository, fixedClock)
 
     @Test
     fun `given a predicate is created, when no id is given, then it gets an id from the repository`() {
@@ -169,7 +169,7 @@ class PredicateServiceUnitTest {
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
         every { statementRepository.countPredicateUsage(predicate.id) } returns 0
-        every { curatorRepository.findById(theOwningContributorId) } returns theOwningContributor
+        every { contributorRepository.findById(theOwningContributorId) } returns Optional.of(theOwningContributor)
         every { repository.deleteById(predicate.id) } returns Unit
 
         service.delete(predicate.id, theOwningContributorId)
@@ -182,12 +182,12 @@ class PredicateServiceUnitTest {
     @Test
     fun `given a predicate is being deleted, when it is not used in a statement, and it is not owned by the user, but the user is a curator, it gets deleted`() {
         val theOwningContributorId = ContributorId(MockUserId.USER)
-        val aCurator = createContributor(id = ContributorId(MockUserId.CURATOR))
+        val aCurator = createContributor(id = ContributorId(MockUserId.CURATOR), isCurator = true)
         val predicate = createPredicate(createdBy = theOwningContributorId)
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
         every { statementRepository.countPredicateUsage(predicate.id) } returns 0
-        every { curatorRepository.findById(aCurator.id) } returns aCurator
+        every { contributorRepository.findById(aCurator.id) } returns Optional.of(aCurator)
         every { repository.deleteById(predicate.id) } returns Unit
 
         service.delete(predicate.id, aCurator.id)
@@ -195,18 +195,19 @@ class PredicateServiceUnitTest {
         verify(exactly = 1) { repository.findById(predicate.id) }
         verify(exactly = 1) { statementRepository.countPredicateUsage(predicate.id) }
         verify(exactly = 1) { repository.deleteById(predicate.id) }
-        verify(exactly = 1) { curatorRepository.findById(aCurator.id) }
+        verify(exactly = 1) { contributorRepository.findById(aCurator.id) }
     }
 
     @Test
     fun `given a predicate is being deleted, when it is not used in a statement, and it is not owned by the user, and the user is not a curator, it throws an exception`() {
         val theOwningContributorId = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
         val loggedInUserId = ContributorId(MockUserId.USER)
+        val loggedInUser = createContributor(id = loggedInUserId)
         val predicate = createPredicate(createdBy = theOwningContributorId)
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
         every { statementRepository.countPredicateUsage(predicate.id) } returns 0
-        every { curatorRepository.findById(loggedInUserId) } returns null
+        every { contributorRepository.findById(loggedInUserId) } returns Optional.of(loggedInUser)
         every { repository.deleteById(predicate.id) } returns Unit
 
         shouldThrow<NeitherOwnerNorCurator> {
@@ -216,7 +217,7 @@ class PredicateServiceUnitTest {
         verify(exactly = 1) { repository.findById(predicate.id) }
         verify(exactly = 1) { statementRepository.countPredicateUsage(predicate.id) }
         verify(exactly = 0) { repository.deleteById(predicate.id) }
-        verify(exactly = 1) { curatorRepository.findById(loggedInUserId) }
+        verify(exactly = 1) { contributorRepository.findById(loggedInUserId) }
     }
 
     @Test

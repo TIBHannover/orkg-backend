@@ -16,7 +16,6 @@ import org.orkg.community.input.ObservatoryFilterUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.community.input.UpdateObservatoryFilterUseCase
-import org.orkg.community.output.AdminRepository
 import org.orkg.graph.domain.ContributorNotFound
 import org.orkg.graph.domain.PredicatePath
 import org.springframework.data.domain.Page
@@ -42,8 +41,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class ObservatoryFilterController(
     private val observatoryService: ObservatoryUseCases,
     private val service: ObservatoryFilterUseCases,
-    private val contributorService: RetrieveContributorUseCase,
-    private val adminRepository: AdminRepository
+    private val contributorService: RetrieveContributorUseCase
 ) : ObservatoryFilterRepresentationAdapter {
     @PostMapping("/{id}/filters", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun create(
@@ -116,7 +114,7 @@ class ObservatoryFilterController(
     private fun authorizeUser(contributorId: ContributorId, observatoryId: ObservatoryId) {
         val user = contributorService.findById(contributorId)
             .orElseThrow { ContributorNotFound(contributorId) }
-        if (user.observatoryId != observatoryId && !adminRepository.hasAdminPriviledges(contributorId)) {
+        if (user.observatoryId != observatoryId && !user.isAdmin) {
             throw Forbidden()
         }
     }

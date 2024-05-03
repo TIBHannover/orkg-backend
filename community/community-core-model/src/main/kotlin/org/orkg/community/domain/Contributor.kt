@@ -50,7 +50,19 @@ data class Contributor(
      * Used to generate the Gravatar image URL.
      */
     @JsonIgnore
-    private val email: String? = null
+    private val email: String? = null,
+
+    /**
+     * Determines if the contributor is a curator.
+     */
+    @JsonIgnore
+    val isCurator: Boolean = false,
+
+    /**
+     * Determines if the contributor is an admin.
+     */
+    @JsonIgnore
+    val isAdmin: Boolean = false,
 ) {
     /**
      * The Gravatar ID of the user, e.g. the hashed email address.

@@ -19,7 +19,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.output.CuratorRepository
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -38,15 +38,15 @@ class ResourceServiceUnitTests {
     private val repository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val classRepository: ClassRepository = mockk()
+    private val contributorRepository: ContributorRepository = mockk()
     private val classHierarchyRepository: ClassHierarchyRepository = mockk()
-    private val curatorRepository: CuratorRepository = mockk()
 
     private val service = ResourceService(
         repository,
         statementRepository,
         classRepository,
         classHierarchyRepository,
-        curatorRepository,
+        contributorRepository,
         fixedClock,
     )
 
@@ -61,7 +61,7 @@ class ResourceServiceUnitTests {
             repository,
             statementRepository,
             classRepository,
-            curatorRepository
+            contributorRepository,
         )
     }
 
@@ -316,12 +316,10 @@ class ResourceServiceUnitTests {
     @Test
     fun `given a resource is being deleted, when it is not used in a statement, and it is owned by the user, it gets deleted`() {
         val theOwningContributorId = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
-        val theOwningContributor = createContributor(id = theOwningContributorId)
         val mockResource = createResource(createdBy = theOwningContributorId)
 
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
         every { statementRepository.checkIfResourceHasStatements(mockResource.id) } returns false
-        every { curatorRepository.findById(theOwningContributorId) } returns theOwningContributor
         every { repository.deleteById(mockResource.id) } returns Unit
 
         service.delete(mockResource.id, theOwningContributorId)
@@ -334,12 +332,12 @@ class ResourceServiceUnitTests {
     @Test
     fun `given a resource is being deleted, when it is not used in a statement, and it is not owned by the user, but the user is a curator, it gets deleted`() {
         val theOwningContributorId = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
-        val aCurator = createContributor(id = ContributorId("645fabd1-9952-41f8-9239-627ee67c1940"))
+        val aCurator = createContributor(id = ContributorId("645fabd1-9952-41f8-9239-627ee67c1940"), isCurator = true)
         val mockResource = createResource(createdBy = theOwningContributorId)
 
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
         every { statementRepository.checkIfResourceHasStatements(mockResource.id) } returns false
-        every { curatorRepository.findById(aCurator.id) } returns aCurator
+        every { contributorRepository.findById(aCurator.id) } returns Optional.of(aCurator)
         every { repository.deleteById(mockResource.id) } returns Unit
 
         service.delete(mockResource.id, aCurator.id)
@@ -347,18 +345,19 @@ class ResourceServiceUnitTests {
         verify(exactly = 1) { repository.findById(mockResource.id) }
         verify(exactly = 1) { statementRepository.checkIfResourceHasStatements(mockResource.id) }
         verify(exactly = 1) { repository.deleteById(mockResource.id) }
-        verify(exactly = 1) { curatorRepository.findById(aCurator.id) }
+        verify(exactly = 1) { contributorRepository.findById(aCurator.id) }
     }
 
     @Test
     fun `given a resource is being deleted, when it is not used in a statement, and it is not owned by the user, and the user is not a curator, it throws an exception`() {
         val theOwningContributorId = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
         val loggedInUserId = ContributorId("89b13df4-22ae-4685-bed0-4bb1f1873c78")
+        val loggedInUser = createContributor(id = loggedInUserId)
         val mockResource = createResource(createdBy = theOwningContributorId)
 
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
         every { statementRepository.checkIfResourceHasStatements(mockResource.id) } returns false
-        every { curatorRepository.findById(loggedInUserId) } returns null
+        every { contributorRepository.findById(loggedInUserId) } returns Optional.of(loggedInUser)
         every { repository.deleteById(mockResource.id) } returns Unit
 
         shouldThrow<NeitherOwnerNorCurator> {
@@ -367,8 +366,8 @@ class ResourceServiceUnitTests {
 
         verify(exactly = 1) { repository.findById(mockResource.id) }
         verify(exactly = 1) { statementRepository.checkIfResourceHasStatements(mockResource.id) }
+        verify(exactly = 1) { contributorRepository.findById(loggedInUserId) }
         verify(exactly = 0) { repository.deleteById(mockResource.id) }
-        verify(exactly = 1) { curatorRepository.findById(loggedInUserId) }
     }
 
     @Test

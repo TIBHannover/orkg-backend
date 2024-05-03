@@ -16,7 +16,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.output.CuratorRepository
+import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceService
 import org.orkg.graph.domain.SearchString
@@ -72,7 +72,7 @@ class CorsTest {
     private lateinit var classHierarchyRepository: ClassHierarchyRepository
 
     @MockkBean
-    private lateinit var curatorRepository: CuratorRepository
+    private lateinit var contributorRepository: ContributorRepository
 
     @BeforeEach
     fun setup() {
@@ -141,7 +141,7 @@ class CorsTest {
             statementRepository,
             classRepository,
             classHierarchyRepository,
-            curatorRepository,
+            contributorRepository,
             fixedClock,
         ) {
             override fun findAll(

@@ -13,7 +13,4 @@ data class User(
     val roles: Set<Role>,
     val organizationId: UUID?,
     val observatoryId: UUID?,
-) {
-    val isCurator: Boolean = Role.CURATOR in roles
-    val isAdmin: Boolean = Role.ADMIN in roles
-}
+)

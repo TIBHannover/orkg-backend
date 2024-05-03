@@ -21,7 +21,6 @@ import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.input.ObservatoryFilterUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.RetrieveContributorUseCase
-import org.orkg.community.output.AdminRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.community.testing.fixtures.createObservatory
 import org.orkg.community.testing.fixtures.createObservatoryFilter
@@ -77,9 +76,6 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
 
     @MockkBean
     private lateinit var contributorService: RetrieveContributorUseCase
-
-    @MockkBean
-    private lateinit var adminRepository: AdminRepository
 
     @MockkBean
     private lateinit var observatoryFilterUseCases: ObservatoryFilterUseCases
@@ -232,14 +228,12 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         )
 
         every { contributorService.findById(any()) } returns Optional.of(user)
-        every { adminRepository.hasAdminPriviledges(user.id) } returns false
 
         delete("/api/observatories/${observatory.id}/filters/$id")
             .perform()
             .andExpect(status().isForbidden)
 
         verify(exactly = 1) { contributorService.findById(any()) }
-        verify(exactly = 1) { adminRepository.hasAdminPriviledges(user.id) }
     }
 
     @Test
@@ -432,7 +426,6 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         )
 
         every { contributorService.findById(any()) } returns Optional.of(user)
-        every { adminRepository.hasAdminPriviledges(user.id) } returns false
 
         post("/api/observatories/${observatory.id}/filters")
             .content(objectMapper.writeValueAsString(command))
@@ -441,7 +434,6 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
             .andExpect(status().isForbidden)
 
         verify(exactly = 1) { contributorService.findById(any()) }
-        verify(exactly = 1) { adminRepository.hasAdminPriviledges(user.id) }
     }
 
     @Test
@@ -621,7 +613,6 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
 
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { contributorService.findById(any()) } returns Optional.of(user)
-        every { adminRepository.hasAdminPriviledges(user.id) } returns false
 
         patch("/api/observatories/${observatory.id}/filters/$id")
             .content(objectMapper.writeValueAsString(command))
@@ -634,7 +625,6 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
         verify(exactly = 1) { contributorService.findById(any()) }
-        verify(exactly = 1) { adminRepository.hasAdminPriviledges(user.id) }
     }
 
     @Test

@@ -8,7 +8,7 @@ import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
-import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyNumberLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyOtherLiteralTemplateProperty
 import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
@@ -79,7 +79,9 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
     @Test
     fun `Given an updated number literal template property, when old template property was of another type, it creates a minInclusive statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty().copy(datatype = ObjectIdAndLabel(Classes.decimal, "Decimal"))
+        val oldProperty = createDummyOtherLiteralTemplateProperty().copy(
+            datatype = ClassReference(Classes.decimal, "Decimal", null)
+        )
         val newProperty = NumberLiteralPropertyDefinition(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,
@@ -203,7 +205,9 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
     @Test
     fun `Given an updated number literal template property, when old template property was of another type, it creates a maxInclusive statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty().copy(datatype = ObjectIdAndLabel(Classes.decimal, "Decimal"))
+        val oldProperty = createDummyOtherLiteralTemplateProperty().copy(
+            datatype = ClassReference(Classes.decimal, "Decimal", null)
+        )
         val newProperty = NumberLiteralPropertyDefinition(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,

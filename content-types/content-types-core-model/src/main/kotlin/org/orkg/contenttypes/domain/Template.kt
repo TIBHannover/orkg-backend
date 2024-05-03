@@ -5,6 +5,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.GeneralStatement
@@ -55,7 +56,9 @@ sealed interface TemplateProperty {
             val minCount = statements.wherePredicate(Predicates.shMinCount).singleOrNull()?.`object`?.label?.toInt()
             val maxCount = statements.wherePredicate(Predicates.shMaxCount).singleOrNull()?.`object`?.label?.toInt()
             val path = statements.wherePredicate(Predicates.shPath).singleOrNull()?.objectIdAndLabel()
-            val datatype = statements.wherePredicate(Predicates.shDatatype).singleOrNull()?.objectIdAndLabel()
+            val datatype = statements.wherePredicate(Predicates.shDatatype).singleOrNull()
+                ?.takeIf { it.`object` is Class }
+                ?.let { ClassReference(it.`object` as Class) }
             val `class` = statements.wherePredicate(Predicates.shClass).singleOrNull()?.objectIdAndLabel()
             return when {
                 order == null || path == null -> null
@@ -185,7 +188,7 @@ data class UntypedTemplateProperty(
 ) : TemplateProperty
 
 sealed interface LiteralTemplateProperty : TemplateProperty {
-    val datatype: ObjectIdAndLabel
+    val datatype: ClassReference
 }
 
 data class NumberLiteralTemplateProperty<out T : Number>(
@@ -201,7 +204,7 @@ data class NumberLiteralTemplateProperty<out T : Number>(
     override val path: ObjectIdAndLabel,
     override val createdBy: ContributorId,
     override val createdAt: OffsetDateTime,
-    override val datatype: ObjectIdAndLabel
+    override val datatype: ClassReference
 ) : LiteralTemplateProperty
 
 data class StringLiteralTemplateProperty(
@@ -215,7 +218,7 @@ data class StringLiteralTemplateProperty(
     override val path: ObjectIdAndLabel,
     override val createdBy: ContributorId,
     override val createdAt: OffsetDateTime,
-    override val datatype: ObjectIdAndLabel,
+    override val datatype: ClassReference,
     val pattern: String?,
 ) : LiteralTemplateProperty
 
@@ -230,7 +233,7 @@ data class OtherLiteralTemplateProperty(
     override val path: ObjectIdAndLabel,
     override val createdBy: ContributorId,
     override val createdAt: OffsetDateTime,
-    override val datatype: ObjectIdAndLabel
+    override val datatype: ClassReference
 ) : LiteralTemplateProperty
 
 data class ResourceTemplateProperty(

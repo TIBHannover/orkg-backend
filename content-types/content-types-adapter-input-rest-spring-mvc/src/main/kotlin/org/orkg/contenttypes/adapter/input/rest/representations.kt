@@ -309,7 +309,7 @@ data class UntypedTemplatePropertyRepresentation(
 ) : TemplatePropertyRepresentation
 
 sealed interface LiteralTemplatePropertyRepresentation : TemplatePropertyRepresentation {
-    val datatype: ObjectIdAndLabel
+    val datatype: ClassReference
 }
 
 data class StringLiteralTemplatePropertyRepresentation(
@@ -324,7 +324,7 @@ data class StringLiteralTemplatePropertyRepresentation(
     override val path: ObjectIdAndLabel,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
-    override val datatype: ObjectIdAndLabel,
+    override val datatype: ClassReference,
 ) : LiteralTemplatePropertyRepresentation
 
 data class NumberLiteralTemplatePropertyRepresentation<T : Number>(
@@ -342,7 +342,7 @@ data class NumberLiteralTemplatePropertyRepresentation<T : Number>(
     override val path: ObjectIdAndLabel,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
-    override val datatype: ObjectIdAndLabel
+    override val datatype: ClassReference
 ) : LiteralTemplatePropertyRepresentation
 
 data class OtherLiteralTemplatePropertyRepresentation(
@@ -356,7 +356,7 @@ data class OtherLiteralTemplatePropertyRepresentation(
     override val path: ObjectIdAndLabel,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
-    override val datatype: ObjectIdAndLabel
+    override val datatype: ClassReference
 ) : LiteralTemplatePropertyRepresentation
 
 data class ResourceTemplatePropertyRepresentation(

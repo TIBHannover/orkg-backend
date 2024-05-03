@@ -557,7 +557,7 @@ class TemplateServiceUnitTests {
                     path = ObjectIdAndLabel(stringLiteralPropertyPath.id, stringLiteralPropertyPath.label),
                     createdBy = stringLiteralProperty.createdBy,
                     createdAt = stringLiteralProperty.createdAt,
-                    datatype = ObjectIdAndLabel(stringLiteralPropertyDatatype.id, stringLiteralPropertyDatatype.label)
+                    datatype = ClassReference(stringLiteralPropertyDatatype)
                 ),
                 NumberLiteralTemplateProperty(
                     id = numberLiteralProperty.id,
@@ -572,7 +572,7 @@ class TemplateServiceUnitTests {
                     path = ObjectIdAndLabel(numberLiteralPropertyPath.id, numberLiteralPropertyPath.label),
                     createdBy = numberLiteralProperty.createdBy,
                     createdAt = numberLiteralProperty.createdAt,
-                    datatype = ObjectIdAndLabel(numberLiteralPropertyDatatype.id, numberLiteralPropertyDatatype.label)
+                    datatype = ClassReference(numberLiteralPropertyDatatype)
                 ),
                 OtherLiteralTemplateProperty(
                     id = otherLiteralProperty.id,
@@ -585,7 +585,7 @@ class TemplateServiceUnitTests {
                     path = ObjectIdAndLabel(otherLiteralPropertyPath.id, otherLiteralPropertyPath.label),
                     createdBy = otherLiteralProperty.createdBy,
                     createdAt = otherLiteralProperty.createdAt,
-                    datatype = ObjectIdAndLabel(otherLiteralPropertyDatatype.id, otherLiteralPropertyDatatype.label)
+                    datatype = ClassReference(otherLiteralPropertyDatatype)
                 ),
                 ResourceTemplateProperty(
                     id = resourceProperty.id,

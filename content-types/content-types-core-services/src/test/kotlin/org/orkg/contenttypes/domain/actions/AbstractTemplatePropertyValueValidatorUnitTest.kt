@@ -5,11 +5,13 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
+import java.net.URI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.MissingPropertyValues
@@ -225,7 +227,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     fun `Given a string literal template property, when literal label does not match the required pattern, it throws an exception`() {
         val property = createDummyStringLiteralTemplateProperty().copy(
             minCount = 0,
-            datatype = ObjectIdAndLabel(Classes.string, "String")
+            datatype = ClassReference(Classes.string, "String", URI.create(Literals.XSD.STRING.uri))
         )
         val id = "L123"
         val `object` = createLiteral(ThingId("L123")).toThingDefinition()
@@ -242,7 +244,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
         val property = createDummyStringLiteralTemplateProperty().copy(
             minCount = 0,
             pattern = """\w+""",
-            datatype = ObjectIdAndLabel(Classes.string, "String")
+            datatype = ClassReference(Classes.string, "String", URI.create(Literals.XSD.STRING.uri))
         )
         val id = "L123"
         val `object` = createLiteral(ThingId("L123"), label = "word").toThingDefinition()
@@ -256,7 +258,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
             minCount = 0,
             minInclusive = 0,
             maxInclusive = 10,
-            datatype = ObjectIdAndLabel(Classes.integer, "Integer")
+            datatype = ClassReference(Classes.integer, "Integer", URI.create(Literals.XSD.INT.uri))
         )
         val id = "#temp1"
         val `object` = LiteralDefinition(
@@ -272,7 +274,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
         val property = createDummyNumberLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = 10,
-            datatype = ObjectIdAndLabel(Classes.integer, "Integer")
+            datatype = ClassReference(Classes.integer, "Integer", URI.create(Literals.XSD.INT.uri))
         )
         val id = "#temp1"
         val `object` = LiteralDefinition(
@@ -312,7 +314,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
             minCount = 0,
             minInclusive = 0.0,
             maxInclusive = 10.0,
-            datatype = ObjectIdAndLabel(Classes.decimal, "Decimal")
+            datatype = ClassReference(Classes.decimal, "Decimal", URI.create(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
         val `object` = LiteralDefinition(
@@ -328,7 +330,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
         val property = createDummyDecimalLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = 10.0,
-            datatype = ObjectIdAndLabel(Classes.decimal, "Decimal")
+            datatype = ClassReference(Classes.decimal, "Decimal", URI.create(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
         val `object` = LiteralDefinition(
@@ -348,7 +350,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
         val property = createDummyDecimalLiteralTemplateProperty().copy(
             minCount = 0,
             maxInclusive = 5.0,
-            datatype = ObjectIdAndLabel(Classes.decimal, "Decimal")
+            datatype = ClassReference(Classes.decimal, "Decimal", URI.create(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
         val `object` = LiteralDefinition(
@@ -369,7 +371,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
             minCount = 0,
             minInclusive = 0.0F,
             maxInclusive = 10.0F,
-            datatype = ObjectIdAndLabel(Classes.float, "Float")
+            datatype = ClassReference(Classes.float, "Float", URI.create(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"
         val `object` = LiteralDefinition(
@@ -385,7 +387,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
         val property = createDummyFloatLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = 10.0F,
-            datatype = ObjectIdAndLabel(Classes.float, "Float")
+            datatype = ClassReference(Classes.float, "Float", URI.create(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"
         val `object` = LiteralDefinition(
@@ -405,7 +407,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
         val property = createDummyFloatLiteralTemplateProperty().copy(
             minCount = 0,
             maxInclusive = 5.0F,
-            datatype = ObjectIdAndLabel(Classes.float, "Float")
+            datatype = ClassReference(Classes.float, "Float", URI.create(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"
         val `object` = LiteralDefinition(
@@ -424,7 +426,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     fun `Given a literal template property, when object label cannot be parsed by data type, it throws an exception`() {
         val property = createDummyOtherLiteralTemplateProperty().copy(
             minCount = 0,
-            datatype = ObjectIdAndLabel(Classes.integer, "Integer")
+            datatype = ClassReference(Classes.integer, "Integer", URI.create(Literals.XSD.INT.uri))
         )
         val id = "#temp1"
         val `object` = LiteralDefinition(

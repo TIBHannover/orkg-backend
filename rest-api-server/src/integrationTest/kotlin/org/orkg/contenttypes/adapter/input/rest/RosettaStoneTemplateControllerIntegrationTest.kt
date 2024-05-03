@@ -4,6 +4,7 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -17,6 +18,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
+import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.createClass
@@ -27,6 +29,7 @@ import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.createUser
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
@@ -119,11 +122,11 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
             Classes.propertyShape,
             Classes.problem,
             Classes.researchField,
-            Classes.string,
-            Classes.integer,
-            Classes.decimal,
-            Classes.float
         ).forEach { classService.createClass(label = it.value, id = it.value) }
+
+        Literals.XSD.entries.forEach {
+            classService.createClass(label = it.`class`.value, id = it.`class`.value, uri = URI.create(it.uri))
+        }
 
         resourceService.createResource(
             id = "R12",
@@ -226,7 +229,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\d+"
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
-                property.datatype shouldBe ObjectIdAndLabel(ThingId("String"), "String")
+                property.datatype shouldBe ClassReference(ThingId("String"), "String", URI.create(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -241,7 +244,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.minInclusive shouldBe -1
                 property.maxInclusive shouldBe 10
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
-                property.datatype shouldBe ObjectIdAndLabel(ThingId("Integer"), "Integer")
+                property.datatype shouldBe ClassReference(ThingId("Integer"), "Integer", URI.create(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -254,7 +257,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
-                property.datatype shouldBe ObjectIdAndLabel(ThingId("C25"), "C25")
+                property.datatype shouldBe ClassReference(ThingId("C25"), "C25", null)
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }

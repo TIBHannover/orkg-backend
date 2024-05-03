@@ -1,16 +1,19 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
+import java.net.URI
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.ResourceTemplateProperty
 import org.orkg.contenttypes.domain.RosettaStoneTemplate
 import org.orkg.contenttypes.domain.StringLiteralTemplateProperty
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 
@@ -63,5 +66,5 @@ fun createDummyStringLiteralObjectPositionTemplateProperty() = StringLiteralTemp
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.hasObjectPosition, "has object position"),
-    datatype = ObjectIdAndLabel(Classes.string, "string literal property class label")
+    datatype = ClassReference(Classes.string, "string literal property class label", URI.create(Literals.XSD.STRING.uri))
 )

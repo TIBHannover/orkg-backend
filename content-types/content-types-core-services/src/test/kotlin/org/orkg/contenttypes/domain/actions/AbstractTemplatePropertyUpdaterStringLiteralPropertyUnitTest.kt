@@ -8,7 +8,7 @@ import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
-import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyOtherLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralTemplateProperty
 import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
@@ -76,7 +76,9 @@ class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : AbstractTem
     @Test
     fun `Given an updated string literal template property, when old template property was of another type, it creates a pattern statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty().copy(datatype = ObjectIdAndLabel(Classes.string, "String"))
+        val oldProperty = createDummyOtherLiteralTemplateProperty().copy(
+            datatype = ClassReference(Classes.string, "String", null)
+        )
         val newProperty = StringLiteralPropertyDefinition(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,

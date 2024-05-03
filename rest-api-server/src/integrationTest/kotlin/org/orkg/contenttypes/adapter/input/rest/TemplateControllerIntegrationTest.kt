@@ -4,6 +4,7 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -36,6 +37,7 @@ import org.orkg.createResource
 import org.orkg.createUser
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
@@ -131,11 +133,11 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             Classes.propertyShape,
             Classes.problem,
             Classes.researchField,
-            Classes.string,
-            Classes.integer,
-            Classes.decimal,
-            Classes.float
         ).forEach { classService.createClass(label = it.value, id = it.value) }
+
+        Literals.XSD.entries.forEach {
+            classService.createClass(label = it.`class`.value, id = it.`class`.value, uri = URI.create(it.uri))
+        }
 
         resourceService.createResource(
             id = "R12",
@@ -231,7 +233,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\d+"
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-                property.datatype shouldBe ObjectIdAndLabel(ThingId("String"), "String")
+                property.datatype shouldBe ClassReference(ThingId("String"), "String", URI.create(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -246,7 +248,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.minInclusive shouldBe -1
                 property.maxInclusive shouldBe 10
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-                property.datatype shouldBe ObjectIdAndLabel(ThingId("Integer"), "Integer")
+                property.datatype shouldBe ClassReference(ThingId("Integer"), "Integer", URI.create(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -259,7 +261,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-                property.datatype shouldBe ObjectIdAndLabel(ThingId("C25"), "C25")
+                property.datatype shouldBe ClassReference(ThingId("C25"), "C25", null)
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -342,7 +344,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\w+"
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-                property.datatype shouldBe ObjectIdAndLabel(ThingId("String"), "String")
+                property.datatype shouldBe ClassReference(ThingId("String"), "String", URI.create(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -355,7 +357,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-                property.datatype shouldBe ObjectIdAndLabel(ThingId("C25"), "C25")
+                property.datatype shouldBe ClassReference(ThingId("C25"), "C25", null)
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -370,7 +372,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.minInclusive shouldBe -5.0
                 property.maxInclusive shouldBe 15.5
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-                property.datatype shouldBe ObjectIdAndLabel(ThingId("Decimal"), "Decimal")
+                property.datatype shouldBe ClassReference(ThingId("Decimal"), "Decimal", URI.create(Literals.XSD.DECIMAL.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -466,7 +468,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.maxCount shouldBe 2
             it.pattern shouldBe "\\d+"
             it.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-            it.datatype shouldBe ObjectIdAndLabel(ThingId("String"), "String")
+            it.datatype shouldBe ClassReference(ThingId("String"), "String", URI.create(Literals.XSD.STRING.uri))
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
         }
@@ -494,7 +496,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.maxCount shouldBe 2
             it.pattern shouldBe "\\w+"
             it.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-            it.datatype shouldBe ObjectIdAndLabel(ThingId("String"), "String")
+            it.datatype shouldBe ClassReference(ThingId("String"), "String", URI.create(Literals.XSD.STRING.uri))
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
         }
@@ -527,7 +529,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.minInclusive shouldBe -1
             it.maxInclusive shouldBe 10
             it.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-            it.datatype shouldBe ObjectIdAndLabel(ThingId("Integer"), "Integer")
+            it.datatype shouldBe ClassReference(ThingId("Integer"), "Integer", URI.create(Literals.XSD.INT.uri))
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
         }
@@ -556,7 +558,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.minInclusive shouldBe -5.0
             it.maxInclusive shouldBe 15.5
             it.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-            it.datatype shouldBe ObjectIdAndLabel(ThingId("Decimal"), "Decimal")
+            it.datatype shouldBe ClassReference(ThingId("Decimal"), "Decimal", URI.create(Literals.XSD.DECIMAL.uri))
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
         }
@@ -587,7 +589,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
             it.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-            it.datatype shouldBe ObjectIdAndLabel(ThingId("C25"), "C25")
+            it.datatype shouldBe ClassReference(ThingId("C25"), "C25", null)
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
         }
@@ -614,7 +616,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
             it.path shouldBe ObjectIdAndLabel(ThingId("description"), "label")
-            it.datatype shouldBe ObjectIdAndLabel(ThingId("C27"), "C27")
+            it.datatype shouldBe ClassReference(ThingId("C27"), "C27", null)
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
         }

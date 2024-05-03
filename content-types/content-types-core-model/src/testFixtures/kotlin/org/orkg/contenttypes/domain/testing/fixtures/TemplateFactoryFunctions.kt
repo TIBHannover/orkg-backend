@@ -17,6 +17,7 @@ import org.orkg.contenttypes.domain.TemplateRelations
 import org.orkg.contenttypes.domain.UntypedTemplateProperty
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 
@@ -81,7 +82,7 @@ fun createDummyStringLiteralTemplateProperty() = StringLiteralTemplateProperty(
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.description, "string literal property path label"),
-    datatype = ObjectIdAndLabel(Classes.string, "string literal property class label")
+    datatype = ClassReference(Classes.string, "string literal property class label", URI.create(Literals.XSD.STRING.uri))
 )
 
 fun createDummyNumberLiteralTemplateProperty() = NumberLiteralTemplateProperty(
@@ -97,7 +98,7 @@ fun createDummyNumberLiteralTemplateProperty() = NumberLiteralTemplateProperty(
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.hasHeadingLevel, "number literal property path label"),
-    datatype = ObjectIdAndLabel(Classes.integer, "number literal property class label")
+    datatype = ClassReference(Classes.integer, "number literal property class label", URI.create(Literals.XSD.INT.uri))
 )
 
 fun createDummyFloatLiteralTemplateProperty() = NumberLiteralTemplateProperty(
@@ -113,7 +114,7 @@ fun createDummyFloatLiteralTemplateProperty() = NumberLiteralTemplateProperty(
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.hasHeadingLevel, "float literal property path label"),
-    datatype = ObjectIdAndLabel(Classes.float, "float literal property class label")
+    datatype = ClassReference(Classes.float, "float literal property class label", URI.create(Literals.XSD.FLOAT.uri))
 )
 
 fun createDummyDecimalLiteralTemplateProperty(): NumberLiteralTemplateProperty<Double> = NumberLiteralTemplateProperty(
@@ -129,7 +130,7 @@ fun createDummyDecimalLiteralTemplateProperty(): NumberLiteralTemplateProperty<D
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.hasHeadingLevel, "decimal literal property path label"),
-    datatype = ObjectIdAndLabel(Classes.decimal, "decimal literal property class label")
+    datatype = ClassReference(Classes.decimal, "decimal literal property class label", URI.create(Literals.XSD.DECIMAL.uri))
 )
 
 fun createDummyOtherLiteralTemplateProperty() = OtherLiteralTemplateProperty(
@@ -143,7 +144,7 @@ fun createDummyOtherLiteralTemplateProperty() = OtherLiteralTemplateProperty(
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.hasWikidataId, "literal property path label"),
-    datatype = ObjectIdAndLabel(Classes.integer, "literal property class label")
+    datatype = ClassReference(Classes.integer, "literal property class label", URI.create(Literals.XSD.INT.uri))
 )
 
 fun createDummyResourceTemplateProperty() = ResourceTemplateProperty(

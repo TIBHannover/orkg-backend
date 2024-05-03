@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added `uri` field to `datatype` of literal template property representations.
+  (See: [!921](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/921))
+
+### Fixed
+- Fixed `unlisted_by` property for resources always being `null` when fetched via statement endpoints.
+  (See: [!916](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/916))
+- Fixed possible status 500 when attempting to write statements containing unlisted resources.
 
 ## [0.55.0] - 2024-04-24
 ### Added

@@ -7,6 +7,26 @@ plugins {
     id("test-report-aggregation")
     id("jacoco-report-aggregation")
     id("org.orkg.gradle.print-coverage")
+
+    id("io.github.janbarari.gradle-analytics-plugin") version "1.0.1"
+}
+
+gradleAnalyticsPlugin {
+    database {
+        local = sqlite {
+            name = "gradle-analytics"
+            path = layout.projectDirectory.asFile.path
+        }
+    }
+    trackingTasks = setOf(
+        // IDEA executes the "root" tasks without the leading colon. If we add those here, it does not record tasks
+        // started from the IDE, although it would be the correct configuration.
+        "assemble",
+        "build",
+        "compileAll",
+        "test",
+    )
+    trackAllBranchesEnabled = true
 }
 
 dependencies {

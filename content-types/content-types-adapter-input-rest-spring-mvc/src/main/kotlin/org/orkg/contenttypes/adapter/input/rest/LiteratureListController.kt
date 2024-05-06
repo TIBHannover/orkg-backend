@@ -191,7 +191,7 @@ class LiteratureListController(
     }
 
     data class UpdateLiteratureListRequest(
-        @field:NotBlank
+        @field:NullableNotBlank
         val title: String?,
         @field:Size(min = 1, max = 1)
         @JsonProperty("research_fields")

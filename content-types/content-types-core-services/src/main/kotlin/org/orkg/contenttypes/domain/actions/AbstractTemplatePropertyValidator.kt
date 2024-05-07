@@ -38,7 +38,7 @@ class AbstractTemplatePropertyValidator(
                 throw InvalidMaxCount(max)
             }
             property.minCount?.let { min ->
-                if (max < min) {
+                if (max in 1 until min) {
                     throw InvalidCardinality(min, max)
                 }
             }

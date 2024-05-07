@@ -110,6 +110,17 @@ class AbstractTemplatePropertyValidatorUnitTest {
     }
 
     @Test
+    fun `Given a template property definition, when max count is zero and min count is more than zero, it returns success`() {
+        val property = dummyCreateUntypedTemplatePropertyCommand().copy(minCount = 1, maxCount = 0)
+
+        every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
+
+        abstractTemplatePropertyValidator.validate(property)
+
+        verify(exactly = 1) { predicateRepository.findById(property.path) }
+    }
+
+    @Test
     fun `Given a template property definition, when path predicate does not exist, it throws an exception`() {
         val property = dummyCreateOtherLiteralTemplatePropertyCommand()
 

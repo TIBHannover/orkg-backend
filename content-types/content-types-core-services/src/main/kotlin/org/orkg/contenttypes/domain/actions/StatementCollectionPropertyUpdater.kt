@@ -109,6 +109,10 @@ class StatementCollectionPropertyUpdater(
             }
         }
 
+        while (statementsIterator.hasNext()) {
+            toRemove += statementsIterator.next().id
+        }
+
         if (toRemove.isNotEmpty()) {
             statementService.delete(toRemove)
         }

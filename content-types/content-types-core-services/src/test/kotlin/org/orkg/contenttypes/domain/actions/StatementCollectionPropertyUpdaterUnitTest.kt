@@ -611,6 +611,35 @@ class StatementCollectionPropertyUpdaterUnitTest {
         }
     }
 
+    @Test
+    fun `Given a list of objects, when new objects are identical to old objects but list is shorter, it removes excessive statements`() {
+        val subjectId = ThingId("R123")
+        val objects = listOf(ThingId("R1"), ThingId("R2"))
+        val excessiveObjectStatements = listOf(ThingId("R3")).toReferenceStatements(subjectId)
+        val oldObjectStatements = objects.toReferenceStatements(subjectId) + excessiveObjectStatements
+        val contributorId = ContributorId(UUID.randomUUID())
+
+        every {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        } returns pageOf(oldObjectStatements)
+        every { statementService.delete(any<Set<StatementId>>()) } just runs
+
+        statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
+
+        verify(exactly = 1) {
+            statementService.findAll(
+                subjectId = subjectId,
+                predicateId = Predicates.reference,
+                pageable = PageRequests.ALL
+            )
+        }
+        verify(exactly = 1) { statementService.delete(excessiveObjectStatements.map { it.id }.toSet()) }
+    }
+
     private fun Collection<ThingId>.toReferenceStatements(subjectId: ThingId): List<GeneralStatement> = mapIndexed { index, id ->
         createStatement(
             id = StatementId("S$id"),

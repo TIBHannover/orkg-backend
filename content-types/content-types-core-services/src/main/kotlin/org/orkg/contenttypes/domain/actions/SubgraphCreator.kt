@@ -98,18 +98,18 @@ class SubgraphCreator(
                     )
                 )
                 lookup[it.key] = predicate
-                if (it.value.description != null) {
-                    val description = literalService.create(
+                it.value.description?.let { description ->
+                    val literal = literalService.create(
                         CreateCommand(
                             contributorId = contributorId,
-                            label = it.value.label
+                            label = description
                         )
                     )
                     statementService.add(
                         userId = contributorId,
                         subject = predicate,
                         predicate = Predicates.description,
-                        `object` = description
+                        `object` = literal
                     )
                 }
             }

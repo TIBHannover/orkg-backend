@@ -280,7 +280,7 @@ class SubgraphCreatorUnitTest {
             literalService.create(
                 CreateCommand(
                     contributorId = contributorId,
-                    label = predicateDefinition.label
+                    label = predicateDefinition.description!!
                 )
             )
         } returns literal
@@ -313,7 +313,7 @@ class SubgraphCreatorUnitTest {
             literalService.create(
                 CreateCommand(
                     contributorId = contributorId,
-                    label = predicateDefinition.label
+                    label = predicateDefinition.description!!
                 )
             )
         }

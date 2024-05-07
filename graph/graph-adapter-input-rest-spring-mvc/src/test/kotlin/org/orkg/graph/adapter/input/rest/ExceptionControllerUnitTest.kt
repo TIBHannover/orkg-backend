@@ -15,6 +15,7 @@ import org.orkg.graph.domain.ClassNotAllowed
 import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.InvalidStatement
 import org.orkg.graph.domain.LiteralNotModifiable
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.NeitherOwnerNorCurator
@@ -256,6 +257,30 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun invalidStatementIsListElement() {
+        get("/invalid-statement-is-list-element")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-statement-is-list-element"))
+            .andExpect(jsonPath("$.message").value("A list element statement cannot be managed using the statements endpoint. Please see the documentation on how to manage lists."))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidStatementRosettaStoneStatementResource() {
+        get("/invalid-statement-rosetta-stone-statement-resource")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-statement-rosetta-stone-statement-resource"))
+            .andExpect(jsonPath("$.message").value("A rosetta stone statement resource cannot be managed using statements endpoint. Please see the documentation on how to manage rosetta stone statements."))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -322,6 +347,16 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/neither-owner-nor-creator-visibility")
         fun neitherOwnerNorCuratorVisibility(@RequestParam id: ThingId) {
             throw NeitherOwnerNorCurator.changeVisibility(id)
+        }
+
+        @GetMapping("/invalid-statement-is-list-element")
+        fun invalidStatementIsListElement() {
+            throw InvalidStatement.isListElementStatement()
+        }
+
+        @GetMapping("/invalid-statement-rosetta-stone-statement-resource")
+        fun invalidStatementRosettaStoneStatementResource() {
+            throw InvalidStatement.includesRosettaStoneStatementResource()
         }
     }
 

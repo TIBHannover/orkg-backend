@@ -21,6 +21,7 @@ import org.orkg.common.ThingId
 import org.orkg.graph.input.UpdateStatementUseCase
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.OwnershipInfo
+import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -35,10 +36,11 @@ class StatementServiceUnitTest : DescribeSpec({
     val statementRepository: StatementRepository = mockk()
     val literalRepository: LiteralRepository = mockk()
     val thingRepository: ThingRepository = mockk()
+    val predicateRepository: PredicateRepository = mockk()
 
     val service = StatementService(
         thingRepository,
-        predicateService = mockk(),
+        predicateRepository,
         statementRepository,
         literalRepository,
         fixedClock,
@@ -46,7 +48,7 @@ class StatementServiceUnitTest : DescribeSpec({
 
     afterEach {
         // Confirm all calls. This is a protection against false-positive test results.
-        confirmVerified(statementRepository, literalRepository)
+        confirmVerified(statementRepository, literalRepository, thingRepository, statementRepository)
     }
 
     context("creating a statement") {
@@ -72,6 +74,33 @@ class StatementServiceUnitTest : DescribeSpec({
                         )
                     }
                 }
+
+                verify(exactly = 1) { thingRepository.findByThingId(listId) }
+            }
+        }
+        context("with a rosetta stone statement as a subject") {
+            it("throws an error") {
+                val subjectId = ThingId("L1")
+
+                every { thingRepository.findByThingId(subjectId) } returns Optional.of(
+                    createResource(
+                        id = subjectId,
+                        classes = setOf(Classes.rosettaStoneStatement)
+                    )
+                )
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<InvalidStatement> {
+                        service.create(
+                            ContributorId(UUID.randomUUID()),
+                            subject = subjectId,
+                            predicate = Predicates.description,
+                            `object` = ThingId("R1")
+                        )
+                    }
+                }
+
+                verify(exactly = 1) { thingRepository.findByThingId(subjectId) }
             }
         }
     }
@@ -99,6 +128,30 @@ class StatementServiceUnitTest : DescribeSpec({
                         )
                     }
                 }
+
+                verify(exactly = 1) { thingRepository.findByThingId(listId) }
+            }
+        }
+        context("with a rosetta stone statement as a subject") {
+            it("throws an error") {
+                val subjectId = ThingId("R123")
+
+                every { thingRepository.findByThingId(subjectId) } returns Optional.of(
+                    createResource(subjectId, classes = setOf(Classes.rosettaStoneStatement))
+                )
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<InvalidStatement> {
+                        service.add(
+                            ContributorId(UUID.randomUUID()),
+                            subject = subjectId,
+                            predicate = Predicates.description,
+                            `object` = ThingId("R1")
+                        )
+                    }
+                }
+
+                verify(exactly = 1) { thingRepository.findByThingId(subjectId) }
             }
         }
     }
@@ -132,7 +185,6 @@ class StatementServiceUnitTest : DescribeSpec({
                 }
 
                 verify(exactly = 1) { statementRepository.findByStatementId(id) }
-                verify(exactly = 0) { statementRepository.save(any()) }
             }
         }
         context("to a list subject and hasListElement as a predicate") {
@@ -166,9 +218,40 @@ class StatementServiceUnitTest : DescribeSpec({
                     }
                 }
 
-                verify(exactly = 1) { statementRepository.findByStatementId(id) }
-                verify(exactly = 1) { thingRepository.findByThingId(listId) }
-                verify(exactly = 0) { statementRepository.save(any()) }
+                verify(exactly = 1) {
+                    statementRepository.findByStatementId(id)
+                    thingRepository.findByThingId(listId)
+                }
+            }
+        }
+        context("with a rosetta stone statement as a subject") {
+            it("throws an error") {
+                val id = StatementId("S1")
+                val fakeStatement = createStatement(id)
+                val subjectId = ThingId("L1")
+
+                every { statementRepository.findByStatementId(id) } returns Optional.of(fakeStatement)
+                every { thingRepository.findByThingId(subjectId) } returns Optional.of(
+                    createResource(subjectId, classes = setOf(Classes.rosettaStoneStatement))
+                )
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<InvalidStatement> {
+                        service.update(
+                            UpdateStatementUseCase.UpdateCommand(
+                                statementId = id,
+                                subjectId = subjectId,
+                                predicateId = Predicates.description,
+                                objectId = ThingId("R1")
+                            )
+                        )
+                    }
+                }
+
+                verify(exactly = 1) {
+                    statementRepository.findByStatementId(id)
+                    thingRepository.findByThingId(subjectId)
+                }
             }
         }
         context("that is non-modifiable") {
@@ -266,7 +349,6 @@ class StatementServiceUnitTest : DescribeSpec({
                 }
 
                 verify(exactly = 1) { statementRepository.findByStatementId(any()) }
-                verify(exactly = 0) { statementRepository.deleteByStatementId(any()) }
             }
         }
         context("with a list as a subject and does not has hasListElement as a predicate") {

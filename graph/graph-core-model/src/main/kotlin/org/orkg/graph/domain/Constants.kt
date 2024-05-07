@@ -9,7 +9,8 @@ val reservedClassIds = setOf(
     Classes.`class`,
     Classes.predicate,
     Classes.resource,
-    Classes.list
+    Classes.list,
+    Classes.rosettaStoneStatement
 )
 
 object Predicates {
@@ -137,6 +138,7 @@ object Classes {
     val resourceSection = ThingId("ResourceSection")
     val results = ThingId("Results")
     val rosettaNodeShape = ThingId("RosettaNodeShape")
+    val rosettaStoneStatement = ThingId("RosettaStoneStatement")
     val scenario = ThingId("Scenario")
     val section = ThingId("Section")
     val smartReview = ThingId("SmartReview")

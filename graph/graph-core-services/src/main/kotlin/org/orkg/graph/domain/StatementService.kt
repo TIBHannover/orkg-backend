@@ -74,8 +74,12 @@ class StatementService(
         val foundSubject = thingRepository.findByThingId(subject)
             .orElseThrow { StatementSubjectNotFound(subject) }
 
-        if (predicate == Predicates.hasListElement && foundSubject is Resource && Classes.list in foundSubject.classes) {
-            throw InvalidStatement.isListElementStatement()
+        if (foundSubject is Resource) {
+            if (Classes.rosettaStoneStatement in foundSubject.classes) {
+                throw InvalidStatement.includesRosettaStoneStatementResource()
+            } else if (predicate == Predicates.hasListElement && Classes.list in foundSubject.classes) {
+                throw InvalidStatement.isListElementStatement()
+            }
         }
 
         val foundPredicate = predicateService.findById(predicate)
@@ -119,8 +123,12 @@ class StatementService(
         val foundSubject = thingRepository.findByThingId(subject)
             .orElseThrow { StatementSubjectNotFound(subject) }
 
-        if (predicate == Predicates.hasListElement && foundSubject is Resource && Classes.list in foundSubject.classes) {
-            throw InvalidStatement.isListElementStatement()
+        if (foundSubject is Resource) {
+            if (Classes.rosettaStoneStatement in foundSubject.classes) {
+                throw InvalidStatement.includesRosettaStoneStatementResource()
+            } else if (predicate == Predicates.hasListElement && Classes.list in foundSubject.classes) {
+                throw InvalidStatement.isListElementStatement()
+            }
         }
 
         val foundPredicate = predicateService.findById(predicate)
@@ -193,10 +201,12 @@ class StatementService(
             val foundSubject = thingRepository.findByThingId(it)
                 .orElseThrow { StatementSubjectNotFound(it) }
 
-            if ((found.predicate.id == Predicates.hasListElement || command.predicateId == Predicates.hasListElement) &&
-                foundSubject is Resource && Classes.list in foundSubject.classes
-            ) {
-                throw InvalidStatement.isListElementStatement()
+            if (foundSubject is Resource) {
+                if (Classes.rosettaStoneStatement in foundSubject.classes) {
+                    throw InvalidStatement.includesRosettaStoneStatementResource()
+                } else if ((found.predicate.id == Predicates.hasListElement || command.predicateId == Predicates.hasListElement) && Classes.list in foundSubject.classes) {
+                    throw InvalidStatement.isListElementStatement()
+                }
             }
             // found = found.copy(subject = foundSubject) // TODO: does this make sense?
         }

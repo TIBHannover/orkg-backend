@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added basic support for generating OpenAPI documentation.
+  (See: [!736](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/736))
+
+### Changed
+- It is no longer possible to create resources with class `RosettaStoneStatement` using the resource endpoints.
+  (See: [!928](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/928))
+- It is no longer possible to use resources with class `RosettaStoneStatement` in the subject position of statements.
+  (See: [!928](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/928))
+
+### Fixed
+- Template properties can now be created with a `max_count` of zero.
+  (See: [!929](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/929))
+- Fixed predicate description creation within content-type requests.
+  (See: [!926](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/926))
+- Updating list section now properly deletes obsolete sections.
+  (Closes: [#563](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/563))
+- Providing a title in literature list update requests is no longer required.
+  (Closes: [#565](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/565))
 
 ## [0.56.0] - 2024-05-03
 ### Added

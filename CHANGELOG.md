@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.57.0] - 2024-05-08
 ### Added
 - Added basic support for generating OpenAPI documentation.
   (See: [!736](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/736))
@@ -913,7 +915,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.56.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.57.0...master
+[0.57.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.57.0
 [0.56.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.56.0
 [0.55.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.55.0
 [0.54.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.54.0

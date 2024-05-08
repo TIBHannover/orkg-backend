@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/widgets/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/widgets", produces = [MediaType.APPLICATION_JSON_VALUE])
 class WidgetController(
     private val resolveDOIUseCase: ResolveDOIUseCase,
 ) {
-    @GetMapping("/")
+    @GetMapping
     fun searchDoi(
         @RequestParam(required = false) doi: String?,
         @RequestParam(required = false) title: String?

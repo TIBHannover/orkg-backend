@@ -1,7 +1,10 @@
+import groovy.lang.Closure
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
+import io.swagger.v3.oas.models.servers.Server
 
 plugins {
     id("org.orkg.gradle.asciidoctor")
+    alias(libs.plugins.restdocs.openapi)
 }
 
 fun withSnippets(path: String): Map<String, String> = mapOf("path" to path, "configuration" to "restdocs")
@@ -36,6 +39,7 @@ val aggregateRestDocsSnippets by tasks.registering(Copy::class) {
     restdocs.files.forEach {
         from(zipTree(it)) {
             include("**/*.adoc")
+            include("**/resource.json") // for OpenAPI documentation
         }
     }
     into(aggregatedSnippetsDir)
@@ -121,3 +125,15 @@ tasks.named("build").configure {
 artifacts {
     add("staticFiles", packageHTML)
 }
+
+openapi3 {
+    snippetsDirectory = layout.buildDirectory.dir("generated-snippets").get().asFile.path
+    // tagDescriptionsPropertiesFile = layout.projectDirectory.file("rest-api/openapi-tags.yaml").asFile.path
+
+    title = "Open Research Knowledge Graph (ORKG) REST API"
+    version = "${project.version}"
+    setServer(serverClosure { url = "http://localhost:8080" })
+}
+
+@Suppress("UNCHECKED_CAST")
+fun serverClosure(action: Server.() -> Unit): Closure<Server> = closureOf(action) as Closure<Server>

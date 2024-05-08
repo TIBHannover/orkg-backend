@@ -15,6 +15,7 @@ tasks {
         archiveClassifier.set("restdocs")
         from(tasks.named("test").get().outputs) {
             include("**/*.adoc")
+            include("**/resource.json") // for OpenAPI documentation
         }
         includeEmptyDirs = false
     }

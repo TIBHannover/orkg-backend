@@ -26,6 +26,7 @@ dependencies {
     testFixturesApi(libs.testcontainers.junit5)
     testFixturesApi(libs.testcontainers.neo4j)
     testFixturesApi(libs.testcontainers.postgresql)
+    testFixturesApi(libs.restdocs.openapi)
     testFixturesImplementation("org.hamcrest:hamcrest:2.2")
     testFixturesImplementation(libs.assertj.core)
     testFixturesImplementation(libs.testcontainers.core)

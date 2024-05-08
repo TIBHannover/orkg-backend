@@ -4,10 +4,11 @@ junit5 = "5.8.2"
 kotest = "5.4.0"
 kotlinx-coroutines = "1.6.4"
 liquibase = "4.20.0"
-testcontainers = "1.17.3"
+restdocs-api-spec = "0.16.4" # Latest supported version for Spring Boot 2.x
 spotless = "6.2.1"
 spring-boot = "2.4.13"
 spring-dependency-management = "1.0.11.RELEASE"
+testcontainers = "1.17.3"
 
 [libraries]
 # BOMs
@@ -36,6 +37,7 @@ kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", ve
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 liquibase = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
+restdocs-openapi = { module = "com.epages:restdocs-api-spec-mockmvc", version.ref = "restdocs-api-spec" }
 postgres-driver = { module = "org.postgresql:postgresql", version = "" }
 spring-boot-starter-neo4j-migrations = { module = "eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter", version = "1.16.1" }
 spring-mockk = { module = "com.ninja-squad:springmockk", version = "" }
@@ -51,5 +53,6 @@ kotest = ["kotest-runner", "kotest-assertions-core", "kotest-property", "kotest-
 testcontainers = ["testcontainers-core", "testcontainers-junit5", "testcontainers-postgresql", "testcontainers-neo4j"]
 
 [plugins]
+restdocs-openapi = { id = "com.epages.restdocs-api-spec", version.ref = "restdocs-api-spec" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

@@ -1,27 +1,28 @@
 package org.orkg.widget.adapter.input.rest
 
+import com.epages.restdocs.apispec.ResourceDocumentation.resource
+import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.hamcrest.Matchers.`is`
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.widget.input.ResolveDOIUseCase
 import org.orkg.graph.testing.asciidoc.Asciidoc
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.widget.input.ResolveDOIUseCase
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -46,7 +47,7 @@ class WidgetControllerUnitTest : RestDocsTest("widget") {
             `class` = "Paper",
         )
 
-        mockMvc.perform(documentedGetRequestTo("/api/widgets/?doi={doi}", EXAMPLE_DOI))
+        mockMvc.perform(documentedGetRequestTo("/api/widgets?doi={doi}", EXAMPLE_DOI))
             .andExpect(status().isOk)
             // Explicitly test all properties of the representation. This works as a serialization test.
             .andExpect(jsonPath("$.id", `is`("R1234")))
@@ -54,22 +55,38 @@ class WidgetControllerUnitTest : RestDocsTest("widget") {
             .andExpect(jsonPath("$.title", `is`("Some very interesting title")))
             .andExpect(jsonPath("$.num_statements", `is`(23)))
             .andDo(
-                documentationHandler.document(
-                    requestParameters(
-                        parameterWithName("doi").description("The DOI of the resource to search."),
-                        parameterWithName("title").description("The title of the resource to search.").optional(),
-                    ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the resource."),
-                        fieldWithPath("doi").description("The DOI of the resource. May be `null` if the resource does not have a DOI."),
-                        fieldWithPath("title").description("The title of the resource."),
-                        fieldWithPath("class").description("The class of the resource. Always one of ${Asciidoc.formatPublishableClasses()}."),
-                        fieldWithPath("num_statements").description("The number of statements connected to the resource if the class is `Paper`, or 0 in all other cases."),
+                document(
+                    identifier,
+                    resource(
+                        ResourceSnippetParameters.builder()
+                            .tag(prefix)
+                            .summary("Obtain basic information for display in the widget")
+                            .description(
+                                """
+                                **NOTE**: This is an **internal API** for the [ORKG widget](https://gitlab.com/TIBHannover/orkg/orkg-frontend/-/blob/master/widget/README.md) and should not be used directly!
+                                
+                                The widget can obtain information for resources with one of the following classes: ${Asciidoc.formatPublishableClasses()}.
+                                All request parameters are mutually exclusive.
+                                """.trimIndent()
+                            )
+                            .requestParameters(
+                                parameterWithName("doi").optional()
+                                    .description("The DOI of the resource to search."),
+                                parameterWithName("title").optional()
+                                    .description("The title of the resource to search."),
+                            )
+                            .responseFields(
+                                // The order here determines the order in the generated table. More relevant items should be up.
+                                fieldWithPath("id").description("The identifier of the resource."),
+                                fieldWithPath("doi").description("The DOI of the resource. May be `null` if the resource does not have a DOI."),
+                                fieldWithPath("title").description("The title of the resource."),
+                                fieldWithPath("class").description("The class of the resource. Always one of ${Asciidoc.formatPublishableClasses()}."),
+                                fieldWithPath("num_statements").description("The number of statements connected to the resource if the class is `Paper`, or 0 in all other cases."),
+                            )
+                            .build()
                     )
                 )
             )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -91,12 +108,12 @@ class WidgetControllerUnitTest : RestDocsTest("widget") {
     }
 
     @Test
-    fun noRequestParameterGivenShouldFail() {
+    @DisplayName("when no request parameter is given, it fails with 400 Bad Request")
+    fun noRequestParameter() {
         // TODO: this is not ideal, as it re-implements service logic.
         every { resolveDOIUseCase.resolveDOI(null, null) } throws MissingParameter.requiresAtLeastOneOf("doi", "title")
 
-        mockMvc.perform(documentedGetRequestTo("/api/widgets/"))
-            .andDo(MockMvcResultHandlers.print())
+        mockMvc.perform(documentedGetRequestTo("/api/widgets"))
             .andExpect(status().isBadRequest)
             .andExpect(
                 jsonPath(

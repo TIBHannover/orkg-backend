@@ -36,6 +36,7 @@ import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -119,7 +120,8 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
         every { classService.create(any()) } returns id
         every { classService.findById(id) } returns createClass(id = id, label = label, uri = uri).toOptional()
 
-        post("/api/classes/", request)
+        post("/api/classes/")
+            .content(request)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .perform()

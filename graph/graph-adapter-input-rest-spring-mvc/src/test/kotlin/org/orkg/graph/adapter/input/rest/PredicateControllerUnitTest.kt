@@ -24,6 +24,7 @@ import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -62,7 +63,8 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
         every { predicateService.create(any()) } returns id
         every { predicateService.findById(id) } returns Optional.of(predicate)
 
-        post("/api/predicates/", request)
+        post("/api/predicates/")
+            .content(request)
             .contentType(APPLICATION_JSON)
             .perform()
             .andExpect(status().isCreated)

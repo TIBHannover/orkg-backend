@@ -3,12 +3,24 @@ package org.orkg.contenttypes.domain
 import java.net.URI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
+import org.orkg.graph.domain.Thing
 
 sealed interface ThingReference {
-    val id: ThingId
+    val id: ThingId?
     val label: String
+
+    companion object {
+        fun from(thing: Thing): ThingReference =
+            when (thing) {
+                is Resource -> ResourceReference(thing)
+                is Class -> ClassReference(thing)
+                is Literal -> LiteralReference(thing)
+                is Predicate -> PredicateReference(thing)
+            }
+    }
 }
 
 data class ResourceReference(
@@ -33,4 +45,13 @@ data class ClassReference(
     val uri: URI?
 ) : ThingReference {
     constructor(`class`: Class) : this(`class`.id, `class`.label, `class`.uri)
+}
+
+data class LiteralReference(
+    override val label: String,
+    val datatype: String
+) : ThingReference {
+    constructor(literal: Literal) : this(literal.label, literal.datatype)
+
+    override val id: ThingId? get() = null
 }

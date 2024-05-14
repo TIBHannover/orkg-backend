@@ -20,6 +20,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.ListSectionRequest
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.TextSectionRequest
 import org.orkg.contenttypes.domain.Author
+import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PredicateReference
@@ -538,3 +539,32 @@ data class SmartReviewTextSectionRepresentation(
     val text: String,
     override val type: String = "text"
 ) : SmartReviewSectionRepresentation
+
+data class RosettaStoneStatementRepresentation(
+    val id: ThingId,
+    @get:JsonProperty("template_id")
+    val templateId: ThingId,
+    @get:JsonProperty("latest_version")
+    val latestVersion: ThingId,
+    @get:JsonProperty("is_latest_version")
+    val isLatestVersion: Boolean,
+    @get:JsonProperty("context")
+    val context: ThingId?,
+    val subjects: List<ThingReference>,
+    val objects: List<List<ThingReference>>,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    val certainty: Certainty,
+    val negated: Boolean,
+    val observatories: List<ObservatoryId>,
+    val organizations: List<OrganizationId>,
+    @get:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
+    val visibility: Visibility,
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("unlisted_by")
+    val unlistedBy: ContributorId?,
+    val modifiable: Boolean
+)

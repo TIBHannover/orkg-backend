@@ -1,0 +1,44 @@
+### Create traveling statement
+POST {{server_url}}/api/rosetta-stone/statements
+Content-Type: application/vnd.orkg.rosetta-stone-statement.v1+json
+Authorization: Bearer {{access_token}}
+
+{
+    "template_id": "{{rosetta_stone_template_id}}",
+    "context": null,
+    "subjects": ["#anna"],
+    "objects": [
+        ["#train"],
+        ["#hanover"],
+        ["R144545"],
+        ["#datetime"]
+    ],
+    "certainty": "HIGH",
+    "negated": false,
+    "resources": {
+        "#anna": {
+            "label": "Anna",
+            "classes": []
+        },
+        "#train": {
+            "label": "train",
+            "classes": []
+        },
+        "#hanover": {
+            "label": "train",
+            "classes": ["DCLocation"]
+        }
+    },
+    "predicates": {},
+    "classes": {},
+    "literals": {
+        "#datetime": {
+            "label": "2023-08-29",
+            "data_type": "xsd:date"
+        }
+    },
+    "lists": {},
+    "observatories": [],
+    "organizations": [],
+    "extraction_method": "MANUAL"
+}

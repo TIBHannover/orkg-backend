@@ -30,6 +30,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -52,6 +53,7 @@ class PaperServiceUnitTests {
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
+    private val classService: ClassUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
@@ -67,6 +69,7 @@ class PaperServiceUnitTests {
         observatoryRepository = observatoryRepository,
         organizationRepository = organizationRepository,
         thingRepository = thingRepository,
+        classService = classService,
         resourceService = resourceService,
         statementService = statementService,
         literalService = literalService,
@@ -91,6 +94,7 @@ class PaperServiceUnitTests {
             observatoryRepository,
             organizationRepository,
             thingRepository,
+            classService,
             resourceService,
             statementService,
             literalService,

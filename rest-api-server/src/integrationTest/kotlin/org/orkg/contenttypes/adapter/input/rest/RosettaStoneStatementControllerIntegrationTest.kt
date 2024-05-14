@@ -1,0 +1,429 @@
+package org.orkg.contenttypes.adapter.input.rest
+
+import io.kotest.assertions.asClue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import java.net.URI
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.orkg.auth.input.AuthUseCase
+import org.orkg.auth.output.UserRepository
+import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
+import org.orkg.common.ThingId
+import org.orkg.community.input.ObservatoryUseCases
+import org.orkg.community.input.OrganizationUseCases
+import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
+import org.orkg.contenttypes.domain.Certainty
+import org.orkg.contenttypes.domain.ClassReference
+import org.orkg.contenttypes.domain.LiteralReference
+import org.orkg.contenttypes.domain.PredicateReference
+import org.orkg.contenttypes.domain.ResourceReference
+import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
+import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
+import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
+import org.orkg.contenttypes.input.ResourcePropertyDefinition
+import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
+import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
+import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
+import org.orkg.contenttypes.input.UntypedPropertyDefinition
+import org.orkg.createClass
+import org.orkg.createClasses
+import org.orkg.createLiteral
+import org.orkg.createObservatory
+import org.orkg.createOrganization
+import org.orkg.createPredicate
+import org.orkg.createResource
+import org.orkg.createUser
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.Literals
+import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Visibility
+import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.ResourceUseCases
+import org.orkg.testing.MockUserDetailsService
+import org.orkg.testing.MockUserId
+import org.orkg.testing.andExpectRosettaStoneStatement
+import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
+import org.springframework.test.web.servlet.RequestBuilder
+import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.transaction.annotation.Transactional
+
+@DisplayName("Rosetta Stone Statement Controller")
+@Transactional
+@Import(value = [MockUserDetailsService::class, ContentTypeJacksonModule::class])
+class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest() {
+
+    @Autowired
+    private lateinit var predicateService: PredicateUseCases
+
+    @Autowired
+    private lateinit var resourceService: ResourceUseCases
+
+    @Autowired
+    private lateinit var classService: ClassUseCases
+
+    @Autowired
+    private lateinit var userService: AuthUseCase
+
+    @Autowired
+    private lateinit var literalService: LiteralUseCases
+
+    @Autowired
+    private lateinit var organizationService: OrganizationUseCases
+
+    @Autowired
+    private lateinit var observatoryService: ObservatoryUseCases
+
+    @Autowired
+    private lateinit var rosettaStoneTemplateService: RosettaStoneTemplateUseCases
+
+    @Autowired
+    private lateinit var rosettaStoneStatementService: RosettaStoneStatementUseCases
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
+    @BeforeEach
+    fun setup() {
+        val tempPageable = PageRequest.of(0, 1)
+
+        cleanup()
+
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        assertThat(classService.findAll(tempPageable)).hasSize(0)
+        assertThat(observatoryService.findAll(tempPageable)).hasSize(0)
+        assertThat(organizationService.listOrganizations()).hasSize(0)
+        assertThat(organizationService.listConferences()).hasSize(0)
+        assertThat(rosettaStoneStatementService.findAll(tempPageable)).hasSize(0)
+
+        listOf(
+            Predicates.description,
+            Predicates.placeholder,
+            Predicates.shClass,
+            Predicates.shClosed,
+            Predicates.shDatatype,
+            Predicates.shMaxCount,
+            Predicates.shMaxInclusive,
+            Predicates.shMinCount,
+            Predicates.shMinInclusive,
+            Predicates.shOrder,
+            Predicates.shPath,
+            Predicates.shPattern,
+            Predicates.shProperty,
+            Predicates.shTargetClass,
+            Predicates.templateLabelFormat,
+            Predicates.hasListElement,
+            Predicates.hasSubjectPosition,
+            Predicates.hasObjectPosition,
+        ).forEach { predicateService.createPredicate(it) }
+
+        setOf(
+            Classes.rosettaNodeShape,
+            Classes.propertyShape,
+            Classes.researchField,
+        ).forEach { classService.createClass(label = it.value, id = it.value) }
+
+        Literals.XSD.entries.forEach {
+            classService.createClass(
+                label = it.`class`.value,
+                id = it.`class`.value,
+                uri = URI.create(it.uri)
+            )
+        }
+
+        resourceService.createResource(
+            id = "R12",
+            label = "Computer Science",
+            classes = setOf(Classes.researchField.value)
+        )
+
+        // Example specific entities
+
+        classService.createClasses("C123", "C28", "C25")
+
+        resourceService.createResource(id = "R789")
+        resourceService.createResource(id = "R174")
+        resourceService.createResource(id = "R258", classes = setOf("C28"))
+        resourceService.createResource(id = "R369", classes = setOf("C28"))
+
+        literalService.createLiteral(id = ThingId("L123"), label = "123456")
+        literalService.createLiteral(id = ThingId("L456"), label = "5", datatype = Literals.XSD.INT.prefixedUri)
+        literalService.createLiteral(id = ThingId("L789"), label = "custom type", datatype = "C25")
+
+        val userId = userService.createUser()
+
+        organizationService.createOrganization(
+            createdBy = ContributorId(userId),
+            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+        )
+
+        observatoryService.createObservatory(
+            organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
+            researchField = ThingId("R12"),
+            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+        )
+    }
+
+    @AfterEach
+    fun cleanup() {
+        predicateService.removeAll()
+        resourceService.removeAll()
+        classService.removeAll()
+        observatoryService.removeAll()
+        organizationService.removeAll()
+        userRepository.deleteAll()
+    }
+
+    @Test
+    @TestWithMockUser
+    fun create() {
+        val rosettaStoneTemplateId = createRosettaStoneTemplate()
+        val id = createRosettaStoneStatement(rosettaStoneTemplateId)
+
+        val rosettaStoneStatement = get("/api/rosetta-stone/statements/{id}", id)
+            .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .contentType(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectRosettaStoneStatement()
+            .andReturn()
+            .response
+            .contentAsString
+            .let { objectMapper.readValue(it, RosettaStoneStatementRepresentation::class.java) }
+
+        rosettaStoneStatement.asClue {
+            it.id shouldBe id
+            it.latestVersion shouldBe id
+            it.isLatestVersion shouldBe true
+            it.templateId shouldBe rosettaStoneTemplateId
+            it.context shouldBe ThingId("R789")
+            it.subjects.asClue { subjects ->
+                subjects.size shouldBe 3
+                subjects[0] shouldBe ResourceReference(ThingId("R258"), "label", setOf(ThingId("C28")))
+                subjects[1] shouldBe ResourceReference(ThingId("R369"), "label", setOf(ThingId("C28")))
+                subjects[2].shouldBeInstanceOf<ResourceReference>().asClue { subject ->
+                    subject.id shouldNotBe null
+                    subject.label shouldBe "Subject Resource"
+                    subject.classes shouldBe setOf(ThingId("C28"))
+                }
+            }
+            it.objects.asClue { objects ->
+                objects.size shouldBe 5
+                objects[0].asClue { position ->
+                    position.size shouldBe 3
+                    position[0] shouldBe ResourceReference(ThingId("R174"), "label", emptySet())
+                    position[1].shouldBeInstanceOf<PredicateReference>().asClue { `object` ->
+                        `object`.id shouldNotBe null
+                        `object`.label shouldBe "hasResult"
+                        `object`.description shouldBe "has result"
+                    }
+                    position[2].shouldBeInstanceOf<ClassReference>().asClue { `object` ->
+                        `object`.id shouldNotBe null
+                        `object`.label shouldBe "new class"
+                        `object`.uri shouldBe null
+                    }
+                }
+                objects[1].asClue { position ->
+                    position.size shouldBe 2
+                    position[0] shouldBe LiteralReference("123456", Literals.XSD.STRING.prefixedUri)
+                    position[1] shouldBe LiteralReference("0123456789", Literals.XSD.STRING.prefixedUri)
+                }
+                objects[2].asClue { position ->
+                    position.size shouldBe 2
+                    position[0] shouldBe LiteralReference("5", Literals.XSD.INT.prefixedUri)
+                    position[1] shouldBe LiteralReference("1", Literals.XSD.INT.prefixedUri)
+                }
+                objects[3].asClue { position ->
+                    position.size shouldBe 2
+                    position[0] shouldBe LiteralReference("custom type", "C25")
+                    position[1] shouldBe LiteralReference("some literal value", "C25")
+                }
+                objects[4].asClue { position ->
+                    position.size shouldBe 3
+                    position[0] shouldBe ResourceReference(ThingId("R258"), "label", setOf(ThingId("C28")))
+                    position[1] shouldBe ResourceReference(ThingId("R369"), "label", setOf(ThingId("C28")))
+                    position[2].shouldBeInstanceOf<ResourceReference>().asClue { `object` ->
+                        `object`.id shouldNotBe null
+                        `object`.label shouldBe "list"
+                        `object`.classes shouldBe setOf(Classes.list)
+                    }
+                }
+            }
+            it.createdAt shouldNotBe null
+            it.createdBy shouldBe ContributorId(MockUserId.USER)
+            it.certainty shouldBe Certainty.HIGH
+            it.negated shouldBe false
+            it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
+            it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+            it.extractionMethod shouldBe ExtractionMethod.MANUAL
+            it.visibility shouldBe Visibility.DEFAULT
+            it.unlistedBy shouldBe null
+            it.modifiable shouldBe true
+        }
+    }
+
+    private fun createRosettaStoneTemplate() = rosettaStoneTemplateService.create(
+        CreateRosettaStoneTemplateUseCase.CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            label = "rosetta stone template",
+            description = "rosetta stone template description",
+            formattedLabel = FormattedLabel.of("{0} {1} {2} {3} {4} {5}"),
+            properties = listOf(
+                ResourcePropertyDefinition(
+                    label = "subject position",
+                    placeholder = "subject",
+                    description = "subject",
+                    minCount = 1,
+                    maxCount = 4,
+                    path = Predicates.hasSubjectPosition,
+                    `class` = ThingId("C28")
+                ),
+                UntypedPropertyDefinition(
+                    label = "property label",
+                    placeholder = "property placeholder",
+                    description = "property description",
+                    minCount = 1,
+                    maxCount = 3,
+                    path = Predicates.hasObjectPosition
+                ),
+                StringLiteralPropertyDefinition(
+                    label = "string literal property label",
+                    placeholder = "string literal property placeholder",
+                    description = "string literal property description",
+                    minCount = 1,
+                    maxCount = 2,
+                    pattern = "\\d+",
+                    path = Predicates.hasObjectPosition,
+                    datatype = Classes.string
+                ),
+                NumberLiteralPropertyDefinition(
+                    label = "number literal property label",
+                    placeholder = "number literal property placeholder",
+                    description = "number literal property description",
+                    minCount = 1,
+                    maxCount = 2,
+                    minInclusive = -1,
+                    maxInclusive = 10,
+                    path = Predicates.hasObjectPosition,
+                    datatype = Classes.integer
+                ),
+                OtherLiteralPropertyDefinition(
+                    label = "literal property label",
+                    placeholder = "literal property placeholder",
+                    description = "literal property description",
+                    minCount = 1,
+                    maxCount = 2,
+                    path = Predicates.hasObjectPosition,
+                    datatype = ThingId("C25")
+                ),
+                ResourcePropertyDefinition(
+                    label = "resource property label",
+                    placeholder = "resource property placeholder",
+                    description = "resource property description",
+                    minCount = 3,
+                    maxCount = 4,
+                    path = Predicates.hasObjectPosition,
+                    `class` = ThingId("C28")
+                ),
+            ),
+            organizations = listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
+            observatories = listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
+        )
+    )
+
+    private fun createRosettaStoneStatement(templateId: ThingId): ThingId =
+        post("/api/rosetta-stone/statements")
+            .content(createRosettaStoneStatementJson.replace("\$templateId", templateId.value))
+            .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .contentType(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isCreated)
+            .andReturn()
+            .response
+            .getHeaderValue("Location")!!
+            .toString()
+            .substringAfterLast("/")
+            .let(::ThingId)
+
+    private fun RequestBuilder.perform(): ResultActions = mockMvc.perform(this)
+}
+
+private const val createRosettaStoneStatementJson = """{
+  "template_id": "${'$'}templateId",
+  "context": "R789",
+  "subjects": ["R258", "R369", "#temp1"],
+  "objects": [
+    ["R174", "#temp2", "#temp3"],
+    ["L123", "#temp4"],
+    ["L456", "#temp5"],
+    ["L789", "#temp6"],
+    ["R258", "R369", "#temp7"]
+  ],
+  "certainty": "HIGH",
+  "negated": false,
+  "resources": {
+    "#temp1": {
+      "label": "Subject Resource",
+      "classes": ["C28"]
+    }
+  },
+  "predicates": {
+    "#temp2": {
+      "label": "hasResult",
+      "description": "has result"
+    }
+  },
+  "classes": {
+    "#temp3": {
+      "label": "new class",
+      "uri": null
+    }
+  },
+  "literals": {
+    "#temp4": {
+      "label": "0123456789",
+      "data_type": "xsd:string"
+    },
+    "#temp5": {
+      "label": "1",
+      "data_type": "xsd:integer"
+    },
+    "#temp6": {
+      "label": "some literal value",
+      "data_type": "C25"
+    }
+  },
+  "lists": {
+    "#temp7": {
+      "label": "list",
+      "elements": ["#temp1", "C123"]
+    }
+  },
+  "observatories": [
+    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+  ],
+  "organizations": [
+    "edc18168-c4ee-4cb8-a98a-136f748e912e"
+  ],
+  "extraction_method": "MANUAL"
+}"""

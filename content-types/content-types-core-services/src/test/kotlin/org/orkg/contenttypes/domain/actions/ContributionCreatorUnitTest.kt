@@ -76,7 +76,7 @@ class ContributionCreatorUnitTest {
             )
         } just runs
         every {
-            subgraphCreator.create(
+            subgraphCreator.createThingsAndStatements(
                 contributorId = contributorId,
                 extractionMethod = ExtractionMethod.MANUAL,
                 thingDefinitions = contents,
@@ -117,7 +117,7 @@ class ContributionCreatorUnitTest {
             )
         }
         verify(exactly = 1) {
-            subgraphCreator.create(
+            subgraphCreator.createThingsAndStatements(
                 contributorId = contributorId,
                 extractionMethod = ExtractionMethod.MANUAL,
                 thingDefinitions = contents,

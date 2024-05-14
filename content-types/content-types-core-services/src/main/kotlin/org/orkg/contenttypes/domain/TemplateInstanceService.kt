@@ -22,6 +22,7 @@ import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -41,6 +42,7 @@ class TemplateInstanceService(
     private val templateService: TemplateUseCases,
     private val statementService: StatementUseCases,
     private val thingRepository: ThingRepository,
+    private val classService: ClassUseCases,
     private val resourceService: ResourceUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
@@ -96,7 +98,7 @@ class TemplateInstanceService(
             TemplateInstanceThingDefinitionValidator(thingRepository, classRepository),
             TemplateInstancePropertyValueValidator(thingRepository, classRepository),
             TemplateInstanceSubjectUpdater(resourceRepository),
-            TemplateInstancePropertyValueUpdater(resourceService, statementService, literalService, predicateService, statementRepository, listService)
+            TemplateInstancePropertyValueUpdater(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )
         steps.execute(command, UpdateTemplateInstanceState())
     }

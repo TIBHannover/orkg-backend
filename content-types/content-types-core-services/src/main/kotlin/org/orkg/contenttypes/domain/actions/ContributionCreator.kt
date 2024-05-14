@@ -9,6 +9,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -23,6 +24,7 @@ class ContributionCreator(
     private val subgraphCreator: SubgraphCreator
 ) {
     constructor(
+        classService: ClassUseCases,
         resourceService: ResourceUseCases,
         statementService: StatementUseCases,
         literalService: LiteralUseCases,
@@ -33,6 +35,7 @@ class ContributionCreator(
         resourceService = resourceService,
         statementService = statementService,
         subgraphCreator = SubgraphCreator(
+            classService = classService,
             resourceService = resourceService,
             statementService = statementService,
             literalService = literalService,
@@ -71,7 +74,7 @@ class ContributionCreator(
             contributionId
         }
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = extractionMethod,
             thingDefinitions = thingDefinitions,

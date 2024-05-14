@@ -22,6 +22,7 @@ import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.LiteratureListNotModifiable
 import org.orkg.contenttypes.domain.LiteratureListSectionTypeMismatch
+import org.orkg.contenttypes.domain.MismatchedDataType
 import org.orkg.contenttypes.domain.MissingFormattedLabelPlaceholder
 import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
 import org.orkg.contenttypes.domain.MissingPropertyValues
@@ -352,6 +353,29 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.error", `is`("Bad Request")))
             .andExpect(jsonPath("$.path").value("/invalid-literal"))
             .andExpect(jsonPath("$.message").value("""Object "$objectId" with value "$value" for property "$templatePropertyId" with predicate "$predicateId" is not a valid "$datatype"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun mismatchedDataType() {
+        val templatePropertyId = "R123"
+        val predicateId = "P123"
+        val expectedDataType = "Boolean"
+        val id = "#temp1"
+        val foundDataType = "String"
+
+        get("/mismatched-data-type")
+            .param("templatePropertyId", templatePropertyId)
+            .param("predicateId", predicateId)
+            .param("expectedDataType", expectedDataType)
+            .param("id", id)
+            .param("foundDataType", foundDataType)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/mismatched-data-type"))
+            .andExpect(jsonPath("$.message").value("""Object "$id" with data type "$foundDataType" for property "$templatePropertyId" with predicate "$predicateId" does not match expected data type "$expectedDataType"."""))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
@@ -836,6 +860,17 @@ internal class ExceptionControllerUnitTest {
             @RequestParam value: String
         ) {
             throw InvalidLiteral(templatePropertyId, predicateId, datatype, id, value)
+        }
+
+        @GetMapping("/mismatched-data-type")
+        fun mismatchedDataType(
+            @RequestParam templatePropertyId: ThingId,
+            @RequestParam predicateId: ThingId,
+            @RequestParam expectedDataType: ThingId,
+            @RequestParam id: String,
+            @RequestParam foundDataType: String
+        ) {
+            throw MismatchedDataType(templatePropertyId, predicateId, expectedDataType, id, foundDataType)
         }
 
         @GetMapping("/unrelated-template-property")

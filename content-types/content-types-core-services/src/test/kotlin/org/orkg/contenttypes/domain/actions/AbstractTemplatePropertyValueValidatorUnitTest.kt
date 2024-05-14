@@ -3,17 +3,14 @@ package org.orkg.contenttypes.domain.actions
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import java.net.URI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
+import org.orkg.contenttypes.domain.MismatchedDataType
 import org.orkg.contenttypes.domain.MissingPropertyValues
 import org.orkg.contenttypes.domain.NumberTooHigh
 import org.orkg.contenttypes.domain.NumberTooLow
@@ -43,16 +40,6 @@ import org.orkg.graph.testing.fixtures.createResource
 
 class AbstractTemplatePropertyValueValidatorUnitTest {
     private val abstractTemplatePropertyValueValidator = AbstractTemplatePropertyValueValidator()
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified()
-    }
 
     /*
      * Test cardinality validation
@@ -438,6 +425,76 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
         }.asClue {
             it.message shouldBe """Object "#temp1" with value "not a number" for property "R26" with predicate "${Predicates.hasWikidataId}" is not a valid "Integer"."""
+        }
+    }
+
+    @Test
+    fun `Given a literal template property with a custom datatype, when object data type matches the uri of the custom data type, it returns success`() {
+        val uri = "https://example.org/classes/software"
+        val property = createDummyOtherLiteralTemplateProperty().copy(
+            minCount = 0,
+            datatype = ClassReference(Classes.software, "Software", URI.create(uri))
+        )
+        val id = "#temp1"
+        val `object` = LiteralDefinition(
+            label = "some value",
+            dataType = uri
+        )
+
+        assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
+    }
+
+    @Test
+    fun `Given a literal template property with a custom datatype, when object data type does not match the uri of the custom data type, it throws an exception`() {
+        val property = createDummyOtherLiteralTemplateProperty().copy(
+            minCount = 0,
+            datatype = ClassReference(Classes.software, "Software", null)
+        )
+        val id = "#temp1"
+        val `object` = LiteralDefinition(
+            label = "some value",
+            dataType = "unknown"
+        )
+
+        shouldThrow<MismatchedDataType> {
+            abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
+        }.asClue {
+            it.message shouldBe """Object "#temp1" with data type "unknown" for property "R26" with predicate "${Predicates.hasWikidataId}" does not match expected data type "Software"."""
+        }
+    }
+
+    // TODO: do we allow the id of a orkg class to be used as a datatype?
+    @Test
+    fun `Given a literal template property with a custom datatype, when object data type matches the id of the custom data type, it returns success`() {
+        val property = createDummyOtherLiteralTemplateProperty().copy(
+            minCount = 0,
+            datatype = ClassReference(Classes.software, "Software", null)
+        )
+        val id = "#temp1"
+        val `object` = LiteralDefinition(
+            label = "some value",
+            dataType = Classes.software.value
+        )
+
+        assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
+    }
+
+    @Test
+    fun `Given a literal template property with a custom datatype, when object data type does not match the id of the custom data type, it throws an exception`() {
+        val property = createDummyOtherLiteralTemplateProperty().copy(
+            minCount = 0,
+            datatype = ClassReference(Classes.software, "Software", null)
+        )
+        val id = "#temp1"
+        val `object` = LiteralDefinition(
+            label = "some value",
+            dataType = "unknown"
+        )
+
+        shouldThrow<MismatchedDataType> {
+            abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
+        }.asClue {
+            it.message shouldBe """Object "#temp1" with data type "unknown" for property "R26" with predicate "${Predicates.hasWikidataId}" does not match expected data type "Software"."""
         }
     }
 }

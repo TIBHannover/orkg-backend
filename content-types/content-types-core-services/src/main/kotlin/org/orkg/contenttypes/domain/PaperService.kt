@@ -59,6 +59,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -81,6 +82,7 @@ class PaperService(
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
     private val thingRepository: ThingRepository,
+    private val classService: ClassUseCases,
     private val resourceService: ResourceUseCases,
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
@@ -159,7 +161,7 @@ class PaperService(
             PaperAuthorCreator(resourceService, statementService, literalService, listService),
             PaperResearchFieldCreator(literalService, statementService),
             PaperPublicationInfoCreator(resourceService, resourceRepository, statementService, literalService),
-            PaperContributionCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
+            PaperContributionCreator(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )
         return steps.execute(command, CreatePaperState()).paperId!!
     }
@@ -170,7 +172,7 @@ class PaperService(
             ContributionPaperValidator(resourceRepository),
             ContributionThingDefinitionValidator(thingRepository, classRepository),
             ContributionContentsValidator(thingRepository),
-            ContributionContentsCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
+            ContributionContentsCreator(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )
         return steps.execute(command, ContributionState()).contributionId!!
     }

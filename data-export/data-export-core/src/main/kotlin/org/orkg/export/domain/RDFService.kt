@@ -46,7 +46,8 @@ class RDFService(
             it.toNTriple(writer)
         }, writer::flush)
         resourceRepository.forEach({
-            it.toNTriple(writer)
+            if (Classes.rosettaStoneStatement !in it.classes)
+                it.toNTriple(writer)
         }, writer::flush)
         statementRepository.forEach({
             it.toNTriple(writer)

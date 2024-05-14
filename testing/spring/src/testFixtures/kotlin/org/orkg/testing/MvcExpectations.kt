@@ -255,6 +255,26 @@ fun ResultActions.andExpectRosettaStoneTemplate(path: String = "$"): ResultActio
     .andExpect(jsonPath("$path.organizations").isArray)
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
 
+fun ResultActions.andExpectRosettaStoneStatement(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.template_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.latest_version", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.is_latest_version", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.context", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.subjects", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.objects").isArray)
+    .andExpect(jsonPath("$path.objects[*]").isArray)
+    .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.certainty", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.negated", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.observatories").isArray)
+    .andExpect(jsonPath("$path.organizations").isArray)
+    .andExpect(jsonPath("$path.extraction_method", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.modifiable", `is`(notNullValue())))
+//    .andExpect(jsonPath("$path.unlisted_by", `is`(notNullValue())))
+
 fun ResultActions.andExpectTemplateInstance(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.root", `is`(notNullValue())))
     .andExpectResource("$path.root")

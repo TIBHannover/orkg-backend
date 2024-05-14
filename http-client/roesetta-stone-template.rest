@@ -1,0 +1,63 @@
+### Create traveling statement template
+POST {{server_url}}/api/rosetta-stone/templates
+Content-Type: application/vnd.orkg.rosetta-stone-template.v1+json
+Authorization: Bearer {{access_token}}
+
+{
+    "label": "traveling statement",
+    "description": "This is a template that implements the Rosetta Stone light modeling paradigm for statements with 'travels' as their verb/predicate. E.g. Peter travels from Berlin to Paris by train on the 24th of January 2023.",
+    "formatted_label": "{0} travels by {1} from {2} to {3} on the {4}",
+    "properties": [
+        {
+            "label": "Person",
+            "placeholder": "Person",
+            "description": "Person",
+            "min_count": 1,
+            "max_count": 1,
+            "path": "hasSubjectPosition"
+        },
+        {
+            "label": "transportation",
+            "placeholder": "transportation",
+            "description": "transportation",
+            "min_count": 1,
+            "max_count": 0,
+            "path": "hasObjectPosition"
+        },
+        {
+            "label": "Departure location",
+            "placeholder": "Departure location",
+            "description": "Departure location",
+            "min_count": 0,
+            "max_count": 1,
+            "path": "hasObjectPosition",
+            "class": "DCLocation"
+        },
+        {
+            "label": "Destination location",
+            "placeholder": "Destination location",
+            "description": "Destination location",
+            "min_count": 0,
+            "max_count": 1,
+            "path": "hasObjectPosition",
+            "class": "DCLocation"
+        },
+        {
+            "label": "Datetime",
+            "placeholder": "Datetime",
+            "description": "Datetime",
+            "min_count": 0,
+            "max_count": 1,
+            "path": "hasObjectPosition",
+            "datatype": "Date"
+        }
+    ],
+    "observatories": [],
+    "organizations": []
+}
+
+> {%
+    const location = response.headers.valueOf("Location")
+    const id = location.substring(location.lastIndexOf('/') + 1)
+    client.global.set("rosetta_stone_template_id", id);
+%}

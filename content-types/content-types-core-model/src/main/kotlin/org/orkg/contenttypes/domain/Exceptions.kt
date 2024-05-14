@@ -29,6 +29,12 @@ class TemplateNotFound(id: ThingId) :
 class RosettaStoneTemplateNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Rosetta stone template "$id" not found.""")
 
+class RosettaStoneStatementNotFound(id: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Rosetta stone statement "$id" not found.""")
+
+class RosettaStoneStatementVersionNotFound(id: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Rosetta stone statement version "$id" not found.""")
+
 class LiteratureListNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Literature list "$id" not found.""")
 
@@ -182,6 +188,11 @@ class TooManyPropertyValues(templatePropertyId: ThingId, predicateId: ThingId, m
 class InvalidLiteral(templatePropertyId: ThingId, predicateId: ThingId, datatype: ThingId, id: String, value: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" with value "$value" for property "$templatePropertyId" with predicate "$predicateId" is not a valid "$datatype".""")
 
+class MismatchedDataType(templatePropertyId: ThingId, predicateId: ThingId, expectedDataType: ThingId, id: String, foundDataType: String) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Object "$id" with data type "$foundDataType" for property "$templatePropertyId" with predicate "$predicateId" does not match expected data type "$expectedDataType"."""
+)
+
 class UnrelatedTemplateProperty(templateId: ThingId, templatePropertyId: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Template property "$templatePropertyId" does not belong to template "$templateId".""")
 
@@ -242,4 +253,14 @@ class MissingPropertyPlaceholder(index: Int) : SimpleMessageException(
 class MissingFormattedLabelPlaceholder(index: Int) : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
     message = """Missing formatted label placeholder "{$index}"."""
+)
+
+class TooManyInputPositions(exceptedCount: Int, templateId: ThingId) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Too many input positions for rosetta stone statement of template "$templateId". Expected exactly $exceptedCount input positions."""
+)
+
+class MissingInputPositions(exceptedCount: Int, templateId: ThingId, missingCount: Int) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Missing input for $missingCount input positions for rosetta stone statement of template "$templateId". Expected exactly $exceptedCount input positions."""
 )

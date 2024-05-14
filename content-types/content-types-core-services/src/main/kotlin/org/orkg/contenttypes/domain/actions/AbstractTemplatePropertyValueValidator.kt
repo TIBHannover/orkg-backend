@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.LiteralTemplateProperty
+import org.orkg.contenttypes.domain.MismatchedDataType
 import org.orkg.contenttypes.domain.MissingPropertyValues
 import org.orkg.contenttypes.domain.NumberLiteralTemplateProperty
 import org.orkg.contenttypes.domain.NumberTooHigh
@@ -61,10 +62,13 @@ class AbstractTemplatePropertyValueValidator {
                 if (`object` !is LiteralDefinition) {
                     throw ObjectIsNotALiteral(property.id, property.path.id, id)
                 }
-                Literals.XSD.fromClass(property.datatype.id)?.let { type ->
-                    if (!type.canParse(`object`.label)) {
+                val xsd = Literals.XSD.fromClass(property.datatype.id)
+                if (xsd != null) {
+                    if (!xsd.canParse(`object`.label)) {
                         throw InvalidLiteral(property.id, property.path.id, property.datatype.id, id, `object`.label)
                     }
+                } else if (property.datatype.uri?.toString() != `object`.dataType && property.datatype.id.value != `object`.dataType) {
+                    throw MismatchedDataType(property.id, property.path.id, property.datatype.id, id, `object`.dataType)
                 }
             }
             is UntypedTemplateProperty -> {}

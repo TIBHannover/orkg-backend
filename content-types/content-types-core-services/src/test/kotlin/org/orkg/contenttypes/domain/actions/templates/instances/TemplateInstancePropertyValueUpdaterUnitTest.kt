@@ -46,7 +46,7 @@ class TemplateInstancePropertyValueUpdaterUnitTest {
         val thingDefinitions = command.copy(literals = state.literals)
 
         every {
-            subgraphCreator.create(
+            subgraphCreator.createThingsAndStatements(
                 contributorId = command.contributorId,
                 extractionMethod = command.extractionMethod,
                 thingDefinitions = thingDefinitions,
@@ -68,7 +68,7 @@ class TemplateInstancePropertyValueUpdaterUnitTest {
         }
 
         verify(exactly = 1) {
-            subgraphCreator.create(
+            subgraphCreator.createThingsAndStatements(
                 contributorId = command.contributorId,
                 extractionMethod = command.extractionMethod,
                 thingDefinitions = thingDefinitions,

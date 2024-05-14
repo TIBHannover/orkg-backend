@@ -19,6 +19,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplateInstance
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -38,6 +39,7 @@ class TemplateInstanceServiceUnitTests {
     private val templateService: TemplateUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val thingRepository: ThingRepository = mockk()
+    private val classService: ClassUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val predicateService: PredicateUseCases = mockk()
@@ -50,6 +52,7 @@ class TemplateInstanceServiceUnitTests {
         templateService = templateService,
         statementService = statementService,
         thingRepository = thingRepository,
+        classService = classService,
         resourceService = resourceService,
         literalService = literalService,
         predicateService = predicateService,
@@ -70,6 +73,7 @@ class TemplateInstanceServiceUnitTests {
             templateService,
             statementService,
             thingRepository,
+            classService,
             resourceService,
             literalService,
             predicateService,

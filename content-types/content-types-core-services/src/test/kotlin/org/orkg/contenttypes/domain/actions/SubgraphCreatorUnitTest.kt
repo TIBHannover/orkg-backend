@@ -7,6 +7,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
+import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
 import org.junit.jupiter.api.AfterEach
@@ -15,14 +16,18 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.input.ClassDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.ListDefinition
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneStatementCommand
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreatePredicateUseCase
@@ -43,6 +48,7 @@ import org.orkg.testing.pageOf
 
 class SubgraphCreatorUnitTest {
     private val statementRepository: StatementRepository = mockk()
+    private val classService: ClassUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
@@ -50,6 +56,7 @@ class SubgraphCreatorUnitTest {
     private val listService: ListUseCases = mockk()
 
     private val subgraphCreator = SubgraphCreator(
+        classService = classService,
         resourceService = resourceService,
         statementService = statementService,
         literalService = literalService,
@@ -67,6 +74,7 @@ class SubgraphCreatorUnitTest {
     fun verifyMocks() {
         confirmVerified(
             statementRepository,
+            classService,
             resourceService,
             statementService,
             literalService,
@@ -100,7 +108,7 @@ class SubgraphCreatorUnitTest {
             )
         } returns ThingId("R456")
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,
@@ -137,7 +145,79 @@ class SubgraphCreatorUnitTest {
             contributions = emptyList()
         )
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
+            contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
+            thingDefinitions = contents,
+            validatedIds = emptyMap(),
+            bakedStatements = emptySet()
+        )
+    }
+
+    @Test
+    fun `Given rosetta stone statement contents, when a newly defined class is valid, it gets created`() {
+        val contributorId = ContributorId(UUID.randomUUID())
+        val classDefinition = ClassDefinition(
+            label = "Some class",
+            uri = URI.create("https://example.org")
+        )
+        val contents = dummyCreateRosettaStoneStatementCommand().copy(
+            resources = emptyMap(),
+            literals = emptyMap(),
+            predicates = emptyMap(),
+            lists = emptyMap(),
+            classes = mapOf(
+                "#temp1" to classDefinition
+            )
+        )
+
+        every {
+            classService.create(
+                CreateClassUseCase.CreateCommand(
+                    label = classDefinition.label,
+                    uri = classDefinition.uri,
+                    contributorId = contributorId
+                )
+            )
+        } returns ThingId("C123")
+
+        subgraphCreator.createThingsAndStatements(
+            contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
+            thingDefinitions = contents,
+            validatedIds = mapOf("#temp1" to Either.left("#temp1")),
+            bakedStatements = emptySet()
+        )
+
+        verify(exactly = 1) {
+            classService.create(
+                CreateClassUseCase.CreateCommand(
+                    label = classDefinition.label,
+                    uri = classDefinition.uri,
+                    contributorId = contributorId
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `Given paper contents, when a newly defined class is not validated, it does not get created`() {
+        val contributorId = ContributorId(UUID.randomUUID())
+        val classDefinition = ClassDefinition(
+            label = "Some class",
+            uri = URI.create("https://example.org")
+        )
+        val contents = dummyCreateRosettaStoneStatementCommand().copy(
+            resources = emptyMap(),
+            literals = emptyMap(),
+            predicates = emptyMap(),
+            lists = emptyMap(),
+            classes = mapOf(
+                "#temp1" to classDefinition
+            )
+        )
+
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,
@@ -170,7 +250,7 @@ class SubgraphCreatorUnitTest {
             )
         } returns ThingId("L1")
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,
@@ -203,7 +283,7 @@ class SubgraphCreatorUnitTest {
             contributions = emptyList()
         )
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,
@@ -234,7 +314,7 @@ class SubgraphCreatorUnitTest {
             )
         } returns ThingId("R456")
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,
@@ -293,7 +373,7 @@ class SubgraphCreatorUnitTest {
             )
         } just runs
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,
@@ -340,7 +420,7 @@ class SubgraphCreatorUnitTest {
             contributions = emptyList()
         )
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,
@@ -382,7 +462,7 @@ class SubgraphCreatorUnitTest {
             )
         } just runs
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,
@@ -426,7 +506,7 @@ class SubgraphCreatorUnitTest {
             contributions = emptyList()
         )
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,
@@ -501,7 +581,7 @@ class SubgraphCreatorUnitTest {
             )
         } just runs
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,
@@ -574,7 +654,7 @@ class SubgraphCreatorUnitTest {
             )
         } just runs
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,
@@ -622,7 +702,7 @@ class SubgraphCreatorUnitTest {
             )
         } returns pageOf(statement)
 
-        subgraphCreator.create(
+        subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
             thingDefinitions = contents,

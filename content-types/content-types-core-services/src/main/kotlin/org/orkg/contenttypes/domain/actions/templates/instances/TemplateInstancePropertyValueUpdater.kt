@@ -5,6 +5,7 @@ import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.SubgraphCreator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
+import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -18,6 +19,7 @@ class TemplateInstancePropertyValueUpdater(
 ) : UpdateTemplateInstanceAction {
 
     constructor(
+        classService: ClassUseCases,
         resourceService: ResourceUseCases,
         statementService: StatementUseCases,
         literalService: LiteralUseCases,
@@ -26,6 +28,7 @@ class TemplateInstancePropertyValueUpdater(
         listService: ListUseCases
     ) : this(
         SubgraphCreator(
+            classService = classService,
             resourceService = resourceService,
             statementService = statementService,
             literalService = literalService,
@@ -49,7 +52,7 @@ class TemplateInstancePropertyValueUpdater(
                     ?.let(statementService::delete)
             }
             if (statementsToAdd.isNotEmpty()) {
-                subgraphCreator.create(
+                subgraphCreator.createThingsAndStatements(
                     contributorId = command.contributorId,
                     extractionMethod = command.extractionMethod,
                     thingDefinitions = command.copy(literals = state.literals),

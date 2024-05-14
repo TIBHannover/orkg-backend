@@ -1,0 +1,42 @@
+= Rosetta Stone Statements
+
+Rosetta stone statements are instances of <<rosetta-stone-templates,rosetta stone templates>> and represent a semantically meaningful statement to a human reader.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[rosetta-stone-statements-fetch]]
+== Fetching a rosetta stone statement
+
+A `GET` request provides information about a rosetta stone statement or a specific rosetta stone statement version.
+
+operation::rosetta-stone-statements-get-single[snippets='curl-request,response-fields']
+
+[[rosetta-stone-statements-list]]
+== Listing rosetta stone statements
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<rosetta-stone-statements-fetch,rosetta stone statements>>.
+If no paging request parameters are provided, the default values will be used.
+
+NOTE: Only the most recent versions of rosetta stone statements will be returned.
+
+operation::rosetta-stone-statements-get-paged[snippets='curl-request']
+
+// The following list of request parameters are supported:
+
+// operation::rosetta-stone-statements-get-paged-with-parameters[snippets='request-parameters,curl-request']
+
+[[rosetta-stone-statements-list-versions]]
+== Listing rosetta stone statement versions
+
+A `GET` request returns a list of <<rosetta-stone-statements-fetch,rosetta stone statement>> versions.
+
+operation::rosetta-stone-statements-get-all-versions[snippets='curl-request']
+
+[[rosetta-stone-statements-create]]
+== Creating rosetta stone statements
+
+A `POST` request creates a new rosetta stone statement with all the given parameters.
+The response will be `201 Created` when successful.
+The rosetta stone statement can be retrieved by following the URI in the `Location` header field.
+
+operation::rosetta-stone-statements-create[snippets='request-fields,curl-request,http-response']

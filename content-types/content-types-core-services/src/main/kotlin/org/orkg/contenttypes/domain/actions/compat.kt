@@ -9,6 +9,7 @@ import org.orkg.contenttypes.domain.actions.literaturelists.sections.CreateLiter
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.UpdateLiteratureListSectionAction
 import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosettaStoneStatementAction
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.CreateRosettaStoneTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction
@@ -21,6 +22,7 @@ import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
+import org.orkg.contenttypes.input.CreateRosettaStoneStatementUseCase
 import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
@@ -44,6 +46,7 @@ internal typealias CreateTemplatePropertyCommand = CreateTemplatePropertyUseCase
 internal typealias CreateLiteratureListCommand = CreateLiteratureListUseCase.CreateCommand
 internal typealias CreateLiteratureListSectionCommand = CreateLiteratureListSectionUseCase.CreateCommand
 internal typealias CreateRosettaStoneTemplateCommand = CreateRosettaStoneTemplateUseCase.CreateCommand
+internal typealias CreateRosettaStoneStatementCommand = CreateRosettaStoneStatementUseCase.CreateCommand
 
 internal typealias UpdatePaperCommand = UpdatePaperUseCase.UpdateCommand
 internal typealias UpdateComparisonCommand = UpdateComparisonUseCase.UpdateCommand
@@ -63,6 +66,8 @@ internal typealias CreateTemplatePropertyState = CreateTemplatePropertyAction.St
 internal typealias UpdateTemplatePropertyState = UpdateTemplatePropertyAction.State
 
 internal typealias CreateRosettaStoneTemplateState = CreateRosettaStoneTemplateAction.State
+
+internal typealias CreateRosettaStoneStatementState = CreateRosettaStoneStatementAction.State
 
 internal typealias CreateComparisonState = CreateComparisonAction.State
 internal typealias UpdateComparisonState = UpdateComparisonAction.State

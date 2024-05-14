@@ -8,6 +8,8 @@ import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreatePredicateUseCase
@@ -21,6 +23,7 @@ import org.orkg.graph.input.UpdateListUseCase
 import org.orkg.graph.output.StatementRepository
 
 class SubgraphCreator(
+    private val classService: ClassUseCases,
     private val resourceService: ResourceUseCases,
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
@@ -28,7 +31,7 @@ class SubgraphCreator(
     private val statementRepository: StatementRepository,
     private val listService: ListUseCases
 ) {
-    internal fun create(
+    internal fun createThingsAndStatements(
         contributorId: ContributorId,
         extractionMethod: ExtractionMethod,
         thingDefinitions: ThingDefinitions,
@@ -36,11 +39,41 @@ class SubgraphCreator(
         bakedStatements: Set<BakedStatement>,
         lookup: MutableMap<String, ThingId> = mutableMapOf()
     ) {
+        createThings(thingDefinitions, validatedIds, contributorId, extractionMethod, lookup)
+        createStatements(bakedStatements, lookup, contributorId)
+    }
+
+    internal fun createThings(
+        thingDefinitions: ThingDefinitions,
+        validatedIds: Map<String, Either<String, Thing>>,
+        contributorId: ContributorId,
+        extractionMethod: ExtractionMethod,
+        lookup: MutableMap<String, ThingId> = mutableMapOf()
+    ) {
+        createClasses(thingDefinitions, validatedIds, lookup, contributorId)
         createResources(thingDefinitions, validatedIds, lookup, contributorId, extractionMethod)
         createLiterals(thingDefinitions, validatedIds, lookup, contributorId)
         createPredicates(thingDefinitions, validatedIds, contributorId, lookup)
         createLists(thingDefinitions, validatedIds, lookup, contributorId)
-        createStatements(bakedStatements, lookup, contributorId)
+    }
+
+    private fun createClasses(
+        thingDefinitions: ThingDefinitions,
+        validatedIds: Map<String, Either<String, Thing>>,
+        lookup: MutableMap<String, ThingId>,
+        contributorId: ContributorId
+    ) {
+        thingDefinitions.classes.forEach {
+            if (it.key.isTempId && it.key in validatedIds) {
+                lookup[it.key] = classService.create(
+                    CreateClassUseCase.CreateCommand(
+                        label = it.value.label,
+                        contributorId = contributorId,
+                        uri = it.value.uri
+                    )
+                )
+            }
+        }
     }
 
     private fun createResources(

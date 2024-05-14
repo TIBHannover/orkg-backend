@@ -5,7 +5,6 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
@@ -130,14 +129,7 @@ data class SmartReviewOntologySection(
                 entities = statements[root.id]?.wherePredicate(Predicates.hasEntity)
                     ?.filter { it.`object` is Predicate || it.`object` is Resource }
                     ?.sortedBy { it.createdAt }
-                    ?.map {
-                        when (val `object` = it.`object`) {
-                            is Resource -> ResourceReference(`object`)
-                            is Predicate -> PredicateReference(`object`)
-                            is Class -> ClassReference(`object`)
-                            else -> throw IllegalStateException("Cannot convert section ${`object`.id} to smart review ontology section entity. This is a bug.")
-                        }
-                    }
+                    ?.map { ThingReference.from(it.`object`) }
                     .orEmpty(),
                 predicates = statements[root.id]?.wherePredicate(Predicates.showProperty)
                     ?.filter { it.`object` is Predicate }

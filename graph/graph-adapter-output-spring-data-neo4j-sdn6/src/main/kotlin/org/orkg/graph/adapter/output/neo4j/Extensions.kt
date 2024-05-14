@@ -120,7 +120,7 @@ data class ClassMapper(val name: String) : BiFunction<TypeSystem, Record, Class>
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toClass()
 }
 
-internal fun Node.toLiteral() = Literal(
+fun Node.toLiteral() = Literal(
     id = this["id"].toThingId()!!,
     label = this["label"].asString(),
     datatype = this["datatype"]?.asString() ?: "xsd:string",
@@ -129,7 +129,7 @@ internal fun Node.toLiteral() = Literal(
     modifiable = this["modifiable"].asBoolean()
 )
 
-internal fun Node.toThing(): Thing = when {
+fun Node.toThing(): Thing = when {
     hasLabel("Resource") -> toResource()
     hasLabel("Literal") -> toLiteral()
     hasLabel("Class") -> toClass()
@@ -137,7 +137,7 @@ internal fun Node.toThing(): Thing = when {
     else -> throw IllegalStateException("Cannot parse Thing with labels ${labels()}")
 }
 
-internal fun Node.toClass() = Class(
+fun Node.toClass() = Class(
     id = this["id"].toThingId()!!,
     label = this["label"].asString(),
     uri = this["uri"].toURI(),
@@ -146,7 +146,7 @@ internal fun Node.toClass() = Class(
     modifiable = this["modifiable"].asBoolean()
 )
 
-internal fun Node.toResource() = Resource(
+fun Node.toResource() = Resource(
     id = this["id"].toThingId()!!,
     label = this["label"].asString(),
     classes = this.labels().filter { it !in reservedClassIds }.map(::ThingId).toSet(),
@@ -161,7 +161,7 @@ internal fun Node.toResource() = Resource(
     modifiable = this["modifiable"].asBoolean()
 )
 
-internal fun Node.toPredicate() = Predicate(
+fun Node.toPredicate() = Predicate(
     id = this["id"].toThingId()!!,
     label = this["label"].asString(),
     createdAt = this["created_at"].toOffsetDateTime(),
@@ -178,7 +178,7 @@ internal fun Value.toNullableContributorId() = if (isNull) null else Contributor
 internal fun Value.toObservatoryId() = if (isNull) ObservatoryId.UNKNOWN else ObservatoryId(asString())
 internal fun Value.toOrganizationId() = if (isNull) OrganizationId.UNKNOWN else OrganizationId(asString())
 internal fun Value.toExtractionMethod() = if (isNull) ExtractionMethod.UNKNOWN else ExtractionMethod.valueOf(asString())
-internal fun Value.toThingId() = if (isNull) null else ThingId(asString())
+fun Value.toThingId() = if (isNull) null else ThingId(asString())
 internal fun Value.toVisibility() = if (isNull) Visibility.DEFAULT else Visibility.valueOf(asString())
 internal fun Value.toThingIds() = asList().map { ThingId(it as String) }
 internal fun Value.asNullableInt() = if (isNull) null else asInt()

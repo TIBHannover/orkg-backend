@@ -119,8 +119,9 @@ class RosettaStoneStatementUpdaterUnitTest {
             rosettaStoneStatementRepository.save(
                 withArg {
                     it.id shouldBe originalStatement.id
-                    it.templateId shouldBe originalStatement.templateId
                     it.contextId shouldBe originalStatement.contextId
+                    it.templateId shouldBe originalStatement.templateId
+                    it.templateTargetClassId shouldBe originalStatement.templateTargetClassId
                     it.label shouldBe originalStatement.label
                     it.versions.size shouldBe 2
                     it.versions[0] shouldBe originalStatement.versions.single()

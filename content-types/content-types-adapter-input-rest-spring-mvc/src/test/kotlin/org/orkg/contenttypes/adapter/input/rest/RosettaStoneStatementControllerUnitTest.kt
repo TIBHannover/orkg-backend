@@ -81,10 +81,11 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
                     responseFields(
                         // The order here determines the order in the generated table. More relevant items should be up.
                         fieldWithPath("id").description("The identifier of the rosetta stone statement."),
+                        fieldWithPath("context").description("The ID of the context resource of the rosetta stone statement, possibly indicating the origin of a statement. (optional)"),
                         fieldWithPath("template_id").description("The identifier of the template that was used to instantiate the rosetta stone statement."),
+                        fieldWithPath("class_id").description("The identifier of the class of the rosetta stone statement. This class is equivalent to the target class of the template used to instantiate the rosetta stone statement."),
                         fieldWithPath("version_id").description("The ID of the backing version of the rosetta stone statement contents."),
                         fieldWithPath("latest_version_id").description("The ID of the rosetta stone statement that always points to the latest version of this statement."),
-                        fieldWithPath("context").description("The ID of the context resource of the rosetta stone statement, possibly indicating the origin of a statement. (optional)"),
                         subsectionWithPath("subjects[]").description("The ordered list of subject instance references used in the rosetta stone statement."),
                         fieldWithPath("objects[]").description("The ordered list of object position instances used in the rosetta stone statement."),
                         subsectionWithPath("objects[][]").description("The ordered list of object instance references used for the object position index defined by the outer array."),

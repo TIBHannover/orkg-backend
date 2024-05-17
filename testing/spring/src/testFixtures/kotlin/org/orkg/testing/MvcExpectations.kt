@@ -257,10 +257,11 @@ fun ResultActions.andExpectRosettaStoneTemplate(path: String = "$"): ResultActio
 
 fun ResultActions.andExpectRosettaStoneStatement(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.context", `is`(notNullValue())))
     .andExpect(jsonPath("$path.template_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.class_id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.version_id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.latest_version_id", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.context", `is`(notNullValue())))
     .andExpect(jsonPath("$path.subjects", `is`(notNullValue())))
     .andExpect(jsonPath("$path.objects").isArray)
     .andExpect(jsonPath("$path.objects[*]").isArray)

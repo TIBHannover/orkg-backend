@@ -217,10 +217,11 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
 
         rosettaStoneStatement.asClue {
             it.id shouldBe id
+            it.context shouldBe ThingId("R789")
+            it.templateId shouldBe rosettaStoneTemplateId
+            it.classId shouldNotBe null
             it.versionId shouldNotBe id
             it.latestVersion shouldBe id
-            it.templateId shouldBe rosettaStoneTemplateId
-            it.context shouldBe ThingId("R789")
             it.subjects.asClue { subjects ->
                 subjects.size shouldBe 3
                 subjects[0] shouldBe ResourceReference(ThingId("R258"), "label", setOf(ThingId("C28")))
@@ -304,8 +305,12 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
 
         updatedRosettaStoneStatement.asClue {
             it.id shouldBe rosettaStoneStatement.latestVersion
-            it.templateId shouldBe rosettaStoneTemplateId
             it.contextId shouldBe rosettaStoneStatement.context
+            it.templateId shouldBe rosettaStoneTemplateId
+            it.templateTargetClassId.asClue { templateTargetClassId ->
+                templateTargetClassId shouldNotBe null
+                templateTargetClassId shouldBe rosettaStoneStatement.classId
+            }
             it.label shouldBe ""
             it.versions.size shouldBe 2
             it.versions[0].asClue { version ->

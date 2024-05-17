@@ -11,8 +11,9 @@ import org.orkg.graph.domain.Visibility
 
 data class RosettaStoneStatement(
     val id: ThingId,
-    val templateId: ThingId,
     val contextId: ThingId?,
+    val templateId: ThingId,
+    val templateTargetClassId: ThingId,
     val label: String,
     val versions: List<RosettaStoneStatementVersion>,
     val observatories: List<ObservatoryId>,
@@ -38,19 +39,7 @@ data class RosettaStoneStatement(
     }
 
     fun withVersion(version: RosettaStoneStatementVersion): RosettaStoneStatement =
-        RosettaStoneStatement(
-            id = id,
-            templateId = templateId,
-            contextId = contextId,
-            label = label,
-            versions = versions + version,
-            observatories = observatories,
-            organizations = organizations,
-            extractionMethod = extractionMethod,
-            visibility = visibility,
-            unlistedBy = unlistedBy,
-            modifiable = modifiable
-        )
+        copy(versions = versions + version)
 }
 
 data class RosettaStoneStatementVersion(

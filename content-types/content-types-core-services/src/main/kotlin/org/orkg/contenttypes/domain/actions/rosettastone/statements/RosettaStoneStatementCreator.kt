@@ -32,8 +32,9 @@ class RosettaStoneStatementCreator(
         )
         val statement = RosettaStoneStatement(
             id = rosettaStoneStatementRepository.nextIdentity(),
-            templateId = command.templateId,
             contextId = command.context,
+            templateId = command.templateId,
+            templateTargetClassId = state.rosettaStoneTemplate!!.targetClass,
             label = "", // empty label, because we do want the underlying resource to be findable via resource search endpoints
             versions = listOf(version),
             observatories = command.observatories,

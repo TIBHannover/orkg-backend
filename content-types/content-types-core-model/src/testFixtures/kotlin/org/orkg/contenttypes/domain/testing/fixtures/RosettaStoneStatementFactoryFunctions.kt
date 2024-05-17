@@ -14,8 +14,9 @@ import org.orkg.graph.testing.fixtures.createResource
 
 fun createDummyRosettaStoneStatement() = RosettaStoneStatement(
     id = ThingId("R123"),
-    templateId = ThingId("R456"),
     contextId = ThingId("R789"),
+    templateId = ThingId("R456"),
+    templateTargetClassId = ThingId("R321"),
     label = "Dummy Rosetta Stone Statement Label",
     versions = listOf(
         createDummyRosettaStoneStatementVersion()

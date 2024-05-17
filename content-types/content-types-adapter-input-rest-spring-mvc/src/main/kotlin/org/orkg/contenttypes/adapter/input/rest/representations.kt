@@ -542,14 +542,16 @@ data class SmartReviewTextSectionRepresentation(
 
 data class RosettaStoneStatementRepresentation(
     val id: ThingId,
+    @get:JsonProperty("context")
+    val context: ThingId?,
     @get:JsonProperty("template_id")
     val templateId: ThingId,
+    @get:JsonProperty("class_id")
+    val classId: ThingId,
     @get:JsonProperty("version_id")
     val versionId: ThingId,
     @get:JsonProperty("latest_version_id")
     val latestVersion: ThingId,
-    @get:JsonProperty("context")
-    val context: ThingId?,
     val subjects: List<ThingReference>,
     val objects: List<List<ThingReference>>,
     @get:JsonProperty("created_at")

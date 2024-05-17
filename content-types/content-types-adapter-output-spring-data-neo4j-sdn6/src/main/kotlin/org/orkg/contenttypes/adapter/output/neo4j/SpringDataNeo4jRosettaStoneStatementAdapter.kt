@@ -101,6 +101,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             CREATE (latest:RosettaStoneStatement:LatestVersion:Resource:Thing {version: 0})
             WITH latest
             SET latest += ${'$'}__properties__
+            SET latest:`${statement.templateTargetClassId}`
             WITH latest
             CALL {
                 WITH latest
@@ -175,6 +176,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 CREATE (version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata)
                 WITH latest, __version__, version, metadata
                 SET version += __version__.__properties__
+                SET version:`${statement.templateTargetClassId}`
                 SET metadata += __version__.__metadata__
                 WITH latest, __version__, version
                 CALL {
@@ -207,7 +209,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             .bindAll(
                 mapOf(
                     "__id__" to statement.id.value,
-                    "__labels__" to listOf("RosettaStoneStatement", "LatestVersion"),
+                    "__labels__" to listOf("RosettaStoneStatement", "LatestVersion", statement.templateTargetClassId.value),
                     "__version__" to (versionInfo?.first ?: 1L),
                     "__properties__" to mapOf(
                         "id" to statement.id.value,
@@ -227,7 +229,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     "__versions__" to statement.versions.drop(versionInfo?.second?.toInt() ?: 0)
                         .mapIndexed { index, version ->
                             mapOf(
-                                "__labels__" to listOf("RosettaStoneStatement", "Version"),
+                                "__labels__" to listOf("RosettaStoneStatement", "Version", statement.templateTargetClassId.value),
                                 "__properties__" to mapOf(
                                     "id" to version.id.value,
                                     "label" to statement.label,

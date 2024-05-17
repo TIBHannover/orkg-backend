@@ -18,6 +18,7 @@ import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
 import org.neo4j.driver.Record
 import org.neo4j.driver.types.TypeSystem
+import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
@@ -31,6 +32,12 @@ import org.orkg.graph.domain.Thing
 import org.orkg.graph.output.PredicateRepository
 
 private const val RELATED = "RELATED"
+private val reservedRosettaStoneStatementLabels = setOf(
+    ThingId("Thing"),
+    ThingId("Resource"),
+    ThingId("RosettaStoneStatement"),
+    ThingId("LatestVersion")
+)
 
 data class RosettaStoneStatementMapper(
     val predicateRepository: PredicateRepository,
@@ -88,8 +95,9 @@ data class RosettaStoneStatementMapper(
             .map { it.second }
         return RosettaStoneStatement(
             id = latest.id,
-            templateId = templateId,
             contextId = contextId,
+            templateId = templateId,
+            templateTargetClassId = (latest.classes - reservedRosettaStoneStatementLabels).single(),
             label = latest.label,
             versions = versions,
             observatories = listOf(latest.observatoryId),

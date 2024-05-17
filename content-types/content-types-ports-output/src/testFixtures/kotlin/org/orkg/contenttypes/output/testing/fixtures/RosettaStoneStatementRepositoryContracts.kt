@@ -56,6 +56,7 @@ fun <
 
     val fabricator = Fabrikate(
         FabricatorConfig(
+            seed = 16532,
             collectionSizes = 12..12,
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
         ).withStandardMappings()
@@ -109,8 +110,9 @@ fun <
             actual shouldNotBe null
             actual.asClue {
                 it.id shouldBe expected.id
-                it.templateId shouldBe expected.templateId
                 it.contextId shouldBe expected.contextId
+                it.templateId shouldBe expected.templateId
+                it.templateTargetClassId shouldBe expected.templateTargetClassId
                 it.label shouldBe expected.label
                 it.versions shouldBe expected.versions
                 it.observatories shouldBe expected.observatories

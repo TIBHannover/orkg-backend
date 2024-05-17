@@ -32,8 +32,9 @@ fun Fabrikate.withRosettaStoneStatementMappings() = apply {
     config.register {
         RosettaStoneStatement(
             id = random(),
-            templateId = random(),
             contextId = random(),
+            templateId = random(),
+            templateTargetClassId = random(),
             label = random(),
             versions = listOf(random<RosettaStoneStatementVersion>()),
             observatories = listOf(random()),

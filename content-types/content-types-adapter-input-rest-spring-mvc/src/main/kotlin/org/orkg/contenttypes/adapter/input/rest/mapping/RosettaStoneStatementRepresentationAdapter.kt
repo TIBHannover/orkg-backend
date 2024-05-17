@@ -31,10 +31,11 @@ interface RosettaStoneStatementRepresentationAdapter {
     ): RosettaStoneStatementRepresentation =
         RosettaStoneStatementRepresentation(
             id = requestedVersionId,
+            context = contextId,
             templateId = templateId,
+            classId = templateTargetClassId,
             versionId = version.id,
             latestVersion = id,
-            context = contextId,
             subjects = version.subjects.map(ThingReference::from),
             objects = version.objects.map { it.map(ThingReference::from) },
             createdAt = version.createdAt,

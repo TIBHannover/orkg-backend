@@ -94,7 +94,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     fun getSingle() {
         val resource = createResource()
         every { resourceService.findById(any()) } returns Optional.of(resource)
-        every { statementService.countStatementsAboutResource(resource.id) } returns 23
+        every { statementService.countIncomingStatements(resource.id) } returns 23
         every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/resources/{id}", resource.id)
@@ -203,7 +203,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         every { resourceService.findAllByLabelAndBaseClass(any(), Classes.problem, any()) } returns pageOf(
             createResource(classes = setOf(Classes.problem))
         )
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         get("/api/resources")
@@ -216,7 +216,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         verify(exactly = 1) {
             resourceService.findAllByLabelAndBaseClass(withArg { it.input shouldBe "label" }, Classes.problem, any())
         }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -274,7 +274,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     @DisplayName("Given several resources, when filtering by no parameters, then status is 200 OK and resources are returned")
     fun getPaged() {
         every { resourceService.findAll(any()) } returns pageOf(createResource())
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/resources")
@@ -286,7 +286,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { resourceService.findAll(any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -294,7 +294,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     @DisplayName("Given several resources, when they are fetched with all possible filtering parameters, then status is 200 OK and resources are returned")
     fun getPagedWithParameters() {
         every { resourceService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         val label = "label"
@@ -358,7 +358,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                 organizationId = organizationId
             )
         }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -366,7 +366,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     @DisplayName("Given several resources, when fetched by label and base class, then status is 200 OK and resources are returned")
     fun findByLabelAndBaseClass() {
         every { resourceService.findAllByLabelAndBaseClass(any(), any(), any()) } returns pageOf(createResource())
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/resources")
@@ -387,7 +387,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { resourceService.findAllByLabelAndBaseClass(any(), any(), any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 

@@ -91,7 +91,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
         val templateInstance = createDummyTemplateInstance()
 
         every { service.findById(templateId, templateInstance.root.id) } returns Optional.of(templateInstance)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/templates/{templateId}/instances/{id}", templateId, templateInstance.root.id)
@@ -121,7 +121,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findById(templateId, templateInstance.root.id) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -151,7 +151,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
         val templateInstance = createDummyTemplateInstance()
 
         every { service.findAll(templateId, pageable = any()) } returns pageOf(templateInstance)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/templates/{templateId}/instances", templateId)
@@ -164,7 +164,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findAll(templateId, pageable = any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -175,7 +175,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
         val templateInstance = createDummyTemplateInstance()
 
         every { service.findAll(templateId, any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(templateInstance)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         val label = "label"
@@ -219,7 +219,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findAll(templateId, any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 

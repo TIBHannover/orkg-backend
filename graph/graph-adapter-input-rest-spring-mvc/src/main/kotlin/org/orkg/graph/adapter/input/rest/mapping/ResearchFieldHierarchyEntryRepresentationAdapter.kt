@@ -10,7 +10,7 @@ interface ResearchFieldHierarchyEntryRepresentationAdapter : ResourceRepresentat
 
     fun Page<ResearchFieldHierarchyEntry>.mapToResearchFieldHierarchyEntryRepresentation(): Page<ResearchFieldHierarchyEntryRepresentation> {
         val resources = content.map { it.resource }
-        val usageCounts = countsFor(resources)
+        val usageCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources)
         return map { it.toResearchFieldHierarchyEntryRepresentation(usageCounts, formattedLabels) }
     }

@@ -15,21 +15,21 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
 
     fun Page<GeneralStatement>.mapToStatementRepresentation(): Page<StatementRepresentation> {
         val resources = content.resources()
-        val statementCounts = countsFor(resources)
+        val statementCounts = countIncomingStatements(resources)
         val formattedLabelCounts = formatLabelFor(resources)
         return map { it.toRepresentation(statementCounts, formattedLabelCounts) }
     }
 
     fun Iterable<GeneralStatement>.mapToStatementRepresentation(): Iterable<StatementRepresentation> {
         val resources = toList().resources()
-        val statementCounts = countsFor(resources)
+        val statementCounts = countIncomingStatements(resources)
         val formattedLabelCounts = formatLabelFor(resources)
         return map { it.toRepresentation(statementCounts, formattedLabelCounts) }
     }
 
     private fun GeneralStatement.toStatementRepresentation(): StatementRepresentation {
         val resources = listOf(this).resources()
-        val counts = countsFor(resources)
+        val counts = countIncomingStatements(resources)
         val labels = formatLabelFor(resources)
         return toRepresentation(counts, labels)
     }

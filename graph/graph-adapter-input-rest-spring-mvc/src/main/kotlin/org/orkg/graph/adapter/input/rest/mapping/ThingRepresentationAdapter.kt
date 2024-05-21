@@ -19,7 +19,7 @@ interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepre
 
     fun Page<Thing>.mapToThingRepresentation(): Page<ThingRepresentation> {
         val resources = content.filterIsInstance<Resource>()
-        val statementCounts = countsFor(resources)
+        val statementCounts = countIncomingStatements(resources)
         val formattedLabelCount = formatLabelFor(resources)
         return map { it.toThingRepresentation(statementCounts, formattedLabelCount) }
     }
@@ -27,7 +27,7 @@ interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepre
     private fun Thing.toThingRepresentation(): ThingRepresentation =
         when (this) {
             is Resource -> {
-                val count = statementService.countStatementsAboutResource(id)
+                val count = statementService.countIncomingStatements(id)
                 toResourceRepresentation(mapOf(id to count), formatLabelFor(listOf(this)))
             }
             is Class -> toClassRepresentation()

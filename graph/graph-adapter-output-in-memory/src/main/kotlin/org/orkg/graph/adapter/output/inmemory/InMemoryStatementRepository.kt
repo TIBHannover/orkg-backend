@@ -233,11 +233,13 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
         entities.clear()
     }
 
-    override fun countStatementsAboutResource(id: ThingId) =
+    override fun countIncomingStatements(id: ThingId) =
         entities.count { id == it.`object`.id }.toLong()
 
-    override fun countStatementsAboutResources(resourceIds: Set<ThingId>) =
-        resourceIds.associateWith(::countStatementsAboutResource).filter { it.value > 0 }
+    override fun countIncomingStatements(ids: Set<ThingId>) =
+        entities.groupBy { it.`object`.id }
+            .filter { it.value.isNotEmpty() && it.key in ids }
+            .mapValues { it.value.size.toLong() }
 
     override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> =
         entities.filter { it.id in statementIds }.map { OwnershipInfo(it.id, it.createdBy) }.toSet()

@@ -63,7 +63,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
 
     @BeforeEach
     fun setup() {
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
     }
 

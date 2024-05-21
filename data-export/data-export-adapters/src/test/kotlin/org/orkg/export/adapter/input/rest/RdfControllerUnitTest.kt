@@ -88,7 +88,7 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
             createResource(id = someId, label = "Resource 1234")
         )
 
-        every { statementService.countStatementsAboutResources(setOf(someId)) } returns mapOf(someId to 5L)
+        every { statementService.countIncomingStatements(setOf(someId)) } returns mapOf(someId to 5L)
         every { featureFlagService.isFormattedLabelsEnabled() } returns false
 
         // TODO: tests else-branch, not ideal

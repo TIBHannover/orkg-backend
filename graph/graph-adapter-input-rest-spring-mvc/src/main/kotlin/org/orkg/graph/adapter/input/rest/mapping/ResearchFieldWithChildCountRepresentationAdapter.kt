@@ -10,7 +10,7 @@ interface ResearchFieldWithChildCountRepresentationAdapter : ResourceRepresentat
 
     fun Page<ResearchFieldWithChildCount>.mapToResearchFieldWithChildCountRepresentation(): Page<ResearchFieldWithChildCountRepresentation> {
         val resources = content.map { it.resource }
-        val usageCounts = countsFor(resources)
+        val usageCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources)
         return map { it.toResearchFieldWithChildCountRepresentation(usageCounts, formattedLabels) }
     }

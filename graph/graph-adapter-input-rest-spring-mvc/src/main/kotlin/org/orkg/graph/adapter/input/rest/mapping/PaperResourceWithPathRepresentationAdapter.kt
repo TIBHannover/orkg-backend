@@ -12,7 +12,7 @@ interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapte
 
     fun Page<PaperResourceWithPath>.mapToPaperResourceWithPathRepresentation(): Page<PaperResourceWithPathRepresentation> {
         val resources = map { it.paper } + map { it.path }.flatten().filterIsInstance<Resource>()
-        val usageCounts = countsFor(resources)
+        val usageCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources)
         return map { it.toPaperResourceWithPathRepresentation(usageCounts, formattedLabels) }
     }

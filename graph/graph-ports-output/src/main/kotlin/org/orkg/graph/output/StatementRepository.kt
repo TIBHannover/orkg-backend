@@ -21,8 +21,8 @@ import org.springframework.data.domain.Sort
 import org.springframework.transaction.annotation.Transactional
 
 interface StatementRepository : EntityRepository<GeneralStatement, StatementId> {
-    fun countStatementsAboutResource(id: ThingId): Long
-    fun countStatementsAboutResources(resourceIds: Set<ThingId>): Map<ThingId, Long>
+    fun countIncomingStatements(id: ThingId): Long
+    fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long>
     fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo>
     // legacy methods:
     fun nextIdentity(): StatementId

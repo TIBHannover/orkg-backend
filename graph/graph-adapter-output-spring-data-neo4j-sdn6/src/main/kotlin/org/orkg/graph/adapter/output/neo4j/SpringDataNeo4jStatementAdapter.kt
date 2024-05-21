@@ -16,7 +16,6 @@ import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.optionalMatch
 import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.returning
-import org.neo4j.cypherdsl.core.Cypher.sort
 import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unionAll
 import org.neo4j.cypherdsl.core.Cypher.unwind
@@ -256,11 +255,11 @@ class SpringDataNeo4jStatementAdapter(
             objectLabel = null
         )
 
-    override fun countStatementsAboutResource(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
+    override fun countIncomingStatements(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
         .withQuery {
             val r = name("rel")
             val subject = node("Thing")
-            val `object` = node("Resource")
+            val `object` = node("Thing")
                 .withProperties("id", parameter("id"))
             match(
                 subject.relationshipTo(`object`, RELATED)
@@ -272,23 +271,22 @@ class SpringDataNeo4jStatementAdapter(
         .one()
         .orElse(0)
 
-    override fun countStatementsAboutResources(resourceIds: Set<ThingId>): Map<ThingId, Long> =
+    override fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long> =
         CypherQueryBuilder(neo4jClient)
             .withQuery {
                 val r = name("rel")
-                val subject = node("Thing")
-                val `object` = node("Resource")
-                val resourceId = `object`.property("id")
                 val id = name("id")
+                val `object` = node("Thing").withProperties("id", id)
                 val count = name("count")
-                match(
-                    subject.relationshipTo(`object`, RELATED)
-                        .named(r)
-                ).where(resourceId.`in`(parameter("resourceIds")))
-                    .with(resourceId.`as`(id), count(r).`as`(count))
+                unwind(parameter("ids")).`as`(id)
+                    .match(
+                        node("Thing").relationshipTo(`object`, RELATED)
+                            .named(r)
+                    )
+                    .with(id.asExpression(), count(r).`as`(count))
                     .returning(id, count)
             }
-            .withParameters("resourceIds" to resourceIds.map { it.value })
+            .withParameters("ids" to ids.map { it.value })
             .mappedBy { _, record -> ThingId(record["id"].asString()) to record["count"].asLong() }
             .all()
             .toMap()

@@ -18,14 +18,14 @@ interface AuthorRepresentationAdapter : ResourceRepresentationAdapter {
 
     fun Page<ComparisonAuthor>.mapToComparisonAuthorRepresentation(): Page<ComparisonAuthorRepresentation> {
         val resources = content.map { it.author }.filterIsInstance<ResourceAuthor>().map { it.value }
-        val usageCounts = countsFor(resources)
+        val usageCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources)
         return map { it.toComparisonAuthorRepresentation(usageCounts, formattedLabels) }
     }
 
     fun Page<PaperAuthor>.mapToPaperAuthorRepresentation(): Page<PaperAuthorRepresentation> {
         val resources = content.map { it.author }.filterIsInstance<ResourceAuthor>().map { it.value }
-        val usageCounts = countsFor(resources)
+        val usageCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources)
         return map { it.toPaperAuthorRepresentation(usageCounts, formattedLabels) }
     }

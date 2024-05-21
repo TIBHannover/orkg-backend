@@ -251,11 +251,11 @@ class StatementService(
     override fun countPredicateUsage(pageable: Pageable) =
         statementRepository.countPredicateUsage(pageable)
 
-    override fun countStatementsAboutResource(id: ThingId) =
-        statementRepository.countStatementsAboutResource(id)
+    override fun countIncomingStatements(id: ThingId) =
+        statementRepository.countIncomingStatements(id)
 
-    override fun countStatementsAboutResources(ids: Set<ThingId>): Map<ThingId, Long> =
-        statementRepository.countStatementsAboutResources(ids)
+    override fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long> =
+        statementRepository.countIncomingStatements(ids)
 
     /**
      * Create a bundle where the first level is not included in the statements.

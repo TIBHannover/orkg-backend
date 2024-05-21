@@ -81,7 +81,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
         val response = ResearchFieldWithChildCount(createResearchField(subfieldId), 1)
 
         every { service.findChildren(parentId, any()) } returns pageOf(response)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc.perform(documentedGetRequestTo("/api/research-fields/{id}/children", parentId))
@@ -101,7 +101,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findChildren(parentId, any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -128,7 +128,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
         val subfieldId = ThingId("R123")
 
         every { service.findParents(subfieldId, any()) } returns pageOf(createResearchField(parentId))
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc.perform(documentedGetRequestTo("/api/research-fields/{id}/parents", subfieldId))
@@ -145,7 +145,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findParents(subfieldId, any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -170,7 +170,6 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
         val subfieldId = ThingId("subfield")
 
         every { service.findParents(subfieldId, any()) } returns Page.empty()
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         get("/api/research-fields/$subfieldId/parents")
@@ -179,7 +178,6 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
             .andExpect(jsonPath("$.content", empty<Collection<*>>()))
 
         verify(exactly = 1) { service.findParents(subfieldId, any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -191,7 +189,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
         val root = createResearchField(rootId)
 
         every { service.findRoots(subfieldId, any()) } returns pageOf(root)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc.perform(documentedGetRequestTo("/api/research-fields/{id}/roots", subfieldId))
@@ -208,7 +206,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findRoots(subfieldId, any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -233,7 +231,6 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
         val subfieldId = ThingId("subfield")
 
         every { service.findRoots(subfieldId, any()) } returns Page.empty()
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         get("/api/research-fields/$subfieldId/roots")
@@ -242,7 +239,6 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
             .andExpect(jsonPath("$.content", empty<Collection<*>>()))
 
         verify(exactly = 1) { service.findRoots(subfieldId, any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -255,7 +251,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
         val entry = ResearchFieldHierarchyEntry(childResearchField, setOf(parentId))
 
         every { service.findResearchFieldHierarchy(subfieldId, any()) } returns pageOf(entry)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc.perform(documentedGetRequestTo("/api/research-fields/{id}/hierarchy", subfieldId))
@@ -274,7 +270,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findResearchFieldHierarchy(subfieldId, any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -301,7 +297,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
         val root = createResearchField(rootId)
 
         every { service.findAllRoots(any()) } returns pageOf(root)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc.perform(documentedGetRequestTo("/api/research-fields/roots"))
@@ -311,7 +307,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findAllRoots(any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 

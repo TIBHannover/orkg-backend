@@ -16,14 +16,14 @@ interface TemplateInstanceRepresentationAdapter : ThingRepresentationAdapter, Em
 
     fun Page<TemplateInstance>.mapToTemplateInstanceRepresentation(): Page<TemplateInstanceRepresentation> {
         val resources = content.resources()
-        val statementCounts = countsFor(resources)
+        val statementCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources)
         return map { it.toTemplateInstanceRepresentation(statementCounts, formattedLabels) }
     }
 
     private fun TemplateInstance.toTemplateInstanceRepresentation(): TemplateInstanceRepresentation {
         val resources = listOf(this).resources()
-        val counts = countsFor(resources)
+        val counts = countIncomingStatements(resources)
         val labels = formatLabelFor(resources)
         return toTemplateInstanceRepresentation(counts, labels)
     }

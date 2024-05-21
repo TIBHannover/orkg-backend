@@ -9,7 +9,7 @@ interface FieldPerProblemRepresentationAdapter : ResourceRepresentationAdapter {
 
     fun List<FieldWithFreq>.mapToFieldWithFreqRepresentation(): List<FieldWithFreqRepresentation> {
         val resources = map { it.field }
-        val usageCounts = countsFor(resources)
+        val usageCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources)
         return map { it.toFieldWithFreqRepresentation(usageCounts, formattedLabels) }
     }

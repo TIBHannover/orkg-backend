@@ -221,7 +221,7 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
         } returns pageOf(mockedResult)
         every {
             // The returned counts returned do not matter, we only need to satisfy the call.
-            statementService.countStatementsAboutResources(setOf(paper.id, visualization.id))
+            statementService.countIncomingStatements(setOf(paper.id, visualization.id))
         } returns mapOf(paper.id to 12, visualization.id to 3)
     }
 
@@ -234,8 +234,8 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
         val papersPerProblem = PaperCountPerResearchProblem(problemResource, 5)
 
         every { resourceService.findById(fieldResource.id) } returns Optional.of(fieldResource)
-        every { statementService.countStatementsAboutResources(setOf(fieldResource.id)) } returns mapOf(fieldResource.id to 12)
-        every { statementService.countStatementsAboutResources(setOf(problemResource.id)) } returns mapOf(fieldResource.id to 4)
+        every { statementService.countIncomingStatements(setOf(fieldResource.id)) } returns mapOf(fieldResource.id to 12)
+        every { statementService.countIncomingStatements(setOf(problemResource.id)) } returns mapOf(fieldResource.id to 4)
         every { useCases.getResearchProblemsOfField(fieldResource.id, any()) } returns pageOf(papersPerProblem)
     }
 
@@ -246,7 +246,7 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
 
         every { resourceService.findById(fieldResource.id) } returns Optional.of(fieldResource)
         every {
-            statementService.countStatementsAboutResources(setOf(paper1.id, paper2.id))
+            statementService.countIncomingStatements(setOf(paper1.id, paper2.id))
         } returns mapOf(paper1.id to 12, paper2.id to 13)
         every { useCases.findAllPapersByResearchField(fieldResource.id, any(), any(), any()) } returns pageOf(
             paper1,
@@ -261,7 +261,7 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
 
         every { resourceService.findById(fieldResource.id) } returns Optional.of(fieldResource)
         every {
-            statementService.countStatementsAboutResources(setOf(comparison1.id, comparison2.id))
+            statementService.countIncomingStatements(setOf(comparison1.id, comparison2.id))
         } returns mapOf(comparison1.id to 12, comparison2.id to 13)
         every { useCases.findAllComparisonsByResearchField(fieldResource.id, any(), any(), any()) } returns pageOf(
             comparison1,

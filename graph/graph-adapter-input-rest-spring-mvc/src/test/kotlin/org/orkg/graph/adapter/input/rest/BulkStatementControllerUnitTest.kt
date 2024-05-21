@@ -93,7 +93,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
 
         every { statementService.findAll(subjectId = r1, pageable = any()) } returns pageOf(s1, pageable = pageable)
         every { statementService.findAll(subjectId = r3, pageable = any()) } returns pageOf(s2, pageable = pageable)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc
@@ -119,7 +119,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
             statementService.findAll(subjectId = r3, pageable = any())
         }
         verify(exactly = 2) {
-            statementService.countStatementsAboutResources(any())
+            statementService.countIncomingStatements(any<Set<ThingId>>())
             flags.isFormattedLabelsEnabled()
         }
     }
@@ -148,7 +148,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
 
         every { statementService.findAll(objectId = r2, pageable = any()) } returns pageOf(s1, pageable = pageable)
         every { statementService.findAll(objectId = r4, pageable = any()) } returns pageOf(s2, pageable = pageable)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc
@@ -174,7 +174,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
             statementService.findAll(objectId = r4, pageable = any())
         }
         verify(exactly = 2) {
-            statementService.countStatementsAboutResources(any())
+            statementService.countIncomingStatements(any<Set<ThingId>>())
             flags.isFormattedLabelsEnabled()
         }
     }
@@ -226,7 +226,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { statementService.update(match { it.statementId == s1.id || it.statementId == s2.id }) } just runs
         every { statementService.findById(s1.id) } returns Optional.of(newS1)
         every { statementService.findById(s2.id) } returns Optional.of(newS2)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc
@@ -252,7 +252,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
             statementService.update(match { it.statementId == s2.id })
             statementService.findById(s1.id)
             statementService.findById(s2.id)
-            statementService.countStatementsAboutResources(any())
+            statementService.countIncomingStatements(any<Set<ThingId>>())
             flags.isFormattedLabelsEnabled()
         }
     }

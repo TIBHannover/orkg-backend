@@ -89,7 +89,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     @DisplayName("Given several statements, when filtering by no parameters, then status is 200 OK and statements are returned")
     fun getPaged() {
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createStatement())
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/statements")
@@ -101,7 +100,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -113,7 +111,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             `object` = createLiteral()
         )
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(statement)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         val subjectClasses = (statement.subject as Resource).classes
@@ -176,7 +174,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
                 objectLabel = objectLabel
             )
         }
-        verify(exactly = 1) { statementService.countStatementsAboutResources(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
@@ -359,7 +357,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
                 pageable = any()
             )
         } returns pageOf(statement)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc.perform(get("/api/statements/predicate/${statement.predicate.id}/literals?q=${statement.`object`.label}"))
@@ -372,7 +370,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
                 objectLabel = statement.`object`.label,
                 pageable = any()
             )
-            statementService.countStatementsAboutResources(any())
+            statementService.countIncomingStatements(any<Set<ThingId>>())
             flags.isFormattedLabelsEnabled()
         }
     }

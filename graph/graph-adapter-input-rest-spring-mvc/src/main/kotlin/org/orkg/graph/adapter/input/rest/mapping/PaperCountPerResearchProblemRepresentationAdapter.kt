@@ -10,7 +10,7 @@ interface PaperCountPerResearchProblemRepresentationAdapter : ResourceRepresenta
 
     fun Page<PaperCountPerResearchProblem>.mapToPaperCountPerResearchProblemRepresentation(): Page<PaperCountPerResearchProblemRepresentation> {
         val resources = content.map { it.problem }
-        val usageCounts = countsFor(resources)
+        val usageCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources)
         return map { it.toPaperCountPerResearchProblemRepresentation(usageCounts, formattedLabels) }
     }

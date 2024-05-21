@@ -313,7 +313,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
         )
 
         every { listService.findAllElementsById(id, any()) } returns PageImpl(elements)
-        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc.perform(documentedGetRequestTo("/api/lists/{id}/elements", id))

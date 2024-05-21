@@ -16,14 +16,14 @@ interface EmbeddedStatementRepresentationAdapter : ThingRepresentationAdapter {
 
     fun Page<EmbeddedStatement>.mapToEmbeddedStatementRepresentation(): Page<EmbeddedStatementRepresentation> {
         val resources = content.resources()
-        val statementCounts = countsFor(resources)
+        val statementCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources)
         return map { it.toEmbeddedStatementRepresentation(statementCounts, formattedLabels) }
     }
 
     private fun EmbeddedStatement.toEmbeddedStatementRepresentation(): EmbeddedStatementRepresentation {
         val resources = listOf(this).resources()
-        val counts = countsFor(resources)
+        val counts = countIncomingStatements(resources)
         val labels = formatLabelFor(resources)
         return toEmbeddedStatementRepresentation(counts, labels)
     }

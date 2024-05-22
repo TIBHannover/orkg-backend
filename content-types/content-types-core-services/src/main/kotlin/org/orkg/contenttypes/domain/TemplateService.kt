@@ -13,6 +13,7 @@ import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
+import org.orkg.contenttypes.domain.actions.DescriptionValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
@@ -126,7 +127,7 @@ class TemplateService(
     override fun create(command: CreateTemplateCommand): ThingId {
         val steps = listOf(
             LabelValidator { it.label },
-            LabelValidator("description") { it.description },
+            DescriptionValidator { it.description },
             LabelValidator("formatted_label") { it.formattedLabel?.value },
             TemplateTargetClassValidator(classRepository, statementRepository, { it.targetClass }),
             TemplateRelationsCreateValidator(resourceRepository, predicateRepository),
@@ -158,7 +159,7 @@ class TemplateService(
         val steps = listOf(
             TemplateExistenceValidator(this),
             LabelValidator { it.label },
-            LabelValidator("description") { it.description },
+            DescriptionValidator { it.description },
             LabelValidator("formatted_label") { it.formattedLabel?.value },
             TemplateTargetClassValidator(classRepository, statementRepository, { it.targetClass }, { it.template!!.targetClass.id }),
             TemplateRelationsUpdateValidator(resourceRepository, predicateRepository),

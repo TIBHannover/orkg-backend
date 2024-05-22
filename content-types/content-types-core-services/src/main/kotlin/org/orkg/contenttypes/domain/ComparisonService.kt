@@ -13,6 +13,7 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
+import org.orkg.contenttypes.domain.actions.DescriptionValidator
 import org.orkg.contenttypes.domain.actions.LabelCollectionValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
@@ -172,7 +173,7 @@ class ComparisonService(
     override fun create(command: CreateComparisonCommand): ThingId {
         val steps = listOf(
             LabelValidator("title") { it.title },
-            LabelValidator("description") { it.description },
+            DescriptionValidator { it.description },
             LabelCollectionValidator("references") { it.references },
             ComparisonContributionValidator(resourceRepository) { it.contributions },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
@@ -290,7 +291,7 @@ class ComparisonService(
     override fun update(command: UpdateComparisonCommand) {
         val steps = listOf(
             LabelValidator("title") { it.title },
-            LabelValidator("description") { it.description },
+            DescriptionValidator { it.description },
             LabelCollectionValidator("references") { it.references },
             ComparisonExistenceValidator(this),
             ComparisonModifiableValidator(statementService),

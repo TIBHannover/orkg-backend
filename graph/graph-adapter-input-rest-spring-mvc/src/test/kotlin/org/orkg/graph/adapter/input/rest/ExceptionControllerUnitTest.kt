@@ -14,6 +14,7 @@ import org.orkg.graph.domain.ClassAlreadyExists
 import org.orkg.graph.domain.ClassNotAllowed
 import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidStatement
 import org.orkg.graph.domain.LiteralNotModifiable
@@ -158,6 +159,35 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.errors[0].field").value("title"))
             .andExpect(jsonPath("$.errors[0].message").value("""A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."""))
             .andExpect(jsonPath("$.path").value("/invalid-label"))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidDescription() {
+        get("/invalid-description")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("description"))
+            .andExpect(jsonPath("$.errors[0].message").value("""A description must not be blank and must be at most $MAX_LABEL_LENGTH characters long."""))
+            .andExpect(jsonPath("$.path").value("/invalid-description"))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidDescriptionWithProperty() {
+        get("/invalid-description")
+            .param("property", "contents")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("contents"))
+            .andExpect(jsonPath("$.errors[0].message").value("""A description must not be blank and must be at most $MAX_LABEL_LENGTH characters long."""))
+            .andExpect(jsonPath("$.path").value("/invalid-description"))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
@@ -317,6 +347,16 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/invalid-label", params = ["property"])
         fun invalidLabel(@RequestParam property: String) {
             throw InvalidLabel(property)
+        }
+
+        @GetMapping("/invalid-description")
+        fun invalidInvalidDescription() {
+            throw InvalidDescription()
+        }
+
+        @GetMapping("/invalid-description", params = ["property"])
+        fun invalidInvalidDescription(@RequestParam property: String) {
+            throw InvalidDescription(property)
         }
 
         @GetMapping("/uri-already-in-use")

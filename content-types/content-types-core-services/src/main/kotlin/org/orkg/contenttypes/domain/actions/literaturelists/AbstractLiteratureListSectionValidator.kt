@@ -8,6 +8,8 @@ import org.orkg.contenttypes.input.ListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.TextSectionDefinition
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Description
+import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.ResourceNotFound
@@ -31,7 +33,7 @@ class AbstractLiteratureListSectionValidator(
             }
         } else if (section is TextSectionDefinition) {
             Label.ofOrNull(section.heading) ?: throw InvalidLabel("heading")
-            Label.ofOrNull(section.text) ?: throw InvalidLabel("text")
+            Description.ofOrNull(section.text) ?: throw InvalidDescription("text")
             if (section.headingSize < 1) {
                 throw InvalidHeadingSize(section.headingSize)
             }

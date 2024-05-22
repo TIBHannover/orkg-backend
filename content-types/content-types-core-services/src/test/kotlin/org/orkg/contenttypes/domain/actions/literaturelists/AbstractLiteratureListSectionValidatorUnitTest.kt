@@ -18,6 +18,7 @@ import org.orkg.contenttypes.domain.InvalidListSectionEntry
 import org.orkg.contenttypes.input.testing.fixtures.dummyListSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyTextSectionDefinition
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -130,7 +131,7 @@ class AbstractLiteratureListSectionValidatorUnitTest {
         val section = dummyTextSectionDefinition().copy(text = "\n")
         val validIds = mutableSetOf<ThingId>()
 
-        assertThrows<InvalidLabel> { abstractLiteratureListSectionValidator.validate(section, validIds) }.asClue {
+        assertThrows<InvalidDescription> { abstractLiteratureListSectionValidator.validate(section, validIds) }.asClue {
             it.property shouldBe "text"
         }
     }

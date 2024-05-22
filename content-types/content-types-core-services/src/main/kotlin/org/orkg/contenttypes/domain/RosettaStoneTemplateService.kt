@@ -7,6 +7,7 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
+import org.orkg.contenttypes.domain.actions.DescriptionValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
@@ -75,7 +76,7 @@ class RosettaStoneTemplateService(
     override fun create(command: CreateRosettaStoneTemplateCommand): ThingId {
         val steps = listOf(
             LabelValidator { it.label },
-            LabelValidator("description") { it.description },
+            DescriptionValidator { it.description },
             RosettaStoneTemplateFormattedLabelValidator(),
             RosettaStoneTemplatePropertiesValidator(predicateRepository, classRepository),
             OrganizationValidator(organizationRepository, { it.organizations }),

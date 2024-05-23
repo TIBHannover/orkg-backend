@@ -70,7 +70,6 @@ data class RosettaStoneStatementVersion(
 ) {
     init {
         require(subjects.isNotEmpty()) { "Must have at least one subject." }
-        require(objects.isNotEmpty()) { "Must have at least one object." }
         require(observatories.size <= 1) { "Must be at most one observatory." }
         require(organizations.size <= 1) { "Must be at most one organization." }
     }

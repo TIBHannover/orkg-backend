@@ -26,7 +26,6 @@ import org.orkg.contenttypes.domain.MismatchedDataType
 import org.orkg.contenttypes.domain.MissingFormattedLabelPlaceholder
 import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
 import org.orkg.contenttypes.domain.MissingPropertyValues
-import org.orkg.contenttypes.domain.MissingRequiredObjectPosition
 import org.orkg.contenttypes.domain.MissingSubjectPosition
 import org.orkg.contenttypes.domain.NumberTooHigh
 import org.orkg.contenttypes.domain.NumberTooLow
@@ -693,18 +692,6 @@ internal class ExceptionControllerUnitTest {
     }
 
     @Test
-    fun missingRequiredObjectPosition() {
-        get("/missing-required-object-position")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/missing-required-object-position"))
-            .andExpect(jsonPath("$.message").value("""Missing required object position. There must be at least one property with path "${Predicates.hasObjectPosition}" that has a minimum cardinality of at least one."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
     fun missingPropertyPlaceholder() {
         val index = "4"
 
@@ -998,11 +985,6 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/missing-subject-position")
         fun missingSubjectPosition() {
             throw MissingSubjectPosition()
-        }
-
-        @GetMapping("/missing-required-object-position")
-        fun missingRequiredObjectPosition() {
-            throw MissingRequiredObjectPosition()
         }
 
         @GetMapping("/missing-property-placeholder")

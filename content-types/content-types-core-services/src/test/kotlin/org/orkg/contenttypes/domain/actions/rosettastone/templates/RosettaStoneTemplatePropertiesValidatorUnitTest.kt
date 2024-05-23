@@ -14,7 +14,6 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.InvalidSubjectPositionCardinality
 import org.orkg.contenttypes.domain.InvalidSubjectPositionType
 import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
-import org.orkg.contenttypes.domain.MissingRequiredObjectPosition
 import org.orkg.contenttypes.domain.MissingSubjectPosition
 import org.orkg.contenttypes.domain.TooManySubjectPositions
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
@@ -64,37 +63,6 @@ class RosettaStoneTemplatePropertiesValidatorUnitTest {
         every { abstractTemplatePropertyValidator.validate(any()) } just runs
 
         assertThrows<MissingSubjectPosition> { rosettaStoneTemplatePropertiesValidator(command, state) }
-
-        verify { abstractTemplatePropertyValidator.validate(any()) }
-    }
-
-    @Test
-    fun `Given a rosetta stone template create command, when no object position is specified, it throws an exception`() {
-        val command = dummyCreateRosettaStoneTemplateCommand().let {
-            it.copy(properties = it.properties.take(1))
-        }
-        val state = CreateRosettaStoneTemplateState()
-
-        every { abstractTemplatePropertyValidator.validate(any()) } just runs
-
-        assertThrows<MissingRequiredObjectPosition> { rosettaStoneTemplatePropertiesValidator(command, state) }
-
-        verify { abstractTemplatePropertyValidator.validate(any()) }
-    }
-
-    @Test
-    fun `Given a rosetta stone template create command, when no object position with a minimum cardinality of at least one is specified, it throws an exception`() {
-        val command = dummyCreateRosettaStoneTemplateCommand().copy(
-            properties = listOf(
-                dummyCreateSubjectPositionTemplatePropertyCommand(),
-                dummyCreateUntypedObjectPositionTemplatePropertyCommand().copy(minCount = 0)
-            )
-        )
-        val state = CreateRosettaStoneTemplateState()
-
-        every { abstractTemplatePropertyValidator.validate(any()) } just runs
-
-        assertThrows<MissingRequiredObjectPosition> { rosettaStoneTemplatePropertiesValidator(command, state) }
 
         verify { abstractTemplatePropertyValidator.validate(any()) }
     }

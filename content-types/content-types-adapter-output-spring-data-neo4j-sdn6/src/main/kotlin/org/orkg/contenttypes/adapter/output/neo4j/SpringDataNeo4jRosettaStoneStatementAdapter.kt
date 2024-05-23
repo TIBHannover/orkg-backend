@@ -45,9 +45,9 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
                   (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
             MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(subject:Thing)
-            MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
+            OPTIONAL MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
             WITH latest, context.id AS contextId, template.id AS templateId, metadata, version, object, COLLECT([subject, subjectNode.index]) AS subjects, objectNode
-            WITH latest, contextId, templateId, metadata, version, COLLECT([object, objectNode.index, objectNode.position]) AS objects, subjects
+            WITH latest, contextId, templateId, metadata, version, CASE WHEN object IS NOT NULL THEN COLLECT([object, objectNode.index, objectNode.position]) ELSE [] END AS objects, subjects
             WITH latest, contextId, templateId, COLLECT([version, metadata, subjects, objects]) AS versions
             RETURN latest, contextId, templateId, versions""".trimIndent()
         )
@@ -64,9 +64,9 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
                   (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
             MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(subject:Thing)
-            MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
+            OPTIONAL MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
             WITH latest, context.id AS contextId, template.id AS templateId, metadata, version, object, COLLECT([subject, subjectNode.index]) AS subjects, objectNode
-            WITH latest, contextId, templateId, metadata, version, COLLECT([object, objectNode.index, objectNode.position]) AS objects, subjects
+            WITH latest, contextId, templateId, metadata, version, CASE WHEN object IS NOT NULL THEN COLLECT([object, objectNode.index, objectNode.position]) ELSE [] END AS objects, subjects
             WITH latest, contextId, templateId, COLLECT([version, metadata, subjects, objects]) AS versions
             RETURN latest, contextId, templateId, versions
             SKIP ${'$'}skip
@@ -275,7 +275,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
                   (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
             MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(subject:Thing)
-            MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
+            OPTIONAL MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
             DETACH DELETE latest, version, metadata, subject, subjectNode, object, objectNode""".trimIndent()
         ).run()
     }

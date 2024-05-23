@@ -214,7 +214,7 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
                         fieldWithPath("label").description("The label of the rosetta stone template."),
                         fieldWithPath("description").description("The description of the rosetta stone template."),
                         fieldWithPath("formatted_label").description("The formatted label pattern of the rosetta stone template."),
-                        subsectionWithPath("properties").description("""The list of properties of the rosetta stone template. There has to be exactly one <<template-properties,template property>> with path `hasSubjectPosition` that has a minimum cardinality of at least one and is not a literal template property. All other properties must have a path of `hasObjectPosition`, one of which must have a minimum cardinality of at least one. See <<template-properties,template properties>> for more information."""),
+                        subsectionWithPath("properties").description("""The list of properties of the rosetta stone template. There has to be exactly one <<template-properties,template property>> with path `hasSubjectPosition` that has a minimum cardinality of at least one and is not a literal template property. All other properties must have a path of `hasObjectPosition`. See <<template-properties,template properties>> for more information."""),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone template belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone template belongs to."),
                     )

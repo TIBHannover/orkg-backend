@@ -51,9 +51,7 @@ import org.orkg.contenttypes.domain.actions.templates.properties.TemplatePropert
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.graph.domain.BundleConfiguration
-import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
@@ -187,58 +185,22 @@ class TemplateService(
         steps.execute(command, UpdateTemplatePropertyState())
     }
 
-    internal fun Resource.toTemplate(): Template {
-        val statements = statementRepository.fetchAsBundle(
-            id = id,
-            configuration = BundleConfiguration(
-                minLevel = null,
-                maxLevel = 2,
-                blacklist = emptyList(),
-                whitelist = emptyList()
-            ),
-            sort = Sort.unsorted()
-        ).groupBy { it.subject.id }
-        return Template(
-            id = id,
-            label = label,
-            description = statements[id]!!
-                .wherePredicate(Predicates.description)
-                .singleOrNull()?.`object`?.label,
-            formattedLabel = statements[id]!!
-                .wherePredicate(Predicates.templateLabelFormat)
-                .singleOrNull()
-                ?.let { FormattedLabel.of(it.`object`.label) },
-            targetClass = statements[id]!!
-                .wherePredicate(Predicates.shTargetClass)
-                .single { it.`object` is Class }
-                .let { ClassReference(it.`object` as Class) },
-            relations = TemplateRelations(
-                researchFields = statements[id]!!
-                    .wherePredicate(Predicates.templateOfResearchField)
-                    .objectIdsAndLabel(),
-                researchProblems = statements[id]!!
-                    .wherePredicate(Predicates.templateOfResearchProblem)
-                    .objectIdsAndLabel(),
-                predicate = statements[id]!!
-                    .wherePredicate(Predicates.templateOfPredicate)
-                    .singleOrNull()
-                    ?.objectIdAndLabel()
-            ),
-            properties = statements[id]!!
-                .wherePredicate(Predicates.shProperty)
-                .filter { it.`object` is Resource && Classes.propertyShape in (it.`object` as Resource).classes }
-                .mapNotNull { TemplateProperty.from(it.`object` as Resource, statements[it.`object`.id].orEmpty()) }
-                .sortedBy { it.order },
-            isClosed = statements[id]!!
-                .wherePredicate(Predicates.shClosed)
-                .singleOrNull()
-                .let { it?.`object`?.label.toBoolean() },
-            createdAt = createdAt,
-            createdBy = createdBy,
-            organizations = listOf(organizationId),
-            observatories = listOf(observatoryId),
-            visibility = visibility,
-            unlistedBy = unlistedBy
+    internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
+        return ContentTypeSubgraph(
+            root = resource.id,
+            statements = statementRepository.fetchAsBundle(
+                id = resource.id,
+                configuration = BundleConfiguration(
+                    minLevel = null,
+                    maxLevel = 2,
+                    blacklist = emptyList(),
+                    whitelist = emptyList()
+                ),
+                sort = Sort.unsorted()
+            ).groupBy { it.subject.id }
         )
     }
+
+    internal fun Resource.toTemplate(): Template =
+        Template.from(this, findSubgraph(this).statements)
 }

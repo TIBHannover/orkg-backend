@@ -28,13 +28,68 @@ data class Template(
     val organizations: List<OrganizationId>,
     val visibility: Visibility,
     val unlistedBy: ContributorId? = null
-) : ContentType
+) : ContentType {
+    companion object {
+        fun from(resource: Resource, statements: Map<ThingId, List<GeneralStatement>>): Template {
+            val directStatements = statements[resource.id]!!
+            return Template(
+                id = resource.id,
+                label = resource.label,
+                description = directStatements
+                    .wherePredicate(Predicates.description)
+                    .singleOrNull()?.`object`?.label,
+                formattedLabel = directStatements
+                    .wherePredicate(Predicates.templateLabelFormat)
+                    .singleOrNull()
+                    ?.let { FormattedLabel.of(it.`object`.label) },
+                targetClass = directStatements
+                    .wherePredicate(Predicates.shTargetClass)
+                    .single { it.`object` is Class }
+                    .let { ClassReference(it.`object` as Class) },
+                relations = TemplateRelations.from(resource, statements),
+                properties = directStatements
+                    .wherePredicate(Predicates.shProperty)
+                    .filter { it.`object` is Resource && Classes.propertyShape in (it.`object` as Resource).classes }
+                    .mapNotNull { TemplateProperty.from(it.`object` as Resource, statements[it.`object`.id].orEmpty()) }
+                    .sortedBy { it.order },
+                isClosed = directStatements
+                    .wherePredicate(Predicates.shClosed)
+                    .singleOrNull()
+                    .let { it?.`object`?.label.toBoolean() },
+                createdAt = resource.createdAt,
+                createdBy = resource.createdBy,
+                organizations = listOf(resource.organizationId),
+                observatories = listOf(resource.observatoryId),
+                visibility = resource.visibility,
+                unlistedBy = resource.unlistedBy
+            )
+        }
+    }
+}
 
 data class TemplateRelations(
     val researchFields: List<ObjectIdAndLabel> = emptyList(),
     val researchProblems: List<ObjectIdAndLabel> = emptyList(),
     val predicate: ObjectIdAndLabel? = null,
-)
+) {
+    companion object {
+        fun from(resource: Resource, statements: Map<ThingId, List<GeneralStatement>>): TemplateRelations {
+            val directStatements = statements[resource.id]!!
+            return TemplateRelations(
+                researchFields = directStatements
+                    .wherePredicate(Predicates.templateOfResearchField)
+                    .objectIdsAndLabel(),
+                researchProblems = directStatements
+                    .wherePredicate(Predicates.templateOfResearchProblem)
+                    .objectIdsAndLabel(),
+                predicate = directStatements
+                    .wherePredicate(Predicates.templateOfPredicate)
+                    .singleOrNull()
+                    ?.objectIdAndLabel()
+            )
+        }
+    }
+}
 
 sealed interface TemplateProperty {
     val id: ThingId

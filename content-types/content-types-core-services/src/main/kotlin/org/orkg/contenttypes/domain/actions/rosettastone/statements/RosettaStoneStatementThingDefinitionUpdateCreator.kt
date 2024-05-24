@@ -1,9 +1,9 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.statements
 
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementCommand
+import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.SubgraphCreator
-import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosettaStoneStatementAction.State
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction.State
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -12,9 +12,9 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.StatementRepository
 
-class RosettaStoneStatementThingDefinitionCreator(
+class RosettaStoneStatementThingDefinitionUpdateCreator(
     private val subgraphCreator: SubgraphCreator
-) : CreateRosettaStoneStatementAction {
+) : UpdateRosettaStoneStatementAction {
     constructor(
         classService: ClassUseCases,
         resourceService: ResourceUseCases,
@@ -35,7 +35,7 @@ class RosettaStoneStatementThingDefinitionCreator(
         )
     )
 
-    override fun invoke(command: CreateRosettaStoneStatementCommand, state: State): State {
+    override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State {
         val tempId2Thing: MutableMap<String, ThingId> = mutableMapOf()
         subgraphCreator.createThings(
             thingDefinitions = command,

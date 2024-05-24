@@ -25,7 +25,7 @@ Authorization: Bearer {{access_token}}
             "classes": []
         },
         "#hanover": {
-            "label": "train",
+            "label": "hanover",
             "classes": ["DCLocation"]
         }
     },
@@ -41,4 +41,53 @@ Authorization: Bearer {{access_token}}
     "observatories": [],
     "organizations": [],
     "extraction_method": "MANUAL"
+}
+
+> {%
+    const location = response.headers.valueOf("Location")
+    const id = location.substring(location.lastIndexOf('/') + 1)
+    client.global.set("rosetta_stone_statement_id", id);
+%}
+
+### Update traveling statement
+POST {{server_url}}/api/rosetta-stone/statements/{{rosetta_stone_statement_id}}/versions
+Content-Type: application/vnd.orkg.rosetta-stone-statement.v1+json
+Authorization: Bearer {{access_token}}
+
+{
+    "subjects": ["#bob"],
+    "objects": [
+        ["#plane"],
+        ["#hanover"],
+        ["R144545"],
+        ["#datetime"]
+    ],
+    "certainty": "MODERATE",
+    "negated": false,
+    "resources": {
+        "#bob": {
+            "label": "Bob",
+            "classes": []
+        },
+        "#plane": {
+            "label": "plane",
+            "classes": []
+        },
+        "#hanover": {
+            "label": "hanover",
+            "classes": ["DCLocation"]
+        }
+    },
+    "predicates": {},
+    "classes": {},
+    "literals": {
+        "#datetime": {
+            "label": "2023-08-30",
+            "data_type": "xsd:date"
+        }
+    },
+    "lists": {},
+    "observatories": [],
+    "organizations": [],
+    "extraction_method": "UNKNOWN"
 }

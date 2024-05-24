@@ -31,7 +31,7 @@ class RosettaStoneStatementCreatorUnitTest {
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
 
-    private val stoneStatementThingDefinitionCreateValidator =
+    private val rosettaStoneStatementCreator =
         RosettaStoneStatementCreator(rosettaStoneStatementRepository, thingRepository, fixedClock)
 
     @BeforeEach
@@ -94,7 +94,7 @@ class RosettaStoneStatementCreatorUnitTest {
         } returns Optional.of(createClass(ThingId("Temp5")))
         every { rosettaStoneStatementRepository.save(any()) } just runs
 
-        val result = stoneStatementThingDefinitionCreateValidator(command, state)
+        val result = rosettaStoneStatementCreator(command, state)
 
         result.asClue {
             it.rosettaStoneTemplate shouldBe state.rosettaStoneTemplate

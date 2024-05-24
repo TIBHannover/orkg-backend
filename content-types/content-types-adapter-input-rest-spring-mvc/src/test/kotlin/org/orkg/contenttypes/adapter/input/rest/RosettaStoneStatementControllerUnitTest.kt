@@ -82,8 +82,8 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
                         // The order here determines the order in the generated table. More relevant items should be up.
                         fieldWithPath("id").description("The identifier of the rosetta stone statement."),
                         fieldWithPath("template_id").description("The identifier of the template that was used to instantiate the rosetta stone statement."),
-                        fieldWithPath("latest_version").description("The ID of the rosetta stone statement that always points to the latest version of this statement."),
-                        fieldWithPath("is_latest_version").description("Whether this rosetta stone statement version matches the latest version."),
+                        fieldWithPath("version_id").description("The ID of the backing version of the rosetta stone statement contents."),
+                        fieldWithPath("latest_version_id").description("The ID of the rosetta stone statement that always points to the latest version of this statement."),
                         fieldWithPath("context").description("The ID of the context resource of the rosetta stone statement, possibly indicating the origin of a statement. (optional)"),
                         subsectionWithPath("subjects[]").description("The ordered list of subject instance references used in the rosetta stone statement."),
                         fieldWithPath("objects[]").description("The ordered list of object position instances used in the rosetta stone statement."),
@@ -229,10 +229,107 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
         verify(exactly = 1) { statementService.create(any()) }
     }
 
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a rosetta stone statement update request, when service succeeds, it updates the statement")
+    fun update() {
+        val id = ThingId("R123")
+        val newId = ThingId("R124")
+        every { statementService.update(any()) } returns newId
+
+        documentedPostRequestTo("/api/rosetta-stone/statements/{id}/versions", id)
+            .content(updateRosettaStoneStatementRequest())
+            .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .contentType(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/rosetta-stone/statements/$newId")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created rosetta stone statement can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("subjects[]").description("The ordered list of subject instance IDs used in the updated rosetta stone statement."),
+                        fieldWithPath("objects[]").description("The ordered list of object position instances used in the updated rosetta stone statement. The order of the objects corresponds to the order of the properties of the rosetta stone template."),
+                        fieldWithPath("objects[][]").description("The ordered list of object instance IDs used for the object position index defined by the outer array."),
+                        fieldWithPath("certainty").description("""The certainty of the updated rosetta stone statement. Either of ${Certainty.entries.joinToString { "\"$it\"" }}."""),
+                        fieldWithPath("resources").description("Definition of resources that need to be created."),
+                        fieldWithPath("resources.*.label").description("The label of the resource."),
+                        fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
+                        fieldWithPath("literals").description("Definition of literals that need to be created."),
+                        fieldWithPath("literals.*.label").description("The value of the literal."),
+                        fieldWithPath("literals.*.data_type").description("The data type of the literal."),
+                        fieldWithPath("predicates").description("Definition of predicates that need to be created."),
+                        fieldWithPath("predicates.*.label").description("The label of the predicate."),
+                        fieldWithPath("predicates.*.description").description("The description of the predicate."),
+                        fieldWithPath("lists").description("Definition of lists that need to be created."),
+                        fieldWithPath("lists.*.label").description("The label of the list."),
+                        fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
+                        fieldWithPath("classes").description("Definition of classes that need to be created."),
+                        fieldWithPath("classes.*.label").description("The label of the class."),
+                        fieldWithPath("classes.*.uri").description("The uri of the class."),
+                        fieldWithPath("negated").description("Whether the statement represented by the updated rosetta stone statement instance is semantically negated. (optional, default: false)").optional(),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone statement belongs to."),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone statement belongs to."),
+                        fieldWithPath("extraction_method").description("""The method used to extract the updated rosetta stone statement. Either of ${ExtractionMethod.entries.joinToString { "\"$it\"" }}."""),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { statementService.update(any()) }
+    }
+
     private fun createRosettaStoneStatementRequest() =
         RosettaStoneStatementController.CreateRosettaStoneStatementRequest(
             templateId = ThingId("R456"),
             context = ThingId("R789"),
+            subjects = listOf("R258", "R369", "#temp1"),
+            objects = listOf(
+                listOf("R987", "R654", "#temp2", "#temp3"),
+                listOf("R321", "R741", "#temp4", "#temp5")
+            ),
+            certainty = Certainty.HIGH,
+            negated = false,
+            resources = mapOf(
+                "#temp1" to ResourceDefinitionDTO(
+                    label = "MOTO",
+                    classes = setOf(ThingId("Result"))
+                )
+            ),
+            literals = mapOf(
+                "#temp2" to LiteralDefinitionDTO("0.1", Literals.XSD.DECIMAL.prefixedUri)
+            ),
+            predicates = mapOf(
+                "#temp3" to PredicateDefinitionDTO(
+                    label = "hasResult",
+                    description = "has result"
+                )
+            ),
+            lists = mapOf(
+                "#temp4" to ListDefinitionDTO(
+                    label = "list",
+                    elements = listOf("#temp1", "C123")
+                )
+            ),
+            classes = mapOf(
+                "#temp5" to ClassDefinitionDTO(
+                    label = "class",
+                    uri = URI.create("https://orkg.org/class/C1")
+                )
+            ),
+            observatories = listOf(
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+            ),
+            organizations = listOf(
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+            ),
+            extractionMethod = ExtractionMethod.MANUAL
+        )
+
+    private fun updateRosettaStoneStatementRequest() =
+        RosettaStoneStatementController.UpdateRosettaStoneStatementRequest(
             subjects = listOf("R258", "R369", "#temp1"),
             objects = listOf(
                 listOf("R987", "R654", "#temp2", "#temp3"),

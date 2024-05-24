@@ -26,14 +26,14 @@ interface RosettaStoneStatementRepresentationAdapter {
         map { it.toRosettaStoneStatementRepresentation(it.id, it.latestVersion) }
 
     private fun RosettaStoneStatement.toRosettaStoneStatementRepresentation(
-        versionId: ThingId,
+        requestedVersionId: ThingId,
         version: RosettaStoneStatementVersion
     ): RosettaStoneStatementRepresentation =
         RosettaStoneStatementRepresentation(
-            id = versionId,
+            id = requestedVersionId,
             templateId = templateId,
+            versionId = version.id,
             latestVersion = id,
-            isLatestVersion = latestVersion.id == version.id,
             context = contextId,
             subjects = version.subjects.map(ThingReference::from),
             objects = version.objects.map { it.map(ThingReference::from) },

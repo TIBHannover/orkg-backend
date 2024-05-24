@@ -10,6 +10,7 @@ import org.orkg.contenttypes.domain.actions.literaturelists.sections.UpdateLiter
 import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosettaStoneStatementAction
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.CreateRosettaStoneTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction
@@ -31,6 +32,7 @@ import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.contenttypes.input.UpdatePaperUseCase
+import org.orkg.contenttypes.input.UpdateRosettaStoneStatementUseCase
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.UpdateTemplateUseCase
@@ -55,6 +57,7 @@ internal typealias UpdateTemplatePropertyCommand = UpdateTemplatePropertyUseCase
 internal typealias UpdateTemplateInstanceCommand = UpdateTemplateInstanceUseCase.UpdateCommand
 internal typealias UpdateLiteratureListCommand = UpdateLiteratureListUseCase.UpdateCommand
 internal typealias UpdateLiteratureListSectionCommand = UpdateLiteratureListSectionUseCase.UpdateCommand
+internal typealias UpdateRosettaStoneStatementCommand = UpdateRosettaStoneStatementUseCase.UpdateCommand
 
 internal typealias CreatePaperState = CreatePaperAction.State
 internal typealias UpdatePaperState = UpdatePaperAction.State
@@ -68,6 +71,7 @@ internal typealias UpdateTemplatePropertyState = UpdateTemplatePropertyAction.St
 internal typealias CreateRosettaStoneTemplateState = CreateRosettaStoneTemplateAction.State
 
 internal typealias CreateRosettaStoneStatementState = CreateRosettaStoneStatementAction.State
+internal typealias UpdateRosettaStoneStatementState = UpdateRosettaStoneStatementAction.State
 
 internal typealias CreateComparisonState = CreateComparisonAction.State
 internal typealias UpdateComparisonState = UpdateComparisonAction.State

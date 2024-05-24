@@ -24,6 +24,7 @@ import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.LiteralReference
 import org.orkg.contenttypes.domain.PredicateReference
 import org.orkg.contenttypes.domain.ResourceReference
+import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
 import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
 import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
@@ -40,11 +41,15 @@ import org.orkg.createOrganization
 import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.createUser
+import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -194,7 +199,7 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
 
     @Test
     @TestWithMockUser
-    fun create() {
+    fun createAndUpdate() {
         val rosettaStoneTemplateId = createRosettaStoneTemplate()
         val id = createRosettaStoneStatement(rosettaStoneTemplateId)
 
@@ -212,8 +217,8 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
 
         rosettaStoneStatement.asClue {
             it.id shouldBe id
+            it.versionId shouldNotBe id
             it.latestVersion shouldBe id
-            it.isLatestVersion shouldBe true
             it.templateId shouldBe rosettaStoneTemplateId
             it.context shouldBe ThingId("R789")
             it.subjects.asClue { subjects ->
@@ -275,6 +280,243 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
             it.extractionMethod shouldBe ExtractionMethod.MANUAL
+            it.visibility shouldBe Visibility.DEFAULT
+            it.unlistedBy shouldBe null
+            it.modifiable shouldBe true
+        }
+
+        val updatedId = post("/api/rosetta-stone/statements/{id}/versions", id)
+            .content(updateRosettaStoneStatementJson)
+            .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .contentType(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isCreated)
+            .andReturn()
+            .response
+            .getHeaderValue("Location")!!
+            .toString()
+            .substringAfterLast("/")
+            .let(::ThingId)
+
+        val updatedRosettaStoneStatement = rosettaStoneStatementService.findByIdOrVersionId(id)
+            .orElseThrow { RosettaStoneStatementNotFound(id) }
+
+        updatedRosettaStoneStatement.asClue {
+            it.id shouldBe rosettaStoneStatement.latestVersion
+            it.templateId shouldBe rosettaStoneTemplateId
+            it.contextId shouldBe rosettaStoneStatement.context
+            it.label shouldBe ""
+            it.versions.size shouldBe 2
+            it.versions[0].asClue { version ->
+                version.id shouldBe rosettaStoneStatement.versionId
+                version.subjects.asClue { subjects ->
+                    subjects.size shouldBe 3
+                    subjects[0].shouldBeInstanceOf<Resource>().asClue { subject ->
+                        subject.id shouldBe ThingId("R258")
+                        subject.label shouldBe "label"
+                        subject.classes shouldBe setOf(ThingId("C28"))
+                    }
+                    subjects[1].shouldBeInstanceOf<Resource>().asClue { subject ->
+                        subject.id shouldBe ThingId("R369")
+                        subject.label shouldBe "label"
+                        subject.classes shouldBe setOf(ThingId("C28"))
+                    }
+                    subjects[2].shouldBeInstanceOf<Resource>().asClue { subject ->
+                        subject.id shouldNotBe null
+                        subject.label shouldBe "Subject Resource"
+                        subject.classes shouldBe setOf(ThingId("C28"))
+                    }
+                }
+                version.objects.asClue { objects ->
+                    objects.size shouldBe 5
+                    objects[0].asClue { position ->
+                        position.size shouldBe 3
+                        position[0].shouldBeInstanceOf<Resource>().asClue { `object` ->
+                            `object`.id shouldBe ThingId("R174")
+                            `object`.label shouldBe "label"
+                            `object`.classes shouldBe emptySet()
+                        }
+                        position[1].shouldBeInstanceOf<Predicate>().asClue { `object` ->
+                            `object`.id shouldNotBe null
+                            `object`.label shouldBe "hasResult"
+                            `object`.description shouldBe "has result"
+                        }
+                        position[2].shouldBeInstanceOf<Class>().asClue { `object` ->
+                            `object`.id shouldNotBe null
+                            `object`.label shouldBe "new class"
+                            `object`.uri shouldBe null
+                        }
+                    }
+                    objects[1].asClue { position ->
+                        position.size shouldBe 2
+                        position[0].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "123456"
+                            `object`.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                        }
+                        position[1].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "0123456789"
+                            `object`.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                        }
+                    }
+                    objects[2].asClue { position ->
+                        position.size shouldBe 2
+                        position[0].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "5"
+                            `object`.datatype shouldBe Literals.XSD.INT.prefixedUri
+                        }
+                        position[1].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "1"
+                            `object`.datatype shouldBe Literals.XSD.INT.prefixedUri
+                        }
+                    }
+                    objects[3].asClue { position ->
+                        position.size shouldBe 2
+                        position[0].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "custom type"
+                            `object`.datatype shouldBe "C25"
+                        }
+                        position[1].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "some literal value"
+                            `object`.datatype shouldBe "C25"
+                        }
+                    }
+                    objects[4].asClue { position ->
+                        position.size shouldBe 3
+                        position[0].shouldBeInstanceOf<Resource>().asClue { `object` ->
+                            `object`.id shouldBe ThingId("R258")
+                            `object`.label shouldBe "label"
+                            `object`.classes shouldBe setOf(ThingId("C28"))
+                        }
+                        position[1].shouldBeInstanceOf<Resource>().asClue { `object` ->
+                            `object`.id shouldBe ThingId("R369")
+                            `object`.label shouldBe "label"
+                            `object`.classes shouldBe setOf(ThingId("C28"))
+                        }
+                        position[2].shouldBeInstanceOf<Resource>().asClue { `object` ->
+                            `object`.id shouldNotBe null
+                            `object`.label shouldBe "list"
+                            `object`.classes shouldBe setOf(Classes.list)
+                        }
+                    }
+                }
+                version.createdAt shouldNotBe null
+                version.createdBy shouldBe ContributorId(MockUserId.USER)
+                version.certainty shouldBe Certainty.HIGH
+                version.negated shouldBe false
+                version.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
+                version.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+                version.extractionMethod shouldBe ExtractionMethod.MANUAL
+                version.visibility shouldBe Visibility.DEFAULT
+                version.unlistedBy shouldBe null
+                version.modifiable shouldBe true
+            }
+            it.versions[1].asClue { version ->
+                version.id shouldNotBe updatedId
+                version.subjects.asClue { subjects ->
+                    subjects.size shouldBe 3
+                    subjects[0].shouldBeInstanceOf<Resource>().asClue { subject ->
+                        subject.id shouldBe ThingId("R369")
+                        subject.label shouldBe "label"
+                        subject.classes shouldBe setOf(ThingId("C28"))
+                    }
+                    subjects[1].shouldBeInstanceOf<Resource>().asClue { subject ->
+                        subject.id shouldBe ThingId("R258")
+                        subject.label shouldBe "label"
+                        subject.classes shouldBe setOf(ThingId("C28"))
+                    }
+                    subjects[2].shouldBeInstanceOf<Resource>().asClue { subject ->
+                        subject.id shouldNotBe null
+                        subject.label shouldBe "Updated Subject Resource"
+                        subject.classes shouldBe setOf(ThingId("C28"))
+                    }
+                }
+                version.objects.asClue { objects ->
+                    objects.size shouldBe 5
+                    objects[0].asClue { position ->
+                        position.size shouldBe 3
+                        position[0].shouldBeInstanceOf<Predicate>().asClue { `object` ->
+                            `object`.id shouldNotBe null
+                            `object`.label shouldBe "hasResult"
+                            `object`.description shouldBe "has result too"
+                        }
+                        position[1].shouldBeInstanceOf<Resource>().asClue { `object` ->
+                            `object`.id shouldBe ThingId("R174")
+                            `object`.label shouldBe "label"
+                            `object`.classes shouldBe emptySet()
+                        }
+                        position[2].shouldBeInstanceOf<Class>().asClue { `object` ->
+                            `object`.id shouldNotBe null
+                            `object`.label shouldBe "updated new class"
+                            `object`.uri shouldBe null
+                        }
+                    }
+                    objects[1].asClue { position ->
+                        position.size shouldBe 2
+                        position[0].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "9876543210"
+                            `object`.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                        }
+                        position[1].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "123456"
+                            `object`.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                        }
+                    }
+                    objects[2].asClue { position ->
+                        position.size shouldBe 2
+                        position[0].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "4"
+                            `object`.datatype shouldBe Literals.XSD.INT.prefixedUri
+                        }
+                        position[1].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "5"
+                            `object`.datatype shouldBe Literals.XSD.INT.prefixedUri
+                        }
+                    }
+                    objects[3].asClue { position ->
+                        position.size shouldBe 2
+                        position[0].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "some updated literal value"
+                            `object`.datatype shouldBe "C25"
+                        }
+                        position[1].shouldBeInstanceOf<Literal>().asClue { `object` ->
+                            `object`.label shouldBe "custom type"
+                            `object`.datatype shouldBe "C25"
+                        }
+                    }
+                    objects[4].asClue { position ->
+                        position.size shouldBe 3
+                        position[0].shouldBeInstanceOf<Resource>().asClue { `object` ->
+                            `object`.id shouldBe ThingId("R369")
+                            `object`.label shouldBe "label"
+                            `object`.classes shouldBe setOf(ThingId("C28"))
+                        }
+                        position[1].shouldBeInstanceOf<Resource>().asClue { `object` ->
+                            `object`.id shouldBe ThingId("R258")
+                            `object`.label shouldBe "label"
+                            `object`.classes shouldBe setOf(ThingId("C28"))
+                        }
+                        position[2].shouldBeInstanceOf<Resource>().asClue { `object` ->
+                            `object`.id shouldNotBe null
+                            `object`.label shouldBe "list"
+                            `object`.classes shouldBe setOf(Classes.list)
+                        }
+                    }
+                }
+                version.createdAt shouldNotBe null
+                version.createdBy shouldBe ContributorId(MockUserId.USER)
+                version.certainty shouldBe Certainty.MODERATE
+                version.negated shouldBe false
+                version.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
+                version.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+                version.extractionMethod shouldBe ExtractionMethod.AUTOMATIC
+                version.visibility shouldBe Visibility.DEFAULT
+                version.unlistedBy shouldBe null
+                version.modifiable shouldBe true
+            }
+            it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
+            it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+            it.extractionMethod shouldBe ExtractionMethod.AUTOMATIC
             it.visibility shouldBe Visibility.DEFAULT
             it.unlistedBy shouldBe null
             it.modifiable shouldBe true
@@ -426,4 +668,62 @@ private const val createRosettaStoneStatementJson = """{
     "edc18168-c4ee-4cb8-a98a-136f748e912e"
   ],
   "extraction_method": "MANUAL"
+}"""
+
+private const val updateRosettaStoneStatementJson = """{
+  "subjects": ["R369", "R258", "#temp1"],
+  "objects": [
+    ["#temp2", "R174", "#temp3"],
+    ["#temp4", "L123"],
+    ["#temp5", "L456"],
+    ["#temp6", "L789"],
+    ["R369", "R258", "#temp7"]
+  ],
+  "certainty": "MODERATE",
+  "negated": false,
+  "resources": {
+    "#temp1": {
+      "label": "Updated Subject Resource",
+      "classes": ["C28"]
+    }
+  },
+  "predicates": {
+    "#temp2": {
+      "label": "hasResult",
+      "description": "has result too"
+    }
+  },
+  "classes": {
+    "#temp3": {
+      "label": "updated new class",
+      "uri": null
+    }
+  },
+  "literals": {
+    "#temp4": {
+      "label": "9876543210",
+      "data_type": "xsd:string"
+    },
+    "#temp5": {
+      "label": "4",
+      "data_type": "xsd:integer"
+    },
+    "#temp6": {
+      "label": "some updated literal value",
+      "data_type": "C25"
+    }
+  },
+  "lists": {
+    "#temp7": {
+      "label": "list",
+      "elements": ["C123", "#temp1"]
+    }
+  },
+  "observatories": [
+    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+  ],
+  "organizations": [
+    "edc18168-c4ee-4cb8-a98a-136f748e912e"
+  ],
+  "extraction_method": "AUTOMATIC"
 }"""

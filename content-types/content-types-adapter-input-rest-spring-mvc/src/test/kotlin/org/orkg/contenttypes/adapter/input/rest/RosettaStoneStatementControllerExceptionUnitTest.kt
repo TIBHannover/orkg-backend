@@ -8,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.RosettaStoneStatementControllerExceptionUnitTest.FakeExceptionController
 import org.orkg.contenttypes.domain.MissingInputPositions
+import org.orkg.contenttypes.domain.RosettaStoneStatementNotModifiable
 import org.orkg.contenttypes.domain.TooManyInputPositions
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
@@ -77,6 +78,21 @@ internal class RosettaStoneStatementControllerExceptionUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun rosettaStoneStatementNotModifiable() {
+        val id = "R123"
+
+        get("/rosetta-stone-statement-not-modifiable")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/rosetta-stone-statement-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Rosetta stone statement "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -92,6 +108,11 @@ internal class RosettaStoneStatementControllerExceptionUnitTest {
             @RequestParam missingCount: Int
         ) {
             throw MissingInputPositions(exceptedCount, templateId, missingCount)
+        }
+
+        @GetMapping("/rosetta-stone-statement-not-modifiable")
+        fun rosettaStoneStatementNotModifiable(@RequestParam id: ThingId) {
+            throw RosettaStoneStatementNotModifiable(id)
         }
     }
 

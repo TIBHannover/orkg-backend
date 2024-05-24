@@ -2,6 +2,8 @@ package org.orkg.contenttypes.domain
 
 import java.time.Clock
 import java.util.*
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -9,14 +11,24 @@ import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementCommand
+import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementContextValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementCreator
-import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementPropertyValueValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementExistenceValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementModifiableValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementPropertyValueCreateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementPropertyValueUpdateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTempIdCreateValidator
-import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTemplateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTempIdUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTemplateCreateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementTemplateUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingDefinitionCreateCreator
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingDefinitionCreateValidator
-import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingDefinitionCreator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingDefinitionUpdateCreator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementThingDefinitionUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStoneStatementUpdater
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
@@ -61,15 +73,39 @@ class RosettaStoneStatementService(
     override fun create(command: CreateRosettaStoneStatementCommand): ThingId {
         val steps = listOf(
             RosettaStoneStatementTempIdCreateValidator(),
-            RosettaStoneStatementTemplateValidator(rosettaStoneTemplateService),
+            RosettaStoneStatementTemplateCreateValidator(rosettaStoneTemplateService),
             RosettaStoneStatementContextValidator(resourceRepository),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
             RosettaStoneStatementThingDefinitionCreateValidator(thingRepository, classRepository),
-            RosettaStoneStatementPropertyValueValidator(thingRepository),
-            RosettaStoneStatementThingDefinitionCreator(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService),
+            RosettaStoneStatementPropertyValueCreateValidator(thingRepository),
+            RosettaStoneStatementThingDefinitionCreateCreator(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService),
             RosettaStoneStatementCreator(repository, thingRepository, clock)
         )
         return steps.execute(command, CreateRosettaStoneStatementState()).rosettaStoneStatementId!!
     }
+
+    override fun update(command: UpdateRosettaStoneStatementCommand): ThingId {
+        val steps = listOf(
+            RosettaStoneStatementTempIdUpdateValidator(),
+            RosettaStoneStatementExistenceValidator(this),
+            RosettaStoneStatementModifiableValidator(),
+            RosettaStoneStatementTemplateUpdateValidator(rosettaStoneTemplateService),
+            ObservatoryValidator(observatoryRepository, { it.observatories }, { it.observatories }),
+            OrganizationValidator(organizationRepository, { it.organizations }, { it.organizations }),
+            RosettaStoneStatementThingDefinitionUpdateValidator(thingRepository, classRepository),
+            RosettaStoneStatementPropertyValueUpdateValidator(thingRepository),
+            RosettaStoneStatementThingDefinitionUpdateCreator(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService),
+            RosettaStoneStatementUpdater(repository, thingRepository, clock)
+        )
+        return steps.execute(command, UpdateRosettaStoneStatementState()).rosettaStoneStatementId!!
+    }
+
+    private inline val UpdateRosettaStoneStatementState.observatories: List<ObservatoryId> get() =
+        rosettaStoneStatement?.let { it.observatories + it.versions.flatMap(RosettaStoneStatementVersion::observatories) }.orEmpty() +
+            rosettaStoneStatement?.observatories.orEmpty()
+
+    private inline val UpdateRosettaStoneStatementState.organizations: List<OrganizationId> get() =
+        rosettaStoneStatement?.let { it.organizations + it.versions.flatMap(RosettaStoneStatementVersion::organizations) }.orEmpty() +
+            rosettaStoneStatement?.organizations.orEmpty()
 }

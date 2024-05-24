@@ -544,10 +544,10 @@ data class RosettaStoneStatementRepresentation(
     val id: ThingId,
     @get:JsonProperty("template_id")
     val templateId: ThingId,
-    @get:JsonProperty("latest_version")
+    @get:JsonProperty("version_id")
+    val versionId: ThingId,
+    @get:JsonProperty("latest_version_id")
     val latestVersion: ThingId,
-    @get:JsonProperty("is_latest_version")
-    val isLatestVersion: Boolean,
     @get:JsonProperty("context")
     val context: ThingId?,
     val subjects: List<ThingReference>,

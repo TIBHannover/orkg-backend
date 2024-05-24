@@ -59,6 +59,9 @@ class ComparisonRelatedFigureNotModifiable(id: ThingId) :
 class LiteratureListNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Literature list "$id" is not modifiable.""")
 
+class RosettaStoneStatementNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Rosetta stone statement "$id" is not modifiable.""")
+
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")
 

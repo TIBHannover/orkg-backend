@@ -30,6 +30,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore
 import org.springframework.security.web.AuthenticationEntryPoint
+import org.springframework.security.web.firewall.HttpStatusRequestRejectedHandler
+import org.springframework.security.web.firewall.RequestRejectedHandler
 import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.stereotype.Component
 import org.springframework.web.cors.CorsConfiguration
@@ -197,4 +199,10 @@ class AuthorizationServerWorkaround(
         super.configure(http)
         http.addFilterAfter(CorsFilter(corsConfigurationSource), HeaderWriterFilter::class.java)
     }
+}
+
+@Configuration
+class RequestRejectedHandlerConfiguration {
+    @Bean
+    fun requestRejectedHandler(): RequestRejectedHandler = HttpStatusRequestRejectedHandler()
 }

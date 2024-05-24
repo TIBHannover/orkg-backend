@@ -6,6 +6,7 @@ import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyCommand
+import org.orkg.graph.domain.GeneralStatement
 
 interface CreateTemplatePropertyAction : Action<CreateTemplatePropertyCommand, CreateTemplatePropertyAction.State> {
     data class State(
@@ -17,6 +18,7 @@ interface CreateTemplatePropertyAction : Action<CreateTemplatePropertyCommand, C
 interface UpdateTemplatePropertyAction : Action<UpdateTemplatePropertyCommand, UpdateTemplatePropertyAction.State> {
     data class State(
         val template: Template? = null,
-        val templateProperty: TemplateProperty? = null
+        val templateProperty: TemplateProperty? = null,
+        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap()
     )
 }

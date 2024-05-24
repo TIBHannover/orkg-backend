@@ -33,6 +33,7 @@ import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateOtherLite
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateResourcePropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateStringLiteralPropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand
+import org.orkg.graph.testing.fixtures.createStatement
 
 class TemplatePropertyUpdaterUnitTest {
     private val abstractTemplatePropertyUpdater: AbstractTemplatePropertyUpdater = mockk()
@@ -69,6 +70,7 @@ class TemplatePropertyUpdaterUnitTest {
         result.asClue {
             it.template shouldBe state.template
             it.templateProperty shouldBe state.templateProperty
+            it.statements shouldBe state.statements
         }
     }
 
@@ -81,27 +83,23 @@ class TemplatePropertyUpdaterUnitTest {
         )
         val state = UpdateTemplatePropertyState(
             template = template,
-            templateProperty = property
+            templateProperty = property,
+            statements = mapOf(property.id to listOf(createStatement()))
         )
 
-        every {
-            abstractTemplatePropertyUpdater.update(
-                contributorId = command.contributorId,
-                order = property.order.toInt(),
-                newProperty = command,
-                oldProperty = property
-            )
-        } just runs
+        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
 
         val result = templatePropertyUpdater(command, state)
 
         result.asClue {
             it.template shouldBe state.template
             it.templateProperty shouldBe state.templateProperty
+            it.statements shouldBe state.statements
         }
 
         verify(exactly = 1) {
             abstractTemplatePropertyUpdater.update(
+                statements = state.statements[property.id].orEmpty(),
                 contributorId = command.contributorId,
                 order = property.order.toInt(),
                 newProperty = command,
@@ -122,7 +120,8 @@ class TemplatePropertyUpdaterUnitTest {
         val command = property.toUpdateStringLiteralTemplatePropertyCommand(contributorId, template.id)
         val state = UpdateTemplatePropertyState(
             template = template,
-            templateProperty = property
+            templateProperty = property,
+            statements = mapOf(property.id to listOf(createStatement()))
         )
 
         val result = templatePropertyUpdater(command, state)
@@ -130,6 +129,7 @@ class TemplatePropertyUpdaterUnitTest {
         result.asClue {
             it.template shouldBe state.template
             it.templateProperty shouldBe state.templateProperty
+            it.statements shouldBe state.statements
         }
     }
 
@@ -142,27 +142,23 @@ class TemplatePropertyUpdaterUnitTest {
         )
         val state = UpdateTemplatePropertyState(
             template = template,
-            templateProperty = property
+            templateProperty = property,
+            statements = mapOf(property.id to listOf(createStatement()))
         )
 
-        every {
-            abstractTemplatePropertyUpdater.update(
-                contributorId = command.contributorId,
-                order = property.order.toInt(),
-                newProperty = command,
-                oldProperty = property
-            )
-        } just runs
+        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
 
         val result = templatePropertyUpdater(command, state)
 
         result.asClue {
             it.template shouldBe state.template
             it.templateProperty shouldBe state.templateProperty
+            it.statements shouldBe state.statements
         }
 
         verify(exactly = 1) {
             abstractTemplatePropertyUpdater.update(
+                statements = state.statements[property.id].orEmpty(),
                 contributorId = command.contributorId,
                 order = property.order.toInt(),
                 newProperty = command,
@@ -183,7 +179,8 @@ class TemplatePropertyUpdaterUnitTest {
         val command = property.toUpdateNumberLiteralTemplatePropertyCommand(contributorId, template.id)
         val state = UpdateTemplatePropertyState(
             template = template,
-            templateProperty = property
+            templateProperty = property,
+            statements = mapOf(property.id to listOf(createStatement()))
         )
 
         val result = templatePropertyUpdater(command, state)
@@ -191,6 +188,7 @@ class TemplatePropertyUpdaterUnitTest {
         result.asClue {
             it.template shouldBe state.template
             it.templateProperty shouldBe state.templateProperty
+            it.statements shouldBe state.statements
         }
     }
 
@@ -203,27 +201,23 @@ class TemplatePropertyUpdaterUnitTest {
         )
         val state = UpdateTemplatePropertyState(
             template = template,
-            templateProperty = property
+            templateProperty = property,
+            statements = mapOf(property.id to listOf(createStatement()))
         )
 
-        every {
-            abstractTemplatePropertyUpdater.update(
-                contributorId = command.contributorId,
-                order = property.order.toInt(),
-                newProperty = command,
-                oldProperty = property
-            )
-        } just runs
+        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
 
         val result = templatePropertyUpdater(command, state)
 
         result.asClue {
             it.template shouldBe state.template
             it.templateProperty shouldBe state.templateProperty
+            it.statements shouldBe state.statements
         }
 
         verify(exactly = 1) {
             abstractTemplatePropertyUpdater.update(
+                statements = state.statements[property.id].orEmpty(),
                 contributorId = command.contributorId,
                 order = property.order.toInt(),
                 newProperty = command,
@@ -244,7 +238,8 @@ class TemplatePropertyUpdaterUnitTest {
         val command = property.toUpdateOtherLiteralTemplatePropertyCommand(contributorId, template.id)
         val state = UpdateTemplatePropertyState(
             template = template,
-            templateProperty = property
+            templateProperty = property,
+            statements = mapOf(property.id to listOf(createStatement()))
         )
 
         val result = templatePropertyUpdater(command, state)
@@ -252,6 +247,7 @@ class TemplatePropertyUpdaterUnitTest {
         result.asClue {
             it.template shouldBe state.template
             it.templateProperty shouldBe state.templateProperty
+            it.statements shouldBe state.statements
         }
     }
 
@@ -264,27 +260,23 @@ class TemplatePropertyUpdaterUnitTest {
         )
         val state = UpdateTemplatePropertyState(
             template = template,
-            templateProperty = property
+            templateProperty = property,
+            statements = mapOf(property.id to listOf(createStatement()))
         )
 
-        every {
-            abstractTemplatePropertyUpdater.update(
-                contributorId = command.contributorId,
-                order = property.order.toInt(),
-                newProperty = command,
-                oldProperty = property
-            )
-        } just runs
+        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
 
         val result = templatePropertyUpdater(command, state)
 
         result.asClue {
             it.template shouldBe state.template
             it.templateProperty shouldBe state.templateProperty
+            it.statements shouldBe state.statements
         }
 
         verify(exactly = 1) {
             abstractTemplatePropertyUpdater.update(
+                statements = state.statements[property.id].orEmpty(),
                 contributorId = command.contributorId,
                 order = property.order.toInt(),
                 newProperty = command,
@@ -305,7 +297,8 @@ class TemplatePropertyUpdaterUnitTest {
         val command = property.toUpdateResourceTemplatePropertyCommand(contributorId, template.id)
         val state = UpdateTemplatePropertyState(
             template = template,
-            templateProperty = property
+            templateProperty = property,
+            statements = mapOf(property.id to listOf(createStatement()))
         )
 
         val result = templatePropertyUpdater(command, state)
@@ -313,6 +306,7 @@ class TemplatePropertyUpdaterUnitTest {
         result.asClue {
             it.template shouldBe state.template
             it.templateProperty shouldBe state.templateProperty
+            it.statements shouldBe state.statements
         }
     }
 
@@ -325,27 +319,23 @@ class TemplatePropertyUpdaterUnitTest {
         )
         val state = UpdateTemplatePropertyState(
             template = template,
-            templateProperty = property
+            templateProperty = property,
+            statements = mapOf(property.id to listOf(createStatement()))
         )
 
-        every {
-            abstractTemplatePropertyUpdater.update(
-                contributorId = command.contributorId,
-                order = property.order.toInt(),
-                newProperty = command,
-                oldProperty = property
-            )
-        } just runs
+        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
 
         val result = templatePropertyUpdater(command, state)
 
         result.asClue {
             it.template shouldBe state.template
             it.templateProperty shouldBe state.templateProperty
+            it.statements shouldBe state.statements
         }
 
         verify(exactly = 1) {
             abstractTemplatePropertyUpdater.update(
+                statements = state.statements[property.id].orEmpty(),
                 contributorId = command.contributorId,
                 order = property.order.toInt(),
                 newProperty = command,

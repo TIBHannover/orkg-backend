@@ -129,7 +129,7 @@ class TemplateService(
             LabelValidator("formatted_label") { it.formattedLabel?.value },
             TemplateTargetClassValidator(classRepository, statementRepository, { it.targetClass }),
             TemplateRelationsCreateValidator(resourceRepository, predicateRepository),
-            TemplatePropertiesValidator(predicateRepository, classRepository) { it.properties },
+            TemplatePropertiesValidator(predicateRepository, classRepository, { it.properties }),
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             TemplateResourceCreator(resourceService),
@@ -147,7 +147,7 @@ class TemplateService(
         val steps = listOf(
             TemplatePropertyExistenceCreateValidator(resourceRepository),
             TemplatePropertyTemplateCreateValidator(statementRepository),
-            TemplatePropertyValidator(predicateRepository, classRepository) { it },
+            TemplatePropertyValidator(predicateRepository, classRepository, { it }),
             TemplatePropertyCreator(resourceService, literalService, statementService)
         )
         return steps.execute(command, CreateTemplatePropertyState()).templatePropertyId!!
@@ -155,18 +155,18 @@ class TemplateService(
 
     override fun update(command: UpdateTemplateCommand) {
         val steps = listOf(
-            TemplateExistenceValidator(this),
+            TemplateExistenceValidator(this, resourceRepository),
             LabelValidator { it.label },
             DescriptionValidator { it.description },
             LabelValidator("formatted_label") { it.formattedLabel?.value },
             TemplateTargetClassValidator(classRepository, statementRepository, { it.targetClass }, { it.template!!.targetClass.id }),
             TemplateRelationsUpdateValidator(resourceRepository, predicateRepository),
-            TemplatePropertiesValidator(predicateRepository, classRepository) { it.properties },
+            TemplatePropertiesValidator(predicateRepository, classRepository, { it.properties }, { it.template!!.properties }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.template!!.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.template!!.observatories }),
             TemplateResourceUpdater(resourceService),
-            TemplateTargetClassUpdater(statementService),
-            TemplateRelationsUpdater(statementService),
+            TemplateTargetClassUpdater(literalService, statementService),
+            TemplateRelationsUpdater(literalService, statementService),
             TemplateDescriptionUpdater(literalService, statementService),
             TemplateFormattedLabelUpdater(literalService, statementService),
             TemplateClosedUpdater(literalService, statementService),
@@ -177,9 +177,9 @@ class TemplateService(
 
     override fun updateTemplateProperty(command: UpdateTemplatePropertyCommand) {
         val steps = listOf(
-            TemplatePropertyExistenceUpdateValidator(this),
+            TemplatePropertyExistenceUpdateValidator(this, resourceRepository),
             TemplatePropertyTemplateUpdateValidator(),
-            TemplatePropertyValidator(predicateRepository, classRepository) { it },
+            TemplatePropertyValidator(predicateRepository, classRepository, { it }, { it.templateProperty }),
             TemplatePropertyUpdater(literalService, resourceService, statementService)
         )
         steps.execute(command, UpdateTemplatePropertyState())

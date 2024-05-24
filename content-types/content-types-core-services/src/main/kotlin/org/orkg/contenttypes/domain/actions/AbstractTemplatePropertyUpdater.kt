@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.domain.actions
 
 import org.orkg.common.ContributorId
-import org.orkg.common.PageRequests
 import org.orkg.contenttypes.domain.LiteralTemplateProperty
 import org.orkg.contenttypes.domain.NumberLiteralTemplateProperty
 import org.orkg.contenttypes.domain.ResourceTemplateProperty
@@ -15,6 +14,7 @@ import org.orkg.contenttypes.input.ResourceTemplatePropertyDefinition
 import org.orkg.contenttypes.input.StringLiteralTemplatePropertyDefinition
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
 import org.orkg.contenttypes.input.UntypedPropertyDefinition
+import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
@@ -34,15 +34,12 @@ class AbstractTemplatePropertyUpdater(
     ) : this(statementService, resourceService, SingleStatementPropertyUpdater(literalService, statementService))
 
     internal fun update(
+        statements: List<GeneralStatement>,
         contributorId: ContributorId,
         order: Int,
         newProperty: TemplatePropertyDefinition,
         oldProperty: TemplateProperty
     ) {
-        val statements by lazy {
-            statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL).content
-        }
-
         if (newProperty.label != oldProperty.label) {
             resourceService.update(
                 UpdateResourceUseCase.UpdateCommand(
@@ -178,7 +175,7 @@ class AbstractTemplatePropertyUpdater(
         }
 
         if (newProperty.path != oldProperty.path.id) {
-            singleStatementPropertyUpdater.update(
+            singleStatementPropertyUpdater.updateRequiredProperty(
                 statements = statements,
                 contributorId = contributorId,
                 subjectId = oldProperty.id,

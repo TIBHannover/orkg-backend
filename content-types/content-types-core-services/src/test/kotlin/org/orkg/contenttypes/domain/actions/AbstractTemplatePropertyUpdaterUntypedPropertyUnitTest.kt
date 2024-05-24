@@ -7,7 +7,6 @@ import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
-import org.orkg.common.PageRequests
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyOtherLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyUntypedTemplateProperty
 import org.orkg.contenttypes.input.UntypedPropertyDefinition
@@ -22,7 +21,6 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.pageOf
 
 class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplatePropertyUpdaterUnitTest() {
     @Test
@@ -31,7 +29,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
         val oldProperty = createDummyUntypedTemplateProperty()
         val newProperty = oldProperty.toUntypedTemplatePropertyDefinition()
 
-        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 0, newProperty, oldProperty)
     }
 
     @Test
@@ -51,7 +49,7 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 0, newProperty, oldProperty)
 
         verify(exactly = 1) {
             resourceService.update(
@@ -78,7 +76,6 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         )
 
-        every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
@@ -89,9 +86,8 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty)
 
-        verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
@@ -118,7 +114,6 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         )
 
-        every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
@@ -129,9 +124,8 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty)
 
-        verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
@@ -158,7 +152,6 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         )
 
-        every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
@@ -170,9 +163,8 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty)
 
-        verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
@@ -200,7 +192,6 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         )
 
-        every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
@@ -212,9 +203,8 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty)
 
-        verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
@@ -255,12 +245,10 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
         )
         val statementsToRemove = statements.map { it.id }.toSet()
 
-        every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every { statementService.delete(statementsToRemove) } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 3, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty)
 
-        verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) { statementService.delete(statementsToRemove) }
     }
 
@@ -279,9 +267,8 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         )
 
-        every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every {
-            singleStatementPropertyUpdater.update(
+            singleStatementPropertyUpdater.updateRequiredProperty(
                 statements = statements,
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
@@ -290,11 +277,10 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty)
 
-        verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
-            singleStatementPropertyUpdater.update(
+            singleStatementPropertyUpdater.updateRequiredProperty(
                 statements = statements,
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
@@ -318,7 +304,6 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
         )
         val newOrder = 2
 
-        every { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) } returns pageOf(statements)
         every {
             singleStatementPropertyUpdater.updateRequiredProperty(
                 statements = statements,
@@ -330,9 +315,8 @@ class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : AbstractTemplateP
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(contributorId, newOrder, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, newOrder, newProperty, oldProperty)
 
-        verify(exactly = 1) { statementService.findAll(subjectId = oldProperty.id, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateRequiredProperty(
                 statements = statements,

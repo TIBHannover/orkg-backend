@@ -6,6 +6,7 @@ import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.verify
 import java.util.*
 import java.util.stream.Stream
@@ -15,21 +16,28 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.orkg.contenttypes.domain.ContentTypeSubgraph
+import org.orkg.contenttypes.domain.Template
 import org.orkg.contenttypes.domain.TemplateNotFound
+import org.orkg.contenttypes.domain.TemplateService
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
-import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateNumberLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateOtherLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateResourceTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateStringLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateUntypedTemplatePropertyCommand
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.output.ResourceRepository
+import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.createStatement
 
 class TemplatePropertyExistenceUpdateValidatorUnitTest {
-    private val templateUseCases: TemplateUseCases = mockk()
+    private val templateService: TemplateService = mockk()
+    private val resourceRepository: ResourceRepository = mockk()
 
-    private val templatePropertyExistenceUpdateValidator = TemplatePropertyExistenceUpdateValidator(templateUseCases)
+    private val templatePropertyExistenceUpdateValidator = TemplatePropertyExistenceUpdateValidator(templateService, resourceRepository)
 
     @BeforeEach
     fun resetState() {
@@ -38,24 +46,35 @@ class TemplatePropertyExistenceUpdateValidatorUnitTest {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(templateUseCases)
+        confirmVerified(templateService, resourceRepository)
     }
 
     @ParameterizedTest
     @MethodSource("updateTemplatePropertyCommands")
     fun `Given a template property update command, when searching for existing templates, it returns success`(command: UpdateTemplatePropertyCommand) {
         val state = UpdateTemplatePropertyState()
-        val template = createDummyTemplate()
+        val template = createDummyTemplate().copy(id = command.templateId)
+        val root = createResource(
+            id = template.id,
+            label = template.label,
+            classes = setOf(Classes.nodeShape)
+        )
+        val statements = listOf(createStatement()).groupBy { it.subject.id }
 
-        every { templateUseCases.findById(command.templateId) } returns Optional.of(template)
+        mockkObject(Template.Companion) {
+            every { resourceRepository.findById(template.id) } returns Optional.of(root)
+            every { templateService.findSubgraph(root) } returns ContentTypeSubgraph(root.id, statements)
+            every { Template.from(root, statements) } returns template
 
-        val result = templatePropertyExistenceUpdateValidator(command, state)
+            templatePropertyExistenceUpdateValidator(command, state).asClue {
+                it.template shouldBe template
+                it.statements shouldBe statements
+            }
 
-        result.asClue {
-            it.template shouldBe template
+            verify(exactly = 1) { resourceRepository.findById(template.id) }
+            verify(exactly = 1) { templateService.findSubgraph(root) }
+            verify(exactly = 1) { Template.from(root, statements) }
         }
-
-        verify(exactly = 1) { templateUseCases.findById(command.templateId) }
     }
 
     @ParameterizedTest
@@ -63,11 +82,11 @@ class TemplatePropertyExistenceUpdateValidatorUnitTest {
     fun `Given a template property update command, when template does not exist, it throws an exception`(command: UpdateTemplatePropertyCommand) {
         val state = UpdateTemplatePropertyState()
 
-        every { templateUseCases.findById(command.templateId) } returns Optional.empty()
+        every { resourceRepository.findById(command.templateId) } returns Optional.empty()
 
         assertThrows<TemplateNotFound> { templatePropertyExistenceUpdateValidator(command, state) }
 
-        verify(exactly = 1) { templateUseCases.findById(command.templateId) }
+        verify(exactly = 1) { resourceRepository.findById(command.templateId) }
     }
 
     companion object {

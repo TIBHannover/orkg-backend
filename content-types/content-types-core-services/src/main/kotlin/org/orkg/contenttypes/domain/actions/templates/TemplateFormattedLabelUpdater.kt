@@ -18,6 +18,7 @@ class TemplateFormattedLabelUpdater(
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
         if (command.formattedLabel != state.template!!.formattedLabel) {
             singleStatementPropertyUpdater.updateOptionalProperty(
+                statements = state.statements[command.templateId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.templateLabelFormat,

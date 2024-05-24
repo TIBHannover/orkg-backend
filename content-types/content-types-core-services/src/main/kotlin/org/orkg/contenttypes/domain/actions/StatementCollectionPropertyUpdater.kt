@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.wherePredicate
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
@@ -40,7 +41,8 @@ class StatementCollectionPropertyUpdater(
         objects: Set<ThingId>
     ) {
         // Find out what already exists and what needs to be created or removed
-        val objectId2statementId = statements.associate { it.`object`.id to it.id }
+        val objectId2statementId = statements.wherePredicate(predicateId)
+            .associate { it.`object`.id to it.id }
         val toRemove = objectId2statementId.keys - objects
         val toAdd = objects - objectId2statementId.keys
 
@@ -84,7 +86,9 @@ class StatementCollectionPropertyUpdater(
         predicateId: ThingId,
         objects: List<ThingId>
     ) {
-        val statementsIterator = statements.sortedBy { it.createdAt }.listIterator()
+        val statementsIterator = statements.wherePredicate(predicateId)
+            .sortedBy { it.createdAt }
+            .listIterator()
         val objectsIterator = objects.listIterator()
         val toRemove = mutableSetOf<StatementId>()
 
@@ -147,7 +151,8 @@ class StatementCollectionPropertyUpdater(
         datatype: String = Literals.XSD.STRING.prefixedUri
     ) {
         // Find out what already exists and what needs to be created or removed
-        val objectId2statementId = statements.groupBy { it.`object`.label }
+        val objectId2statementId = statements.wherePredicate(predicateId)
+            .groupBy { it.`object`.label }
         val toRemove = objectId2statementId.keys - literals
         val toAdd = literals - objectId2statementId.keys
 

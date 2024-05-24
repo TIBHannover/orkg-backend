@@ -37,7 +37,7 @@ class LiteratureListSectionsUpdater(
             }
             if (sectionIds != state.literatureList.sections.map { it.id }) {
                 statementCollectionPropertyUpdater.update(
-                    statements = state.statements[command.literatureListId]!!.filter { it.predicate.id == Predicates.hasSection },
+                    statements = state.statements[command.literatureListId].orEmpty(),
                     contributorId = command.contributorId,
                     subjectId = command.literatureListId,
                     predicateId = Predicates.hasSection,

@@ -107,7 +107,7 @@ class LiteratureListSectionsUpdaterUnitTest {
 
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
-                statements = state.statements[command.literatureListId]!!.filter { it.predicate.id == Predicates.hasSection },
+                statements = state.statements[command.literatureListId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
@@ -158,7 +158,7 @@ class LiteratureListSectionsUpdaterUnitTest {
         verify(exactly = 1) { abstractLiteratureListSectionCreator.create(command.contributorId, newSection) }
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
-                statements = state.statements[command.literatureListId]!!.filter { it.predicate.id == Predicates.hasSection },
+                statements = state.statements[command.literatureListId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
@@ -209,7 +209,7 @@ class LiteratureListSectionsUpdaterUnitTest {
         verify(exactly = 1) { abstractLiteratureListSectionCreator.create(command.contributorId, newSection) }
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
-                statements = state.statements[command.literatureListId]!!.filter { it.predicate.id == Predicates.hasSection },
+                statements = state.statements[command.literatureListId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,

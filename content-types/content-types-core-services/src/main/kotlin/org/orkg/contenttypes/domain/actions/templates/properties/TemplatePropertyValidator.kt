@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.actions.templates.properties
 
+import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
 import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
@@ -8,14 +9,26 @@ import org.orkg.graph.output.PredicateRepository
 
 class TemplatePropertyValidator<T, S>(
     private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator,
-    private val valueSelector: (T) -> TemplatePropertyDefinition
+    private val newValueSelector: (T) -> TemplatePropertyDefinition,
+    private val oldValueSelector: (S) -> TemplateProperty?
 ) : Action<T, S> {
     constructor(
         predicateRepository: PredicateRepository,
         classRepository: ClassRepository,
-        valueSelector: (T) -> TemplatePropertyDefinition
-    ) : this(AbstractTemplatePropertyValidator(predicateRepository, classRepository), valueSelector)
+        newValueSelector: (T) -> TemplatePropertyDefinition,
+        oldValueSelector: (S) -> TemplateProperty? = { null }
+    ) : this(
+        AbstractTemplatePropertyValidator(predicateRepository, classRepository),
+        newValueSelector,
+        oldValueSelector
+    )
 
-    override fun invoke(command: T, state: S): S =
-        state.apply { abstractTemplatePropertyValidator.validate(valueSelector(command)) }
+    override fun invoke(command: T, state: S): S {
+        val oldProperty = oldValueSelector(state)
+        val newProperty = newValueSelector(command)
+        if (oldProperty == null || !newProperty.matchesProperty(oldProperty)) {
+            abstractTemplatePropertyValidator.validate(newProperty)
+        }
+        return state
+    }
 }

@@ -35,6 +35,7 @@ class TemplatePropertiesUpdater(
                 if (oldProperty != null) {
                     if (oldProperty.order != index.toLong()) {
                         abstractTemplatePropertyUpdater.update(
+                            statements = state.statements[oldProperty.id].orEmpty(),
                             contributorId = command.contributorId,
                             order = index,
                             newProperty = newProperty,

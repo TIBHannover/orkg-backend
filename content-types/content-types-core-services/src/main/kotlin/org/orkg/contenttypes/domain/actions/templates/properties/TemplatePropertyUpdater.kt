@@ -20,6 +20,7 @@ class TemplatePropertyUpdater(
         state.apply {
             if (!command.matchesProperty(templateProperty!!)) {
                 abstractTemplatePropertyUpdater.update(
+                    statements = state.statements[templateProperty.id].orEmpty(),
                     contributorId = command.contributorId,
                     order = templateProperty.order.toInt(),
                     newProperty = command,

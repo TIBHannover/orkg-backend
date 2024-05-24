@@ -18,6 +18,7 @@ class TemplateDescriptionUpdater(
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
         if (command.description != state.template!!.description) {
             singleStatementPropertyUpdater.updateOptionalProperty(
+                statements = state.statements[command.templateId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.description,

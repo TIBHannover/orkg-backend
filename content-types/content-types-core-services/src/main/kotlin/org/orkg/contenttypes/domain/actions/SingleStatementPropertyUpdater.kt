@@ -107,7 +107,7 @@ class SingleStatementPropertyUpdater(
         }
     }
 
-    internal fun update(
+    internal fun updateRequiredProperty(
         statements: List<GeneralStatement>,
         contributorId: ContributorId,
         subjectId: ThingId,
@@ -124,5 +124,26 @@ class SingleStatementPropertyUpdater(
             predicate = predicateId,
             `object` = objectId
         )
+    }
+
+    internal fun updateOptionalProperty(
+        statements: List<GeneralStatement>,
+        contributorId: ContributorId,
+        subjectId: ThingId,
+        predicateId: ThingId,
+        objectId: ThingId?
+    ) {
+        val toRemove = statements.wherePredicate(predicateId).toMutableSet()
+        if (toRemove.isNotEmpty()) {
+            statementService.delete(toRemove.map { it.id }.toSet())
+        }
+        if (objectId != null) {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = predicateId,
+                `object` = objectId
+            )
+        }
     }
 }

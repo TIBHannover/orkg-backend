@@ -19,6 +19,7 @@ class TemplateClosedUpdater(
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
         if (command.isClosed != state.template!!.isClosed) {
             singleStatementPropertyUpdater.updateOptionalProperty(
+                statements = state.statements[command.templateId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.shClosed,

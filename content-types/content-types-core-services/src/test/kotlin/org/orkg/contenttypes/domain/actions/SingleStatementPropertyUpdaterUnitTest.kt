@@ -397,7 +397,7 @@ class SingleStatementPropertyUpdaterUnitTest {
 
         every { statementService.delete(setOf(StatementId("S456"))) } just runs
 
-        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, null)
+        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, null as String?)
 
         verify(exactly = 1) { statementService.delete(setOf(StatementId("S456"))) }
     }
@@ -407,11 +407,11 @@ class SingleStatementPropertyUpdaterUnitTest {
         val subjectId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
 
-        singleStatementPropertyUpdater.updateOptionalProperty(emptyList(), contributorId, subjectId, Predicates.description, null)
+        singleStatementPropertyUpdater.updateOptionalProperty(emptyList(), contributorId, subjectId, Predicates.description, null as String?)
     }
 
     @Test
-    fun `Given a new object id and a list of statements, when no previous statements exist, it creates a new statement`() {
+    fun `Given a new required object id and a list of statements, when no previous statements exist, it creates a new statement`() {
         val subjectId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R456")
@@ -426,7 +426,7 @@ class SingleStatementPropertyUpdaterUnitTest {
             )
         } just runs
 
-        singleStatementPropertyUpdater.update(statements, contributorId, subjectId, Predicates.hasContribution, contributionId)
+        singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.hasContribution, contributionId)
 
         verify(exactly = 1) {
             statementService.add(
@@ -439,7 +439,7 @@ class SingleStatementPropertyUpdaterUnitTest {
     }
 
     @Test
-    fun `Given a new object id and a list of statements, when previous statements exist, it deletes all matching statements matching the predicate and creates a new statement`() {
+    fun `Given a new required object id and a list of statements, when previous statements exist, it deletes all matching statements matching the predicate and creates a new statement`() {
         val subjectId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R456")
@@ -458,7 +458,7 @@ class SingleStatementPropertyUpdaterUnitTest {
             )
         } just runs
 
-        singleStatementPropertyUpdater.update(statements, contributorId, subjectId, Predicates.hasContribution, contributionId)
+        singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.hasContribution, contributionId)
 
         verify(exactly = 1) { statementService.delete(setOf(StatementId("S357"))) }
         verify(exactly = 1) {
@@ -469,5 +469,83 @@ class SingleStatementPropertyUpdaterUnitTest {
                 `object` = contributionId
             )
         }
+    }
+
+    @Test
+    fun `Given a new optional object id and a list of statements, when no previous statements exist, it creates a new statement`() {
+        val subjectId = ThingId("R123")
+        val contributorId = ContributorId(UUID.randomUUID())
+        val objectId = ThingId("R456")
+        val statements = emptyList<GeneralStatement>()
+
+        every {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.hasContribution,
+                `object` = objectId
+            )
+        } just runs
+
+        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.hasContribution, objectId)
+
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.hasContribution,
+                `object` = objectId
+            )
+        }
+    }
+
+    @Test
+    fun `Given a new optional object id and a list of statements, when previous statements exist, it deletes all statements matching the predicate and creates a new statement`() {
+        val subjectId = ThingId("R123")
+        val contributorId = ContributorId(UUID.randomUUID())
+        val objectId = ThingId("R456")
+        val statements = listOf(
+            createStatement(StatementId("S159")),
+            createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution))
+        )
+
+        every { statementService.delete(setOf(StatementId("S357"))) } just runs
+        every {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.hasContribution,
+                `object` = objectId
+            )
+        } just runs
+
+        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.hasContribution, objectId)
+
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S357"))) }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = subjectId,
+                predicate = Predicates.hasContribution,
+                `object` = objectId
+            )
+        }
+    }
+
+    @Test
+    fun `Given a new optional object id and a list of statements, when object id is null but previous statements exist, it deletes all statements matching the predicate`() {
+        val subjectId = ThingId("R123")
+        val contributorId = ContributorId(UUID.randomUUID())
+        val objectId = null
+        val statements = listOf(
+            createStatement(StatementId("S159")),
+            createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution))
+        )
+
+        every { statementService.delete(setOf(StatementId("S357"))) } just runs
+
+        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.hasContribution, objectId as ThingId?)
+
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S357"))) }
     }
 }

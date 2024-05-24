@@ -23,6 +23,8 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateOtherLiteralTempl
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateResourceTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
 import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
+import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.createStatement
 
 class TemplatePropertiesUpdaterUnitTest {
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator = mockk()
@@ -53,9 +55,7 @@ class TemplatePropertiesUpdaterUnitTest {
         val command = dummyUpdateTemplateCommand().copy(
             properties = null
         )
-        val state = UpdateTemplateState(
-            template = template
-        )
+        val state = UpdateTemplateState(template)
 
         templatePropertiesUpdater(command, state)
     }
@@ -66,9 +66,7 @@ class TemplatePropertiesUpdaterUnitTest {
         val command = dummyUpdateTemplateCommand().copy(
             properties = template.properties.map { it.toTemplatePropertyDefinition() }
         )
-        val state = UpdateTemplateState(
-            template = template
-        )
+        val state = UpdateTemplateState(template)
 
         templatePropertiesUpdater(command, state)
     }
@@ -79,9 +77,7 @@ class TemplatePropertiesUpdaterUnitTest {
         val command = dummyUpdateTemplateCommand().copy(
             properties = template.properties.dropLast(1).map { it.toTemplatePropertyDefinition() }
         )
-        val state = UpdateTemplateState(
-            template = template
-        )
+        val state = UpdateTemplateState(template)
 
         every {
             abstractTemplatePropertyDeleter.delete(command.contributorId, command.templateId, template.properties.last().id)
@@ -106,11 +102,13 @@ class TemplatePropertiesUpdaterUnitTest {
             properties = template.properties.drop(1).map { it.toTemplatePropertyDefinition() }
         )
         val state = UpdateTemplateState(
-            template = template
+            template = template,
+            statements = template.properties.associate { it.id to listOf(createStatement(subject = createResource(it.id))) }
         )
 
         every {
             abstractTemplatePropertyUpdater.update(
+                statements = any(),
                 contributorId = command.contributorId,
                 order = 0,
                 newProperty = command.properties!![0],
@@ -125,6 +123,7 @@ class TemplatePropertiesUpdaterUnitTest {
 
         verify(exactly = 1) {
             abstractTemplatePropertyUpdater.update(
+                statements = state.statements[template.properties[1].id]!!,
                 contributorId = command.contributorId,
                 order = 0,
                 newProperty = command.properties!![0],
@@ -142,9 +141,7 @@ class TemplatePropertiesUpdaterUnitTest {
         val command = dummyUpdateTemplateCommand().copy(
             properties = template.properties.map { it.toTemplatePropertyDefinition() } + dummyCreateOtherLiteralTemplatePropertyCommand()
         )
-        val state = UpdateTemplateState(
-            template = template
-        )
+        val state = UpdateTemplateState(template)
 
         every {
             abstractTemplatePropertyCreator.create(
@@ -176,7 +173,8 @@ class TemplatePropertiesUpdaterUnitTest {
             properties = listOf(dummyUpdateResourceTemplatePropertyCommand(), template.properties.single().toTemplatePropertyDefinition())
         )
         val state = UpdateTemplateState(
-            template = template
+            template = template,
+            statements = template.properties.associate { it.id to listOf(createStatement(subject = createResource(it.id))) }
         )
 
         every {
@@ -189,6 +187,7 @@ class TemplatePropertiesUpdaterUnitTest {
         } returns ThingId("irrelevant")
         every {
             abstractTemplatePropertyUpdater.update(
+                statements = any(),
                 contributorId = command.contributorId,
                 order = 1,
                 newProperty = command.properties!![1],
@@ -208,6 +207,7 @@ class TemplatePropertiesUpdaterUnitTest {
         }
         verify(exactly = 1) {
             abstractTemplatePropertyUpdater.update(
+                statements = state.statements[template.properties.single().id]!!,
                 contributorId = command.contributorId,
                 order = 1,
                 newProperty = command.properties!![1],
@@ -222,9 +222,7 @@ class TemplatePropertiesUpdaterUnitTest {
         val command = dummyUpdateTemplateCommand().copy(
             properties = template.properties.dropLast(1).map { it.toTemplatePropertyDefinition() } + dummyUpdateResourceTemplatePropertyCommand()
         )
-        val state = UpdateTemplateState(
-            template = template
-        )
+        val state = UpdateTemplateState(template)
 
         every {
             abstractTemplatePropertyCreator.create(

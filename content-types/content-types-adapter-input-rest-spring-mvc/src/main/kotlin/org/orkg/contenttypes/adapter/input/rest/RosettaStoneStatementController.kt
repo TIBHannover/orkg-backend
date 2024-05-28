@@ -102,7 +102,7 @@ class RosettaStoneStatementController(
     }
 
     @PreAuthorizeUser
-    @PostMapping("/{id}/versions", consumes = [ROSETTA_STONE_STATEMENT_JSON_V1])
+    @PostMapping("/{id}", consumes = [ROSETTA_STONE_STATEMENT_JSON_V1])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: UpdateRosettaStoneStatementRequest,

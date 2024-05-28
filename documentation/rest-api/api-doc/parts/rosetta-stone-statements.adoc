@@ -45,7 +45,7 @@ operation::rosetta-stone-statements-create[snippets='request-fields,curl-request
 == Editing a rosetta stone statement
 
 A `POST` request creates a new version of an existing rosetta stone statement with all the given parameters.
-The response will be `204 No Content` when successful.
+The response will be `201 Created` when successful.
 The revised rosetta stone statement (object) can be retrieved by following the URI in the `Location` header field.
 
 operation::rosetta-stone-statements-update[snippets='request-fields,curl-request,http-response']

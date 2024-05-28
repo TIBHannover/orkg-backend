@@ -50,7 +50,7 @@ Authorization: Bearer {{access_token}}
 %}
 
 ### Update traveling statement
-POST {{server_url}}/api/rosetta-stone/statements/{{rosetta_stone_statement_id}}/versions
+POST {{server_url}}/api/rosetta-stone/statements/{{rosetta_stone_statement_id}}
 Content-Type: application/vnd.orkg.rosetta-stone-statement.v1+json
 Authorization: Bearer {{access_token}}
 

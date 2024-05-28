@@ -286,7 +286,7 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
             it.modifiable shouldBe true
         }
 
-        val updatedId = post("/api/rosetta-stone/statements/{id}/versions", id)
+        val updatedId = post("/api/rosetta-stone/statements/{id}", id)
             .content(updateRosettaStoneStatementJson)
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .contentType(ROSETTA_STONE_STATEMENT_JSON_V1)

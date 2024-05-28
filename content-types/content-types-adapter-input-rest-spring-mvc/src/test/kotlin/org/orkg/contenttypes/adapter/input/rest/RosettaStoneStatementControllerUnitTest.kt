@@ -309,7 +309,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
         val newId = ThingId("R124")
         every { statementService.update(any()) } returns newId
 
-        documentedPostRequestTo("/api/rosetta-stone/statements/{id}/versions", id)
+        documentedPostRequestTo("/api/rosetta-stone/statements/{id}", id)
             .content(updateRosettaStoneStatementRequest())
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .contentType(ROSETTA_STONE_STATEMENT_JSON_V1)

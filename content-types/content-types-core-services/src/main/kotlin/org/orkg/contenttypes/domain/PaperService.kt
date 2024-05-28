@@ -194,7 +194,7 @@ class PaperService(
             PaperAuthorUpdater(resourceService, statementService, literalService, listService),
             PaperResearchFieldUpdater(literalService, statementService),
             PaperPublicationInfoUpdater(resourceService, resourceRepository, statementService, literalService),
-            PaperSDGUpdater(statementService)
+            PaperSDGUpdater(literalService, statementService)
         )
         steps.execute(command, UpdatePaperState())
     }

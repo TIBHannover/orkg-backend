@@ -1,4 +1,4 @@
-package org.orkg.contenttypes.domain.actions.papers
+package org.orkg.contenttypes.domain.actions.comparisons
 
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
@@ -12,15 +12,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
-import org.orkg.contenttypes.domain.actions.UpdatePaperState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
+import org.orkg.contenttypes.domain.actions.UpdateComparisonState
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
+import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateComparisonCommand
 import org.orkg.graph.domain.Predicates
 
-class PaperSDGUpdaterUnitTest {
+class ComparisonSDGUpdaterUnitTest {
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
 
-    private val paperSDGUpdater = PaperSDGUpdater(statementCollectionPropertyUpdater)
+    private val comparisonSDGUpdater = ComparisonSDGUpdater(statementCollectionPropertyUpdater)
 
     @BeforeEach
     fun resetState() {
@@ -33,25 +33,25 @@ class PaperSDGUpdaterUnitTest {
     }
 
     @Test
-    fun `Given a paper update command, it updates the sdgs`() {
-        val command = dummyUpdatePaperCommand()
-        val state = UpdatePaperState(paper = createDummyPaper())
+    fun `Given a comparison update command, it updates the sdgs`() {
+        val command = dummyUpdateComparisonCommand()
+        val state = UpdateComparisonState(comparison = createDummyComparison())
 
         every {
             statementCollectionPropertyUpdater.update(
                 contributorId = command.contributorId,
-                subjectId = command.paperId,
+                subjectId = command.comparisonId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
                 objects = command.sustainableDevelopmentGoals!!
             )
         } just runs
 
-        paperSDGUpdater(command, state)
+        comparisonSDGUpdater(command, state)
 
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
                 contributorId = command.contributorId,
-                subjectId = command.paperId,
+                subjectId = command.comparisonId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
                 objects = command.sustainableDevelopmentGoals!!
             )
@@ -59,21 +59,21 @@ class PaperSDGUpdaterUnitTest {
     }
 
     @Test
-    fun `Given a paper update command, when new sdgs set is identical to new sdgs set, it does nothing`() {
-        val command = dummyUpdatePaperCommand()
-        val state = UpdatePaperState(
-            paper = createDummyPaper().copy(
+    fun `Given a comparison update command, when new sdgs set is identical to new sdgs set, it does nothing`() {
+        val command = dummyUpdateComparisonCommand()
+        val state = UpdateComparisonState(
+            comparison = createDummyComparison().copy(
                 sustainableDevelopmentGoals = command.sustainableDevelopmentGoals!!.map { ObjectIdAndLabel(it, "irrelevant") }.toSet()
             )
         )
-        paperSDGUpdater(command, state)
+        comparisonSDGUpdater(command, state)
     }
 
     @Test
-    fun `Given a paper update command, when no sdgs set is set, it does nothing`() {
-        val command = dummyUpdatePaperCommand().copy(sustainableDevelopmentGoals = null)
-        val state = UpdatePaperState()
+    fun `Given a comparison update command, when no sdgs set is set, it does nothing`() {
+        val command = dummyUpdateComparisonCommand().copy(sustainableDevelopmentGoals = null)
+        val state = UpdateComparisonState()
 
-        paperSDGUpdater(command, state)
+        comparisonSDGUpdater(command, state)
     }
 }

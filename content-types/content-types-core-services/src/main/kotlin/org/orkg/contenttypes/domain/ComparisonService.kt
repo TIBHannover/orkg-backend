@@ -305,7 +305,7 @@ class ComparisonService(
             ComparisonDescriptionUpdater(literalService, statementService),
             ComparisonResearchFieldUpdater(literalService, statementService),
             ComparisonAuthorUpdater(resourceService, statementService, literalService, listService),
-            ComparisonSDGUpdater(statementService),
+            ComparisonSDGUpdater(literalService, statementService),
             ComparisonContributionUpdater(literalService, statementService),
             ComparisonReferencesUpdater(literalService, statementService),
             ComparisonIsAnonymizedUpdater(literalService, statementService)

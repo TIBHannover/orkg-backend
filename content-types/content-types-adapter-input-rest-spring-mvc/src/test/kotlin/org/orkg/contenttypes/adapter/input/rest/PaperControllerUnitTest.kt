@@ -96,7 +96,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @MockkBean
     private lateinit var paperService: PaperUseCases
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var contributionService: ContributionUseCases
 

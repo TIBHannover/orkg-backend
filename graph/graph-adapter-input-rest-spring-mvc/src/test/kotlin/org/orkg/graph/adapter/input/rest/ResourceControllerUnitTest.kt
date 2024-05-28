@@ -71,19 +71,15 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     @MockkBean
     private lateinit var resourceService: ResourceUseCases
 
-    @Suppress("unused") // required by ResourceController but not used in the test (yet)
     @MockkBean
     private lateinit var contributorService: RetrieveContributorUseCase
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var statementService: StatementUseCases
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var formattedLabelRepository: FormattedLabelRepository
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var flags: FeatureFlagService
 

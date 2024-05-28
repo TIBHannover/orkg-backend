@@ -43,18 +43,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @DisplayName("Given an ObservatoryResourceController controller")
 internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory-resources") {
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var resourceService: ResourceUseCases
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var contributorService: RetrieveContributorUseCase
 
     @MockkBean
     private lateinit var statementService: StatementUseCases
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var formattedLabelRepository: FormattedLabelRepository
 

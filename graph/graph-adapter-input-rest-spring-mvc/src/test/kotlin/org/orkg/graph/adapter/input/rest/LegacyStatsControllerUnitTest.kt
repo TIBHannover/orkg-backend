@@ -40,7 +40,6 @@ class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
     @MockkBean
     private lateinit var statisticsService: RetrieveLegacyStatisticsUseCase
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var contributorService: RetrieveContributorUseCase
 

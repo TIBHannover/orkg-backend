@@ -79,19 +79,15 @@ internal class OrganizationControllerUnitTest {
     @MockkBean
     private lateinit var organizationService: OrganizationUseCases
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var userDetailsService: UserDetailsService
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var observatoryService: ObservatoryUseCases
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var imageService: ImageUseCases
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var resourceService: ResourceUseCases
 

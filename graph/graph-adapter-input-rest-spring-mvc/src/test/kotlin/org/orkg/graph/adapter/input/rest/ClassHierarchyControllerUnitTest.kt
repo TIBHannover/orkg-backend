@@ -53,11 +53,9 @@ internal class ClassHierarchyControllerUnitTest {
     @Autowired
     private lateinit var context: WebApplicationContext
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var classService: ClassUseCases
 
-    @Suppress("unused") // required by ClassController but not used in the test (yet)
     @MockkBean
     private lateinit var resourceService: ResourceUseCases
 

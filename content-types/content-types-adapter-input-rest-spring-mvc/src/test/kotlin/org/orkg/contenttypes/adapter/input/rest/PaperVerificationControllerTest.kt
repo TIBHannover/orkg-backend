@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.junit.jupiter.api.BeforeEach
@@ -35,10 +34,6 @@ internal class PaperVerificationControllerTest {
     @Autowired
     private lateinit var context: WebApplicationContext
 
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var userDetailsService: UserDetailsService
 

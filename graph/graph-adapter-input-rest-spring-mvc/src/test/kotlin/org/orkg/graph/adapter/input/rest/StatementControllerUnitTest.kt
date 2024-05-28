@@ -68,11 +68,9 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     @MockkBean
     private lateinit var statementService: StatementUseCases
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var formattedLabelRepository: FormattedLabelRepository
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var flags: FeatureFlagService
 

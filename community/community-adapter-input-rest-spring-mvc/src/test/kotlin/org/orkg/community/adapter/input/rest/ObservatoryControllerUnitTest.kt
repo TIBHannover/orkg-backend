@@ -62,7 +62,6 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     @MockkBean
     private lateinit var observatoryUseCases: ObservatoryUseCases
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var resourceUseCases: ResourceUseCases
 

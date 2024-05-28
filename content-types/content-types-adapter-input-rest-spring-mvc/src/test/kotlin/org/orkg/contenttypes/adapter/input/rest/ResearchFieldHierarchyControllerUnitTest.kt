@@ -44,19 +44,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @DisplayName("Given a ResearchField controller")
 internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research-fields") {
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var statementService: StatementUseCases
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var formattedLabelRepository: FormattedLabelRepository
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var flags: FeatureFlagService
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var userRepository: RetrieveContributorUseCase
 

@@ -188,7 +188,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
     @TestWithMockUser
     @DisplayName("Given an observatory filter, when deleted by id, then status is 204 NO CONTENT")
     fun delete() {
-        val id = ObservatoryFilterId(UUID.randomUUID())
+        val id = createObservatoryFilter().id // keep the ID stable during different test runs
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
@@ -440,7 +440,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
     @TestWithMockUser
     @DisplayName("Given an observatory filter update command, when service succeeds, then status is 204 NO CONTENT")
     fun update() {
-        val id = ObservatoryFilterId(UUID.randomUUID())
+        val id = createObservatoryFilter().id // keep the ID stable during different test runs
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),

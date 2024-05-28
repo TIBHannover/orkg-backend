@@ -1,17 +1,38 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
+import org.neo4j.cypherdsl.core.Condition
+import org.neo4j.cypherdsl.core.Conditions
+import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.caseExpression
+import org.neo4j.cypherdsl.core.Cypher.listOf
+import org.neo4j.cypherdsl.core.Cypher.literalOf
+import org.neo4j.cypherdsl.core.Cypher.match
+import org.neo4j.cypherdsl.core.Cypher.name
+import org.neo4j.cypherdsl.core.Cypher.node
+import org.neo4j.cypherdsl.core.Functions.collect
+import org.neo4j.cypherdsl.core.Functions.count
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.PagedQueryBuilder.fetchAs
+import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResourceRepository
+import org.orkg.graph.adapter.output.neo4j.toSortItems
+import org.orkg.graph.adapter.output.neo4j.orElseGet
+import org.orkg.graph.adapter.output.neo4j.toCondition
+import org.orkg.graph.adapter.output.neo4j.where
+import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.PredicateRepository
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.stereotype.Component
@@ -57,31 +78,154 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             .one()
     }
 
-    override fun findAll(pageable: Pageable): Page<RosettaStoneStatement> {
-        val contents = neo4jClient.query("""
-            MATCH (latest:RosettaStoneStatement:LatestVersion)
-            OPTIONAL MATCH (latest)-[:CONTEXT]->(context:Thing)
-            MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
-                  (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
-            MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(subject:Thing)
-            OPTIONAL MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
-            WITH latest, context.id AS contextId, template.id AS templateId, metadata, version, object, COLLECT([subject, subjectNode.index]) AS subjects, objectNode
-            WITH latest, contextId, templateId, metadata, version, CASE WHEN object IS NOT NULL THEN COLLECT([object, objectNode.index, objectNode.position]) ELSE [] END AS objects, subjects
-            WITH latest, contextId, templateId, COLLECT([version, metadata, subjects, objects]) AS versions
-            RETURN latest, contextId, templateId, versions
-            SKIP ${'$'}skip
-            LIMIT ${'$'}limit""".trimIndent()
-        )
-            .bindAll(mapOf("skip" to pageable.offset, "limit" to pageable.pageSize))
-            .fetchAs(RosettaStoneStatement::class.java)
-            .mappedBy(RosettaStoneStatementMapper(predicateRepository))
-            .all()
-            .toList()
-        val count = neo4jClient.query("""MATCH (latest:RosettaStoneStatement:LatestVersion) RETURN COUNT(latest)""")
-            .fetchAs<Long>()
-            .one() ?: 0
-        return PageImpl(contents, pageable, count)
-    }
+    override fun findAll(
+        pageable: Pageable,
+        context: ThingId?,
+        templateId: ThingId?,
+        templateTargetClassId: ThingId?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?
+    ): Page<RosettaStoneStatement> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
+        .withCommonQuery {
+            match(node("RosettaStoneStatement", "LatestVersion").named("latest"))
+        }
+        .withQuery { commonQuery ->
+            val latest = node("RosettaStoneStatement", "LatestVersion").named("latest")
+            val version = node("RosettaStoneStatement", "Version").named("version")
+            val contextNode = node("Thing").named("context")
+            val metadata = node("RosettaStoneStatementMetadata").named("metadata")
+            val template = node("RosettaNodeShape").named("template")
+            val subjectNode = node("SubjectNode").named("subjectNode")
+            val subject = node("Thing").named("subject")
+            val objectNode = node("ObjectNode").named("objectNode")
+            val `object` = node("Thing").named("object")
+            val contextId = name("contextId")
+            val templateIdVar = name("templateId")
+            val subjects = name("subjects")
+            val objects = name("objects")
+            val versions = name("versions")
+            commonQuery.optionalMatch(latest.relationshipTo(contextNode, "CONTEXT"))
+                .match(
+                    latest.relationshipTo(version, "VERSION").relationshipTo(metadata, "METADATA"),
+                    latest.relationshipTo(template, "TEMPLATE")
+                )
+                .match(version.relationshipTo(subjectNode, "SUBJECT").relationshipTo(subject, "VALUE"))
+                .optionalMatch(version.relationshipTo(objectNode, "OBJECT").relationshipTo(`object`, "VALUE"))
+                .let { match ->
+                    templateTargetClassId?.let {
+                        val targetClass = node("Class").withProperties("id", anonParameter(it.value))
+                        match.match(latest.relationshipTo(targetClass, "INSTANCE_OF"))
+                    } ?: match
+                }
+                .with(
+                    latest,
+                    contextNode,
+                    template,
+                    metadata,
+                    version,
+                    subject,
+                    subjectNode,
+                    `object`,
+                    objectNode
+                )
+                .where(
+                    context.toCondition { contextNode.property("id").eq(anonParameter(it.value)) },
+                    templateId.toCondition { template.property("id").eq(anonParameter(it.value)) },
+                    visibility.toCondition { filter ->
+                        filter.targets.map { latest.property("visibility").eq(literalOf<String>(it.name)) }
+                            .reduceOrNull(Condition::or) ?: Conditions.noCondition()
+                    },
+                    createdBy.toCondition { latest.property("created_by").eq(anonParameter(it.value.toString())) },
+                    createdAtStart.toCondition { latest.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
+                    createdAtEnd.toCondition { latest.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
+                    observatoryId.toCondition { latest.property("observatory_id").eq(anonParameter(it.value.toString())) },
+                    organizationId.toCondition { latest.property("organization_id").eq(anonParameter(it.value.toString())) }
+                )
+                .with(
+                    latest,
+                    contextNode.property("id").`as`(contextId),
+                    template.property("id").`as`(templateIdVar),
+                    metadata,
+                    version,
+                    `object`,
+                    collect(listOf(subject.asExpression(), subjectNode.property("index"))).`as`(subjects),
+                    objectNode
+                )
+                .with(
+                    latest,
+                    contextId,
+                    templateIdVar,
+                    metadata,
+                    version,
+                    // TODO: refactor query to workaround implicit aggregation key caused by case expression
+                    caseExpression()
+                        .`when`(`object`.isNotNull)
+                        .then(collect(listOf(`object`.asExpression(), objectNode.property("index"), objectNode.property("position"))))
+                        .elseDefault(listOf())
+                        .`as`(objects),
+                    subjects
+                )
+                .with(
+                    latest,
+                    contextId,
+                    templateIdVar,
+                    collect(listOf(version.asExpression(), metadata.asExpression(), subjects, objects)).`as`(versions)
+                )
+                // TODO: implement order by optimizations?
+                .orderBy(
+                    pageable.sort.orElseGet { Sort.by("created_at") }
+                        .toSortItems(
+                            propertyMappings = mapOf(
+                                "id" to latest.property("id"),
+                                "created_at" to latest.property("created_at"),
+                                "created_by" to latest.property("created_by"),
+                                "visibility" to latest.property("visibility"),
+                                "template_id" to templateIdVar
+                            ),
+                            knownProperties = arrayOf("id", "created_at", "created_by", "visibility", "template_id")
+                        )
+                )
+                .returning(latest.asExpression(), contextId, templateIdVar, versions)
+        }
+        .withCountQuery { commonQuery ->
+            val latest = node("RosettaStoneStatement", "LatestVersion").named("latest")
+            val contextNode = node("Thing").named("context")
+            val template = node("RosettaNodeShape").named("template")
+            commonQuery.optionalMatch(latest.relationshipTo(contextNode, "CONTEXT"))
+                .match(latest.relationshipTo(template, "TEMPLATE"))
+                .let { match ->
+                    templateTargetClassId?.let {
+                        val targetClass = node("Class").withProperties("id", anonParameter(it.value))
+                        match.match(latest.relationshipTo(targetClass, "INSTANCE_OF"))
+                    } ?: match
+                }
+                .with(
+                    latest,
+                    contextNode,
+                    template,
+                )
+                .where(
+                    context.toCondition { contextNode.property("id").eq(anonParameter(it.value)) },
+                    templateId.toCondition { template.property("id").eq(anonParameter(it.value)) },
+                    visibility.toCondition { filter ->
+                        filter.targets.map { latest.property("visibility").eq(literalOf<String>(it.name)) }
+                            .reduceOrNull(Condition::or) ?: Conditions.noCondition()
+                    },
+                    createdBy.toCondition { latest.property("created_by").eq(anonParameter(it.value.toString())) },
+                    createdAtStart.toCondition { latest.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
+                    createdAtEnd.toCondition { latest.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
+                    observatoryId.toCondition { latest.property("observatory_id").eq(anonParameter(it.value.toString())) },
+                    organizationId.toCondition { latest.property("organization_id").eq(anonParameter(it.value.toString())) }
+                )
+                .returning(count(latest))
+        }
+        .fetchAs<RosettaStoneStatement>()
+        .mappedBy(RosettaStoneStatementMapper(predicateRepository))
+        .fetch(pageable, false)
 
     override fun save(statement: RosettaStoneStatement) {
         val versionInfo = neo4jClient.query("""

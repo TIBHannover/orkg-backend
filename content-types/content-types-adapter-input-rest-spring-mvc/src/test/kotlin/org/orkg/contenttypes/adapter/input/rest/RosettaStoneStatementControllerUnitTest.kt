@@ -4,10 +4,13 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import java.net.URI
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -20,10 +23,12 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStat
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneStatement
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -39,6 +44,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -129,7 +135,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
     @DisplayName("Given several rosetta stone statements, when they are fetched, then status is 200 OK and rosetta stone statements are returned")
     fun getPaged() {
         val statement = createDummyRosettaStoneStatement()
-        every { statementService.findAll(pageable = any()) } returns pageOf(statement)
+        every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(statement)
 
         documentedGetRequestTo("/api/rosetta-stone/statements")
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
@@ -140,7 +146,72 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
             .andExpectRosettaStoneStatement("$.content[*]")
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { statementService.findAll(pageable = any()) }
+        verify(exactly = 1) { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    @DisplayName("Given several rosetta stone statements, when filtering by several parameters, then status is 200 OK and rosetta stone statements are returned")
+    fun getPagedWithParameters() {
+        val statement = createDummyRosettaStoneStatement()
+        every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(statement)
+
+        val context = ThingId("R123")
+        val templateId = ThingId("R456")
+        val templateTargetClassId = ThingId("C123")
+        val visibility = VisibilityFilter.ALL_LISTED
+        val createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
+        val createdAtStart = OffsetDateTime.now(fixedClock).minusHours(1)
+        val createdAtEnd = OffsetDateTime.now(fixedClock).plusHours(1)
+        val observatoryId = ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+
+        documentedGetRequestTo("/api/rosetta-stone/statements")
+            .param("context", context.value)
+            .param("template_id", templateId.value)
+            .param("class_id", templateTargetClassId.value)
+            .param("visibility", visibility.name)
+            .param("created_by", createdBy.value.toString())
+            .param("created_at_start", createdAtStart.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("created_at_end", createdAtEnd.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("observatory_id", observatoryId.value.toString())
+            .param("organization_id", organizationId.value.toString())
+            .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .contentType(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectRosettaStoneStatement("$.content[*]")
+            .andDo(
+                documentationHandler.document(
+                    requestParameters(
+                        parameterWithName("context").description("Filter for the id of the context that the rosetta stone statement was created with. (optional)"),
+                        parameterWithName("template_id").description("Filter for the template id that was used to instantiate the rosetta stone statement. (optional)"),
+                        parameterWithName("class_id").description("Filter for the class id of the rosetta stone statement. (optional)"),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED"."""),
+                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created the first version of the rosetta stone statement. (optional)"),
+                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned rosetta stone statement can have. (optional)"),
+                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned rosetta stone statement can have. (optional)"),
+                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the rosetta stone statement belongs to. (optional)"),
+                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the rosetta stone statement belongs to. (optional)"),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            statementService.findAll(
+                pageable = any(),
+                context = context,
+                templateId = templateId,
+                templateTargetClassId = templateTargetClassId,
+                visibility = visibility,
+                createdBy = createdBy,
+                createdAtStart = createdAtStart,
+                createdAtEnd = createdAtEnd,
+                observatoryId = observatoryId,
+                organizationId = organizationId
+            )
+        }
     }
 
     @Test

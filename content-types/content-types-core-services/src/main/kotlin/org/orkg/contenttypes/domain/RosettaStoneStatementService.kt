@@ -1,7 +1,9 @@
 package org.orkg.contenttypes.domain
 
 import java.time.Clock
+import java.time.OffsetDateTime
 import java.util.*
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -32,6 +34,7 @@ import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStone
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
+import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -67,8 +70,30 @@ class RosettaStoneStatementService(
     override fun findByIdOrVersionId(id: ThingId): Optional<RosettaStoneStatement> =
         repository.findByIdOrVersionId(id)
 
-    override fun findAll(pageable: Pageable): Page<RosettaStoneStatement> =
-        repository.findAll(pageable)
+    override fun findAll(
+        pageable: Pageable,
+        context: ThingId?,
+        templateId: ThingId?,
+        templateTargetClassId: ThingId?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?
+    ): Page<RosettaStoneStatement> =
+        repository.findAll(
+            pageable = pageable,
+            context = context,
+            templateId = templateId,
+            templateTargetClassId = templateTargetClassId,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId
+        )
 
     override fun create(command: CreateRosettaStoneStatementCommand): ThingId {
         val steps = listOf(

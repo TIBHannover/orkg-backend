@@ -5,9 +5,15 @@ import dev.forkhandles.fabrikate.Fabrikate
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.comparables.shouldBeGreaterThan
+import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
+import java.time.OffsetDateTime
+import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.RosettaStoneStatement
@@ -23,13 +29,17 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.domain.Visibility
+import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.withCustomMappings
+import org.orkg.graph.testing.fixtures.withLongerURIs
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 
 fun <
     T : RosettaStoneStatementRepository,
@@ -56,13 +66,13 @@ fun <
 
     val fabricator = Fabrikate(
         FabricatorConfig(
-            seed = 16532,
-            collectionSizes = 12..12,
+            collectionSizes = 5..5,
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
         ).withStandardMappings()
     )
         .withCustomMappings()
         .withRosettaStoneStatementMappings()
+        .withLongerURIs()
 
     val saveThing: (Thing) -> Unit = {
         when (it) {
@@ -97,6 +107,7 @@ fun <
         setOfNotNull(
             fabricator.random<Resource>().copy(id = templateId, classes = setOf(Classes.rosettaNodeShape)),
             contextId?.let { fabricator.random<Resource>().copy(id = it) },
+            fabricator.random<Class>().copy(id = templateTargetClassId),
         ) + versions.flatMap { it.requiredEntities() }
 
     describe("saving a rosetta stone statement") {
@@ -178,32 +189,393 @@ fun <
     }
 
     describe("finding several rosetta stone statements") {
-        val statements = fabricator.random<List<RosettaStoneStatement>>()
-        statements.forEach {
-            it.requiredEntities().forEach(saveThing)
-            repository.save(it)
-        }
-        val expected = statements.take(10)
+        context("without filters") {
+            val statements = fabricator.random<List<RosettaStoneStatement>>()
+            statements.forEach {
+                it.requiredEntities().forEach(saveThing)
+                repository.save(it)
+            }
+            val expected = statements.sortedBy { it.versions.first().createdAt }.take(10)
+            val result = repository.findAll(PageRequest.of(0, 10))
 
-        val result = repository.findAll(PageRequest.of(0, 10))
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe statements.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.versions.first().createdAt shouldBeLessThan b.versions.first().createdAt
+                }
+            }
+        }
+        context("by context") {
+            val statements = fabricator.random<MutableList<RosettaStoneStatement>>()
+            val contextId = fabricator.random<ThingId>()
+            statements.take(3).forEachIndexed { index, statement ->
+                statements[index] = statement.copy(contextId = contextId)
+            }
+            statements.forEach {
+                it.requiredEntities().forEach(saveThing)
+                repository.save(it)
+            }
+            val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
+            val result = repository.findAll(PageRequest.of(0, 10), context = contextId)
 
-        it("returns the correct result") {
-            result shouldNotBe null
-            result.content shouldNotBe null
-            result.content.size shouldBe expected.size
-            result.content shouldContainAll expected
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.versions.first().createdAt shouldBeLessThan b.versions.first().createdAt
+                }
+            }
         }
-        it("pages the result correctly") {
-            result.size shouldBe 10
-            result.number shouldBe 0
-            result.totalPages shouldBe 2
-            result.totalElements shouldBe statements.size
+        context("by template id") {
+            val statements = fabricator.random<MutableList<RosettaStoneStatement>>()
+            val templateId = fabricator.random<ThingId>()
+            statements.take(3).forEachIndexed { index, statement ->
+                statements[index] = statement.copy(templateId = templateId)
+            }
+            statements.forEach {
+                it.requiredEntities().forEach(saveThing)
+                repository.save(it)
+            }
+            val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
+            val result = repository.findAll(PageRequest.of(0, 10), templateId = templateId)
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.versions.first().createdAt shouldBeLessThan b.versions.first().createdAt
+                }
+            }
         }
-        xit("sorts the results by creation date by default") {
-//            TODO: decide on default sorting key
-//            result.content.zipWithNext { a, b ->
-//                a.createdAt shouldBeLessThan b.createdAt
-//            }
+        context("by class id") {
+            val statements = fabricator.random<MutableList<RosettaStoneStatement>>()
+            val classId = fabricator.random<ThingId>()
+            statements.take(3).forEachIndexed { index, statement ->
+                statements[index] = statement.copy(templateTargetClassId = classId)
+            }
+            statements.forEach {
+                it.requiredEntities().forEach(saveThing)
+                repository.save(it)
+            }
+            val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
+            val result = repository.findAll(PageRequest.of(0, 10), templateTargetClassId = classId)
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.versions.first().createdAt shouldBeLessThan b.versions.first().createdAt
+                }
+            }
+        }
+        context("by visibility") {
+            val statements = fabricator.random<MutableList<RosettaStoneStatement>>()
+            statements.forEachIndexed { index, statement ->
+                statements[index] = statement.copy(visibility = Visibility.entries[index % Visibility.entries.size])
+            }
+            VisibilityFilter.entries.forEach { visibilityFilter ->
+                context("when visibility is $visibilityFilter") {
+                    statements.forEach {
+                        it.requiredEntities().forEach(saveThing)
+                        repository.save(it)
+                    }
+                    val expected = statements.filter { it.visibility in visibilityFilter.targets }.sortedBy { it.versions.first().createdAt }
+                    val result = repository.findAll(PageRequest.of(0, 10), visibility = visibilityFilter)
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expected.size
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 10
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expected.size
+                    }
+                    it("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.versions.first().createdAt shouldBeLessThan b.versions.first().createdAt
+                        }
+                    }
+                }
+            }
+        }
+        context("by created by") {
+            val statements = fabricator.random<MutableList<RosettaStoneStatement>>()
+            val contributorId = fabricator.random<ContributorId>()
+            statements.take(3).forEachIndexed { index, statement ->
+                statements[index] = statement.copy(
+                    versions = statement.versions.toMutableList().also { versions ->
+                        versions[0] = versions[0].copy(createdBy = contributorId)
+                    }
+                )
+            }
+            statements.forEach {
+                it.requiredEntities().forEach(saveThing)
+                repository.save(it)
+            }
+            val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
+            val result = repository.findAll(PageRequest.of(0, 10), createdBy = contributorId)
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.versions.first().createdAt shouldBeLessThan b.versions.first().createdAt
+                }
+            }
+        }
+        context("by created at start") {
+            val statements = fabricator.random<MutableList<RosettaStoneStatement>>()
+            statements.forEachIndexed { index, statement ->
+                statements[index] = statement.copy(
+                    versions = statement.versions.toMutableList().also { versions ->
+                        versions[0] = versions[0].copy(createdAt = OffsetDateTime.now().minusHours(index.toLong()))
+                    }
+                )
+            }
+            statements.forEach {
+                it.requiredEntities().forEach(saveThing)
+                repository.save(it)
+            }
+            val expected = statements.take(3)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 10),
+                createdAtStart = expected.last().versions.first().createdAt
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.versions.first().createdAt shouldBeLessThan b.versions.first().createdAt
+                }
+            }
+        }
+        context("by created at end") {
+            val statements = fabricator.random<MutableList<RosettaStoneStatement>>()
+            statements.forEachIndexed { index, statement ->
+                statements[index] = statement.copy(
+                    versions = statement.versions.toMutableList().also { versions ->
+                        versions[0] = versions[0].copy(createdAt = OffsetDateTime.now().plusHours(index.toLong()))
+                    }
+                )
+            }
+            statements.forEach {
+                it.requiredEntities().forEach(saveThing)
+                repository.save(it)
+            }
+            val expected = statements.take(3)
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 10),
+                createdAtEnd = expected.last().versions.first().createdAt
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.versions.first().createdAt shouldBeLessThan b.versions.first().createdAt
+                }
+            }
+        }
+        context("by organization id") {
+            val statements = fabricator.random<MutableList<RosettaStoneStatement>>()
+            val organizationId = fabricator.random<OrganizationId>()
+            statements.take(3).forEachIndexed { index, statement ->
+                statements[index] = statement.copy(organizations = listOf(organizationId))
+            }
+            statements.forEach {
+                it.requiredEntities().forEach(saveThing)
+                repository.save(it)
+            }
+            val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
+
+            val result = repository.findAll(PageRequest.of(0, 10), organizationId = organizationId)
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.versions.first().createdAt shouldBeLessThan b.versions.first().createdAt
+                }
+            }
+        }
+        context("by observatory id") {
+            val statements = fabricator.random<MutableList<RosettaStoneStatement>>()
+            val observatoryId = fabricator.random<ObservatoryId>()
+            statements.take(3).forEachIndexed { index, statement ->
+                statements[index] = statement.copy(observatories = listOf(observatoryId))
+            }
+            statements.forEach {
+                it.requiredEntities().forEach(saveThing)
+                repository.save(it)
+            }
+            val expected = statements.take(3).sortedBy { it.versions.first().createdAt }
+            val result = repository.findAll(PageRequest.of(0, 10), observatoryId = observatoryId)
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.versions.first().createdAt shouldBeLessThan b.versions.first().createdAt
+                }
+            }
+        }
+        context("with all filters") {
+            val statements = fabricator.random<List<RosettaStoneStatement>>()
+                .map { it.copy(visibility = Visibility.FEATURED) }
+            statements.forEach {
+                it.requiredEntities().forEach(saveThing)
+                repository.save(it)
+            }
+            val expected = statements.first()
+            val firstVersion = expected.versions.first()
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 10),
+                context = expected.contextId,
+                templateId = expected.templateId,
+                templateTargetClassId = expected.templateTargetClassId,
+                visibility = VisibilityFilter.ALL_LISTED,
+                createdBy = firstVersion.createdBy,
+                createdAtStart = firstVersion.createdAt,
+                createdAtEnd = firstVersion.createdAt,
+                observatoryId = expected.observatories.single(),
+                organizationId = expected.organizations.single()
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe 1
+                result.content shouldContainAll setOf(expected)
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe 1
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.versions.first().createdAt shouldBeLessThan b.versions.first().createdAt
+                }
+            }
+        }
+        it("sorts the results by multiple properties") {
+            val statements = fabricator.random<MutableList<RosettaStoneStatement>>()
+            statements[1] = statements[1].copy(
+                versions = statements[1].versions.toMutableList().also { versions ->
+                    versions[0] = versions[0].copy(createdBy = statements[0].versions.first().createdBy)
+                }
+            )
+            statements.forEach {
+                it.requiredEntities().forEach(saveThing)
+                repository.save(it)
+            }
+            val sort = Sort.by("created_by").ascending().and(Sort.by("created_at").descending())
+            val result = repository.findAll(PageRequest.of(0, 12, sort))
+
+            result.content.zipWithNext { a, b ->
+                if (a.versions.first().createdBy == b.versions.first().createdBy) {
+                    a.versions.first().createdAt shouldBeGreaterThan b.versions.first().createdAt
+                } else {
+                    a.versions.first().createdBy.value.toString() shouldBeLessThan b.versions.first().createdBy.value.toString()
+                }
+            }
         }
     }
 

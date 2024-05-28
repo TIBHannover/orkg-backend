@@ -2,6 +2,8 @@ package org.orkg.graph.testing.fixtures
 
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
+import dev.forkhandles.fabrikate.StringFabricator
+import java.net.URI
 import kotlin.math.absoluteValue
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.StatementId
@@ -101,4 +103,10 @@ fun Fabrikate.withLiteralIds(): Fabrikate = apply {
 
 inline fun <reified T : Any> Fabrikate.random(size: Int): List<T> {
     return (0 until size).map { random() }
+}
+
+fun Fabrikate.withLongerURIs(): Fabrikate = apply {
+    config.register {
+        URI.create("https://${StringFabricator(random = config.random, length = IntRange(10, 20))()}.com")
+    }
 }

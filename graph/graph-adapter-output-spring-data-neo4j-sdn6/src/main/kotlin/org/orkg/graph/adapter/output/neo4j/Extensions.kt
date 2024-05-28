@@ -15,7 +15,6 @@ import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.FunctionInvocation
 import org.neo4j.cypherdsl.core.Functions
 import org.neo4j.cypherdsl.core.PatternElement
-import org.neo4j.cypherdsl.core.Property
 import org.neo4j.cypherdsl.core.ResultStatement
 import org.neo4j.cypherdsl.core.SortItem
 import org.neo4j.cypherdsl.core.StatementBuilder
@@ -229,7 +228,7 @@ fun Sort.toSortItems(
 )
 
 fun Sort.toSortItems(
-    propertyMappings: Map<String, Property>? = null,
+    propertyMappings: Map<String, Expression>? = null,
     vararg knownProperties: String
 ): kotlin.collections.List<SortItem> =
     map { sort ->
@@ -289,8 +288,12 @@ fun match(
         match(node).let { if (patterns.isNotEmpty()) it.match(patterns) else it }.with(node)
     }
 
+@Deprecated("For removal", replaceWith = ReplaceWith("org.orkg.graph.adapter.output.neo4j.orElseGet"))
 inline fun Pageable.withDefaultSort(sort: () -> Sort): Pageable =
     if (this.sort.isSorted) this else PageRequest.of(pageNumber, pageSize, sort())
+
+inline fun Sort.orElseGet(sort: () -> Sort): Sort =
+    if (isSorted) this else sort()
 
 fun orderByOptimizations(
     node: Expression,

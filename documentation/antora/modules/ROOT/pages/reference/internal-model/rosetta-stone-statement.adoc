@@ -1,0 +1,23 @@
+= Rosetta Stone Statement Model Diagram
+
+[mermaid,width=100%]
+----
+flowchart LR
+    latest[RosettaStoneStatement \n LatestVersion \n Resource]
+    latest --> |"VERSION"| version
+    latest --> |"TEMPLATE"| template
+    latest --> |"CONTEXT"| context
+    template["RosettaNodeShape \n Resource"]
+    context["Resource"]
+    version[RosettaStoneStatement \n Version \n Resource]
+    version --> |"METADATA"| metadata
+    version --> |"SUBJECT"| subjectNode
+    version --> |"OBJECT"| objectNode
+    metadata[RosettaStoneStatementMetadata]
+    subjectNode["SubjectNode"]
+    subjectNode --> |"VALUE"| subject
+    subject["Resource"]
+    objectNode["ObjectNode"]
+    objectNode --> |"VALUE"| object
+    object["Thing"]
+----

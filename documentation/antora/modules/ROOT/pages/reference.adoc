@@ -16,3 +16,7 @@
 * xref:reference/model/smart-review.adoc[Smart Review]
 * xref:reference/model/template.adoc[Template]
 * xref:reference/model/rosetta-stone-template.adoc[Rosetta Stone Template]
+
+== Internal Model
+
+* xref:reference/internal-model/rosetta-stone-statement.adoc[Rosetta Stone Statement]

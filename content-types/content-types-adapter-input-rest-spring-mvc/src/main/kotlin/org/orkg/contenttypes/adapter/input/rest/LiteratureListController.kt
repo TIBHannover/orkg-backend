@@ -267,12 +267,10 @@ class LiteratureListController(
     }
 
     data class TextSectionRequest(
-        @field:NullableNotBlank
         val heading: String,
         @field:Positive
         @JsonProperty("heading_size")
         val headingSize: Int,
-        @field:NullableNotBlank
         val text: String
     ) : LiteratureListSectionRequest {
         override fun toLiteratureListSectionDefinition(): LiteratureListSectionDefinition =

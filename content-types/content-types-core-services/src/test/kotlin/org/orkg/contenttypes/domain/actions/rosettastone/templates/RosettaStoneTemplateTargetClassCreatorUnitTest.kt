@@ -18,13 +18,16 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneTempl
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
+import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
 class RosettaStoneTemplateTargetClassCreatorUnitTest {
     private val classService: ClassUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
+    private val literalService: LiteralUseCases = mockk()
 
-    private val rosettaStoneTemplateTargetClassCreator = RosettaStoneTemplateTargetClassCreator(classService, statementService)
+    private val rosettaStoneTemplateTargetClassCreator = RosettaStoneTemplateTargetClassCreator(classService, statementService, literalService)
 
     @BeforeEach
     fun resetState() {
@@ -33,24 +36,26 @@ class RosettaStoneTemplateTargetClassCreatorUnitTest {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(classService, statementService)
+        confirmVerified(classService, statementService, literalService)
     }
 
     @Test
-    fun `Given a rosetta stone template create command, it crate a new target class and links it to the root resource`() {
+    fun `Given a rosetta stone template create command, it crates a new target class and links it to the root resource and creates a new example usage statement`() {
         val command = dummyCreateRosettaStoneTemplateCommand()
         val state = CreateRosettaStoneTemplateState(
             rosettaStoneTemplateId = ThingId("R45665")
         )
         val classId = ThingId("C123")
+        val exampleUsageId = ThingId("L123")
 
         every { classService.create(any()) } returns classId
+        every { literalService.create(any()) } returns exampleUsageId
         every {
             statementService.add(
                 userId = command.contributorId,
-                subject = state.rosettaStoneTemplateId!!,
-                predicate = Predicates.shTargetClass,
-                `object` = classId
+                subject = any(),
+                predicate = any(),
+                `object` = any()
             )
         } just runs
 
@@ -74,6 +79,22 @@ class RosettaStoneTemplateTargetClassCreatorUnitTest {
                 subject = state.rosettaStoneTemplateId!!,
                 predicate = Predicates.shTargetClass,
                 `object` = classId
+            )
+        }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.exampleUsage
+                )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = classId,
+                predicate = Predicates.exampleOfUsage,
+                `object` = exampleUsageId
             )
         }
     }

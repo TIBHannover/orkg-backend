@@ -14,6 +14,7 @@ interface CreateRosettaStoneTemplateUseCase {
         val label: String,
         val description: String,
         val formattedLabel: FormattedLabel,
+        val exampleUsage: String,
         val properties: List<TemplatePropertyDefinition>,
         val observatories: List<ObservatoryId>,
         val organizations: List<OrganizationId>

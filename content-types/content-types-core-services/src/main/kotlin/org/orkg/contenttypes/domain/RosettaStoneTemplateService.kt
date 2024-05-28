@@ -80,7 +80,7 @@ class RosettaStoneTemplateService(
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             RosettaStoneTemplateResourceCreator(resourceService),
-            RosettaStoneTemplateTargetClassCreator(classService, statementService),
+            RosettaStoneTemplateTargetClassCreator(classService, statementService, literalService),
             RosettaStoneTemplateDescriptionCreator(literalService, statementService),
             RosettaStoneTemplateFormattedLabelCreator(literalService, statementService),
             RosettaStoneTemplateClosedCreator(literalService, statementService),

@@ -87,6 +87,9 @@ class RosettaStoneTemplateController(
         @field:NotBlank
         @JsonProperty("formatted_label")
         val formattedLabel: String,
+        @field:NotBlank
+        @JsonProperty("example_usage")
+        val exampleUsage: String,
         @field:Valid
         val properties: List<TemplatePropertyRequest>,
         @field:Size(max = 1)
@@ -100,6 +103,7 @@ class RosettaStoneTemplateController(
                 label = label,
                 description = description,
                 formattedLabel = FormattedLabel.of(formattedLabel),
+                exampleUsage = exampleUsage,
                 properties = properties.map { it.toTemplatePropertyDefinition() },
                 observatories = observatories,
                 organizations = organizations

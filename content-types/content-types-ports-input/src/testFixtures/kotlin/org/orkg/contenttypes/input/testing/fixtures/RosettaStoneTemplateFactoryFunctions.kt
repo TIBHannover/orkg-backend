@@ -19,6 +19,7 @@ fun dummyCreateRosettaStoneTemplateCommand() = CreateRosettaStoneTemplateUseCase
     label = "Dummy Rosetta Stone Template Label",
     description = "Some description about the rosetta stone template",
     formattedLabel = FormattedLabel.of("{0} {1} {2} {3} {4} {5}"),
+    exampleUsage = "example sentence of the statement",
     properties = listOf(
         dummyCreateSubjectPositionTemplatePropertyCommand(),
         dummyCreateUntypedObjectPositionTemplatePropertyCommand(),

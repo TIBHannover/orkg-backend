@@ -460,6 +460,10 @@
     {
       "id": "hasObjectPosition",
       "label": "object position"
+    },
+    {
+      "id": "exampleOfUsage",
+      "label": "example of usage"
     }
   ],
 

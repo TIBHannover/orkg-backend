@@ -20,6 +20,7 @@ interface RosettaStoneTemplateRepresentationAdapter : TemplatePropertyRepresenta
             description = description,
             formattedLabel = formattedLabel?.value,
             targetClass = targetClass,
+            exampleUsage = exampleUsage,
             properties = properties.map { it.toTemplatePropertyRepresentation() },
             createdAt = createdAt,
             createdBy = createdBy,

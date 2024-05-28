@@ -16,6 +16,7 @@ val reservedClassIds = setOf(
 object Predicates {
     val comparesContribution = ThingId("compareContribution")
     val description = ThingId("description")
+    val exampleOfUsage = ThingId("exampleOfUsage")
     val field = ThingId("P24")
     val hasAuthor = ThingId("P27")
     val hasAuthors = ThingId("hasAuthors")

@@ -382,6 +382,8 @@ data class RosettaStoneTemplateRepresentation(
     val formattedLabel: String?, // FIXME: The type should be FormattedLabel, but value classes cannot be parsed by jackson
     @get:JsonProperty("target_class")
     val targetClass: ThingId,
+    @get:JsonProperty("example_usage")
+    val exampleUsage: String?,
     val properties: List<TemplatePropertyRepresentation>,
     @get:JsonProperty("created_at")
     val createdAt: OffsetDateTime,

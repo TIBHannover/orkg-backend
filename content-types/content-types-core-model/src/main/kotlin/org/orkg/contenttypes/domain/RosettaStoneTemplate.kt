@@ -18,6 +18,7 @@ data class RosettaStoneTemplate(
     val description: String?,
     val formattedLabel: FormattedLabel?,
     val targetClass: ThingId,
+    val exampleUsage: String?,
     val properties: List<TemplateProperty>,
     val createdBy: ContributorId,
     val createdAt: OffsetDateTime,
@@ -43,6 +44,12 @@ data class RosettaStoneTemplate(
                     .wherePredicate(Predicates.shTargetClass)
                     .single()
                     .`object`.id,
+                exampleUsage = directStatements
+                    .wherePredicate(Predicates.shTargetClass)
+                    .single().`object`.id
+                    .let { statements[it].orEmpty() }
+                    .wherePredicate(Predicates.exampleOfUsage)
+                    .singleOrNull()?.`object`?.label,
                 properties = directStatements
                     .wherePredicate(Predicates.shProperty)
                     .filter { it.`object` is Resource && Classes.propertyShape in (it.`object` as Resource).classes }

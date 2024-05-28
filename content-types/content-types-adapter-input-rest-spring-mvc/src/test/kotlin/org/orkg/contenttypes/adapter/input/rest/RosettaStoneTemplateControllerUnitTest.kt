@@ -90,6 +90,7 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
                         fieldWithPath("description").description("The description of the rosetta stone template."),
                         fieldWithPath("formatted_label").description("The formatted label pattern of the rosetta stone template."),
                         fieldWithPath("target_class").description("The target class of the rosetta stone template."),
+                        fieldWithPath("example_usage").description("One or more example sentences that demonstrate the usage of the statement that this template models."),
                         subsectionWithPath("properties").description("The list of properties of the rosetta stone template. See <<template-properties,template properties>> for more information."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone template belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone template belongs to."),
@@ -214,6 +215,7 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
                         fieldWithPath("label").description("The label of the rosetta stone template."),
                         fieldWithPath("description").description("The description of the rosetta stone template."),
                         fieldWithPath("formatted_label").description("The formatted label pattern of the rosetta stone template."),
+                        fieldWithPath("example_usage").description("One or more example sentences that demonstrate the usage of the statement that this template models."),
                         subsectionWithPath("properties").description("""The list of properties of the rosetta stone template. There has to be exactly one <<template-properties,template property>> with path `hasSubjectPosition` that has a minimum cardinality of at least one and is not a literal template property. All other properties must have a path of `hasObjectPosition`. See <<template-properties,template properties>> for more information."""),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the rosetta stone template belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the rosetta stone template belongs to."),
@@ -230,6 +232,7 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
             label = "Dummy Rosetta Stone Template Label",
             description = "Some description about the Rosetta Stone Template",
             formattedLabel = "{P32}",
+            exampleUsage = "example sentence of the statement",
             properties = listOf(
                 untypedTemplatePropertyRequest(),
                 stringLiteralTemplatePropertyRequest(),

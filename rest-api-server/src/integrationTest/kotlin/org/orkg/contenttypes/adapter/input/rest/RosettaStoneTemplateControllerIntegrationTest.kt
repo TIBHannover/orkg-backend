@@ -94,6 +94,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
 
         listOf(
             Predicates.description,
+            Predicates.exampleOfUsage,
             Predicates.hasAuthor,
             Predicates.hasAuthors,
             Predicates.hasContribution,
@@ -192,6 +193,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
             it.label shouldBe "rosetta stone template"
             it.description shouldBe "rosetta stone template description"
             it.formattedLabel shouldBe "{0} {1} {2} {3} {4} {5}"
+            it.exampleUsage shouldBe "example statement usage"
             it.targetClass shouldNotBe null
             it.properties.size shouldBe 6
             it.properties[0].shouldBeInstanceOf<ResourceTemplatePropertyRepresentation>().asClue { property ->
@@ -305,6 +307,7 @@ private const val createRosettaStoneTemplateJson = """{
   "label": "rosetta stone template",
   "description": "rosetta stone template description",
   "formatted_label": "{0} {1} {2} {3} {4} {5}",
+  "example_usage": "example statement usage",
   "properties": [
     {
       "label": "subject position",

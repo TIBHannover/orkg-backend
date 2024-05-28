@@ -5,7 +5,8 @@
 flowchart LR
     Template[RosettaNodeShape \n Resource] --> |"description"| description[Literal \n xsd:string]
     Template --> |"TemplateLabelFormat"| formattedLabel[Literal \n xsd:string]
-	Template --> |"sh:targetClass"| targetClass[Class]
+	Template --> |"sh:targetClass"| targetClass
+    targetClass[Class] --> |"exampleOfUsage"| usage[Literal \n xsd:string]
 	Template --> |"sh:property"| TemplatePopoerty
 	subgraph TemplatePopoerty[Template Popoerty]
 		subgraph Resource Property

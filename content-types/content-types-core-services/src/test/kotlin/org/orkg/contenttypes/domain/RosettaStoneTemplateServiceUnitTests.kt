@@ -95,6 +95,7 @@ class RosettaStoneTemplateServiceUnitTests {
         val description = "rosetta stone template description"
         val formattedLabel = FormattedLabel.of("{P32}")
         val targetClassId = ThingId("targetClass")
+        val exampleUsage = "example usage of template"
         val predicateId = ThingId("P22")
         val predicateLabel = "Predicate label"
 
@@ -194,6 +195,11 @@ class RosettaStoneTemplateServiceUnitTests {
                 subject = expected,
                 predicate = createPredicate(Predicates.shTargetClass),
                 `object` = createClass(targetClassId)
+            ),
+            createStatement(
+                subject = createClass(targetClassId),
+                predicate = createPredicate(Predicates.exampleOfUsage),
+                `object` = createLiteral(label = exampleUsage)
             ),
             createStatement(
                 subject = expected,
@@ -483,6 +489,7 @@ class RosettaStoneTemplateServiceUnitTests {
             template.description shouldBe description
             template.formattedLabel shouldBe formattedLabel
             template.targetClass shouldBe targetClassId
+            template.exampleUsage shouldBe exampleUsage
             template.properties.size shouldBe 5
             template.properties shouldContainInOrder listOf(
                 UntypedTemplateProperty(

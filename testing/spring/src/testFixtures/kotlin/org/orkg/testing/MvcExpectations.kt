@@ -232,6 +232,7 @@ fun ResultActions.andExpectRosettaStoneTemplate(path: String = "$"): ResultActio
     .andExpect(jsonPath("$path.description", `is`(notNullValue())))
     .andExpect(jsonPath("$path.formatted_label", `is`(notNullValue())))
     .andExpect(jsonPath("$path.target_class", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.example_usage").exists())
     .andExpect(jsonPath("$path.properties").isArray)
     .andExpect(jsonPath("$path.properties[*].id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.properties[*].label", `is`(notNullValue())))

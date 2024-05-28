@@ -121,6 +121,7 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
 
         listOf(
             Predicates.description,
+            Predicates.exampleOfUsage,
             Predicates.placeholder,
             Predicates.shClass,
             Predicates.shClosed,
@@ -534,6 +535,7 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
             label = "rosetta stone template",
             description = "rosetta stone template description",
             formattedLabel = FormattedLabel.of("{0} {1} {2} {3} {4} {5}"),
+            exampleUsage = "example statement usage",
             properties = listOf(
                 ResourcePropertyDefinition(
                     label = "subject position",

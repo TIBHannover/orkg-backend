@@ -23,6 +23,7 @@ fun createDummyRosettaStoneTemplate() = RosettaStoneTemplate(
     description = "Some description about the rosetta stone template",
     formattedLabel = FormattedLabel.of("{P32}"),
     targetClass = ThingId("targetClass"),
+    exampleUsage = "example sentence of the statement",
     properties = listOf(
         createDummySubjectPositionTemplateProperty(),
         createDummyStringLiteralObjectPositionTemplateProperty()

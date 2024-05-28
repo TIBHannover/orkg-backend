@@ -39,7 +39,6 @@ import org.orkg.contenttypes.domain.ResourceIsNotAnInstanceOfTargetClass
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.TemplateNotApplicable
 import org.orkg.contenttypes.domain.TooManyPropertyValues
-import org.orkg.contenttypes.domain.TooManySubjectPositions
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.contenttypes.domain.UnrelatedLiteratureListSection
 import org.orkg.contenttypes.domain.UnrelatedTemplateProperty
@@ -644,18 +643,6 @@ internal class ExceptionControllerUnitTest {
     }
 
     @Test
-    fun tooManySubjectPositions() {
-        get("/too-many-subject-positions")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/too-many-subject-positions"))
-            .andExpect(jsonPath("$.message").value("""Too many subject positions. There can only be exactly one property with path "${Predicates.hasSubjectPosition}"."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
     fun invalidSubjectPositionCardinality() {
         get("/invalid-subject-position-cardinality")
             .perform()
@@ -965,11 +952,6 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/literature-list-section-type-mismatch-must-be-list-section")
         fun literatureListSectionTypeMismatchMustBeListSection() {
             throw LiteratureListSectionTypeMismatch.mustBeListSection()
-        }
-
-        @GetMapping("/too-many-subject-positions")
-        fun tooManySubjectPositions() {
-            throw TooManySubjectPositions()
         }
 
         @GetMapping("/invalid-subject-position-cardinality")

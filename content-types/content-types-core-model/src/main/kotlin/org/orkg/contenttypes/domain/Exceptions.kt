@@ -223,11 +223,6 @@ class LiteratureListSectionTypeMismatch private constructor(
     }
 }
 
-class TooManySubjectPositions : SimpleMessageException(
-    status = HttpStatus.BAD_REQUEST,
-    message = """Too many subject positions. There can only be exactly one property with path "${Predicates.hasSubjectPosition}"."""
-)
-
 class InvalidSubjectPositionCardinality : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
     message = """Invalid subject position cardinality. Minimum cardinality must be at least one."""
@@ -238,14 +233,19 @@ class InvalidSubjectPositionType : SimpleMessageException(
     message = """Invalid subject position type. Subject position must not be a literal property."""
 )
 
+class InvalidSubjectPositionPath : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Invalid subject position path. Must be "${Predicates.hasSubjectPosition}"."""
+)
+
+class InvalidObjectPositionPath(index: Int) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Invalid object position path for property at index "$index". Must be "${Predicates.hasObjectPosition}"."""
+)
+
 class MissingSubjectPosition : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
     message = """Missing subject position. There must be at least one property with path "${Predicates.hasSubjectPosition}" that has a minimum cardinality of at least one."""
-)
-
-class MissingRequiredObjectPosition : SimpleMessageException(
-    status = HttpStatus.BAD_REQUEST,
-    message = """Missing required object position. There must be at least one property with path "${Predicates.hasObjectPosition}" that has a minimum cardinality of at least one."""
 )
 
 class MissingPropertyPlaceholder(index: Int) : SimpleMessageException(

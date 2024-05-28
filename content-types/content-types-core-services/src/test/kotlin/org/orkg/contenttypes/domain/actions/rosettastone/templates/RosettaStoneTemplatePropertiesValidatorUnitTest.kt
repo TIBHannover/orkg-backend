@@ -11,11 +11,12 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.contenttypes.domain.InvalidObjectPositionPath
 import org.orkg.contenttypes.domain.InvalidSubjectPositionCardinality
+import org.orkg.contenttypes.domain.InvalidSubjectPositionPath
 import org.orkg.contenttypes.domain.InvalidSubjectPositionType
 import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
 import org.orkg.contenttypes.domain.MissingSubjectPosition
-import org.orkg.contenttypes.domain.TooManySubjectPositions
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneTemplateCommand
@@ -55,16 +56,10 @@ class RosettaStoneTemplatePropertiesValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template create command, when no subject position is specified, it throws an exception`() {
-        val command = dummyCreateRosettaStoneTemplateCommand().let {
-            it.copy(properties = it.properties.drop(1))
-        }
+        val command = dummyCreateRosettaStoneTemplateCommand().copy(properties = emptyList())
         val state = CreateRosettaStoneTemplateState()
 
-        every { abstractTemplatePropertyValidator.validate(any()) } just runs
-
         assertThrows<MissingSubjectPosition> { rosettaStoneTemplatePropertiesValidator(command, state) }
-
-        verify { abstractTemplatePropertyValidator.validate(any()) }
     }
 
     @Test
@@ -85,7 +80,7 @@ class RosettaStoneTemplatePropertiesValidatorUnitTest {
     }
 
     @Test
-    fun `Given a rosetta stone template create command, when more than one subject position is specified, it throws an exception`() {
+    fun `Given a rosetta stone template create command, when object position has an invalid path, it throws an exception`() {
         val command = dummyCreateRosettaStoneTemplateCommand().copy(
             properties = listOf(
                 dummyCreateSubjectPositionTemplatePropertyCommand(),
@@ -94,11 +89,19 @@ class RosettaStoneTemplatePropertiesValidatorUnitTest {
         )
         val state = CreateRosettaStoneTemplateState()
 
-        every { abstractTemplatePropertyValidator.validate(any()) } just runs
+        assertThrows<InvalidObjectPositionPath> { rosettaStoneTemplatePropertiesValidator(command, state) }
+    }
 
-        assertThrows<TooManySubjectPositions> { rosettaStoneTemplatePropertiesValidator(command, state) }
+    @Test
+    fun `Given a rosetta stone template create command, when subject position has an invalid path, it throws an exception`() {
+        val command = dummyCreateRosettaStoneTemplateCommand().copy(
+            properties = listOf(
+                dummyCreateStringLiteralObjectPositionTemplatePropertyCommand(),
+            )
+        )
+        val state = CreateRosettaStoneTemplateState()
 
-        verify { abstractTemplatePropertyValidator.validate(any()) }
+        assertThrows<InvalidSubjectPositionPath> { rosettaStoneTemplatePropertiesValidator(command, state) }
     }
 
     @Test

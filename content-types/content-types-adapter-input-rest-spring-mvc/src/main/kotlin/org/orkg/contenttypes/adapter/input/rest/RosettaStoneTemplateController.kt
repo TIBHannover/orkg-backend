@@ -91,6 +91,7 @@ class RosettaStoneTemplateController(
         @JsonProperty("example_usage")
         val exampleUsage: String,
         @field:Valid
+        @field:Size(min = 1)
         val properties: List<TemplatePropertyRequest>,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>,

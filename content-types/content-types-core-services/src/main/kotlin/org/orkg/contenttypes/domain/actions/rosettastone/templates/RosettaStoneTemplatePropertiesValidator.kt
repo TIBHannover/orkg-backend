@@ -1,10 +1,11 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.templates
 
+import org.orkg.contenttypes.domain.InvalidObjectPositionPath
 import org.orkg.contenttypes.domain.InvalidSubjectPositionCardinality
+import org.orkg.contenttypes.domain.InvalidSubjectPositionPath
 import org.orkg.contenttypes.domain.InvalidSubjectPositionType
 import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
 import org.orkg.contenttypes.domain.MissingSubjectPosition
-import org.orkg.contenttypes.domain.TooManySubjectPositions
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
@@ -25,28 +26,35 @@ class RosettaStoneTemplatePropertiesValidator(
         command: CreateRosettaStoneTemplateCommand,
         state: CreateRosettaStoneTemplateState
     ): CreateRosettaStoneTemplateState {
-        var subjectCount = 0
-        command.properties.forEachIndexed { index, property ->
-            if (property.path == Predicates.hasSubjectPosition) {
-                if (subjectCount > 0) {
-                    throw TooManySubjectPositions()
-                }
-                if (property.minCount == null || property.minCount!! < 1) {
-                    throw InvalidSubjectPositionCardinality()
-                }
-                if (property is LiteralTemplatePropertyDefinition) {
-                    throw InvalidSubjectPositionType()
-                }
-                subjectCount++
+        if (command.properties.isEmpty()) {
+            throw MissingSubjectPosition()
+        }
+
+        command.properties.first().let { subject ->
+            if (subject.path != Predicates.hasSubjectPosition) {
+                throw InvalidSubjectPositionPath()
             }
+            if (subject.minCount == null || subject.minCount!! < 1) {
+                throw InvalidSubjectPositionCardinality()
+            }
+            if (subject is LiteralTemplatePropertyDefinition) {
+                throw InvalidSubjectPositionType()
+            }
+        }
+
+        command.properties.withIndex().drop(1).forEach { (index, `object`) ->
+            if (`object`.path != Predicates.hasObjectPosition) {
+                throw InvalidObjectPositionPath(index)
+            }
+        }
+
+        command.properties.forEachIndexed { index, property ->
             if (property.placeholder == null) {
                 throw MissingPropertyPlaceholder(index)
             }
             abstractTemplatePropertyValidator.validate(property)
         }
-        if (subjectCount == 0) {
-            throw MissingSubjectPosition()
-        }
+
         return state
     }
 }

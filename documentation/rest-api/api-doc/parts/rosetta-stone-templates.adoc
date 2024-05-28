@@ -32,7 +32,8 @@ A `POST` request creates a new rosetta stone template with all the given paramet
 The response will be `201 Created` when successful.
 The rosetta stone template (object) can be retrieved by following the URI in the `Location` header field.
 
-NOTE: A rosetta stone template must have exactly one <<template-properties,template property>> with path `hasSubjectPosition` that has a minimum cardinality of at least one and is not a literal template property.
-      All other properties must have a path of `hasObjectPosition`.
+NOTE: The first property of a rosetta stone template defines the subject position of the statement and is required to have a path of `hasSubjectPosition`, must have a minimum cardinality of at least one and is not a literal template property.
+      All other properties define a object position, which must have a path of `hasObjectPosition`.
+      At least one property is required to create a new rosetta stone template.
 
 operation::rosetta-stone-templates-create[snippets='request-fields,curl-request,http-response']

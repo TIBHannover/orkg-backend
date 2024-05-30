@@ -31,3 +31,12 @@ dependencies {
     testFixturesImplementation(libs.restdocs.openapi) // FIXME: no idea why this works, but GAV does not
     testFixturesImplementation(libs.testcontainers.core)
 }
+
+dependencyAnalysis {
+    issues {
+        onUnusedDependencies {
+            // We do not use the "main" source set, so the (automatically added) stdlib is always unused.
+            exclude("org.jetbrains.kotlin:kotlin-stdlib")
+        }
+    }
+}

@@ -69,29 +69,18 @@ testing {
             testType.set(TestSuiteType.INTEGRATION_TEST)
             dependencies {
                 implementation(project())
-                implementation(project(":common"))
-                implementation(testFixtures(project(":testing:spring")))
                 implementation(project(":migrations:liquibase"))
                 implementation(project(":migrations:neo4j-migrations"))
-                implementation(project(":graph:graph-core-model"))
                 implementation(project(":graph:graph-core-services"))
-                implementation(project(":graph:graph-ports-input"))
                 implementation(project(":graph:graph-ports-output"))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
-                implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
-                implementation(project(":content-types:content-types-ports-input"))
                 implementation(project(":content-types:content-types-ports-output"))
-                implementation(project(":identity-management:idm-ports-input"))
                 implementation(project(":identity-management:idm-ports-output"))
                 implementation(project(":identity-management:idm-core-model"))
                 implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter
-                implementation(project(":community:community-core-model"))
-                implementation(project(":community:community-ports-input"))
                 implementation(project(":community:community-ports-output")) // for CuratorRepository
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
-                implementation(project(":media-storage:media-storage-core-model"))
                 implementation(project(":feature-flags:feature-flags-ports"))
-                implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     // Disable JUnit 4 (aka Vintage)
@@ -136,6 +125,8 @@ dependencies {
 
     kapt(platform("org.orkg:platform"))
 
+    implementation(kotlin("stdlib")) // satisfy buildHealth task
+
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
     implementation(project(":common"))
     runtimeOnly(project(":common:serialization"))
@@ -151,7 +142,6 @@ dependencies {
     implementation(project(":content-types:content-types-adapter-output-simcomp"))
     runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
     runtimeOnly(project(":content-types:content-types-adapter-output-web"))
-    implementation(project(":content-types:content-types-core-model"))
     runtimeOnly(project(":content-types:content-types-core-services"))
     implementation(project(":content-types:content-types-ports-input"))
     runtimeOnly(project(":content-types:content-types-ports-output"))
@@ -250,6 +240,18 @@ dependencies {
     "integrationTestRuntimeOnly"(libs.bundles.testcontainers)
     "integrationTestRuntimeOnly"(libs.bundles.kotest)
     "integrationTestApi"("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
+    "integrationTestApi"("org.springframework.security:spring-security-test")
+    "integrationTestApi"(project(":common"))
+    "integrationTestApi"(project(":community:community-core-model"))
+    "integrationTestApi"(project(":community:community-ports-input"))
+    "integrationTestApi"(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
+    "integrationTestApi"(project(":content-types:content-types-ports-input"))
+    "integrationTestApi"(project(":graph:graph-core-model"))
+    "integrationTestApi"(project(":graph:graph-ports-input"))
+    "integrationTestApi"(project(":identity-management:idm-ports-input"))
+    "integrationTestApi"(project(":media-storage:media-storage-core-model"))
+    "integrationTestApi"(testFixtures(project(":testing:spring")))
+    "integrationTestImplementation"(project(":content-types:content-types-core-model"))
 }
 
 tasks.named("check") {

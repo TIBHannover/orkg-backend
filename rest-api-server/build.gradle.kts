@@ -63,6 +63,8 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-test")
                 implementation(project(":common:serialization"))
+                implementation("org.apache.tomcat:tomcat-annotations-api")
+                implementation("org.springframework.boot:spring-boot-test")
             }
         }
         val integrationTest by registering(JvmTestSuite::class) {
@@ -198,7 +200,27 @@ dependencies {
     liquibase(project(mapOf("path" to ":migrations:liquibase", "configuration" to "liquibase")))
     neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
 
+    // Direct transitive dependencies
     implementation(libs.forkhandles.result4k)
+    implementation("org.apache.tomcat.embed:tomcat-embed-core")
+    implementation("org.neo4j.driver:neo4j-java-driver")
+    implementation("org.slf4j:slf4j-api")
+    implementation("org.springframework.boot:spring-boot-actuator-autoconfigure")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
+    implementation("org.springframework.boot:spring-boot")
+    implementation("org.springframework.data:spring-data-commons")
+    implementation("org.springframework.security:spring-security-config")
+    implementation("org.springframework.security:spring-security-core")
+    implementation("org.springframework.security:spring-security-web")
+    implementation("org.springframework:spring-beans")
+    implementation("org.springframework:spring-context-support")
+    implementation("org.springframework:spring-context")
+    implementation("org.springframework:spring-core")
+    implementation("org.springframework:spring-web")
+    implementation("org.springframework:spring-webmvc")
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.databind)
+    implementation(libs.jakarta.validation)
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 

@@ -18,6 +18,7 @@ dependencies {
 
     testFixturesApi(project(":common"))
     testFixturesApi(project(":graph:graph-core-model"))
+    testFixturesApi(libs.forkhandles.fabrikate4k)
     testFixturesImplementation(libs.forkhandles.values4k)
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
 }

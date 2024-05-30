@@ -58,10 +58,12 @@ dependencies {
     api(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for Neo4jLiteral, TODO: break dependency
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-output"))
-    implementation("org.neo4j.driver:neo4j-java-driver")
-    implementation("org.neo4j:neo4j-cypher-dsl")
+    api("org.neo4j.driver:neo4j-java-driver")
+    api("org.neo4j:neo4j-cypher-dsl")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation(project(":common:neo4j-dsl"))
+
+    containerTestImplementation(kotlin("stdlib")) // to satisfy buildHealth task
 
     neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
 }

@@ -1,3 +1,4 @@
+import com.autonomousapps.tasks.BuildHealthTask
 import org.orkg.gradle.plugins.PrintCoverageTask
 
 plugins {
@@ -47,8 +48,19 @@ val testCodeCoverageReport by tasks.getting(JacocoReport::class) {
     }
 }
 
+dependencyAnalysis {
+    issues {
+        all {
+            onAny {
+                severity("fail")
+            }
+        }
+    }
+}
+
 tasks.check {
     dependsOn(tasks.named<TestReport>("testAggregateTestReport"))
     dependsOn(tasks.named<JacocoReport>("testCodeCoverageReport"))
+    dependsOn(tasks.named<BuildHealthTask>("buildHealth"))
     finalizedBy(tasks.named<PrintCoverageTask>("printCoverage"))
 }

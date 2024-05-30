@@ -244,7 +244,7 @@ dependencies {
     implementation(libs.javax.activation)
     implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations
     // File uploads
-    implementation("commons-fileupload:commons-fileupload:1.5")
+    runtimeOnly("commons-fileupload:commons-fileupload:1.5")
     // Caching
     runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
     runtimeOnly("com.github.ben-manes.caffeine:caffeine")

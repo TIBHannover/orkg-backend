@@ -201,7 +201,6 @@ dependencies {
     neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
 
     // Direct transitive dependencies
-    implementation(libs.forkhandles.result4k)
     implementation("org.apache.tomcat.embed:tomcat-embed-core")
     implementation("org.neo4j.driver:neo4j-java-driver")
     implementation("org.slf4j:slf4j-api")

@@ -99,6 +99,14 @@ testing {
                 }
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.forkhandles.values4k)
+                implementation("jakarta.persistence:jakarta.persistence-api")
+                implementation("org.hamcrest:hamcrest")
+                implementation("org.hibernate:hibernate-core:5.4.32.Final")
+                implementation("org.springframework.boot:spring-boot")
+                implementation("org.springframework.data:spring-data-commons")
+                implementation("org.springframework:spring-core")
+                implementation("org.springframework:spring-web")
+                implementation(libs.assertj.core)
             }
             targets {
                 all {
@@ -268,7 +276,20 @@ dependencies {
     "integrationTestApi"(project(":identity-management:idm-ports-input"))
     "integrationTestApi"(project(":media-storage:media-storage-core-model"))
     "integrationTestApi"(testFixtures(project(":testing:spring")))
+    "integrationTestApi"("com.fasterxml.jackson.core:jackson-annotations")
+    "integrationTestApi"("org.junit.jupiter:junit-jupiter-api")
+    "integrationTestApi"("org.junit.jupiter:junit-jupiter-params")
+    "integrationTestApi"("org.springframework.boot:spring-boot-autoconfigure")
+    "integrationTestApi"("org.springframework.boot:spring-boot-test-autoconfigure")
+    "integrationTestApi"("org.springframework.boot:spring-boot-test")
+    "integrationTestApi"("org.springframework.restdocs:spring-restdocs-core")
+    "integrationTestApi"("org.springframework:spring-beans")
+    "integrationTestApi"("org.springframework:spring-context")
+    "integrationTestApi"("org.springframework:spring-test")
+    "integrationTestApi"("org.springframework:spring-tx")
+    "integrationTestApi"(libs.jackson.databind)
     "integrationTestImplementation"(project(":content-types:content-types-core-model"))
+    "kaptIntegrationTest"("org.springframework.boot:spring-boot-configuration-processor")
 }
 
 tasks.named("check") {

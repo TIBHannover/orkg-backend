@@ -28,3 +28,6 @@ gradle-app.setting
 dumps/
 
 *.hprof
+
+# Gradle Analytics plugin
+gradle-analytics.db

@@ -60,5 +60,5 @@ dependencies {
     implementation(project(":common:neo4j-dsl"))
     neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
 
-    containerTestImplementation(kotlin("stdlib")) // to satisfy buildHealth task
+    containerTestImplementation(kotlin("stdlib")) // "downgrade" from api()
 }

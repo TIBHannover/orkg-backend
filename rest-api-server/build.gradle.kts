@@ -135,7 +135,7 @@ dependencies {
 
     kapt(platform("org.orkg:platform"))
 
-    implementation(kotlin("stdlib")) // satisfy buildHealth task
+    implementation(kotlin("stdlib")) // "downgrade" from api()
 
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
     implementation(project(":common"))

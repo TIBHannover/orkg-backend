@@ -3,6 +3,7 @@
 
 plugins {
     id("org.orkg.gradle.input-adapter-spring-web")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {
@@ -28,6 +29,8 @@ testing {
 
                 implementation(testFixtures(project(":testing:spring")))
 
+                implementation("io.kotest:kotest-assertions-api")
+                implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test")

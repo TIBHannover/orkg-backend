@@ -76,3 +76,6 @@ class ServiceUnavailable private constructor(
             ServiceUnavailable("""$serviceName service threw an exception.""", cause)
     }
 }
+
+class MalformedMediaTypeCapability(name: String, value: String, cause: Throwable? = null) :
+    SimpleMessageException(HttpStatus.NOT_ACCEPTABLE, """Malformed value "$value" for media type capability "$name".""", cause)

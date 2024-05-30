@@ -47,6 +47,11 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation(testFixtures(project(":common")))
+                implementation(testFixtures(project(":testing:spring")))
+
+                implementation("io.kotest:kotest-assertions-api")
+                implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     // Disable JUnit 4 (aka Vintage)
                     exclude(group = "junit", module = "junit")

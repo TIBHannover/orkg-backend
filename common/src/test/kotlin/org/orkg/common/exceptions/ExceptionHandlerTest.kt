@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
@@ -150,6 +151,23 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun malformedMediaTypeCapability() {
+        val name = "formatted-label"
+        val value = "true"
+
+        get("/errors/malformed-media-type-capability")
+            .param("name", name)
+            .param("value", value)
+            .perform()
+            .andExpect(status().isNotAcceptable)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_ACCEPTABLE.value()))
+            .andExpect(jsonPath("$.error", `is`("Not Acceptable")))
+            .andExpect(jsonPath("$.path").value("/errors/malformed-media-type-capability"))
+            .andExpect(jsonPath("$.message").value("""Malformed value "$value" for media type capability "$name"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class TestController {
@@ -161,6 +179,10 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
 
         @GetMapping("/errors/service-unavailable")
         fun serviceUnavailable(): Nothing = throw ServiceUnavailable.create("TEST", 500, "irrelevant")
+
+        @GetMapping("/errors/malformed-media-type-capability")
+        fun malformedMediaTypeCapability(@RequestParam name: String, @RequestParam value: String): Nothing =
+            throw MalformedMediaTypeCapability(name, value)
 
         data class JsonRequest(
             val field: String,

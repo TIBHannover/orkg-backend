@@ -100,9 +100,7 @@ fun <
             .map { it.copy(classes = setOf(Classes.comparison)) }
         comparisons.zipWithNext { a, b -> saveStatement(a.hasPreviousVersion(b)) }
 
-        val expected = comparisons.drop(1).map {
-            HeadVersion(it.id, it.label, it.createdAt)
-        }
+        val expected = comparisons.drop(1).map(::HeadVersion)
         val result = repository.findVersionHistory(comparisons.first().id)
 
         it("returns the correct result") {

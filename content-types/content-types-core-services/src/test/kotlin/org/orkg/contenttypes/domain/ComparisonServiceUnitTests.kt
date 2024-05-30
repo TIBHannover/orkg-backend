@@ -46,6 +46,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.MockUserId
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
@@ -111,7 +112,8 @@ class ComparisonServiceUnitTests {
             HeadVersion(
                 id = ThingId("R156"),
                 label = "Previous version comparison",
-                createdAt = OffsetDateTime.now(fixedClock).minusDays(1)
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(1),
+                createdBy = ContributorId(MockUserId.USER)
             )
         )
         val researchFieldId = ThingId("R20")

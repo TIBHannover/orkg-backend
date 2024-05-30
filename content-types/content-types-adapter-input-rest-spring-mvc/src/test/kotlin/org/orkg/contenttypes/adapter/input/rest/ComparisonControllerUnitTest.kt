@@ -131,6 +131,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("versions[].id").description("The ID of the resource of a previous version of the comparison."),
                         fieldWithPath("versions[].label").description("The label of a previous version of the comparison."),
                         timestampFieldWithPath("versions[].created_at", "the previous version of the comparison resource was created"),
+                        fieldWithPath("versions[].created_by").type("String").description("The UUID of the user or service who created the comparison version."),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison is anonymized."),
                         fieldWithPath("visibility").description("""Visibility of the comparison. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this comparison.").optional(),

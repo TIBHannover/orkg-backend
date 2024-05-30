@@ -43,7 +43,7 @@ private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${
 interface Neo4jComparisonRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query("""
 MATCH (cmp:Comparison:Resource {id: $id})-[:RELATED*1.. {predicate_id: "hasPreviousVersion"}]->(prev:Comparison)
-RETURN prev.id AS id, prev.label AS label, prev.created_at AS createdAt""")
+RETURN prev.id AS id, prev.label AS label, prev.created_at AS createdAt, prev.created_by AS createdBy""")
     fun findVersionHistory(id: ThingId): List<HeadVersion>
 
     @Query("""$MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD$INCLUDING_SUBFIELDS $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",

@@ -61,19 +61,22 @@ fun createDummyLiteratureList() = LiteratureList(
         head = HeadVersion(
             id = ThingId("R1465"),
             label = "head",
-            createdAt = OffsetDateTime.parse("2024-01-28T12:24:00.959539600+01:00")
+            createdAt = OffsetDateTime.parse("2024-01-28T12:24:00.959539600+01:00"),
+            createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
         ),
         published = listOf(
             PublishedVersion(
                 id = ThingId("R5466"),
                 label = "version 2",
                 createdAt = OffsetDateTime.parse("2024-01-30T12:24:00.959539600+01:00"),
+                createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
                 changelog = "change 2"
             ),
             PublishedVersion(
                 id = ThingId("R13546"),
                 label = "version 1",
                 createdAt = OffsetDateTime.parse("2024-01-29T12:24:00.959539600+01:00"),
+                createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
                 changelog = "change 1"
             )
         )

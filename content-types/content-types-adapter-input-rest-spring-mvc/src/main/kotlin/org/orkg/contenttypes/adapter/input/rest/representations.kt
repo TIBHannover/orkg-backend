@@ -177,7 +177,9 @@ data class HeadVersionRepresentation(
     val id: ThingId,
     val label: String,
     @get:JsonProperty("created_at")
-    val createdAt: OffsetDateTime
+    val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
 )
 
 data class PublishedVersionRepresentation(
@@ -185,6 +187,8 @@ data class PublishedVersionRepresentation(
     val label: String,
     @get:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
     val changelog: String?
 )
 

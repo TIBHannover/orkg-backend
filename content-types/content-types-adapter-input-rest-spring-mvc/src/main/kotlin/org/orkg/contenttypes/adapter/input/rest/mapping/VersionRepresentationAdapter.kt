@@ -30,7 +30,7 @@ interface VersionRepresentationAdapter {
         map { it.toHeadVersionRepresentation() }
 
     fun HeadVersion.toHeadVersionRepresentation(): HeadVersionRepresentation =
-        HeadVersionRepresentation(id, label, createdAt)
+        HeadVersionRepresentation(id, label, createdAt, createdBy)
 
     fun Optional<PublishedVersion>.mapToPublishedVersionRepresentation(): Optional<PublishedVersionRepresentation> =
         map { it.toPublishedVersionRepresentation() }
@@ -39,5 +39,5 @@ interface VersionRepresentationAdapter {
         map { it.toPublishedVersionRepresentation() }
 
     fun PublishedVersion.toPublishedVersionRepresentation(): PublishedVersionRepresentation =
-        PublishedVersionRepresentation(id, label, createdAt, changelog)
+        PublishedVersionRepresentation(id, label, createdAt, createdBy, changelog)
 }

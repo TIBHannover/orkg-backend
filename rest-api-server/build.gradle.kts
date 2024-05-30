@@ -239,10 +239,6 @@ dependencies {
     implementation("org.springframework.data:spring-data-neo4j")
     implementation(libs.spring.boot.starter.neo4j.migrations)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
-    implementation(libs.bundles.jaxb)
-    implementation(libs.javax.activation)
-    implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations
     // File uploads
     runtimeOnly("commons-fileupload:commons-fileupload:1.5")
     // Caching

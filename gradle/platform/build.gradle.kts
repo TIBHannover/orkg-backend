@@ -16,6 +16,7 @@ dependencies {
 
     // Force certain version upgrades
     api("org.springframework.data:spring-data-commons:2.7.16!!")
+    api("org.springframework:spring-test:5.3.22!!")
     api("org.springframework.data:spring-data-neo4j:6.3.16!!")
     api("org.apache.lucene:lucene-queryparser:9.5.0")
     api("com.epages:restdocs-api-spec:0.16.4")

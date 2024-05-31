@@ -48,6 +48,7 @@ include(
     "community:community-ports-input",
     "community:community-ports-output",
     "community:community-adapter-input-rest-spring-mvc",
+    "community:community-adapter-input-rest-spring-mvc-legacy",
     "community:community-adapter-output-spring-data-jpa",
 )
 include(

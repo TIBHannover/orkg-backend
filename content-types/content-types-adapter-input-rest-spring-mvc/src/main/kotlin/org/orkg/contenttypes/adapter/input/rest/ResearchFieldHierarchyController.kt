@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ResearchFieldHierarchyUseCases
 import org.orkg.featureflags.output.FeatureFlagService
@@ -8,8 +9,8 @@ import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldWithChildCountRepr
 import org.orkg.graph.adapter.input.rest.ResearchFieldHierarchyEntryRepresentation
 import org.orkg.graph.adapter.input.rest.ResearchFieldWithChildCountRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
 class ResearchFieldHierarchyController(
     private val service: ResearchFieldHierarchyUseCases,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService
 ) : ResearchFieldHierarchyEntryRepresentationAdapter,
     ResearchFieldWithChildCountRepresentationAdapter {
@@ -31,34 +32,44 @@ class ResearchFieldHierarchyController(
     @GetMapping("/{id}/children")
     fun findChildren(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResearchFieldWithChildCountRepresentation> =
-        service.findChildren(id, pageable).mapToResearchFieldWithChildCountRepresentation()
+        service.findChildren(id, pageable)
+            .mapToResearchFieldWithChildCountRepresentation(capabilities)
 
     @GetMapping("/{id}/parents")
     fun findParent(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
-        service.findParents(id, pageable).mapToResourceRepresentation()
+        service.findParents(id, pageable)
+            .mapToResourceRepresentation(capabilities)
 
     @GetMapping("/{id}/roots")
     fun findRoots(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
-        service.findRoots(id, pageable).mapToResourceRepresentation()
+        service.findRoots(id, pageable)
+            .mapToResourceRepresentation(capabilities)
 
     @GetMapping("/roots")
     fun findAllRoots(
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
-        service.findAllRoots(pageable).mapToResourceRepresentation()
+        service.findAllRoots(pageable)
+            .mapToResourceRepresentation(capabilities)
 
     @GetMapping("/{id}/hierarchy")
     fun findResearchFieldHierarchy(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResearchFieldHierarchyEntryRepresentation> =
-        service.findResearchFieldHierarchy(id, pageable).mapToResearchFieldHierarchyEntryRepresentation()
+        service.findResearchFieldHierarchy(id, pageable)
+            .mapToResearchFieldHierarchyEntryRepresentation(capabilities)
 }

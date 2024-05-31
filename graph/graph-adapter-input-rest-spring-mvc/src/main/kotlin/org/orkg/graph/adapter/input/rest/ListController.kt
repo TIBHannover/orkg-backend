@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
 import org.orkg.common.ContributorId
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
@@ -9,10 +10,10 @@ import org.orkg.graph.adapter.input.rest.mapping.ListRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ThingRepresentationAdapter
 import org.orkg.graph.domain.ListNotFound
 import org.orkg.graph.input.CreateListUseCase.CreateCommand
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateListUseCase.UpdateCommand
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
@@ -35,7 +36,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class ListController(
     private val service: ListUseCases,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService,
 ) : ListRepresentationAdapter, ThingRepresentationAdapter {
 
@@ -44,8 +45,13 @@ class ListController(
         service.findById(id).mapToListRepresentation().orElseThrow { ListNotFound(id) }
 
     @GetMapping("/{id}/elements")
-    fun findAllElementsById(@PathVariable id: ThingId, pageable: Pageable): Page<ThingRepresentation> =
-        service.findAllElementsById(id, pageable).mapToThingRepresentation()
+    fun findAllElementsById(
+        @PathVariable id: ThingId,
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
+    ): Page<ThingRepresentation> =
+        service.findAllElementsById(id, pageable)
+            .mapToThingRepresentation(capabilities)
 
     @PreAuthorizeUser
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])

@@ -17,6 +17,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
@@ -30,10 +31,10 @@ import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.CreateResourceUseCase.CreateCommand
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
-import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
@@ -63,7 +64,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [ResourceController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ResourceController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ResourceController::class])
 @DisplayName("Given a Resource controller")
 internal class ResourceControllerUnitTest : RestDocsTest("resources") {
@@ -78,7 +79,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     private lateinit var statementService: StatementUseCases
 
     @MockkBean
-    private lateinit var formattedLabelRepository: FormattedLabelRepository
+    private lateinit var formattedLabelService: FormattedLabelUseCases
 
     @MockkBean
     private lateinit var flags: FeatureFlagService
@@ -91,7 +92,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         val resource = createResource()
         every { resourceService.findById(any()) } returns Optional.of(resource)
         every { statementService.countIncomingStatements(resource.id) } returns 23
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/resources/{id}", resource.id)
             .accept(MediaType.APPLICATION_JSON)
@@ -104,7 +104,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                         // The order here determines the order in the generated table. More relevant items should be up.
                         fieldWithPath("id").description("The identifier of the resource."),
                         fieldWithPath("label").description("The label of the resource. It is intended to be read by humans and should be used for displaying the resource."),
-                        fieldWithPath("formatted_label").description("The formatted label of the resource.").ignored(),
+                        fieldWithPath("formatted_label").description("The formatted label of the resource. See <<content-negotiation,Content Negotiation>> for information on how to obtain this value.").ignored(),
                         fieldWithPath("classes").description("The set of classes of which this resources is an instance of."),
                         fieldWithPath("shared").description("The number of statements that have this resource in their object position."),
                         fieldWithPath("featured").description("Determine if the resource is featured. Defaults to `false`."),
@@ -200,7 +200,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             createResource(classes = setOf(Classes.problem))
         )
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         get("/api/resources")
             .param("q", "label")
@@ -213,7 +212,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             resourceService.findAllByLabelAndBaseClass(withArg { it.input shouldBe "label" }, Classes.problem, any())
         }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
     @Test
@@ -271,7 +269,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     fun getPaged() {
         every { resourceService.findAll(any()) } returns pageOf(createResource())
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/resources")
             .accept(MediaType.APPLICATION_JSON)
@@ -283,7 +280,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
 
         verify(exactly = 1) { resourceService.findAll(any()) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
     @Test
@@ -291,7 +287,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     fun getPagedWithParameters() {
         every { resourceService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         val label = "label"
         val exact = true
@@ -355,7 +350,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             )
         }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
     @Test
@@ -363,7 +357,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     fun findByLabelAndBaseClass() {
         every { resourceService.findAllByLabelAndBaseClass(any(), any(), any()) } returns pageOf(createResource())
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/resources")
             .param("q", "example")
@@ -384,7 +377,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
 
         verify(exactly = 1) { resourceService.findAllByLabelAndBaseClass(any(), any(), any()) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
     @Test

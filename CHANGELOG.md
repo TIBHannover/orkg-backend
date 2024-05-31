@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.58.0] - 2024-05-30
+### Added
+- Added endpoints for creating, retrieving and updating rosetta stone statements.
+  (See: [!927](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/927),
+        [!938](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/938))
+- The target class of rosetta stone templates is now included in the response.
+  (See: [!927](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/927))
+- Added mandatory `example_usage` field to rosetta stone templates.
+  (See: [!943](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/943))
+- Added a `created_by` field to all version entries of content-type endpoints.
+  (See: [!950](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/950))
+
+### Changed
+- It is now possible to create empty literature list text sections.
+  (See: [!949](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/949))
+- Rosetta Stone Templates no longer require an object position.
+  (See: [!935](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/935))
+- The first input position of a rosetta stone templates is now required to be the subject position.
+  (See: [!947](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/947))
+- Rejected requests are now mapped to status 400 bad request instead of status 500 internal server error.
+  (See: [!934](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/934))
+
+### Fixed
+- Descriptions and formatted labels are now properly validated when creating or updating a template.
+  (See: [!940](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/940))
+- Fixed descriptions of content-types not accepting new lines.
+  (See: [!942](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/942))
+
 ## [0.57.0] - 2024-05-08
 ### Added
 - Added basic support for generating OpenAPI documentation.
@@ -915,7 +943,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.57.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.58.0...master
+[0.58.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.58.0
 [0.57.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.57.0
 [0.56.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.56.0
 [0.55.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.55.0

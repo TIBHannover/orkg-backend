@@ -3,6 +3,7 @@ package org.orkg.graph.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -20,10 +21,10 @@ import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
@@ -55,13 +56,13 @@ class ResourceController(
     private val service: ResourceUseCases,
     private val contributorService: RetrieveContributorUseCase,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ThingId): ResourceRepresentation =
-        service.findById(id).mapToResourceRepresentation().orElseThrow { ResourceNotFound.withId(id) }
+    fun findById(@PathVariable id: ThingId, capabilities: MediaTypeCapabilities): ResourceRepresentation =
+        service.findById(id).mapToResourceRepresentation(capabilities).orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping
     fun findAll(
@@ -75,7 +76,8 @@ class ResourceController(
         @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Set<ThingId>,
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
         service.findAll(
             pageable = pageable,
@@ -88,16 +90,17 @@ class ResourceController(
             excludeClasses = excludeClasses,
             observatoryId = observatoryId,
             organizationId = organizationId
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
 
     @GetMapping(params = ["base_class"])
     fun findAllByLabelAndBaseClass(
         @RequestParam("q") string: String,
         @RequestParam("base_class") baseClass: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
         service.findAllByLabelAndBaseClass(SearchString.of(string, exactMatch = false) as FuzzySearchString, baseClass, pageable)
-            .mapToResourceRepresentation()
+            .mapToResourceRepresentation(capabilities)
 
     @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -105,6 +108,7 @@ class ResourceController(
         @RequestBody request: CreateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         @AuthenticationPrincipal currentUser: UserDetails?,
+        capabilities: MediaTypeCapabilities
     ): ResponseEntity<ResourceRepresentation> {
         val contributor = contributorService.findById(currentUser.contributorId())
         val id = service.create(
@@ -122,14 +126,15 @@ class ResourceController(
             .path("api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
-        return created(location).body(service.findById(id).mapToResourceRepresentation().get())
+        return created(location).body(service.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
     @PreAuthorizeUser
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
-        @RequestBody request: UpdateResourceRequest
+        @RequestBody request: UpdateResourceRequest,
+        capabilities: MediaTypeCapabilities
     ): ResponseEntity<ResourceRepresentation> {
         val found = service.findById(id)
 
@@ -144,14 +149,15 @@ class ResourceController(
                 extractionMethod = request.extractionMethod
             )
         )
-        return ok(service.findById(id).mapToResourceRepresentation().get())
+        return ok(service.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
     @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun updateWithObservatory(
         @PathVariable id: ThingId,
-        @RequestBody request: UpdateResourceObservatoryRequest
+        @RequestBody request: UpdateResourceObservatoryRequest,
+        capabilities: MediaTypeCapabilities
     ): ResponseEntity<ResourceRepresentation> {
         val found = service.findById(id)
         if (!found.isPresent)
@@ -163,7 +169,7 @@ class ResourceController(
                 observatoryId = request.observatoryId,
             )
         )
-        return ok(service.findById(id).mapToResourceRepresentation().get())
+        return ok(service.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
     @GetMapping("{id}/contributors")
@@ -216,13 +222,14 @@ class ResourceController(
         unlisted: Boolean,
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> {
         return service.findAllByClassInAndVisibility(
             classes = classes,
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             pageable = pageable
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
     }
 }
 

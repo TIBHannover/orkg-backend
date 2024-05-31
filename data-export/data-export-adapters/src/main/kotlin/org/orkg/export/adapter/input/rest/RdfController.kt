@@ -1,5 +1,6 @@
 package org.orkg.export.adapter.input.rest
 
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
@@ -7,8 +8,8 @@ import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.adapter.input.rest.ThingRepresentation
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.output.ClassRepository
-import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.data.domain.Pageable
@@ -28,7 +29,7 @@ class RdfController(
     private val predicateRepository: PredicateRepository,
     private val classRepository: ClassRepository,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter, PredicateRepresentationAdapter, ClassRepresentationAdapter {
     @GetMapping(DUMP_ENDPOINT, produces = ["application/n-triples"])
@@ -45,7 +46,8 @@ class RdfController(
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("type", required = false, defaultValue = "item") type: String,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Iterable<ThingRepresentation> =
         if (searchString != null) {
             val labelSearchString = SearchString.of(searchString, exactMatch = exactMatch)
@@ -57,12 +59,12 @@ class RdfController(
                     .mapToClassRepresentation()
 
                 else -> resourceRepository.findAll(label = labelSearchString, pageable = pageable)
-                    .mapToResourceRepresentation()
+                    .mapToResourceRepresentation(capabilities)
             }
         } else when (type) {
             "property" -> predicateRepository.findAll(pageable).mapToPredicateRepresentation()
             "class" -> classRepository.findAll(pageable).mapToClassRepresentation()
-            else -> resourceRepository.findAll(pageable).mapToResourceRepresentation()
+            else -> resourceRepository.findAll(pageable).mapToResourceRepresentation(capabilities)
         }
 
     companion object {

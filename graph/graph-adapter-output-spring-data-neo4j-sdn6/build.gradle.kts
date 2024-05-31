@@ -27,7 +27,6 @@ dependencies {
     api("org.springframework:spring-tx")
 
     implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation(libs.forkhandles.values4k)
     implementation(project(":common:neo4j-dsl"))
 
     testFixturesApi(project(":common"))

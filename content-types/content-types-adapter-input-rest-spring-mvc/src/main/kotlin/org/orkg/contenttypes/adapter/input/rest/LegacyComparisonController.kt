@@ -1,14 +1,17 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeCurator
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.input.RetrieveAuthorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.adapter.input.rest.ComparisonAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.AuthorRepresentationAdapter
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -28,7 +31,7 @@ class LegacyComparisonController(
     private val resourceService: ResourceUseCases,
     private val authorService: RetrieveAuthorUseCase,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService
 ) : AuthorRepresentationAdapter {
     @PutMapping("/{id}/metadata/featured")
@@ -58,6 +61,11 @@ class LegacyComparisonController(
     }
 
     @GetMapping("/{id}/authors")
-    fun getTopAuthors(@PathVariable id: ThingId, pageable: Pageable) =
-        authorService.findTopAuthorsOfComparison(id, pageable).mapToComparisonAuthorRepresentation()
+    fun getTopAuthors(
+        @PathVariable id: ThingId,
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
+    ): Page<ComparisonAuthorRepresentation> =
+        authorService.findTopAuthorsOfComparison(id, pageable)
+            .mapToComparisonAuthorRepresentation(capabilities)
 }

@@ -56,6 +56,7 @@ class FormattedLabelTest {
     ): String =
         TemplatedResource(
             id = ThingId("R0"),
+            templateId = ThingId("R1"),
             label = "test template",
             classId = "C0",
             format = format,

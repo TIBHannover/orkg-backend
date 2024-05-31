@@ -95,6 +95,9 @@ Their structure is documented in the section about <<error-represenation,Error r
 [[authentication]]
 include::parts/auth.adoc[leveloffset=+1]
 
+[[content-negotiation]]
+include::parts/content-negotiation.adoc[leveloffset=+1]
+
 [[statements]]
 == Statements
 

@@ -11,6 +11,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-core") // for AccessDeniedException, UserDetails
     api("org.springframework:spring-context")
+    api("org.springframework:spring-core")
     api("org.springframework:spring-web")
     api("org.springframework:spring-webmvc")
     implementation("com.fasterxml.jackson.core:jackson-core")

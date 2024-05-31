@@ -3,7 +3,7 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
-version = "0.57.0"
+version = "0.58.0"
 
 val springSecurityOAuthVersion = "2.5.2"
 
@@ -224,7 +224,6 @@ dependencies {
     implementation("org.springframework:spring-context")
     implementation("org.springframework:spring-core")
     implementation("org.springframework:spring-web")
-    implementation("org.springframework:spring-webmvc")
     implementation(libs.jackson.core)
     implementation(libs.jackson.databind)
     implementation(libs.jakarta.validation)

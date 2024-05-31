@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.InvalidFilterConfig
@@ -9,9 +10,9 @@ import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
@@ -27,7 +28,7 @@ class ObservatoryResourceController(
     private val resourceService: ResourceUseCases,
     private val objectMapper: ObjectMapper,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter {
 
@@ -36,21 +37,24 @@ class ObservatoryResourceController(
         @PathVariable id: ObservatoryId,
         @RequestParam("filter_config", required = false) filterConfig: String?,
         @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
         resourceService.findAllPapersByObservatoryIdAndFilters(
             observatoryId = id,
             filters = objectMapper.parseFilterConfig(filterConfig),
             visibility = visibility ?: VisibilityFilter.ALL_LISTED,
             pageable = pageable
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
 
     @GetMapping("{id}/problems")
     fun findAllProblemsByObservatoryId(
         @PathVariable id: ObservatoryId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
-        resourceService.findAllProblemsByObservatoryId(id, pageable).mapToResourceRepresentation()
+        resourceService.findAllProblemsByObservatoryId(id, pageable)
+            .mapToResourceRepresentation(capabilities)
 
     @GetMapping("{id}/class")
     fun findAllResourcesByClassInAndVisibilityAndObservatoryId(
@@ -62,14 +66,15 @@ class ObservatoryResourceController(
         unlisted: Boolean,
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
         resourceService.findAllByClassInAndVisibilityAndObservatoryId(
             classes = classes,
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             id = id,
             pageable = pageable
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
 }
 
 internal fun ObjectMapper.parseFilterConfig(filterConfig: String?): List<SearchFilter> =

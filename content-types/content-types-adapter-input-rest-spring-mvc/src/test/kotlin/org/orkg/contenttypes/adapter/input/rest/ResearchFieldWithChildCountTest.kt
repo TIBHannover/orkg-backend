@@ -8,8 +8,8 @@ import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldWithChildCountRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.ResearchFieldWithChildCountRepresentation
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectResearchFieldWithChildCount
 import org.orkg.testing.spring.restdocs.RestDocsTest
@@ -47,7 +47,7 @@ internal class ResearchFieldWithChildCountTest : RestDocsTest("research-fields")
     @RestController
     internal class FakeResearchFieldWithChildCountController(
         override val statementService: StatementUseCases = mockk(),
-        override val formattedLabelRepository: FormattedLabelRepository = mockk(),
+        override val formattedLabelService: FormattedLabelUseCases = mockk(),
         override val flags: FeatureFlagService = mockk()
     ) : ResearchFieldWithChildCountRepresentationAdapter {
         @GetMapping("/subfield")

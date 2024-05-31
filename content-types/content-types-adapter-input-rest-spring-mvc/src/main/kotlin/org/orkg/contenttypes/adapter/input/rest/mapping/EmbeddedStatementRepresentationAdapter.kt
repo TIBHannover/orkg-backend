@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest.mapping
 
 import java.util.*
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.contenttypes.adapter.input.rest.EmbeddedStatementRepresentation
 import org.orkg.contenttypes.domain.EmbeddedStatement
 import org.orkg.graph.adapter.input.rest.mapping.ThingRepresentationAdapter
@@ -11,20 +12,26 @@ import org.springframework.data.domain.Page
 
 interface EmbeddedStatementRepresentationAdapter : ThingRepresentationAdapter {
 
-    fun Optional<EmbeddedStatement>.mapToEmbeddedStatementRepresentation(): Optional<EmbeddedStatementRepresentation> =
-        map { it.toEmbeddedStatementRepresentation() }
+    fun Optional<EmbeddedStatement>.mapToEmbeddedStatementRepresentation(
+        capabilities: MediaTypeCapabilities
+    ): Optional<EmbeddedStatementRepresentation> =
+        map { it.toEmbeddedStatementRepresentation(capabilities) }
 
-    fun Page<EmbeddedStatement>.mapToEmbeddedStatementRepresentation(): Page<EmbeddedStatementRepresentation> {
+    fun Page<EmbeddedStatement>.mapToEmbeddedStatementRepresentation(
+        capabilities: MediaTypeCapabilities
+    ): Page<EmbeddedStatementRepresentation> {
         val resources = content.resources()
         val statementCounts = countIncomingStatements(resources)
-        val formattedLabels = formatLabelFor(resources)
+        val formattedLabels = formatLabelFor(resources, capabilities)
         return map { it.toEmbeddedStatementRepresentation(statementCounts, formattedLabels) }
     }
 
-    private fun EmbeddedStatement.toEmbeddedStatementRepresentation(): EmbeddedStatementRepresentation {
+    private fun EmbeddedStatement.toEmbeddedStatementRepresentation(
+        capabilities: MediaTypeCapabilities
+    ): EmbeddedStatementRepresentation {
         val resources = listOf(this).resources()
         val counts = countIncomingStatements(resources)
-        val labels = formatLabelFor(resources)
+        val labels = formatLabelFor(resources, capabilities)
         return toEmbeddedStatementRepresentation(counts, labels)
     }
 

@@ -1,8 +1,9 @@
-package org.orkg.configuration
+package org.orkg.common.configuration
 
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.MediaTypeCapabilityRegistry
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
 import org.springframework.core.MethodParameter
 import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.http.MediaType
@@ -15,6 +16,7 @@ import org.springframework.web.method.support.ModelAndViewContainer
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
+@Import(MediaTypeCapabilityRegistry::class)
 class WebMvcConfiguration(
     private val mediaTypeCapabilityRegistry: MediaTypeCapabilityRegistry,
 ) : WebMvcConfigurer {

@@ -444,7 +444,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("featured").optional().ignored(),
             fieldWithPath("unlisted").optional().ignored(),
             fieldWithPath("modifiable").description("Whether this resource can be modified.").optional().ignored(),
-            fieldWithPath("formatted_label").description("The formatted label of the resource if available").optional()
+            fieldWithPath("formatted_label").description("The formatted label of the resource. See <<content-negotiation,Content Negotiation>> for information on how to obtain this value.").optional()
         )
 }
 

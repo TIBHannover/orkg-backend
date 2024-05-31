@@ -24,8 +24,8 @@ class PropertyBasedFeatureFlagService(
  * Enable/Disable specific ORKG features.
  */
 data class FeatureFlags(
-    /** Enable support for formatted labels (disabled by default - for performance reasons). */
-    val formattedLabels: Boolean = false,
+    /** Enable support for formatted labels. */
+    val formattedLabels: Boolean = true,
     /** Use Neo4j 3.x (legacy) series. */
     val useNeo4jVersion3: Boolean = false,
     /** Enable cache warmup. */

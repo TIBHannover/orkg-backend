@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
@@ -28,8 +29,8 @@ import org.orkg.graph.domain.StatementObjectNotFound
 import org.orkg.graph.domain.StatementPredicateNotFound
 import org.orkg.graph.domain.StatementSubjectNotFound
 import org.orkg.graph.domain.ThingNotFound
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -59,7 +60,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [StatementController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [StatementController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [StatementController::class])
 @DisplayName("Given a Statement controller")
 @UsesMocking
@@ -69,7 +70,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     private lateinit var statementService: StatementUseCases
 
     @MockkBean
-    private lateinit var formattedLabelRepository: FormattedLabelRepository
+    private lateinit var formattedLabelService: FormattedLabelUseCases
 
     @MockkBean
     private lateinit var flags: FeatureFlagService
@@ -87,7 +88,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     @DisplayName("Given several statements, when filtering by no parameters, then status is 200 OK and statements are returned")
     fun getPaged() {
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createStatement())
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/statements")
             .accept(MediaType.APPLICATION_JSON)
@@ -98,7 +98,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
-        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
     @Test
@@ -110,7 +109,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
         )
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(statement)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         val subjectClasses = (statement.subject as Resource).classes
         val subjectId = statement.subject.id
@@ -173,7 +171,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             )
         }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
     @Test
@@ -356,7 +353,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             )
         } returns pageOf(statement)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc.perform(get("/api/statements/predicate/${statement.predicate.id}/literals?q=${statement.`object`.label}"))
             .andExpect(status().isOk)
@@ -369,7 +365,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
                 pageable = any()
             )
             statementService.countIncomingStatements(any<Set<ThingId>>())
-            flags.isFormattedLabelsEnabled()
         }
     }
 

@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.contenttypes.domain.ComparisonAuthor
 import org.orkg.contenttypes.domain.PaperAuthor
 import org.orkg.contenttypes.domain.SimpleAuthor
@@ -16,17 +17,21 @@ import org.springframework.data.domain.Page
 
 interface AuthorRepresentationAdapter : ResourceRepresentationAdapter {
 
-    fun Page<ComparisonAuthor>.mapToComparisonAuthorRepresentation(): Page<ComparisonAuthorRepresentation> {
+    fun Page<ComparisonAuthor>.mapToComparisonAuthorRepresentation(
+        capabilities: MediaTypeCapabilities
+    ): Page<ComparisonAuthorRepresentation> {
         val resources = content.map { it.author }.filterIsInstance<ResourceAuthor>().map { it.value }
         val usageCounts = countIncomingStatements(resources)
-        val formattedLabels = formatLabelFor(resources)
+        val formattedLabels = formatLabelFor(resources, capabilities)
         return map { it.toComparisonAuthorRepresentation(usageCounts, formattedLabels) }
     }
 
-    fun Page<PaperAuthor>.mapToPaperAuthorRepresentation(): Page<PaperAuthorRepresentation> {
+    fun Page<PaperAuthor>.mapToPaperAuthorRepresentation(
+        capabilities: MediaTypeCapabilities
+    ): Page<PaperAuthorRepresentation> {
         val resources = content.map { it.author }.filterIsInstance<ResourceAuthor>().map { it.value }
         val usageCounts = countIncomingStatements(resources)
-        val formattedLabels = formatLabelFor(resources)
+        val formattedLabels = formatLabelFor(resources, capabilities)
         return map { it.toPaperAuthorRepresentation(usageCounts, formattedLabels) }
     }
 

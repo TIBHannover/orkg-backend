@@ -55,7 +55,7 @@ dependencies {
     api(project(":common"))
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-output"))
-    api(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for Neo4jLiteral, TODO: break dependency
+    api(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-output"))
     api("org.neo4j.driver:neo4j-java-driver")

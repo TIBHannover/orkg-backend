@@ -13,9 +13,9 @@ import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.adapter.input.rest.PaperCountPerResearchProblemRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
@@ -38,7 +38,7 @@ class ResearchFieldController(
     private val service: RetrieveResearchFieldUseCase,
     private val resourceService: ResourceUseCases,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter, PaperCountPerResearchProblemRepresentationAdapter {
     /**

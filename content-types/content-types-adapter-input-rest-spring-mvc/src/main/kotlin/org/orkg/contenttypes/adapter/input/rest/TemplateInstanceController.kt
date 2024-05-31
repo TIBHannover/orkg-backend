@@ -19,8 +19,8 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
@@ -44,7 +44,7 @@ const val TEMPLATE_INSTANCE_JSON_V1 = "application/vnd.orkg.template-instance.v1
 class TemplateInstanceController(
     private val service: TemplateInstanceUseCases,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService,
 ) : TemplateInstanceRepresentationAdapter {
 

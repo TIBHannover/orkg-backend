@@ -7,17 +7,17 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.featureflags.output.FeatureFlagService
-import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PaperCountPerResearchProblem
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.asciidoc.legacyVisibilityFilterRequestParameters
 import org.orkg.graph.testing.asciidoc.visibilityFilterRequestParameter
 import org.orkg.graph.testing.fixtures.createComparisonResource
@@ -69,7 +69,7 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
     private lateinit var statementService: StatementUseCases
 
     @MockkBean
-    private lateinit var formattedLabelRepository: FormattedLabelRepository
+    private lateinit var formattedLabelService: FormattedLabelUseCases
 
     @MockkBean
     private lateinit var flags: FeatureFlagService

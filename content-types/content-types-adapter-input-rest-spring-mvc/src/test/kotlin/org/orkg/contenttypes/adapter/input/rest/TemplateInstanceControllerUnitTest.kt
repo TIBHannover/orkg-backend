@@ -20,17 +20,17 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplateInstance
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.featureflags.output.FeatureFlagService
-import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplateInstance
@@ -70,7 +70,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
     private lateinit var statementService: StatementUseCases
 
     @MockkBean
-    private lateinit var formattedLabelRepository: FormattedLabelRepository
+    private lateinit var formattedLabelService: FormattedLabelUseCases
 
     @MockkBean
     private lateinit var flags: FeatureFlagService
@@ -82,7 +82,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(service, statementService, formattedLabelRepository, flags)
+        confirmVerified(service, statementService, formattedLabelService, flags)
     }
 
     @Test

@@ -10,9 +10,9 @@ import org.orkg.graph.adapter.input.rest.mapping.PaperResourceWithPathRepresenta
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.PaperResourceWithPathRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -36,7 +36,7 @@ class LegacyPaperController(
     private val service: LegacyPaperUseCases,
     private val resourceService: ResourceUseCases,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService,
 ) : PaperResourceWithPathRepresentationAdapter, ResourceRepresentationAdapter {
 

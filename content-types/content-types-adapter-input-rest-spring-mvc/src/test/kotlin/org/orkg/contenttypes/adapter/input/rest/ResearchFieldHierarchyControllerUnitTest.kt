@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.input.RetrieveContributorUseCase
@@ -18,11 +19,10 @@ import org.orkg.contenttypes.domain.ResearchFieldHierarchyEntry
 import org.orkg.contenttypes.domain.ResearchFieldWithChildCount
 import org.orkg.contenttypes.input.ResearchFieldHierarchyUseCases
 import org.orkg.featureflags.output.FeatureFlagService
-import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResearchFieldNotFound
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
@@ -49,7 +49,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
     private lateinit var statementService: StatementUseCases
 
     @MockkBean
-    private lateinit var formattedLabelRepository: FormattedLabelRepository
+    private lateinit var formattedLabelService: FormattedLabelUseCases
 
     @MockkBean
     private lateinit var flags: FeatureFlagService
@@ -67,7 +67,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(statementService, formattedLabelRepository, flags, service)
+        confirmVerified(statementService, formattedLabelService, flags, service)
     }
 
     @Test

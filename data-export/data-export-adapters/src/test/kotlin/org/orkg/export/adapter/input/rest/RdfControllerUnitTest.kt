@@ -12,11 +12,11 @@ import org.orkg.export.adapter.input.rest.RdfController.Companion.DUMP_ENDPOINT
 import org.orkg.export.adapter.input.rest.RdfController.Companion.HINTS_ENDPOINT
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.FuzzySearchString
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
-import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -56,7 +56,7 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
     private lateinit var statementService: StatementUseCases
 
     @MockkBean
-    private lateinit var formattedLabelRepository: FormattedLabelRepository
+    private lateinit var formattedLabelService: FormattedLabelUseCases
 
     @MockkBean
     private lateinit var featureFlagService: FeatureFlagService

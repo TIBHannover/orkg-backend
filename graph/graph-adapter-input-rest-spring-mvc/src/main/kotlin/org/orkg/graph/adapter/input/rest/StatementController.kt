@@ -14,9 +14,9 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.CreateStatement
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementNotFound
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateStatementUseCase
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -44,7 +44,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/statements", produces = [MediaType.APPLICATION_JSON_VALUE])
 class StatementController(
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService
 ) : StatementRepresentationAdapter, BundleRepresentationAdapter {
 

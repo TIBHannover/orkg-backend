@@ -10,10 +10,10 @@ import org.orkg.graph.adapter.input.rest.mapping.ListRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ThingRepresentationAdapter
 import org.orkg.graph.domain.ListNotFound
 import org.orkg.graph.input.CreateListUseCase.CreateCommand
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateListUseCase.UpdateCommand
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
@@ -36,7 +36,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class ListController(
     private val service: ListUseCases,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService,
 ) : ListRepresentationAdapter, ThingRepresentationAdapter {
 

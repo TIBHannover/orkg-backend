@@ -21,7 +21,6 @@ dependencies {
     api(project(":feature-flags:feature-flags-ports"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
-    api(project(":graph:graph-ports-output")) // for FormattedLabelRepository
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")

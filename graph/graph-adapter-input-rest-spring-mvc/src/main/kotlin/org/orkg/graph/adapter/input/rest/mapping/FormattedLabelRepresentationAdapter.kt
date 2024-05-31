@@ -6,14 +6,14 @@ import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.FORMATTED_LABELS_CAPABILITY
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Resource
-import org.orkg.graph.output.FormattedLabelRepository
+import org.orkg.graph.input.FormattedLabelUseCases
 
 interface FormattedLabelRepresentationAdapter {
-    val formattedLabelRepository: FormattedLabelRepository
+    val formattedLabelService: FormattedLabelUseCases
     val flags: FeatureFlagService
 
     fun formatLabelFor(resources: List<Resource>, capabilities: MediaTypeCapabilities): Map<ThingId, FormattedLabel?> =
         capabilities.getOrDefault(FORMATTED_LABELS_CAPABILITY)
-            .map { resources.associate { it.id to formattedLabelRepository.formattedLabelFor(it.id, it.classes) } }
+            .map { formattedLabelService.findFormattedLabels(resources) }
             .orElseGet { emptyMap() }
 }

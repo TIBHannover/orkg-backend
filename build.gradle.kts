@@ -36,7 +36,7 @@ reporting {
 // JaCoCo Code Coverage Report
 reporting {
     reports {
-        val testCodeCoverageReport by creating(JacocoCoverageReport::class) {
+        val testCodeCoverageReport by registering(JacocoCoverageReport::class) {
             testType.set(TestSuiteType.UNIT_TEST)
         }
     }

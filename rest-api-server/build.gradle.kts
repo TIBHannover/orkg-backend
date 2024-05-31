@@ -119,12 +119,12 @@ testing {
     }
 }
 
-val bootJar by tasks.getting(BootJar::class) {
+tasks.named<BootJar>("bootJar") {
     enabled = true
     archiveClassifier.set("boot")
 }
 
-val jar by tasks.getting(Jar::class) {
+tasks.named<Jar>("jar") {
     // Build regular JAR, so we can share the application class and database migrations (e.g. for use in tests)
     enabled = true
 }
@@ -372,7 +372,10 @@ springBoot {
 normalization {
     runtimeClasspath {
         // This only affects build cache key calculation. The file will be included in the build.
-        ignore("**/build-info.properties")
+        metaInf {
+            ignoreProperty("build.time") // The file will always be recreated, so the timestamp always changes
+            ignoreProperty("build.version") // The version could change when switching branches, which is no problem
+        }
     }
 }
 

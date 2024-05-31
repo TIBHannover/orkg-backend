@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.OrganizationId
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
@@ -23,6 +24,11 @@ class OrganizationResourceController(
     override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter {
     @GetMapping("{id}/problems")
-    fun findProblemsByOrganizationId(@PathVariable id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
-        resourceService.findAllProblemsByOrganizationId(id, pageable).mapToResourceRepresentation()
+    fun findProblemsByOrganizationId(
+        @PathVariable id: OrganizationId,
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
+    ): Page<ResourceRepresentation> =
+        resourceService.findAllProblemsByOrganizationId(id, pageable)
+            .mapToResourceRepresentation(capabilities)
 }

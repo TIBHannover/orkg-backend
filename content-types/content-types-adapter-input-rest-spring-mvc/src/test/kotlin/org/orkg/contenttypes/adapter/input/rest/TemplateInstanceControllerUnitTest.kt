@@ -25,6 +25,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplateInstance
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
@@ -57,7 +58,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [TemplateInstanceController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [TemplateInstanceController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [TemplateInstanceController::class])
 @DisplayName("Given a Template Instance controller")
 internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-instances") {
@@ -92,7 +93,6 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
 
         every { service.findById(templateId, templateInstance.root.id) } returns Optional.of(templateInstance)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/templates/{templateId}/instances/{id}", templateId, templateInstance.root.id)
             .accept(TEMPLATE_INSTANCE_JSON_V1)
@@ -122,7 +122,6 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
 
         verify(exactly = 1) { service.findById(templateId, templateInstance.root.id) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
     @Test
@@ -152,7 +151,6 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
 
         every { service.findAll(templateId, pageable = any()) } returns pageOf(templateInstance)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         documentedGetRequestTo("/api/templates/{templateId}/instances", templateId)
             .accept(TEMPLATE_INSTANCE_JSON_V1)
@@ -165,7 +163,6 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
 
         verify(exactly = 1) { service.findAll(templateId, pageable = any()) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
     @Test
@@ -176,7 +173,6 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
 
         every { service.findAll(templateId, any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(templateInstance)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         val label = "label"
         val exact = true
@@ -220,7 +216,6 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
 
         verify(exactly = 1) { service.findAll(templateId, any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-        verify(exactly = 1) { flags.isFormattedLabelsEnabled() }
     }
 
     @Test

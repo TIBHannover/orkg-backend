@@ -6,6 +6,7 @@ import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.export.adapter.input.rest.RdfController.Companion.DUMP_ENDPOINT
 import org.orkg.export.adapter.input.rest.RdfController.Companion.HINTS_ENDPOINT
@@ -37,7 +38,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [RdfController::class, ExceptionHandler::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [RdfController::class, ExceptionHandler::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [RdfController::class])
 @UsesMocking
 internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
@@ -89,7 +90,6 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
         )
 
         every { statementService.countIncomingStatements(setOf(someId)) } returns mapOf(someId to 5L)
-        every { featureFlagService.isFormattedLabelsEnabled() } returns false
 
         // TODO: tests else-branch, not ideal
         mockMvc.perform(

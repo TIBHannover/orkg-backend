@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.contenttypes.domain.pmap
@@ -34,26 +35,28 @@ class BulkStatementController(
     @GetMapping("/subjects")
     fun findBySubjects(
         @RequestParam("ids") resourceIds: List<ThingId>,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): List<BulkGetStatementsResponse> =
         resourceIds.pmap {
             BulkGetStatementsResponse(
                 id = it,
                 statements = statementService.findAll(subjectId = it, pageable = pageable)
-                    .mapToStatementRepresentation()
+                    .mapToStatementRepresentation(capabilities)
             )
         }
 
     @GetMapping("/objects")
     fun findByObjects(
         @RequestParam("ids") resourceIds: List<ThingId>,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): List<BulkGetStatementsResponse> =
         resourceIds.pmap {
             BulkGetStatementsResponse(
                 id = it,
                 statements = statementService.findAll(objectId = it, pageable = pageable)
-                    .mapToStatementRepresentation()
+                    .mapToStatementRepresentation(capabilities)
             )
         }
 
@@ -70,7 +73,8 @@ class BulkStatementController(
     @PutMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun edit(
         @RequestParam("ids") statementsIds: List<StatementId>,
-        @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest
+        @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest,
+        capabilities: MediaTypeCapabilities
     ): Iterable<BulkPutStatementResponse> =
         statementsIds.map {
             statementService.update(
@@ -83,7 +87,7 @@ class BulkStatementController(
             )
             statementService.findById(it).get()
         }
-            .mapToStatementRepresentation()
+            .mapToStatementRepresentation(capabilities)
             .map { BulkPutStatementResponse(it.id, it) }
 }
 

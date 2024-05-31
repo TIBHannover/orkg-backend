@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.PaperResourceWithPath
 import org.orkg.graph.domain.Resource
@@ -10,10 +11,12 @@ import org.springframework.data.domain.Page
 
 interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapter {
 
-    fun Page<PaperResourceWithPath>.mapToPaperResourceWithPathRepresentation(): Page<PaperResourceWithPathRepresentation> {
+    fun Page<PaperResourceWithPath>.mapToPaperResourceWithPathRepresentation(
+        capabilities: MediaTypeCapabilities
+    ): Page<PaperResourceWithPathRepresentation> {
         val resources = map { it.paper } + map { it.path }.flatten().filterIsInstance<Resource>()
         val usageCounts = countIncomingStatements(resources)
-        val formattedLabels = formatLabelFor(resources)
+        val formattedLabels = formatLabelFor(resources, capabilities)
         return map { it.toPaperResourceWithPathRepresentation(usageCounts, formattedLabels) }
     }
 

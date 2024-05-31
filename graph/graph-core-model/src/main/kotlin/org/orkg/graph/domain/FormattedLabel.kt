@@ -10,3 +10,7 @@ value class FormattedLabel private constructor(override val value: String) : Val
 }
 
 private val isValidLabel: Validation<String> = { it.isEmpty().or(it.isNotBlank()) }
+
+enum class FormattedLabelVersion {
+    V1
+}

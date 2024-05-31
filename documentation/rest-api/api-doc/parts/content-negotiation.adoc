@@ -1,0 +1,13 @@
+= Content Negotiation
+
+Some endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+Furthermore, some media types support defining additional parameters to enable specific response representation features.
+
+The following list of media type parameters are supported:
+
+.Media type parameters supported by the API
+[options="header"]
+|==================================================================================================================================================================
+| Parameter Name   | Acceptable Values | Supported Media Types | Description
+| formatted-labels | `V1`              | application/json      | When specified, enables serialization of the `formatted_label` field for resource representations.
+|==================================================================================================================================================================

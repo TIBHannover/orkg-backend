@@ -12,6 +12,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PaperCountPerResearchProblem
 import org.orkg.graph.input.ResourceUseCases
@@ -54,7 +55,7 @@ val supportedClasses = setOf(
     "SmartReviewPublished",
 ).sorted().toAsciidoc()
 
-@ContextConfiguration(classes = [ResearchFieldController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ResearchFieldController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ResearchFieldController::class])
 @UsesMocking
 class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {

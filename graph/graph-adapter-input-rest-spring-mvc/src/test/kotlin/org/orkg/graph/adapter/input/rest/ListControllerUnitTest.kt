@@ -15,6 +15,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.ListElementNotFound
 import org.orkg.graph.domain.ListNotFound
@@ -52,7 +53,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [ListController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ListController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ListController::class])
 @DisplayName("Given a List controller")
 internal class ListControllerUnitTest : RestDocsTest("lists") {
@@ -311,7 +312,6 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         every { listService.findAllElementsById(id, any()) } returns PageImpl(elements)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc.perform(documentedGetRequestTo("/api/lists/{id}/elements", id))
             .andExpect(status().isOk)

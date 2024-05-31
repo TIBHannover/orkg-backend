@@ -13,6 +13,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.community.domain.InvalidFilterConfig
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.SearchFilter
@@ -38,7 +39,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [ObservatoryResourceController::class, ExceptionHandler::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ObservatoryResourceController::class, ExceptionHandler::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ObservatoryResourceController::class])
 @DisplayName("Given an ObservatoryResourceController controller")
 internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory-resources") {
@@ -61,7 +62,6 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
     @BeforeEach
     fun setup() {
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
     }
 
     @Test

@@ -16,6 +16,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.StatementUseCases
@@ -43,7 +44,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [BulkStatementController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [BulkStatementController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [BulkStatementController::class])
 @UsesMocking
 internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements") {
@@ -92,7 +93,6 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { statementService.findAll(subjectId = r1, pageable = any()) } returns pageOf(s1, pageable = pageable)
         every { statementService.findAll(subjectId = r3, pageable = any()) } returns pageOf(s2, pageable = pageable)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc
             .perform(documentedGetRequestTo("/api/statements/subjects/?ids={ids}", "$r1,$r3"))
@@ -118,7 +118,6 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         }
         verify(exactly = 2) {
             statementService.countIncomingStatements(any<Set<ThingId>>())
-            flags.isFormattedLabelsEnabled()
         }
     }
 
@@ -147,7 +146,6 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { statementService.findAll(objectId = r2, pageable = any()) } returns pageOf(s1, pageable = pageable)
         every { statementService.findAll(objectId = r4, pageable = any()) } returns pageOf(s2, pageable = pageable)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc
             .perform(documentedGetRequestTo("/api/statements/objects/?ids={ids}", "$r2,$r4"))
@@ -173,7 +171,6 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         }
         verify(exactly = 2) {
             statementService.countIncomingStatements(any<Set<ThingId>>())
-            flags.isFormattedLabelsEnabled()
         }
     }
 
@@ -225,7 +222,6 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { statementService.findById(s1.id) } returns Optional.of(newS1)
         every { statementService.findById(s2.id) } returns Optional.of(newS2)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc
             .perform(documentedPutRequestTo("/api/statements/?ids={ids}", "${s1.id},${s2.id}").content(payload))
@@ -251,7 +247,6 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
             statementService.findById(s1.id)
             statementService.findById(s2.id)
             statementService.countIncomingStatements(any<Set<ThingId>>())
-            flags.isFormattedLabelsEnabled()
         }
     }
 

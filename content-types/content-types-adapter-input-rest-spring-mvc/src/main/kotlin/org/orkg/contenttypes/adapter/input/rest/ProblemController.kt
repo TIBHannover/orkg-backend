@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.ContributorId
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeCurator
 import org.orkg.common.contributorId
@@ -49,9 +50,12 @@ class ProblemController(
 ) : ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
 
     @GetMapping("/{problemId}/fields")
-    fun getFieldPerProblem(@PathVariable problemId: ThingId): Iterable<FieldWithFreqRepresentation> {
-        return service.findFieldsPerProblem(problemId).mapToFieldWithFreqRepresentation()
-    }
+    fun getFieldPerProblem(
+        @PathVariable problemId: ThingId,
+        capabilities: MediaTypeCapabilities
+    ): List<FieldWithFreqRepresentation> =
+        service.findFieldsPerProblem(problemId)
+            .mapToFieldWithFreqRepresentation(capabilities)
 
     @GetMapping("/{problemId}/")
     fun getFieldPerProblemAndClasses(
@@ -73,8 +77,8 @@ class ProblemController(
         )
 
     @GetMapping("/top")
-    fun getTopProblems(): Iterable<ResourceRepresentation> =
-        service.findTopResearchProblems().mapToResourceRepresentation()
+    fun getTopProblems(capabilities: MediaTypeCapabilities): Iterable<ResourceRepresentation> =
+        service.findTopResearchProblems().mapToResourceRepresentation(capabilities)
 
     @GetMapping("/{problemId}/users")
     fun getContributorsPerProblem(
@@ -94,9 +98,11 @@ class ProblemController(
     @GetMapping("/{problemId}/authors")
     fun getAuthorsPerProblem(
         @PathVariable problemId: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<PaperAuthorRepresentation> =
-        authorService.findAuthorsPerProblem(problemId, pageable).mapToPaperAuthorRepresentation()
+        authorService.findAuthorsPerProblem(problemId, pageable)
+            .mapToPaperAuthorRepresentation(capabilities)
 
     @PutMapping("/{id}/metadata/featured")
     @PreAuthorizeCurator

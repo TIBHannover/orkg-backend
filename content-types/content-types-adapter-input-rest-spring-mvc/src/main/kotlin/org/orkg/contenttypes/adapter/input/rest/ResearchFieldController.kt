@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import java.util.*
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
@@ -49,11 +50,13 @@ class ResearchFieldController(
     @GetMapping("/{id}/problems")
     fun getResearchProblemsOfField(
         @PathVariable id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<PaperCountPerResearchProblemRepresentation> {
         resourceService.findById(id)
             .orElseThrow { ResourceNotFound.withId(id) }
-        return service.getResearchProblemsOfField(id, pageable).mapToPaperCountPerResearchProblemRepresentation()
+        return service.getResearchProblemsOfField(id, pageable)
+            .mapToPaperCountPerResearchProblemRepresentation(capabilities)
     }
 
     /**
@@ -70,7 +73,8 @@ class ResearchFieldController(
         unlisted: Boolean,
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> {
         // Add if condition to check if featured is present and pass the variable
         // Do the same for all
@@ -80,7 +84,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = true,
             pageable = pageable
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
     }
 
     /**
@@ -111,7 +115,8 @@ class ResearchFieldController(
         unlisted: Boolean,
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllComparisonsByResearchField(
@@ -119,7 +124,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = true,
             pageable = pageable
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
     }
 
     /**
@@ -136,7 +141,8 @@ class ResearchFieldController(
         unlisted: Boolean,
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllPapersByResearchField(
@@ -144,7 +150,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = true,
             pageable = pageable
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
     }
 
     /**
@@ -161,7 +167,8 @@ class ResearchFieldController(
         unlisted: Boolean,
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllPapersByResearchField(
@@ -169,7 +176,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = false,
             pageable = pageable
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
     }
 
     /**
@@ -186,7 +193,8 @@ class ResearchFieldController(
         unlisted: Boolean,
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllComparisonsByResearchField(
@@ -194,7 +202,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = false,
             pageable = pageable
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
     }
 
     /**
@@ -226,7 +234,8 @@ class ResearchFieldController(
         unlisted: Boolean,
         @RequestParam("visibility", required = false)
         visibility: VisibilityFilter?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return service.findAllResearchProblemsByResearchField(
@@ -234,7 +243,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = false,
             pageable = pageable
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
     }
 
     /**
@@ -252,7 +261,8 @@ class ResearchFieldController(
         visibility: VisibilityFilter?,
         @RequestParam("classes")
         classes: List<String>,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
         service.findAllEntitiesBasedOnClassesByResearchField(
             id = id,
@@ -260,7 +270,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = true,
             pageable = pageable
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
 
     /**
      * Gets entities based on the provided classes excluding sub fields
@@ -277,7 +287,8 @@ class ResearchFieldController(
         visibility: VisibilityFilter?,
         @RequestParam("classes")
         classes: List<String>,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> =
         service.findAllEntitiesBasedOnClassesByResearchField(
             id = id,
@@ -285,5 +296,5 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = false,
             pageable = pageable
-        ).mapToResourceRepresentation()
+        ).mapToResourceRepresentation(capabilities)
 }

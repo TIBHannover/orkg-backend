@@ -12,10 +12,10 @@ import org.orkg.MediaTypeCapabilitiesControllerTest.ProducingFakeController
 import org.orkg.MediaTypeCapabilitiesControllerTest.TestConfiguration
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.MediaTypeCapabilityRegistry
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.testing.fixtures.FORMATTED_LABEL_CAPABILITY
 import org.orkg.common.testing.fixtures.INCOMING_STATEMENTS_COUNT_CAPABILITY
-import org.orkg.configuration.WebMvcConfiguration
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.OffsetDateTime
 import javax.validation.Valid
 import org.orkg.common.ContributorId
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -50,10 +51,11 @@ class TemplateInstanceController(
     @GetMapping("/{id}")
     fun findById(
         @PathVariable templateId: ThingId,
-        @PathVariable id: ThingId
+        @PathVariable id: ThingId,
+        capabilities: MediaTypeCapabilities
     ): TemplateInstanceRepresentation =
         service.findById(templateId, id)
-            .mapToTemplateInstanceRepresentation()
+            .mapToTemplateInstanceRepresentation(capabilities)
             .orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping
@@ -67,7 +69,8 @@ class TemplateInstanceController(
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<TemplateInstanceRepresentation> =
         service.findAll(
             templateId = templateId,
@@ -79,7 +82,7 @@ class TemplateInstanceController(
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
             organizationId = organizationId
-        ).mapToTemplateInstanceRepresentation()
+        ).mapToTemplateInstanceRepresentation(capabilities)
 
     @PreAuthorizeUser
     @PutMapping("/{id}", consumes = [TEMPLATE_INSTANCE_JSON_V1], produces = [TEMPLATE_INSTANCE_JSON_V1])

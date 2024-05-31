@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
 import org.orkg.common.ContributorId
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
@@ -44,8 +45,13 @@ class ListController(
         service.findById(id).mapToListRepresentation().orElseThrow { ListNotFound(id) }
 
     @GetMapping("/{id}/elements")
-    fun findAllElementsById(@PathVariable id: ThingId, pageable: Pageable): Page<ThingRepresentation> =
-        service.findAllElementsById(id, pageable).mapToThingRepresentation()
+    fun findAllElementsById(
+        @PathVariable id: ThingId,
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
+    ): Page<ThingRepresentation> =
+        service.findAllElementsById(id, pageable)
+            .mapToThingRepresentation(capabilities)
 
     @PreAuthorizeUser
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])

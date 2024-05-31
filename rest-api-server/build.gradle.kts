@@ -63,35 +63,26 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-test")
                 implementation(project(":common:serialization"))
+                implementation("org.apache.tomcat:tomcat-annotations-api")
+                implementation("org.springframework.boot:spring-boot-test")
             }
         }
         val integrationTest by registering(JvmTestSuite::class) {
             testType.set(TestSuiteType.INTEGRATION_TEST)
             dependencies {
                 implementation(project())
-                implementation(project(":common"))
-                implementation(testFixtures(project(":testing:spring")))
                 implementation(project(":migrations:liquibase"))
                 implementation(project(":migrations:neo4j-migrations"))
-                implementation(project(":graph:graph-core-model"))
                 implementation(project(":graph:graph-core-services"))
-                implementation(project(":graph:graph-ports-input"))
                 implementation(project(":graph:graph-ports-output"))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
-                implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
-                implementation(project(":content-types:content-types-ports-input"))
                 implementation(project(":content-types:content-types-ports-output"))
-                implementation(project(":identity-management:idm-ports-input"))
                 implementation(project(":identity-management:idm-ports-output"))
                 implementation(project(":identity-management:idm-core-model"))
                 implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter
-                implementation(project(":community:community-core-model"))
-                implementation(project(":community:community-ports-input"))
                 implementation(project(":community:community-ports-output")) // for CuratorRepository
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
-                implementation(project(":media-storage:media-storage-core-model"))
                 implementation(project(":feature-flags:feature-flags-ports"))
-                implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     // Disable JUnit 4 (aka Vintage)
@@ -108,6 +99,14 @@ testing {
                 }
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.forkhandles.values4k)
+                implementation("jakarta.persistence:jakarta.persistence-api")
+                implementation("org.hamcrest:hamcrest")
+                implementation("org.hibernate:hibernate-core:5.4.32.Final")
+                implementation("org.springframework.boot:spring-boot")
+                implementation("org.springframework.data:spring-data-commons")
+                implementation("org.springframework:spring-core")
+                implementation("org.springframework:spring-web")
+                implementation(libs.assertj.core)
             }
             targets {
                 all {
@@ -136,6 +135,8 @@ dependencies {
 
     kapt(platform("org.orkg:platform"))
 
+    implementation(kotlin("stdlib")) // "downgrade" from api()
+
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
     implementation(project(":common"))
     runtimeOnly(project(":common:serialization"))
@@ -151,7 +152,6 @@ dependencies {
     implementation(project(":content-types:content-types-adapter-output-simcomp"))
     runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
     runtimeOnly(project(":content-types:content-types-adapter-output-web"))
-    implementation(project(":content-types:content-types-core-model"))
     runtimeOnly(project(":content-types:content-types-core-services"))
     implementation(project(":content-types:content-types-ports-input"))
     runtimeOnly(project(":content-types:content-types-ports-output"))
@@ -208,7 +208,25 @@ dependencies {
     liquibase(project(mapOf("path" to ":migrations:liquibase", "configuration" to "liquibase")))
     neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
 
-    implementation(libs.forkhandles.result4k)
+    // Direct transitive dependencies
+    implementation("org.apache.tomcat.embed:tomcat-embed-core")
+    implementation("org.neo4j.driver:neo4j-java-driver")
+    implementation("org.slf4j:slf4j-api")
+    implementation("org.springframework.boot:spring-boot-actuator-autoconfigure")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
+    implementation("org.springframework.boot:spring-boot")
+    implementation("org.springframework.data:spring-data-commons")
+    implementation("org.springframework.security:spring-security-config")
+    implementation("org.springframework.security:spring-security-core")
+    implementation("org.springframework.security:spring-security-web")
+    implementation("org.springframework:spring-beans")
+    implementation("org.springframework:spring-context-support")
+    implementation("org.springframework:spring-context")
+    implementation("org.springframework:spring-core")
+    implementation("org.springframework:spring-web")
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.databind)
+    implementation(libs.jakarta.validation)
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -227,12 +245,8 @@ dependencies {
     implementation("org.springframework.data:spring-data-neo4j")
     implementation(libs.spring.boot.starter.neo4j.migrations)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
-    implementation(libs.bundles.jaxb)
-    implementation(libs.javax.activation)
-    implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations
     // File uploads
-    implementation("commons-fileupload:commons-fileupload:1.5")
+    runtimeOnly("commons-fileupload:commons-fileupload:1.5")
     // Caching
     runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
     runtimeOnly("com.github.ben-manes.caffeine:caffeine")
@@ -250,6 +264,31 @@ dependencies {
     "integrationTestRuntimeOnly"(libs.bundles.testcontainers)
     "integrationTestRuntimeOnly"(libs.bundles.kotest)
     "integrationTestApi"("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
+    "integrationTestApi"("org.springframework.security:spring-security-test")
+    "integrationTestApi"(project(":common"))
+    "integrationTestApi"(project(":community:community-core-model"))
+    "integrationTestApi"(project(":community:community-ports-input"))
+    "integrationTestApi"(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
+    "integrationTestApi"(project(":content-types:content-types-ports-input"))
+    "integrationTestApi"(project(":graph:graph-core-model"))
+    "integrationTestApi"(project(":graph:graph-ports-input"))
+    "integrationTestApi"(project(":identity-management:idm-ports-input"))
+    "integrationTestApi"(project(":media-storage:media-storage-core-model"))
+    "integrationTestApi"(testFixtures(project(":testing:spring")))
+    "integrationTestApi"("com.fasterxml.jackson.core:jackson-annotations")
+    "integrationTestApi"("org.junit.jupiter:junit-jupiter-api")
+    "integrationTestApi"("org.junit.jupiter:junit-jupiter-params")
+    "integrationTestApi"("org.springframework.boot:spring-boot-autoconfigure")
+    "integrationTestApi"("org.springframework.boot:spring-boot-test-autoconfigure")
+    "integrationTestApi"("org.springframework.boot:spring-boot-test")
+    "integrationTestApi"("org.springframework.restdocs:spring-restdocs-core")
+    "integrationTestApi"("org.springframework:spring-beans")
+    "integrationTestApi"("org.springframework:spring-context")
+    "integrationTestApi"("org.springframework:spring-test")
+    "integrationTestApi"("org.springframework:spring-tx")
+    "integrationTestApi"(libs.jackson.databind)
+    "integrationTestImplementation"(project(":content-types:content-types-core-model"))
+    "kaptIntegrationTest"("org.springframework.boot:spring-boot-configuration-processor")
 }
 
 tasks.named("check") {

@@ -9,6 +9,7 @@ plugins {
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-core")
+    api("jakarta.annotation:jakarta.annotation-api")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-core")
     api("org.springframework:spring-context")

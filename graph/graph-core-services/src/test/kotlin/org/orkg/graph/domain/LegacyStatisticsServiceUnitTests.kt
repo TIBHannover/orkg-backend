@@ -11,11 +11,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
-import org.orkg.community.adapter.output.jpa.internal.PostgresObservatoryRepository
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ContributorRepository
-import org.orkg.graph.output.ResourceRepository
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.graph.output.LegacyStatisticsRepository
+import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.fixedClock
 
@@ -23,8 +23,8 @@ class LegacyStatisticsServiceUnitTests {
 
     private val legacyStatisticsRepository: LegacyStatisticsRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
-    private val observatoryRepository: PostgresObservatoryRepository = mockk()
-    private val organizationRepository: PostgresOrganizationRepository = mockk()
+    private val observatoryRepository: ObservatoryRepository = mockk()
+    private val organizationRepository: OrganizationRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
     private val service = LegacyStatisticsService(

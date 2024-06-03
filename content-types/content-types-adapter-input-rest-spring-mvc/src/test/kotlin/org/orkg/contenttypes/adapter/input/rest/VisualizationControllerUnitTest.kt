@@ -15,6 +15,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
@@ -51,7 +52,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [VisualizationController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [VisualizationController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [VisualizationController::class])
 @DisplayName("Given a Visualization controller")
 internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") {
@@ -377,13 +378,13 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
                 AuthorDTO(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
                     homepage = null
                 ),
                 AuthorDTO(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
                     homepage = null
                 ),
                 AuthorDTO(

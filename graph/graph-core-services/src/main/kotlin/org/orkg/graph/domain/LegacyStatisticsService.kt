@@ -6,11 +6,11 @@ import java.time.format.DateTimeFormatter
 import kotlin.collections.List
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
-import org.orkg.community.adapter.output.jpa.internal.PostgresObservatoryRepository
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.output.ContributorRepository
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.LegacyStatisticsRepository
@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional
 class LegacyStatisticsService(
     private val legacyStatisticsRepository: LegacyStatisticsRepository,
     private val contributorRepository: ContributorRepository,
-    private val observatoryRepository: PostgresObservatoryRepository,
-    private val organizationRepository: PostgresOrganizationRepository,
+    private val observatoryRepository: ObservatoryRepository,
+    private val organizationRepository: OrganizationRepository,
     private val resourceRepository: ResourceRepository,
     private val clock: Clock,
 ) : RetrieveLegacyStatisticsUseCase {
@@ -74,7 +74,7 @@ class LegacyStatisticsService(
         legacyStatisticsRepository.findAllObservatoryStats(pageable)
 
     override fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats {
-        if (!observatoryRepository.existsById(id.value)) {
+        if (!observatoryRepository.existsById(id)) {
             throw ObservatoryNotFound(id)
         }
         return legacyStatisticsRepository.findObservatoryStatsById(id).orElseGet { ObservatoryStats(id) }

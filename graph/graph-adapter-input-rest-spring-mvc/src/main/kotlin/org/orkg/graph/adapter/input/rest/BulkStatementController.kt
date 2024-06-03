@@ -1,15 +1,16 @@
 package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.contenttypes.domain.pmap
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateStatementUseCase
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
@@ -27,33 +28,35 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/statements", produces = [MediaType.APPLICATION_JSON_VALUE])
 class BulkStatementController(
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService
 ) : StatementRepresentationAdapter {
 
     @GetMapping("/subjects")
     fun findBySubjects(
         @RequestParam("ids") resourceIds: List<ThingId>,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): List<BulkGetStatementsResponse> =
         resourceIds.pmap {
             BulkGetStatementsResponse(
                 id = it,
                 statements = statementService.findAll(subjectId = it, pageable = pageable)
-                    .mapToStatementRepresentation()
+                    .mapToStatementRepresentation(capabilities)
             )
         }
 
     @GetMapping("/objects")
     fun findByObjects(
         @RequestParam("ids") resourceIds: List<ThingId>,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): List<BulkGetStatementsResponse> =
         resourceIds.pmap {
             BulkGetStatementsResponse(
                 id = it,
                 statements = statementService.findAll(objectId = it, pageable = pageable)
-                    .mapToStatementRepresentation()
+                    .mapToStatementRepresentation(capabilities)
             )
         }
 
@@ -70,7 +73,8 @@ class BulkStatementController(
     @PutMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun edit(
         @RequestParam("ids") statementsIds: List<StatementId>,
-        @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest
+        @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest,
+        capabilities: MediaTypeCapabilities
     ): Iterable<BulkPutStatementResponse> =
         statementsIds.map {
             statementService.update(
@@ -83,7 +87,7 @@ class BulkStatementController(
             )
             statementService.findById(it).get()
         }
-            .mapToStatementRepresentation()
+            .mapToStatementRepresentation(capabilities)
             .map { BulkPutStatementResponse(it.id, it) }
 }
 

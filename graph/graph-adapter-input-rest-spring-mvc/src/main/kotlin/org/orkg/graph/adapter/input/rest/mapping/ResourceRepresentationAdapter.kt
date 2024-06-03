@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
 import java.util.*
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.Resource
@@ -13,21 +14,22 @@ import org.springframework.data.domain.Page
 interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {
     val statementService: StatementUseCases
 
-    fun Optional<Resource>.mapToResourceRepresentation(): Optional<ResourceRepresentation> =
+    fun Optional<Resource>.mapToResourceRepresentation(capabilities: MediaTypeCapabilities): Optional<ResourceRepresentation> =
         map {
             val count = statementService.countIncomingStatements(it.id)
-            it.toResourceRepresentation(mapOf(it.id to count), formatLabelFor(listOf(it)))
+            val formattedLabel = formatLabelFor(listOf(it), capabilities)
+            it.toResourceRepresentation(mapOf(it.id to count), formattedLabel)
         }
 
-    fun Page<Resource>.mapToResourceRepresentation(): Page<ResourceRepresentation> {
+    fun Page<Resource>.mapToResourceRepresentation(capabilities: MediaTypeCapabilities): Page<ResourceRepresentation> {
         val statementCounts = countIncomingStatements(content)
-        val formattedLabelCount = formatLabelFor(content)
+        val formattedLabelCount = formatLabelFor(content, capabilities)
         return map { it.toResourceRepresentation(statementCounts, formattedLabelCount) }
     }
 
-    fun Iterable<Resource>.mapToResourceRepresentation(): Iterable<ResourceRepresentation> {
+    fun Iterable<Resource>.mapToResourceRepresentation(capabilities: MediaTypeCapabilities): Iterable<ResourceRepresentation> {
         val statementCounts = countIncomingStatements(toList())
-        val formattedLabelCount = formatLabelFor(toList())
+        val formattedLabelCount = formatLabelFor(toList(), capabilities)
         return map { it.toResourceRepresentation(statementCounts, formattedLabelCount) }
     }
 

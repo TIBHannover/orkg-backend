@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
@@ -13,9 +14,9 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.CreateStatement
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementNotFound
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateStatementUseCase
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -43,7 +44,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/statements", produces = [MediaType.APPLICATION_JSON_VALUE])
 class StatementController(
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService
 ) : StatementRepresentationAdapter, BundleRepresentationAdapter {
 
@@ -59,7 +60,8 @@ class StatementController(
         @RequestParam("object_classes", required = false) objectClasses: Set<ThingId>?,
         @RequestParam("object_id", required = false) objectId: ThingId?,
         @RequestParam("object_label", required = false) objectLabel: String?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<StatementRepresentation> =
         statementService.findAll(
             pageable = pageable,
@@ -73,50 +75,64 @@ class StatementController(
             objectClasses = objectClasses.orEmpty(),
             objectId = objectId,
             objectLabel = objectLabel
-        ).mapToStatementRepresentation()
+        ).mapToStatementRepresentation(capabilities)
 
     @GetMapping("/{statementId}")
-    fun findById(@PathVariable statementId: StatementId): StatementRepresentation =
-        statementService.findById(statementId).mapToStatementRepresentation().orElseThrow { StatementNotFound(statementId) }
+    fun findById(
+        @PathVariable statementId: StatementId,
+        capabilities: MediaTypeCapabilities
+    ): StatementRepresentation =
+        statementService.findById(statementId)
+            .mapToStatementRepresentation(capabilities)
+            .orElseThrow { StatementNotFound(statementId) }
 
     @GetMapping("/subject/{subjectId}")
     fun findBySubject(
         @PathVariable subjectId: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<StatementRepresentation> =
-        statementService.findAll(subjectId = subjectId, pageable = pageable).mapToStatementRepresentation()
+        statementService.findAll(subjectId = subjectId, pageable = pageable)
+            .mapToStatementRepresentation(capabilities)
 
     @GetMapping("/subject/{subjectId}/predicate/{predicateId}")
     fun findBySubjectAndPredicate(
         @PathVariable subjectId: ThingId,
         @PathVariable predicateId: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<StatementRepresentation> =
         statementService.findAll(subjectId = subjectId, predicateId = predicateId, pageable = pageable)
-            .mapToStatementRepresentation()
+            .mapToStatementRepresentation(capabilities)
 
     @GetMapping("/predicate/{predicateId}")
     fun findByPredicate(
         @PathVariable predicateId: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<StatementRepresentation> =
-        statementService.findAll(predicateId = predicateId, pageable = pageable).mapToStatementRepresentation()
+        statementService.findAll(predicateId = predicateId, pageable = pageable)
+            .mapToStatementRepresentation(capabilities)
 
     @GetMapping("/predicate/{predicateId}/literal/{literal}")
     fun findByPredicateAndLiteralAndSubjectClass(
         @PathVariable predicateId: ThingId,
         @PathVariable literal: String,
         @RequestParam("subjectClass", required = false) subjectClass: ThingId?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<StatementRepresentation> =
-        findByPredicateAndLiteralAndSubjectClassWithLiteralAsParameter(predicateId, literal, subjectClass, pageable)
+        findByPredicateAndLiteralAndSubjectClassWithLiteralAsParameter(
+            predicateId, literal, subjectClass, pageable, capabilities
+        )
 
     @GetMapping("/predicate/{predicateId}/literals")
     fun findByPredicateAndLiteralAndSubjectClassWithLiteralAsParameter(
         @PathVariable predicateId: ThingId,
         @RequestParam("q") literal: String,
         @RequestParam("subjectClass", required = false) subjectClass: ThingId?,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<StatementRepresentation> =
         statementService.findAll(
             subjectClasses = setOfNotNull(subjectClass),
@@ -124,23 +140,26 @@ class StatementController(
             objectClasses = setOf(Classes.literal),
             objectLabel = literal,
             pageable = pageable
-        ).mapToStatementRepresentation()
+        ).mapToStatementRepresentation(capabilities)
 
     @GetMapping("/object/{objectId}")
     fun findByObject(
         @PathVariable objectId: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<StatementRepresentation> =
-        statementService.findAll(objectId = objectId, pageable = pageable).mapToStatementRepresentation()
+        statementService.findAll(objectId = objectId, pageable = pageable)
+            .mapToStatementRepresentation(capabilities)
 
     @GetMapping("/object/{objectId}/predicate/{predicateId}")
     fun findByObjectAndPredicate(
         @PathVariable objectId: ThingId,
         @PathVariable predicateId: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<StatementRepresentation> =
         statementService.findAll(objectId = objectId, predicateId = predicateId, pageable = pageable)
-            .mapToStatementRepresentation()
+            .mapToStatementRepresentation(capabilities)
 
     @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -148,6 +167,7 @@ class StatementController(
         @RequestBody statement: CreateStatement,
         uriComponentsBuilder: UriComponentsBuilder,
         @AuthenticationPrincipal currentUser: UserDetails?,
+        capabilities: MediaTypeCapabilities
     ): ResponseEntity<StatementRepresentation> {
         val id = statementService.create(
             currentUser.contributorId(),
@@ -159,14 +179,16 @@ class StatementController(
             .path("api/statements/{id}")
             .buildAndExpand(statement.id)
             .toUri()
-        return created(location).body(statementService.findById(id).mapToStatementRepresentation().get())
+        return created(location)
+            .body(statementService.findById(id).mapToStatementRepresentation(capabilities).get())
     }
 
     @PreAuthorizeUser
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun edit(
         @PathVariable id: StatementId,
-        @RequestBody(required = true) statementEditRequest: StatementEditRequest
+        @RequestBody(required = true) statementEditRequest: StatementEditRequest,
+        capabilities: MediaTypeCapabilities
     ): ResponseEntity<StatementRepresentation> {
         val foundStatement = statementService.findById(id)
 
@@ -182,7 +204,7 @@ class StatementController(
             )
         )
 
-        return statementService.findById(id).mapToStatementRepresentation().map(::ok).get()
+        return statementService.findById(id).mapToStatementRepresentation(capabilities).map(::ok).get()
     }
 
     @PreAuthorizeUser
@@ -202,7 +224,8 @@ class StatementController(
         @RequestParam("blacklist", required = false, defaultValue = "") blacklist: List<ThingId>,
         @RequestParam("whitelist", required = false, defaultValue = "") whitelist: List<ThingId>,
         @RequestParam("includeFirst", required = false, defaultValue = "true") includeFirst: Boolean,
-        sort: Sort
+        sort: Sort,
+        capabilities: MediaTypeCapabilities
     ): BundleRepresentation =
         statementService.fetchAsBundle(
             thingId,
@@ -213,5 +236,5 @@ class StatementController(
             ),
             includeFirst,
             sort
-        ).toBundleRepresentation()
+        ).toBundleRepresentation(capabilities)
 }

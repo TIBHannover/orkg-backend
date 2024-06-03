@@ -176,7 +176,7 @@ class PaperController(
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field: Valid
-        val identifiers: Map<String, List<String>>?,
+        val identifiers: IdentifierMapDTO?,
         @JsonProperty("publication_info")
         val publicationInfo: PublicationInfoDTO?,
         @field:Valid
@@ -248,7 +248,7 @@ class PaperController(
                 contributorId = contributorId,
                 title = title,
                 researchFields = researchFields,
-                identifiers = identifiers.orEmpty(),
+                identifiers = identifiers?.values.orEmpty(),
                 publicationInfo = publicationInfo?.toPublicationInfoDefinition(),
                 authors = authors.map { it.toAuthor() },
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
@@ -266,7 +266,7 @@ class PaperController(
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
         @field: Valid
-        val identifiers: Map<String, List<String>>?,
+        val identifiers: IdentifierMapDTO?,
         @field:Valid
         @JsonProperty("publication_info")
         val publicationInfo: PublicationInfoDTO?,
@@ -285,7 +285,7 @@ class PaperController(
                 contributorId = contributorId,
                 title = title,
                 researchFields = researchFields,
-                identifiers = identifiers,
+                identifiers = identifiers?.values,
                 publicationInfo = publicationInfo?.toPublicationInfoDefinition(),
                 authors = authors?.map { it.toAuthor() },
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals,

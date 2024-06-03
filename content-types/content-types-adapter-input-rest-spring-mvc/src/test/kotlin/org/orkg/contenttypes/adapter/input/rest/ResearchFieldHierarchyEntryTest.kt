@@ -10,8 +10,8 @@ import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldHierarchyEntryRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.ResearchFieldHierarchyEntryRepresentation
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectResearchFieldHierarchyEntry
@@ -50,7 +50,7 @@ internal class ResearchFieldHierarchyEntryTest : RestDocsTest("research-fields")
     @RestController
     internal class FakeResearchFieldHierarchyEntryController(
         override val statementService: StatementUseCases = mockk(),
-        override val formattedLabelRepository: FormattedLabelRepository = mockk(),
+        override val formattedLabelService: FormattedLabelUseCases = mockk(),
         override val flags: FeatureFlagService = mockk()
     ) : ResearchFieldHierarchyEntryRepresentationAdapter {
         @GetMapping("/hierarchy")

@@ -53,10 +53,10 @@ dependencies {
     }
     api("org.springframework.data:spring-data-neo4j")
     api("org.springframework:spring-context")
-    api(project(":common"))
-    api(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for Neo4jLiteral, TODO: break dependency
     api(project(":statistics:statistics-ports-output"))
     implementation("org.neo4j:neo4j-cypher-dsl")
     implementation(project(":common:neo4j-dsl"))
     neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
+
+    containerTestImplementation(kotlin("stdlib")) // "downgrade" from api()
 }

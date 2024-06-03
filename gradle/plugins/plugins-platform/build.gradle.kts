@@ -17,6 +17,7 @@ dependencies.constraints {
     api("dev.jacomet.gradle.plugins:logging-capabilities:0.11.1")
     api("org.gradlex:java-ecosystem-capabilities:1.3.1")
     api("com.autonomousapps:dependency-analysis-gradle-plugin:1.28.0")
+    api("com.osacky.doctor:doctor-plugin:0.10.0")
 
     api("com.google.cloud.tools:jib-gradle-plugin:3.4.0")
     api("com.diffplug.spotless:spotless-plugin-gradle:6.2.1")

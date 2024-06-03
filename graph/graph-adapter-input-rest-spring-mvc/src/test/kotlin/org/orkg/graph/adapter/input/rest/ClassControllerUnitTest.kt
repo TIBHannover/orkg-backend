@@ -22,9 +22,9 @@ import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.toOptional
 import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
@@ -62,7 +62,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
     private lateinit var statementService: StatementUseCases
 
     @MockkBean
-    private lateinit var formattedLabelRepository: FormattedLabelRepository
+    private lateinit var formattedLabelService: FormattedLabelUseCases
 
     @MockkBean
     private lateinit var flags: FeatureFlagService

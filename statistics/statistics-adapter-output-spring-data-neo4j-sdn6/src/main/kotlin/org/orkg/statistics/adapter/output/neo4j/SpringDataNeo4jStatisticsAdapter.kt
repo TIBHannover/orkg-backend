@@ -8,7 +8,6 @@ import org.neo4j.cypherdsl.core.Predicates.*
 import org.orkg.common.neo4jdsl.CypherQueryBuilder
 import org.orkg.common.neo4jdsl.QueryCache.Uncached
 import org.orkg.common.neo4jdsl.SingleQueryBuilder.fetchAs
-import org.orkg.statistics.adapter.output.neo4j.internal.Neo4jStatisticsRepository
 import org.orkg.statistics.output.StatisticsRepository
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
@@ -17,7 +16,6 @@ private const val RELATED = "RELATED"
 
 @Component
 class SpringDataNeo4jStatisticsAdapter(
-    private val neo4jRepository: Neo4jStatisticsRepository,
     private val neo4jClient: Neo4jClient
 ) : StatisticsRepository {
     override fun countNodes(label: String): Long =

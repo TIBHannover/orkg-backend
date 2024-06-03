@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
+import org.springframework.web.HttpMediaTypeNotAcceptableException
+import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -38,6 +40,42 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
         ex.bindingResult.fieldErrors.map {
             FieldValidationError(field = it.field.toSnakeCase(), message = it?.defaultMessage)
         }
+    }
+
+    override fun handleHttpMediaTypeNotAcceptable(
+        ex: HttpMediaTypeNotAcceptableException,
+        headers: HttpHeaders,
+        status: HttpStatus,
+        request: WebRequest
+    ): ResponseEntity<Any> {
+        val payload = MessageErrorResponse(
+            status = status.value(),
+            error = status.reasonPhrase,
+            path = request.requestURI,
+            message = "Unsupported response media type. Please check the 'Accept' header for a list of supported media types.",
+            timestamp = OffsetDateTime.now(clock),
+        )
+        val responseHeaders = HttpHeaders()
+        responseHeaders.accept = ex.supportedMediaTypes
+        return ResponseEntity(payload, responseHeaders, status)
+    }
+
+    override fun handleHttpMediaTypeNotSupported(
+        ex: HttpMediaTypeNotSupportedException,
+        headers: HttpHeaders,
+        status: HttpStatus,
+        request: WebRequest
+    ): ResponseEntity<Any> {
+        val payload = MessageErrorResponse(
+            status = status.value(),
+            error = status.reasonPhrase,
+            path = request.requestURI,
+            message = "Unsupported request media type. Please check the 'Accept' header for a list of supported media types.",
+            timestamp = OffsetDateTime.now(clock),
+        )
+        val responseHeaders = HttpHeaders()
+        responseHeaders.accept = ex.supportedMediaTypes
+        return ResponseEntity(payload, responseHeaders, status)
     }
 
     override fun handleHttpMessageNotReadable(

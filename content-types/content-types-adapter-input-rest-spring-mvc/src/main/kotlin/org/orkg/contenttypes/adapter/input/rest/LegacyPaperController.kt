@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase
@@ -9,14 +10,15 @@ import org.orkg.graph.adapter.input.rest.mapping.PaperResourceWithPathRepresenta
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.PaperResourceWithPathRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.created
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
@@ -34,7 +36,7 @@ class LegacyPaperController(
     private val service: LegacyPaperUseCases,
     private val resourceService: ResourceUseCases,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService,
 ) : PaperResourceWithPathRepresentationAdapter, ResourceRepresentationAdapter {
 
@@ -45,19 +47,23 @@ class LegacyPaperController(
         uriComponentsBuilder: UriComponentsBuilder,
         @RequestParam("mergeIfExists", required = false, defaultValue = "false") mergeIfExists: Boolean,
         @AuthenticationPrincipal currentUser: UserDetails?,
+        capabilities: MediaTypeCapabilities
     ): ResponseEntity<ResourceRepresentation> {
         val id = service.addPaperContent(paper, mergeIfExists, currentUser.contributorId().value)
         val location = uriComponentsBuilder
             .path("api/resources/")
             .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.created(location).body(resourceService.findById(id).mapToResourceRepresentation().get())
+        return created(location)
+            .body(resourceService.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
     @GetMapping("/")
     fun findPaperResourcesRelatedTo(
         @RequestParam("linkedTo", required = true) id: ThingId,
-        pageable: Pageable
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
     ): Page<PaperResourceWithPathRepresentation> =
-        service.findPapersRelatedToResource(id, pageable).mapToPaperResourceWithPathRepresentation()
+        service.findPapersRelatedToResource(id, pageable)
+            .mapToPaperResourceWithPathRepresentation(capabilities)
 }

@@ -9,9 +9,13 @@ import org.orkg.common.ThingId
  */
 data class TemplatedResource(
     /**
-     * The id of the template used on this resource
+     * The id of the resource
      */
     val id: ThingId,
+    /**
+     * The id of the resource used on this resource
+     */
+    val templateId: ThingId,
     /**
      * The label of the template applied on this resource
      */

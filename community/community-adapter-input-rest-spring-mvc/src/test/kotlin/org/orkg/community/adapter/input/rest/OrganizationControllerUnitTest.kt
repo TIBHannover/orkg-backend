@@ -2,9 +2,6 @@ package org.orkg.community.adapter.input.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import io.kotest.assertions.asClue
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
 import java.time.Clock
@@ -13,15 +10,11 @@ import java.util.*
 import javax.activation.MimeType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
 import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.community.domain.InvalidImageEncoding
 import org.orkg.community.domain.LogoNotFound
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.domain.OrganizationType
@@ -36,27 +29,25 @@ import org.orkg.mediastorage.domain.ImageId
 import org.orkg.mediastorage.domain.InvalidImageData
 import org.orkg.mediastorage.domain.InvalidMimeType
 import org.orkg.mediastorage.input.ImageUseCases
-import org.orkg.mediastorage.testing.fixtures.encodedTestImage
-import org.orkg.mediastorage.testing.fixtures.loadEncodedImage
 import org.orkg.mediastorage.testing.fixtures.loadImage
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.MockUserDetailsService
+import org.orkg.testing.SecurityTestConfiguration
 import org.orkg.testing.annotations.TestWithMockUser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpMethod
+import org.springframework.context.annotation.Import
+import org.springframework.http.HttpMethod.PATCH
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -65,6 +56,7 @@ import org.springframework.web.context.WebApplicationContext
 
 @ContextConfiguration(classes = [OrganizationController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [OrganizationController::class])
+@Import(SecurityTestConfiguration::class, MockUserDetailsService::class)
 @DisplayName("Given an Organization controller")
 internal class OrganizationControllerUnitTest {
 
@@ -78,9 +70,6 @@ internal class OrganizationControllerUnitTest {
 
     @MockkBean
     private lateinit var organizationService: OrganizationUseCases
-
-    @MockkBean
-    private lateinit var userDetailsService: UserDetailsService
 
     @MockkBean
     private lateinit var observatoryService: ObservatoryUseCases
@@ -109,7 +98,7 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.findLogo(id) } returns Optional.of(image)
 
-        mockMvc.perform(get("/api/organizations/$id/logo"))
+        mockMvc.perform(get("/api/organizations/{id}/logo", id))
             .andExpect(status().isOk)
             .andExpect(content().contentType(image.mimeType.toString()))
             .andExpect(content().bytes(image.data.bytes))
@@ -123,7 +112,7 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.findLogo(id) } throws LogoNotFound(id)
 
-        mockMvc.perform(get("/api/organizations/$id/logo"))
+        mockMvc.perform(get("/api/organizations/{id}/logo", id))
             .andExpect(status().isNotFound)
     }
 
@@ -133,7 +122,7 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.findLogo(id) } throws OrganizationNotFound(id)
 
-        mockMvc.perform(get("/api/organizations/$id/logo"))
+        mockMvc.perform(get("/api/organizations/{id}/logo", id))
             .andExpect(status().isNotFound)
     }
 
@@ -157,56 +146,12 @@ internal class OrganizationControllerUnitTest {
         every { organizationService.findById(id) } returns Optional.of(organization)
         every { organizationService.findLogo(id) } returns Optional.of(image)
 
-        mockMvc.perform(get("/api/organizations/$id"))
+        mockMvc.perform(get("/api/organizations/{id}", id))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value("$id"))
             .andExpect(jsonPath("$.logo_id").doesNotExist())
 
         verify(exactly = 1) { organizationService.findById(id) }
-    }
-
-    @Nested
-    @DisplayName("When converting images")
-    inner class Images {
-        @ParameterizedTest
-        @ValueSource(strings = [
-            "invalid",
-            "data:image/png;base64,",
-            "data:invalid;base64,",
-            "data:;base64,",
-            "data:;,",
-            "data:;,data"
-        ])
-        fun `given an image is being decoded, when the image encoding is invalid, then an exception is thrown`(string: String) {
-            shouldThrow<InvalidImageEncoding> {
-                EncodedImage(string).decodeBase64()
-            }
-        }
-
-        @ParameterizedTest
-        @ValueSource(strings = ["data:invalid;base64,irrelevant", "data:invalid/error/;base64,irrelevant"])
-        fun `given an image is being decoded, when the mime type is invalid, then an exception is thrown`(string: String) {
-            shouldThrow<InvalidMimeType> {
-                EncodedImage(string).decodeBase64()
-            }
-        }
-
-        @Test
-        fun `given an image is being decoded, when the data is invalid, then an exception is thrown`() {
-            shouldThrow<InvalidImageData> {
-                EncodedImage("data:image/png;base64,error").decodeBase64()
-            }
-        }
-
-        @Test
-        fun `given an image is decoded, then the result is correct`() {
-            val decoded = EncodedImage(loadEncodedImage(encodedTestImage)).decodeBase64()
-            val expected = loadRawImage(testImage)
-            decoded.asClue {
-                decoded.data shouldBe expected.data
-                decoded.mimeType.toString() shouldBe expected.mimeType.toString()
-            }
-        }
     }
 
     @Test
@@ -219,9 +164,13 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } throws OrganizationNotFound(id)
 
-        patchMultipart("/api/organizations/$id") {
-            json("properties", body)
-        }.andExpect(status().isNotFound)
+        mockMvc
+            .perform(
+                multipart(PATCH, "/api/organizations/{id}", id)
+                    .json("properties", body)
+                    .characterEncoding(Charsets.UTF_8.name())
+            )
+            .andExpect(status().isNotFound)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
@@ -237,9 +186,13 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } throws exception
 
-        patchMultipart("/api/organizations/$id") {
-            json("properties", body)
-        }.andExpect(status().isBadRequest)
+        mockMvc
+            .perform(
+                multipart(PATCH, "/api/organizations/{id}", id)
+                    .json("properties", body)
+                    .characterEncoding(Charsets.UTF_8.name())
+            )
+            .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/organizations/$id"))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -258,9 +211,13 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } throws exception
 
-        patchMultipart("/api/organizations/$id") {
-            json("properties", body)
-        }.andExpect(status().isBadRequest)
+        mockMvc
+            .perform(
+                multipart(PATCH, "/api/organizations/{id}", id)
+                    .json("properties", body)
+                    .characterEncoding(Charsets.UTF_8.name())
+            )
+            .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/organizations/$id"))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -278,9 +235,13 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        patchMultipart("/api/organizations/$id") {
-            json("properties", body)
-        }.andExpect(status().isNoContent)
+        mockMvc
+            .perform(
+                multipart(PATCH, "/api/organizations/{id}", id)
+                    .json("properties", body)
+                    .characterEncoding(Charsets.UTF_8.name())
+            )
+            .andExpect(status().isNoContent)
             .andExpect(content().string(""))
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
@@ -294,9 +255,13 @@ internal class OrganizationControllerUnitTest {
             "name" to ""
         )
 
-        patchMultipart("/api/organizations/$id") {
-            json("properties", body)
-        }.andExpect(status().isBadRequest)
+        mockMvc
+            .perform(
+                multipart(PATCH, "/api/organizations/{id}", id)
+                    .json("properties", body)
+                    .characterEncoding(Charsets.UTF_8.name())
+            )
+            .andExpect(status().isBadRequest)
 
         verify(exactly = 0) { organizationService.update(any(), any()) }
     }
@@ -309,9 +274,13 @@ internal class OrganizationControllerUnitTest {
             "url" to ""
         )
 
-        patchMultipart("/api/organizations/$id") {
-            json("properties", body)
-        }.andExpect(status().isBadRequest)
+        mockMvc
+            .perform(
+                multipart(PATCH, "/api/organizations/{id}", id)
+                    .json("properties", body)
+                    .characterEncoding(Charsets.UTF_8.name())
+            )
+            .andExpect(status().isBadRequest)
 
         verify(exactly = 0) { organizationService.update(any(), any()) }
     }
@@ -329,10 +298,14 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        patchMultipart("/api/organizations/$id") {
-            json("properties", body)
-            file(MockMultipartFile("logo", "image.png", image.mimeType.toString(), image.data.bytes))
-        }.andExpect(status().isNoContent)
+        mockMvc
+            .perform(
+                multipart(PATCH, "/api/organizations/{id}", id)
+                    .json("properties", body)
+                    .file(MockMultipartFile("logo", "image.png", image.mimeType.toString(), image.data.bytes))
+                    .characterEncoding(Charsets.UTF_8.name())
+            )
+            .andExpect(status().isNoContent)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
@@ -345,9 +318,13 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        patchMultipart("/api/organizations/$id") {
-            file(MockMultipartFile("logo", "image.png", image.mimeType.toString(), image.data.bytes))
-        }.andExpect(status().isNoContent)
+        mockMvc
+            .perform(
+                multipart(PATCH, "/api/organizations/{id}", id)
+                    .file(MockMultipartFile("logo", "image.png", image.mimeType.toString(), image.data.bytes))
+                    .characterEncoding(Charsets.UTF_8.name())
+            )
+            .andExpect(status().isNoContent)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
@@ -364,9 +341,13 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        patchMultipart("/api/organizations/$id") {
-            json("properties", body)
-        }.andExpect(status().isNoContent)
+        mockMvc
+            .perform(
+                multipart(PATCH, "/api/organizations/{id}", id)
+                    .json("properties", body)
+                    .characterEncoding(Charsets.UTF_8.name())
+            )
+            .andExpect(status().isNoContent)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
@@ -378,7 +359,11 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        patchMultipart("/api/organizations/$id")
+        mockMvc
+            .perform(
+                multipart(PATCH, "/api/organizations/{id}", id)
+                    .characterEncoding(Charsets.UTF_8.name())
+            )
             .andExpect(status().isNoContent)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
@@ -395,20 +380,4 @@ internal class OrganizationControllerUnitTest {
             objectMapper.writeValueAsString(data).toByteArray()
         )
     )
-
-    private fun patchMultipart(
-        uriTemplate: String,
-        block: (MockMultipartHttpServletRequestBuilder.() -> (Unit))? = null
-    ): ResultActions {
-        val request: MockMultipartHttpServletRequestBuilder = MockMvcRequestBuilders.multipart(uriTemplate)
-
-        // TODO: This can be replaced with MockMvcRequestBuilders.multipart(HttpMethod.PATCH, uriTemplate) after the upgrade, when spring-test 5.3.x is used.
-        val field = MockHttpServletRequestBuilder::class.java.getDeclaredField("method")
-        field.isAccessible = true
-        field.set(request, HttpMethod.PATCH.name)
-
-        if (block != null)
-            block(request)
-        return mockMvc.perform(request.characterEncoding(Charsets.UTF_8.name()))
-    }
 }

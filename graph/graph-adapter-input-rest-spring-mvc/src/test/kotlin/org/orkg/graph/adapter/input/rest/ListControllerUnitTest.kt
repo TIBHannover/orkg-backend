@@ -12,15 +12,16 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.ListElementNotFound
 import org.orkg.graph.domain.ListNotFound
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createList
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -52,7 +53,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [ListController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ListController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ListController::class])
 @DisplayName("Given a List controller")
 internal class ListControllerUnitTest : RestDocsTest("lists") {
@@ -64,7 +65,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
     private lateinit var statementService: StatementUseCases
 
     @MockkBean
-    private lateinit var formattedLabelRepository: FormattedLabelRepository
+    private lateinit var formattedLabelService: FormattedLabelUseCases
 
     @MockkBean
     private lateinit var flags: FeatureFlagService
@@ -311,7 +312,6 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         every { listService.findAllElementsById(id, any()) } returns PageImpl(elements)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc.perform(documentedGetRequestTo("/api/lists/{id}/elements", id))
             .andExpect(status().isOk)

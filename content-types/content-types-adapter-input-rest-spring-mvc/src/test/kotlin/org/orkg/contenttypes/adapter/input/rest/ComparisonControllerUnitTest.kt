@@ -22,6 +22,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
@@ -73,7 +74,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [ComparisonController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [ComparisonController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ComparisonController::class])
 @DisplayName("Given a Comparison controller")
 internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
@@ -1037,13 +1038,13 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                 AuthorDTO(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
                     homepage = null
                 ),
                 AuthorDTO(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
                     homepage = null
                 ),
                 AuthorDTO(
@@ -1086,13 +1087,13 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                 AuthorDTO(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
                     homepage = null
                 ),
                 AuthorDTO(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
                     homepage = null
                 ),
                 AuthorDTO(

@@ -40,7 +40,7 @@ data class LiteratureList(
                     .sortedBy { it.id },
                 authors = statements.authors(root).ifEmpty { statements.legacyAuthors(root) },
                 versions = VersionInfo(
-                    head = HeadVersion(directStatements.first().subject as Resource),
+                    head = HeadVersion(directStatements.firstOrNull()?.subject ?: resource),
                     published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
                         .sortedByDescending { it.createdAt }
                         .objects()

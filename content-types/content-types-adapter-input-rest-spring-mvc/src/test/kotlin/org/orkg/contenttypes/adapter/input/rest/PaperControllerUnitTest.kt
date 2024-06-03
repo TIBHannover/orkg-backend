@@ -32,6 +32,7 @@ import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperReque
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.PaperContentsDTO
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.StatementObjectDefinitionDTO
 import org.orkg.contenttypes.adapter.input.rest.PaperController.UpdatePaperRequest
+import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
@@ -88,7 +89,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [PaperController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [PaperController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [PaperController::class])
 @DisplayName("Given a Paper controller")
 internal class PaperControllerUnitTest : RestDocsTest("papers") {
@@ -1260,7 +1261,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         CreatePaperRequest(
             title = "example paper",
             researchFields = listOf(ThingId("R12")),
-            identifiers = mapOf("doi" to listOf("10.48550 / arXiv.2304.05327")),
+            identifiers = IdentifierMapDTO(mapOf("doi" to listOf("10.48550 / arXiv.2304.05327"))),
             publicationInfo = PublicationInfoDTO(
                 publishedMonth = 5,
                 publishedYear = 2015,
@@ -1277,13 +1278,13 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                 AuthorDTO(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
                     homepage = null
                 ),
                 AuthorDTO(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
                     homepage = null
                 ),
                 AuthorDTO(
@@ -1384,7 +1385,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         UpdatePaperRequest(
             title = "example paper",
             researchFields = listOf(ThingId("R14")),
-            identifiers = mapOf("doi" to listOf("10.48550/arXiv.2304.05327")),
+            identifiers = IdentifierMapDTO(mapOf("doi" to listOf("10.48550/arXiv.2304.05327"))),
             publicationInfo = PublicationInfoDTO(
                 publishedMonth = 5,
                 publishedYear = 2015,
@@ -1401,13 +1402,13 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                 AuthorDTO(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
                     homepage = null
                 ),
                 AuthorDTO(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
                     homepage = null
                 ),
                 AuthorDTO(

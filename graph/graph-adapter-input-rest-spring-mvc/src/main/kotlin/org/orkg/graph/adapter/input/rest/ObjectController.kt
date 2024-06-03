@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
@@ -8,11 +9,12 @@ import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.CreateObjectUseCase
 import org.orkg.graph.input.CreateObjectUseCase.CreateObjectRequest
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.*
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.PatchMapping
@@ -29,7 +31,7 @@ class ObjectController(
     private val resourceService: ResourceUseCases,
     private val objectService: CreateObjectUseCase,
     override val statementService: StatementUseCases,
-    override val formattedLabelRepository: FormattedLabelRepository,
+    override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService,
 ) : ResourceRepresentationAdapter {
 
@@ -39,13 +41,14 @@ class ObjectController(
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         @AuthenticationPrincipal currentUser: UserDetails?,
+        capabilities: MediaTypeCapabilities
     ): ResponseEntity<ResourceRepresentation> {
         val id = objectService.createObject(obj, null, currentUser.contributorId().value)
         val location = uriComponentsBuilder
             .path("api/objects/")
             .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.created(location).body(resourceService.findById(id).mapToResourceRepresentation().get())
+        return created(location).body(resourceService.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
     @PreAuthorizeUser
@@ -55,6 +58,7 @@ class ObjectController(
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         @AuthenticationPrincipal currentUser: UserDetails?,
+        capabilities: MediaTypeCapabilities
     ): ResponseEntity<ResourceRepresentation> {
         resourceService
             .findById(id)
@@ -64,6 +68,6 @@ class ObjectController(
             .path("api/objects/")
             .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.created(location).body(resourceService.findById(id).mapToResourceRepresentation().get())
+        return created(location).body(resourceService.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 }

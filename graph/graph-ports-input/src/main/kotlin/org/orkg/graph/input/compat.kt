@@ -27,6 +27,8 @@ interface ListUseCases : CreateListUseCase, RetrieveListUseCase,
 interface ClassHierarchyUseCases : CreateClassHierarchyUseCase,
     RetrieveClassHierarchyUseCase, DeleteClassHierarchyUseCase
 
+interface FormattedLabelUseCases : RetrieveFormattedLabelUseCase
+
 // FIXME: we need to refactor those as well
 interface OtherResourceUseCases :
     MarkAsVerifiedUseCase,

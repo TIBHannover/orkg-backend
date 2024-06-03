@@ -14,6 +14,7 @@ dependencies {
     testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi("org.springframework.boot:spring-boot-test-autoconfigure")
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
+    testFixturesApi("org.springframework.security:spring-security-config")
     testFixturesApi("org.springframework.security:spring-security-core")
     testFixturesApi("org.springframework.security:spring-security-test")
     testFixturesApi("org.springframework:spring-beans")

@@ -7,7 +7,6 @@ plugins {
 
 dependencies {
     api(project(":common"))
-    api(project(":community:community-adapter-output-spring-data-jpa")) // TODO: break dependency
     api(project(":community:community-ports-input"))
     api(project(":community:community-ports-output"))
     api(project(":graph:graph-core-model"))

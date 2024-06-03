@@ -1,8 +1,8 @@
 package org.orkg.common.neo4jdsl
 
 import java.time.OffsetDateTime
+import java.util.*
 import java.util.stream.Collectors
-import org.orkg.common.ContributorId
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
@@ -27,7 +27,7 @@ fun Sort.Order.toNeo4jSnippet(): String = buildString {
     append(" ").append(direction)
 }
 
-fun StringBuilder.appendOrderByOptimizations(pageable: Pageable, createdAt: OffsetDateTime?, createdBy: ContributorId?) {
+fun StringBuilder.appendOrderByOptimizations(pageable: Pageable, createdAt: OffsetDateTime?, createdBy: UUID?) {
     val properties = pageable.sort.map { it.property }
 
     if (createdAt == null && "created_at" in properties) {

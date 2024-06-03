@@ -64,4 +64,6 @@ class SpringJpaPostgresObservatoryAdapter(
         userRepository.findAllByObservatoryId(id.value, pageable).map(UserEntity::toUser).map(User::toContributor)
 
     override fun count(): Long = postgresRepository.count()
+
+    override fun existsById(id: ObservatoryId): Boolean = postgresRepository.existsById(id.value)
 }

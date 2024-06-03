@@ -142,6 +142,7 @@ dependencies {
     runtimeOnly(project(":common:serialization"))
 
     runtimeOnly(project(":community:community-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":community:community-adapter-input-rest-spring-mvc-legacy"))
     implementation(project(":community:community-ports-input"))
     implementation(project(":community:community-core-model"))
     runtimeOnly(project(":community:community-core-services"))

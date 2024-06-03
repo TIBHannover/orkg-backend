@@ -55,13 +55,10 @@ dependencies {
     api(project(":community:community-ports-output")) // uses repository directly
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
-    api(project(":identity-management:idm-ports-input")) // in legacy controller, TODO: break dependency
     api(project(":media-storage:media-storage-ports-input"))
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(libs.javax.activation)
-    implementation(project(":community:community-adapter-output-spring-data-jpa")) // for User.toContributor, TODO: break dependency
-    implementation(project(":identity-management:idm-core-model"))
     implementation(project(":media-storage:media-storage-core-model"))
     testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")

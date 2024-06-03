@@ -79,7 +79,7 @@ class SpringDataNeo4jLiteralAdapter(
             if (createdAt != null) {
                 append(" AND n.created_at = ${'$'}createdAt")
             }
-            appendOrderByOptimizations(pageable, createdAt, createdBy)
+            appendOrderByOptimizations(pageable, createdAt, createdBy?.value)
         }.replaceFirst(" AND", "WHERE")
         val query = """
             MATCH (n:Literal) $where

@@ -1,6 +1,7 @@
 package org.orkg.community.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
@@ -14,6 +15,7 @@ import org.orkg.common.OrganizationId
  * in all places were user data needs to be displayed. It should never expose sensitive information, such as the
  * user's email address.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Contributor(
     /**
      * The user's ID.

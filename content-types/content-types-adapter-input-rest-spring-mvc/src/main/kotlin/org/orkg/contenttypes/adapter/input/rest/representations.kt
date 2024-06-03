@@ -217,14 +217,14 @@ data class AuthorDTO(
     @field:NotBlank
     val name: String,
     @field:Valid
-    val identifiers: Map<String, List<String>>?,
+    val identifiers: IdentifierMapDTO?,
     val homepage: URI?
 ) {
     fun toAuthor(): Author =
         Author(
             id = id,
             name = name,
-            identifiers = identifiers,
+            identifiers = identifiers?.values,
             homepage = homepage
         )
 }

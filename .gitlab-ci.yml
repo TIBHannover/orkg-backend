@@ -45,7 +45,7 @@ build:
   cache:
     <<: *gradle_cache_settings
   script:
-    - git version
+    - apt-get update && apt-get install --assume-yes git
     - ./gradlew --build-cache build
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
   artifacts:

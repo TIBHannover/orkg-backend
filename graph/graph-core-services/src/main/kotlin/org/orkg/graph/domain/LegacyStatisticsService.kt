@@ -74,7 +74,7 @@ class LegacyStatisticsService(
         legacyStatisticsRepository.findAllObservatoryStats(pageable)
 
     override fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats {
-        if (!observatoryRepository.findById(id).isPresent) {
+        if (!observatoryRepository.existsById(id)) {
             throw ObservatoryNotFound(id)
         }
         return legacyStatisticsRepository.findObservatoryStatsById(id).orElseGet { ObservatoryStats(id) }

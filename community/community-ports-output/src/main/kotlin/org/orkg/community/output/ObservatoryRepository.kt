@@ -33,4 +33,6 @@ interface ObservatoryRepository {
     fun allMembers(id: ObservatoryId, pageable: Pageable): Page<Contributor>
 
     fun count(): Long
+
+    fun existsById(id: ObservatoryId): Boolean
 }

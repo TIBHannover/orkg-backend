@@ -179,3 +179,7 @@ data class ResourcePropertyRequest(
     override fun toTemplatePropertyDefinition(): TemplatePropertyDefinition =
         ResourcePropertyDefinition(label, placeholder, description, minCount, maxCount, path, `class`)
 }
+
+data class IdentifierMapDTO(
+    val values: Map<String, List<String>>
+)

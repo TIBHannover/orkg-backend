@@ -27,6 +27,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
@@ -62,7 +63,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [LiteratureListController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [LiteratureListController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LiteratureListController::class])
 @DisplayName("Given a LiteratureList controller")
 internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists") {
@@ -497,13 +498,13 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                 AuthorDTO(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
                     homepage = null
                 ),
                 AuthorDTO(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
                     homepage = null
                 ),
                 AuthorDTO(
@@ -550,13 +551,13 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                 AuthorDTO(
                     id = null,
                     name = "Author with orcid",
-                    identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
                     homepage = null
                 ),
                 AuthorDTO(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
-                    identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
                     homepage = null
                 ),
                 AuthorDTO(

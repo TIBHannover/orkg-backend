@@ -19,6 +19,7 @@ dependencies {
     api("org.springframework:spring-test:5.3.22!!")
     api("org.springframework.data:spring-data-neo4j:6.3.16!!")
     api("org.apache.lucene:lucene-queryparser:9.5.0")
+    api("net.datafaker:datafaker:1.7.0")
     api("com.epages:restdocs-api-spec:0.16.4")
     api("org.springframework.boot:spring-boot-autoconfigure:2.7.8!!") // mis-alignment in tests; required for Neo4j Migrations
     // Related to capability resolution:

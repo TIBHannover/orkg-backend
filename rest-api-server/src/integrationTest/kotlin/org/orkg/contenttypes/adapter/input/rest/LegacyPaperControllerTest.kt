@@ -13,9 +13,6 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase.LegacyCreatePaperRequest
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase.PaperDefinition
 import org.orkg.contenttypes.input.LegacyPaperUseCases
-import org.orkg.createClasses
-import org.orkg.createPredicate
-import org.orkg.createResource
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
@@ -24,6 +21,9 @@ import org.orkg.graph.input.CreateObjectUseCase.ObjectStatement
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.fixtures.createClasses
+import org.orkg.graph.testing.fixtures.createPredicate
+import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.TestWithMockUser

@@ -2,7 +2,7 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.gradle.kotlin-library")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
 }
 
 dependencies {
@@ -13,4 +13,8 @@ dependencies {
     api(project(":identity-management:idm-core-model")) // for LegacyController/UseCases, TODO: break dependency
     api(project(":media-storage:media-storage-core-model"))
     implementation(project(":graph:graph-core-model"))
+
+    testFixturesApi(project(":common"))
+    testFixturesApi(project(":community:community-core-model"))
+    testFixturesApi(project(":media-storage:media-storage-core-model")) // transitive
 }

@@ -9,10 +9,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.createClass
-import org.orkg.createLiteral
-import org.orkg.createPredicate
-import org.orkg.createResource
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
@@ -20,6 +16,10 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.fixtures.createClass
+import org.orkg.graph.testing.fixtures.createLiteral
+import org.orkg.graph.testing.fixtures.createPredicate
+import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.TestWithMockUser

@@ -1,0 +1,3 @@
+logging:
+  level:
+    org.neo4j.ogm.drivers.embedded.request.EmbeddedRequest: DEBUG

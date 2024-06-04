@@ -5,8 +5,8 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.createLiteral
 import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest

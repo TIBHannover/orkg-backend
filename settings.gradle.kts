@@ -106,4 +106,7 @@ include(
     "statistics:statistics-adapter-output-spring-data-neo4j-sdn6",
 )
 include("widget")
-include("rest-api-server")
+include(
+    "rest-api-server",
+    "rest-api-server:data-init",
+)

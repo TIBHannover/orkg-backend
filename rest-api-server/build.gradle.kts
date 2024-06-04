@@ -59,12 +59,15 @@ testing {
                     // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
                     // exclude(module = "mockito-core")
                 }
+                implementation(project(":common"))
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-test")
-                implementation(project(":common:serialization"))
                 implementation("org.apache.tomcat:tomcat-annotations-api")
                 implementation("org.springframework.boot:spring-boot-test")
+                implementation("org.springframework:spring-beans")
+                implementation(libs.jackson.core)
+                implementation(libs.jackson.databind)
             }
         }
         val integrationTest by registering(JvmTestSuite::class) {
@@ -76,11 +79,18 @@ testing {
                 implementation(project(":graph:graph-core-services"))
                 implementation(project(":graph:graph-ports-output"))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
+                implementation(testFixtures(project(":graph:graph-ports-input")))
+                implementation(testFixtures(project(":community:community-ports-input")))
+                implementation(testFixtures(project(":identity-management:idm-ports-input")))
                 implementation(project(":content-types:content-types-ports-output"))
                 implementation(project(":identity-management:idm-ports-output"))
                 implementation(project(":identity-management:idm-core-model"))
                 implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter
                 implementation(project(":community:community-ports-output")) // for CuratorRepository
+                implementation(project(":community:community-core-model"))
+                implementation(project(":community:community-ports-input"))
+                implementation(project(":identity-management:idm-ports-input"))
+                implementation(project(":media-storage:media-storage-core-model"))
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
                 implementation(project(":feature-flags:feature-flags-ports"))
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
@@ -102,7 +112,6 @@ testing {
                 implementation("jakarta.persistence:jakarta.persistence-api")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.hibernate:hibernate-core:5.4.32.Final")
-                implementation("org.springframework.boot:spring-boot")
                 implementation("org.springframework.data:spring-data-commons")
                 implementation("org.springframework:spring-core")
                 implementation("org.springframework:spring-web")
@@ -138,15 +147,14 @@ dependencies {
     implementation(kotlin("stdlib")) // "downgrade" from api()
 
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
-    implementation(project(":common"))
+    runtimeOnly(project(":rest-api-server:data-init"))
+
     runtimeOnly(project(":common:serialization"))
 
     runtimeOnly(project(":community:community-adapter-input-rest-spring-mvc"))
     runtimeOnly(project(":community:community-adapter-input-rest-spring-mvc-legacy"))
-    implementation(project(":community:community-ports-input"))
-    implementation(project(":community:community-core-model"))
+    runtimeOnly(project(":community:community-core-model"))
     runtimeOnly(project(":community:community-core-services"))
-    implementation(project(":community:community-ports-output"))
     runtimeOnly(project(":community:community-adapter-output-spring-data-jpa"))
 
     runtimeOnly(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
@@ -154,8 +162,6 @@ dependencies {
     runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
     runtimeOnly(project(":content-types:content-types-adapter-output-web"))
     runtimeOnly(project(":content-types:content-types-core-services"))
-    implementation(project(":content-types:content-types-ports-input"))
-    runtimeOnly(project(":content-types:content-types-ports-output"))
 
     runtimeOnly(project(":data-export:data-export-adapters"))
     runtimeOnly(project(":data-export:data-export-core"))
@@ -165,17 +171,13 @@ dependencies {
     runtimeOnly(project(":discussions:discussions-core-services"))
     runtimeOnly(project(":discussions:discussions-adapter-output-spring-data-jpa"))
 
-    implementation(project(":feature-flags:feature-flags-ports")) // for cache warmup
     runtimeOnly(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
 
     runtimeOnly(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
-    implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-core-services"))
-    implementation(project(":graph:graph-ports-input"))
-    implementation(project(":graph:graph-ports-output"))
+    runtimeOnly(project(":graph:graph-core-model"))
+    runtimeOnly(project(":graph:graph-core-services"))
 
-    implementation(project(":identity-management:idm-ports-input")) // for PostgresDummyDataSetup
     runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))
     runtimeOnly(project(":identity-management:idm-core-services"))
     runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
@@ -189,9 +191,7 @@ dependencies {
 
     runtimeOnly(project(":media-storage:media-storage-adapter-input-serialization"))
     runtimeOnly(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
-    implementation(project(":media-storage:media-storage-core-model"))
-    runtimeOnly(project(":media-storage:media-storage-ports-input"))
-    runtimeOnly(project(":media-storage:media-storage-ports-output"))
+    runtimeOnly(project(":media-storage:media-storage-core-model"))
     runtimeOnly(project(":media-storage:media-storage-core-services"))
 
     runtimeOnly(project(":profiling:profiling-adapter-output"))
@@ -211,23 +211,17 @@ dependencies {
 
     // Direct transitive dependencies
     implementation("org.apache.tomcat.embed:tomcat-embed-core")
-    implementation("org.neo4j.driver:neo4j-java-driver")
     implementation("org.slf4j:slf4j-api")
     implementation("org.springframework.boot:spring-boot-actuator-autoconfigure")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework.boot:spring-boot")
-    implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework.security:spring-security-config")
     implementation("org.springframework.security:spring-security-core")
     implementation("org.springframework.security:spring-security-web")
-    implementation("org.springframework:spring-beans")
     implementation("org.springframework:spring-context-support")
     implementation("org.springframework:spring-context")
     implementation("org.springframework:spring-core")
     implementation("org.springframework:spring-web")
-    implementation(libs.jackson.core)
-    implementation(libs.jackson.databind)
-    implementation(libs.jakarta.validation)
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -243,17 +237,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("org.springframework.data:spring-data-neo4j")
     implementation(libs.spring.boot.starter.neo4j.migrations)
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // File uploads
     runtimeOnly("commons-fileupload:commons-fileupload:1.5")
     // Caching
     runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
     runtimeOnly("com.github.ben-manes.caffeine:caffeine")
     implementation("io.github.stepio.coffee-boots:coffee-boots:3.0.0")
-    // Data Faker
-    implementation("net.datafaker:datafaker:1.7.0")
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly("org.jolokia:jolokia-core")
@@ -267,14 +257,10 @@ dependencies {
     "integrationTestApi"("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
     "integrationTestApi"("org.springframework.security:spring-security-test")
     "integrationTestApi"(project(":common"))
-    "integrationTestApi"(project(":community:community-core-model"))
-    "integrationTestApi"(project(":community:community-ports-input"))
     "integrationTestApi"(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
     "integrationTestApi"(project(":content-types:content-types-ports-input"))
     "integrationTestApi"(project(":graph:graph-core-model"))
     "integrationTestApi"(project(":graph:graph-ports-input"))
-    "integrationTestApi"(project(":identity-management:idm-ports-input"))
-    "integrationTestApi"(project(":media-storage:media-storage-core-model"))
     "integrationTestApi"(testFixtures(project(":testing:spring")))
     "integrationTestApi"("com.fasterxml.jackson.core:jackson-annotations")
     "integrationTestApi"("org.junit.jupiter:junit-jupiter-api")

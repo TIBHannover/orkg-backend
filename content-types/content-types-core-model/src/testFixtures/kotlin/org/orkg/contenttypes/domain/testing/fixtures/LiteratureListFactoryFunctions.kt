@@ -123,15 +123,20 @@ fun createDummyListSection(): ListSection =
     ListSection(
         id = ThingId("R456351"),
         entries = listOf(
-            ResourceReference(
-                id = ThingId("R154686"),
-                label = "Paper",
-                classes = setOf(Classes.paper)
+            ListSection.Entry(
+                ResourceReference(
+                    id = ThingId("R154686"),
+                    label = "Paper",
+                    classes = setOf(Classes.paper)
+                ),
+                "paper entry description"
             ),
-            ResourceReference(
-                id = ThingId("R6416"),
-                label = "Comparison",
-                classes = setOf(Classes.comparison)
+            ListSection.Entry(
+                ResourceReference(
+                    id = ThingId("R6416"),
+                    label = "Comparison",
+                    classes = setOf(Classes.comparison)
+                )
             )
         )
     )
@@ -145,20 +150,28 @@ fun LiteratureListSection.toGroupedStatements(): Map<ThingId, List<GeneralStatem
 fun ListSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
     val statements = mutableSetOf<GeneralStatement>()
     val root = createResource(id)
-    entries.forEachIndexed { index, `object` ->
-        val entry = createResource(ThingId("R$index"))
+    entries.forEachIndexed { index, entry ->
+        val value = createResource(ThingId("R$index"))
         statements += createStatement(
             id = StatementId("S$index"),
             subject = root,
             predicate = createPredicate(Predicates.hasEntry),
-            `object` = entry
+            `object` = value
         )
         statements += createStatement(
-            id = StatementId("S${index}_${entries.size}"),
-            subject = entry,
+            id = StatementId("S${index}_2"),
+            subject = value,
             predicate = createPredicate(Predicates.hasLink),
-            `object` = createResource(`object`.id, classes = `object`.classes)
+            `object` = createResource(entry.value.id, classes = entry.value.classes)
         )
+        entry.description?.let { description ->
+            statements += createStatement(
+                id = StatementId("S${index}_3"),
+                subject = value,
+                predicate = createPredicate(Predicates.description),
+                `object` = createLiteral(ThingId("L${index}_3"), description)
+            )
+        }
     }
     return statements.groupBy { it.subject.id }
 }

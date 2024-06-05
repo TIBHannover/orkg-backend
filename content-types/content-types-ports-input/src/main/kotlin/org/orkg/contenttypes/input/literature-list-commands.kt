@@ -37,7 +37,7 @@ interface CreateLiteratureListSectionUseCase {
     data class CreateListSectionCommand(
         override val contributorId: ContributorId,
         override val literatureListId: ThingId,
-        override val entries: List<ThingId>
+        override val entries: List<ListSectionDefinition.Entry>
     ) : CreateCommand, ListSectionDefinition
 
     data class CreateTextSectionCommand(
@@ -79,7 +79,7 @@ interface UpdateLiteratureListSectionUseCase {
         override val literatureListSectionId: ThingId,
         override val contributorId: ContributorId,
         override val literatureListId: ThingId,
-        override val entries: List<ThingId>
+        override val entries: List<ListSectionDefinition.Entry>
     ) : UpdateCommand, ListSectionDefinition
 
     data class UpdateTextSectionCommand(
@@ -97,10 +97,15 @@ sealed interface LiteratureListSectionDefinition {
 }
 
 interface ListSectionDefinition : LiteratureListSectionDefinition {
-    val entries: List<ThingId>
+    val entries: List<Entry>
+
+    data class Entry(
+        val id: ThingId,
+        val description: String? = null
+    )
 
     override fun matchesListSection(section: LiteratureListSection): Boolean =
-        section is ListSection && section.entries.map { it.id } == entries
+        section is ListSection && section.entries.map { Entry(it.value.id, it.description) } == entries
 }
 
 interface TextSectionDefinition : LiteratureListSectionDefinition {
@@ -116,7 +121,7 @@ interface TextSectionDefinition : LiteratureListSectionDefinition {
 sealed interface LiteratureListSectionCommand
 
 data class ListSectionCommand(
-    override val entries: List<ThingId>
+    override val entries: List<ListSectionDefinition.Entry>
 ) : LiteratureListSectionCommand, ListSectionDefinition
 
 data class TextSectionCommand(

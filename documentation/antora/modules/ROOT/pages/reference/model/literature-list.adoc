@@ -43,6 +43,7 @@ flowchart LR
 		subgraph List Section
 			listSection --> |"HasEntry"| entry[Resource]
 			entry --> |"HasLink"| any[Any \n Resource]
+            entry --> |"description"| entryDescription[Literal \n xsd:string]
 		end
 	end
 	LiteratureList --> |"sustainableDevelopmentGoal"| sdg[SustainableDevelopmentGoal \n Resource]

@@ -78,7 +78,8 @@ class AbstractLiteratureListSectionDeleterUnitTest {
                 StatementId("S0"),
                 StatementId("S1"),
                 StatementId("S0_2"),
-                StatementId("S1_2")
+                StatementId("S1_2"),
+                StatementId("S0_3")
             ))
         }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
@@ -158,7 +159,8 @@ class AbstractLiteratureListSectionDeleterUnitTest {
                 StatementId("S0"),
                 StatementId("S1"),
                 StatementId("S0_2"),
-                StatementId("S1_2")
+                StatementId("S1_2"),
+                StatementId("S0_3")
             ))
         }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }

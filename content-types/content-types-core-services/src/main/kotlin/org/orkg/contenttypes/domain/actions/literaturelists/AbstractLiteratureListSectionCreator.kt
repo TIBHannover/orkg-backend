@@ -28,6 +28,40 @@ class AbstractLiteratureListSectionCreator(
             is TextSectionDefinition -> createTextSection(contributorId, section)
         }
 
+    internal fun createListSectionEntry(
+        contributorId: ContributorId,
+        entry: ListSectionDefinition.Entry
+    ): ThingId {
+        val entryId = resourceService.createUnsafe(
+            CreateResourceUseCase.CreateCommand(
+                label = "Entry",
+                classes = setOf(Classes.listSection),
+                contributorId = contributorId
+            )
+        )
+        statementService.add(
+            userId = contributorId,
+            subject = entryId,
+            predicate = Predicates.hasLink,
+            `object` = entry.id
+        )
+        entry.description?.let { description ->
+            val descriptionLiteral = literalService.create(
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    label = description
+                )
+            )
+            statementService.add(
+                userId = contributorId,
+                subject = entryId,
+                predicate = Predicates.description,
+                `object` = descriptionLiteral
+            )
+        }
+        return entryId
+    }
+
     private fun createListSection(
         contributorId: ContributorId,
         section: ListSectionDefinition
@@ -40,24 +74,12 @@ class AbstractLiteratureListSectionCreator(
             )
         )
         section.entries.forEach {
-            val entryId = resourceService.createUnsafe(
-                CreateResourceUseCase.CreateCommand(
-                    label = "Entry",
-                    classes = setOf(Classes.listSection),
-                    contributorId = contributorId
-                )
-            )
+            val entryId = createListSectionEntry(contributorId, it)
             statementService.add(
                 userId = contributorId,
                 subject = sectionId,
                 predicate = Predicates.hasEntry,
                 `object` = entryId
-            )
-            statementService.add(
-                userId = contributorId,
-                subject = entryId,
-                predicate = Predicates.hasLink,
-                `object` = it
             )
         }
         return sectionId

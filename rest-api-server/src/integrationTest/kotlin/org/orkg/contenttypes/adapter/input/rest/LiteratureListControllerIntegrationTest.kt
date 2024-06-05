@@ -274,8 +274,14 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
             it.sections[1].shouldBeInstanceOf<ListSectionRepresentation>().asClue { section ->
                 section.id shouldNotBe null
                 section.entries shouldBe listOf(
-                    ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
-                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
+                    ListSectionRepresentation.EntryRepresentation(
+                        ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
+                        "example description"
+                    ),
+                    ListSectionRepresentation.EntryRepresentation(
+                        ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
+                        null
+                    )
                 )
             }
         }
@@ -347,9 +353,18 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
             it.sections[1].shouldBeInstanceOf<ListSection>().asClue { section ->
                 section.id shouldNotBe null
                 section.entries shouldBe listOf(
-                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
-                    ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
-                    ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset)),
+                    ListSection.Entry(
+                        ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
+                        "new description"
+                    ),
+                    ListSection.Entry(
+                        ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
+                        null
+                    ),
+                    ListSection.Entry(
+                        ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset)),
+                        "updated example description"
+                    )
                 )
             }
         }
@@ -420,9 +435,18 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
         literatureList.sections.last().shouldBeInstanceOf<ListSection>().asClue {
             it.id shouldNotBe null
             it.entries shouldBe listOf(
-                ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(ThingId("Dataset"))),
-                ResourceReference(ThingId("R3004"), "Some other resource", setOf(ThingId("Software"))),
-                ResourceReference(ThingId("R3003"), "Some resource", setOf(ThingId("Paper")))
+                ListSection.Entry(
+                    ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(ThingId("Dataset"))),
+                    "example description"
+                ),
+                ListSection.Entry(
+                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(ThingId("Software"))),
+                    null
+                ),
+                ListSection.Entry(
+                    ResourceReference(ThingId("R3003"), "Some resource", setOf(ThingId("Paper"))),
+                    null
+                )
             )
         }
 
@@ -442,9 +466,18 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
         updatedLiteratureList.sections.last().shouldBeInstanceOf<ListSection>().asClue {
             it.id shouldBe literatureListSectionId
             it.entries shouldBe listOf(
-                ResourceReference(ThingId("R3003"), "Some resource", setOf(ThingId("Paper"))),
-                ResourceReference(ThingId("R3004"), "Some other resource", setOf(ThingId("Software"))),
-                ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(ThingId("Dataset")))
+                ListSection.Entry(
+                    ResourceReference(ThingId("R3003"), "Some resource", setOf(ThingId("Paper"))),
+                    null
+                ),
+                ListSection.Entry(
+                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(ThingId("Software"))),
+                    "new description"
+                ),
+                ListSection.Entry(
+                    ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(ThingId("Dataset"))),
+                    "updated example description"
+                )
             )
         }
     }
@@ -513,8 +546,14 @@ private const val createLiteratureListJson = """{
     },
     {
       "entries": [
-        "R3003",
-        "R3004"
+        {
+          "id": "R3003",
+          "description": "example description"
+        },
+        {
+          "id": "R3004",
+          "description": null
+        }
       ]
     }
   ]
@@ -567,9 +606,18 @@ private const val updateLiteratureListJson = """{
     },
     {
       "entries": [
-        "R3004",
-        "R3003",
-        "R3005"
+        {
+          "id": "R3004",
+          "description": "new description"
+        },
+        {
+          "id": "R3003",
+          "description": null
+        },
+        {
+          "id": "R3005",
+          "description": "updated example description"
+        }
       ]
     }
   ]
@@ -589,16 +637,34 @@ private const val updateTextSectionJson = """{
 
 private const val createListSectionJson = """{
   "entries": [
-    "R3005",
-    "R3004",
-    "R3003"
+    {
+      "id": "R3005",
+      "description": "example description"
+    },
+    {
+      "id": "R3004",
+      "description": null
+    },
+    {
+      "id": "R3003",
+      "description": null
+    }
   ]
 }"""
 
 private const val updateListSectionJson = """{
   "entries": [
-    "R3003",
-    "R3004",
-    "R3005"
+    {
+      "id": "R3003",
+      "description": null
+    },
+    {
+      "id": "R3004",
+      "description": "new description"
+    },
+    {
+      "id": "R3005",
+      "description": "updated example description"
+    }
   ]
 }"""

@@ -17,13 +17,16 @@ import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyListSection
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTextSection
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
+import org.orkg.contenttypes.domain.wherePredicate
 import org.orkg.contenttypes.input.ListSectionCommand
+import org.orkg.contenttypes.input.ListSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.toDefinitionEntry
 import org.orkg.contenttypes.input.testing.fixtures.toListSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.toTextSectionDefinition
+import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
-import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -31,10 +34,11 @@ import org.orkg.graph.input.UpdateResourceUseCase
 class AbstractLiteratureListSectionUpdaterUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
+    private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater = mockk()
 
     private val abstractLiteratureListSectionUpdater = AbstractLiteratureListSectionUpdater(
-        statementService, resourceService, singleStatementPropertyUpdater
+        statementService, resourceService, abstractLiteratureListSectionCreator, singleStatementPropertyUpdater
     )
 
     @BeforeEach
@@ -44,7 +48,12 @@ class AbstractLiteratureListSectionUpdaterUnitTest {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(statementService, resourceService, singleStatementPropertyUpdater)
+        confirmVerified(
+            statementService,
+            resourceService,
+            abstractLiteratureListSectionCreator,
+            singleStatementPropertyUpdater
+        )
     }
 
     @Test
@@ -85,20 +94,23 @@ class AbstractLiteratureListSectionUpdaterUnitTest {
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S0"), StatementId("S0_2"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S0"), StatementId("S0_2"), StatementId("S0_3"))) }
         verify(exactly = 1) { resourceService.delete(ThingId("R0"), contributorId) }
     }
 
     @Test
-    fun `Given a list section, when an entry has been added to the beginning of the list, it creates a new hasEntry and hasLink statement and reassigns existing entry nodes`() {
+    fun `Given a list section, when an entry has been added to the beginning of the list, it creates a new entry node and reassigns existing entry nodes`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldSection = createDummyListSection()
-        val newSection = oldSection.toListSectionDefinition().copy(entries = listOf(ThingId("R789")) + oldSection.entries.map { it.id })
+        val newSection = oldSection.toListSectionDefinition().copy(
+            entries = listOf(ListSectionDefinition.Entry(ThingId("R789"))) + oldSection.entries.map { it.toDefinitionEntry() }
+        )
         val statements = oldSection.toGroupedStatements()
         val entryId = ThingId("R1564")
 
-        every { resourceService.createUnsafe(any()) } returns entryId
+        every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
         every { statementService.add(any(), any(), any(), any()) } just runs
+        every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
         every { statementService.delete(any<Set<StatementId>>()) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
@@ -112,6 +124,15 @@ class AbstractLiteratureListSectionUpdaterUnitTest {
             )
         }
         verify(exactly = 1) {
+            singleStatementPropertyUpdater.updateOptionalProperty(
+                statements = statements[ThingId("R0")]!!.wherePredicate(Predicates.description),
+                contributorId = contributorId,
+                subjectId = ThingId("R0"),
+                predicateId = Predicates.description,
+                label = null
+            )
+        }
+        verify(exactly = 1) {
             statementService.add(
                 userId = contributorId,
                 subject = ThingId("R1"),
@@ -119,9 +140,21 @@ class AbstractLiteratureListSectionUpdaterUnitTest {
                 `object` = ThingId("R154686")
             )
         }
+        verify(exactly = 1) {
+            singleStatementPropertyUpdater.updateOptionalProperty(
+                statements = statements[ThingId("R1")]!!.wherePredicate(Predicates.description),
+                contributorId = contributorId,
+                subjectId = ThingId("R1"),
+                predicateId = Predicates.description,
+                label = "paper entry description"
+            )
+        }
         verify(exactly = 1) { statementService.delete(setOf(StatementId("S0_2"), StatementId("S1_2"))) }
         verify(exactly = 1) {
-            resourceService.createUnsafe(CreateResourceUseCase.CreateCommand(contributorId = contributorId, label = "Entry"))
+            abstractLiteratureListSectionCreator.createListSectionEntry(
+                contributorId = contributorId,
+                entry = oldSection.entries.last().toDefinitionEntry()
+            )
         }
         verify(exactly = 1) {
             statementService.add(
@@ -131,31 +164,26 @@ class AbstractLiteratureListSectionUpdaterUnitTest {
                 `object` = entryId
             )
         }
-        verify(exactly = 1) {
-            statementService.add(
-                userId = contributorId,
-                subject = entryId,
-                predicate = Predicates.hasLink,
-                `object` = ThingId("R6416")
-            )
-        }
     }
 
     @Test
-    fun `Given a list section, when an entry has been added to the end of the list, it creates a new hasEntry and hasLink statement`() {
+    fun `Given a list section, when an entry has been added to the end of the list, it creates new a section entry`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldSection = createDummyListSection()
-        val newSection = oldSection.toListSectionDefinition().copy(entries = oldSection.entries.map { it.id } + ThingId("R789"))
+        val newEntry = ListSectionDefinition.Entry(ThingId("R789"))
+        val newSection = oldSection.toListSectionDefinition().copy(
+            entries = oldSection.entries.map { it.toDefinitionEntry() } + newEntry
+        )
         val statements = oldSection.toGroupedStatements()
         val entryId = ThingId("R1564")
 
-        every { resourceService.createUnsafe(any()) } returns entryId
+        every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
         every { statementService.add(any(), any(), any(), any()) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            resourceService.createUnsafe(CreateResourceUseCase.CreateCommand(contributorId = contributorId, label = "Entry"))
+            abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, newEntry)
         }
         verify(exactly = 1) {
             statementService.add(
@@ -165,32 +193,26 @@ class AbstractLiteratureListSectionUpdaterUnitTest {
                 `object` = entryId
             )
         }
-        verify(exactly = 1) {
-            statementService.add(
-                userId = contributorId,
-                subject = entryId,
-                predicate = Predicates.hasLink,
-                `object` = ThingId("R789")
-            )
-        }
     }
 
     @Test
-    fun `Given a list section, when an entry has been inserted to the list, it reassigns updates the hasLink statement and creates a new hasEntry and hasLink statement`() {
+    fun `Given a list section, when an entry has been inserted to the list, it reuses the existing entry node and creates a new entry node for each entry after the new one`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldSection = createDummyListSection()
+        val entry = oldSection.entries.last().toDefinitionEntry()
         val newSection = ListSectionCommand(
             entries = listOf(
-                ThingId("R154686"),
-                ThingId("new"),
-                ThingId("R6416")
+                oldSection.entries.first().toDefinitionEntry(),
+                ListSectionDefinition.Entry(ThingId("new")),
+                entry
             )
         )
         val statements = oldSection.toGroupedStatements()
         val entryId = ThingId("R1564")
 
-        every { resourceService.createUnsafe(any()) } returns entryId
+        every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
         every { statementService.add(any(), any(), any(), any()) } just runs
+        every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
         every { statementService.delete(any<Set<StatementId>>()) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
@@ -205,7 +227,7 @@ class AbstractLiteratureListSectionUpdaterUnitTest {
         }
         verify(exactly = 1) { statementService.delete(setOf(StatementId("S1_2"))) }
         verify(exactly = 1) {
-            resourceService.createUnsafe(CreateResourceUseCase.CreateCommand(contributorId = contributorId, label = "Entry"))
+            abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, entry)
         }
         verify(exactly = 1) {
             statementService.add(
@@ -216,11 +238,39 @@ class AbstractLiteratureListSectionUpdaterUnitTest {
             )
         }
         verify(exactly = 1) {
-            statementService.add(
-                userId = contributorId,
-                subject = entryId,
-                predicate = Predicates.hasLink,
-                `object` = ThingId("R6416")
+            singleStatementPropertyUpdater.updateOptionalProperty(
+                statements = emptyList(),
+                contributorId = contributorId,
+                subjectId = ThingId("R1"),
+                predicateId = Predicates.description,
+                label = null
+            )
+        }
+    }
+
+    @Test
+    fun `Given a list section, when description of an entry changes, it only updates the description`() {
+        val contributorId = ContributorId(UUID.randomUUID())
+        val oldSection = createDummyListSection()
+        val newSection = ListSectionCommand(
+            entries = listOf(
+                oldSection.entries.first().toDefinitionEntry(),
+                oldSection.entries.last().toDefinitionEntry().copy(description = "updated description")
+            )
+        )
+        val statements = oldSection.toGroupedStatements()
+
+        every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
+
+        abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
+
+        verify(exactly = 1) {
+            singleStatementPropertyUpdater.updateOptionalProperty(
+                statements = emptyList(),
+                contributorId = contributorId,
+                subjectId = ThingId("R1"),
+                predicateId = Predicates.description,
+                label = "updated description"
             )
         }
     }

@@ -22,13 +22,16 @@ class AbstractLiteratureListSectionValidator(
 ) {
     internal fun validate(section: LiteratureListSectionDefinition, validIds: MutableSet<ThingId>) {
         if (section is ListSectionDefinition) {
-            section.entries.forEach {
-                if (it !in validIds) {
-                    val resource = resourceRepository.findById(it).orElseThrow { ResourceNotFound.withId(it) }
+            section.entries.forEach { entry ->
+                entry.description?.let { description ->
+                    Description.ofOrNull(description) ?: throw InvalidDescription("description")
+                }
+                if (entry.id !in validIds) {
+                    val resource = resourceRepository.findById(entry.id).orElseThrow { ResourceNotFound.withId(entry.id) }
                     if (allowedListSectionEntryClasses.intersect(resource.classes).isEmpty()) {
-                        throw InvalidListSectionEntry(it, allowedListSectionEntryClasses)
+                        throw InvalidListSectionEntry(entry.id, allowedListSectionEntryClasses)
                     }
-                    validIds += it
+                    validIds += entry.id
                 }
             }
         } else if (section is TextSectionDefinition) {

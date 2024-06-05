@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.input.ListSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyListSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyTextSectionDefinition
 import org.orkg.graph.domain.Classes
@@ -43,10 +44,120 @@ class AbstractLiteratureListSectionCreatorUnitTest {
     }
 
     @Test
-    fun `Given a list section definition, when creating, it returns success`() {
+    fun `Given a list section definition, when creating a section entry with a description, it returns success`() {
+        val entry = ThingId("R2315")
+        val description = "test description"
+        val section = dummyListSectionDefinition().copy(
+            entries = listOf(ListSectionDefinition.Entry(entry, description))
+        )
+        val contributorId = ContributorId(UUID.randomUUID())
+        val sectionId = ThingId("R123")
+        val entryId = ThingId("R456")
+        val descriptionId = ThingId("L1")
+
+        every {
+            resourceService.createUnsafe(
+                CreateResourceUseCase.CreateCommand(
+                    label = "",
+                    classes = setOf(Classes.listSection),
+                    contributorId = contributorId
+                )
+            )
+        } returns sectionId
+        every {
+            resourceService.createUnsafe(
+                CreateResourceUseCase.CreateCommand(
+                    label = "Entry",
+                    classes = setOf(Classes.listSection),
+                    contributorId = contributorId
+                )
+            )
+        } returns entryId
+        every {
+            statementService.add(
+                userId = contributorId,
+                subject = sectionId,
+                predicate = Predicates.hasEntry,
+                `object` = entryId
+            )
+        } just runs
+        every {
+            statementService.add(
+                userId = contributorId,
+                subject = entryId,
+                predicate = Predicates.hasLink,
+                `object` = entry
+            )
+        } just runs
+        every { literalService.create(any()) } returns descriptionId
+        every {
+            statementService.add(
+                userId = contributorId,
+                subject = entryId,
+                predicate = Predicates.description,
+                `object` = descriptionId
+            )
+        } just runs
+
+        abstractLiteratureListSectionCreator.create(contributorId, section)
+
+        verify(exactly = 1) {
+            resourceService.createUnsafe(
+                CreateResourceUseCase.CreateCommand(
+                    label = "",
+                    classes = setOf(Classes.listSection),
+                    contributorId = contributorId
+                )
+            )
+        }
+        verify(exactly = 1) {
+            resourceService.createUnsafe(
+                CreateResourceUseCase.CreateCommand(
+                    label = "Entry",
+                    classes = setOf(Classes.listSection),
+                    contributorId = contributorId
+                )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = sectionId,
+                predicate = Predicates.hasEntry,
+                `object` = entryId
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = entryId,
+                predicate = Predicates.hasLink,
+                `object` = entry
+            )
+        }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    label = description
+                )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = entryId,
+                predicate = Predicates.description,
+                `object` = descriptionId
+            )
+        }
+    }
+
+    @Test
+    fun `Given a list section definition, when creating a section entry without a description, it returns success`() {
         val entry = ThingId("R2315")
         val section = dummyListSectionDefinition().copy(
-            entries = listOf(entry)
+            entries = listOf(ListSectionDefinition.Entry(entry))
         )
         val contributorId = ContributorId(UUID.randomUUID())
         val sectionId = ThingId("R123")

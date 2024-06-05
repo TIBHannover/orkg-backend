@@ -40,7 +40,10 @@ interface LiteratureListRepresentationAdapter : AuthorRepresentationAdapter, Ver
 
     private fun LiteratureListSection.toLiteratureListSectionRepresentation(): LiteratureListSectionRepresentation =
         when (this) {
-            is ListSection -> ListSectionRepresentation(id, entries)
+            is ListSection -> ListSectionRepresentation(id, entries.map { it.toEntryRepresentation() })
             is TextSection -> TextSectionRepresentation(id, heading, headingSize, text)
         }
+
+    private fun ListSection.Entry.toEntryRepresentation(): ListSectionRepresentation.EntryRepresentation =
+        ListSectionRepresentation.EntryRepresentation(value, description)
 }

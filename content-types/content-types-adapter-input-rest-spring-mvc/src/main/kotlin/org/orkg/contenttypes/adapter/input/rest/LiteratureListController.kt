@@ -20,6 +20,7 @@ import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.ListSectionCommand
+import org.orkg.contenttypes.input.ListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.TextSectionCommand
@@ -245,16 +246,28 @@ class LiteratureListController(
     }
 
     data class ListSectionRequest(
-        val entries: List<ThingId>
+        val entries: List<Entry>
     ) : LiteratureListSectionRequest {
+        data class Entry(
+            val id: ThingId,
+            val description: String? = null
+        ) {
+            fun toDefinitionEntry(): ListSectionDefinition.Entry =
+                ListSectionDefinition.Entry(id, description)
+        }
+
         override fun toLiteratureListSectionDefinition(): LiteratureListSectionDefinition =
-            ListSectionCommand(entries)
+            ListSectionCommand(entries.map { it.toDefinitionEntry() })
 
         override fun toCreateCommand(
             contributorId: ContributorId,
             literatureListId: ThingId
         ): CreateLiteratureListSectionUseCase.CreateCommand =
-            CreateLiteratureListSectionUseCase.CreateListSectionCommand(contributorId, literatureListId, entries)
+            CreateLiteratureListSectionUseCase.CreateListSectionCommand(
+                contributorId = contributorId,
+                literatureListId = literatureListId,
+                entries = entries.map { it.toDefinitionEntry() }
+            )
 
         override fun toUpdateCommand(
             literatureListSectionId: ThingId,
@@ -262,7 +275,7 @@ class LiteratureListController(
             literatureListId: ThingId
         ): UpdateLiteratureListSectionUseCase.UpdateCommand =
             UpdateLiteratureListSectionUseCase.UpdateListSectionCommand(
-                literatureListSectionId, contributorId, literatureListId, entries
+                literatureListSectionId, contributorId, literatureListId, entries.map { it.toDefinitionEntry() }
             )
     }
 

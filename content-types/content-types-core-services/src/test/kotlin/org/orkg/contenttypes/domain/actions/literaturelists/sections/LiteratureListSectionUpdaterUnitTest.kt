@@ -26,6 +26,7 @@ import org.orkg.contenttypes.input.ListSectionDefinition
 import org.orkg.contenttypes.input.TextSectionDefinition
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase.UpdateListSectionCommand
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.toDefinitionEntry
 
 class LiteratureListSectionUpdaterUnitTest {
     private val abstractLiteratureListSectionUpdater: AbstractLiteratureListSectionUpdater = mockk()
@@ -104,7 +105,7 @@ class LiteratureListSectionUpdaterUnitTest {
         )
         val command = oldSection.toUpdateListSectionCommand(contributorId, literatureList.id)
             .shouldBeInstanceOf<UpdateListSectionCommand>()
-            .copy(entries = listOf(ThingId("other")))
+            .copy(entries = listOf(ListSectionDefinition.Entry(ThingId("other"))))
 
         every { abstractLiteratureListSectionUpdater.updateListSection(any(), any(), any(), any()) } just runs
 
@@ -136,7 +137,7 @@ class LiteratureListSectionUpdaterUnitTest {
         literatureListSectionId = id,
         contributorId = contributorId,
         literatureListId = literatureListId,
-        entries = entries.map { it.id }
+        entries = entries.map { it.toDefinitionEntry() }
     )
 
     private fun TextSection.toUpdateTextSectionCommand(

@@ -27,6 +27,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.ListSectionRequest.Entry
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.input.ContributionUseCases
@@ -132,9 +133,11 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                         fieldWithPath("sections[].id").description("The id of the section."),
                         fieldWithPath("sections[].type").description("""The type of the section. Either of "text" or "list"."""),
                         fieldWithPath("sections[].entries").description("The linked resources of a list section.").optional(),
-                        fieldWithPath("sections[].entries[].id").description("The id of the linked resource.").optional(),
-                        fieldWithPath("sections[].entries[].label").description("The label of the linked resource.").optional(),
-                        fieldWithPath("sections[].entries[].classes").description("The classes of the linked resource.").optional(),
+                        fieldWithPath("sections[].entries[].value").description("The linked resource of the entry.").optional(),
+                        fieldWithPath("sections[].entries[].value.id").description("The id of the linked resource.").optional(),
+                        fieldWithPath("sections[].entries[].value.label").description("The label of the linked resource.").optional(),
+                        fieldWithPath("sections[].entries[].value.classes").description("The classes of the linked resource.").optional(),
+                        fieldWithPath("sections[].entries[].description").description("The description of the entry.").optional(),
                         fieldWithPath("sections[].heading").description("The heading of the text section.").optional(),
                         fieldWithPath("sections[].heading_size").description("The heading size of the text section.").optional(),
                         fieldWithPath("sections[].text").description("The text contents of the text section.").optional(),
@@ -302,7 +305,10 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         val literatureListId = ThingId("R3541")
         val id = ThingId("R123")
         val request = LiteratureListController.ListSectionRequest(
-            entries = listOf(ThingId("R123"), ThingId("R456"))
+            entries = listOf(
+                Entry(ThingId("R123")),
+                Entry(ThingId("R456"))
+            )
         )
         every { literatureListService.createSection(any()) } returns id
 
@@ -322,7 +328,9 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                         headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
                     ),
                     requestFields(
-                        fieldWithPath("entries").description("""The list of ids of resources that should be part of this section. Every resource must either be an instance of "Paper", "Dataset" or "Software".""")
+                        fieldWithPath("entries").description("""The list entries that should be part of this section."""),
+                        fieldWithPath("entries[].id").description("""The id of the linked resource. Every resource must either be an instance of "Paper", "Dataset" or "Software"."""),
+                        fieldWithPath("entries[].description").description("""The description of the entry. (optional)""")
                     )
                 )
             )
@@ -413,7 +421,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         val literatureListId = ThingId("R3541")
         val id = ThingId("R123")
         val request = LiteratureListController.ListSectionRequest(
-            entries = listOf(ThingId("R123"), ThingId("R456"))
+            entries = listOf(Entry(ThingId("R123")), Entry(ThingId("R456")))
         )
         every { literatureListService.updateSection(any()) } just runs
 
@@ -434,7 +442,9 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                         headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
                     ),
                     requestFields(
-                        fieldWithPath("entries").description("""The updated list of ids of resources that should be part of this section. Every resource must either be an instance of "Paper", "Dataset" or "Software".""")
+                        fieldWithPath("entries").description("""The list of updated entries that should be part of this section."""),
+                        fieldWithPath("entries[].id").description("""The id of the linked resource. Every resource must either be an instance of "Paper", "Dataset" or "Software"."""),
+                        fieldWithPath("entries[].description").description("""The description of the entry. (optional)""")
                     )
                 )
             )
@@ -608,7 +618,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         @JvmStatic
         private fun listSectionRequest() =
             LiteratureListController.ListSectionRequest(
-                entries = listOf(ThingId("R123"), ThingId("R456"))
+                entries = listOf(Entry(ThingId("R123")), Entry(ThingId("R456")))
             )
     }
 }

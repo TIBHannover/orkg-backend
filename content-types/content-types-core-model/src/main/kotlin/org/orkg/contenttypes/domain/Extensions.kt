@@ -39,7 +39,7 @@ fun List<GeneralStatement>.associateIdentifiers(identifiers: Set<Identifier>): M
             ?.let { identifier -> identifier.id to statement.`object` }
     }
         .groupBy({ it.first }, { it.second })
-        .mapValues { (_, value) -> value.sortedBy { it.id }.map { it.label }.distinct() }
+        .mapValues { (_, value) -> value.map { it.label }.distinct().sorted() }
 
 fun List<GeneralStatement>.withoutObjectsWithBlankLabels(): List<GeneralStatement> =
     filter { it.`object`.label.isNotBlank() }

@@ -457,8 +457,13 @@ sealed interface LiteratureListSectionRepresentation {
 @JsonTypeName("list")
 data class ListSectionRepresentation(
     override val id: ThingId,
-    val entries: List<ResourceReference>
-) : LiteratureListSectionRepresentation
+    val entries: List<EntryRepresentation>
+) : LiteratureListSectionRepresentation {
+    data class EntryRepresentation(
+        val value: ResourceReference,
+        val description: String?
+    )
+}
 
 @JsonTypeName("text")
 data class TextSectionRepresentation(

@@ -111,6 +111,7 @@ class LiteratureListServiceUnitTests {
         val entry1 = createResource(id = ThingId("R646568"))
         val entry2 = createResource(id = ThingId("R645454"))
         val paper = createResource(id = ThingId("R47876"), classes = setOf(Classes.paper))
+        val paperEntryDescription = "paper entry description"
         val comparison = createResource(id = ThingId("R1546878"), classes = setOf(Classes.comparison))
         val textSection = createResource(id = ThingId("R489"), label = "heading", classes = setOf(Classes.textSection))
         val textContent = "text content"
@@ -191,6 +192,11 @@ class LiteratureListServiceUnitTests {
                 subject = entry1,
                 predicate = createPredicate(Predicates.hasPaper),
                 `object` = paper
+            ),
+            createStatement(
+                subject = entry1,
+                predicate = createPredicate(Predicates.description),
+                `object` = createLiteral(label = paperEntryDescription)
             ),
             createStatement(
                 subject = listSection,
@@ -293,7 +299,12 @@ class LiteratureListServiceUnitTests {
             it.published shouldBe false
             it.sections shouldBe listOf(
                 TextSection(textSection.id, textSection.label, 4, textContent),
-                ListSection(listSection.id, listOf(ResourceReference(paper), ResourceReference(comparison)))
+                ListSection(
+                    listSection.id, listOf(
+                        ListSection.Entry(ResourceReference(paper), paperEntryDescription),
+                        ListSection.Entry(ResourceReference(comparison))
+                    )
+                )
             )
         }
 
@@ -340,6 +351,7 @@ class LiteratureListServiceUnitTests {
         val entry1 = createResource(id = ThingId("R646568"))
         val entry2 = createResource(id = ThingId("R645454"))
         val paper = createResource(id = ThingId("R47876"), classes = setOf(Classes.paper))
+        val paperEntryDescription = "paper entry description"
         val comparison = createResource(id = ThingId("R1546878"), classes = setOf(Classes.comparison))
         val textSection = createResource(id = ThingId("R489"), label = "heading", classes = setOf(Classes.textSection))
         val textContent = "text content"
@@ -404,6 +416,11 @@ class LiteratureListServiceUnitTests {
                         subject = entry1,
                         predicate = createPredicate(Predicates.hasPaper),
                         `object` = paper
+                    ),
+                    createStatement(
+                        subject = entry1,
+                        predicate = createPredicate(Predicates.description),
+                        `object` = createLiteral(label = paperEntryDescription)
                     ),
                     createStatement(
                         subject = listSection,
@@ -522,7 +539,13 @@ class LiteratureListServiceUnitTests {
             it.published shouldBe true
             it.sections shouldBe listOf(
                 TextSection(textSection.id, textSection.label, 4, textContent),
-                ListSection(listSection.id, listOf(ResourceReference(paper), ResourceReference(comparison)))
+                ListSection(
+                    listSection.id,
+                    listOf(
+                        ListSection.Entry(ResourceReference(paper), paperEntryDescription),
+                        ListSection.Entry(ResourceReference(comparison))
+                    )
+                )
             )
         }
 

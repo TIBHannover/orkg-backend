@@ -15,11 +15,13 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.InvalidHeadingSize
 import org.orkg.contenttypes.domain.InvalidListSectionEntry
+import org.orkg.contenttypes.input.ListSectionDefinition.Entry
 import org.orkg.contenttypes.input.testing.fixtures.dummyListSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyTextSectionDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 
@@ -52,7 +54,7 @@ class AbstractLiteratureListSectionValidatorUnitTest {
 
         abstractLiteratureListSectionValidator.validate(section, validIds)
 
-        validIds shouldBe section.entries
+        validIds shouldBe section.entries.map { it.id }
 
         verify(exactly = 1) { resourceRepository.findById(ThingId("R2315")) }
         verify(exactly = 1) { resourceRepository.findById(ThingId("R3512")) }
@@ -61,7 +63,10 @@ class AbstractLiteratureListSectionValidatorUnitTest {
     @Test
     fun `Given a list section definition, when validating, it does not validate an id twice`() {
         val section = dummyListSectionDefinition().copy(
-            entries = listOf(ThingId("R2315"), ThingId("R2315"))
+            entries = listOf(
+                Entry(ThingId("R2315")),
+                Entry(ThingId("R2315"))
+            )
         )
         val validIds = mutableSetOf<ThingId>()
 
@@ -87,9 +92,19 @@ class AbstractLiteratureListSectionValidatorUnitTest {
 
         abstractLiteratureListSectionValidator.validate(section, validIds)
 
-        validIds shouldBe section.entries
+        validIds shouldBe section.entries.map { it.id }
 
         verify(exactly = 1) { resourceRepository.findById(ThingId("R3512")) }
+    }
+
+    @Test
+    fun `Given a list section definition, when description is invalid, it throws an exception`() {
+        val section = dummyListSectionDefinition().copy(
+            entries = listOf(Entry(ThingId("R2315"), "a".repeat(MAX_LABEL_LENGTH + 1)))
+        )
+        val validIds = mutableSetOf<ThingId>()
+
+        assertThrows<InvalidDescription> { abstractLiteratureListSectionValidator.validate(section, validIds) }
     }
 
     @Test

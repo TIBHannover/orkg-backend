@@ -13,6 +13,7 @@ import org.orkg.contenttypes.domain.TextSection
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.ListSectionCommand
+import org.orkg.contenttypes.input.ListSectionDefinition.Entry
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.TextSectionCommand
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
@@ -96,8 +97,8 @@ fun dummyCreateListSectionCommand() = CreateLiteratureListSectionUseCase.CreateL
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
     entries = listOf(
-        ThingId("R2315"),
-        ThingId("R3512"),
+        Entry(ThingId("R2315"), "dummy description"),
+        Entry(ThingId("R3512")),
     )
 )
 
@@ -114,8 +115,8 @@ fun dummyUpdateListSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateL
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
     entries = listOf(
-        ThingId("R2315"),
-        ThingId("R3512"),
+        Entry(ThingId("R2315"), "dummy description"),
+        Entry(ThingId("R3512")),
     )
 )
 
@@ -131,8 +132,8 @@ fun dummyUpdateTextSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateT
 fun dummyListSectionDefinition(): ListSectionCommand =
     ListSectionCommand(
         entries = listOf(
-            ThingId("R2315"),
-            ThingId("R3512"),
+            Entry(ThingId("R2315"), "dummy description"),
+            Entry(ThingId("R3512")),
         )
     )
 
@@ -150,7 +151,10 @@ fun LiteratureListSection.toLiteratureListSectionDefinition(): LiteratureListSec
     }
 
 fun ListSection.toListSectionDefinition(): ListSectionCommand =
-    ListSectionCommand(entries.map { it.id })
+    ListSectionCommand(entries.map { Entry(it.value.id, it.description) })
 
 fun TextSection.toTextSectionDefinition(): TextSectionCommand =
     TextSectionCommand(heading, headingSize, text)
+
+fun ListSection.Entry.toDefinitionEntry(): Entry =
+    Entry(value.id, description)

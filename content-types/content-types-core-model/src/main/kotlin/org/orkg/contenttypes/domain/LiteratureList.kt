@@ -82,8 +82,13 @@ sealed interface LiteratureListSection {
 
 data class ListSection(
     override val id: ThingId,
-    val entries: List<ResourceReference>
+    val entries: List<Entry>
 ) : LiteratureListSection {
+    data class Entry(
+        val value: ResourceReference,
+        val description: String? = null
+    )
+
     companion object {
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): ListSection =
             ListSection(
@@ -92,12 +97,17 @@ data class ListSection(
                     ?.wherePredicate(Predicates.hasEntry)
                     ?.sortedBy { it.createdAt }
                     ?.mapNotNull { hasEntry ->
-                        statements[hasEntry.`object`.id]
-                            ?.singleOrNull {
-                                (it.predicate.id == Predicates.hasLink || it.predicate.id == Predicates.hasPaper) &&
-                                    it.`object` is Resource
-                            }
-                            ?.let { ResourceReference(it.`object` as Resource) }
+                        val entryStatements = statements[hasEntry.`object`.id]
+                        val hasLink = entryStatements?.singleOrNull {
+                            (it.predicate.id == Predicates.hasLink || it.predicate.id == Predicates.hasPaper) &&
+                                it.`object` is Resource
+                        }
+                        hasLink?.let {
+                            Entry(
+                                ResourceReference(it.`object` as Resource),
+                                entryStatements.wherePredicate(Predicates.description).singleObjectLabel()
+                            )
+                        }
                     }.orEmpty()
             )
     }

@@ -28,7 +28,7 @@ class LiteratureListSectionUpdateValidator(
             }
             abstractLiteratureListSectionValidator.validate(
                 section = command as LiteratureListSectionDefinition,
-                validIds = section.entries.map { it.id }.toMutableSet()
+                validIds = section.entries.map { it.value.id }.toMutableSet()
             )
         } else if (command is UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand) {
             if (section !is TextSection) {

@@ -4,6 +4,7 @@ import dev.forkhandles.fabrikate.Fabrikate
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 
@@ -11,6 +12,7 @@ fun Fabrikate.withRosettaStoneStatementMappings() = apply {
     config.register {
         RosettaStoneStatementVersion(
             id = random(),
+            formattedLabel = FormattedLabel.of(random()),
             subjects = listOf(random<Resource>(), random<Predicate>(), random<Class>()),
             objects = listOf(
                 listOf(random<Resource>(), random<Predicate>(), random<Class>()),

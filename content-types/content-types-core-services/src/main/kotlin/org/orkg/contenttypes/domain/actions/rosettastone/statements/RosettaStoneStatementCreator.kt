@@ -18,6 +18,7 @@ class RosettaStoneStatementCreator(
     override fun invoke(command: CreateRosettaStoneStatementCommand, state: State): State {
         val version = RosettaStoneStatementVersion(
             id = rosettaStoneStatementRepository.nextIdentity(),
+            formattedLabel = state.rosettaStoneTemplate!!.formattedLabel,
             subjects = command.subjects.map { state.mapToThing(it) },
             objects = command.objects.map { objects -> objects.map { state.mapToThing(it) } },
             createdAt = OffsetDateTime.now(clock),
@@ -34,7 +35,7 @@ class RosettaStoneStatementCreator(
             id = rosettaStoneStatementRepository.nextIdentity(),
             contextId = command.context,
             templateId = command.templateId,
-            templateTargetClassId = state.rosettaStoneTemplate!!.targetClass,
+            templateTargetClassId = state.rosettaStoneTemplate.targetClass,
             label = "", // empty label, because we do want the underlying resource to be findable via resource search endpoints
             versions = listOf(version),
             observatories = command.observatories,

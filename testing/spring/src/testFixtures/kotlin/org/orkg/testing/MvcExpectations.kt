@@ -263,6 +263,7 @@ fun ResultActions.andExpectRosettaStoneStatement(path: String = "$"): ResultActi
     .andExpect(jsonPath("$path.class_id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.version_id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.latest_version_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.formatted_label", `is`(notNullValue())))
     .andExpect(jsonPath("$path.subjects", `is`(notNullValue())))
     .andExpect(jsonPath("$path.objects").isArray)
     .andExpect(jsonPath("$path.objects[*]").isArray)

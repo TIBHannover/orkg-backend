@@ -62,6 +62,7 @@ dependencies {
     api("org.neo4j:neo4j-cypher-dsl")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation(project(":common:neo4j-dsl"))
+    implementation(libs.forkhandles.values4k)
 
     containerTestImplementation(kotlin("stdlib")) // "downgrade" from api()
 

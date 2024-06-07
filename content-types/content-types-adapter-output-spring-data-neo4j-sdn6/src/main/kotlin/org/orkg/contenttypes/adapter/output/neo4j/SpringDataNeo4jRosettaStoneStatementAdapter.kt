@@ -403,6 +403,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                                     }
                                 },
                                 "__metadata__" to mapOf(
+                                    "formatted_label" to version.formattedLabel.value,
                                     "certainty" to version.certainty.name,
                                     "negated" to version.negated,
                                     "version" to index + (versionInfo?.second?.toInt() ?: 0)

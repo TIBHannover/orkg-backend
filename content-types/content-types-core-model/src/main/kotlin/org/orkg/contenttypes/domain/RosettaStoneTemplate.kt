@@ -16,7 +16,7 @@ data class RosettaStoneTemplate(
     val id: ThingId,
     val label: String,
     val description: String?,
-    val formattedLabel: FormattedLabel?,
+    val formattedLabel: FormattedLabel,
     val targetClass: ThingId,
     val exampleUsage: String?,
     val properties: List<TemplateProperty>,
@@ -38,8 +38,8 @@ data class RosettaStoneTemplate(
                     .singleOrNull()?.`object`?.label,
                 formattedLabel = directStatements
                     .wherePredicate(Predicates.templateLabelFormat)
-                    .singleOrNull()
-                    ?.let { FormattedLabel.of(it.`object`.label) },
+                    .single()
+                    .let { FormattedLabel.of(it.`object`.label) },
                 targetClass = directStatements
                     .wherePredicate(Predicates.shTargetClass)
                     .single()

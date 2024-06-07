@@ -26,6 +26,7 @@ import org.orkg.graph.adapter.output.neo4j.match
 import org.orkg.graph.adapter.output.neo4j.toResource
 import org.orkg.graph.adapter.output.neo4j.toThing
 import org.orkg.graph.adapter.output.neo4j.toThingId
+import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
@@ -77,6 +78,7 @@ data class RosettaStoneStatementMapper(
                     }
                 metadata["version"].asLong() to RosettaStoneStatementVersion(
                     id = node.id,
+                    formattedLabel = FormattedLabel.of(metadata["formatted_label"].asString()),
                     subjects = subjects,
                     objects = objects,
                     createdAt = node.createdAt,

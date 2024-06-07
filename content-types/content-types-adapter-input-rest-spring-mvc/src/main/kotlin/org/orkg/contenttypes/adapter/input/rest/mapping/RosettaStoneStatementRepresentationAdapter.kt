@@ -36,6 +36,7 @@ interface RosettaStoneStatementRepresentationAdapter {
             classId = templateTargetClassId,
             versionId = version.id,
             latestVersion = id,
+            formattedLabel = version.formattedLabel.value,
             subjects = version.subjects.map(ThingReference::from),
             objects = version.objects.map { it.map(ThingReference::from) },
             createdAt = version.createdAt,

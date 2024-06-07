@@ -17,6 +17,7 @@ class RosettaStoneStatementUpdater(
     override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State {
         val version = RosettaStoneStatementVersion(
             id = rosettaStoneStatementRepository.nextIdentity(),
+            formattedLabel = state.rosettaStoneTemplate!!.formattedLabel,
             subjects = command.subjects.map { state.mapToThing(it) },
             objects = command.objects.map { objects -> objects.map { state.mapToThing(it) } },
             createdAt = OffsetDateTime.now(clock),

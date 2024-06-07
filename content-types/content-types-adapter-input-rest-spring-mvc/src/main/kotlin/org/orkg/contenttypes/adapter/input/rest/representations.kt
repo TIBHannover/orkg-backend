@@ -563,6 +563,8 @@ data class RosettaStoneStatementRepresentation(
     val versionId: ThingId,
     @get:JsonProperty("latest_version_id")
     val latestVersion: ThingId,
+    @get:JsonProperty("formatted_label")
+    val formattedLabel: String,
     val subjects: List<ThingReference>,
     val objects: List<List<ThingReference>>,
     @get:JsonProperty("created_at")

@@ -223,6 +223,7 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
             it.classId shouldNotBe null
             it.versionId shouldNotBe id
             it.latestVersion shouldBe id
+            it.formattedLabel shouldBe "{0} {1} {2} {3} {4} {5}"
             it.subjects.asClue { subjects ->
                 subjects.size shouldBe 3
                 subjects[0] shouldBe ResourceReference(ThingId("R258"), "label", setOf(ThingId("C28")))
@@ -316,6 +317,7 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
             it.versions.size shouldBe 2
             it.versions[0].asClue { version ->
                 version.id shouldBe rosettaStoneStatement.versionId
+                version.formattedLabel shouldBe FormattedLabel.of("{0} {1} {2} {3} {4} {5}")
                 version.subjects.asClue { subjects ->
                     subjects.size shouldBe 3
                     subjects[0].shouldBeInstanceOf<Resource>().asClue { subject ->
@@ -419,6 +421,7 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
             }
             it.versions[1].asClue { version ->
                 version.id shouldNotBe updatedId
+                version.formattedLabel shouldBe FormattedLabel.of("{0} {1} {2} {3} {4} {5}")
                 version.subjects.asClue { subjects ->
                     subjects.size shouldBe 3
                     subjects[0].shouldBeInstanceOf<Resource>().asClue { subject ->

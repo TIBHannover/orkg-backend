@@ -146,6 +146,7 @@ dependencies {
     implementation(project(":community:community-ports-input"))
     implementation(project(":community:community-core-model"))
     runtimeOnly(project(":community:community-core-services"))
+    runtimeOnly(project(":community:community-core-services-legacy"))
     implementation(project(":community:community-ports-output"))
     runtimeOnly(project(":community:community-adapter-output-spring-data-jpa"))
 

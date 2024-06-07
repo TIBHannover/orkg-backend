@@ -10,7 +10,6 @@ dependencies {
     api(libs.javax.activation)
     api(project(":common"))
     api(project(":community:community-core-model"))
-    api(project(":identity-management:idm-core-model")) // for LegacyController/UseCases, TODO: break dependency
     api(project(":media-storage:media-storage-core-model"))
     implementation(project(":graph:graph-core-model"))
 }

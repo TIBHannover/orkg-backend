@@ -13,8 +13,6 @@ dependencies {
     api(project(":community:community-ports-input"))
     api(project(":community:community-ports-output"))
     api(project(":graph:graph-ports-output"))
-    api(project(":identity-management:idm-core-model"))
-    api(project(":identity-management:idm-ports-output")) // for UserRepository, TODO: break dependency
     api(project(":media-storage:media-storage-core-model"))
     api(project(":media-storage:media-storage-ports-input"))
     implementation(libs.javax.activation)

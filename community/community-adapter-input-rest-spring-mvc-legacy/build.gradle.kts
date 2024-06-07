@@ -14,7 +14,7 @@ dependencies {
     api(libs.jakarta.validation)
     api(project(":common"))
     implementation(project(":community:community-core-model"))
-    api(project(":community:community-ports-input"))
+    api(project(":community:community-ports-input-legacy"))
     api(project(":identity-management:idm-ports-input")) // in legacy controller, TODO: break dependency
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")

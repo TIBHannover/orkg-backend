@@ -18,7 +18,7 @@ dependencies {
     api(project(":community:community-ports-output"))
     api(project(":identity-management:idm-adapter-output-spring-data-jpa")) // TODO: break dependency
     api(project(":identity-management:idm-core-model"))
-    api(project(":identity-management:idm-ports-output")) // for UserRepository, TODO: break dependency
+    api(project(":identity-management:idm-ports-output")) // transitive
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation(libs.jakarta.validation)
     implementation(project(":graph:graph-core-model"))

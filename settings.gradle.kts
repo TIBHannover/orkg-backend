@@ -44,8 +44,10 @@ include(
 )
 include(
     "community:community-core-services",
+    "community:community-core-services-legacy",
     "community:community-core-model",
     "community:community-ports-input",
+    "community:community-ports-input-legacy",
     "community:community-ports-output",
     "community:community-adapter-input-rest-spring-mvc",
     "community:community-adapter-input-rest-spring-mvc-legacy",

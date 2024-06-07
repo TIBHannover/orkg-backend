@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Enabled formatted labels on resources via content-negotiation.
+  (Closes: [!562](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/562))
+- Added support for descriptions on literature list section entries.
+  (See: [!960](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/960))
+- Added acknowledgements to literature list responses.
+  (See: [!962](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/962))
+- Added an endpoint to fetch linked contents of published literature lists.
+  (See: [!963](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/963))
+- Formatted labels of Rosetta Stone Templates are now persisted with each Rosetta Stone Statement version.
+  (See: [!961](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/961))
+
+### Fixed
+- Error responses with status code 406 and 415 no longer return an empty body.
+  (See: [!957](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/957))
+- Fixed content type head version parsing.
+- Null values provided for identifiers no longer causes a status 500.
+  (Closes: [!570](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/570))
+- Fixed several validation issues for lists.
+  (See: [!963](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/963))
 
 ## [0.58.0] - 2024-05-30
 ### Added

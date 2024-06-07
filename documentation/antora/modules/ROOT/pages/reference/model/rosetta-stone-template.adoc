@@ -7,8 +7,8 @@ flowchart LR
     Template --> |"TemplateLabelFormat"| formattedLabel[Literal \n xsd:string]
 	Template --> |"sh:targetClass"| targetClass
     targetClass[Class] --> |"exampleOfUsage"| usage[Literal \n xsd:string]
-	Template --> |"sh:property"| TemplatePopoerty
-	subgraph TemplatePopoerty[Template Popoerty]
+	Template --> |"sh:property"| TemplateProperty
+	subgraph TemplateProperty[Template Property]
 		subgraph Resource Property
 			ResourceProperty[PropertyShape \n Resource] --> |"sh:class"| klass[Class]
 			ResourceProperty --> |"sh:order"| order[Literal \n xsd:integer]

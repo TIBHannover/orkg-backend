@@ -7,21 +7,22 @@ interface CreateListUseCase {
     fun create(command: CreateCommand): ThingId
 
     data class CreateCommand(
+        val contributorId: ContributorId,
         val label: String,
         val elements: List<ThingId>,
         val id: ThingId? = null,
-        val contributorId: ContributorId? = null,
         val modifiable: Boolean = true
     )
 }
 
 interface UpdateListUseCase {
-    fun update(id: ThingId, command: UpdateCommand)
+    fun update(command: UpdateCommand)
 
     data class UpdateCommand(
+        val id: ThingId,
+        val contributorId: ContributorId,
         val label: String? = null,
-        val elements: List<ThingId>? = null,
-        val contributorId: ContributorId? = null
+        val elements: List<ThingId>? = null
     )
 }
 

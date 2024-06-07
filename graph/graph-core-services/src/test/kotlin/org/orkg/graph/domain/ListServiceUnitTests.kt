@@ -1,13 +1,16 @@
 package org.orkg.graph.domain
 
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
 import java.util.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
@@ -26,28 +29,39 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 
 class ListServiceUnitTests {
-
     private val repository: ListRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
     private val service = ListService(repository, thingRepository, fixedClock)
 
+    @BeforeEach
+    fun resetState() {
+        clearAllMocks()
+    }
+
+    @AfterEach
+    fun verifyMocks() {
+        confirmVerified(repository, thingRepository)
+    }
+
     @Test
     fun `given a list is created, when valid inputs are provided, it returns success`() {
         val command = CreateListUseCase.CreateCommand(
-            label = "label",
-            elements = listOf(ThingId("R1")),
             id = ThingId("List1"),
             contributorId = ContributorId(UUID.randomUUID()),
+            label = "label",
+            elements = listOf(ThingId("R1")),
             modifiable = false
         )
 
+        every { thingRepository.findByThingId(command.id!!) } returns Optional.empty()
         every { thingRepository.existsAll(command.elements.toSet()) } returns true
         every { repository.save(any(), any()) } just runs
 
         val result = service.create(command)
         result shouldBe command.id
 
-        verify(exactly = 0) { repository.nextIdentity() }
+        verify(exactly = 1) { thingRepository.findByThingId(command.id!!) }
+        verify(exactly = 1) { thingRepository.existsAll(command.elements.toSet()) }
         verify(exactly = 1) { repository.save(any(), any()) }
     }
 
@@ -60,31 +74,25 @@ class ListServiceUnitTests {
             contributorId = ContributorId(UUID.randomUUID())
         )
 
-        assertThrows<InvalidLabel> {
-            service.create(command)
-        }
-
-        verify(exactly = 0) { repository.nextIdentity() }
-        verify(exactly = 0) { repository.save(any(), any()) }
+        assertThrows<InvalidLabel> { service.create(command) }
     }
 
     @Test
     fun `given a list is created, when not all elements exist, then an exception is thrown`() {
         val command = CreateListUseCase.CreateCommand(
-            label = "label",
-            elements = listOf(ThingId("R1")),
             id = ThingId("List1"),
-            contributorId = ContributorId(UUID.randomUUID())
+            contributorId = ContributorId(UUID.randomUUID()),
+            label = "label",
+            elements = listOf(ThingId("R1"))
         )
 
+        every { thingRepository.findByThingId(command.id!!) } returns Optional.empty()
         every { thingRepository.existsAll(command.elements.toSet()) } returns false
 
-        assertThrows<ListElementNotFound> {
-            service.create(command)
-        }
+        assertThrows<ListElementNotFound> { service.create(command) }
 
-        verify(exactly = 0) { repository.nextIdentity() }
-        verify(exactly = 0) { repository.save(any(), any()) }
+        verify(exactly = 1) { thingRepository.findByThingId(command.id!!) }
+        verify(exactly = 1) { thingRepository.existsAll(command.elements.toSet()) }
     }
 
     @Test
@@ -105,43 +113,16 @@ class ListServiceUnitTests {
         result shouldBe id
 
         verify(exactly = 1) { repository.nextIdentity() }
+        verify(exactly = 1) { thingRepository.existsAll(command.elements.toSet()) }
         verify(exactly = 1) { repository.save(any(), any()) }
-    }
-
-    @Test
-    fun `given a list is created, when no contributor is given, then unknown contributor id gets used`() {
-        val command = CreateListUseCase.CreateCommand(
-            label = "label",
-            elements = listOf(ThingId("R1")),
-            id = ThingId("List1"),
-            contributorId = null
-        )
-
-        every { thingRepository.existsAll(command.elements.toSet()) } returns true
-        every { repository.save(any(), any()) } just runs
-
-        service.create(command)
-
-        verify(exactly = 0) { repository.nextIdentity() }
-        verify(exactly = 1) {
-            repository.save(
-                List(
-                    id = command.id!!,
-                    label = command.label,
-                    elements = command.elements,
-                    createdAt = OffsetDateTime.now(fixedClock),
-                    createdBy = ContributorId.UNKNOWN,
-                    modifiable = true
-                ),
-                ContributorId.UNKNOWN
-            )
-        }
     }
 
     @Test
     fun `given a list is updated, when valid inputs are provided, it returns success`() {
         val id = ThingId("List1")
         val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId.UNKNOWN,
             label = "label",
             elements = listOf(ThingId("R1"))
         )
@@ -155,8 +136,10 @@ class ListServiceUnitTests {
         every { thingRepository.existsAll(command.elements!!.toSet()) } returns true
         every { repository.save(any(), any()) } just runs
 
-        service.update(id, command)
+        service.update(command)
 
+        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { thingRepository.existsAll(command.elements!!.toSet()) }
         verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
     }
 
@@ -164,23 +147,25 @@ class ListServiceUnitTests {
     fun `given a list is updated, when list does not exist, then an exception is thrown`() {
         val id = ThingId("List1")
         val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId.UNKNOWN,
             label = "label",
             elements = listOf(ThingId("R1"))
         )
 
         every { repository.findById(id) } returns Optional.empty()
 
-        assertThrows<ListNotFound> {
-            service.update(id, command)
-        }
+        assertThrows<ListNotFound> { service.update(command) }
 
-        verify(exactly = 0) { repository.save(any(), any()) }
+        verify(exactly = 1) { repository.findById(id) }
     }
 
     @Test
     fun `given a list is updated, when label is invalid, then an exception is thrown`() {
         val id = ThingId("List1")
         val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId.UNKNOWN,
             label = "\n",
             elements = listOf(ThingId("R1"))
         )
@@ -188,17 +173,17 @@ class ListServiceUnitTests {
 
         every { repository.findById(id) } returns Optional.of(list)
 
-        assertThrows<InvalidLabel> {
-            service.update(id, command)
-        }
+        assertThrows<InvalidLabel> { service.update(command) }
 
-        verify(exactly = 0) { repository.save(any(), any()) }
+        verify(exactly = 1) { repository.findById(id) }
     }
 
     @Test
     fun `given a list is updated, when not all elements exist, then an exception is thrown`() {
         val id = ThingId("List1")
         val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId.UNKNOWN,
             label = "label",
             elements = listOf(ThingId("R1"))
         )
@@ -207,17 +192,18 @@ class ListServiceUnitTests {
         every { repository.findById(id) } returns Optional.of(list)
         every { thingRepository.existsAll(command.elements!!.toSet()) } returns false
 
-        assertThrows<ListElementNotFound> {
-            service.update(id, command)
-        }
+        assertThrows<ListElementNotFound> { service.update(command) }
 
-        verify(exactly = 0) { repository.save(any(), any()) }
+        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { thingRepository.existsAll(command.elements!!.toSet()) }
     }
 
     @Test
     fun `given a list is updated, when only the label is updated, it returns success`() {
         val id = ThingId("List1")
         val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId.UNKNOWN,
             label = "label",
             elements = null
         )
@@ -229,9 +215,9 @@ class ListServiceUnitTests {
         every { repository.findById(id) } returns Optional.of(list)
         every { repository.save(any(), any()) } just runs
 
-        service.update(id, command)
+        service.update(command)
 
-        verify(exactly = 0) { thingRepository.existsAll(any()) }
+        verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
     }
 
@@ -239,6 +225,8 @@ class ListServiceUnitTests {
     fun `given a list is updated, when only the elements are updated, it returns success`() {
         val id = ThingId("List1")
         val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId.UNKNOWN,
             label = null,
             elements = listOf(ThingId("R1"))
         )
@@ -251,8 +239,10 @@ class ListServiceUnitTests {
         every { thingRepository.existsAll(command.elements!!.toSet()) } returns true
         every { repository.save(any(), any()) } just runs
 
-        service.update(id, command)
+        service.update(command)
 
+        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { thingRepository.existsAll(command.elements!!.toSet()) }
         verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
     }
 
@@ -260,6 +250,8 @@ class ListServiceUnitTests {
     fun `given a list is updated, when elements are empty, it returns success`() {
         val id = ThingId("List1")
         val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId.UNKNOWN,
             label = "label",
             elements = listOf()
         )
@@ -272,7 +264,7 @@ class ListServiceUnitTests {
         every { repository.findById(id) } returns Optional.of(list)
         every { repository.save(any(), any()) } just runs
 
-        service.update(id, command)
+        service.update(command)
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
@@ -282,6 +274,8 @@ class ListServiceUnitTests {
     fun `given a list is updated, when list is unmodifiable, it throws an exception`() {
         val id = ThingId("List1")
         val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId.UNKNOWN,
             label = "label",
             elements = listOf()
         )
@@ -289,12 +283,9 @@ class ListServiceUnitTests {
 
         every { repository.findById(id) } returns Optional.of(list)
 
-        assertThrows<ListNotModifiable> {
-            service.update(id, command)
-        }
+        assertThrows<ListNotModifiable> { service.update(command) }
 
         verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 0) { repository.delete(id) }
     }
 
     @Test
@@ -324,12 +315,36 @@ class ListServiceUnitTests {
 
         every { repository.exists(id) } returns false
 
-        assertThrows<ListNotFound> {
-            service.findAllElementsById(id, pageable)
-        }
+        assertThrows<ListNotFound> { service.findAllElementsById(id, pageable) }
 
         verify(exactly = 1) { repository.exists(id) }
-        verify(exactly = 0) { repository.findAllElementsById(id, any()) }
+    }
+
+    @Test
+    fun `given a list is being deleted, when it still exists, it deletes the list`() {
+        val id = ThingId("List1")
+        val list = createList(id)
+
+        every { repository.findById(id) } returns Optional.of(list)
+        every { thingRepository.isUsedAsObject(id) } returns false
+        every { repository.delete(id) } just runs
+
+        service.delete(id)
+
+        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { thingRepository.isUsedAsObject(id) }
+        verify(exactly = 1) { repository.delete(id) }
+    }
+
+    @Test
+    fun `given a list is being deleted, when it is already deleted, it returns success`() {
+        val id = ThingId("List1")
+
+        every { repository.findById(id) } returns Optional.empty()
+
+        service.delete(id)
+
+        verify(exactly = 1) { repository.findById(id) }
     }
 
     @Test
@@ -339,11 +354,22 @@ class ListServiceUnitTests {
 
         every { repository.findById(id) } returns Optional.of(list)
 
-        assertThrows<ListNotModifiable> {
-            service.delete(id)
-        }
+        assertThrows<ListNotModifiable> { service.delete(id) }
 
         verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 0) { repository.delete(id) }
+    }
+
+    @Test
+    fun `given a list is being deleted, when list is still used, then it throws an exception`() {
+        val id = ThingId("List1")
+        val list = createList(id)
+
+        every { repository.findById(id) } returns Optional.of(list)
+        every { thingRepository.isUsedAsObject(id) } returns true
+
+        assertThrows<ListInUse> { service.delete(id) }
+
+        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { thingRepository.isUsedAsObject(id) }
     }
 }

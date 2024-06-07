@@ -50,7 +50,6 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -234,7 +233,6 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
             .contentType(COMPARISON_JSON_V2)
             .characterEncoding("utf-8")
             .perform()
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andReturn()
             .response

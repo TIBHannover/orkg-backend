@@ -71,9 +71,10 @@ class ListController(
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
-        @RequestBody request: UpdateRequest
+        @RequestBody request: UpdateRequest,
+        @AuthenticationPrincipal currentUser: UserDetails?
     ): ResponseEntity<Any> {
-        service.update(id, request.toUpdateCommand())
+        service.update(request.toUpdateCommand(id, currentUser.contributorId()))
         return noContent().build()
     }
 
@@ -81,20 +82,15 @@ class ListController(
         val label: String,
         val elements: List<ThingId>
     ) {
-        fun toCreateCommand(contributorId: ContributorId): CreateCommand = CreateCommand(
-            contributorId = contributorId,
-            label = label,
-            elements = elements
-        )
+        fun toCreateCommand(contributorId: ContributorId): CreateCommand =
+            CreateCommand(contributorId, label, elements)
     }
 
     data class UpdateRequest(
         val label: String? = null,
         val elements: List<ThingId>? = null
     ) {
-        fun toUpdateCommand(): UpdateCommand = UpdateCommand(
-            label = label,
-            elements = elements
-        )
+        fun toUpdateCommand(id: ThingId, contributorId: ContributorId): UpdateCommand =
+            UpdateCommand(id, contributorId, label, elements)
     }
 }

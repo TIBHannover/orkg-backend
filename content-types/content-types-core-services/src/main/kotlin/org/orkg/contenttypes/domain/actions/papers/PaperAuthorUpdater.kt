@@ -7,6 +7,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ListRepository
 
 class PaperAuthorUpdater(
     private val authorUpdater: AuthorUpdater
@@ -15,8 +16,9 @@ class PaperAuthorUpdater(
         resourceService: ResourceUseCases,
         statementService: StatementUseCases,
         literalService: LiteralUseCases,
-        listService: ListUseCases
-    ) : this(AuthorUpdater(resourceService, statementService, literalService, listService))
+        listService: ListUseCases,
+        listRepository: ListRepository
+    ) : this(AuthorUpdater(resourceService, statementService, literalService, listService, listRepository))
 
     override operator fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
         if (command.authors != null && command.authors != state.paper!!.authors) {

@@ -139,7 +139,14 @@ fun ListUseCases.createList(
     label: String,
     elements: List<ThingId>,
     id: ThingId? = null,
-    contributorId: ContributorId? = null,
-) = create(CreateListUseCase.CreateCommand(label, elements, id, contributorId))
+    contributorId: ContributorId = ContributorId.UNKNOWN,
+) = create(
+    CreateListUseCase.CreateCommand(
+        contributorId = contributorId,
+        label = label,
+        elements = elements,
+        id = id
+    )
+)
 
 private fun String.toDisplayId() = this.lowercase().replace(Regex("[^a-zA-Z0-9_]"), "_")

@@ -21,6 +21,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ListRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
@@ -32,9 +33,10 @@ class AuthorUpdaterUnitTest {
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val authorCreator: AuthorCreator = mockk()
+    private val listRepository: ListRepository = mockk()
 
     private val authorUpdater =
-        AuthorUpdater(resourceService, statementService, literalService, listService, authorCreator)
+        AuthorUpdater(resourceService, statementService, literalService, listService, listRepository, authorCreator)
 
     @BeforeEach
     fun resetState() {
@@ -43,7 +45,7 @@ class AuthorUpdaterUnitTest {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(resourceService, statementService, literalService, listService, authorCreator)
+        confirmVerified(resourceService, statementService, literalService, listService, listRepository, authorCreator)
     }
 
     @Test
@@ -105,7 +107,7 @@ class AuthorUpdaterUnitTest {
                 `object` = createResource(authorListId, classes = setOf(Classes.list))
             )
         )
-        every { listService.delete(authorListId) } just runs
+        every { listRepository.delete(authorListId) } just runs
         every { authorCreator.create(contributorId, authors, subjectId) } just runs
 
         authorUpdater.update(contributorId, authors, subjectId)
@@ -117,7 +119,7 @@ class AuthorUpdaterUnitTest {
                 pageable = PageRequests.SINGLE
             )
         }
-        verify(exactly = 1) { listService.delete(authorListId) }
+        verify(exactly = 1) { listRepository.delete(authorListId) }
         verify(exactly = 1) { authorCreator.create(contributorId, authors, subjectId) }
     }
 }

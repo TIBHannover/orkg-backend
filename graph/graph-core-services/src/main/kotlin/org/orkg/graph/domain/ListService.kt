@@ -4,7 +4,6 @@ import dev.forkhandles.values.ofOrNull
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
-import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.ListUseCases
@@ -26,15 +25,17 @@ class ListService(
     override fun create(command: CreateListUseCase.CreateCommand): ThingId {
         val label = Label.ofOrNull(command.label)?.value
             ?: throw InvalidLabel()
+        val id = command.id
+            ?.also { id -> thingRepository.findByThingId(id).ifPresent { throw ThingAlreadyExists(id) } }
+            ?: repository.nextIdentity()
         if (command.elements.isNotEmpty() && !thingRepository.existsAll(command.elements.toSet()))
             throw ListElementNotFound()
-        val id = command.id ?: repository.nextIdentity()
         val list = List(
             id = id,
             label = label,
             elements = command.elements,
             createdAt = OffsetDateTime.now(clock),
-            createdBy = command.contributorId ?: ContributorId.UNKNOWN,
+            createdBy = command.contributorId,
             modifiable = command.modifiable
         )
         repository.save(list, list.createdBy)
@@ -51,10 +52,11 @@ class ListService(
 
     override fun exists(id: ThingId): Boolean = repository.exists(id)
 
-    override fun update(id: ThingId, command: UpdateListUseCase.UpdateCommand) {
-        val list = repository.findById(id).orElseThrow { ListNotFound(id) }
+    override fun update(command: UpdateListUseCase.UpdateCommand) {
+        val list = repository.findById(command.id)
+            .orElseThrow { ListNotFound(command.id) }
         if (!list.modifiable)
-            throw ListNotModifiable(id)
+            throw ListNotModifiable(command.id)
         val label = command.label?.let {
             Label.ofOrNull(it)?.value ?: throw InvalidLabel()
         }
@@ -62,19 +64,22 @@ class ListService(
             if (it.isNotEmpty() && !thingRepository.existsAll(it.toSet()))
                 throw ListElementNotFound()
         }
-        repository.save(
-            list.copy(
-                label = label ?: list.label,
-                elements = elements ?: list.elements
-            ),
-            contributorId = command.contributorId ?: ContributorId.UNKNOWN
+        val updated = list.copy(
+            label = label ?: list.label,
+            elements = elements ?: list.elements
         )
+        if (updated != list) {
+            repository.save(updated, command.contributorId)
+        }
     }
 
     override fun delete(id: ThingId) {
         repository.findById(id).ifPresent {
             if (!it.modifiable) {
                 throw ListNotModifiable(id)
+            }
+            if (thingRepository.isUsedAsObject(id)) {
+                throw ListInUse(id)
             }
             repository.delete(id)
         }

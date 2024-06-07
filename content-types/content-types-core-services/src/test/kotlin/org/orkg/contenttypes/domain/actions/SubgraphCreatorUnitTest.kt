@@ -443,6 +443,11 @@ class SubgraphCreatorUnitTest {
             contributions = emptyList()
         )
         val listId = ThingId("R456")
+        val updateCommand = UpdateListUseCase.UpdateCommand(
+            id = listId,
+            contributorId = contributorId,
+            elements = listOf(ThingId("R2000"))
+        )
 
         every {
             listService.create(
@@ -453,14 +458,7 @@ class SubgraphCreatorUnitTest {
                 )
             )
         } returns listId
-        every {
-            listService.update(
-                listId,
-                UpdateListUseCase.UpdateCommand(
-                    elements = listOf(ThingId("R2000"))
-                )
-            )
-        } just runs
+        every { listService.update(updateCommand) } just runs
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
@@ -479,14 +477,7 @@ class SubgraphCreatorUnitTest {
                 )
             )
         }
-        verify(exactly = 1) {
-            listService.update(
-                listId,
-                UpdateListUseCase.UpdateCommand(
-                    elements = listOf(ThingId("R2000"))
-                )
-            )
-        }
+        verify(exactly = 1) { listService.update(updateCommand) }
     }
 
     @Test

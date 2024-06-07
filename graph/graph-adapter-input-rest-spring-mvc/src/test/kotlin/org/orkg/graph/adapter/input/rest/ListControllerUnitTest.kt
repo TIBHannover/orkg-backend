@@ -230,7 +230,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             "elements" to list.elements
         )
 
-        every { listService.update(id, any()) } just runs
+        every { listService.update(any()) } just runs
 
         documentedPatchRequestTo("/api/lists/{id}", id)
             .content(request)
@@ -246,7 +246,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { listService.update(id, any()) }
+        verify(exactly = 1) { listService.update(any()) }
     }
 
     @Test
@@ -259,7 +259,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
         )
         val exception = InvalidLabel()
 
-        every { listService.update(id, any()) } throws exception
+        every { listService.update(any()) } throws exception
 
         patch("/api/lists/$id", request)
             .andExpect(status().isBadRequest)
@@ -271,7 +271,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/lists/$id"))
 
-        verify(exactly = 1) { listService.update(id, any()) }
+        verify(exactly = 1) { listService.update(any()) }
     }
 
     @Test
@@ -284,7 +284,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
         )
         val exception = ListElementNotFound()
 
-        every { listService.update(id, any()) } throws exception
+        every { listService.update(any()) } throws exception
 
         patch("/api/lists/$id", request)
             .andExpect(status().isBadRequest)
@@ -296,7 +296,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/lists/$id"))
 
-        verify(exactly = 1) { listService.update(id, any()) }
+        verify(exactly = 1) { listService.update(any()) }
     }
 
     @Test

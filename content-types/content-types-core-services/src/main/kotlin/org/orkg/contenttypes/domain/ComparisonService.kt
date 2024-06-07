@@ -71,6 +71,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.springframework.beans.factory.annotation.Value
@@ -92,6 +93,7 @@ class ComparisonService(
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
+    private val listRepository: ListRepository,
     private val publishingService: PublishingService,
     private val comparisonRepository: ComparisonRepository,
     @Value("\${orkg.publishing.base-url.comparison}")
@@ -304,7 +306,7 @@ class ComparisonService(
             ComparisonResourceUpdater(resourceService),
             ComparisonDescriptionUpdater(literalService, statementService),
             ComparisonResearchFieldUpdater(literalService, statementService),
-            ComparisonAuthorUpdater(resourceService, statementService, literalService, listService),
+            ComparisonAuthorUpdater(resourceService, statementService, literalService, listService, listRepository),
             ComparisonSDGUpdater(literalService, statementService),
             ComparisonContributionUpdater(literalService, statementService),
             ComparisonReferencesUpdater(literalService, statementService),

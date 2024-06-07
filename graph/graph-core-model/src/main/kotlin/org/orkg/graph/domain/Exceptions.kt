@@ -71,6 +71,9 @@ class ResourceUsedInStatement(id: ThingId) :
 class PredicateUsedInStatement(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete predicate "$id" because it is used in at least one statement.""")
 
+class ListInUse(id: ThingId) :
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete list "$id" because it is used in at least one statement.""")
+
 class ClassNotAllowed(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Class id "$id" is not allowed.""")
 
@@ -85,6 +88,9 @@ class PredicateAlreadyExists(id: ThingId) :
 
 class LiteralAlreadyExists(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Literal "$id" already exists.""")
+
+class ThingAlreadyExists(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """A thing with id "$id" already exists.""")
 
 class ResourceNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Resource "$id" is not modifiable.""")

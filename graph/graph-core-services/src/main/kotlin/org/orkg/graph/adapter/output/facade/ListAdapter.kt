@@ -105,10 +105,6 @@ class ListAdapter(
 
     override fun delete(id: ThingId) {
         if (exists(id)) {
-            val statements = statementRepository.findAll(subjectId = id, pageable = PageRequests.ALL)
-            if (!statements.isEmpty) {
-                statementRepository.deleteByStatementIds(statements.map { it.id }.toSet())
-            }
             resourceRepository.deleteById(id)
         }
     }
@@ -116,7 +112,12 @@ class ListAdapter(
     private fun Resource.toList(): List = List(
         id = id,
         label = label,
-        elements = statementRepository.findAll(subjectId = id, pageable = PageRequests.ALL)
+        elements = statementRepository.findAll(
+            subjectId = id,
+            predicateId = Predicates.hasListElement,
+            pageable = PageRequests.ALL
+        )
+            .filter { it.index != null }
             .sortedBy { it.index }
             .map { it.`object`.id },
         createdAt = createdAt,

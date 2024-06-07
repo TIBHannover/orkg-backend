@@ -168,8 +168,9 @@ class SubgraphCreator(
         }
         lists.forEach {
             listService.update(
-                lookup[it.key]!!,
                 UpdateListUseCase.UpdateCommand(
+                    id = lookup[it.key]!!,
+                    contributorId = contributorId,
                     elements = it.value.elements.map { id -> resolve(id, lookup) },
                 )
             )

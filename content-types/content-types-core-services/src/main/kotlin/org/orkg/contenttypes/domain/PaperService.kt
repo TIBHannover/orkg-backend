@@ -66,6 +66,7 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
@@ -88,6 +89,7 @@ class PaperService(
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
     private val listService: ListUseCases,
+    private val listRepository: ListRepository,
     private val publishingService: PublishingService,
     private val paperRepository: PaperRepository,
     private val classRepository: ClassRepository,
@@ -191,7 +193,7 @@ class PaperService(
             PaperAuthorUpdateValidator(resourceRepository, statementRepository),
             PaperResourceUpdater(resourceService),
             PaperIdentifierUpdater(statementService, literalService),
-            PaperAuthorUpdater(resourceService, statementService, literalService, listService),
+            PaperAuthorUpdater(resourceService, statementService, literalService, listService, listRepository),
             PaperResearchFieldUpdater(literalService, statementService),
             PaperPublicationInfoUpdater(resourceService, resourceRepository, statementService, literalService),
             PaperSDGUpdater(literalService, statementService)

@@ -40,6 +40,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -61,6 +62,7 @@ class ComparisonServiceUnitTests {
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
+    private val listRepository: ListRepository = mockk()
     private val publishingService: PublishingService = mockk()
     private val comparisonRepository: ComparisonRepository = mockk()
 
@@ -74,6 +76,7 @@ class ComparisonServiceUnitTests {
         statementService = statementService,
         literalService = literalService,
         listService = listService,
+        listRepository = listRepository,
         publishingService = publishingService,
         comparisonRepository = comparisonRepository,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
@@ -96,6 +99,7 @@ class ComparisonServiceUnitTests {
             statementService,
             literalService,
             listService,
+            listRepository,
             publishingService,
             comparisonRepository
         )

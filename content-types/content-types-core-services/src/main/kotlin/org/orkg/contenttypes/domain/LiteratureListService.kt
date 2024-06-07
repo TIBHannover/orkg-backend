@@ -58,6 +58,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.Page
@@ -76,7 +77,8 @@ class LiteratureListService(
     private val resourceService: ResourceUseCases,
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases,
-    private val listService: ListUseCases
+    private val listService: ListUseCases,
+    private val listRepository: ListRepository
 ) : LiteratureListUseCases {
     override fun findById(id: ThingId): Optional<LiteratureList> =
         resourceRepository.findById(id)
@@ -157,7 +159,7 @@ class LiteratureListService(
             LiteratureListSectionsUpdateValidator(resourceRepository),
             LiteratureListResourceUpdater(resourceService),
             LiteratureListResearchFieldUpdater(literalService, statementService),
-            LiteratureListAuthorUpdater(resourceService, statementService, literalService, listService),
+            LiteratureListAuthorUpdater(resourceService, statementService, literalService, listService, listRepository),
             LiteratureListSDGUpdater(literalService, statementService),
             LiteratureListSectionsUpdater(literalService, resourceService, statementService)
         )

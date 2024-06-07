@@ -17,6 +17,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidStatement
+import org.orkg.graph.domain.ListInUse
 import org.orkg.graph.domain.LiteralNotModifiable
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.NeitherOwnerNorCurator
@@ -24,6 +25,7 @@ import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementNotModifiable
+import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
@@ -311,6 +313,36 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun thingAlreadyExists() {
+        val id = "R123"
+
+        get("/thing-already-exists")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/thing-already-exists"))
+            .andExpect(jsonPath("$.message").value("""A thing with id "$id" already exists."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun listInUse() {
+        val id = "R123"
+
+        get("/list-in-use")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.error", `is`("Forbidden")))
+            .andExpect(jsonPath("$.path").value("/list-in-use"))
+            .andExpect(jsonPath("$.message").value("""Unable to delete list "$id" because it is used in at least one statement."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -397,6 +429,16 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/invalid-statement-rosetta-stone-statement-resource")
         fun invalidStatementRosettaStoneStatementResource() {
             throw InvalidStatement.includesRosettaStoneStatementResource()
+        }
+
+        @GetMapping("/thing-already-exists")
+        fun thingAlreadyExists(@RequestParam id: ThingId) {
+            throw ThingAlreadyExists(id)
+        }
+
+        @GetMapping("/list-in-use")
+        fun listInUse(@RequestParam id: ThingId) {
+            throw ListInUse(id)
         }
     }
 

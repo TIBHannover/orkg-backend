@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
+private const val id = "${'$'}id"
 private const val ids = "${'$'}ids"
 
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
@@ -21,4 +22,16 @@ UNWIND $ids AS id
 MATCH (node:Thing {id: id})
 RETURN apoc.coll.containsAll(collect(node.id), $ids) AS result""")
     fun existsAll(ids: Set<ThingId>): Boolean
+
+    @Query("""
+CALL {
+    MATCH (:Thing {id: $id})<-[r:RELATED]-()
+    RETURN r
+    UNION ALL
+    MATCH (:Thing {id: $id})<-[r:VALUE]-()
+    RETURN r
+}
+WITH r
+RETURN COUNT(r) > 0 AS count""")
+    fun isUsedAsObject(id: ThingId): Boolean
 }

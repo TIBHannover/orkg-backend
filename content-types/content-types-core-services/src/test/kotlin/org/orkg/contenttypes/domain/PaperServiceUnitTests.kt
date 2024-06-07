@@ -37,6 +37,7 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
@@ -62,6 +63,7 @@ class PaperServiceUnitTests {
     private val publishingService: PublishingService = mockk()
     private val paperRepository: PaperRepository = mockk()
     private val classRepository: ClassRepository = mockk()
+    private val listRepository: ListRepository = mockk()
 
     private val service = PaperService(
         resourceRepository = resourceRepository,
@@ -75,6 +77,7 @@ class PaperServiceUnitTests {
         literalService = literalService,
         predicateService = predicateService,
         listService = listService,
+        listRepository = listRepository,
         publishingService = publishingService,
         paperRepository = paperRepository,
         classRepository = classRepository,
@@ -100,6 +103,7 @@ class PaperServiceUnitTests {
             literalService,
             predicateService,
             listService,
+            listRepository,
             publishingService,
             paperRepository,
             classRepository

@@ -32,11 +32,9 @@ abstract class AuthorCreator(
                     }
                     author.id!!
                 }
-
                 author.homepage == null && author.identifiers.isNullOrEmpty() -> {
                     createLiteralAuthor(author, contributorId)
                 }
-
                 else -> createResourceAuthor(author, contributorId)
             }
         }
@@ -55,7 +53,7 @@ abstract class AuthorCreator(
         )
     }
 
-    private fun createLiteralAuthor(author: Author, contributorId: ContributorId): ThingId =
+    internal fun createLiteralAuthor(author: Author, contributorId: ContributorId): ThingId =
         literalService.create(
             CreateCommand(
                 contributorId = contributorId,
@@ -63,7 +61,7 @@ abstract class AuthorCreator(
             )
         )
 
-    private fun createResourceAuthor(author: Author, contributorId: ContributorId): ThingId {
+    internal fun createResourceAuthor(author: Author, contributorId: ContributorId): ThingId {
         val authorId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
                 label = author.name,
@@ -95,7 +93,7 @@ abstract class AuthorCreator(
         return authorId
     }
 
-    private fun createIdentifiers(
+    internal fun createIdentifiers(
         authorId: ThingId,
         missingIdentifiers: Map<String, List<String>>,
         contributorId: ContributorId

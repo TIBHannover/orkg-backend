@@ -4,3 +4,9 @@ plugins {
     kotlin("plugin.spring")
     id("org.springframework.boot")
 }
+
+springBoot {
+    buildInfo {
+        excludes.set(setOf("time"))
+    }
+}

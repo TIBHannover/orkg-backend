@@ -366,10 +366,6 @@ kapt {
     includeCompileClasspath = false
 }
 
-springBoot {
-    buildInfo()
-}
-
 normalization {
     runtimeClasspath {
         // This only affects build cache key calculation. The file will be included in the build.

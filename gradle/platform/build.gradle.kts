@@ -6,7 +6,11 @@ dependencies {
     // Extend existing platforms
     api(enforcedPlatform(kotlin("bom", "1.9.22")))
     api(platform("dev.forkhandles:forkhandles-bom:2.0.0.0"))
-    api(platform("org.springframework.boot:spring-boot-dependencies:2.4.13"))
+    // FIXME: The version is forced because the Spring Gradle plugin version was moved ahead to work around an issue
+    //        related to rebuilds.
+    //        The force may not be needed; it serves as a safe-guard against accidental upgrades, and can be removed
+    //        when the version is updated to the same version as the Gradle plugin.
+    api(platform("org.springframework.boot:spring-boot-dependencies:2.4.13!!"))
     api(enforcedPlatform("org.junit:junit-bom:5.8.2")) // TODO: can be removed after upgrade to Spring Boot 2.7
     api(enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.6.4")) // Required for Kotest. TODO: can be removed after upgrade to Spring Boot 2.7
     // Use the virtual platform defined in the alignment rule to manage Jackson versions

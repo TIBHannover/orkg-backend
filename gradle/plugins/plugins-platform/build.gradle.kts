@@ -8,7 +8,10 @@ dependencies.constraints {
     api("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion")
 
-    api("org.springframework.boot:spring-boot-gradle-plugin:2.4.13")
+    // FIXME: This version should be the same as the one used in the platform.
+    //        It was moved ahead to work around a bug in the Spring Gradle plugin that lead to rebuilds which were
+    //        unnecessary.
+    api("org.springframework.boot:spring-boot-gradle-plugin:3.0.13")
 
     val asciidoctorVersion = "3.3.2"
     api("org.asciidoctor:asciidoctor-gradle-jvm:$asciidoctorVersion")

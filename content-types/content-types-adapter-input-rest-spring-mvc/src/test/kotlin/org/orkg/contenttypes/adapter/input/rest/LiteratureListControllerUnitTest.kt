@@ -141,6 +141,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                         fieldWithPath("sections[].heading").description("The heading of the text section.").optional(),
                         fieldWithPath("sections[].heading_size").description("The heading size of the text section.").optional(),
                         fieldWithPath("sections[].text").description("The text contents of the text section.").optional(),
+                        subsectionWithPath("acknowledgements").description("A key-value map of contributor ids to an estimated contribution percentage."),
                         fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `literature-list`."),
                     ).and(authorListFields("literature list"))
                         .and(sustainableDevelopmentGoalsFields("literature list"))

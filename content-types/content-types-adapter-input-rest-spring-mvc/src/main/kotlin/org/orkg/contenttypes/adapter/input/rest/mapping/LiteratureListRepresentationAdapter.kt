@@ -35,7 +35,8 @@ interface LiteratureListRepresentationAdapter : AuthorRepresentationAdapter, Ver
             visibility = visibility,
             unlistedBy = unlistedBy,
             published = published,
-            sections = sections.map { it.toLiteratureListSectionRepresentation() }
+            sections = sections.map { it.toLiteratureListSectionRepresentation() },
+            acknowledgements = acknowledgements
         )
 
     private fun LiteratureListSection.toLiteratureListSectionRepresentation(): LiteratureListSectionRepresentation =

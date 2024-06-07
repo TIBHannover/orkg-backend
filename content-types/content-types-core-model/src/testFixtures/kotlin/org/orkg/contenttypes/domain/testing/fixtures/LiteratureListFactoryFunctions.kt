@@ -108,6 +108,10 @@ fun createDummyLiteratureList() = LiteratureList(
     sections = listOf(
         createDummyTextSection(),
         createDummyListSection()
+    ),
+    acknowledgements = mapOf(
+        ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620") to 0.75,
+        ContributorId.UNKNOWN to 0.25
     )
 )
 

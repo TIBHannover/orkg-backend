@@ -27,11 +27,28 @@ data class LiteratureList(
     val visibility: Visibility,
     val unlistedBy: ContributorId? = null,
     val published: Boolean,
-    val sections: List<LiteratureListSection>
+    val sections: List<LiteratureListSection>,
+    val acknowledgements: Map<ContributorId, Double>
 ) : ContentType {
     companion object {
         fun from(resource: Resource, root: ThingId, statements: Map<ThingId, List<GeneralStatement>>): LiteratureList {
             val directStatements = statements[root].orEmpty()
+            val versions = VersionInfo(
+                head = HeadVersion(directStatements.firstOrNull()?.subject ?: resource),
+                published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
+                    .sortedByDescending { it.createdAt }
+                    .objects()
+                    .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
+            )
+            val sections = directStatements.wherePredicate(Predicates.hasSection)
+                .filter { it.`object` is Resource }
+                .sortedBy { it.createdAt }
+                .map { it.`object` as Resource }
+            val contributors = listOf(
+                versions.head.createdBy,
+                *versions.published.map { it.createdBy }.toTypedArray(),
+                *sections.flatMap { LiteratureListSection.contributors(it, statements) }.toTypedArray()
+            )
             return LiteratureList(
                 id = resource.id,
                 title = resource.label,
@@ -39,13 +56,7 @@ data class LiteratureList(
                     .objectIdsAndLabel()
                     .sortedBy { it.id },
                 authors = statements.authors(root).ifEmpty { statements.legacyAuthors(root) },
-                versions = VersionInfo(
-                    head = HeadVersion(directStatements.firstOrNull()?.subject ?: resource),
-                    published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
-                        .sortedByDescending { it.createdAt }
-                        .objects()
-                        .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
-                ),
+                versions = versions,
                 sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
                     .objectIdsAndLabel()
                     .sortedBy { it.id }
@@ -58,10 +69,10 @@ data class LiteratureList(
                 visibility = resource.visibility,
                 unlistedBy = resource.unlistedBy,
                 published = Classes.literatureListPublished in resource.classes,
-                sections = directStatements.wherePredicate(Predicates.hasSection)
-                    .filter { it.`object` is Resource }
-                    .sortedBy { it.createdAt }
-                    .map { LiteratureListSection.from(it.`object` as Resource, statements) }
+                sections = sections.map { LiteratureListSection.from(it, statements) },
+                acknowledgements = contributors.groupingBy { it }
+                    .eachCount()
+                    .mapValues { (_, value) -> value.toDouble() / contributors.size }
             )
         }
     }
@@ -75,6 +86,13 @@ sealed interface LiteratureListSection {
             when {
                 Classes.listSection in root.classes -> ListSection.from(root, statements)
                 Classes.textSection in root.classes -> TextSection.from(root, statements)
+                else -> throw IllegalStateException("Cannot convert section ${root.id} to literature list section. This is a bug.")
+            }
+
+        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+            when {
+                Classes.listSection in root.classes -> ListSection.contributors(root, statements)
+                Classes.textSection in root.classes -> TextSection.contributors(root, statements)
                 else -> throw IllegalStateException("Cannot convert section ${root.id} to literature list section. This is a bug.")
             }
     }
@@ -110,6 +128,19 @@ data class ListSection(
                         }
                     }.orEmpty()
             )
+
+        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+            statements[root.id].orEmpty()
+                .wherePredicate(Predicates.hasEntry)
+                .map { hasEntry ->
+                    val entryStatements = statements[hasEntry.`object`.id]
+                    val hasLink = entryStatements?.singleOrNull {
+                        (it.predicate.id == Predicates.hasLink || it.predicate.id == Predicates.hasPaper) &&
+                            it.`object` is Resource
+                    }
+                    listOfNotNull(root.createdBy, hasLink?.`object`?.createdBy)
+                }
+                .flatten()
     }
 }
 
@@ -133,5 +164,8 @@ data class TextSection(
                     ?.singleObjectLabel()
                     .orEmpty()
             )
+
+        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+            listOf(root.createdBy)
     }
 }

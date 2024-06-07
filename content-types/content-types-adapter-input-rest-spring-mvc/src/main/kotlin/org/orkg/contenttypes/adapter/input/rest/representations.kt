@@ -438,6 +438,7 @@ data class LiteratureListRepresentation(
     val unlistedBy: ContributorId? = null,
     val published: Boolean,
     val sections: List<LiteratureListSectionRepresentation>,
+    val acknowledgements: Map<ContributorId, Double>,
     override val jsonClass: String = "literature-list"
 ) : ContentTypeRepresentation
 

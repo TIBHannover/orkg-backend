@@ -284,6 +284,10 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
                     )
                 )
             }
+            it.acknowledgements shouldBe mapOf(
+                ContributorId(MockUserId.USER) to 0.6666666666666666,
+                ContributorId.UNKNOWN to 0.3333333333333333
+            )
         }
 
         put("/api/literature-lists/{id}", id)
@@ -367,6 +371,10 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
                     )
                 )
             }
+            it.acknowledgements shouldBe mapOf(
+                ContributorId(MockUserId.USER) to 0.625,
+                ContributorId.UNKNOWN to 0.375
+            )
         }
     }
 

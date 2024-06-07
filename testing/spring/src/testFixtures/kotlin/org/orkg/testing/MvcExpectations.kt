@@ -331,6 +331,7 @@ fun ResultActions.andExpectLiteratureList(path: String = "$"): ResultActions = t
     .andExpect(jsonPath("$path.sections[*].heading", `is`(notNullValue())))
     .andExpect(jsonPath("$path.sections[*].heading_size", `is`(notNullValue())))
     .andExpect(jsonPath("$path.sections[*].text", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.acknowledgements", `is`(notNullValue())))
     .andExpect(jsonPath("$path._class").value("literature-list"))
 
 fun ResultActions.andExpectSmartReview(path: String = "$"): ResultActions = this

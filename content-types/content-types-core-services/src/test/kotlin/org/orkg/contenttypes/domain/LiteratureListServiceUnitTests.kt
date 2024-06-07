@@ -14,6 +14,7 @@ import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
@@ -306,6 +307,9 @@ class LiteratureListServiceUnitTests {
                     )
                 )
             )
+            it.acknowledgements shouldBe mapOf(
+                ContributorId.UNKNOWN to 1.0
+            )
         }
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }
@@ -546,6 +550,9 @@ class LiteratureListServiceUnitTests {
                         ListSection.Entry(ResourceReference(comparison))
                     )
                 )
+            )
+            it.acknowledgements shouldBe mapOf(
+                ContributorId.UNKNOWN to 1.0
             )
         }
 

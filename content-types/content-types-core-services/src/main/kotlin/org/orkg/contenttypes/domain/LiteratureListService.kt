@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain
 import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
+import org.orkg.common.Either
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
@@ -109,6 +110,25 @@ class LiteratureListService(
             published = published,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toLiteratureList() }
+
+    override fun findPublishedContentById(
+        literatureListId: ThingId,
+        contentId: ThingId
+    ): Either<Paper, Resource> {
+        val literatureList = resourceRepository.findById(literatureListId)
+            .filter { Classes.literatureListPublished in it.classes }
+            .orElseThrow { LiteratureListNotFound(literatureListId) }
+        val statements = findSubgraph(literatureList).statements
+        val content = statements.values.flatten()
+            .firstOrNull { statement -> statement.`object`.id == contentId && statement.`object` is Resource }
+            ?.`object` as? Resource
+            ?: throw PublishedLiteratureListContentNotFound(literatureListId, contentId)
+        return when {
+            Classes.paper in content.classes -> Either.left(Paper.from(content, statements))
+            Classes.dataset in content.classes || Classes.software in content.classes -> Either.right(content)
+            else -> throw PublishedLiteratureListContentNotFound(literatureListId, contentId)
+        }
+    }
 
     override fun create(command: CreateLiteratureListCommand): ThingId {
         val steps = listOf(

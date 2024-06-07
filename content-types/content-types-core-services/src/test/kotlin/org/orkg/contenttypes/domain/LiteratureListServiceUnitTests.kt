@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -14,6 +15,7 @@ import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -569,5 +571,139 @@ class LiteratureListServiceUnitTests {
                 sort = Sort.unsorted()
             )
         }
+    }
+
+    @Test
+    fun `Given a published literature list, when fetching one of its contents (dataset), then it is returned`() {
+        val literatureList = createResource(classes = setOf(Classes.literatureListPublished))
+        val content = createResource(id = ThingId("R123"), classes = setOf(Classes.dataset))
+
+        every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
+        every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
+            PublishedContentType(
+                rootId = literatureList.id,
+                subgraph = listOf(createStatement(`object` = content))
+            )
+        )
+        every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
+
+        val result = service.findPublishedContentById(literatureList.id, content.id)
+        result.isRight shouldBe true
+        result.onRight { it shouldBe content }
+
+        verify(exactly = 1) { resourceRepository.findById(literatureList.id) }
+        verify(exactly = 1) { literatureListPublishedRepository.findById(literatureList.id) }
+        verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given a published literature list, when fetching one of its contents (paper), then it is returned`() {
+        val literatureList = createResource(classes = setOf(Classes.literatureListPublished))
+        val content = createResource(id = ThingId("R123"), classes = setOf(Classes.paper))
+
+        every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
+        every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
+            PublishedContentType(
+                rootId = literatureList.id,
+                subgraph = listOf(createStatement(`object` = content))
+            )
+        )
+        every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
+
+        val result = service.findPublishedContentById(literatureList.id, content.id)
+        result.isLeft shouldBe true
+        result.onLeft { paper ->
+            paper.shouldBeInstanceOf<Paper>().asClue {
+                it.id shouldBe content.id
+                it.title shouldBe content.label
+                it.createdAt shouldBe content.createdAt
+                it.createdBy shouldBe content.createdBy
+                it.observatories shouldBe listOf(content.observatoryId)
+                it.extractionMethod shouldBe content.extractionMethod
+                it.organizations shouldBe listOf(content.organizationId)
+                it.visibility shouldBe content.visibility
+                it.verified shouldBe false
+                it.unlistedBy shouldBe content.unlistedBy
+                it.modifiable shouldBe content.modifiable
+            }
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(literatureList.id) }
+        verify(exactly = 1) { literatureListPublishedRepository.findById(literatureList.id) }
+        verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given a published literature list, when fetching one of its contents but literature list does not exist, then it throws an exception`() {
+        val literatureListId = ThingId("R123")
+        val contentId = ThingId("R456")
+
+        every { resourceRepository.findById(literatureListId) } returns Optional.empty()
+
+        assertThrows<LiteratureListNotFound> {
+            service.findPublishedContentById(literatureListId, contentId)
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(literatureListId) }
+    }
+
+    @Test
+    fun `Given a published literature list, when fetching one of its contents but provided literature list id is not of a published literature list, then it throws an exception`() {
+        val notALiteratureList = createResource(classes = setOf(Classes.paper))
+        val contentId = ThingId("R456")
+
+        every { resourceRepository.findById(notALiteratureList.id) } returns Optional.of(notALiteratureList)
+
+        assertThrows<LiteratureListNotFound> {
+            service.findPublishedContentById(notALiteratureList.id, contentId)
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(notALiteratureList.id) }
+    }
+
+    @Test
+    fun `Given a published literature list, when fetching one of its contents but content is unrelated, then it throws an exception`() {
+        val literatureList = createResource(classes = setOf(Classes.literatureListPublished))
+        val unrelatedContent = createResource(id = ThingId("R123"), classes = setOf(Classes.dataset))
+
+        every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
+        every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
+            PublishedContentType(
+                rootId = literatureList.id,
+                subgraph = listOf()
+            )
+        )
+        every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
+
+        assertThrows<PublishedLiteratureListContentNotFound> {
+            service.findPublishedContentById(literatureList.id, unrelatedContent.id)
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(literatureList.id) }
+        verify(exactly = 1) { literatureListPublishedRepository.findById(literatureList.id) }
+        verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given a published literature list, when fetching one of its contents but content is not of a know class, then it throws an exception`() {
+        val literatureList = createResource(classes = setOf(Classes.literatureListPublished))
+        val unknownContent = createResource(id = ThingId("R123"), classes = setOf(Classes.caption))
+
+        every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
+        every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
+            PublishedContentType(
+                rootId = literatureList.id,
+                subgraph = listOf()
+            )
+        )
+        every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
+
+        assertThrows<PublishedLiteratureListContentNotFound> {
+            service.findPublishedContentById(literatureList.id, unknownContent.id)
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(literatureList.id) }
+        verify(exactly = 1) { literatureListPublishedRepository.findById(literatureList.id) }
+        verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
     }
 }

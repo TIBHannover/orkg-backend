@@ -46,3 +46,20 @@ NOTE: All fields at the top level in the request can be omitted or `null`, meani
 WARNING: Author names will not be updated if a resource id is specified for a given author.
 
 operation::literature-lists-update[snippets='request-fields,curl-request,http-response']
+
+[[literature-lists-published-contents]]
+== Fetching published literature list contents
+
+A `GET` request returns contents of an already published literature list, at the state of publishing.
+
+operation::literature-lists-find-published-content-by-id[snippets='curl-request']
+
+Depending on the type of the requested content, the following representations are returned:
+
+[options="header"]
+|===
+| Type     | Returned Representation
+| Dataset  | <<resources-fetch,Resource>>
+| Paper    | <<papers-fetch,Paper>>
+| Software | <<resources-fetch,Resource>>
+|===

@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.OffsetDateTime
+import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Positive
 import javax.validation.constraints.Size
 import org.orkg.common.ContributorId
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -16,6 +18,7 @@ import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.LiteratureListRepresentationAdapter
+import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
 import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
@@ -26,16 +29,22 @@ import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.TextSectionCommand
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
+import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.FormattedLabelUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.GetMapping
@@ -54,8 +63,11 @@ const val LITERATURE_LIST_SECTION_JSON_V1 = "application/vnd.orkg.literature-lis
 @RestController
 @RequestMapping("/api/literature-lists", produces = [LITERATURE_LIST_JSON_V1])
 class LiteratureListController(
-    private val service: LiteratureListUseCases
-) : LiteratureListRepresentationAdapter {
+    private val service: LiteratureListUseCases,
+    override val formattedLabelService: FormattedLabelUseCases,
+    override val statementService: StatementUseCases,
+    override val flags: FeatureFlagService
+) : LiteratureListRepresentationAdapter, ResourceRepresentationAdapter, PaperRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(
         @PathVariable id: ThingId
@@ -89,6 +101,17 @@ class LiteratureListController(
             published = published,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).mapToLiteratureListRepresentation()
+
+    @GetMapping("/{literatureListId}/published-contents/{contentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun findPublishedContentById(
+        @PathVariable literatureListId: ThingId,
+        @PathVariable contentId: ThingId,
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
+    ): ResponseEntity<Any> =
+        service.findPublishedContentById(literatureListId, contentId)
+            .fold({ it.toPaperRepresentation() }, { Optional.of(it).mapToResourceRepresentation(capabilities).get() })
+            .let(::ok)
 
     @PreAuthorizeUser
     @PostMapping(consumes = [LITERATURE_LIST_JSON_V1])

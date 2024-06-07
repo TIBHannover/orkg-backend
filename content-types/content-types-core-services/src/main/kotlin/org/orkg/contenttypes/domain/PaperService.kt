@@ -55,7 +55,6 @@ import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -220,51 +219,25 @@ class PaperService(
     }
 
     internal fun Resource.toPaper(): Paper {
-        val statements = (
-            statementRepository.fetchAsBundle(
-                id = id,
-                configuration = BundleConfiguration(
-                    minLevel = null,
-                    maxLevel = 3,
-                    blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
-                    whitelist = emptyList()
-                ),
-                sort = Sort.unsorted()
-            ) + statementRepository.fetchAsBundle(
-                id = id,
-                configuration = BundleConfiguration(
-                    minLevel = null,
-                    maxLevel = 1,
-                    blacklist = emptyList(),
-                    whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue)
-                ),
-                sort = Sort.unsorted()
-            )
-            ).groupBy { it.subject.id }
-        val directStatements = statements[id].orEmpty()
-        return Paper(
+        val statements = statementRepository.fetchAsBundle(
             id = id,
-            title = label,
-            researchFields = directStatements.wherePredicate(Predicates.hasResearchField)
-                .objectIdsAndLabel()
-                .sortedBy { it.id },
-            identifiers = directStatements.associateIdentifiers(Identifiers.paper),
-            publicationInfo = PublicationInfo.from(directStatements),
-            authors = statements.authors(id),
-            contributions = directStatements.wherePredicate(Predicates.hasContribution).objectIdsAndLabel(),
-            sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
-                .objectIdsAndLabel()
-                .sortedBy { it.id }
-                .toSet(),
-            observatories = listOf(observatoryId),
-            organizations = listOf(organizationId),
-            extractionMethod = extractionMethod,
-            createdAt = createdAt,
-            createdBy = createdBy,
-            verified = verified ?: false,
-            visibility = visibility,
-            modifiable = modifiable,
-            unlistedBy = unlistedBy
+            configuration = BundleConfiguration(
+                minLevel = null,
+                maxLevel = 3,
+                blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
+                whitelist = emptyList()
+            ),
+            sort = Sort.unsorted()
+        ) + statementRepository.fetchAsBundle(
+            id = id,
+            configuration = BundleConfiguration(
+                minLevel = null,
+                maxLevel = 1,
+                blacklist = emptyList(),
+                whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue)
+            ),
+            sort = Sort.unsorted()
         )
+        return Paper.from(this, statements.groupBy { it.subject.id })
     }
 }

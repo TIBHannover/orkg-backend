@@ -223,6 +223,9 @@ class LiteratureListSectionTypeMismatch private constructor(
     }
 }
 
+class PublishedLiteratureListContentNotFound(literatureListId: ThingId, contentId: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Literature list content "$contentId" not found for literature list "$literatureListId".""")
+
 class InvalidSubjectPositionCardinality : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
     message = """Invalid subject position cardinality. Minimum cardinality must be at least one."""

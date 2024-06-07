@@ -21,25 +21,32 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.provider.Arguments
 import org.orkg.common.ContributorId
+import org.orkg.common.Either
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.ListSectionRequest.Entry
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
+import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.FormattedLabelUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectLiteratureList
 import org.orkg.testing.andExpectPage
+import org.orkg.testing.andExpectPaper
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
@@ -49,6 +56,7 @@ import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -64,7 +72,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [LiteratureListController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [LiteratureListController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, WebMvcConfiguration::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LiteratureListController::class])
 @DisplayName("Given a LiteratureList controller")
 internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists") {
@@ -74,6 +82,15 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
 
     @MockkBean
     private lateinit var contributionService: ContributionUseCases
+
+    @MockkBean
+    private lateinit var statementService: StatementUseCases
+
+    @MockkBean
+    private lateinit var formattedLabelService: FormattedLabelUseCases
+
+    @MockkBean
+    private lateinit var flags: FeatureFlagService
 
     @BeforeEach
     fun resetState() {
@@ -452,6 +469,32 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { literatureListService.updateSection(any<UpdateLiteratureListSectionUseCase.UpdateListSectionCommand>()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a published literature list, when fetching its contents, returns success")
+    fun findPublishedContentById() {
+        val literatureListId = ThingId("R3541")
+        val id = ThingId("R123")
+        every { literatureListService.findPublishedContentById(any(), any()) } returns Either.left(createDummyPaper())
+
+        documentedGetRequestTo("/api/literature-lists/{literatureListId}/published-contents/{contentId}", literatureListId, id)
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPaper()
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("literatureListId").description("The id of the published literature list."),
+                        parameterWithName("contentId").description("The id of the resource to fetch.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { literatureListService.findPublishedContentById(any(), any()) }
     }
 
     @Test

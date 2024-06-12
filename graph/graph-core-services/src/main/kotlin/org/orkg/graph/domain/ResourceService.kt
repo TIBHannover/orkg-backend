@@ -13,7 +13,6 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
-import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -28,7 +27,6 @@ class ResourceService(
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val classRepository: ClassRepository,
-    private val classHierarchyRepository: ClassHierarchyRepository,
     private val contributorRepository: ContributorRepository,
     private val clock: Clock,
 ) : ResourceUseCases {
@@ -67,6 +65,7 @@ class ResourceService(
         createdAtEnd: OffsetDateTime?,
         includeClasses: Set<ThingId>,
         excludeClasses: Set<ThingId>,
+        baseClass: ThingId?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?
     ): Page<Resource> =
@@ -79,6 +78,7 @@ class ResourceService(
             createdAtEnd = createdAtEnd,
             includeClasses = includeClasses,
             excludeClasses = excludeClasses,
+            baseClass = baseClass,
             observatoryId = observatoryId,
             organizationId = organizationId
         )
@@ -237,13 +237,6 @@ class ResourceService(
         statementRepository.findAllProblemsByOrganizationId(id, pageable)
 
     override fun hasStatements(id: ThingId): Boolean = statementRepository.checkIfResourceHasStatements(id)
-
-    override fun findAllByLabelAndBaseClass(
-        searchString: FuzzySearchString,
-        baseClass: ThingId,
-        pageable: Pageable
-    ): Page<Resource> =
-        classHierarchyRepository.findAllResourcesByLabelAndBaseClass(searchString, baseClass, pageable)
 
     private fun setVerifiedFlag(resourceId: ThingId, verified: Boolean) {
         val result = repository.findById(resourceId)

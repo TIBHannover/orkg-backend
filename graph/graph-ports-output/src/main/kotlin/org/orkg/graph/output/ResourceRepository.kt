@@ -29,6 +29,7 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
         createdAtEnd: OffsetDateTime? = null,
         includeClasses: Set<ThingId> = emptySet(),
         excludeClasses: Set<ThingId> = emptySet(),
+        baseClass: ThingId? = null,
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
     ): Page<Resource>

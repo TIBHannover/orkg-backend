@@ -3,6 +3,7 @@ package org.orkg.graph.adapter.output.inmemory
 import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.ClassSubclassRelation
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
@@ -17,9 +18,14 @@ class InMemoryGraph {
     private val classes: MutableMap<ThingId, Class> = mutableMapOf()
     private val literals: MutableMap<ThingId, Literal> = mutableMapOf()
     private val statements: MutableMap<StatementId, GeneralStatement> = mutableMapOf()
+    private val childClassIdToClassRelation: MutableMap<ThingId, ClassSubclassRelation> = mutableMapOf()
 
     fun add(thing: Thing) {
         things[thing.id] = thing
+        resources.remove(thing.id)
+        predicates.remove(thing.id)
+        classes.remove(thing.id)
+        literals.remove(thing.id)
         when (thing) {
             is Resource -> resources[thing.id] = thing
             is Predicate -> predicates[thing.id] = thing
@@ -39,6 +45,22 @@ class InMemoryGraph {
             }
             result.takeIf { it != statement }
         }.forEach { statements[it.id] = it }
+        childClassIdToClassRelation.toMap().forEach { (key, value) ->
+            if (value.parent.id == thing.id) {
+                if (thing is Class) {
+                    childClassIdToClassRelation[key] = value.copy(parent = thing)
+                } else {
+                    childClassIdToClassRelation.remove(key)
+                }
+            }
+            if (value.child.id == thing.id) {
+                if (thing is Class) {
+                    childClassIdToClassRelation[key] = value.copy(child = thing)
+                } else {
+                    childClassIdToClassRelation.remove(key)
+                }
+            }
+        }
     }
 
     fun add(statement: GeneralStatement) {
@@ -46,6 +68,10 @@ class InMemoryGraph {
         add(statement.predicate)
         add(statement.`object`)
         statements[statement.id] = statement
+    }
+
+    fun add(classRelation: ClassSubclassRelation) {
+        childClassIdToClassRelation[classRelation.child.id] = classRelation
     }
 
     fun findById(thingId: ThingId): Optional<Thing> =
@@ -65,6 +91,9 @@ class InMemoryGraph {
 
     fun findStatementById(statementId: StatementId): Optional<GeneralStatement> =
         Optional.ofNullable(statements[statementId])
+
+    fun findClassRelationByChildId(childId: ThingId) =
+        Optional.ofNullable(childClassIdToClassRelation[childId])
 
     fun findAll(): List<Thing> = things.values.distinct()
 
@@ -86,7 +115,13 @@ class InMemoryGraph {
             when (thing) {
                 is Resource -> resources.remove(thingId)
                 is Predicate -> predicates.remove(thingId)
-                is Class -> classes.remove(thingId)
+                is Class -> {
+                    classes.remove(thingId)
+                    childClassIdToClassRelation.remove(thingId)
+                    childClassIdToClassRelation.filterValues { it.parent.id == thingId }
+                        .map { it.value.child.id }
+                        .forEach { childClassIdToClassRelation.remove(it) }
+                }
                 is Literal -> literals.remove(thingId)
             }
             statements.values.filter { it.subject.id == thingId || it.predicate.id == thingId || it.`object`.id == thingId }
@@ -99,6 +134,9 @@ class InMemoryGraph {
     fun remove(statement: GeneralStatement): GeneralStatement? =
         remove(statement.id)
 
+    fun remove(classRelation: ClassSubclassRelation): ClassSubclassRelation? =
+        childClassIdToClassRelation.remove(classRelation.child.id)
+
     fun removeAll() {
         statements.clear()
         things.clear()
@@ -106,5 +144,10 @@ class InMemoryGraph {
         predicates.clear()
         classes.clear()
         literals.clear()
+        removeAllClassRelations()
+    }
+
+    fun removeAllClassRelations() {
+        childClassIdToClassRelation.clear()
     }
 }

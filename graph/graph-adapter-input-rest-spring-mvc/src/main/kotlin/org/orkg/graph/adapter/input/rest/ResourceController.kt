@@ -15,7 +15,6 @@ import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.SearchString
@@ -74,6 +73,7 @@ class ResourceController(
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
         @RequestParam("include", required = false, defaultValue = "") includeClasses: Set<ThingId>,
         @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Set<ThingId>,
+        @RequestParam("base_class", required = false) baseClass: ThingId?,
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
         pageable: Pageable,
@@ -88,19 +88,10 @@ class ResourceController(
             createdAtEnd = createdAtEnd,
             includeClasses = includeClasses,
             excludeClasses = excludeClasses,
+            baseClass = baseClass,
             observatoryId = observatoryId,
             organizationId = organizationId
         ).mapToResourceRepresentation(capabilities)
-
-    @GetMapping(params = ["base_class"])
-    fun findAllByLabelAndBaseClass(
-        @RequestParam("q") string: String,
-        @RequestParam("base_class") baseClass: ThingId,
-        pageable: Pageable,
-        capabilities: MediaTypeCapabilities
-    ): Page<ResourceRepresentation> =
-        service.findAllByLabelAndBaseClass(SearchString.of(string, exactMatch = false) as FuzzySearchString, baseClass, pageable)
-            .mapToResourceRepresentation(capabilities)
 
     @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])

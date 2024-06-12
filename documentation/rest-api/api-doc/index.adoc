@@ -198,11 +198,9 @@ A `GET` request lists all resources.
 
 operation::resources-get-paged[snippets='curl-request']
 
-The following two distinct sets of request parameters are supported:
+The following list of request parameters are supported:
 
 operation::resources-get-paged-with-parameters[snippets='request-parameters,curl-request']
-
-operation::resources-find-by-label-and-base-class[snippets='request-parameters']
 
 TIP: {pagination_note}
 

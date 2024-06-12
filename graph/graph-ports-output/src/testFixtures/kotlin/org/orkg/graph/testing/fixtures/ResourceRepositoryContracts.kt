@@ -17,19 +17,32 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.ClassSubclassRelation
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.output.ClassRelationRepository
+import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
-fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describeSpec {
+fun <
+    R : ResourceRepository,
+    C : ClassRepository,
+    CR : ClassRelationRepository
+> resourceRepositoryContract(
+    repository: R,
+    classRepository: C,
+    classRelationRepository: CR,
+) = describeSpec {
     beforeTest {
         repository.deleteAll()
+        classRelationRepository.deleteAll()
+        classRepository.deleteAll()
     }
 
     val fabricator = Fabrikate(
@@ -667,11 +680,56 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                     }
                 }
             }
+            context("by base class") {
+                val parent = createClass(id = ThingId("A"), uri = null)
+                val child = createClass(id = ThingId("B"), uri = null)
+                classRepository.save(parent)
+                classRepository.save(child)
+                classRelationRepository.save(ClassSubclassRelation(child, parent, OffsetDateTime.now()))
+
+                val resources = fabricator.random<MutableList<Resource>>()
+                (0 until 2).forEach {
+                    resources[it] = resources[it].copy(classes = setOf(parent.id))
+                }
+                (2 until 4).forEach {
+                    resources[it] = resources[it].copy(classes = setOf(child.id))
+                }
+                resources.forEach(repository::save)
+
+                val result = repository.findAll(
+                    baseClass = parent.id,
+                    pageable = PageRequest.of(0, 5)
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 4
+                    result.content shouldContainAll resources.take(4)
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe 4
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
             context("using all parameters") {
+                val parent = createClass(id = ThingId("A"), uri = null)
+                val child = createClass(id = ThingId("B"), uri = null)
+                classRepository.save(parent)
+                classRepository.save(child)
+                classRelationRepository.save(ClassSubclassRelation(child, parent, OffsetDateTime.now()))
+
                 val resources = fabricator.random<List<Resource>>()
                 resources.forEach(repository::save)
 
-                val expected = createResource()
+                val expected = createResource(classes = setOf(child.id))
                 repository.save(expected)
 
                 val result = repository.findAll(
@@ -683,6 +741,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                     createdAtEnd = expected.createdAt,
                     includeClasses = expected.classes,
                     excludeClasses = setOf(ThingId("MissingCLass")),
+                    baseClass = parent.id,
                     observatoryId = expected.observatoryId,
                     organizationId = expected.organizationId
                 )

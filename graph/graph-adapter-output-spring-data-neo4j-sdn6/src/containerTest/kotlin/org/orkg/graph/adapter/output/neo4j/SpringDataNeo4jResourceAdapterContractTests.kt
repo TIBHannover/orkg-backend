@@ -11,6 +11,8 @@ import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Functions.labels
 import org.orkg.graph.adapter.output.neo4j.configuration.GraphNeo4jConfiguration
+import org.orkg.graph.output.ClassRelationRepository
+import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.resourceRepositoryContract
@@ -26,6 +28,8 @@ import org.springframework.test.context.ContextConfiguration
 @ContextConfiguration(
     classes = [
         SpringDataNeo4jResourceAdapter::class,
+        SpringDataNeo4jClassAdapter::class,
+        SpringDataNeo4jClassHierarchyAdapter::class,
         GraphNeo4jConfiguration::class
     ],
     initializers = [
@@ -35,9 +39,17 @@ import org.springframework.test.context.ContextConfiguration
 @ImportAutoConfiguration(MigrationsAutoConfiguration::class)
 internal class SpringDataNeo4jResourceAdapterContractTests(
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
+    @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
+    @Autowired private val springDataNeo4jClassRelationAdapter: ClassRelationRepository,
     @Autowired private val neo4jClient: Neo4jClient
 ) : DescribeSpec({
-    include(resourceRepositoryContract(springDataNeo4jResourceAdapter))
+    include(
+        resourceRepositoryContract(
+            springDataNeo4jResourceAdapter,
+            springDataNeo4jClassAdapter,
+            springDataNeo4jClassRelationAdapter
+        )
+    )
     include(neo4jResourceRepositoryContract(springDataNeo4jResourceAdapter, neo4jClient))
 
     finalizeSpec {

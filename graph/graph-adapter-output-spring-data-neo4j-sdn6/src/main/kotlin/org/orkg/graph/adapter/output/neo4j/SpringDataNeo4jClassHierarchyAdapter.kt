@@ -13,7 +13,6 @@ import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
 import org.neo4j.cypherdsl.core.Functions.id
-import org.neo4j.cypherdsl.core.Functions.size
 import org.neo4j.cypherdsl.core.Predicates.exists
 import org.orkg.common.ThingId
 import org.orkg.common.neo4jdsl.CypherQueryBuilder
@@ -25,8 +24,6 @@ import org.orkg.graph.domain.ChildClass
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.ClassHierarchyEntry
 import org.orkg.graph.domain.ClassSubclassRelation
-import org.orkg.graph.domain.FuzzySearchString
-import org.orkg.graph.domain.Resource
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.springframework.data.domain.Page
@@ -288,46 +285,4 @@ class SpringDataNeo4jClassHierarchyAdapter(
         .fetchAs<Boolean>()
         .one()
         .orElse(false)
-
-    override fun findAllResourcesByLabelAndBaseClass(
-        searchString: FuzzySearchString,
-        baseClass: ThingId,
-        pageable: Pageable
-    ): Page<Resource> = CypherQueryBuilder(neo4jClient)
-        .withCommonQuery {
-            val node = name("node")
-            val nodes = name("nodes")
-            val score = name("score")
-            match(
-                node("Resource").named(node)
-                    .relationshipTo(node("Class"), INSTANCE_OF)
-                    .relationshipTo(node("Class").withProperties("id", parameter("baseClass")), SUBCLASS_OF)
-                    .length(0, null)
-            )
-                .with(collect(node).`as`(nodes))
-                .call("db.index.fulltext.queryNodes")
-                .withArgs(literalOf<String>("fulltext_idx_for_resource_on_label"), parameter("label"))
-                .yield(node, score)
-                .with(node, score)
-                .where(
-                    size(node.property("label")).gte(parameter("minLabelLength"))
-                        .and(node.`in`(nodes))
-                )
-        }
-        .withQuery { commonQuery ->
-            val node = name("node")
-            val score = name("score")
-            commonQuery
-                .with(node, score)
-                .orderBy(size(node.property("label")).ascending(), score.descending(), node.property("created_at").ascending())
-                .returning(node)
-        }
-        .countOver("node")
-        .withParameters(
-            "label" to searchString.query,
-            "baseClass" to baseClass.value,
-            "minLabelLength" to searchString.input.length
-        )
-        .mappedBy(ResourceMapper("node"))
-        .fetch(pageable)
 }

@@ -4,5 +4,12 @@ import io.kotest.core.spec.style.DescribeSpec
 import org.orkg.graph.testing.fixtures.resourceRepositoryContract
 
 internal class InMemoryResourceAdapterContractTests : DescribeSpec({
-    include(resourceRepositoryContract(InMemoryResourceRepository(InMemoryGraph())))
+    val inMemoryGraph = InMemoryGraph()
+    include(
+        resourceRepositoryContract(
+            InMemoryResourceRepository(inMemoryGraph),
+            InMemoryClassRepository(inMemoryGraph),
+            InMemoryClassRelationRepository(inMemoryGraph)
+        )
+    )
 })

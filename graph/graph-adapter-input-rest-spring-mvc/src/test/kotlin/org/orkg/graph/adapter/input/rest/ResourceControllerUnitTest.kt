@@ -195,26 +195,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     }
 
     @Test
-    fun `Given several resources, when fetched by label (fuzzy) and base class, then status is 200 OK`() {
-        every { resourceService.findAllByLabelAndBaseClass(any(), Classes.problem, any()) } returns pageOf(
-            createResource(classes = setOf(Classes.problem))
-        )
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-
-        get("/api/resources")
-            .param("q", "label")
-            .param("base_class", "Problem")
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectResource("$.content[*]")
-
-        verify(exactly = 1) {
-            resourceService.findAllByLabelAndBaseClass(withArg { it.input shouldBe "label" }, Classes.problem, any())
-        }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-    }
-
-    @Test
     @TestWithMockUser
     fun `When creating a resource, and service reports invalid class collection, then status is 400 BAD REQUEST`() {
         val command = CreateResourceRequest(
@@ -285,7 +265,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     @Test
     @DisplayName("Given several resources, when they are fetched with all possible filtering parameters, then status is 200 OK and resources are returned")
     fun getPagedWithParameters() {
-        every { resourceService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
+        every { resourceService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
 
         val label = "label"
@@ -296,6 +276,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         val createdAtEnd = OffsetDateTime.now(clock).plusHours(1)
         val includeClasses = setOf(ThingId("Include1"), ThingId("Include2"))
         val excludeClasses = setOf(ThingId("Exclude1"), ThingId("Exclude2"))
+        val baseClass = ThingId("BaseClass")
         val observatoryId = ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
         val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
 
@@ -308,6 +289,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .param("created_at_end", createdAtEnd.format(ISO_OFFSET_DATE_TIME))
             .param("include", includeClasses.joinToString(separator = ","))
             .param("exclude", excludeClasses.joinToString(separator = ","))
+            .param("base_class", baseClass.value)
             .param("observatory_id", observatoryId.value.toString())
             .param("organization_id", organizationId.value.toString())
             .accept(MediaType.APPLICATION_JSON)
@@ -326,6 +308,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                         parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned resource can have. (optional)"),
                         parameterWithName("include").description("A comma-separated set of classes that the resource must have. (optional)"),
                         parameterWithName("exclude").description("A comma-separated set of classes that the resource must not have. (optional)"),
+                        parameterWithName("base_class").description("The id of the base class that the resource has to be an instance of. (optional)"),
                         parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)"),
                         parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)")
                     )
@@ -345,37 +328,11 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                 createdAtEnd = createdAtEnd,
                 includeClasses = includeClasses,
                 excludeClasses = excludeClasses,
+                baseClass = baseClass,
                 observatoryId = observatoryId,
                 organizationId = organizationId
             )
         }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
-    }
-
-    @Test
-    @DisplayName("Given several resources, when fetched by label and base class, then status is 200 OK and resources are returned")
-    fun findByLabelAndBaseClass() {
-        every { resourceService.findAllByLabelAndBaseClass(any(), any(), any()) } returns pageOf(createResource())
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-
-        documentedGetRequestTo("/api/resources")
-            .param("q", "example")
-            .param("base_class", "Pattern")
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andExpectResource("$.content[*]")
-            .andDo(
-                documentationHandler.document(
-                    requestParameters(
-                        parameterWithName("q").description("The fuzzy search string for the label of the resource."),
-                        parameterWithName("base_class").description("The id of the base class that every resource has to be an instance of.")
-                    )
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
-
-        verify(exactly = 1) { resourceService.findAllByLabelAndBaseClass(any(), any(), any()) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 

@@ -52,6 +52,7 @@ const val RESOURCE_ID_TO_RESOURCE_CACHE = "resource-id-to-resource"
 const val RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE = "resource-id-to-resource-exists"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_resource_on_label"
 private const val INSTANCE_OF = "INSTANCE_OF"
+private const val SUBCLASS_OF = "SUBCLASS_OF"
 
 @Component
 @CacheConfig(cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
@@ -231,6 +232,7 @@ class SpringDataNeo4jResourceAdapter(
         createdAtEnd: OffsetDateTime?,
         includeClasses: Set<ThingId>,
         excludeClasses: Set<ThingId>,
+        baseClass: ThingId?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?
     ): Page<Resource> = CypherQueryBuilder(neo4jClient, Uncached)
@@ -267,20 +269,26 @@ class SpringDataNeo4jResourceAdapter(
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 excludeClasses.toCondition { classes -> classes.map { node.hasLabels(it.value).not() }.reduce(Condition::and) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
-                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) }
+                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
+                baseClass.toCondition {
+                    node.relationshipTo(node("Class"), INSTANCE_OF)
+                        .relationshipTo(node("Class").withProperties("id", anonParameter(it.value)), SUBCLASS_OF)
+                        .length(0, null)
+                        .asCondition()
+                }
             )
         }
         .withQuery { commonQuery ->
             val node = name("node")
             val score = if (label != null && label is FuzzySearchString) name("score") else null
             val variables = listOfNotNull(node, score)
-            val pageableWithDefaultSort = pageable.withDefaultSort { Sort.by("created_at") }
+            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery
                 .with(variables) // "with" is required because cypher dsl reorders "orderBy" and "where" clauses sometimes, decreasing performance
                 .where(
                     orderByOptimizations(
                         node = node,
-                        sort = pageableWithDefaultSort.sort,
+                        sort = sort,
                         properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
                     )
                 )
@@ -293,7 +301,7 @@ class SpringDataNeo4jResourceAdapter(
                             node.property("created_at").ascending()
                         )
                     } else {
-                        pageableWithDefaultSort.sort.toSortItems(
+                        sort.toSortItems(
                             node = node,
                             knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
                         )

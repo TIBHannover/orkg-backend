@@ -12,9 +12,6 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.ChildClass
 import org.orkg.graph.domain.ClassHierarchyEntry
 import org.orkg.graph.domain.ClassSubclassRelation
-import org.orkg.graph.domain.FuzzySearchString
-import org.orkg.graph.domain.Resource
-import org.orkg.graph.domain.SearchString
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
@@ -375,55 +372,6 @@ fun <
             it("sorts the results by class id by default") {
                 result.content.zipWithNext { a, b ->
                     a.`class`.id.value shouldBeLessThan b.`class`.id.value
-                }
-            }
-        }
-    }
-
-    describe("finding several resources with base class") {
-        context("by label") {
-            val a = createClass(id = ThingId("A"), uri = null)
-            val b = createClass(id = ThingId("B"), uri = null)
-
-            classRepository.save(a)
-            classRepository.save(b)
-
-            relationRepository.save(ClassSubclassRelation(b, a, OffsetDateTime.now()))
-
-            val label = "label to find"
-            val resources = fabricator.random<List<Resource>>().toMutableList()
-            (0 until 6).forEach {
-                resources[it] = resources[it].copy(label = label)
-            }
-            (0 until 2).forEach {
-                resources[it] = resources[it].copy(classes = setOf(a.id))
-            }
-            (2 until 4).forEach {
-                resources[it] = resources[it].copy(classes = setOf(b.id))
-            }
-            resources.forEach(resourceRepository::save)
-
-            val result = repository.findAllResourcesByLabelAndBaseClass(
-                searchString = SearchString.of("LABEL to find", exactMatch = false) as FuzzySearchString,
-                baseClass = a.id,
-                pageable = PageRequest.of(0, 5)
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe 4
-                result.content shouldContainAll resources.take(4)
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe 4
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
                 }
             }
         }

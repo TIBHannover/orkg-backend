@@ -6,7 +6,6 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.SearchFilter
@@ -26,6 +25,7 @@ interface RetrieveResourceUseCase {
         createdAtEnd: OffsetDateTime? = null,
         includeClasses: Set<ThingId> = emptySet(),
         excludeClasses: Set<ThingId> = emptySet(),
+        baseClass: ThingId? = null,
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
     ): Page<Resource>
@@ -60,9 +60,4 @@ interface RetrieveResourceUseCase {
     ): Page<Resource>
     fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
     fun hasStatements(id: ThingId): Boolean
-    fun findAllByLabelAndBaseClass(
-        searchString: FuzzySearchString,
-        baseClass: ThingId,
-        pageable: Pageable
-    ): Page<Resource>
 }

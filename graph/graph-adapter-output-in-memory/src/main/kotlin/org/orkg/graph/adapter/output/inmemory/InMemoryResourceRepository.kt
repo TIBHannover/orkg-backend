@@ -17,7 +17,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
-class InMemoryResourceRepository(inMemoryGraph: InMemoryGraph) :
+class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
     InMemoryRepository<ThingId, Resource>(compareBy(Resource::createdAt)), ResourceRepository {
 
     override val entities: InMemoryEntityAdapter<ThingId, Resource> =
@@ -80,6 +80,7 @@ class InMemoryResourceRepository(inMemoryGraph: InMemoryGraph) :
         createdAtEnd: OffsetDateTime?,
         includeClasses: Set<ThingId>,
         excludeClasses: Set<ThingId>,
+        baseClass: ThingId?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?
     ): Page<Resource> =
@@ -92,22 +93,34 @@ class InMemoryResourceRepository(inMemoryGraph: InMemoryGraph) :
             },
             predicate = {
                 (label == null || it.label.matches(label)) &&
-                    (visibility == null || when (visibility) {
-                        VisibilityFilter.ALL_LISTED -> it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED
-                        VisibilityFilter.UNLISTED -> it.visibility == Visibility.UNLISTED
-                        VisibilityFilter.FEATURED -> it.visibility == Visibility.FEATURED
-                        VisibilityFilter.NON_FEATURED -> it.visibility == Visibility.DEFAULT
-                        VisibilityFilter.DELETED -> it.visibility == Visibility.DELETED
-                    }) &&
+                    (visibility == null || it.visibility in visibility.targets) &&
                     (createdBy == null || it.createdBy == createdBy) &&
                     (createdAtStart == null || it.createdAt >= createdAtStart) &&
                     (createdAtEnd == null || it.createdAt <= createdAtEnd) &&
                     (includeClasses.isEmpty() || includeClasses.all { `class` -> `class` in it.classes }) &&
                     (excludeClasses.isEmpty() || excludeClasses.none { `class` -> `class` in it.classes }) &&
                     (observatoryId == null || it.observatoryId == observatoryId) &&
-                    (organizationId == null || it.organizationId == organizationId)
+                    (organizationId == null || it.organizationId == organizationId) &&
+                    (baseClass == null || it.isInstanceOf(baseClass))
             }
         )
+
+    private fun Resource.isInstanceOf(baseClass: ThingId): Boolean {
+        val visited: MutableSet<ThingId> = mutableSetOf()
+        val frontier: LinkedList<ThingId> = LinkedList<ThingId>(classes)
+        while (frontier.isNotEmpty()) {
+            val `class` = frontier.pop()
+            if (`class` == baseClass) {
+                return true
+            }
+            visited.add(`class`)
+            inMemoryGraph.findClassRelationByChildId(`class`)
+                .map { it.parent.id }
+                .filter { it !in visited }
+                .ifPresent(frontier::add)
+        }
+        return false
+    }
 
     override fun findAllPapersByLabel(label: String) =
         entities.values.filter {

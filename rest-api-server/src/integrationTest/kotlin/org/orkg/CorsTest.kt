@@ -22,7 +22,6 @@ import org.orkg.graph.domain.ResourceService
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ResourceUseCases
-import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -67,9 +66,6 @@ class CorsTest {
 
     @Autowired
     private lateinit var classRepository: ClassRepository
-
-    @Autowired
-    private lateinit var classHierarchyRepository: ClassHierarchyRepository
 
     @MockkBean
     private lateinit var contributorRepository: ContributorRepository
@@ -140,7 +136,6 @@ class CorsTest {
             repository,
             statementRepository,
             classRepository,
-            classHierarchyRepository,
             contributorRepository,
             fixedClock,
         ) {
@@ -153,6 +148,7 @@ class CorsTest {
                 createdAtEnd: OffsetDateTime?,
                 includeClasses: Set<ThingId>,
                 excludeClasses: Set<ThingId>,
+                baseClass: ThingId?,
                 observatoryId: ObservatoryId?,
                 organizationId: OrganizationId?
             ): Page<Resource> = Page.empty(pageable)

@@ -238,8 +238,6 @@ class ResourceService(
     override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         statementRepository.findAllProblemsByOrganizationId(id, pageable)
 
-    override fun hasStatements(id: ThingId): Boolean = statementRepository.checkIfResourceHasStatements(id)
-
     private fun setVerifiedFlag(resourceId: ThingId, verified: Boolean) {
         val result = repository.findById(resourceId)
         var resultObj = result.orElseThrow { ResourceNotFound.withId(resourceId) }

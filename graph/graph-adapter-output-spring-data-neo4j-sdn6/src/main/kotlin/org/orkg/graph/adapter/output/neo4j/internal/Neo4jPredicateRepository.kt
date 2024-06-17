@@ -51,13 +51,6 @@ RETURN COUNT(node)""")
 
     override fun findById(id: ThingId): Optional<Neo4jPredicate>
 
-    // @Query was added manually because of a strange bug that it is not reproducible. It seems that the OGM generates
-    // a query containing a string literal when the set only has one element, which the driver refused as an invalid
-    // query (which it is). It only happens under certain circumstances which are not reproducible in a test. I checked
-    // the driver version and everything else that came to mind. No idea what is wrong. This seems to work. -- MP
-    @Query("""MATCH (n:`Predicate`) WHERE n.id in $ids RETURN n""")
-    fun findAllByIdIn(ids: Set<ThingId>): Iterable<Neo4jPredicate>
-
     @Transactional
     override fun deleteById(id: ThingId)
 }

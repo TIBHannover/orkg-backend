@@ -65,7 +65,6 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
     fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>
     fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
-    fun checkIfResourceHasStatements(id: ThingId): Boolean
     fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
 
     fun findAllPapersByObservatoryIdAndFilters(

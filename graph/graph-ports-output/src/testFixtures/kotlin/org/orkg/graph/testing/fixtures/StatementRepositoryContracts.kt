@@ -1746,28 +1746,6 @@ fun <
         }
     }
 
-    describe("checking if a resource is used in a statement") {
-        context("when no statements exist") {
-            it("returns the correct result") {
-                val resource = fabricator.random<Resource>()
-                // Resource has to exist for neo4j repos
-                resourceRepository.save(resource)
-                repository.checkIfResourceHasStatements(resource.id) shouldBe false
-            }
-        }
-        context("when a statement exists") {
-            it("returns the correct result") {
-                val statement = fabricator.random<GeneralStatement>().copy(
-                    subject = fabricator.random<Resource>(),
-                    `object` = fabricator.random<Resource>()
-                )
-                saveStatement(statement)
-                repository.checkIfResourceHasStatements(statement.subject.id) shouldBe true
-                repository.checkIfResourceHasStatements(statement.`object`.id) shouldBe true
-            }
-        }
-    }
-
     describe("determining ownership") {
         context("when multiple ids are given") {
             it("returns the correct result") {

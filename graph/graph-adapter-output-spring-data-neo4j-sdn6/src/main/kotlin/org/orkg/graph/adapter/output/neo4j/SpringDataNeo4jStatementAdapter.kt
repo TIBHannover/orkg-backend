@@ -762,18 +762,6 @@ class SpringDataNeo4jStatementAdapter(
             .mappedBy { _, record -> ResourceContributor(record["createdBy"].asString(), record["createdAt"].asString()) }
             .fetch(pageable)
 
-    override fun checkIfResourceHasStatements(id: ThingId): Boolean = CypherQueryBuilder(neo4jClient)
-        .withQuery {
-            val n = node("Resource")
-                .withProperties("id", parameter("id"))
-                .named("n")
-            match(n).returning(exists(n.relationshipBetween(node("Thing"), RELATED)))
-        }
-        .withParameters("id" to id.value)
-        .fetchAs<Boolean>()
-        .one()
-        .orElse(false)
-
     override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         CypherQueryBuilder(neo4jClient)
             .withCommonQuery {

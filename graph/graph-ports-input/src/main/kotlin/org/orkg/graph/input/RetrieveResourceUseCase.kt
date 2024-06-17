@@ -59,5 +59,4 @@ interface RetrieveResourceUseCase {
         pageable: Pageable
     ): Page<Resource>
     fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
-    fun hasStatements(id: ThingId): Boolean
 }

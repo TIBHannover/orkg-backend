@@ -23,4 +23,5 @@ interface PredicateRepository : EntityRepository<Predicate, ThingId> {
         createdAt: OffsetDateTime? = null,
         pageable: Pageable
     ): Page<Predicate>
+    fun isInUse(id: ThingId): Boolean
 }

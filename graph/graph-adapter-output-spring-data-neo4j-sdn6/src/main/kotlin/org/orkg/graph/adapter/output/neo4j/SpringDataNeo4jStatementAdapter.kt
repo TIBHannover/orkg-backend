@@ -13,18 +13,15 @@ import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Cypher.optionalMatch
 import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.union
-import org.neo4j.cypherdsl.core.Cypher.unionAll
 import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Cypher.valueAt
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
-import org.neo4j.cypherdsl.core.Functions.sum
 import org.neo4j.cypherdsl.core.Node
 import org.neo4j.cypherdsl.core.Predicates.exists
 import org.neo4j.cypherdsl.core.Relationship
@@ -548,36 +545,6 @@ class SpringDataNeo4jStatementAdapter(
         .withParameters("id" to id.value)
         .mappedBy(LiteralMapper("doi"))
         .one()
-
-    override fun countPredicateUsage(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
-        .withQuery {
-            val r1 = node("Thing")
-                .relationshipTo(node("Thing"), RELATED)
-                .withProperties("predicate_id", parameter("id"))
-            val r2 = node("Predicate")
-                .withProperties("id", parameter("id"))
-                .relationshipBetween(node("Thing"), RELATED)
-            val cnt = name("cnt")
-            call(
-                unionAll(
-                    optionalMatch(r1)
-                        .returning(countDistinct(r1.asExpression()).`as`(cnt))
-                        .build(),
-                    optionalMatch(r2)
-                        .where(r2.property("predicate_id").ne(literalOf<String>("description")))
-                        .returning(countDistinct(r2.asExpression()).`as`(cnt))
-                        .build()
-                )
-            )
-            .with(cnt)
-            .returning(sum(cnt.asExpression()))
-        }
-        .withParameters(
-            "id" to id.value
-        )
-        .fetchAs<Long>()
-        .one()
-        .orElse(0)
 
     override fun findByDOI(doi: String): Optional<Resource> = CypherQueryBuilder(neo4jClient)
         .withQuery {

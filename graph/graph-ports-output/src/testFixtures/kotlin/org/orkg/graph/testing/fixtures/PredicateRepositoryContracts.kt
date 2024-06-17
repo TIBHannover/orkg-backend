@@ -11,29 +11,41 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.Thing
+import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
+import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
 fun <
-    R : PredicateRepository,
+    P : PredicateRepository,
     S : StatementRepository,
-    L : LiteralRepository
+    C : ClassRepository,
+    L : LiteralRepository,
+    R : ResourceRepository,
 > predicateRepositoryContract(
-    repository: R,
+    repository: P,
     statementRepository: S,
-    literalRepository: L
+    classRepository: C,
+    literalRepository: L,
+    resourceRepository: R
 ) = describeSpec {
     beforeTest {
         statementRepository.deleteAll()
-        repository.deleteAll()
+        classRepository.deleteAll()
         literalRepository.deleteAll()
+        resourceRepository.deleteAll()
+        repository.deleteAll()
     }
 
     val fabricator = Fabrikate(
@@ -42,6 +54,22 @@ fun <
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
         ).withStandardMappings()
     ).withCustomMappings()
+
+    val saveThing: (Thing) -> Unit = {
+        when (it) {
+            is Class -> classRepository.save(it)
+            is Literal -> literalRepository.save(it)
+            is Resource -> resourceRepository.save(it)
+            is Predicate -> repository.save(it)
+        }
+    }
+
+    val saveStatement: (GeneralStatement) -> Unit = {
+        saveThing(it.subject)
+        saveThing(it.predicate)
+        saveThing(it.`object`)
+        statementRepository.save(it)
+    }
 
     describe("saving a predicate") {
         it("saves and loads all properties correctly") {
@@ -264,6 +292,50 @@ fun <
             repository.save(predicate)
             val id = repository.nextIdentity()
             repository.findById(id).isPresent shouldBe false
+        }
+    }
+
+    context("checking whether a predicate is used") {
+        context("when no statements exist") {
+            it("returns the correct result") {
+                val actual = repository.isInUse(ThingId("Missing"))
+                actual shouldBe false
+            }
+        }
+        context("when used in a statement") {
+            context("as a predicate") {
+                it("returns the correct result") {
+                    val statement = fabricator.random<GeneralStatement>()
+                    saveStatement(statement)
+
+                    val actual = repository.isInUse(statement.predicate.id)
+                    actual shouldBe true
+                }
+            }
+            context("as a subject") {
+                it("returns the correct result") {
+                    val subject = fabricator.random<Predicate>()
+                    val statement = fabricator.random<GeneralStatement>().copy(
+                        subject = subject
+                    )
+                    saveStatement(statement)
+
+                    val actual = repository.isInUse(subject.id)
+                    actual shouldBe false
+                }
+            }
+            context("as an object") {
+                it("returns the correct result") {
+                    val `object` = fabricator.random<Predicate>()
+                    val statement = fabricator.random<GeneralStatement>().copy(
+                        `object` = `object`
+                    )
+                    saveStatement(statement)
+
+                    val actual = repository.isInUse(`object`.id)
+                    actual shouldBe true
+                }
+            }
         }
     }
 }

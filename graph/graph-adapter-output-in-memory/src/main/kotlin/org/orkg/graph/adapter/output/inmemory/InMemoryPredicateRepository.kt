@@ -11,7 +11,7 @@ import org.orkg.graph.output.PredicateRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-class InMemoryPredicateRepository(inMemoryGraph: InMemoryGraph) :
+class InMemoryPredicateRepository(val inMemoryGraph: InMemoryGraph) :
     InMemoryRepository<ThingId, Predicate>(compareBy(Predicate::createdAt)), PredicateRepository {
 
     override val entities: InMemoryEntityAdapter<ThingId, Predicate> =
@@ -64,4 +64,8 @@ class InMemoryPredicateRepository(inMemoryGraph: InMemoryGraph) :
         (createdBy == null || createdBy == it.createdBy) &&
             (createdAt == null || createdAt == it.createdAt)
     }
+
+    // this method does not check for rosetta stone statement usage
+    override fun isInUse(id: ThingId): Boolean =
+        inMemoryGraph.findAllStatements().any { it.`object`.id == id || it.predicate.id == id }
 }

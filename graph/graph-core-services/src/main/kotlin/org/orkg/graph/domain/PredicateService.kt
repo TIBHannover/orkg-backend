@@ -69,8 +69,8 @@ class PredicateService(
         if (!predicate.modifiable)
             throw PredicateNotModifiable(predicate.id)
 
-        if (statementRepository.countPredicateUsage(predicate.id) > 0)
-            throw PredicateUsedInStatement(predicate.id)
+        if (repository.isInUse(predicate.id))
+            throw PredicateInUse(predicate.id)
 
         if (!predicate.isOwnedBy(contributorId)) {
             val contributor =

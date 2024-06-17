@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 import org.springframework.transaction.annotation.Transactional
 
+private const val id = "${'$'}id"
 private const val ids = "${'$'}ids"
 private const val query = "${'$'}query"
 private const val label = "${'$'}label"
@@ -53,4 +54,19 @@ RETURN COUNT(node)""")
 
     @Transactional
     override fun deleteById(id: ThingId)
+
+    @Query("""
+CALL {
+    MATCH (:Predicate {id: $id})<-[r:RELATED]-()
+    RETURN r
+    UNION ALL
+    MATCH (:Predicate {id: $id})<-[r:VALUE]-()
+    RETURN r
+    UNION ALL
+    MATCH ()-[r:RELATED {predicate_id: $id}]-()
+    RETURN r
+}
+WITH r
+RETURN COUNT(r) > 0 AS count""")
+    fun isInUse(id: ThingId): Boolean
 }

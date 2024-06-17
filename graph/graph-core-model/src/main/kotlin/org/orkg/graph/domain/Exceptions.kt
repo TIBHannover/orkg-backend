@@ -68,7 +68,7 @@ class DatasetNotFound(id: ThingId) :
 class ResourceInUse(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete resource "$id" because it is used in at least one statement.""")
 
-class PredicateUsedInStatement(id: ThingId) :
+class PredicateInUse(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete predicate "$id" because it is used in at least one statement.""")
 
 class ListInUse(id: ThingId) :

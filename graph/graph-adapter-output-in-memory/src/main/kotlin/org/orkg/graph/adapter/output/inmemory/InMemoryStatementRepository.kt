@@ -259,14 +259,6 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             }
         })
 
-    override fun countPredicateUsage(id: ThingId): Long =
-        entities.values.count {
-            (it.subject is Predicate && (it.subject as Predicate).id == id ||
-                it.predicate.id == id ||
-                it.`object` is Predicate && (it.`object` as Predicate).id == id) &&
-                it.predicate.id.value != "description"
-        }.toLong()
-
     override fun findByDOI(doi: String): Optional<Resource> =
         Optional.ofNullable(entities.values.find {
             it.subject is Resource && it.predicate.id == Predicates.hasDOI &&

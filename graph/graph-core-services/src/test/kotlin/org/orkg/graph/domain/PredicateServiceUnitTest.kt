@@ -152,9 +152,9 @@ class PredicateServiceUnitTest {
         val couldBeAnyone = ContributorId(MockUserId.USER)
 
         every { repository.findById(mockPredicate.id) } returns Optional.of(mockPredicate)
-        every { statementRepository.countPredicateUsage(mockPredicate.id) } returns 1
+        every { repository.isInUse(mockPredicate.id) } returns true
 
-        shouldThrow<PredicateUsedInStatement> {
+        shouldThrow<PredicateInUse> {
             service.delete(mockPredicate.id, couldBeAnyone)
         }
 
@@ -168,14 +168,14 @@ class PredicateServiceUnitTest {
         val predicate = createPredicate(createdBy = theOwningContributorId)
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
-        every { statementRepository.countPredicateUsage(predicate.id) } returns 0
+        every { repository.isInUse(predicate.id) } returns false
         every { contributorRepository.findById(theOwningContributorId) } returns Optional.of(theOwningContributor)
         every { repository.deleteById(predicate.id) } returns Unit
 
         service.delete(predicate.id, theOwningContributorId)
 
         verify(exactly = 1) { repository.findById(predicate.id) }
-        verify(exactly = 1) { statementRepository.countPredicateUsage(predicate.id) }
+        verify(exactly = 1) { repository.isInUse(predicate.id) }
         verify(exactly = 1) { repository.deleteById(predicate.id) }
     }
 
@@ -186,14 +186,14 @@ class PredicateServiceUnitTest {
         val predicate = createPredicate(createdBy = theOwningContributorId)
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
-        every { statementRepository.countPredicateUsage(predicate.id) } returns 0
+        every { repository.isInUse(predicate.id) } returns false
         every { contributorRepository.findById(aCurator.id) } returns Optional.of(aCurator)
         every { repository.deleteById(predicate.id) } returns Unit
 
         service.delete(predicate.id, aCurator.id)
 
         verify(exactly = 1) { repository.findById(predicate.id) }
-        verify(exactly = 1) { statementRepository.countPredicateUsage(predicate.id) }
+        verify(exactly = 1) { repository.isInUse(predicate.id) }
         verify(exactly = 1) { repository.deleteById(predicate.id) }
         verify(exactly = 1) { contributorRepository.findById(aCurator.id) }
     }
@@ -206,7 +206,7 @@ class PredicateServiceUnitTest {
         val predicate = createPredicate(createdBy = theOwningContributorId)
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
-        every { statementRepository.countPredicateUsage(predicate.id) } returns 0
+        every { repository.isInUse(predicate.id) } returns false
         every { contributorRepository.findById(loggedInUserId) } returns Optional.of(loggedInUser)
         every { repository.deleteById(predicate.id) } returns Unit
 
@@ -215,7 +215,7 @@ class PredicateServiceUnitTest {
         }
 
         verify(exactly = 1) { repository.findById(predicate.id) }
-        verify(exactly = 1) { statementRepository.countPredicateUsage(predicate.id) }
+        verify(exactly = 1) { repository.isInUse(predicate.id) }
         verify(exactly = 0) { repository.deleteById(predicate.id) }
         verify(exactly = 1) { contributorRepository.findById(loggedInUserId) }
     }

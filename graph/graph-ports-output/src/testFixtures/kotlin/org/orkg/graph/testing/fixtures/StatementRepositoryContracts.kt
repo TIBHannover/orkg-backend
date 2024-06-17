@@ -1093,54 +1093,6 @@ fun <
     }
 
     describe("counting predicate usage") {
-        context("for a single predicate") {
-            context("when no statements exist") {
-                it("returns the correct result") {
-                    val actual = repository.countPredicateUsage(ThingId("Missing"))
-                    actual shouldBe 0
-                }
-            }
-            context("when used in a statement") {
-                context("as a predicate") {
-                    it("returns the correct result") {
-                        val statement = fabricator.random<GeneralStatement>()
-                        saveStatement(statement)
-
-                        val actual = repository.countPredicateUsage(statement.predicate.id)
-                        actual shouldBe 1
-                    }
-                }
-                context("as a subject") {
-                    it("returns the correct result") {
-                        val subject = fabricator.random<Predicate>()
-                        val statement = fabricator.random<GeneralStatement>().copy(
-                            subject = subject
-                        )
-                        saveStatement(statement)
-                        val description = fabricator.random<GeneralStatement>().copy(
-                            subject = subject,
-                            predicate = createPredicate(id = Predicates.description)
-                        )
-                        saveStatement(description)
-
-                        val actual = repository.countPredicateUsage(subject.id)
-                        actual shouldBe 1
-                    }
-                }
-                context("as an object") {
-                    it("returns the correct result") {
-                        val `object` = fabricator.random<Predicate>()
-                        val statement = fabricator.random<GeneralStatement>().copy(
-                            `object` = `object`
-                        )
-                        saveStatement(statement)
-
-                        val actual = repository.countPredicateUsage(`object`.id)
-                        actual shouldBe 1
-                    }
-                }
-            }
-        }
         context("for all predicates") {
             context("when no statements exist") {
                 val result = repository.countPredicateUsage(PageRequest.of(0, 5))

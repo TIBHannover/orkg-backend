@@ -134,6 +134,9 @@ class SpringDataNeo4jPredicateAdapter(
         return PageImpl(elements.toList(), pageable, count)
     }
 
+    override fun isInUse(id: ThingId): Boolean =
+        neo4jRepository.isInUse(id)
+
     private fun Predicate.toNeo4jPredicate() =
         neo4jRepository.findById(this.id).orElseGet(::Neo4jPredicate).apply {
             id = this@toNeo4jPredicate.id

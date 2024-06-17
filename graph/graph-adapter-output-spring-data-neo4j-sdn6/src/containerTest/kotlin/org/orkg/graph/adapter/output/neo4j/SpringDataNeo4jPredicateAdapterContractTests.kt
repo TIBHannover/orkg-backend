@@ -11,8 +11,10 @@ import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Functions.labels
 import org.orkg.graph.adapter.output.neo4j.configuration.GraphNeo4jConfiguration
+import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
+import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.predicateRepositoryContract
@@ -28,8 +30,10 @@ import org.springframework.test.context.ContextConfiguration
 @ContextConfiguration(
     classes = [
         SpringDataNeo4jStatementAdapter::class,
+        SpringDataNeo4jResourceAdapter::class,
         SpringDataNeo4jPredicateAdapter::class,
         SpringDataNeo4jLiteralAdapter::class,
+        SpringDataNeo4jClassAdapter::class,
         GraphNeo4jConfiguration::class
     ],
     initializers = [
@@ -40,22 +44,28 @@ import org.springframework.test.context.ContextConfiguration
 internal class SpringDataNeo4jPredicateAdapterContractTests(
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
     @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
+    @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
+    @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
     @Autowired private val neo4jClient: Neo4jClient
 ) : DescribeSpec({
     include(
         predicateRepositoryContract(
             springDataNeo4jPredicateAdapter,
             springDataNeo4jStatementAdapter,
-            springDataNeo4jLiteralAdapter
+            springDataNeo4jClassAdapter,
+            springDataNeo4jLiteralAdapter,
+            springDataNeo4jResourceAdapter
         )
     )
     include(neo4jPredicateRepositoryContract(springDataNeo4jPredicateAdapter, neo4jClient))
 
     finalizeSpec {
         springDataNeo4jStatementAdapter.deleteAll()
-        springDataNeo4jPredicateAdapter.deleteAll()
+        springDataNeo4jClassAdapter.deleteAll()
         springDataNeo4jLiteralAdapter.deleteAll()
+        springDataNeo4jResourceAdapter.deleteAll()
+        springDataNeo4jPredicateAdapter.deleteAll()
     }
 })
 

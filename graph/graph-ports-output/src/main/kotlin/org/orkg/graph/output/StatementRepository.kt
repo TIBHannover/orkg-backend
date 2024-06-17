@@ -56,7 +56,6 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement>
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
     fun findDOIByContributionId(id: ThingId): Optional<Literal>
-    fun countPredicateUsage(id: ThingId): Long
 
     /** Find any resource by DOI. */
     fun findByDOI(doi: String): Optional<Resource>

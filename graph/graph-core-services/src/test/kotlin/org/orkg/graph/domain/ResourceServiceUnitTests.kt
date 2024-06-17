@@ -26,6 +26,7 @@ import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
 import org.orkg.testing.fixedClock
@@ -38,12 +39,14 @@ class ResourceServiceUnitTests {
     private val statementRepository: StatementRepository = mockk()
     private val classRepository: ClassRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
+    private val thingRepository: ThingRepository = mockk()
 
     private val service = ResourceService(
         repository,
         statementRepository,
         classRepository,
         contributorRepository,
+        thingRepository,
         fixedClock,
     )
 
@@ -59,6 +62,7 @@ class ResourceServiceUnitTests {
             statementRepository,
             classRepository,
             contributorRepository,
+            thingRepository
         )
     }
 
@@ -300,14 +304,14 @@ class ResourceServiceUnitTests {
         val couldBeAnyone = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")
 
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
-        every { statementRepository.checkIfResourceHasStatements(mockResource.id) } returns true
+        every { thingRepository.isUsedAsObject(mockResource.id) } returns true
 
-        shouldThrow<ResourceUsedInStatement> {
+        shouldThrow<ResourceInUse> {
             service.delete(mockResource.id, couldBeAnyone)
         }
 
         verify(exactly = 1) { repository.findById(mockResource.id) }
-        verify(exactly = 1) { statementRepository.checkIfResourceHasStatements(mockResource.id) }
+        verify(exactly = 1) { thingRepository.isUsedAsObject(mockResource.id) }
     }
 
     @Test
@@ -316,13 +320,13 @@ class ResourceServiceUnitTests {
         val mockResource = createResource(createdBy = theOwningContributorId)
 
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
-        every { statementRepository.checkIfResourceHasStatements(mockResource.id) } returns false
+        every { thingRepository.isUsedAsObject(mockResource.id) } returns false
         every { repository.deleteById(mockResource.id) } returns Unit
 
         service.delete(mockResource.id, theOwningContributorId)
 
         verify(exactly = 1) { repository.findById(mockResource.id) }
-        verify(exactly = 1) { statementRepository.checkIfResourceHasStatements(mockResource.id) }
+        verify(exactly = 1) { thingRepository.isUsedAsObject(mockResource.id) }
         verify(exactly = 1) { repository.deleteById(mockResource.id) }
     }
 
@@ -333,14 +337,14 @@ class ResourceServiceUnitTests {
         val mockResource = createResource(createdBy = theOwningContributorId)
 
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
-        every { statementRepository.checkIfResourceHasStatements(mockResource.id) } returns false
+        every { thingRepository.isUsedAsObject(mockResource.id) } returns false
         every { contributorRepository.findById(aCurator.id) } returns Optional.of(aCurator)
         every { repository.deleteById(mockResource.id) } returns Unit
 
         service.delete(mockResource.id, aCurator.id)
 
         verify(exactly = 1) { repository.findById(mockResource.id) }
-        verify(exactly = 1) { statementRepository.checkIfResourceHasStatements(mockResource.id) }
+        verify(exactly = 1) { thingRepository.isUsedAsObject(mockResource.id) }
         verify(exactly = 1) { repository.deleteById(mockResource.id) }
         verify(exactly = 1) { contributorRepository.findById(aCurator.id) }
     }
@@ -353,7 +357,7 @@ class ResourceServiceUnitTests {
         val mockResource = createResource(createdBy = theOwningContributorId)
 
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
-        every { statementRepository.checkIfResourceHasStatements(mockResource.id) } returns false
+        every { thingRepository.isUsedAsObject(mockResource.id) } returns false
         every { contributorRepository.findById(loggedInUserId) } returns Optional.of(loggedInUser)
         every { repository.deleteById(mockResource.id) } returns Unit
 
@@ -362,7 +366,7 @@ class ResourceServiceUnitTests {
         }
 
         verify(exactly = 1) { repository.findById(mockResource.id) }
-        verify(exactly = 1) { statementRepository.checkIfResourceHasStatements(mockResource.id) }
+        verify(exactly = 1) { thingRepository.isUsedAsObject(mockResource.id) }
         verify(exactly = 1) { contributorRepository.findById(loggedInUserId) }
         verify(exactly = 0) { repository.deleteById(mockResource.id) }
     }

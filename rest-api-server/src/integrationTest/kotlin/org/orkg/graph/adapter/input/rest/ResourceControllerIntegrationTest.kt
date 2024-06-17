@@ -259,7 +259,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         statementService.create(subject, predicate, `object`)
 
         mockMvc
-            .perform(deleteRequest("/api/resources/$subject"))
+            .perform(deleteRequest("/api/resources/$`object`"))
             .andExpect(status().isForbidden)
             .andDo(
                 document(

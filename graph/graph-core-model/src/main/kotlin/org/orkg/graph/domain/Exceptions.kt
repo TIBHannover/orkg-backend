@@ -65,7 +65,7 @@ class ResearchProblemNotFound(id: ThingId) :
 class DatasetNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Dataset "$id" not found.""")
 
-class ResourceUsedInStatement(id: ThingId) :
+class ResourceInUse(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete resource "$id" because it is used in at least one statement.""")
 
 class PredicateUsedInStatement(id: ThingId) :

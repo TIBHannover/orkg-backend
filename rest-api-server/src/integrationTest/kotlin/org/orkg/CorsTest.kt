@@ -25,6 +25,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.testing.fixedClock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -69,6 +70,9 @@ class CorsTest {
 
     @MockkBean
     private lateinit var contributorRepository: ContributorRepository
+
+    @MockkBean
+    private lateinit var thingRepository: ThingRepository
 
     @BeforeEach
     fun setup() {
@@ -137,6 +141,7 @@ class CorsTest {
             statementRepository,
             classRepository,
             contributorRepository,
+            thingRepository,
             fixedClock,
         ) {
             override fun findAll(

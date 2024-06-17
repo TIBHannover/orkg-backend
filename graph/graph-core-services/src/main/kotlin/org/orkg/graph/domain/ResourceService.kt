@@ -16,6 +16,7 @@ import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -28,6 +29,7 @@ class ResourceService(
     private val statementRepository: StatementRepository,
     private val classRepository: ClassRepository,
     private val contributorRepository: ContributorRepository,
+    private val thingRepository: ThingRepository,
     private val clock: Clock,
 ) : ResourceUseCases {
     @Transactional(readOnly = true)
@@ -158,8 +160,8 @@ class ResourceService(
         if (!resource.modifiable)
             throw ResourceNotModifiable(resource.id)
 
-        if (statementRepository.checkIfResourceHasStatements(resource.id))
-            throw ResourceUsedInStatement(resource.id)
+        if (thingRepository.isUsedAsObject(resource.id))
+            throw ResourceInUse(resource.id)
 
         if (!resource.isOwnedBy(contributorId)) {
             val contributor =

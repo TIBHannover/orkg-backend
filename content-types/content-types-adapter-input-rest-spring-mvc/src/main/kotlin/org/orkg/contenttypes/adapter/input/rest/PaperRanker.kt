@@ -47,13 +47,13 @@ class PaperRanker(
                     visibility = Visibility.DEFAULT,
                     unlistedBy = null
                 ))
-                logger.debug("Re-listing paper \"${paper.id}\".")
+                logger.debug("""Re-listing paper "{}".""", paper.id)
             } else if (paper.visibility == Visibility.DEFAULT && !score.isSufficient) {
                 resourceRepository.save(paper.copy(
                     visibility = Visibility.UNLISTED,
                     unlistedBy = ContributorId.SYSTEM
                 ))
-                logger.debug("Unlisting paper \"${paper.id}\".")
+                logger.debug("""Unlisting paper "{}".""", paper.id)
             }
         }.thenRun {
             logger.info("Done ranking papers. Took ${(System.nanoTime() - startMillis).toMillis()}ms")

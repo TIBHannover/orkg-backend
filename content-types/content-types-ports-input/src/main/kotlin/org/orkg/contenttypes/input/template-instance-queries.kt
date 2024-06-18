@@ -22,8 +22,6 @@ interface RetrieveTemplateInstanceUseCase {
         createdBy: ContributorId? = null,
         createdAtStart: OffsetDateTime? = null,
         createdAtEnd: OffsetDateTime? = null,
-        includeClasses: Set<ThingId> = emptySet(),
-        excludeClasses: Set<ThingId> = emptySet(),
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
     ): Page<TemplateInstance>

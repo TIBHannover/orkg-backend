@@ -70,8 +70,6 @@ class TemplateInstanceService(
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
-        includeClasses: Set<ThingId>,
-        excludeClasses: Set<ThingId>,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?
     ): Page<TemplateInstance> {

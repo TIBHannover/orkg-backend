@@ -105,6 +105,7 @@ class StatementService(
             `object` = foundObject,
             createdBy = userId,
             createdAt = OffsetDateTime.now(clock),
+            modifiable = modifiable
         )
         statementRepository.save(newStatement)
         return id

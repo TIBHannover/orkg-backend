@@ -142,8 +142,8 @@ class InvalidBounds(min: Number, max: Number) :
 
 class InvalidDatatype : SimpleMessageException {
     constructor(actual: ThingId, expected: ThingId) : super(HttpStatus.BAD_REQUEST, """Invalid datatype. Found "$actual", expected "$expected".""")
-    constructor(actual: ThingId, expected1: ThingId, expected2: ThingId, vararg expected: ThingId) :
-        super(HttpStatus.BAD_REQUEST, """Invalid datatype. Found "$actual", expected either of ${(listOf(expected1, expected2) + expected).joinToString { "\"$it\"" }}.""")
+    constructor(actual: ThingId, vararg expected: ThingId) :
+        super(HttpStatus.BAD_REQUEST, """Invalid datatype. Found "$actual", expected either of ${expected.joinToString { "\"$it\"" }}.""")
 }
 
 class InvalidRegexPattern(pattern: String, cause: Throwable) :

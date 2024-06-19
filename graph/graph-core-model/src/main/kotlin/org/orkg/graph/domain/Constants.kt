@@ -2,6 +2,10 @@ package org.orkg.graph.domain
 
 import org.orkg.common.ThingId
 import org.orkg.common.isValidDate
+import org.orkg.common.isValidDateTime
+import org.orkg.common.isValidDecimal
+import org.orkg.common.isValidDuration
+import org.orkg.common.isValidTime
 import org.orkg.common.isValidURI
 
 val reservedClassIds = setOf(
@@ -99,9 +103,12 @@ object Classes {
     val dataset = ThingId("Dataset")
     val datasetDescription = ThingId("DatasetDescription")
     val date = ThingId("Date")
+    val dateTime = ThingId("DateTime")
     val decimal = ThingId("Decimal")
     val deletedComparison = ThingId("ComparisonDeleted")
     val discussion = ThingId("Discussion")
+    val double = ThingId("Double")
+    val duration = ThingId("Duration")
     val epilogue = ThingId("Epilogue")
     val evaluation = ThingId("Evaluation")
     val externalResourceDescription = ThingId("ExternalResourceDescription")
@@ -149,6 +156,7 @@ object Classes {
     val supplementaryInformationDescription = ThingId("SupplementaryInformationDescription")
     val sustainableDevelopmentGoal = ThingId("SustainableDevelopmentGoal")
     val textSection = ThingId("TextSection")
+    val time = ThingId("Time")
     val uri = ThingId("URI")
     val venue = ThingId("Venue")
     val visualization = ThingId("Visualization")
@@ -159,15 +167,20 @@ object Literals {
     enum class XSD(
         private val fragment: String,
         val `class`: ThingId,
+        val isNumber: Boolean,
         private val predicate: (String) -> Boolean
     ) {
-        STRING("string", Classes.string, { true }),
-        INT("integer", Classes.integer, { it.toIntOrNull() != null }),
-        DECIMAL("decimal", Classes.decimal, { it.toDoubleOrNull() != null }),
-        DATE("date", Classes.date, { it.isValidDate() }),
-        BOOLEAN("boolean", Classes.boolean, { it.toBooleanStrictOrNull() != null }),
-        FLOAT("float", Classes.float, { it.toFloatOrNull() != null }),
-        URI("anyURI", Classes.uri, { it.isValidURI() });
+        STRING("string", Classes.string, false, { true }),
+        INT("integer", Classes.integer, true, { it.toIntOrNull() != null }),
+        DECIMAL("decimal", Classes.decimal, true, { it.isValidDecimal() }),
+        DATE("date", Classes.date, false, { it.isValidDate() }),
+        BOOLEAN("boolean", Classes.boolean, false, { it.toBooleanStrictOrNull() != null }),
+        FLOAT("float", Classes.float, true, { it.toFloatOrNull() != null }),
+        DOUBLE("double", Classes.double, true, { it.toDoubleOrNull() != null }),
+        URI("anyURI", Classes.uri, false, { it.isValidURI() }),
+        DURATION("duration", Classes.duration, false, { it.isValidDuration() }),
+        DATE_TIME("dateTime", Classes.dateTime, false, { it.isValidDateTime() }),
+        TIME("time", Classes.time, false, { it.isValidTime() });
 
         val prefixedUri: String get() = "xsd:$fragment"
         val uri: String get() = "http://www.w3.org/2001/XMLSchema#$fragment"

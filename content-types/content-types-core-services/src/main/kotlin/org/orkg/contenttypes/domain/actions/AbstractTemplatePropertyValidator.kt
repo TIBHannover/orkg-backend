@@ -56,8 +56,8 @@ class AbstractTemplatePropertyValidator(
             }
         } else if (property is NumberLiteralTemplatePropertyDefinition<*>) {
             val xsd = Literals.XSD.fromClass(property.datatype)
-            if (xsd != Literals.XSD.INT && xsd != Literals.XSD.DECIMAL && xsd != Literals.XSD.FLOAT) {
-                throw InvalidDatatype(property.datatype, Literals.XSD.INT.`class`, Literals.XSD.DECIMAL.`class`, Literals.XSD.FLOAT.`class`)
+            if (xsd?.isNumber != true) {
+                throw InvalidDatatype(property.datatype, *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray())
             }
             val minInclusive = property.minInclusive
             val maxInclusive = property.maxInclusive

@@ -226,7 +226,7 @@ class AbstractTemplatePropertyValidatorUnitTest {
     @Test
     fun `Given a number template property definition, when datatype does not match xsd integer, decimal or float, it throws an exception`() {
         val property = dummyCreateNumberLiteralTemplatePropertyCommand().copy(datatype = Classes.string)
-        val exception = InvalidDatatype(property.datatype, Classes.integer, Classes.decimal, Classes.float)
+        val exception = InvalidDatatype(property.datatype, Classes.integer, Classes.decimal, Classes.float, Classes.double)
 
         assertThrows<InvalidDatatype> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message
     }

@@ -2,22 +2,6 @@ package org.orkg.contenttypes.adapter.output.neo4j
 
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-import org.orkg.common.ContributorId
-import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.CypherQueryBuilder
-import org.orkg.common.neo4jdsl.QueryCache
-import org.orkg.contenttypes.output.TemplateRepository
-import org.orkg.graph.adapter.output.neo4j.ResourceMapper
-import org.orkg.graph.domain.ExactSearchString
-import org.orkg.graph.domain.FuzzySearchString
-import org.orkg.graph.domain.Resource
-import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.VisibilityFilter
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
-import org.springframework.data.neo4j.core.Neo4jClient
-import org.springframework.stereotype.Component
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Conditions
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
@@ -29,19 +13,35 @@ import org.neo4j.cypherdsl.core.Functions.size
 import org.neo4j.cypherdsl.core.Functions.toLower
 import org.neo4j.cypherdsl.core.Node
 import org.neo4j.cypherdsl.core.PatternElement
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.ThingId
+import org.orkg.common.neo4jdsl.CypherQueryBuilder
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
+import org.orkg.common.neo4jdsl.QueryCache
+import org.orkg.contenttypes.output.TemplateRepository
+import org.orkg.graph.adapter.output.neo4j.ResourceMapper
 import org.orkg.graph.adapter.output.neo4j.match
 import org.orkg.graph.adapter.output.neo4j.node
+import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
 import org.orkg.graph.adapter.output.neo4j.toCondition
 import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where
-import org.orkg.graph.adapter.output.neo4j.withDefaultSort
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Resource
+import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.VisibilityFilter
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.neo4j.core.Neo4jClient
+import org.springframework.stereotype.Component
 
 private const val RELATED = "RELATED"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_template_on_label"
@@ -132,13 +132,13 @@ class SpringDataNeo4jTemplateAdapter(
             val node = name("node")
             val score = if (label != null && label is FuzzySearchString) name("score") else null
             val variables = listOfNotNull(node, score)
-            val pageableWithDefaultSort = pageable.withDefaultSort { Sort.by("created_at") }
+            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery
                 .with(variables) // "with" is required because cypher dsl reorders "orderBy" and "where" clauses sometimes, decreasing performance
                 .where(
                     orderByOptimizations(
                         node = node,
-                        sort = pageableWithDefaultSort.sort,
+                        sort = sort,
                         properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
                     )
                 )
@@ -151,7 +151,7 @@ class SpringDataNeo4jTemplateAdapter(
                             node.property("created_at").ascending()
                         )
                     } else {
-                        pageableWithDefaultSort.sort.toSortItems(
+                        sort.toSortItems(
                             node = node,
                             knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
                         )

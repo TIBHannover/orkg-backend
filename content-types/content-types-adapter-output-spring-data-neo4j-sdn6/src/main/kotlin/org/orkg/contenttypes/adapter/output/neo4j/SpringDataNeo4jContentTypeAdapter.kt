@@ -1,7 +1,21 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Conditions
+import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.call
+import org.neo4j.cypherdsl.core.Cypher.literalOf
+import org.neo4j.cypherdsl.core.Cypher.match
+import org.neo4j.cypherdsl.core.Cypher.name
+import org.neo4j.cypherdsl.core.Cypher.node
+import org.neo4j.cypherdsl.core.Cypher.unionAll
+import org.neo4j.cypherdsl.core.Node
+import org.neo4j.cypherdsl.core.Predicates.exists
+import org.neo4j.cypherdsl.core.RelationshipPattern
+import org.neo4j.cypherdsl.core.StatementBuilder
+import org.neo4j.cypherdsl.core.SymbolicName
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -10,12 +24,15 @@ import org.orkg.common.neo4jdsl.CypherQueryBuilder
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countDistinctOver
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache
+import org.orkg.contenttypes.domain.ContentTypeClass
+import org.orkg.contenttypes.output.ContentTypeRepository
 import org.orkg.graph.adapter.output.neo4j.ResourceMapper
+import org.orkg.graph.adapter.output.neo4j.match
 import org.orkg.graph.adapter.output.neo4j.node
+import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.toCondition
 import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where
-import org.orkg.graph.adapter.output.neo4j.withDefaultSort
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
@@ -25,17 +42,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import org.neo4j.cypherdsl.core.Cypher.*
-import org.neo4j.cypherdsl.core.Node
-import org.neo4j.cypherdsl.core.Predicates.*
-import org.neo4j.cypherdsl.core.RelationshipPattern
-import org.neo4j.cypherdsl.core.StatementBuilder
-import org.neo4j.cypherdsl.core.SymbolicName
-import org.orkg.contenttypes.domain.ContentTypeClass
-import org.orkg.contenttypes.output.ContentTypeRepository
-import org.orkg.graph.adapter.output.neo4j.match
 
 private const val RELATED = "RELATED"
 
@@ -97,9 +103,9 @@ class SpringDataNeo4jContentTypeAdapter(
         }
         .withQuery { commonQuery ->
             val node = name("node")
-            val pageableWithDefaultSort = pageable.withDefaultSort { Sort.by("created_at") }
+            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery.orderBy(
-                    pageableWithDefaultSort.sort.toSortItems(
+                    sort.toSortItems(
                         node = node,
                         knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
                     )

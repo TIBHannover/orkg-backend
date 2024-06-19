@@ -365,7 +365,7 @@ class SpringDataNeo4jStatementAdapter(
             val subject = name("sub")
             val r = name("r")
             val `object` = name("obj")
-            val sort = pageable.withDefaultSort { Sort.by("created_at") }.sort
+            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             val propertyMappings = mapOf(
                 "id" to r.property("id"),
                 "created_at" to r.property("created_at"),
@@ -832,7 +832,7 @@ class SpringDataNeo4jStatementAdapter(
             filters.indices.joinToString(prefix = ", ") { filterIndex -> "value$filterIndex" }
         }
         val withNodePropertiesAndValues = """WITH paper, paper.id AS id, paper.created_at AS created_at, paper.created_by AS created_by$filterValues"""
-        val sort = pageable.withDefaultSort { Sort.by(Sort.Direction.DESC, "created_at") }.sort
+        val sort = pageable.sort.orElseGet { Sort.by(Sort.Direction.DESC, "created_at") }
         val commonQuery = "$matchPaper $matchFilters $withPaperAndValues $whereVisibilityAndValues $withNodePropertiesAndValues"
         val query = "$commonQuery RETURN DISTINCT paper SKIP ${'$'}sdnSkip LIMIT ${'$'}sdnLimit".let {
             it.sortedWith(sort, it.lastIndexOf("RETURN"))

@@ -29,12 +29,12 @@ import org.orkg.graph.adapter.output.neo4j.internal.Neo4jPredicate
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResource
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jThing
 import org.orkg.graph.adapter.output.neo4j.node
+import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
 import org.orkg.graph.adapter.output.neo4j.toCondition
 import org.orkg.graph.adapter.output.neo4j.toMatchOrNull
 import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where
-import org.orkg.graph.adapter.output.neo4j.withDefaultSort
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.FuzzySearchString
@@ -143,13 +143,13 @@ class SpringDataNeo4jPaperAdapter(
             val node = name("node")
             val score = if (label != null && label is FuzzySearchString) name("score") else null
             val variables = listOfNotNull(node, score)
-            val pageableWithDefaultSort = pageable.withDefaultSort { Sort.by("created_at") }
+            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery
                 .with(variables) // "with" is required because cypher dsl reorders "orderBy" and "where" clauses sometimes, decreasing performance
                 .where(
                     orderByOptimizations(
                         node = node,
-                        sort = pageableWithDefaultSort.sort,
+                        sort = sort,
                         properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
                     )
                 )
@@ -162,7 +162,7 @@ class SpringDataNeo4jPaperAdapter(
                             node.property("created_at").ascending()
                         )
                     } else {
-                        pageableWithDefaultSort.sort.toSortItems(
+                        sort.toSortItems(
                             node = node,
                             knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
                         )

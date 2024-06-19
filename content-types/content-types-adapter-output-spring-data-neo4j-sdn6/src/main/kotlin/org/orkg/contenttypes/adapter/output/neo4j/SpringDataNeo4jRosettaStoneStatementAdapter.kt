@@ -406,7 +406,8 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                                     "formatted_label" to version.formattedLabel.value,
                                     "certainty" to version.certainty.name,
                                     "negated" to version.negated,
-                                    "version" to index + (versionInfo?.second?.toInt() ?: 0)
+                                    "version" to index + (versionInfo?.second?.toInt() ?: 0),
+                                    "object_count" to version.objects.size
                                 )
                             )
                         }

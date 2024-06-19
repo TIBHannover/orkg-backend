@@ -63,19 +63,20 @@ data class RosettaStoneStatementMapper(
             .map { version ->
                 val node = version[0].asNode().toResource()
                 val metadata = version[1].asNode()
-                val subjects = version[2]
-                    .asList { expand(it[0].asNode().toThing(), predicateRepository) to it[1].asInt() }
-                    .sortedBy { it.second }
-                    .map { it.first }
-                val objects = version[3]
-                    .asList { Triple(expand(it[0].asNode().toThing(), predicateRepository), it[1].asInt(), it[2].asInt()) }
-                    .groupBy { it.third }.entries.toList()
-                    .sortedBy { it.key }
-                    .map { entry ->
-                        entry.value.toList()
-                            .sortedBy { it.second }
-                            .map { it.first }
+                val subjects = version[2] // (thing, index)
+                    .asList { SubjectNode(expand(it[0].asNode().toThing(), predicateRepository), it[1].asInt()) }
+                    .sortedBy { it.index }
+                    .map { it.thing }
+                val objects = run {
+                    val objectNodes = version[3] // (thing, index, position)
+                        .asList { ObjectNode(expand(it[0].asNode().toThing(), predicateRepository), it[1].asInt(), it[2].asInt()) }
+                        .groupBy { it.position }
+                    (0 until metadata["object_count"].asInt()).map { position ->
+                        objectNodes[position].orEmpty()
+                            .sortedBy { it.index }
+                            .map { it.thing }
                     }
+                }
                 metadata["version"].asLong() to RosettaStoneStatementVersion(
                     id = node.id,
                     formattedLabel = FormattedLabel.of(metadata["formatted_label"].asString()),
@@ -118,6 +119,17 @@ data class RosettaStoneStatementMapper(
             )
             else -> thing
         }
+
+    data class SubjectNode(
+        val thing: Thing,
+        val index: Int
+    )
+
+    data class ObjectNode(
+        val thing: Thing,
+        val index: Int,
+        val position: Int
+    )
 }
 
 internal fun matchLiteratureList(

@@ -225,6 +225,42 @@
     {
       "id": "Version",
       "label": "version"
+    },
+    {
+      "id": "Integer",
+      "label": "Integer"
+    },
+    {
+      "id": "Decimal",
+      "label": "Decimal"
+    },
+    {
+      "id": "Boolean",
+      "label": "Boolean"
+    },
+    {
+      "id": "Float",
+      "label": "Float"
+    },
+    {
+      "id": "Double",
+      "label": "Double"
+    },
+    {
+      "id": "URI",
+      "label": "URI"
+    },
+    {
+      "id": "Duration",
+      "label": "Duration"
+    },
+    {
+      "id": "DateTime",
+      "label": "DateTime"
+    },
+    {
+      "id": "Time",
+      "label": "Time"
     }
   ],
 
@@ -464,42 +500,6 @@
     {
       "id": "exampleOfUsage",
       "label": "example of usage"
-    },
-    {
-      "id": "Integer",
-      "label": "Integer"
-    },
-    {
-      "id": "Decimal",
-      "label": "Decimal"
-    },
-    {
-      "id": "Boolean",
-      "label": "Boolean"
-    },
-    {
-      "id": "Float",
-      "label": "Float"
-    },
-    {
-      "id": "Double",
-      "label": "Double"
-    },
-    {
-      "id": "URI",
-      "label": "URI"
-    },
-    {
-      "id": "Duration",
-      "label": "Duration"
-    },
-    {
-      "id": "DateTime",
-      "label": "DateTime"
-    },
-    {
-      "id": "Time",
-      "label": "Time"
     }
   ],
 

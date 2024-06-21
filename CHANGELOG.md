@@ -6,11 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added validation support for xsd:double, xsd:duration, xsd:dateTime and xsd:time primitive data types.
+  (See: [!981](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/981))
+
+### Changed
+- The two distinct parameter sets for the endpoint `/api/resources` have been merged and can now be used in arbitrary combinations.
+  (See: [!968](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/968))
+
+### Fixed
+- Resources can no longer be deleted when still being used in a rosetta stone statement.
+  (See: [!971](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/971))
+- Resources can now be deleted even when there are still used as a subject in a statement.
+  (See: [!971](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/971))
+- Predicates can no longer be deleted when still being used in a rosetta stone statement.
+  (See: [!971](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/971))
+- Fixed empty rosetta stone statement objects not being correctly retrieved.
+  (See: [!980](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/980))
 
 ## [0.59.0] - 2024-06-07
 ### Added
 - Enabled formatted labels on resources via content-negotiation.
-  (Closes: [!562](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/562))
+  (Closes: [#562](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/562))
 - Added support for descriptions on literature list section entries.
   (See: [!960](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/960))
 - Added acknowledgements to literature list responses.
@@ -25,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!957](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/957))
 - Fixed content type head version parsing.
 - Null values provided for identifiers no longer causes a status 500.
-  (Closes: [!570](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/570))
+  (Closes: [#570](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/570))
 - Fixed several validation issues for lists.
   (See: [!963](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/963))
 

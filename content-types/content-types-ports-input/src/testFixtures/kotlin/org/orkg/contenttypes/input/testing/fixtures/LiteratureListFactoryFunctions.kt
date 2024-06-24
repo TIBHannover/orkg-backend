@@ -96,6 +96,7 @@ fun dummyUpdateLiteratureListCommand() = UpdateLiteratureListUseCase.UpdateComma
 fun dummyCreateListSectionCommand() = CreateLiteratureListSectionUseCase.CreateListSectionCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
+    index = null,
     entries = listOf(
         Entry(ThingId("R2315"), "dummy description"),
         Entry(ThingId("R3512")),
@@ -105,6 +106,7 @@ fun dummyCreateListSectionCommand() = CreateLiteratureListSectionUseCase.CreateL
 fun dummyCreateTextSectionCommand() = CreateLiteratureListSectionUseCase.CreateTextSectionCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
+    index = null,
     heading = "Updated Heading",
     headingSize = 3,
     text = "updated text section contents"

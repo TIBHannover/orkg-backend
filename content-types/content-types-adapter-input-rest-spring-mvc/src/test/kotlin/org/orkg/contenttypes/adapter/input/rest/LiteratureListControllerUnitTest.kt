@@ -67,6 +67,7 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -330,7 +331,38 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         )
         every { literatureListService.createSection(any()) } returns id
 
-        documentedPostRequestTo("/api/literature-lists/{literatureListId}/sections", literatureListId)
+        MockMvcRequestBuilders.post("/api/literature-lists/{literatureListId}/sections", literatureListId)
+            .content(request)
+            .accept(LITERATURE_LIST_SECTION_JSON_V1)
+            .contentType(LITERATURE_LIST_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+
+        verify(exactly = 1) {
+            literatureListService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()
+                it.index shouldBe null
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a list section create request, when service succeeds, it creates the list section at the specified index")
+    fun createListSectionAtIndex() {
+        val literatureListId = ThingId("R3541")
+        val id = ThingId("R123")
+        val index = 5
+        val request = LiteratureListController.ListSectionRequest(
+            entries = listOf(
+                Entry(ThingId("R123")),
+                Entry(ThingId("R456"))
+            )
+        )
+        every { literatureListService.createSection(any()) } returns id
+
+        documentedPostRequestTo("/api/literature-lists/{literatureListId}/sections/{index}", literatureListId, index)
             .content(request)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
@@ -340,7 +372,8 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("literatureListId").description("The id of the literature list to which the new section should be appended to.")
+                        parameterWithName("literatureListId").description("The id of the literature list to which the new section should be appended to."),
+                        parameterWithName("index").description("The insertion index the of the section. Otherwise, the created list section will be appended at the end of the literature list. (optional)")
                     ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
@@ -354,7 +387,12 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { literatureListService.createSection(any<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()) }
+        verify(exactly = 1) {
+            literatureListService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()
+                it.index shouldBe index
+            })
+        }
     }
 
     @Test
@@ -370,7 +408,37 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         )
         every { literatureListService.createSection(any()) } returns id
 
-        documentedPostRequestTo("/api/literature-lists/{literatureListId}/sections", literatureListId)
+        MockMvcRequestBuilders.post("/api/literature-lists/{literatureListId}/sections", literatureListId)
+            .content(request)
+            .accept(LITERATURE_LIST_SECTION_JSON_V1)
+            .contentType(LITERATURE_LIST_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+
+        verify(exactly = 1) {
+            literatureListService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()
+                it.index shouldBe null
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a text section create request, when service succeeds, it creates the text section at the specified index")
+    fun createTextSectionAtIndex() {
+        val literatureListId = ThingId("R3541")
+        val id = ThingId("R123")
+        val index = 5
+        val request = LiteratureListController.TextSectionRequest(
+            heading = "heading",
+            headingSize = 2,
+            text = "text contents"
+        )
+        every { literatureListService.createSection(any()) } returns id
+
+        documentedPostRequestTo("/api/literature-lists/{literatureListId}/sections/{index}", literatureListId, index)
             .content(request)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
@@ -380,7 +448,8 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("literatureListId").description("The id of the literature list to which the new section should be appended to.")
+                        parameterWithName("literatureListId").description("The id of the literature list to which the new section should be appended to."),
+                        parameterWithName("index").description("The insertion index the of the section. Otherwise, the created text section will be appended at the end of the literature list. (optional)")
                     ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
@@ -394,7 +463,12 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { literatureListService.createSection(any<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()) }
+        verify(exactly = 1) {
+            literatureListService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()
+                it.index shouldBe index
+            })
+        }
     }
 
     @Test
@@ -662,7 +736,10 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         @JvmStatic
         private fun listSectionRequest() =
             LiteratureListController.ListSectionRequest(
-                entries = listOf(Entry(ThingId("R123")), Entry(ThingId("R456")))
+                entries = listOf(
+                    Entry(ThingId("R123"), "Example description of an entry"),
+                    Entry(ThingId("R456"))
+                )
             )
     }
 }

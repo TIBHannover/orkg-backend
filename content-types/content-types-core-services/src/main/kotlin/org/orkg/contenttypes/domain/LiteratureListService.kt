@@ -44,6 +44,7 @@ import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureL
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionExistenceCreateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionExistenceUpdateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionIndexValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionUpdateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionUpdater
 import org.orkg.contenttypes.input.LiteratureListUseCases
@@ -151,6 +152,7 @@ class LiteratureListService(
     override fun createSection(command: CreateLiteratureListSectionCommand): ThingId {
         val steps = listOf(
             LiteratureListSectionExistenceCreateValidator(resourceRepository),
+            LiteratureListSectionIndexValidator(statementRepository),
             LiteratureListSectionCreateValidator(resourceRepository),
             LiteratureListSectionCreator(literalService, resourceService, statementService)
         )

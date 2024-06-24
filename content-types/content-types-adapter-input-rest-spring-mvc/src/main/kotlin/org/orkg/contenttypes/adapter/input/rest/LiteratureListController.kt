@@ -8,6 +8,7 @@ import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Positive
+import javax.validation.constraints.PositiveOrZero
 import javax.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
@@ -147,15 +148,16 @@ class LiteratureListController(
     }
 
     @PreAuthorizeUser
-    @PostMapping("/{id}/sections", consumes = [LITERATURE_LIST_SECTION_JSON_V1], produces = [LITERATURE_LIST_SECTION_JSON_V1])
+    @PostMapping(value = ["/{id}/sections", "/{id}/sections/{index}"], consumes = [LITERATURE_LIST_SECTION_JSON_V1], produces = [LITERATURE_LIST_SECTION_JSON_V1])
     fun createSection(
         @PathVariable id: ThingId,
+        @PathVariable(required = false) @PositiveOrZero index: Int?,
         @RequestBody @Valid request: LiteratureListSectionRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.createSection(request.toCreateCommand(userId, id))
+        service.createSection(request.toCreateCommand(userId, id, index))
         val location = uriComponentsBuilder
             .path("api/literature-lists/{id}")
             .buildAndExpand(id)
@@ -258,7 +260,8 @@ class LiteratureListController(
 
         fun toCreateCommand(
             contributorId: ContributorId,
-            literatureListId: ThingId
+            literatureListId: ThingId,
+            index: Int?
         ): CreateLiteratureListSectionUseCase.CreateCommand
 
         fun toUpdateCommand(
@@ -284,12 +287,11 @@ class LiteratureListController(
 
         override fun toCreateCommand(
             contributorId: ContributorId,
-            literatureListId: ThingId
+            literatureListId: ThingId,
+            index: Int?
         ): CreateLiteratureListSectionUseCase.CreateCommand =
             CreateLiteratureListSectionUseCase.CreateListSectionCommand(
-                contributorId = contributorId,
-                literatureListId = literatureListId,
-                entries = entries.map { it.toDefinitionEntry() }
+                contributorId, literatureListId, index, entries.map { it.toDefinitionEntry() }
             )
 
         override fun toUpdateCommand(
@@ -314,10 +316,11 @@ class LiteratureListController(
 
         override fun toCreateCommand(
             contributorId: ContributorId,
-            literatureListId: ThingId
+            literatureListId: ThingId,
+            index: Int?
         ): CreateLiteratureListSectionUseCase.CreateCommand =
             CreateLiteratureListSectionUseCase.CreateTextSectionCommand(
-                contributorId, literatureListId, heading, headingSize, text
+                contributorId, literatureListId, index, heading, headingSize, text
             )
 
         override fun toUpdateCommand(

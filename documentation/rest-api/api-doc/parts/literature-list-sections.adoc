@@ -12,11 +12,11 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 [[literature-list-sections-create-text-section]]
 === Creating a text section
 
-A `POST` request creates a new text section and appends it to the end of the literature list.
+A `POST` request creates a new text section and adds it to the specified literature list.
 The response will be `201 Created` when successful.
 The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::literature-lists-create-text-section[snippets='request-fields,curl-request,http-response']
+operation::literature-lists-create-text-section-at-index[snippets='curl-request,path-parameters,request-fields,http-response']
 
 [[literature-list-sections-edit-text-section]]
 === Editing a text section
@@ -33,11 +33,11 @@ operation::literature-lists-update-text-section[snippets='request-fields,curl-re
 [[literature-list-sections-create-list-section]]
 === Creating a list section
 
-A `POST` request creates a new list section and appends it to the end of the literature list.
+A `POST` request creates a new list section and adds it to the specified literature list.
 The response will be `201 Created` when successful.
 The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::literature-lists-create-list-section[snippets='request-fields,curl-request,http-response']
+operation::literature-lists-create-list-section-at-index[snippets='curl-request,path-parameters,request-fields,http-response']
 
 [[literature-list-sections-edit-list-section]]
 === Editing a list section

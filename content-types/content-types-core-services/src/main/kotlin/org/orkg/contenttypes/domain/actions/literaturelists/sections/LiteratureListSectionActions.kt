@@ -9,7 +9,8 @@ import org.orkg.graph.domain.GeneralStatement
 
 interface CreateLiteratureListSectionAction : Action<CreateLiteratureListSectionCommand, CreateLiteratureListSectionAction.State> {
     data class State(
-        val literatureListSectionId: ThingId? = null
+        val literatureListSectionId: ThingId? = null,
+        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
     )
 }
 

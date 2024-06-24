@@ -1,47 +1,42 @@
 package org.orkg.contenttypes.domain.actions
 
 import org.orkg.common.ContributorId
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.associateIdentifiers
 import org.orkg.contenttypes.domain.identifiers.Identifier
+import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
-abstract class IdentifierUpdater(
-    private val statementService: StatementUseCases,
-    private val literalService: LiteralUseCases,
-    private val identifierCreator: IdentifierCreator = object : IdentifierCreator(statementService, literalService) {}
+class IdentifierUpdater(
+    private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
 ) {
+    constructor(
+        statementService: StatementUseCases,
+        literalService: LiteralUseCases,
+    ) : this(StatementCollectionPropertyUpdater(literalService, statementService))
+
     internal fun update(
+        statements: Map<ThingId, List<GeneralStatement>>,
         contributorId: ContributorId,
-        oldIdentifiers: Map<String, List<String>>,
         newIdentifiers: Map<String, List<String>>,
         identifierDefinitions: Set<Identifier>,
         subjectId: ThingId
     ) {
+        val directStatements = statements[subjectId].orEmpty()
+        val oldIdentifiers = directStatements.associateIdentifiers(identifierDefinitions)
+
         if (oldIdentifiers == newIdentifiers)
             return
 
-        val key2Identifier = identifierDefinitions.associateBy { it.id }
-
-        // Find out what already exists and what needs to be created or removed
-        val toRemove = oldIdentifiers.filter { (key, value) -> key !in newIdentifiers || value != newIdentifiers[key] }
-        val toAdd = newIdentifiers.filter { (key, value) -> key !in oldIdentifiers || value != oldIdentifiers[key] }
-
-        // Remove unwanted identifiers
-        if (toRemove.isNotEmpty()) {
-            toRemove.forEach { (key, _) ->
-                statementService.findAll(
-                    subjectId = subjectId,
-                    predicateId = key2Identifier[key]!!.predicateId,
-                    pageable = PageRequests.ALL
-                ).forEach { statementService.delete(it.id) }
-            }
-        }
-
-        // Create new identifiers
-        if (toAdd.isNotEmpty()) {
-            identifierCreator.create(contributorId, toAdd, identifierDefinitions, subjectId)
+        identifierDefinitions.forEach { identifier ->
+            statementCollectionPropertyUpdater.update(
+                statements = directStatements,
+                contributorId = contributorId,
+                subjectId = subjectId,
+                predicateId = identifier.predicateId,
+                literals = newIdentifiers[identifier.id].orEmpty().toSet()
+            )
         }
     }
 }

@@ -70,9 +70,7 @@ class PaperPublicationInfoUpdaterUnitTest {
         val command = dummyUpdatePaperCommand().copy(
             publicationInfo = null
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
+        val state = UpdatePaperState(paper)
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -96,9 +94,7 @@ class PaperPublicationInfoUpdaterUnitTest {
         val command = dummyUpdatePaperCommand().copy(
             publicationInfo = publicationInfo.toPublicationInfoDefinition()
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
+        val state = UpdatePaperState(paper)
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -126,27 +122,19 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = null
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
         val monthLiteral = createLiteral(label = paper.publicationInfo.publishedMonth.toString())
         val statementId = StatementId("S1")
-
-        every {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.monthPublished,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(
+        val statements = listOf(
             createStatement(
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.monthPublished),
                 `object` = monthLiteral
             )
-        )
-        every { statementService.delete(statementId) } just runs
+        ).groupBy { it.subject.id }
+        val state = UpdatePaperState(paper, statements)
+
+        every { statementService.delete(setOf(statementId)) } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -155,14 +143,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.monthPublished,
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) { statementService.delete(statementId) }
+        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
     }
 
     @Test
@@ -184,9 +165,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = null
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
+        val state = UpdatePaperState(paper)
         val monthLiteralId = ThingId("L132")
 
         every {
@@ -251,31 +230,23 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = null
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
         val oldMonthLiteral = createLiteral(
             label = paper.publicationInfo.publishedMonth.toString(),
             datatype = Literals.XSD.INT.prefixedUri
         )
         val newMonthLiteralId = ThingId("L534")
         val statementId = StatementId("S1")
-
-        every {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.monthPublished,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(
+        val statements = listOf(
             createStatement(
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.monthPublished),
                 `object` = oldMonthLiteral
             )
-        )
-        every { statementService.delete(statementId) } just runs
+        ).groupBy { it.subject.id }
+        val state = UpdatePaperState(paper, statements)
+
+        every { statementService.delete(setOf(statementId)) } just runs
         every {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -301,14 +272,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.monthPublished,
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) { statementService.delete(statementId) }
+        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
         verify(exactly = 1) {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -342,9 +306,7 @@ class PaperPublicationInfoUpdaterUnitTest {
         val command = dummyUpdatePaperCommand().copy(
             publicationInfo = publicationInfo.toPublicationInfoDefinition()
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
+        val state = UpdatePaperState(paper)
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -372,27 +334,19 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = null
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
         val yearLiteral = createLiteral(label = paper.publicationInfo.publishedYear.toString())
         val statementId = StatementId("S1")
-
-        every {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.yearPublished,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(
+        val statements = listOf(
             createStatement(
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.yearPublished),
                 `object` = yearLiteral
             )
-        )
-        every { statementService.delete(statementId) } just runs
+        ).groupBy { it.subject.id }
+        val state = UpdatePaperState(paper, statements)
+
+        every { statementService.delete(setOf(statementId)) } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -401,14 +355,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.yearPublished,
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) { statementService.delete(statementId) }
+        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
     }
 
     @Test
@@ -430,9 +377,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = null
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
+        val state = UpdatePaperState(paper)
         val yearLiteralId = ThingId("L645")
 
         every {
@@ -479,7 +424,7 @@ class PaperPublicationInfoUpdaterUnitTest {
         }
     }
 
-@Test
+    @Test
     fun `Given a paper update command, when updating publication year with a new value, it replaces the old statement`() {
         val paper = createDummyPaper().copy(
             publicationInfo = PublicationInfo(
@@ -497,31 +442,23 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = null
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
         val oldYearLiteral = createLiteral(
             label = paper.publicationInfo.publishedYear.toString(),
             datatype = Literals.XSD.INT.prefixedUri
         )
         val newYearLiteralId = ThingId("L4351")
         val statementId = StatementId("S1")
-
-        every {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.yearPublished,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(
+        val statements = listOf(
             createStatement(
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.yearPublished),
                 `object` = oldYearLiteral
             )
-        )
-        every { statementService.delete(statementId) } just runs
+        ).groupBy { it.subject.id }
+        val state = UpdatePaperState(paper, statements)
+
+        every { statementService.delete(setOf(statementId)) } just runs
         every {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -547,14 +484,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.yearPublished,
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) { statementService.delete(statementId) }
+        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
         verify(exactly = 1) {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -588,9 +518,7 @@ class PaperPublicationInfoUpdaterUnitTest {
         val command = dummyUpdatePaperCommand().copy(
             publicationInfo = publicationInfo.toPublicationInfoDefinition()
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
+        val state = UpdatePaperState(paper)
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -618,30 +546,22 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = null
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
         val venueResource = createResource(
             label = paper.publicationInfo.publishedIn.toString(),
             classes = setOf(Classes.venue)
         )
         val statementId = StatementId("S1")
-
-        every {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.hasVenue,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(
+        val statements = listOf(
             createStatement(
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.hasVenue),
                 `object` = venueResource
             )
-        )
-        every { statementService.delete(statementId) } just runs
+        ).groupBy { it.subject.id }
+        val state = UpdatePaperState(paper, statements)
+
+        every { statementService.delete(setOf(statementId)) } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -650,14 +570,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.hasVenue,
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) { statementService.delete(statementId) }
+        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
     }
 
     @Test
@@ -679,9 +592,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = null
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
+        val state = UpdatePaperState(paper)
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             label = venue,
             classes = setOf(Classes.venue),
@@ -753,9 +664,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = null
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
+        val state = UpdatePaperState(paper)
         val venueResource = createResource(
             label = venue,
             classes = setOf(Classes.venue)
@@ -826,9 +735,7 @@ class PaperPublicationInfoUpdaterUnitTest {
         val command = dummyUpdatePaperCommand().copy(
             publicationInfo = publicationInfo.toPublicationInfoDefinition()
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
+        val state = UpdatePaperState(paper)
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -856,27 +763,19 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = null
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
         val urlLiteral = createLiteral(label = paper.publicationInfo.url.toString())
         val statementId = StatementId("S1")
-
-        every {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.hasURL,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(
+        val statements = listOf(
             createStatement(
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.hasURL),
                 `object` = urlLiteral
             )
-        )
-        every { statementService.delete(statementId) } just runs
+        ).groupBy { it.subject.id }
+        val state = UpdatePaperState(paper, statements)
+
+        every { statementService.delete(setOf(statementId)) } just runs
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -885,14 +784,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.hasURL,
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) { statementService.delete(statementId) }
+        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
     }
 
     @Test
@@ -914,9 +806,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = url
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
+        val state = UpdatePaperState(paper)
         val urlLiteralId = ThingId("L4356")
 
         every {
@@ -981,31 +871,23 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = URI.create("https://orkg.org")
             )
         )
-        val state = UpdatePaperState(
-            paper = paper
-        )
         val oldUrlLiteral = createLiteral(
             label = paper.publicationInfo.url.toString(),
             datatype = Literals.XSD.URI.prefixedUri
         )
         val newUrlLiteralId = ThingId("L15436")
         val statementId = StatementId("S1")
-
-        every {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.hasURL,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(
+        val statements = listOf(
             createStatement(
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.hasURL),
                 `object` = oldUrlLiteral
             )
-        )
-        every { statementService.delete(statementId) } just runs
+        ).groupBy { it.subject.id }
+        val state = UpdatePaperState(paper, statements)
+
+        every { statementService.delete(setOf(statementId)) } just runs
         every {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -1031,14 +913,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectId = command.paperId,
-                predicateId = Predicates.hasURL,
-                pageable = PageRequests.SINGLE
-            )
-        }
-        verify(exactly = 1) { statementService.delete(statementId) }
+        verify(exactly = 1) { statementService.delete(setOf(statementId)) }
         verify(exactly = 1) {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(

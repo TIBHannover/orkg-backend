@@ -8,17 +8,21 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
 class PaperIdentifierUpdater(
-    statementService: StatementUseCases,
-    literalService: LiteralUseCases
-) : IdentifierUpdater(statementService, literalService), UpdatePaperAction {
-    override operator fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
+    private val identifierUpdater: IdentifierUpdater
+) : UpdatePaperAction {
+    constructor(
+        statementService: StatementUseCases,
+        literalService: LiteralUseCases
+    ) : this(IdentifierUpdater(statementService, literalService))
+
+    override fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
         if (command.identifiers != null) {
-            update(
+            identifierUpdater.update(
+                statements = state.statements,
                 contributorId = command.contributorId,
-                oldIdentifiers = state.paper!!.identifiers,
                 newIdentifiers = command.identifiers!!,
                 identifierDefinitions = Identifiers.paper,
-                subjectId = state.paper.id
+                subjectId = state.paper!!.id
             )
         }
         return state

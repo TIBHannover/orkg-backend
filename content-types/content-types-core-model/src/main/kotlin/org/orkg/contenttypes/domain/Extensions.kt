@@ -48,6 +48,8 @@ inline val List<ObjectIdAndLabel>.ids get() = map { it.id }
 
 inline val Set<ObjectIdAndLabel>.ids get() = mapTo(mutableSetOf()) { it.id }
 
+inline val List<GeneralStatement>.ids get() = mapTo(mutableSetOf()) { it.id }
+
 private fun Thing.toAuthor(statements: List<GeneralStatement>): Author =
     when (this) {
         is Resource -> toAuthor(statements.withoutObjectsWithBlankLabels())

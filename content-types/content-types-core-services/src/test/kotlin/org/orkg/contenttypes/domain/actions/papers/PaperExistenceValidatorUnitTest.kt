@@ -7,21 +7,29 @@ import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.contenttypes.domain.ContentTypeSubgraph
+import org.orkg.contenttypes.domain.Paper
 import org.orkg.contenttypes.domain.PaperNotFound
+import org.orkg.contenttypes.domain.PaperService
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
-import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.output.ResourceRepository
+import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.createStatement
 
 class PaperExistenceValidatorUnitTest {
-    private val paperService: PaperUseCases = mockk()
+    private val paperService: PaperService = mockk()
+    private val resourceRepository: ResourceRepository = mockk()
 
-    private val paperExistenceValidator = PaperExistenceValidator(paperService)
+    private val paperExistenceValidator = PaperExistenceValidator(paperService, resourceRepository)
 
     @BeforeEach
     fun resetState() {
@@ -30,7 +38,7 @@ class PaperExistenceValidatorUnitTest {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(paperService)
+        confirmVerified(paperService, resourceRepository)
     }
 
     @Test
@@ -38,14 +46,28 @@ class PaperExistenceValidatorUnitTest {
         val paper = createDummyPaper()
         val command = dummyUpdatePaperCommand().copy(paperId = paper.id)
         val state = UpdatePaperState()
+        val root = createResource(
+            id = paper.id,
+            label = paper.title,
+            classes = setOf(Classes.paper)
+        )
+        val statements = listOf(createStatement()).groupBy { it.subject.id }
 
-        every { paperService.findById(paper.id) } returns Optional.of(paper)
+        mockkObject(Paper.Companion) {
+            every { resourceRepository.findById(paper.id) } returns Optional.of(root)
+            every { paperService.findSubgraph(root) } returns ContentTypeSubgraph(root.id, statements)
+            every { Paper.from(root, statements) } returns paper
 
-        paperExistenceValidator(command, state).asClue {
-            it.paper shouldBe paper
+            paperExistenceValidator(command, state).asClue {
+                it.paper shouldBe paper
+                it.statements shouldBe statements
+                it.authors shouldBe state.authors
+            }
+
+            verify(exactly = 1) { resourceRepository.findById(paper.id) }
+            verify(exactly = 1) { paperService.findSubgraph(root) }
+            verify(exactly = 1) { Paper.from(root, statements) }
         }
-
-        verify(exactly = 1) { paperService.findById(paper.id) }
     }
 
     @Test
@@ -54,10 +76,10 @@ class PaperExistenceValidatorUnitTest {
         val command = dummyUpdatePaperCommand().copy(paperId = paper.id)
         val state = UpdatePaperState()
 
-        every { paperService.findById(paper.id) } returns Optional.empty()
+        every { resourceRepository.findById(paper.id) } returns Optional.empty()
 
         shouldThrow<PaperNotFound> { paperExistenceValidator(command, state) }
 
-        verify(exactly = 1) { paperService.findById(paper.id) }
+        verify(exactly = 1) { resourceRepository.findById(paper.id) }
     }
 }

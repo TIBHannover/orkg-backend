@@ -180,13 +180,13 @@ class PaperService(
 
     override fun update(command: UpdatePaperCommand) {
         val steps = listOf(
-            PaperExistenceValidator(this),
+            PaperExistenceValidator(this, resourceRepository),
             PaperModifiableValidator(),
             PublicationInfoValidator { it.publicationInfo },
-            ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.paper!!.researchFields.map(ObjectIdAndLabel::id) }),
+            ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.paper!!.researchFields.ids }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.paper!!.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.paper!!.organizations }),
-            SDGValidator({ it.sustainableDevelopmentGoals }, { it.paper!!.sustainableDevelopmentGoals.map(ObjectIdAndLabel::id).toSet() }),
+            SDGValidator({ it.sustainableDevelopmentGoals }, { it.paper!!.sustainableDevelopmentGoals.ids }),
             PaperTitleUpdateValidator(resourceService),
             PaperIdentifierUpdateValidator(statementRepository),
             PaperAuthorUpdateValidator(resourceRepository, statementRepository),
@@ -218,9 +218,9 @@ class PaperService(
         )
     }
 
-    internal fun Resource.toPaper(): Paper {
+    internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
         val statements = statementRepository.fetchAsBundle(
-            id = id,
+            id = resource.id,
             configuration = BundleConfiguration(
                 minLevel = null,
                 maxLevel = 3,
@@ -229,7 +229,7 @@ class PaperService(
             ),
             sort = Sort.unsorted()
         ) + statementRepository.fetchAsBundle(
-            id = id,
+            id = resource.id,
             configuration = BundleConfiguration(
                 minLevel = null,
                 maxLevel = 1,
@@ -238,6 +238,13 @@ class PaperService(
             ),
             sort = Sort.unsorted()
         )
-        return Paper.from(this, statements.groupBy { it.subject.id })
+        return ContentTypeSubgraph(
+            root = resource.id,
+            statements = statements.groupBy { it.subject.id }
+        )
+    }
+
+    internal fun Resource.toPaper(): Paper {
+        return Paper.from(this, findSubgraph(this).statements)
     }
 }

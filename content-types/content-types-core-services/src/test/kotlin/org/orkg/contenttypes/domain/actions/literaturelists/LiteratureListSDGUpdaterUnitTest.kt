@@ -74,13 +74,20 @@ class LiteratureListSDGUpdaterUnitTest {
     fun `Given a literature list update command, when SDGs have changed, it updates the SDG statements`() {
         val literatureList = createDummyLiteratureList()
         val command = dummyUpdateLiteratureListCommand()
+        val statements = listOf(
+            createStatement(
+                subject = createResource(command.literatureListId),
+                predicate = createPredicate(Predicates.sustainableDevelopmentGoal)
+            ),
+            createStatement(
+                subject = createResource(command.literatureListId),
+                predicate = createPredicate(Predicates.hasContent)
+            ),
+            createStatement(subject = createResource())
+        ).groupBy { it.subject.id }
         val state = UpdateLiteratureListState(
             literatureList = literatureList,
-            statements = listOf(
-                createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.sustainableDevelopmentGoal)),
-                createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasContent)),
-                createStatement(subject = createResource())
-            ).groupBy { it.subject.id }
+            statements = statements
         )
 
         every {
@@ -103,9 +110,7 @@ class LiteratureListSDGUpdaterUnitTest {
 
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
-                statements = listOf(
-                    createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.sustainableDevelopmentGoal))
-                ),
+                statements = statements[command.literatureListId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.sustainableDevelopmentGoal,

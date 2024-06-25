@@ -35,6 +35,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
+import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.featureflags.output.FeatureFlagService
@@ -44,6 +45,7 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectLiteratureList
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPaper
@@ -51,6 +53,7 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.documentedPutRequestTo
@@ -610,6 +613,35 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { literatureListService.updateSection(any<UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand>()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a literature list section delete request, when service succeeds, it returns status 204 NO CONTENT")
+    fun deleteSection() {
+        val literatureListId = ThingId("R3541")
+        val sectionId = ThingId("R123")
+        val command = DeleteLiteratureListSectionUseCase.DeleteCommand(
+            literatureListId, sectionId, ContributorId(MockUserId.USER)
+        )
+        every { literatureListService.deleteSection(command) } just runs
+
+        documentedDeleteRequestTo("/api/literature-lists/{literatureListId}/sections/{sectionId}", literatureListId, sectionId)
+            .accept(LITERATURE_LIST_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("literatureListId").description("The id of the literature list the section belongs to."),
+                        parameterWithName("sectionId").description("The id of the section.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { literatureListService.deleteSection(command) }
     }
 
     private fun createLiteratureListRequest() =

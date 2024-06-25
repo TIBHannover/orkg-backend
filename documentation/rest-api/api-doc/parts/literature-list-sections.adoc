@@ -47,3 +47,12 @@ The response will be `204 No Content` when successful.
 The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
 
 operation::literature-lists-update-list-section[snippets='request-fields,curl-request,http-response']
+
+[[literature-list-sections-delete]]
+== Deleting a literature list section
+
+A `DELETE` request deletes a literature list section by ID.
+The response will be `204 No Content` when successful.
+The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::literature-lists-delete-section[snippets='curl-request,path-parameters,http-response']

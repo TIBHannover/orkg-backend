@@ -22,7 +22,7 @@ interface LegacyPaperUseCases : LegacyRetrievePaperUseCase, LegacyCreatePaperUse
 interface ResearchFieldHierarchyUseCases : RetrieveResearchFieldHierarchyUseCase
 
 interface LiteratureListUseCases : RetrieveLiteratureListUseCase, CreateLiteratureListUseCase,
-    CreateLiteratureListSectionUseCase, UpdateLiteratureListUseCase, UpdateLiteratureListSectionUseCase
+    CreateLiteratureListSectionUseCase, UpdateLiteratureListUseCase, UpdateLiteratureListSectionUseCase, DeleteLiteratureListSectionUseCase
 
 interface SmartReviewUseCases : RetrieveSmartReviewUseCase
 

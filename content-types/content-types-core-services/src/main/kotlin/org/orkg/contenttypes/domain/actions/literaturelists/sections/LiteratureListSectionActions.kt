@@ -4,6 +4,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.LiteratureList
 import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionCommand
+import org.orkg.contenttypes.domain.actions.DeleteLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionCommand
 import org.orkg.graph.domain.GeneralStatement
 
@@ -15,6 +16,13 @@ interface CreateLiteratureListSectionAction : Action<CreateLiteratureListSection
 }
 
 interface UpdateLiteratureListSectionAction : Action<UpdateLiteratureListSectionCommand, UpdateLiteratureListSectionAction.State> {
+    data class State(
+        val literatureList: LiteratureList? = null,
+        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
+    )
+}
+
+interface DeleteLiteratureListSectionAction : Action<DeleteLiteratureListSectionCommand, DeleteLiteratureListSectionAction.State> {
     data class State(
         val literatureList: LiteratureList? = null,
         val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),

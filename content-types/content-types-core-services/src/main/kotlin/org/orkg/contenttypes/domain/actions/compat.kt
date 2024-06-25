@@ -6,6 +6,7 @@ import org.orkg.contenttypes.domain.actions.contributions.ContributionAction
 import org.orkg.contenttypes.domain.actions.literaturelists.CreateLiteratureListAction
 import org.orkg.contenttypes.domain.actions.literaturelists.UpdateLiteratureListAction
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.CreateLiteratureListSectionAction
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.DeleteLiteratureListSectionAction
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.UpdateLiteratureListSectionAction
 import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
@@ -28,6 +29,7 @@ import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
+import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
@@ -59,6 +61,8 @@ internal typealias UpdateLiteratureListCommand = UpdateLiteratureListUseCase.Upd
 internal typealias UpdateLiteratureListSectionCommand = UpdateLiteratureListSectionUseCase.UpdateCommand
 internal typealias UpdateRosettaStoneStatementCommand = UpdateRosettaStoneStatementUseCase.UpdateCommand
 
+internal typealias DeleteLiteratureListSectionCommand = DeleteLiteratureListSectionUseCase.DeleteCommand
+
 internal typealias CreatePaperState = CreatePaperAction.State
 internal typealias UpdatePaperState = UpdatePaperAction.State
 
@@ -86,3 +90,4 @@ internal typealias UpdateLiteratureListState = UpdateLiteratureListAction.State
 
 internal typealias CreateLiteratureListSectionState = CreateLiteratureListSectionAction.State
 internal typealias UpdateLiteratureListSectionState = UpdateLiteratureListSectionAction.State
+internal typealias DeleteLiteratureListSectionState = DeleteLiteratureListSectionAction.State

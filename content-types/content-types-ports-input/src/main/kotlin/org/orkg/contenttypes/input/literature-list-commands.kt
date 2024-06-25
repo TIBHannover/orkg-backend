@@ -95,6 +95,16 @@ interface UpdateLiteratureListSectionUseCase {
     ) : UpdateCommand, TextSectionDefinition
 }
 
+interface DeleteLiteratureListSectionUseCase {
+    fun deleteSection(command: DeleteCommand)
+
+    data class DeleteCommand(
+        val literatureListId: ThingId,
+        val sectionId: ThingId,
+        val contributorId: ContributorId
+    )
+}
+
 sealed interface LiteratureListSectionDefinition {
     fun matchesListSection(section: LiteratureListSection): Boolean
 }

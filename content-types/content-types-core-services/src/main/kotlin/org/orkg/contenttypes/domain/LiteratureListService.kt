@@ -14,6 +14,8 @@ import org.orkg.contenttypes.domain.actions.CreateLiteratureListCommand
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
+import org.orkg.contenttypes.domain.actions.DeleteLiteratureListSectionCommand
+import org.orkg.contenttypes.domain.actions.DeleteLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
@@ -42,7 +44,9 @@ import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectio
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionCreateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionCreator
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionDeleter
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionExistenceCreateValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionExistenceDeleteValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionExistenceUpdateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionIndexValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionUpdateValidator
@@ -166,6 +170,14 @@ class LiteratureListService(
             LiteratureListSectionUpdater(literalService, resourceService, statementService)
         )
         steps.execute(command, UpdateLiteratureListSectionState())
+    }
+
+    override fun deleteSection(command: DeleteLiteratureListSectionCommand) {
+        val steps = listOf(
+            LiteratureListSectionExistenceDeleteValidator(this, resourceRepository),
+            LiteratureListSectionDeleter(statementService, resourceService)
+        )
+        steps.execute(command, DeleteLiteratureListSectionState())
     }
 
     override fun update(command: UpdateLiteratureListCommand) {

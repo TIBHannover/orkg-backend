@@ -23,6 +23,7 @@ import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapt
 import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
+import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.ListSectionCommand
 import org.orkg.contenttypes.input.ListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
@@ -48,6 +49,7 @@ import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -176,6 +178,23 @@ class LiteratureListController(
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.updateSection(request.toUpdateCommand(sectionId, userId, literatureListId))
+        val location = uriComponentsBuilder
+            .path("api/literature-lists/{id}")
+            .buildAndExpand(literatureListId)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @PreAuthorizeUser
+    @DeleteMapping("/{literatureListId}/sections/{sectionId}", produces = [LITERATURE_LIST_SECTION_JSON_V1])
+    fun deleteSection(
+        @PathVariable literatureListId: ThingId,
+        @PathVariable sectionId: ThingId,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.deleteSection(DeleteLiteratureListSectionUseCase.DeleteCommand(literatureListId, sectionId, userId))
         val location = uriComponentsBuilder
             .path("api/literature-lists/{id}")
             .buildAndExpand(literatureListId)

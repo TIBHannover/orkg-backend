@@ -12,6 +12,7 @@ import org.orkg.contenttypes.domain.LiteratureListSection
 import org.orkg.contenttypes.domain.TextSection
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
+import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.ListSectionCommand
 import org.orkg.contenttypes.input.ListSectionDefinition.Entry
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
@@ -145,6 +146,12 @@ fun dummyTextSectionDefinition(): TextSectionCommand =
         headingSize = 3,
         text = "updated text section contents"
     )
+
+fun dummyDeleteSectionCommand() = DeleteLiteratureListSectionUseCase.DeleteCommand(
+    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+    literatureListId = ThingId("R123"),
+    sectionId = ThingId("R456")
+)
 
 fun LiteratureListSection.toLiteratureListSectionDefinition(): LiteratureListSectionDefinition =
     when (this) {

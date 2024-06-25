@@ -7,12 +7,8 @@ version = "0.60.0"
 
 val springSecurityOAuthVersion = "2.5.2"
 
-// Support downloading JavaDoc artifacts by enabling it via Gradle properties
-val downloadJavadoc: String? by project
-
 plugins {
     id("org.orkg.gradle.spring-boot-application")
-    id("idea")
     id("jacoco-report-aggregation")
     id("org.orkg.gradle.docker-image")
 
@@ -35,12 +31,6 @@ val neo4jMigrations: Configuration by configurations.creating {
 val runtimeClasspath by configurations.getting {
     extendsFrom(liquibase)
     extendsFrom(neo4jMigrations)
-}
-
-idea {
-    module {
-        isDownloadJavadoc = downloadJavadoc?.let(String::toBoolean) ?: false
-    }
 }
 
 testing {

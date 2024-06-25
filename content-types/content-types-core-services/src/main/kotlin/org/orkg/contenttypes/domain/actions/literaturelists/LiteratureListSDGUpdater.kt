@@ -22,8 +22,7 @@ class LiteratureListSDGUpdater(
     ): UpdateLiteratureListState {
         if (command.sustainableDevelopmentGoals != null && command.sustainableDevelopmentGoals != state.literatureList!!.sustainableDevelopmentGoals.ids) {
             statementCollectionPropertyUpdater.update(
-                statements = state.statements[command.literatureListId].orEmpty()
-                    .filter { it.predicate.id == Predicates.sustainableDevelopmentGoal },
+                statements = state.statements[command.literatureListId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.sustainableDevelopmentGoal,

@@ -5,16 +5,11 @@ import javax.validation.Valid
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
-import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
-import org.orkg.graph.input.FormattedLabelUseCases
-import org.orkg.graph.input.ResourceUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateClassUseCase
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -40,12 +35,8 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/classes/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ClassController(
-    private val service: ClassUseCases,
-    private val resourceService: ResourceUseCases,
-    override val statementService: StatementUseCases,
-    override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService
-) : ClassRepresentationAdapter, ResourceRepresentationAdapter {
+    private val service: ClassUseCases
+) : ClassRepresentationAdapter {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ThingId): ClassRepresentation =

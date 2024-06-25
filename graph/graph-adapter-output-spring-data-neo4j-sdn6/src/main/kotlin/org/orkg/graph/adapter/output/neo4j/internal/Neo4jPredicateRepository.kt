@@ -9,7 +9,6 @@ import org.springframework.data.neo4j.repository.query.Query
 import org.springframework.transaction.annotation.Transactional
 
 private const val id = "${'$'}id"
-private const val ids = "${'$'}ids"
 private const val query = "${'$'}query"
 private const val label = "${'$'}label"
 private const val minLabelLength = "${'$'}minLabelLength"

@@ -69,9 +69,9 @@ private const val RELATED = "RELATED"
 class SpringDataNeo4jStatementAdapter(
     private val neo4jStatementIdGenerator: Neo4jStatementIdGenerator,
     private val predicateRepository: PredicateRepository,
-    override val neo4jClient: Neo4jClient,
+    private val neo4jClient: Neo4jClient,
     private val cacheManager: CacheManager? = null,
-) : SpringDataNeo4jAdapter(neo4jClient), StatementRepository {
+) : StatementRepository {
 
     override fun nextIdentity(): StatementId {
         // IDs could exist already by manual creation. We need to find the next available one.

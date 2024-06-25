@@ -36,8 +36,8 @@ private const val INSTANCE_OF = "INSTANCE_OF"
 
 @Component
 class SpringDataNeo4jClassHierarchyAdapter(
-    override val neo4jClient: Neo4jClient
-) : SpringDataNeo4jAdapter(neo4jClient), ClassHierarchyRepository, ClassRelationRepository {
+    private val neo4jClient: Neo4jClient
+) : ClassHierarchyRepository, ClassRelationRepository {
 
     override fun save(classRelation: ClassSubclassRelation) {
         CypherQueryBuilder(neo4jClient)

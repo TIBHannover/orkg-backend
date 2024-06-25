@@ -276,12 +276,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .characterEncoding("UTF-8")
             .content(objectMapper.writeValueAsString(literal))
 
-    private fun createCreateRequestWithBlankLabel() = LiteralCreateRequest(label = " ".repeat(5))
-
     private fun createCreateRequestWithEmptyLabel() = LiteralCreateRequest(label = "")
-
-    private fun createUpdateRequestWithBlankLabel() =
-        LiteralUpdateRequest(id = null, label = " ".repeat(5), datatype = null)
 
     private fun createUpdateRequestWithEmptyLabel() =
         LiteralUpdateRequest(id = null, label = "", datatype = null)

@@ -321,22 +321,6 @@ class ObjectService(
 
         // Miscellaneous
         val MAP_PREDICATE_CLASSES = mapOf("P32" to "Problem")
-
-        /** Regular expression to check whether an input string is a valid ORCID id.  */
-        const val ORCID_REGEX =
-            "^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})-?([0-9]{4})-?([0-9]{4})-?(([0-9]{4})|([0-9]{3}X))\\s*\$"
-
-        // Properties
-        val hasAuthorsPredicate = ThingId(ID_AUTHORS_PREDICATE)
-        val PublicationMonthPredicate = ThingId(ID_PUBDATE_MONTH_PREDICATE)
-        val PublicationYearPredicate = ThingId(ID_PUBDATE_YEAR_PREDICATE)
-        val ResearchFieldPredicate = ThingId(ID_RESEARCH_FIELD_PREDICATE)
-        val OrcidPredicate = ThingId(ID_ORCID_PREDICATE)
-        val VenuePredicate = ThingId(ID_VENUE_PREDICATE)
-        val UrlPredicate = ThingId(ID_URL_PREDICATE)
-        val ContributionClass = ThingId(ID_CONTRIBUTION_CLASS)
-        val AuthorClass = ThingId(ID_AUTHOR_CLASS)
-        val VenueClass = ThingId(ID_VENUE_CLASS)
     }
 
     // </editor-fold>

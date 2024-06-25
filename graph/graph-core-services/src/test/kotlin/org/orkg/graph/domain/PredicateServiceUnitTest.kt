@@ -18,7 +18,6 @@ import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
-import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
 import org.orkg.testing.fixedClock
@@ -26,9 +25,8 @@ import org.orkg.testing.fixedClock
 class PredicateServiceUnitTest {
 
     private val repository: PredicateRepository = mockk()
-    private val statementRepository: StatementRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
-    private val service = PredicateService(repository, statementRepository, contributorRepository, fixedClock)
+    private val service = PredicateService(repository, contributorRepository, fixedClock)
 
     @Test
     fun `given a predicate is created, when no id is given, then it gets an id from the repository`() {

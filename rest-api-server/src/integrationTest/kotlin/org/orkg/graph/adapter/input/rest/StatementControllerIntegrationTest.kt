@@ -25,7 +25,6 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -307,13 +306,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         fieldWithPath("created_by").description("The ID of the user that created the statement. All zeros if unknown."),
         fieldWithPath("modifiable").description("Whether this statement can be modified.")
     )
-
-    private fun pageOfStatementsWithAnyObjectResponseFields() =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", statementFields())
-            .andWithPrefix("content[].subject.", resourceResponseFields())
-            .andWithPrefix("content[].predicate.", predicateResponseFields())
-            .and(subsectionWithPath("content[].object").description("An object. Can be either a resource or a literal."))
 
     private fun sharedStatementResponseFields() =
         responseFields(statementFields())

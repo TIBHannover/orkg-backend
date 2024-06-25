@@ -11,7 +11,6 @@ import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
-import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class PredicateService(
     private val repository: PredicateRepository,
-    private val statementRepository: StatementRepository,
     private val contributorRepository: ContributorRepository,
     private val clock: Clock,
 ) : PredicateUseCases {

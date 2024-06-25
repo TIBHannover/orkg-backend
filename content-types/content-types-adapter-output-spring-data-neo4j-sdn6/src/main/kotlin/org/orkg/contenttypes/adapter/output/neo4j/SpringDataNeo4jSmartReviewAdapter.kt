@@ -5,20 +5,14 @@ import java.time.format.DateTimeFormatter
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Conditions
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
-import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.literalOf
-import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Cypher.valueAt
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.size
 import org.neo4j.cypherdsl.core.Functions.toLower
 import org.neo4j.cypherdsl.core.Node
-import org.neo4j.cypherdsl.core.PatternElement
 import org.neo4j.cypherdsl.core.RelationshipPattern
-import org.neo4j.cypherdsl.core.StatementBuilder
-import org.neo4j.cypherdsl.core.SymbolicName
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -145,32 +139,4 @@ class SpringDataNeo4jSmartReviewAdapter(
         .countOver("node")
         .mappedBy(ResourceMapper("node"))
         .fetch(pageable, false)
-
-    private fun matchPublishedSmartReviews(
-        symbolicName: SymbolicName,
-        patternGenerator: (Node) -> Collection<PatternElement>
-    ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere {
-        val srp = node("SmartReviewPublished").named("srp")
-        val srl = name("srl")
-        val patterns = patternGenerator(srp)
-        return match(
-            srp.relationshipFrom(node("SmartReview").named(srl), RELATED)
-                .withProperties("predicate_id", literalOf<String>(Predicates.hasPublishedVersion.value))
-        ).let {
-            if (patterns.isNotEmpty()) it.match(patterns) else it
-        }.with(
-            srl.asExpression(),
-            valueAt(call("apoc.coll.sortNodes").withArgs(collect(srp), literalOf<String>("created_at")).asFunction(), 0).`as`(symbolicName)
-        )
-    }
-
-    private fun matchUnpublishedSmartReviews(
-        symbolicName: SymbolicName,
-        patternGenerator: (Node) -> Collection<PatternElement>
-    ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere {
-        val node = node("SmartReview").named(symbolicName)
-        val patterns = patternGenerator(node)
-        return match(node).let { if (patterns.isNotEmpty()) it.match(patterns) else it }
-            .with(symbolicName)
-    }
 }

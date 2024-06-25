@@ -40,8 +40,6 @@ private const val WITH_NODE_PROPERTIES =
 
 // Custom queries
 
-private const val HAS_CLASSES = """ANY(collectionFields IN $classes WHERE collectionFields IN LABELS(node))"""
-
 private const val MATCH_PAPER = """MATCH (node:`Resource`:`Paper`)"""
 private const val MATCH_PAPER_BY_ID = """MATCH (node:`Resource`:`Paper` {id: $id})"""
 

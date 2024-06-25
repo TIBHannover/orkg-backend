@@ -13,13 +13,11 @@ import java.net.URI
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.stream.Stream
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.provider.Arguments
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ObservatoryId
@@ -751,12 +749,6 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         )
 
     companion object {
-        @JvmStatic
-        fun literatureListSectionRequests(): Stream<Arguments> = Stream.of(
-            Arguments.of(textSectionRequest()),
-            Arguments.of(listSectionRequest())
-        )
-
         @JvmStatic
         private fun textSectionRequest() =
             LiteratureListController.TextSectionRequest(

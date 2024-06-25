@@ -9,6 +9,7 @@ flowchart LR
 	SmartReview --> |"P31 \n has Contribution"| Contribution
     SmartReview --> |"hasAuthors"| authorList[List \n Resource]
 	SmartReview --> |"P30 \n has research field"| researchField[ResearchField \n Resource]
+	SmartReview --> |"HasReference"| reference[Literal \n xsd:string]
     subgraph Author List
         authorList --> |"hasListElement"| Author
 		subgraph Author
@@ -45,7 +46,7 @@ flowchart LR
 		subgraph Section
 			section --> |"hasContent"| content[Literal \n xsd:string]
 		end
-		subgraph Comaprison Section
+		subgraph Comparison Section
 			comparisonSection --> |"HasLink"| comparison[Comparison \n Resource]
 		end
 		subgraph Visualization Section

@@ -60,7 +60,7 @@ class LiteratureListSectionExistenceCreateValidatorUnitTest {
 
     @ParameterizedTest
     @MethodSource("createLiteratureListSectionCommands")
-    fun `Given a literature list section create command, when existing literature list is not modifiable, it throws an exception`(command: CreateLiteratureListSectionCommand) {
+    fun `Given a literature list section create command, when existing literature list is published, it throws an exception`(command: CreateLiteratureListSectionCommand) {
         val state = CreateLiteratureListSectionState()
         val template = createResource(id = command.literatureListId, classes = setOf(Classes.literatureListPublished))
 

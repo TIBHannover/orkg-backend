@@ -6,10 +6,9 @@ import org.orkg.contenttypes.adapter.input.rest.RosettaStoneStatementRepresentat
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersionNotFound
-import org.orkg.contenttypes.domain.ThingReference
 import org.springframework.data.domain.Page
 
-interface RosettaStoneStatementRepresentationAdapter {
+interface RosettaStoneStatementRepresentationAdapter : ThingReferenceRepresentationAdapter {
 
     fun Optional<RosettaStoneStatement>.mapToRosettaStoneStatementRepresentation(
         versionId: ThingId
@@ -37,8 +36,8 @@ interface RosettaStoneStatementRepresentationAdapter {
             versionId = version.id,
             latestVersion = id,
             formattedLabel = version.formattedLabel.value,
-            subjects = version.subjects.map(ThingReference::from),
-            objects = version.objects.map { it.map(ThingReference::from) },
+            subjects = version.subjects.map { it.toThingReferenceRepresentation() },
+            objects = version.objects.map { objects -> objects.map { it.toThingReferenceRepresentation() } },
             createdAt = version.createdAt,
             createdBy = version.createdBy,
             certainty = version.certainty,

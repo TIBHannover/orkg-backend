@@ -288,6 +288,24 @@ class SpringDataNeo4jStatementAdapter(
             .all()
             .toMap()
 
+    override fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String> =
+        CypherQueryBuilder(neo4jClient)
+            .withQuery {
+                val id = name("id")
+                val subject = node("Thing").withProperties("id", id)
+                val `object` = node("Literal")
+                unwind(parameter("ids")).`as`(id)
+                    .match(
+                        subject.relationshipTo(`object`, RELATED)
+                            .withProperties("predicate_id", literalOf<String>(Predicates.description.value))
+                    )
+                    .returning(id, valueAt(collect(`object`.property("label")), 0).`as`("description"))
+            }
+            .withParameters("ids" to ids.map { it.value })
+            .mappedBy { _, record -> ThingId(record["id"].asString()) to record["description"].asString() }
+            .all()
+            .toMap()
+
     override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> =
         CypherQueryBuilder(neo4jClient)
             .withQuery {

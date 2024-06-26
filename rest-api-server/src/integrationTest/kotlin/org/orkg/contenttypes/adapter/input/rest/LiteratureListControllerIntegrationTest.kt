@@ -275,11 +275,11 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
                 section.id shouldNotBe null
                 section.entries shouldBe listOf(
                     ListSectionRepresentation.EntryRepresentation(
-                        ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
+                        ResourceReferenceRepresentation(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
                         "example description"
                     ),
                     ListSectionRepresentation.EntryRepresentation(
-                        ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
+                        ResourceReferenceRepresentation(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
                         null
                     )
                 )

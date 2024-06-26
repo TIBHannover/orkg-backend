@@ -27,10 +27,8 @@ import org.orkg.graph.adapter.output.neo4j.toResource
 import org.orkg.graph.adapter.output.neo4j.toThing
 import org.orkg.graph.adapter.output.neo4j.toThingId
 import org.orkg.graph.domain.FormattedLabel
-import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
-import org.orkg.graph.output.PredicateRepository
 
 private const val RELATED = "RELATED"
 private val reservedRosettaStoneStatementLabels = setOf(
@@ -41,19 +39,17 @@ private val reservedRosettaStoneStatementLabels = setOf(
 )
 
 data class RosettaStoneStatementMapper(
-    val predicateRepository: PredicateRepository,
     val latest: String = "latest",
     val templateId: String = "templateId",
     val contextId: String = "contextId",
     val versions: String = "versions",
 ) : BiFunction<TypeSystem, Record, RosettaStoneStatement> {
     constructor(
-        predicateRepository: PredicateRepository,
         latest: SymbolicName,
         templateId: SymbolicName,
         context: SymbolicName,
         versions: SymbolicName
-    ) : this(predicateRepository, latest.value, templateId.value, context.value, versions.value)
+    ) : this(latest.value, templateId.value, context.value, versions.value)
 
     override fun apply(typeSystem: TypeSystem, record: Record): RosettaStoneStatement {
         val latest = record[latest].asNode().toResource()
@@ -64,12 +60,12 @@ data class RosettaStoneStatementMapper(
                 val node = version[0].asNode().toResource()
                 val metadata = version[1].asNode()
                 val subjects = version[2] // (thing, index)
-                    .asList { SubjectNode(expand(it[0].asNode().toThing(), predicateRepository), it[1].asInt()) }
+                    .asList { SubjectNode(it[0].asNode().toThing(), it[1].asInt()) }
                     .sortedBy { it.index }
                     .map { it.thing }
                 val objects = run {
                     val objectNodes = version[3] // (thing, index, position)
-                        .asList { ObjectNode(expand(it[0].asNode().toThing(), predicateRepository), it[1].asInt(), it[2].asInt()) }
+                        .asList { ObjectNode(it[0].asNode().toThing(), it[1].asInt(), it[2].asInt()) }
                         .groupBy { it.position }
                     (0 until metadata["object_count"].asInt()).map { position ->
                         objectNodes[position].orEmpty()
@@ -111,14 +107,6 @@ data class RosettaStoneStatementMapper(
             modifiable = latest.modifiable
         )
     }
-
-    private fun expand(thing: Thing, predicateRepository: PredicateRepository): Thing =
-        when (thing) {
-            is Predicate -> thing.copy(
-                description = predicateRepository.findById(thing.id).orElse(null)?.description
-            )
-            else -> thing
-        }
 
     data class SubjectNode(
         val thing: Thing,

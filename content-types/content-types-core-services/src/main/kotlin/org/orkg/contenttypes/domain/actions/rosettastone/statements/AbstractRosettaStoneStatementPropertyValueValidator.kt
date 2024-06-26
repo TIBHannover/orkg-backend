@@ -11,10 +11,12 @@ import org.orkg.contenttypes.domain.actions.toThingDefinition
 import org.orkg.contenttypes.input.ThingDefinition
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 
 class AbstractRosettaStoneStatementPropertyValueValidator(
     override val thingRepository: ThingRepository,
+    private val statementRepository: StatementRepository,
     private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator = AbstractTemplatePropertyValueValidator()
 ) : ThingIdValidator {
     fun validate(
@@ -42,7 +44,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                 }
 
                 `object`.onRight { thing ->
-                    abstractTemplatePropertyValueValidator.validateObject(property, thing.id.value, thing.toThingDefinition())
+                    abstractTemplatePropertyValueValidator.validateObject(property, thing.id.value, thing.toThingDefinition(statementRepository))
                 }
             }
         }

@@ -37,8 +37,7 @@ fun createPublishedContentType(
                 id = Predicates.hasPaper,
                 label = "has paper",
                 createdAt = OffsetDateTime.parse("2021-04-26T16:57:34.745465+02:00"),
-                createdBy = ContributorId.UNKNOWN,
-                description = null
+                createdBy = ContributorId.UNKNOWN
             ),
             `object` = Class(
                 id = ThingId("C12457"),
@@ -68,8 +67,7 @@ fun createPublishedContentType(
                 id = Predicates.hasPaper,
                 label = "has paper",
                 createdAt = OffsetDateTime.parse("2021-04-26T16:57:34.745465+02:00"),
-                createdBy = ContributorId.UNKNOWN,
-                description = null
+                createdBy = ContributorId.UNKNOWN
             ),
             `object` = Literal(
                 id = ThingId("L354354"),

@@ -2,6 +2,7 @@ package org.orkg.export.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.verify
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
@@ -126,12 +127,19 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
     @Test
     fun testFilterPredicates() {
         // TODO: Search strings are not comparable, so they cannot be used here.
-        every { predicateRepository.findAllByLabel(any<FuzzySearchString>(), any<Pageable>()) } returns PageImpl(
+        every {
+            predicateRepository.findAllByLabel(any<FuzzySearchString>(), any<Pageable>())
+        } returns pageOf(
             listOf(createPredicate(id = ThingId("P1234"), label = "Predicate 1234"))
         )
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        mockMvc.perform(get(HINTS_ENDPOINT).param("q", "1234").param("type", "property"))
+        mockMvc.perform(get(HINTS_ENDPOINT)
+            .param("q", "1234")
+            .param("type", "property"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].label", `is`("Predicate 1234")))
+
+        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
     }
 }

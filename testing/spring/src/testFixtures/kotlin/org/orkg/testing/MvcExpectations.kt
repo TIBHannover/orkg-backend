@@ -83,7 +83,6 @@ fun ResultActions.andExpectResource(path: String = "$"): ResultActions = this
 fun ResultActions.andExpectPredicate(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.label", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.description").hasJsonPath())
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
     .andExpect(jsonPath("$path.modifiable", `is`(notNullValue())))
@@ -379,7 +378,6 @@ fun ResultActions.andExpectSmartReview(path: String = "$"): ResultActions = this
     // predicate section specific
     .andExpect(jsonPath("$path.sections[*].predicate.id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.sections[*].predicate.label", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.sections[*].predicate.description").hasJsonPath())
     // ontology section specific
     .andExpect(jsonPath("$path.sections[*].entities").isArray)
     .andExpect(jsonPath("$path.sections[*].entities[*].id", `is`(notNullValue())))
@@ -388,7 +386,6 @@ fun ResultActions.andExpectSmartReview(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.sections[*].predicates").isArray)
     .andExpect(jsonPath("$path.sections[*].predicates[*].id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.sections[*].predicates[*].label", `is`(notNullValue())))
-    .andExpect(jsonPath("$path.sections[*].predicates[*].description").hasJsonPath())
     // text section specific
     .andExpect(jsonPath("$path.sections[*].text", `is`(notNullValue())))
     .andExpect(jsonPath("$path.references").isArray)

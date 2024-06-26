@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional
 interface StatementRepository : EntityRepository<GeneralStatement, StatementId> {
     fun countIncomingStatements(id: ThingId): Long
     fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long>
+    fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String>
     fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo>
     // legacy methods:
     fun nextIdentity(): StatementId

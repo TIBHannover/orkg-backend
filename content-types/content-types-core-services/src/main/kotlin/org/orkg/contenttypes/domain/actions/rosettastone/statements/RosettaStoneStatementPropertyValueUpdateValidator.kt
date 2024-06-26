@@ -2,12 +2,16 @@ package org.orkg.contenttypes.domain.actions.rosettastone.statements
 
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction.State
+import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 
 class RosettaStoneStatementPropertyValueUpdateValidator(
     private val abstractRosettaStoneStatementPropertyValueValidator: AbstractRosettaStoneStatementPropertyValueValidator
 ) : UpdateRosettaStoneStatementAction {
-    constructor(thingRepository: ThingRepository) : this(AbstractRosettaStoneStatementPropertyValueValidator(thingRepository))
+    constructor(
+        thingRepository: ThingRepository,
+        statementRepository: StatementRepository
+    ) : this(AbstractRosettaStoneStatementPropertyValueValidator(thingRepository, statementRepository))
 
     override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State {
         val validatedIds = abstractRosettaStoneStatementPropertyValueValidator.validate(

@@ -39,4 +39,6 @@ interface RetrieveStatementUseCase {
     fun countIncomingStatements(id: ThingId): Long
 
     fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long>
+
+    fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String>
 }

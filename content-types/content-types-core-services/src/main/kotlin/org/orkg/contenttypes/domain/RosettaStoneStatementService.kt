@@ -103,7 +103,7 @@ class RosettaStoneStatementService(
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
             RosettaStoneStatementThingDefinitionCreateValidator(thingRepository, classRepository),
-            RosettaStoneStatementPropertyValueCreateValidator(thingRepository),
+            RosettaStoneStatementPropertyValueCreateValidator(thingRepository, statementRepository),
             RosettaStoneStatementThingDefinitionCreateCreator(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService),
             RosettaStoneStatementCreator(repository, thingRepository, clock)
         )
@@ -119,7 +119,7 @@ class RosettaStoneStatementService(
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.organizations }),
             RosettaStoneStatementThingDefinitionUpdateValidator(thingRepository, classRepository),
-            RosettaStoneStatementPropertyValueUpdateValidator(thingRepository),
+            RosettaStoneStatementPropertyValueUpdateValidator(thingRepository, statementRepository),
             RosettaStoneStatementThingDefinitionUpdateCreator(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService),
             RosettaStoneStatementUpdater(repository, thingRepository, clock)
         )

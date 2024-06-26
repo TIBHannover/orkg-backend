@@ -20,10 +20,6 @@ import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.Certainty
-import org.orkg.contenttypes.domain.ClassReference
-import org.orkg.contenttypes.domain.LiteralReference
-import org.orkg.contenttypes.domain.PredicateReference
-import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
 import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
@@ -226,9 +222,9 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
             it.formattedLabel shouldBe "{0} {1} {2} {3} {4} {5}"
             it.subjects.asClue { subjects ->
                 subjects.size shouldBe 3
-                subjects[0] shouldBe ResourceReference(ThingId("R258"), "label", setOf(ThingId("C28")))
-                subjects[1] shouldBe ResourceReference(ThingId("R369"), "label", setOf(ThingId("C28")))
-                subjects[2].shouldBeInstanceOf<ResourceReference>().asClue { subject ->
+                subjects[0] shouldBe ResourceReferenceRepresentation(ThingId("R258"), "label", setOf(ThingId("C28")))
+                subjects[1] shouldBe ResourceReferenceRepresentation(ThingId("R369"), "label", setOf(ThingId("C28")))
+                subjects[2].shouldBeInstanceOf<ResourceReferenceRepresentation>().asClue { subject ->
                     subject.id shouldNotBe null
                     subject.label shouldBe "Subject Resource"
                     subject.classes shouldBe setOf(ThingId("C28"))
@@ -238,13 +234,12 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
                 objects.size shouldBe 5
                 objects[0].asClue { position ->
                     position.size shouldBe 3
-                    position[0] shouldBe ResourceReference(ThingId("R174"), "label", emptySet())
-                    position[1].shouldBeInstanceOf<PredicateReference>().asClue { `object` ->
+                    position[0] shouldBe ResourceReferenceRepresentation(ThingId("R174"), "label", emptySet())
+                    position[1].shouldBeInstanceOf<PredicateReferenceRepresentation>().asClue { `object` ->
                         `object`.id shouldNotBe null
                         `object`.label shouldBe "hasResult"
-                        `object`.description shouldBe "has result"
                     }
-                    position[2].shouldBeInstanceOf<ClassReference>().asClue { `object` ->
+                    position[2].shouldBeInstanceOf<ClassReferenceRepresentation>().asClue { `object` ->
                         `object`.id shouldNotBe null
                         `object`.label shouldBe "new class"
                         `object`.uri shouldBe null
@@ -252,24 +247,24 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
                 }
                 objects[1].asClue { position ->
                     position.size shouldBe 2
-                    position[0] shouldBe LiteralReference("123456", Literals.XSD.STRING.prefixedUri)
-                    position[1] shouldBe LiteralReference("0123456789", Literals.XSD.STRING.prefixedUri)
+                    position[0] shouldBe LiteralReferenceRepresentation("123456", Literals.XSD.STRING.prefixedUri)
+                    position[1] shouldBe LiteralReferenceRepresentation("0123456789", Literals.XSD.STRING.prefixedUri)
                 }
                 objects[2].asClue { position ->
                     position.size shouldBe 2
-                    position[0] shouldBe LiteralReference("5", Literals.XSD.INT.prefixedUri)
-                    position[1] shouldBe LiteralReference("1", Literals.XSD.INT.prefixedUri)
+                    position[0] shouldBe LiteralReferenceRepresentation("5", Literals.XSD.INT.prefixedUri)
+                    position[1] shouldBe LiteralReferenceRepresentation("1", Literals.XSD.INT.prefixedUri)
                 }
                 objects[3].asClue { position ->
                     position.size shouldBe 2
-                    position[0] shouldBe LiteralReference("custom type", "C25")
-                    position[1] shouldBe LiteralReference("some literal value", "C25")
+                    position[0] shouldBe LiteralReferenceRepresentation("custom type", "C25")
+                    position[1] shouldBe LiteralReferenceRepresentation("some literal value", "C25")
                 }
                 objects[4].asClue { position ->
                     position.size shouldBe 3
-                    position[0] shouldBe ResourceReference(ThingId("R258"), "label", setOf(ThingId("C28")))
-                    position[1] shouldBe ResourceReference(ThingId("R369"), "label", setOf(ThingId("C28")))
-                    position[2].shouldBeInstanceOf<ResourceReference>().asClue { `object` ->
+                    position[0] shouldBe ResourceReferenceRepresentation(ThingId("R258"), "label", setOf(ThingId("C28")))
+                    position[1] shouldBe ResourceReferenceRepresentation(ThingId("R369"), "label", setOf(ThingId("C28")))
+                    position[2].shouldBeInstanceOf<ResourceReferenceRepresentation>().asClue { `object` ->
                         `object`.id shouldNotBe null
                         `object`.label shouldBe "list"
                         `object`.classes shouldBe setOf(Classes.list)
@@ -348,7 +343,6 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
                         position[1].shouldBeInstanceOf<Predicate>().asClue { `object` ->
                             `object`.id shouldNotBe null
                             `object`.label shouldBe "hasResult"
-                            `object`.description shouldBe "has result"
                         }
                         position[2].shouldBeInstanceOf<Class>().asClue { `object` ->
                             `object`.id shouldNotBe null
@@ -447,7 +441,6 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
                         position[0].shouldBeInstanceOf<Predicate>().asClue { `object` ->
                             `object`.id shouldNotBe null
                             `object`.label shouldBe "hasResult"
-                            `object`.description shouldBe "has result too"
                         }
                         position[1].shouldBeInstanceOf<Resource>().asClue { `object` ->
                             `object`.id shouldBe ThingId("R174")

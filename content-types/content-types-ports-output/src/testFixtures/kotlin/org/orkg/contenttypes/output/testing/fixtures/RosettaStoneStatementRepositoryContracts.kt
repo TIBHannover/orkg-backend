@@ -22,11 +22,8 @@ import org.orkg.contenttypes.domain.testing.fixtures.withRosettaStoneStatementMa
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
-import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicate
-import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
@@ -79,24 +76,7 @@ fun <
             is Class -> classRepository.save(it)
             is Literal -> literalRepository.save(it)
             is Resource -> resourceRepository.save(it)
-            is Predicate -> {
-                predicateRepository.save(it)
-                it.description?.let { description ->
-                    val descriptionPredicate = fabricator.random<Predicate>()
-                        .copy(id = Predicates.description)
-                    val descriptionLiteral = fabricator.random<Literal>().copy(
-                        label = description,
-                        datatype = Literals.XSD.STRING.prefixedUri
-                    )
-                    statementRepository.save(
-                        fabricator.random<GeneralStatement>().copy(
-                            subject = it,
-                            predicate = descriptionPredicate,
-                            `object` = descriptionLiteral
-                        )
-                    )
-                }
-            }
+            is Predicate -> predicateRepository.save(it)
         }
     }
 

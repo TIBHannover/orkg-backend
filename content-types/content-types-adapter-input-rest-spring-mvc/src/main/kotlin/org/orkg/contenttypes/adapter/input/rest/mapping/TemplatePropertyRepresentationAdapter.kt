@@ -15,7 +15,7 @@ import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.UntypedTemplateProperty
 import org.springframework.data.domain.Page
 
-interface TemplatePropertyRepresentationAdapter {
+interface TemplatePropertyRepresentationAdapter : ThingReferenceRepresentationAdapter {
 
     fun Optional<TemplateProperty>.mapToTemplatePropertyRepresentation(): Optional<TemplatePropertyRepresentation> =
         map { it.toTemplatePropertyRepresentation() }
@@ -29,13 +29,13 @@ interface TemplatePropertyRepresentationAdapter {
                 id, label, placeholder, description, order, minCount, maxCount, path, createdAt, createdBy
             )
             is StringLiteralTemplateProperty -> StringLiteralTemplatePropertyRepresentation(
-                id, label, placeholder, description, order, minCount, maxCount, pattern, path, createdAt, createdBy, datatype
+                id, label, placeholder, description, order, minCount, maxCount, pattern, path, createdAt, createdBy, datatype.toClassReferenceRepresentation()
             )
             is NumberLiteralTemplateProperty<*> -> NumberLiteralTemplatePropertyRepresentation(
-                id, label, placeholder, description, order, minCount, maxCount, minInclusive, maxInclusive, path, createdAt, createdBy, datatype
+                id, label, placeholder, description, order, minCount, maxCount, minInclusive, maxInclusive, path, createdAt, createdBy, datatype.toClassReferenceRepresentation()
             )
             is OtherLiteralTemplateProperty -> OtherLiteralTemplatePropertyRepresentation(
-                id, label, placeholder, description, order, minCount, maxCount, path, createdAt, createdBy, datatype
+                id, label, placeholder, description, order, minCount, maxCount, path, createdAt, createdBy, datatype.toClassReferenceRepresentation()
             )
             is ResourceTemplateProperty -> ResourceTemplatePropertyRepresentation(
                 id, label, placeholder, description, order, minCount, maxCount, path, createdAt, createdBy, `class`

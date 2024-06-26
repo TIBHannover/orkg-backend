@@ -1,12 +1,14 @@
 package org.orkg.graph.adapter.input.rest.mapping
 
 import org.orkg.common.MediaTypeCapabilities
+import org.orkg.common.ThingId
+import org.orkg.graph.adapter.input.rest.PaperResourceWithPathRepresentation
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.PaperResourceWithPath
+import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
 import org.orkg.graph.domain.Visibility
-import org.orkg.graph.adapter.input.rest.PaperResourceWithPathRepresentation
 import org.springframework.data.domain.Page
 
 interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapter {
@@ -14,18 +16,24 @@ interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapte
     fun Page<PaperResourceWithPath>.mapToPaperResourceWithPathRepresentation(
         capabilities: MediaTypeCapabilities
     ): Page<PaperResourceWithPathRepresentation> {
-        val resources = map { it.paper } + map { it.path }.flatten().filterIsInstance<Resource>()
+        val pathItems = map { it.path }.flatten()
+        val resources = map { it.paper } + pathItems.filterIsInstance<Resource>()
         val usageCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources, capabilities)
-        return map { it.toPaperResourceWithPathRepresentation(usageCounts, formattedLabels) }
+        val predicates = pathItems.filterIsInstance<Predicate>()
+        val descriptions = findAllDescriptions(predicates)
+        return map { it.toPaperResourceWithPathRepresentation(usageCounts, formattedLabels, descriptions) }
     }
 
     fun PaperResourceWithPath.toPaperResourceWithPathRepresentation(
         usageCounts: StatementCounts,
-        formattedLabels: FormattedLabels
+        formattedLabels: FormattedLabels,
+        descriptions: Map<ThingId, String>
     ): PaperResourceWithPathRepresentation =
         PaperResourceWithPathRepresentation(
-            path = path.map { list -> list.map { it.toThingRepresentation(usageCounts, formattedLabels) } },
+            path = path.map { list ->
+                list.map { it.toThingRepresentation(usageCounts, formattedLabels, descriptions[it.id]) }
+            },
             id = paper.id,
             label = paper.label,
             classes = paper.classes,

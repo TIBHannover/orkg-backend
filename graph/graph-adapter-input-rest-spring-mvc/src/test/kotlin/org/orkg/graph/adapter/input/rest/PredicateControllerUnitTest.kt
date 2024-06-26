@@ -9,17 +9,22 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.annotations.UsesMocking
+import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -49,6 +54,9 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
     @MockkBean
     private lateinit var predicateService: PredicateUseCases
 
+    @MockkBean
+    private lateinit var statementService: StatementUseCases
+
     @Test
     @TestWithMockUser
     @DisplayName("Given a predicate create request, when service succeeds, it creates and returns the predicate")
@@ -62,6 +70,14 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
 
         every { predicateService.create(any()) } returns id
         every { predicateService.findById(id) } returns Optional.of(predicate)
+        every {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        } returns pageOf()
 
         post("/api/predicates/")
             .content(request)
@@ -98,8 +114,14 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
                 }
             )
+            predicateService.findById(id)
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
         }
-        verify(exactly = 1) { predicateService.findById(id) }
     }
 
     @Test
@@ -114,6 +136,14 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
 
         every { predicateService.create(any()) } returns id
         every { predicateService.findById(id) } returns Optional.of(predicate)
+        every {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        } returns pageOf()
 
         post("/api/predicates/", request)
             .contentType(APPLICATION_JSON)
@@ -130,7 +160,13 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
                 }
             )
+            predicateService.findById(id)
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
         }
-        verify(exactly = 1) { predicateService.findById(id) }
     }
 }

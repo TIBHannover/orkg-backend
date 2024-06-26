@@ -18,8 +18,7 @@ class PredicateDeserializer : JsonDeserializer<Predicate>() {
             id = ThingId(this["id"].asText()),
             label = this["label"].asText(),
             createdAt = OffsetDateTime.parse(this["created_at"].asText()),
-            createdBy = ContributorId(this["created_by"].asText()),
-            description = this["description"]?.textValue()
+            createdBy = ContributorId(this["created_by"].asText())
         )
     }
 }

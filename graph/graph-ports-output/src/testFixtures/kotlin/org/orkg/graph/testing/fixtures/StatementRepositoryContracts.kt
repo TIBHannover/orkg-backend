@@ -27,6 +27,7 @@ import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.PredicateUsageCount
 import org.orkg.graph.domain.Predicates
@@ -212,6 +213,52 @@ fun <
                     actual.size shouldBe 0
                 }
             }
+        }
+    }
+
+    context("finding several thing descriptions") {
+        val hasDescription = fabricator.random<Predicate>().copy(id = Predicates.description)
+        val graph = listOf(
+            fabricator.random<GeneralStatement>().copy(
+                subject = fabricator.random<Resource>(),
+                predicate = hasDescription,
+                `object` = fabricator.random<Literal>().copy(
+                    label = "description 1",
+                    datatype = Literals.XSD.STRING.prefixedUri
+                )
+            ),
+            fabricator.random<GeneralStatement>().copy(
+                subject = fabricator.random<Resource>(),
+                predicate = hasDescription,
+                `object` = fabricator.random<Literal>().copy(
+                    label = "description 2",
+                    datatype = Literals.XSD.STRING.prefixedUri
+                )
+            ),
+            fabricator.random<GeneralStatement>().copy(
+                subject = fabricator.random<Resource>(),
+                predicate = hasDescription,
+                `object` = fabricator.random<Resource>()
+            )
+        )
+
+        it("returns the correct result") {
+            graph.forEach(saveStatement)
+            val result = repository.findAllDescriptions(graph.map { it.subject.id }.toSet())
+            result shouldBe mapOf(
+                graph[0].subject.id to "description 1",
+                graph[1].subject.id to "description 2"
+            )
+        }
+        it("returns empty result when no ids are given") {
+            graph.forEach(saveStatement)
+            val actual = repository.countIncomingStatements(setOf())
+            actual.size shouldBe 0
+        }
+        it("returns nothing when the given resource is missing in the graph") {
+            graph.forEach(saveStatement)
+            val actual = repository.countIncomingStatements(setOf(ThingId("missing")))
+            actual.size shouldBe 0
         }
     }
 

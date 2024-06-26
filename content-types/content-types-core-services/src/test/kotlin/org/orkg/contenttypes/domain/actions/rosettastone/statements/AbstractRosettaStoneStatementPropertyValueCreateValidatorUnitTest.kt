@@ -24,16 +24,18 @@ import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.contenttypes.input.ThingDefinition
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createResource
 
 class AbstractRosettaStoneStatementPropertyValueCreateValidatorUnitTest {
     private val thingRepository: ThingRepository = mockk()
+    private val statementRepository: StatementRepository = mockk()
     private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator = mockk()
 
     private val abstractRosettaStoneStatementPropertyValueValidator = AbstractRosettaStoneStatementPropertyValueValidator(
-        thingRepository, abstractTemplatePropertyValueValidator
+        thingRepository, statementRepository, abstractTemplatePropertyValueValidator
     )
 
     @BeforeEach
@@ -43,7 +45,7 @@ class AbstractRosettaStoneStatementPropertyValueCreateValidatorUnitTest {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(thingRepository, abstractTemplatePropertyValueValidator)
+        confirmVerified(thingRepository, statementRepository, abstractTemplatePropertyValueValidator)
     }
 
     @Test

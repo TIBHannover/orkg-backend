@@ -1,0 +1,20 @@
+package org.orkg.graph.input
+
+import java.net.URI
+import org.orkg.common.ContributorId
+import org.orkg.common.ThingId
+
+interface ImportResourceUseCase {
+    fun importResourceByShortForm(contributorId: ContributorId, ontologyId: String, shortForm: String): ThingId
+    fun importResourceByURI(contributorId: ContributorId, ontologyId: String, uri: URI): ThingId
+}
+
+interface ImportPredicateUseCase {
+    fun importPredicateByShortForm(contributorId: ContributorId, ontologyId: String, shortForm: String): ThingId
+    fun importPredicateByURI(contributorId: ContributorId, ontologyId: String, uri: URI): ThingId
+}
+
+interface ImportClassUseCase {
+    fun importClassByShortForm(contributorId: ContributorId, ontologyId: String, shortForm: String): ThingId
+    fun importClassByURI(contributorId: ContributorId, ontologyId: String, uri: URI): ThingId
+}

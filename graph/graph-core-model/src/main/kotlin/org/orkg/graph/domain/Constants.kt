@@ -63,6 +63,7 @@ object Predicates {
     val monthPublished = ThingId("P28")
     val placeholder = ThingId("placeholder")
     val reference = ThingId("reference")
+    val sameAs = ThingId("SAME_AS")
     val shClass = ThingId("sh:class")
     val shClosed = ThingId("sh:closed")
     val shDatatype = ThingId("sh:datatype")

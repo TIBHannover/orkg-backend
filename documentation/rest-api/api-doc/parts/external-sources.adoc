@@ -1,0 +1,32 @@
+= External sources
+
+The following external sources are supported by {orkg}:
+
+[[external-sources-resources]]
+== Resources
+
+[options="header"]
+|==========================
+| External Source | Ontology ID | Base URI
+| GeoNames | geonames | https://sws.geonames.org/
+| Wikidata | wikidata | https://www.wikidata.org/entity/
+|==========================
+
+[[external-sources-predicates]]
+== Predicates
+
+[options="header"]
+|==========================
+| External Source | Ontology ID | Base URI
+| Wikidata | wikidata | https://www.wikidata.org/entity/
+|==========================
+
+[[external-sources-classes]]
+== Classes
+
+[options="header"]
+|==========================
+| External Source | Ontology ID | Base URI
+| Ontology Lookup Service | See the website of https://www.ebi.ac.uk/ols4/ontologies[OLS] for a list of supported ontologies. | -
+| Wikidata | wikidata | https://www.wikidata.org/entity/
+|==========================

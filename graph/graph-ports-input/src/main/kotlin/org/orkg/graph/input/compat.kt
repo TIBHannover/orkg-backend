@@ -29,6 +29,8 @@ interface ClassHierarchyUseCases : CreateClassHierarchyUseCase,
 
 interface FormattedLabelUseCases : RetrieveFormattedLabelUseCase
 
+interface ImportUseCases : ImportResourceUseCase, ImportPredicateUseCase, ImportClassUseCase
+
 // FIXME: we need to refactor those as well
 interface OtherResourceUseCases :
     MarkAsVerifiedUseCase,

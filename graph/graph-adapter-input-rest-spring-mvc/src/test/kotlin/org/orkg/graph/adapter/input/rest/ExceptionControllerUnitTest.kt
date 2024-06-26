@@ -14,6 +14,9 @@ import org.orkg.graph.domain.ClassAlreadyExists
 import org.orkg.graph.domain.ClassNotAllowed
 import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExternalClassNotFound
+import org.orkg.graph.domain.ExternalPredicateNotFound
+import org.orkg.graph.domain.ExternalResourceNotFound
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidStatement
@@ -343,6 +346,57 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun externalResourceNotFound() {
+        val id = "R123"
+        val ontologyId = "skos"
+
+        get("/external-resource-not-found")
+            .param("id", id)
+            .param("ontologyId", ontologyId)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.error", `is`("Not Found")))
+            .andExpect(jsonPath("$.path").value("/external-resource-not-found"))
+            .andExpect(jsonPath("$.message").value("""External resource "$id" for ontology "$ontologyId" not found."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun externalPredicateNotFound() {
+        val id = "R123"
+        val ontologyId = "skos"
+
+        get("/external-predicate-not-found")
+            .param("id", id)
+            .param("ontologyId", ontologyId)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.error", `is`("Not Found")))
+            .andExpect(jsonPath("$.path").value("/external-predicate-not-found"))
+            .andExpect(jsonPath("$.message").value("""External predicate "$id" for ontology "$ontologyId" not found."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun externalClassNotFound() {
+        val id = "R123"
+        val ontologyId = "skos"
+
+        get("/external-class-not-found")
+            .param("id", id)
+            .param("ontologyId", ontologyId)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.error", `is`("Not Found")))
+            .andExpect(jsonPath("$.path").value("/external-class-not-found"))
+            .andExpect(jsonPath("$.message").value("""External class "$id" for ontology "$ontologyId" not found."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -439,6 +493,21 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/list-in-use")
         fun listInUse(@RequestParam id: ThingId) {
             throw ListInUse(id)
+        }
+
+        @GetMapping("/external-resource-not-found")
+        fun externalResourceNotFound(@RequestParam ontologyId: String, @RequestParam id: String) {
+            throw ExternalResourceNotFound(ontologyId, id)
+        }
+
+        @GetMapping("/external-predicate-not-found")
+        fun externalPredicateNotFound(@RequestParam ontologyId: String, @RequestParam id: String) {
+            throw ExternalPredicateNotFound(ontologyId, id)
+        }
+
+        @GetMapping("/external-class-not-found")
+        fun externalClassNotFound(@RequestParam ontologyId: String, @RequestParam id: String) {
+            throw ExternalClassNotFound(ontologyId, id)
         }
     }
 

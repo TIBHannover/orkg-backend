@@ -13,32 +13,18 @@ import io.kotest.matchers.string.shouldNotMatch
 import java.net.URI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
-import org.orkg.graph.domain.Literal
-import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.output.ClassRepository
-import org.orkg.graph.output.LiteralRepository
-import org.orkg.graph.output.PredicateRepository
-import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
 fun <
-    C : ClassRepository,
-    S : StatementRepository,
-    L : LiteralRepository,
-    P : PredicateRepository
+    C : ClassRepository
 > classRepositoryContract(
     repository: C,
-    statementRepository: S,
-    literalRepository: L,
-    predicateRepository: P
 ) = describeSpec {
     beforeTest {
-        statementRepository.deleteAll()
         repository.deleteAll()
-        literalRepository.deleteAll()
-        predicateRepository.deleteAll()
     }
 
     val fabricator = Fabrikate(
@@ -50,19 +36,8 @@ fun <
 
     describe("saving a class") {
         it("saves and loads all properties correctly") {
-            val expected: Class = fabricator.random<Class>().copy(
-                description = "some class description"
-            )
+            val expected: Class = fabricator.random<Class>()
             repository.save(expected)
-
-            val descriptionStatement = createStatement(
-                subject = expected,
-                predicate = createPredicate(id = Predicates.description),
-                `object` = createLiteral(label = expected.description!!),
-            )
-            predicateRepository.save(descriptionStatement.predicate)
-            literalRepository.save(descriptionStatement.`object` as Literal)
-            statementRepository.save(descriptionStatement)
 
             val actual = repository.findById(expected.id).orElse(null)
 
@@ -74,7 +49,6 @@ fun <
                 it.createdAt shouldBe expected.createdAt
                 it.createdBy shouldBe expected.createdBy
                 it.id shouldBe expected.id
-                it.description shouldBe expected.description
                 it.modifiable shouldBe expected.modifiable
             }
         }

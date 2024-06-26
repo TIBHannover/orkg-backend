@@ -27,7 +27,7 @@ interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepre
         val resources = content.filterIsInstance<Resource>()
         val statementCounts = countIncomingStatements(resources)
         val formattedLabelCount = formatLabelFor(resources, capabilities)
-        val descriptions = findAllDescriptions(content.filterIsInstance<Predicate>())
+        val descriptions = findAllDescriptions(content.filter { it is Predicate || it is Class })
         return map { it.toThingRepresentation(statementCounts, formattedLabelCount, descriptions[it.id]) }
     }
 
@@ -39,7 +39,10 @@ interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepre
                 val count = statementService.countIncomingStatements(id)
                 toResourceRepresentation(mapOf(id to count), formatLabelFor(listOf(this), capabilities))
             }
-            is Class -> toClassRepresentation()
+            is Class -> {
+                val description = statementService.findAllDescriptions(setOf(id))
+                toClassRepresentation(description[id])
+            }
             is Literal -> toLiteralRepresentation()
             is Predicate -> {
                 val description = statementService.findAllDescriptions(setOf(id))
@@ -54,7 +57,7 @@ interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepre
     ): ThingRepresentation =
         when (this) {
             is Resource -> toResourceRepresentation(statementCounts, formattedLabels)
-            is Class -> toClassRepresentation()
+            is Class -> toClassRepresentation(description)
             is Literal -> toLiteralRepresentation()
             is Predicate -> toPredicateRepresentation(description)
         }

@@ -57,9 +57,8 @@ fun createClass(
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-05T12:29:15.3155145+01:00"),
     uri: URI? = URI.create("https://example.org/OK"),
     createdBy: ContributorId = ContributorId("dc8b2055-c14a-4e9f-9fcd-e0b79cf1f834"),
-    description: String? = null,
     modifiable: Boolean = true
-): Class = Class(id, label, uri, createdAt, createdBy, description, modifiable)
+): Class = Class(id, label, uri, createdAt, createdBy, modifiable)
 
 fun createClassWithoutURI(): Class = createClass(uri = null)
 

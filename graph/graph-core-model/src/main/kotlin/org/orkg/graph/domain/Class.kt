@@ -19,7 +19,6 @@ data class Class(
     val uri: URI?,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId = ContributorId.UNKNOWN,
-    val description: String? = null,
     override val modifiable: Boolean = true
 ) : Thing
 

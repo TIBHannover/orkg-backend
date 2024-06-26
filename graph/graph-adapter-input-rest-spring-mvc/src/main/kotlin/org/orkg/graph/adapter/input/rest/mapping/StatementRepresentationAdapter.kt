@@ -4,8 +4,10 @@ import java.util.*
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.StatementRepresentation
+import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
 import org.springframework.data.domain.Page
@@ -23,7 +25,7 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
         val resources = content.resources()
         val statementCounts = countIncomingStatements(resources)
         val formattedLabelCounts = formatLabelFor(resources, capabilities)
-        val descriptions = findAllDescriptions(predicates())
+        val descriptions = findAllDescriptions(thingsWithDescription())
         return map { it.toRepresentation(statementCounts, formattedLabelCounts, descriptions) }
     }
 
@@ -33,7 +35,7 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
         val resources = resources()
         val statementCounts = countIncomingStatements(resources)
         val formattedLabelCounts = formatLabelFor(resources, capabilities)
-        val descriptions = findAllDescriptions(predicates())
+        val descriptions = findAllDescriptions(thingsWithDescription())
         return map { it.toRepresentation(statementCounts, formattedLabelCounts, descriptions) }
     }
 
@@ -44,7 +46,7 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
         val resources = statementAsList.resources()
         val counts = countIncomingStatements(resources)
         val labels = formatLabelFor(resources, capabilities)
-        val descriptions = findAllDescriptions(statementAsList.predicates())
+        val descriptions = findAllDescriptions(statementAsList.thingsWithDescription())
         return toRepresentation(counts, labels, descriptions)
     }
 
@@ -68,8 +70,8 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
         map(GeneralStatement::subject).filterIsInstance<Resource>() +
             map(GeneralStatement::`object`).filterIsInstance<Resource>()
 
-    private fun Iterable<GeneralStatement>.predicates() =
-        map(GeneralStatement::subject).filterIsInstance<Resource>() +
+    private fun Iterable<GeneralStatement>.thingsWithDescription() =
+        map(GeneralStatement::subject).filter { it is Predicate || it is Class } +
             map(GeneralStatement::predicate) +
-            map(GeneralStatement::`object`).filterIsInstance<Resource>()
+            map(GeneralStatement::`object`).filter { it is Predicate || it is Class }
 }

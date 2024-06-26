@@ -10,6 +10,7 @@ import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateClassUseCase
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -35,7 +36,8 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/classes/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ClassController(
-    private val service: ClassUseCases
+    private val service: ClassUseCases,
+    override val statementService: StatementUseCases,
 ) : ClassRepresentationAdapter {
 
     @GetMapping("/{id}")

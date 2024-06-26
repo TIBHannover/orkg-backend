@@ -3,6 +3,7 @@ package org.orkg.graph.adapter.input.rest.mapping
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.PaperResourceWithPathRepresentation
+import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.PaperResourceWithPath
 import org.orkg.graph.domain.Predicate
@@ -16,11 +17,11 @@ interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapte
     fun Page<PaperResourceWithPath>.mapToPaperResourceWithPathRepresentation(
         capabilities: MediaTypeCapabilities
     ): Page<PaperResourceWithPathRepresentation> {
-        val pathItems = map { it.path }.flatten()
+        val pathItems = map { it.path.flatten() }.flatten()
         val resources = map { it.paper } + pathItems.filterIsInstance<Resource>()
         val usageCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources, capabilities)
-        val predicates = pathItems.filterIsInstance<Predicate>()
+        val predicates = pathItems.filter { it is Predicate || it is Class }
         val descriptions = findAllDescriptions(predicates)
         return map { it.toPaperResourceWithPathRepresentation(usageCounts, formattedLabels, descriptions) }
     }

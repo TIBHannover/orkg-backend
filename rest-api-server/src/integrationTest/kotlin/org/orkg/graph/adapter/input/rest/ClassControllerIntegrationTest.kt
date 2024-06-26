@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.createClass
 import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.input.ClassUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,18 +30,13 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var service: ClassUseCases
 
-    @Autowired
-    private lateinit var resourceService: ResourceUseCases
-
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
 
         service.removeAll()
-        resourceService.removeAll()
 
         assertThat(service.findAll(tempPageable)).hasSize(0)
-        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
     }
 
     @Test

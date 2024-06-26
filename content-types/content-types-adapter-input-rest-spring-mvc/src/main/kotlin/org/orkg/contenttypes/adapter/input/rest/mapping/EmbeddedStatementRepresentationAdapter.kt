@@ -6,10 +6,12 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.input.rest.EmbeddedStatementRepresentation
 import org.orkg.contenttypes.domain.EmbeddedStatement
 import org.orkg.graph.adapter.input.rest.mapping.ThingRepresentationAdapter
+import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementCounts
+import org.orkg.graph.domain.Thing
 import org.springframework.data.domain.Page
 
 interface EmbeddedStatementRepresentationAdapter : ThingRepresentationAdapter {
@@ -25,7 +27,7 @@ interface EmbeddedStatementRepresentationAdapter : ThingRepresentationAdapter {
         val resources = content.resources()
         val statementCounts = countIncomingStatements(resources)
         val formattedLabels = formatLabelFor(resources, capabilities)
-        val descriptions = findAllDescriptions(content.predicates())
+        val descriptions = findAllDescriptions(content.thingsWithDescription())
         return map { it.toEmbeddedStatementRepresentation(statementCounts, formattedLabels, descriptions) }
     }
 
@@ -35,7 +37,7 @@ interface EmbeddedStatementRepresentationAdapter : ThingRepresentationAdapter {
         val resources = resources()
         val counts = countIncomingStatements(resources)
         val labels = formatLabelFor(resources, capabilities)
-        val descriptions = findAllDescriptions(predicates())
+        val descriptions = findAllDescriptions(thingsWithDescription())
         return toEmbeddedStatementRepresentation(counts, labels, descriptions)
     }
 
@@ -53,15 +55,15 @@ interface EmbeddedStatementRepresentationAdapter : ThingRepresentationAdapter {
             }
         )
 
-    private fun List<EmbeddedStatement>.resources(): List<Resource> =
+    fun List<EmbeddedStatement>.resources(): List<Resource> =
         flatMap { it.resources() }
 
     fun EmbeddedStatement.resources(): List<Resource> =
-        (statements.values.flatMap { it.map { e -> e.resources() } } + thing).filterIsInstance<Resource>()
+        (statements.values.flatMap { it.resources() } + thing).filterIsInstance<Resource>()
 
-    private fun List<EmbeddedStatement>.predicates(): List<Predicate> =
-        flatMap { it.predicates() }
+    fun List<EmbeddedStatement>.thingsWithDescription(): List<Thing> =
+        flatMap { it.thingsWithDescription() }
 
-    fun EmbeddedStatement.predicates(): List<Predicate> =
-        (statements.values.flatMap { it.map { e -> e.predicates() } } + thing).filterIsInstance<Predicate>()
+    fun EmbeddedStatement.thingsWithDescription(): List<Thing> =
+        (statements.values.flatMap { it.thingsWithDescription() } + thing).filter { it is Predicate || it is Class }
 }

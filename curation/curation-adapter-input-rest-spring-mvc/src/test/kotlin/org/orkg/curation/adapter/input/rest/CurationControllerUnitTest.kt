@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.curation.input.RetrieveCurationUseCase
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPredicate
@@ -31,6 +32,9 @@ internal class CurationControllerUnitTest : RestDocsTest("curation") {
     @MockkBean
     private lateinit var service: RetrieveCurationUseCase
 
+    @MockkBean
+    private lateinit var statementService: StatementUseCases
+
     @BeforeEach
     fun resetState() {
         clearAllMocks()
@@ -38,7 +42,7 @@ internal class CurationControllerUnitTest : RestDocsTest("curation") {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(service)
+        confirmVerified(service, statementService)
     }
 
     @Test

@@ -9,19 +9,28 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
+import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.MissingInputPositions
+import org.orkg.contenttypes.domain.NestedRosettaStoneStatement
+import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
+import org.orkg.contenttypes.domain.RosettaStoneStatementVersionNotFound
 import org.orkg.contenttypes.domain.TooManyInputPositions
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValueValidator
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralObjectPositionTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createDummySubjectPositionTemplateProperty
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
+import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.contenttypes.input.ThingDefinition
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.output.StatementRepository
@@ -32,10 +41,11 @@ import org.orkg.graph.testing.fixtures.createResource
 class AbstractRosettaStoneStatementPropertyValueCreateValidatorUnitTest {
     private val thingRepository: ThingRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
+    private val rosettaStoneStatementService: RosettaStoneStatementUseCases = mockk()
     private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator = mockk()
 
     private val abstractRosettaStoneStatementPropertyValueValidator = AbstractRosettaStoneStatementPropertyValueValidator(
-        thingRepository, statementRepository, abstractTemplatePropertyValueValidator
+        thingRepository, statementRepository, rosettaStoneStatementService, abstractTemplatePropertyValueValidator
     )
 
     @BeforeEach
@@ -45,7 +55,12 @@ class AbstractRosettaStoneStatementPropertyValueCreateValidatorUnitTest {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(thingRepository, statementRepository, abstractTemplatePropertyValueValidator)
+        confirmVerified(
+            thingRepository,
+            statementRepository,
+            rosettaStoneStatementService,
+            abstractTemplatePropertyValueValidator
+        )
     }
 
     @Test
@@ -165,5 +180,153 @@ class AbstractRosettaStoneStatementPropertyValueCreateValidatorUnitTest {
                 objects = objects
             )
         }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that contains rosetta stone statements, it throws an exception`() {
+        val templateProperties = listOf(
+            createDummySubjectPositionTemplateProperty().copy(
+                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
+            )
+        )
+        val templateId = ThingId("R456")
+        val rosettaStoneStatement = createDummyRosettaStoneStatement().let {
+            it.copy(
+                versions = listOf(
+                    it.latestVersion.copy(
+                        subjects = listOf(createResource(classes = setOf(Classes.rosettaStoneStatement)))
+                    )
+                )
+            )
+        }
+        val latestVersionId = rosettaStoneStatement.latestVersion.id
+        val rosettaStoneStatementResource = createResource(latestVersionId, classes = setOf(Classes.rosettaStoneStatement))
+        val subjects = listOf(latestVersionId.value)
+
+        every { thingRepository.findByThingId(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
+        every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
+        every { rosettaStoneStatementService.findByIdOrVersionId(any()) } returns Optional.of(rosettaStoneStatement)
+
+        assertThrows<NestedRosettaStoneStatement> {
+            abstractRosettaStoneStatementPropertyValueValidator.validate(
+                templateProperties = templateProperties,
+                thingDefinitions = emptyMap(),
+                validatedIdsIn = emptyMap(),
+                tempIds = emptySet(),
+                templateId = templateId,
+                subjects = subjects,
+                objects = emptyList()
+            )
+        }
+
+        verify(exactly = 1) { thingRepository.findByThingId(latestVersionId) }
+        verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
+        verify(exactly = 1) { rosettaStoneStatementService.findByIdOrVersionId(latestVersionId) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that does not contain a rosetta stone statement, it returns success`() {
+        val templateProperties = listOf(
+            createDummySubjectPositionTemplateProperty().copy(
+                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
+            )
+        )
+        val templateId = ThingId("R456")
+        val rosettaStoneStatement = createDummyRosettaStoneStatement()
+        val latestVersionId = rosettaStoneStatement.latestVersion.id
+        val rosettaStoneStatementResource = createResource(latestVersionId, classes = setOf(Classes.rosettaStoneStatement))
+        val subjects = listOf(latestVersionId.value)
+
+        every { thingRepository.findByThingId(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
+        every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
+        every { rosettaStoneStatementService.findByIdOrVersionId(any()) } returns Optional.of(rosettaStoneStatement)
+        every { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) } just runs
+
+        val result = abstractRosettaStoneStatementPropertyValueValidator.validate(
+            templateProperties = templateProperties,
+            thingDefinitions = emptyMap(),
+            validatedIdsIn = emptyMap(),
+            tempIds = emptySet(),
+            templateId = templateId,
+            subjects = subjects,
+            objects = emptyList()
+        )
+
+        result shouldBe mapOf(
+            latestVersionId.value to Either.right<String, Thing>(rosettaStoneStatementResource)
+        )
+
+        verify(exactly = 1) { thingRepository.findByThingId(latestVersionId) }
+        verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
+        verify(exactly = 1) { rosettaStoneStatementService.findByIdOrVersionId(latestVersionId) }
+        verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateObject(any(), latestVersionId.value, any()) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that cannot be found, it throws an exception`() {
+        val templateProperties = listOf(
+            createDummySubjectPositionTemplateProperty().copy(
+                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
+            )
+        )
+        val templateId = ThingId("R456")
+        val rosettaStoneStatement = createDummyRosettaStoneStatement()
+        val latestVersionId = rosettaStoneStatement.latestVersion.id
+        val rosettaStoneStatementResource = createResource(latestVersionId, classes = setOf(Classes.rosettaStoneStatement))
+        val subjects = listOf(latestVersionId.value)
+
+        every { thingRepository.findByThingId(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
+        every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
+        every { rosettaStoneStatementService.findByIdOrVersionId(any()) } returns Optional.empty()
+
+        assertThrows<RosettaStoneStatementNotFound> {
+            abstractRosettaStoneStatementPropertyValueValidator.validate(
+                templateProperties = templateProperties,
+                thingDefinitions = emptyMap(),
+                validatedIdsIn = emptyMap(),
+                tempIds = emptySet(),
+                templateId = templateId,
+                subjects = subjects,
+                objects = emptyList()
+            )
+        }
+
+        verify(exactly = 1) { thingRepository.findByThingId(latestVersionId) }
+        verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
+        verify(exactly = 1) { rosettaStoneStatementService.findByIdOrVersionId(latestVersionId) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that does not have the specified version, it throws an exception`() {
+        val templateProperties = listOf(
+            createDummySubjectPositionTemplateProperty().copy(
+                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
+            )
+        )
+        val templateId = ThingId("R456")
+        val rosettaStoneStatement = createDummyRosettaStoneStatement()
+        val latestVersionId = ThingId("Missing")
+        val rosettaStoneStatementResource = createResource(latestVersionId, classes = setOf(Classes.rosettaStoneStatement))
+        val subjects = listOf(latestVersionId.value)
+
+        every { thingRepository.findByThingId(latestVersionId) } returns Optional.of(rosettaStoneStatementResource)
+        every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
+        every { rosettaStoneStatementService.findByIdOrVersionId(any()) } returns Optional.of(rosettaStoneStatement)
+
+        assertThrows<RosettaStoneStatementVersionNotFound> {
+            abstractRosettaStoneStatementPropertyValueValidator.validate(
+                templateProperties = templateProperties,
+                thingDefinitions = emptyMap(),
+                validatedIdsIn = emptyMap(),
+                tempIds = emptySet(),
+                templateId = templateId,
+                subjects = subjects,
+                objects = emptyList()
+            )
+        }
+
+        verify(exactly = 1) { thingRepository.findByThingId(latestVersionId) }
+        verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
+        verify(exactly = 1) { rosettaStoneStatementService.findByIdOrVersionId(latestVersionId) }
     }
 }

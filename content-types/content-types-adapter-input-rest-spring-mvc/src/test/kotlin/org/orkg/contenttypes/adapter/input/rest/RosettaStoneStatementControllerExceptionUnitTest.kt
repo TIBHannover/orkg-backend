@@ -9,6 +9,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.RosettaStoneStatementControllerExceptionUnitTest.FakeExceptionController
 import org.orkg.contenttypes.domain.CannotDeleteIndividualRosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.MissingInputPositions
+import org.orkg.contenttypes.domain.NestedRosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementInUse
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotModifiable
 import org.orkg.contenttypes.domain.TooManyInputPositions
@@ -122,6 +123,23 @@ internal class RosettaStoneStatementControllerExceptionUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun nestedRosettaStoneStatement() {
+        val id = "R123"
+        val index = "4"
+
+        get("/nested-rosetta-stone-statement")
+            .param("id", id)
+            .param("index", index)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/nested-rosetta-stone-statement"))
+            .andExpect(jsonPath("$.message").value("""Rosetta stone statement "$id" for input position $index already contains a rosetta stone statement in one of its input positions."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -152,6 +170,11 @@ internal class RosettaStoneStatementControllerExceptionUnitTest {
         @GetMapping("/rosetta-stone-statement-in-use")
         fun rosettaStoneStatementInUse(@RequestParam id: ThingId) {
             throw RosettaStoneStatementInUse(id)
+        }
+
+        @GetMapping("/nested-rosetta-stone-statement")
+        fun nestedRosettaStoneStatement(@RequestParam id: ThingId, @RequestParam index: Int) {
+            throw NestedRosettaStoneStatement(id, index)
         }
     }
 

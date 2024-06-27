@@ -276,3 +276,8 @@ class MissingInputPositions(exceptedCount: Int, templateId: ThingId, missingCoun
     status = HttpStatus.BAD_REQUEST,
     message = """Missing input for $missingCount input positions for rosetta stone statement of template "$templateId". Expected exactly $exceptedCount input positions."""
 )
+
+class NestedRosettaStoneStatement(id: ThingId, index: Int) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Rosetta stone statement "$id" for input position $index already contains a rosetta stone statement in one of its input positions."""
+)

@@ -108,5 +108,12 @@ include(
     "statistics:statistics-adapter-input-rest-spring-mvc",
     "statistics:statistics-adapter-output-spring-data-neo4j-sdn6",
 )
+include(
+    "curation:curation-core-services",
+    "curation:curation-ports-input",
+    "curation:curation-ports-output",
+    "curation:curation-adapter-input-rest-spring-mvc",
+    "curation:curation-adapter-output-spring-data-neo4j-sdn6",
+)
 include("widget")
 include("rest-api-server")

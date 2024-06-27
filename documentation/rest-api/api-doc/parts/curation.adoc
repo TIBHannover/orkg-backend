@@ -1,0 +1,11 @@
+[[curation]]
+= Curation
+
+Curation endpoints provide specialised views for entities of the graph.
+
+[[curation-list-predicates-without-descriptions]]
+== Listing predicates without descriptions
+
+A `GET` request lists all <<predicates,predicates>> without descriptions:
+
+operation::curation-find-all-predicates-without-descriptions[snippets='curl-request,http-response']

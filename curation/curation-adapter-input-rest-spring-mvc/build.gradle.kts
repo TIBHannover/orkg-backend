@@ -11,15 +11,10 @@ testing {
             dependencies {
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
-                implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
-                implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
-                implementation("org.springframework.restdocs:spring-restdocs-core")
-                implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
                 implementation(libs.spring.mockk)
-                implementation(libs.spring.restdocs)
                 implementation(project(":common"))
                 implementation(project(":common:serialization"))
                 implementation(testFixtures(project(":graph:graph-core-model")))
@@ -31,13 +26,12 @@ testing {
 }
 
 dependencies {
-    api("io.micrometer:micrometer-core")
-    api("org.springframework:spring-context")
+    api("org.springframework.data:spring-data-commons:2.7.16")
     api("org.springframework:spring-web")
-    api(project(":curation:curation-core-model"))
     api(project(":curation:curation-ports-input"))
-    api(project(":graph:graph-core-model"))
     api(project(":graph:graph-adapter-input-rest-spring-mvc"))
+    api(project(":graph:graph-core-model"))
+    api(project(":graph:graph-ports-input"))
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
     testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7

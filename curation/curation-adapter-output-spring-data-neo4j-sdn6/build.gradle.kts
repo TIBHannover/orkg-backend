@@ -47,16 +47,16 @@ testing {
 }
 
 dependencies {
-    api("org.springframework.boot:spring-boot-autoconfigure")
+    api("org.springframework.data:spring-data-commons:2.7.16")
     api("org.springframework.boot:spring-boot-starter-data-neo4j") {
         exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
     }
     api("org.springframework.data:spring-data-neo4j")
     api("org.springframework:spring-context")
+    api(project(":common"))
     api(project(":curation:curation-ports-output"))
     api(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
-    implementation("org.neo4j:neo4j-cypher-dsl")
-    implementation(project(":common:neo4j-dsl"))
+    api(project(":graph:graph-core-model"))
     neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
 
     containerTestImplementation(kotlin("stdlib")) // "downgrade" from api()

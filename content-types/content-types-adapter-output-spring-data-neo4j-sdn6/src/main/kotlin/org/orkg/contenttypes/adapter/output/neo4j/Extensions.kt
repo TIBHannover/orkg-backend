@@ -1,5 +1,7 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.function.BiFunction
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anyNode
@@ -18,6 +20,7 @@ import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
 import org.neo4j.driver.Record
 import org.neo4j.driver.types.TypeSystem
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.RosettaStoneStatement
@@ -87,7 +90,13 @@ data class RosettaStoneStatementMapper(
                     extractionMethod = node.extractionMethod,
                     visibility = node.visibility,
                     unlistedBy = node.unlistedBy,
-                    modifiable = node.modifiable
+                    modifiable = node.modifiable,
+                    deletedBy = metadata["deleted_by"].takeUnless { it.isNull }
+                        ?.asString()
+                        ?.let(::ContributorId),
+                    deletedAt = metadata["deleted_at"].takeUnless { it.isNull }
+                        ?.asString()
+                        ?.let { OffsetDateTime.parse(it, ISO_OFFSET_DATE_TIME) }
                 )
             }
             .sortedBy { it.first }

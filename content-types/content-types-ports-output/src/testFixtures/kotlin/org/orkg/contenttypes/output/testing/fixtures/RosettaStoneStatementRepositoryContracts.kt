@@ -35,6 +35,8 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.withCustomMappings
 import org.orkg.graph.testing.fixtures.withLongerURIs
+import org.orkg.testing.MockUserId
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
@@ -588,5 +590,26 @@ fun <
         repository.findAll(PageRequests.ALL).totalElements shouldBe 3
         repository.deleteAll()
         repository.findAll(PageRequests.ALL).totalElements shouldBe 0
+    }
+
+    it("soft deletes a rosetta stone statement") {
+        val statement = fabricator.random<RosettaStoneStatement>()
+        statement.requiredEntities().forEach(saveThing)
+        repository.save(statement)
+        val contributorId = ContributorId(MockUserId.USER)
+
+        repository.softDelete(statement.id, contributorId)
+
+        repository.findByIdOrVersionId(statement.id).asClue { optional ->
+            optional.isPresent shouldBe true
+            optional.get().asClue {
+                it.visibility shouldBe Visibility.DELETED
+                it.versions.forEach { version ->
+                    version.visibility shouldBe Visibility.DELETED
+                    version.deletedBy shouldBe contributorId
+                    version.deletedAt shouldBe OffsetDateTime.now(fixedClock)
+                }
+            }
+        }
     }
 }

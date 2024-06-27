@@ -24,8 +24,10 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -116,6 +118,17 @@ class RosettaStoneStatementController(
             .buildAndExpand(newId)
             .toUri()
         return created(location).build()
+    }
+
+    @PreAuthorizeUser
+    @DeleteMapping("/{id}")
+    fun softDelete(
+        @PathVariable id: ThingId,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.softDelete(id, userId)
+        return noContent().build()
     }
 
     data class CreateRosettaStoneStatementRequest(

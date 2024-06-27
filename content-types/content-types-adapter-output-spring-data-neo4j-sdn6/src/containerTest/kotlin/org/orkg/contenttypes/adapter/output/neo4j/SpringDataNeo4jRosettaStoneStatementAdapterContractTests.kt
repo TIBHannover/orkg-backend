@@ -17,6 +17,7 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.Neo4jContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
@@ -34,7 +35,8 @@ import org.springframework.test.context.ContextConfiguration
         SpringDataNeo4jClassAdapter::class,
         SpringDataNeo4jThingAdapter::class,
         GraphNeo4jConfiguration::class,
-        ContentTypesNeo4jConfiguration::class
+        ContentTypesNeo4jConfiguration::class,
+        FixedClockConfig::class
     ],
     initializers = [
         Neo4jContainerInitializer::class

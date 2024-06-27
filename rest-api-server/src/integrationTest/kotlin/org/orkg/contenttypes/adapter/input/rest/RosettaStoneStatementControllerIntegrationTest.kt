@@ -281,6 +281,8 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
             it.visibility shouldBe Visibility.DEFAULT
             it.unlistedBy shouldBe null
             it.modifiable shouldBe true
+            it.deletedBy shouldBe null
+            it.deletedAt shouldBe null
         }
 
         val updatedId = post("/api/rosetta-stone/statements/{id}", id)
@@ -412,6 +414,8 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
                 version.visibility shouldBe Visibility.DEFAULT
                 version.unlistedBy shouldBe null
                 version.modifiable shouldBe true
+                version.deletedBy shouldBe null
+                version.deletedAt shouldBe null
             }
             it.versions[1].asClue { version ->
                 version.id shouldNotBe updatedId
@@ -515,6 +519,8 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
                 version.visibility shouldBe Visibility.DEFAULT
                 version.unlistedBy shouldBe null
                 version.modifiable shouldBe true
+                version.deletedBy shouldBe null
+                version.deletedAt shouldBe null
             }
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))

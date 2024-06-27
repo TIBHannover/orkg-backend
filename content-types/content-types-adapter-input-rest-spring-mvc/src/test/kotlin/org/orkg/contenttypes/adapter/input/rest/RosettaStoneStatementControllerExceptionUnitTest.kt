@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.RosettaStoneStatementControllerExceptionUnitTest.FakeExceptionController
+import org.orkg.contenttypes.domain.CannotDeleteIndividualRosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.MissingInputPositions
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotModifiable
 import org.orkg.contenttypes.domain.TooManyInputPositions
@@ -93,6 +94,18 @@ internal class RosettaStoneStatementControllerExceptionUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun cannotDeleteIndividualRosettaStoneStatementVersion() {
+        get("/cannot-delete-individual-rosetta-stone-statement-version")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/cannot-delete-individual-rosetta-stone-statement-version"))
+            .andExpect(jsonPath("$.message").value("""Cannot delete individual versions of rosetta stone statements."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -113,6 +126,11 @@ internal class RosettaStoneStatementControllerExceptionUnitTest {
         @GetMapping("/rosetta-stone-statement-not-modifiable")
         fun rosettaStoneStatementNotModifiable(@RequestParam id: ThingId) {
             throw RosettaStoneStatementNotModifiable(id)
+        }
+
+        @GetMapping("/cannot-delete-individual-rosetta-stone-statement-version")
+        fun cannotDeleteIndividualRosettaStoneStatementVersion() {
+            throw CannotDeleteIndividualRosettaStoneStatementVersion()
         }
     }
 

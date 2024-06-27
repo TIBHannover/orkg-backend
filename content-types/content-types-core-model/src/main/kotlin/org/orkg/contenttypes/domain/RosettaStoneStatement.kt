@@ -57,7 +57,9 @@ data class RosettaStoneStatementVersion(
     val extractionMethod: ExtractionMethod,
     val visibility: Visibility,
     val modifiable: Boolean,
-    val unlistedBy: ContributorId? = null
+    val unlistedBy: ContributorId? = null,
+    val deletedBy: ContributorId? = null,
+    val deletedAt: OffsetDateTime? = null
 ) {
     init {
         require(subjects.isNotEmpty()) { "Must have at least one subject." }

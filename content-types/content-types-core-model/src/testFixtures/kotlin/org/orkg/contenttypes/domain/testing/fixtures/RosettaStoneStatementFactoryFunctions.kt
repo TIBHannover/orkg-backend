@@ -64,5 +64,7 @@ fun createDummyRosettaStoneStatementVersion() = RosettaStoneStatementVersion(
     extractionMethod = ExtractionMethod.MANUAL,
     visibility = Visibility.DEFAULT,
     modifiable = true,
-    unlistedBy = null
+    unlistedBy = null,
+    deletedBy = null,
+    deletedAt = null
 )

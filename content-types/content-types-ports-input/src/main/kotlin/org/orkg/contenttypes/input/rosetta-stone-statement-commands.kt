@@ -54,3 +54,7 @@ interface UpdateRosettaStoneStatementUseCase {
         val modifiable: Boolean = true
     ) : ThingDefinitions
 }
+
+interface DeleteRosettaStoneStatementUseCase {
+    fun softDelete(id: ThingId, contributorId: ContributorId)
+}

@@ -2,6 +2,8 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
 import java.time.OffsetDateTime
@@ -25,12 +27,14 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneStatement
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
@@ -107,6 +111,9 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
                         fieldWithPath("visibility").description("""Visibility of the rosetta stone statement. Can be one of "default", "featured", "unlisted" or "deleted"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this rosetta stone statement.").optional(),
                         fieldWithPath("modifiable").description("Whether this rosetta stone statement can be modified."),
+                        timestampFieldWithPath("deleted_at", "the rosetta stone statement was deleted").optional(),
+                        // TODO: Add links to documentation of special user UUIDs.
+                        fieldWithPath("deleted_by").type("String").description("The UUID of the user or service who deleted this rosetta stone statement.").optional(),
                     )
                 )
             )
@@ -352,6 +359,29 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { statementService.update(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a rosetta stone statement, when soft deleting and service succeeds, then status is 204 NO CONTENT")
+    fun softDelete() {
+        val id = ThingId("R123")
+        every { statementService.softDelete(id, any()) } just runs
+
+        documentedDeleteRequestTo("/api/rosetta-stone/statements/{id}", id)
+            .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The id of the rosetta stone statement to soft-delete.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { statementService.softDelete(id, ContributorId(MockUserId.USER)) }
     }
 
     private fun createRosettaStoneStatementRequest() =

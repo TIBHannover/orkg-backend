@@ -62,6 +62,9 @@ class LiteratureListNotModifiable(id: ThingId) :
 class RosettaStoneStatementNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Rosetta stone statement "$id" is not modifiable.""")
 
+class CannotDeleteIndividualRosettaStoneStatementVersion :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Cannot delete individual versions of rosetta stone statements.""")
+
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")
 

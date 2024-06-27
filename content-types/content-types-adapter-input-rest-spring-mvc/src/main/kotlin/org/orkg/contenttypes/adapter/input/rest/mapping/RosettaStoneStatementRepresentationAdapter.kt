@@ -47,6 +47,8 @@ interface RosettaStoneStatementRepresentationAdapter : ThingReferenceRepresentat
             extractionMethod = version.extractionMethod,
             visibility = version.visibility,
             unlistedBy = version.unlistedBy,
-            modifiable = modifiable
+            modifiable = modifiable,
+            deletedBy = version.deletedBy,
+            deletedAt = version.deletedAt
         )
 }

@@ -15,7 +15,8 @@ interface TemplateInstanceUseCases : RetrieveTemplateInstanceUseCase, UpdateTemp
 
 interface RosettaStoneTemplateUseCases : RetrieveRosettaStoneTemplateUseCase, CreateRosettaStoneTemplateUseCase
 
-interface RosettaStoneStatementUseCases : RetrieveRosettaStoneStatementUseCase, CreateRosettaStoneStatementUseCase, UpdateRosettaStoneStatementUseCase
+interface RosettaStoneStatementUseCases : RetrieveRosettaStoneStatementUseCase, CreateRosettaStoneStatementUseCase,
+    UpdateRosettaStoneStatementUseCase, DeleteRosettaStoneStatementUseCase
 
 interface LegacyPaperUseCases : LegacyRetrievePaperUseCase, LegacyCreatePaperUseCase
 

@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
@@ -24,9 +25,9 @@ import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResourceRepository
+import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.toCondition
-import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
@@ -39,7 +40,8 @@ import org.springframework.stereotype.Component
 @Component
 class SpringDataNeo4jRosettaStoneStatementAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
-    private val neo4jClient: Neo4jClient
+    private val neo4jClient: Neo4jClient,
+    private val clock: Clock = Clock.systemDefaultZone()
 ) : RosettaStoneStatementRepository {
     override fun nextIdentity(): ThingId {
         // IDs could exist already by manual creation. We need to find the next available one.
@@ -405,7 +407,9 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                                     "certainty" to version.certainty.name,
                                     "negated" to version.negated,
                                     "version" to index + (versionInfo?.second?.toInt() ?: 0),
-                                    "object_count" to version.objects.size
+                                    "object_count" to version.objects.size,
+                                    "deleted_by" to version.deletedBy?.toString(),
+                                    "deleted_at" to version.deletedAt?.format(ISO_OFFSET_DATE_TIME)
                                 )
                             )
                         }
@@ -424,5 +428,25 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             OPTIONAL MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
             DETACH DELETE latest, version, metadata, subject, subjectNode, object, objectNode""".trimIndent()
         ).run()
+    }
+
+    override fun softDelete(id: ThingId, contributorId: ContributorId) {
+        neo4jClient.query("""
+            MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id}),
+                  (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
+                  (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
+            SET latest.visibility = 'DELETED',
+                version.visibility = 'DELETED',
+                metadata.deleted_by = ${'$'}deleted_by,
+                metadata.deleted_at = ${'$'}deleted_at""".trimIndent()
+        )
+            .bindAll(
+                mapOf(
+                    "id" to id.value,
+                    "deleted_by" to contributorId.toString(),
+                    "deleted_at" to OffsetDateTime.now(clock).format(ISO_OFFSET_DATE_TIME)
+                )
+            )
+            .run()
     }
 }

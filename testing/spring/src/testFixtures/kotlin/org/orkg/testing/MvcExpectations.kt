@@ -276,6 +276,8 @@ fun ResultActions.andExpectRosettaStoneStatement(path: String = "$"): ResultActi
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
     .andExpect(jsonPath("$path.modifiable", `is`(notNullValue())))
 //    .andExpect(jsonPath("$path.unlisted_by", `is`(notNullValue())))
+//    .andExpect(jsonPath("$path.deleted_by", `is`(notNullValue())))
+//    .andExpect(jsonPath("$path.deleted_at", `is`(notNullValue())))
 
 fun ResultActions.andExpectTemplateInstance(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.root", `is`(notNullValue())))

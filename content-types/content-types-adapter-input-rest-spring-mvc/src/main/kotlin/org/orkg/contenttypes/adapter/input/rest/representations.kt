@@ -583,7 +583,13 @@ data class RosettaStoneStatementRepresentation(
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
-    val modifiable: Boolean
+    val modifiable: Boolean,
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("deleted_by")
+    val deletedBy: ContributorId?,
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("deleted_at")
+    val deletedAt: OffsetDateTime?
 )
 
 @JsonTypeInfo(

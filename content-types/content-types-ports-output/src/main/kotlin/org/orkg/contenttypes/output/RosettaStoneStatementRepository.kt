@@ -32,4 +32,6 @@ interface RosettaStoneStatementRepository {
     fun save(statement: RosettaStoneStatement)
 
     fun deleteAll()
+
+    fun softDelete(id: ThingId, contributorId: ContributorId)
 }

@@ -34,6 +34,7 @@ import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStone
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
@@ -124,6 +125,20 @@ class RosettaStoneStatementService(
             RosettaStoneStatementUpdater(repository, thingRepository, clock)
         )
         return steps.execute(command, UpdateRosettaStoneStatementState()).rosettaStoneStatementId!!
+    }
+
+    override fun softDelete(id: ThingId, contributorId: ContributorId) {
+        findByIdOrVersionId(id).ifPresent {
+            if (!it.modifiable) {
+                throw RosettaStoneStatementNotModifiable(id)
+            }
+            if (it.id != id) {
+                throw CannotDeleteIndividualRosettaStoneStatementVersion()
+            }
+            if (it.visibility != Visibility.DELETED) {
+                repository.softDelete(id, contributorId)
+            }
+        }
     }
 
     private inline val UpdateRosettaStoneStatementState.observatories: List<ObservatoryId> get() =

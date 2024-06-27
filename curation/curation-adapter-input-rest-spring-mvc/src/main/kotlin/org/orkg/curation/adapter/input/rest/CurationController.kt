@@ -1,10 +1,8 @@
 package org.orkg.curation.adapter.input.rest
 
 import org.orkg.curation.input.RetrieveCurationUseCase
-import org.orkg.graph.adapter.input.rest.ClassRepresentation
 import org.orkg.graph.adapter.input.rest.PredicateRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
-import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -18,15 +16,10 @@ import org.springframework.web.bind.annotation.RestController
 class CurationController(
     private val service: RetrieveCurationUseCase,
     override val statementService: StatementUseCases
-) : PredicateRepresentationAdapter, ClassRepresentationAdapter {
+) : PredicateRepresentationAdapter {
 
     @GetMapping("/predicates-without-descriptions")
     fun findAllPredicatesWithoutDescriptions(pageable: Pageable): Page<PredicateRepresentation> =
         service.findAllPredicatesWithoutDescriptions(pageable)
             .map { it.toPredicateRepresentation(null) }
-
-    @GetMapping("/classes-without-descriptions")
-    fun findAllClassesWithoutDescriptions(pageable: Pageable): Page<ClassRepresentation> =
-        service.findAllClassesWithoutDescriptions(pageable)
-            .map { it.toClassRepresentation(null) }
 }

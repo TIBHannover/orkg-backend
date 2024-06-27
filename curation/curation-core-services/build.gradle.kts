@@ -6,9 +6,9 @@ plugins {
 }
 
 dependencies {
+    api("org.springframework.data:spring-data-commons:2.7.16")
     api("org.springframework:spring-context")
-    api(project(":community:community-ports-output"))
-    api(project(":curation:curation-core-model"))
     api(project(":curation:curation-ports-input"))
     api(project(":curation:curation-ports-output"))
+    api(project(":graph:graph-core-model"))
 }

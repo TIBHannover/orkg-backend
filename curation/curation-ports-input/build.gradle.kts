@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":curation:curation-core-model"))
+    api("org.springframework.data:spring-data-commons:2.7.16")
     api(project(":graph:graph-core-model"))
 }

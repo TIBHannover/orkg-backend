@@ -109,7 +109,6 @@ include(
     "statistics:statistics-adapter-output-spring-data-neo4j-sdn6",
 )
 include(
-    "curation:curation-core-model",
     "curation:curation-core-services",
     "curation:curation-ports-input",
     "curation:curation-ports-output",

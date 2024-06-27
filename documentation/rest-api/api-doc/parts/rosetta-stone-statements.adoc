@@ -53,7 +53,18 @@ operation::rosetta-stone-statements-update[snippets='request-fields,curl-request
 [[rosetta-stone-statements-delete]]
 == Deleting a rosetta stone statement
 
-A `DELETE` request soft-deletes a rosetta stone statement version.
+=== Soft-deleting a rosetta stone statement
+
+A `DELETE` request soft-deletes a rosetta stone statement with all its versions.
 The response will be `204 No Content` when successful.
 
 operation::rosetta-stone-statements-soft-delete[snippets='curl-request,path-parameters,http-response']
+
+=== Fully deleting a rosetta stone statement
+
+A `DELETE` request fully deletes a rosetta stone statement with all its versions.
+The response will be `204 No Content` when successful.
+
+NOTE: The user performing the action needs to be a curator.
+
+operation::rosetta-stone-statements-delete[snippets='curl-request,path-parameters,http-response']

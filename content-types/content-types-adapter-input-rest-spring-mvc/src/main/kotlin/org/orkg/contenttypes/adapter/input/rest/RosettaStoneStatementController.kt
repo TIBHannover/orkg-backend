@@ -8,6 +8,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.PreAuthorizeCurator
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.adapter.input.rest.mapping.RosettaStoneStatementRepresentationAdapter
@@ -128,6 +129,17 @@ class RosettaStoneStatementController(
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.softDelete(id, userId)
+        return noContent().build()
+    }
+
+    @PreAuthorizeCurator
+    @DeleteMapping("/{id}/versions")
+    fun delete(
+        @PathVariable id: ThingId,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.delete(id, userId)
         return noContent().build()
     }
 

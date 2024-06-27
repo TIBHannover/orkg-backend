@@ -22,6 +22,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.withRosettaStoneStatementMa
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
@@ -80,6 +81,13 @@ fun <
             is Resource -> resourceRepository.save(it)
             is Predicate -> predicateRepository.save(it)
         }
+    }
+
+    val saveStatement: (GeneralStatement) -> Unit = {
+        saveThing(it.subject)
+        saveThing(it.predicate)
+        saveThing(it.`object`)
+        statementRepository.save(it)
     }
 
     fun RosettaStoneStatementVersion.requiredEntities(): Set<Thing> =
@@ -609,6 +617,141 @@ fun <
                     version.deletedBy shouldBe contributorId
                     version.deletedAt shouldBe OffsetDateTime.now(fixedClock)
                 }
+            }
+        }
+    }
+
+    it("deletes a rosetta stone statement") {
+        val statement = fabricator.random<RosettaStoneStatement>()
+        statement.requiredEntities().forEach(saveThing)
+        repository.save(statement)
+
+        repository.delete(statement.id)
+
+        repository.findByIdOrVersionId(statement.id).isPresent shouldBe false
+    }
+
+    describe("checking whether a rosetta stone statement is used as an object") {
+        context("when it is not used as an object") {
+            it("returns the correct result") {
+                val statement = fabricator.random<RosettaStoneStatement>()
+                statement.requiredEntities().forEach(saveThing)
+                repository.save(statement)
+
+                repository.isUsedAsObject(statement.id) shouldBe false
+                repository.isUsedAsObject(statement.versions.first().id) shouldBe false
+            }
+        }
+        context("when the latest version is used as a subject in another rosetta stone statement") {
+            it("returns the correct result") {
+                val statement = fabricator.random<RosettaStoneStatement>()
+                statement.requiredEntities().forEach(saveThing)
+                repository.save(statement)
+
+                val statementResource = resourceRepository.findById(statement.id).get()
+                val otherStatement = fabricator.random<RosettaStoneStatement>().let {
+                    it.copy(versions = it.versions + it.versions.first().copy(
+                        id = fabricator.random(),
+                        subjects = listOf(statementResource)
+                    ))
+                }
+                otherStatement.requiredEntities().forEach(saveThing)
+                repository.save(otherStatement)
+
+                repository.isUsedAsObject(statement.id) shouldBe true
+                repository.isUsedAsObject(statement.versions.first().id) shouldBe true
+            }
+        }
+        context("when an older version is used as a subject in another rosetta stone statement") {
+            it("returns the correct result") {
+                val statement = fabricator.random<RosettaStoneStatement>()
+                statement.requiredEntities().forEach(saveThing)
+                repository.save(statement)
+
+                val statementResource = resourceRepository.findById(statement.versions.last().id).get()
+                val otherStatement = fabricator.random<RosettaStoneStatement>().let {
+                    it.copy(versions = it.versions + it.versions.first().copy(
+                        id = fabricator.random(),
+                        subjects = listOf(statementResource)
+                    ))
+                }
+                otherStatement.requiredEntities().forEach(saveThing)
+                repository.save(otherStatement)
+
+                repository.isUsedAsObject(statement.id) shouldBe true
+                repository.isUsedAsObject(statement.versions.first().id) shouldBe true
+            }
+        }
+        context("when the latest version is used as an object in another rosetta stone statement") {
+            it("returns the correct result") {
+                val statement = fabricator.random<RosettaStoneStatement>()
+                statement.requiredEntities().forEach(saveThing)
+                repository.save(statement)
+
+                val statementResource = resourceRepository.findById(statement.id).get()
+                val otherStatement = fabricator.random<RosettaStoneStatement>().let {
+                    it.copy(versions = it.versions + it.versions.first().copy(
+                        id = fabricator.random(),
+                        objects = listOf(listOf(statementResource))
+                    ))
+                }
+                otherStatement.requiredEntities().forEach(saveThing)
+                repository.save(otherStatement)
+
+                repository.isUsedAsObject(statement.id) shouldBe true
+                repository.isUsedAsObject(statement.versions.first().id) shouldBe true
+            }
+        }
+        context("when an older version is used as an object in another rosetta stone statement") {
+            it("returns the correct result") {
+                val statement = fabricator.random<RosettaStoneStatement>()
+                statement.requiredEntities().forEach(saveThing)
+                repository.save(statement)
+
+                val statementResource = resourceRepository.findById(statement.versions.last().id).get()
+                val otherStatement = fabricator.random<RosettaStoneStatement>().let {
+                    it.copy(versions = it.versions + it.versions.first().copy(
+                        id = fabricator.random(),
+                        objects = listOf(listOf(statementResource))
+                    ))
+                }
+                otherStatement.requiredEntities().forEach(saveThing)
+                repository.save(otherStatement)
+
+                repository.isUsedAsObject(statement.id) shouldBe true
+                repository.isUsedAsObject(statement.versions.first().id) shouldBe true
+            }
+        }
+        context("when the latest version is used in a triple") {
+            it("returns the correct result") {
+                val statement = fabricator.random<RosettaStoneStatement>()
+                statement.requiredEntities().forEach(saveThing)
+                repository.save(statement)
+
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        `object` = resourceRepository.findById(statement.id).get()
+                    )
+                )
+
+                repository.isUsedAsObject(statement.id) shouldBe true
+                repository.isUsedAsObject(statement.versions.first().id) shouldBe true
+            }
+        }
+        context("when an older version is used in a triple") {
+            it("returns the correct result") {
+                val statement = fabricator.random<RosettaStoneStatement>()
+                statement.requiredEntities().forEach(saveThing)
+                repository.save(statement)
+
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        `object` = resourceRepository.findById(statement.versions.last().id).get()
+                    )
+                )
+
+                repository.isUsedAsObject(statement.id) shouldBe true
+                repository.isUsedAsObject(statement.versions.first().id) shouldBe true
             }
         }
     }

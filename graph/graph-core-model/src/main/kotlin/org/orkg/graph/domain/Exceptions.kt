@@ -224,6 +224,9 @@ class NeitherOwnerNorCurator private constructor(
     }
 }
 
+class NotACurator(contributorId: ContributorId) :
+    SimpleMessageException(HttpStatus.FORBIDDEN, "Contributor <$contributorId> is not a curator.")
+
 /**
  * Exception indicating that a property was blank when it was not supposed to be.
  */

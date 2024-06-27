@@ -65,6 +65,9 @@ class RosettaStoneStatementNotModifiable(id: ThingId) :
 class CannotDeleteIndividualRosettaStoneStatementVersion :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Cannot delete individual versions of rosetta stone statements.""")
 
+class RosettaStoneStatementInUse(id: ThingId) :
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete rosetta stone statement "$id" because it is used in at least one (rosetta stone) statement.""")
+
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")
 

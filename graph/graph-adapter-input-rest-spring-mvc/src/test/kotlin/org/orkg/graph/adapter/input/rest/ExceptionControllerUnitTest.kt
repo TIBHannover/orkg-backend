@@ -24,6 +24,7 @@ import org.orkg.graph.domain.ListInUse
 import org.orkg.graph.domain.LiteralNotModifiable
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.NeitherOwnerNorCurator
+import org.orkg.graph.domain.NotACurator
 import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.graph.domain.StatementId
@@ -397,6 +398,21 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun notACurator() {
+        val contributorId = "62bfeea3-4210-436d-b953-effa5a07ed64"
+
+        get("/not-a-curator")
+            .param("contributorId", contributorId)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.error", `is`("Forbidden")))
+            .andExpect(jsonPath("$.path").value("/not-a-curator"))
+            .andExpect(jsonPath("$.message").value("""Contributor <$contributorId> is not a curator."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -508,6 +524,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/external-class-not-found")
         fun externalClassNotFound(@RequestParam ontologyId: String, @RequestParam id: String) {
             throw ExternalClassNotFound(ontologyId, id)
+        }
+
+        @GetMapping("/not-a-curator")
+        fun notACurator(@RequestParam contributorId: ContributorId) {
+            throw NotACurator(contributorId)
         }
     }
 

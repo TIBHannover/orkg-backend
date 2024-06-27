@@ -449,4 +449,47 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             )
             .run()
     }
+
+    override fun delete(id: ThingId) {
+        neo4jClient.query("""
+            MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id})
+            OPTIONAL MATCH (latest)-[:CONTEXT]->(context:Thing)
+            MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
+                  (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
+            MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(Thing)
+            OPTIONAL MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(Thing)
+            DETACH DELETE latest, version, metadata, subjectNode, objectNode""".trimIndent()
+        )
+            .bindAll(mapOf("id" to id.value))
+            .run()
+    }
+
+    override fun isUsedAsObject(id: ThingId): Boolean =
+        neo4jClient.query("""
+            CALL {
+                MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id})
+                RETURN latest
+                UNION
+                MATCH (latest:RosettaStoneStatement:LatestVersion)-[:VERSION]->(:RosettaStoneStatement:Version {id: ${'$'}id})
+                RETURN latest
+            }
+            MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)
+            WITH latest.id AS latestId, COLLECT(version.id) AS ids
+            WITH (latestId + ids) AS ids
+            UNWIND ids AS id
+            CALL {
+                WITH id
+                MATCH (:Thing {id: id})<-[r:RELATED]-()
+                RETURN r
+                UNION ALL
+                WITH id
+                MATCH (:Thing {id: id})<-[r:VALUE]-()
+                RETURN r
+            }
+            WITH r
+            RETURN COUNT(r) > 0 AS count""".trimIndent()
+        )
+            .bindAll(mapOf("id" to id.value))
+            .fetchAs<Boolean>()
+            .one() ?: false
 }

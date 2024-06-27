@@ -13,11 +13,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
+import org.orkg.common.ThingId
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
+import org.orkg.graph.domain.ContributorNotFound
+import org.orkg.graph.domain.NotACurator
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
@@ -47,6 +52,7 @@ class RosettaStoneStatementServiceUnitTests {
     private val predicateService: PredicateUseCases = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val listService: ListUseCases = mockk()
+    private val contributorRepository: ContributorRepository = mockk()
 
     private val service = RosettaStoneStatementService(
         repository,
@@ -63,6 +69,7 @@ class RosettaStoneStatementServiceUnitTests {
         predicateService,
         statementRepository,
         listService,
+        contributorRepository,
         fixedClock
     )
 
@@ -87,6 +94,7 @@ class RosettaStoneStatementServiceUnitTests {
             literalService,
             predicateService,
             statementRepository,
+            contributorRepository,
             listService
         )
     }
@@ -107,14 +115,14 @@ class RosettaStoneStatementServiceUnitTests {
 
     @Test
     fun `Given a rosetta stone statement, when soft deleting but statement does not exist, it does nothing`() {
-        val statement = createDummyRosettaStoneStatement().copy(modifiable = false)
+        val statementId = ThingId("R123")
         val contributorId = ContributorId(MockUserId.USER)
 
-        every { repository.findByIdOrVersionId(statement.id) } returns Optional.empty()
+        every { repository.findByIdOrVersionId(statementId) } returns Optional.empty()
 
-        service.softDelete(statement.id, contributorId)
+        service.softDelete(statementId, contributorId)
 
-        verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
+        verify(exactly = 1) { repository.findByIdOrVersionId(statementId) }
     }
 
     @Test
@@ -152,5 +160,108 @@ class RosettaStoneStatementServiceUnitTests {
         service.softDelete(statement.id, contributorId)
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement, when deleting, it deletes the rosetta stone statement`() {
+        val statement = createDummyRosettaStoneStatement()
+        val contributorId = ContributorId(MockUserId.USER)
+        val contributor = createContributor(contributorId, isCurator = true)
+
+        every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
+        every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
+        every { repository.isUsedAsObject(statement.id) } returns false
+        every { repository.delete(statement.id) } just runs
+
+        service.delete(statement.id, contributorId)
+
+        verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
+        verify(exactly = 1) { contributorRepository.findById(contributorId) }
+        verify(exactly = 1) { repository.isUsedAsObject(statement.id) }
+        verify(exactly = 1) { repository.delete(statement.id) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement, when deleting but statement does not exist, it does nothing`() {
+        val statementId = ThingId("R123")
+        val contributorId = ContributorId(MockUserId.USER)
+
+        every { repository.findByIdOrVersionId(statementId) } returns Optional.empty()
+
+        service.delete(statementId, contributorId)
+
+        verify(exactly = 1) { repository.findByIdOrVersionId(statementId) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement, when deleting but statement is not modifiable, it throws an exception`() {
+        val statement = createDummyRosettaStoneStatement().copy(modifiable = false)
+        val contributorId = ContributorId(MockUserId.USER)
+
+        every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
+
+        assertThrows<RosettaStoneStatementNotModifiable> { service.delete(statement.id, contributorId) }
+
+        verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement, when deleting but provided id is not the latest version, it throws an exception`() {
+        val statement = createDummyRosettaStoneStatement()
+        val contributorId = ContributorId(MockUserId.USER)
+
+        every { repository.findByIdOrVersionId(statement.versions.first().id) } returns Optional.of(statement)
+
+        assertThrows<CannotDeleteIndividualRosettaStoneStatementVersion> {
+            service.delete(statement.versions.first().id, contributorId)
+        }
+
+        verify(exactly = 1) { repository.findByIdOrVersionId(statement.versions.first().id) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement, when deleting but contributor cannot be found, it throws an exception`() {
+        val statement = createDummyRosettaStoneStatement()
+        val contributorId = ContributorId(MockUserId.USER)
+
+        every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
+        every { contributorRepository.findById(contributorId) } returns Optional.empty()
+
+        assertThrows<ContributorNotFound> { service.delete(statement.id, contributorId) }
+
+        verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
+        verify(exactly = 1) { contributorRepository.findById(contributorId) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement, when deleting but contributor is not a curator, it throws an exception`() {
+        val statement = createDummyRosettaStoneStatement()
+        val contributorId = ContributorId(MockUserId.USER)
+        val contributor = createContributor(contributorId, isCurator = false)
+
+        every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
+        every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
+
+        assertThrows<NotACurator> { service.delete(statement.id, contributorId) }
+
+        verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
+        verify(exactly = 1) { contributorRepository.findById(contributorId) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement, when deleting but statement version is used an object, it throws an exception`() {
+        val statement = createDummyRosettaStoneStatement()
+        val contributorId = ContributorId(MockUserId.USER)
+        val contributor = createContributor(contributorId, isCurator = true)
+
+        every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
+        every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
+        every { repository.isUsedAsObject(statement.id) } returns true
+
+        assertThrows<RosettaStoneStatementInUse> { service.delete(statement.id, contributorId) }
+
+        verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
+        verify(exactly = 1) { contributorRepository.findById(contributorId) }
+        verify(exactly = 1) { repository.isUsedAsObject(statement.id) }
     }
 }

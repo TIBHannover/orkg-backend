@@ -384,6 +384,29 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
         verify(exactly = 1) { statementService.softDelete(id, ContributorId(MockUserId.USER)) }
     }
 
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a rosetta stone statement, when deleting and service succeeds, then status is 204 NO CONTENT")
+    fun delete() {
+        val id = ThingId("R123")
+        every { statementService.delete(id, any()) } just runs
+
+        documentedDeleteRequestTo("/api/rosetta-stone/statements/{id}/versions", id)
+            .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The id of the rosetta stone statement to delete.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { statementService.delete(id, ContributorId(MockUserId.USER)) }
+    }
+
     private fun createRosettaStoneStatementRequest() =
         RosettaStoneStatementController.CreateRosettaStoneStatementRequest(
             templateId = ThingId("R456"),

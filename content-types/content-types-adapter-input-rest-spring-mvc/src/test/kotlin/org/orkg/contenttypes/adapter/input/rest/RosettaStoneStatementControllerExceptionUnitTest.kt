@@ -9,6 +9,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.RosettaStoneStatementControllerExceptionUnitTest.FakeExceptionController
 import org.orkg.contenttypes.domain.CannotDeleteIndividualRosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.MissingInputPositions
+import org.orkg.contenttypes.domain.RosettaStoneStatementInUse
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotModifiable
 import org.orkg.contenttypes.domain.TooManyInputPositions
 import org.orkg.testing.FixedClockConfig
@@ -106,6 +107,21 @@ internal class RosettaStoneStatementControllerExceptionUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun rosettaStoneStatementInUse() {
+        val id = "R123"
+
+        get("/rosetta-stone-statement-in-use")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.error", `is`("Forbidden")))
+            .andExpect(jsonPath("$.path").value("/rosetta-stone-statement-in-use"))
+            .andExpect(jsonPath("$.message").value("""Unable to delete rosetta stone statement "$id" because it is used in at least one (rosetta stone) statement."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -131,6 +147,11 @@ internal class RosettaStoneStatementControllerExceptionUnitTest {
         @GetMapping("/cannot-delete-individual-rosetta-stone-statement-version")
         fun cannotDeleteIndividualRosettaStoneStatementVersion() {
             throw CannotDeleteIndividualRosettaStoneStatementVersion()
+        }
+
+        @GetMapping("/rosetta-stone-statement-in-use")
+        fun rosettaStoneStatementInUse(@RequestParam id: ThingId) {
+            throw RosettaStoneStatementInUse(id)
         }
     }
 

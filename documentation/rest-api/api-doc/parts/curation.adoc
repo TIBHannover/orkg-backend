@@ -1,7 +1,7 @@
 [[curation]]
 = Curation
 
-
+Curation endpoints provide specialised views for entities of the graph.
 
 [[curation-list-predicates-without-descriptions]]
 == Listing predicates without descriptions

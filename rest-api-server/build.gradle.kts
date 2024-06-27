@@ -188,6 +188,10 @@ dependencies {
     runtimeOnly(project(":statistics:statistics-adapter-output-spring-data-neo4j-sdn6"))
     runtimeOnly(project(":statistics:statistics-core-services"))
 
+    runtimeOnly(project(":curation:curation-adapter-input-rest-spring-mvc"))
+    runtimeOnly(project(":curation:curation-adapter-output-spring-data-neo4j-sdn6"))
+    runtimeOnly(project(":curation:curation-core-services"))
+
     runtimeOnly(project(":media-storage:media-storage-adapter-input-serialization"))
     runtimeOnly(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
     implementation(project(":media-storage:media-storage-core-model"))

@@ -1,0 +1,58 @@
+package org.orkg.curation.adapter.input.rest
+
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.clearAllMocks
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.verify
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.orkg.common.exceptions.ExceptionHandler
+import org.orkg.common.json.CommonJacksonModule
+import org.orkg.curation.input.RetrieveCurationUseCase
+import org.orkg.graph.testing.fixtures.createPredicate
+import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.andExpectPredicate
+import org.orkg.testing.pageOf
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.MediaType
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+
+@ContextConfiguration(classes = [CurationController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@WebMvcTest(controllers = [CurationController::class])
+@DisplayName("Given a Curation controller")
+internal class CurationControllerUnitTest : RestDocsTest("curation") {
+
+    @MockkBean
+    private lateinit var service: RetrieveCurationUseCase
+
+    @BeforeEach
+    fun resetState() {
+        clearAllMocks()
+    }
+
+    @AfterEach
+    fun verifyMocks() {
+        confirmVerified(service)
+    }
+
+    @Test
+    @DisplayName("Given several predicates, when fetching all predicates without descriptions, then status is 200 OK and predicates are returned")
+    fun findAllPredicatesWithoutDescriptions() {
+        every { service.findAllPredicatesWithoutDescriptions(any()) } returns pageOf(createPredicate())
+
+        documentedGetRequestTo("/api/curation/predicates-without-descriptions")
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPredicate("$.content[*]")
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { service.findAllPredicatesWithoutDescriptions(any()) }
+    }
+}

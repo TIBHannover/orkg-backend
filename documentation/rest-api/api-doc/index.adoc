@@ -404,6 +404,9 @@ include::parts/rosetta-stone-statements.adoc[leveloffset=+1]
 [[content-types]]
 include::parts/content-types.adoc[leveloffset=+1]
 
+[[curation]]
+include::parts/curation.adoc[leveloffset=+1]
+
 [[rdf-integration]]
 include::parts/rdf.adoc[leveloffset=+1]
 

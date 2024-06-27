@@ -24,12 +24,11 @@ import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResourceRepository
-import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.toCondition
+import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.output.PredicateRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -39,7 +38,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class SpringDataNeo4jRosettaStoneStatementAdapter(
-    private val predicateRepository: PredicateRepository,
     private val neo4jRepository: Neo4jResourceRepository,
     private val neo4jClient: Neo4jClient
 ) : RosettaStoneStatementRepository {
@@ -74,7 +72,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
         )
             .bindAll(mapOf("id" to id.value))
             .fetchAs(RosettaStoneStatement::class.java)
-            .mappedBy(RosettaStoneStatementMapper(predicateRepository))
+            .mappedBy(RosettaStoneStatementMapper())
             .one()
     }
 
@@ -224,7 +222,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 .returning(count(latest))
         }
         .fetchAs<RosettaStoneStatement>()
-        .mappedBy(RosettaStoneStatementMapper(predicateRepository))
+        .mappedBy(RosettaStoneStatementMapper())
         .fetch(pageable, false)
 
     override fun save(statement: RosettaStoneStatement) {

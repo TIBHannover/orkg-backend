@@ -27,6 +27,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceC
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createResource
@@ -34,10 +35,11 @@ import org.orkg.graph.testing.fixtures.createResource
 class TemplateInstancePropertyValueValidatorUnitTest {
     private val thingRepository: ThingRepository = mockk()
     private val classRepository: ClassRepository = mockk()
+    private val statementRepository: StatementRepository = mockk()
     private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator = mockk()
 
     private val templateInstancePropertyValueValidator = TemplateInstancePropertyValueValidator(
-        thingRepository, classRepository, abstractTemplatePropertyValueValidator
+        thingRepository, classRepository, statementRepository, abstractTemplatePropertyValueValidator
     )
 
     @BeforeEach
@@ -47,7 +49,7 @@ class TemplateInstancePropertyValueValidatorUnitTest {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(thingRepository, classRepository, abstractTemplatePropertyValueValidator)
+        confirmVerified(thingRepository, classRepository, statementRepository, abstractTemplatePropertyValueValidator)
     }
 
     @Test

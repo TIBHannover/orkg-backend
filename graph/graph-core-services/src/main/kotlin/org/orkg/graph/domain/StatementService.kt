@@ -258,6 +258,9 @@ class StatementService(
     override fun countIncomingStatements(ids: Set<ThingId>): Map<ThingId, Long> =
         statementRepository.countIncomingStatements(ids)
 
+    override fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String> =
+        statementRepository.findAllDescriptions(ids)
+
     /**
      * Create a bundle where the first level is not included in the statements.
      *

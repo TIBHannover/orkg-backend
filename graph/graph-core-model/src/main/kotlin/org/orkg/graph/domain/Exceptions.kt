@@ -51,6 +51,21 @@ class ThingNotFound : SimpleMessageException {
     constructor(id: ThingId) : this(id.value)
 }
 
+class ExternalResourceNotFound : SimpleMessageException {
+    constructor(ontologyId: String, id: String) : super(HttpStatus.NOT_FOUND, """External resource "$id" for ontology "$ontologyId" not found.""")
+    constructor(ontologyId: String, uri: URI) : this(ontologyId, uri.toString())
+}
+
+class ExternalPredicateNotFound : SimpleMessageException {
+    constructor(ontologyId: String, id: String) : super(HttpStatus.NOT_FOUND, """External predicate "$id" for ontology "$ontologyId" not found.""")
+    constructor(ontologyId: String, uri: URI) : this(ontologyId, uri.toString())
+}
+
+class ExternalClassNotFound : SimpleMessageException {
+    constructor(ontologyId: String, id: String) : super(HttpStatus.NOT_FOUND, """External class "$id" for ontology "$ontologyId" not found.""")
+    constructor(ontologyId: String, uri: URI) : this(ontologyId, uri.toString())
+}
+
 class ListNotFound(id: ThingId) : SimpleMessageException(HttpStatus.NOT_FOUND, """List "$id" not found.""")
 
 class ContributorNotFound(id: ContributorId) :

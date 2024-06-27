@@ -15,7 +15,6 @@ import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
-import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Thing
@@ -73,19 +72,8 @@ fun <
 
     describe("saving a predicate") {
         it("saves and loads all properties correctly") {
-            val expected: Predicate = fabricator.random<Predicate>().copy(
-                description = "some predicate description"
-            )
+            val expected: Predicate = fabricator.random<Predicate>()
             repository.save(expected)
-
-            val descriptionStatement = createStatement(
-                subject = expected,
-                predicate = createPredicate(id = Predicates.description),
-                `object` = createLiteral(label = expected.description!!)
-            )
-            repository.save(descriptionStatement.predicate)
-            literalRepository.save(descriptionStatement.`object` as Literal)
-            statementRepository.save(descriptionStatement)
 
             val actual = repository.findById(expected.id).orElse(null)
 
@@ -96,7 +84,6 @@ fun <
                 it.createdAt shouldBe expected.createdAt
                 it.createdBy shouldBe expected.createdBy
                 it.id shouldBe expected.id
-                it.description shouldBe it.description
                 it.modifiable shouldBe expected.modifiable
             }
         }

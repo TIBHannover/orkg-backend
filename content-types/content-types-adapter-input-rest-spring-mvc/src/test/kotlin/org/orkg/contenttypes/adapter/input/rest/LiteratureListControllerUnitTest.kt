@@ -156,6 +156,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                         fieldWithPath("sections[].entries[].value.id").description("The id of the linked resource.").optional(),
                         fieldWithPath("sections[].entries[].value.label").description("The label of the linked resource.").optional(),
                         fieldWithPath("sections[].entries[].value.classes").description("The classes of the linked resource.").optional(),
+                        fieldWithPath("sections[].entries[].value._class").description("Indicates which type of entity was returned. Always has the value `resource_ref`."),
                         fieldWithPath("sections[].entries[].description").description("The description of the entry.").optional(),
                         fieldWithPath("sections[].heading").description("The heading of the text section.").optional(),
                         fieldWithPath("sections[].heading_size").description("The heading size of the text section.").optional(),

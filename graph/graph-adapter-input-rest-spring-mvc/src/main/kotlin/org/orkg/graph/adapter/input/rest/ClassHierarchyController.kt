@@ -9,6 +9,7 @@ import org.orkg.graph.adapter.input.rest.mapping.ChildClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ClassHierarchyEntryRepresentationAdapter
 import org.orkg.graph.domain.EmptyChildIds
 import org.orkg.graph.input.ClassHierarchyUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
@@ -31,6 +32,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/classes", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ClassHierarchyController(
+    override val statementService: StatementUseCases,
     private val service: ClassHierarchyUseCases
 ) : ClassHierarchyEntryRepresentationAdapter, ChildClassRepresentationAdapter {
 

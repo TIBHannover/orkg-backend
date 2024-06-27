@@ -56,3 +56,24 @@ The response will be `200 OK` when successful.
 The updated class is returned in the body for convenience.
 
 operation::classes-replace[snippets='request-fields,curl-request,http-response']
+
+[[classes-import]]
+=== Importing a class
+
+The {orkg} REST API provides two endpoints for importing classes from external ontologies.
+
+[[classes-import-by-uri]]
+==== Importing a class by URI
+
+A `POST` request imports a class from an external ontology by a given URI.
+The response will be `201 Created` when successful, even when the class was already imported.
+
+operation::import-import-class-by-uri[snippets='curl-request,http-response,request-fields']
+
+[[classes-import-by-short-form]]
+==== Importing a class by short form
+
+A `POST` request imports a class from an external ontology by a given short form id.
+The response will be `201 Created` when successful, even when the class was already imported.
+
+operation::import-import-class-by-short-form[snippets='curl-request,http-response,request-fields']

@@ -13,11 +13,13 @@ import org.orkg.contenttypes.domain.actions.toThingDefinition
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 
 class TemplateInstancePropertyValueValidator(
     override val thingRepository: ThingRepository,
     private val classRepository: ClassRepository,
+    private val statementRepository: StatementRepository,
     private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator = AbstractTemplatePropertyValueValidator()
 ) : UpdateTemplateInstanceAction, ThingIdValidator {
     override fun invoke(
@@ -56,7 +58,7 @@ class TemplateInstancePropertyValueValidator(
                 }
 
                 `object`.onRight { thing ->
-                    abstractTemplatePropertyValueValidator.validateObject(property, thing.id.value, thing.toThingDefinition())
+                    abstractTemplatePropertyValueValidator.validateObject(property, thing.id.value, thing.toThingDefinition(statementRepository))
                     val statement = BakedStatement(templateInstance.root.id.value, property.path.id.value, thing.id.value)
                     if (statement in toRemove) {
                         toRemove -= statement

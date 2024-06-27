@@ -11,7 +11,8 @@ import org.orkg.contenttypes.domain.LiteratureListSection
 import org.orkg.contenttypes.domain.TextSection
 import org.springframework.data.domain.Page
 
-interface LiteratureListRepresentationAdapter : AuthorRepresentationAdapter, VersionRepresentationAdapter, LabeledObjectRepresentationAdapter {
+interface LiteratureListRepresentationAdapter : AuthorRepresentationAdapter, VersionRepresentationAdapter,
+    LabeledObjectRepresentationAdapter, ThingReferenceRepresentationAdapter {
 
     fun Optional<LiteratureList>.mapToLiteratureListRepresentation(): Optional<LiteratureListRepresentation> =
         map { it.toLiteratureListRepresentation() }
@@ -46,5 +47,5 @@ interface LiteratureListRepresentationAdapter : AuthorRepresentationAdapter, Ver
         }
 
     private fun ListSection.Entry.toEntryRepresentation(): ListSectionRepresentation.EntryRepresentation =
-        ListSectionRepresentation.EntryRepresentation(value, description)
+        ListSectionRepresentation.EntryRepresentation(value.toResourceReferenceRepresentation(), description)
 }

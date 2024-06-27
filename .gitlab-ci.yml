@@ -26,7 +26,7 @@ cache: &gradle_cache_settings
     files:
       # Only have a single version of the wrapper, and invalidate the cache when the Gradle wrapper version changes.
       - gradle/wrapper/gradle-wrapper.properties
-    prefix: wrapper
+    prefix: "$CI_COMMIT_REF_NAME"
   paths:
     - .gradle-user-home/caches/             # Gradle Build Cache directories
     - .gradle-user-home/notifications/      # Prevent welcome message to be shown every time

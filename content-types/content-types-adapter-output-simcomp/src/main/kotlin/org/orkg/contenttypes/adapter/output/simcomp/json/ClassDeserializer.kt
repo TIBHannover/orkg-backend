@@ -20,8 +20,7 @@ class ClassDeserializer : JsonDeserializer<Class>() {
             label = this["label"].asText(),
             uri = this["uri"]?.textValue()?.let(URI::create),
             createdAt = OffsetDateTime.parse(this["created_at"].asText()),
-            createdBy = ContributorId(this["created_by"].asText()),
-            description = this["description"]?.textValue()
+            createdBy = ContributorId(this["created_by"].asText())
         )
     }
 }

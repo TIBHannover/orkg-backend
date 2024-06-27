@@ -106,15 +106,15 @@ class SmartReviewServiceUnitTests {
             label = "property section heading",
             classes = setOf(Classes.propertySection)
         )
-        val property = createPredicate(id = ThingId("P7689"), description = "predicate description")
+        val property = createPredicate(id = ThingId("P7689"))
         val ontologySection = createResource(
             id = ThingId("R159"),
             label = "ontology section heading",
             classes = setOf(Classes.ontologySection)
         )
         val ontologyResourceEntity = createResource(id = ThingId("R13457"), classes = setOf(Classes.author))
-        val ontologyPredicateEntity = createPredicate(id = ThingId("P6148"), description = "ontology entity")
-        val ontologyPredicate = createPredicate(id = ThingId("P73489"), description = "predicate for comparison")
+        val ontologyPredicateEntity = createPredicate(id = ThingId("P6148"))
+        val ontologyPredicate = createPredicate(id = ThingId("P73489"))
         val textSection = createResource(id = ThingId("R489"), label = "heading", classes = setOf(Classes.section, Classes.introduction))
         val textContent = "text content"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
@@ -403,15 +403,15 @@ class SmartReviewServiceUnitTests {
             label = "property section heading",
             classes = setOf(Classes.propertySection)
         )
-        val property = createPredicate(id = ThingId("P7689"), description = "predicate description")
+        val property = createPredicate(id = ThingId("P7689"))
         val ontologySection = createResource(
             id = ThingId("R159"),
             label = "ontology section heading",
             classes = setOf(Classes.ontologySection)
         )
         val ontologyResourceEntity = createResource(id = ThingId("R13457"), classes = setOf(Classes.author))
-        val ontologyPredicateEntity = createPredicate(id = ThingId("P6148"), description = "ontology entity")
-        val ontologyPredicate = createPredicate(id = ThingId("P73489"), description = "predicate for comparison")
+        val ontologyPredicateEntity = createPredicate(id = ThingId("P6148"))
+        val ontologyPredicate = createPredicate(id = ThingId("P73489"))
         val textSection = createResource(id = ThingId("R489"), label = "heading", classes = setOf(Classes.section, Classes.introduction))
         val textContent = "text content"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))

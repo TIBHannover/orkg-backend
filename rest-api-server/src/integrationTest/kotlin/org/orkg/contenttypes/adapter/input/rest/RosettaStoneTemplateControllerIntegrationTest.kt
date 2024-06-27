@@ -18,7 +18,6 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
-import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.createClass
@@ -231,7 +230,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\d+"
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
-                property.datatype shouldBe ClassReference(ThingId("String"), "String", URI.create(Literals.XSD.STRING.uri))
+                property.datatype shouldBe ClassReferenceRepresentation(ThingId("String"), "String", URI.create(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -246,7 +245,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.minInclusive shouldBe -1
                 property.maxInclusive shouldBe 10
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
-                property.datatype shouldBe ClassReference(ThingId("Integer"), "Integer", URI.create(Literals.XSD.INT.uri))
+                property.datatype shouldBe ClassReferenceRepresentation(ThingId("Integer"), "Integer", URI.create(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -259,7 +258,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
-                property.datatype shouldBe ClassReference(ThingId("C25"), "C25", null)
+                property.datatype shouldBe ClassReferenceRepresentation(ThingId("C25"), "C25", null)
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }

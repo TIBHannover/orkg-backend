@@ -241,6 +241,11 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             .filter { it.value.isNotEmpty() && it.key in ids }
             .mapValues { it.value.size.toLong() }
 
+    override fun findAllDescriptions(ids: Set<ThingId>): Map<ThingId, String> =
+        entities.groupBy { it.subject.id }
+            .filter { it.value.any { statement -> statement.`object` is Literal } && it.key in ids }
+            .mapValues { it.value.first().`object`.label }
+
     override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> =
         entities.filter { it.id in statementIds }.map { OwnershipInfo(it.id, it.createdBy) }.toSet()
 

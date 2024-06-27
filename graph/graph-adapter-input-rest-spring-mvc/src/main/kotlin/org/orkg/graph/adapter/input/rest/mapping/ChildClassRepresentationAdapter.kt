@@ -6,9 +6,19 @@ import org.springframework.data.domain.Page
 
 interface ChildClassRepresentationAdapter : ClassRepresentationAdapter {
 
-    fun Page<ChildClass>.mapToChildClassRepresentation(): Page<ChildClassRepresentation> =
-        map { it.toChildClassRepresentation() }
+    fun Page<ChildClass>.mapToChildClassRepresentation(): Page<ChildClassRepresentation> {
+        val descriptions = when {
+            content.isNotEmpty() -> {
+                val ids = content.mapTo(mutableSetOf()) { it.`class`.id }
+                statementService.findAllDescriptions(ids)
+            }
+            else -> emptyMap()
+        }
+        return map { it.toChildClassRepresentation(descriptions[it.`class`.id]) }
+    }
 
-    fun ChildClass.toChildClassRepresentation(): ChildClassRepresentation =
-        ChildClassRepresentation(`class`.toClassRepresentation(), childCount)
+    fun ChildClass.toChildClassRepresentation(
+        description: String?
+    ): ChildClassRepresentation =
+        ChildClassRepresentation(`class`.toClassRepresentation(description), childCount)
 }

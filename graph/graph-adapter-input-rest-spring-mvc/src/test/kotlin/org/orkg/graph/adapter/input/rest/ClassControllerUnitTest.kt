@@ -14,18 +14,23 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.toOptional
 import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectClass
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedPatchRequestTo
 import org.orkg.testing.spring.restdocs.documentedPutRequestTo
@@ -51,6 +56,9 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
     @MockkBean
     private lateinit var classService: ClassUseCases
 
+    @MockkBean
+    private lateinit var statementService: StatementUseCases
+
     @Autowired
     private lateinit var clock: Clock
 
@@ -61,11 +69,28 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
         @DisplayName("Then querying for that URI should return `200 OK`")
         fun shouldReturn200() {
             every { classService.findByURI(any()) } returns Optional.of(mockReply())
+            every {
+                statementService.findAll(
+                    pageable = PageRequests.SINGLE,
+                    subjectId = any(),
+                    predicateId = Predicates.description,
+                    objectClasses = setOf(Classes.literal)
+                )
+            } returns pageOf()
 
             mockMvc
                 .perform(performGetByURI("http://example.org/exists"))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.uri").value("http://example.org/exists"))
+
+            verify(exactly = 1) {
+                statementService.findAll(
+                    pageable = PageRequests.SINGLE,
+                    subjectId = mockReply().id,
+                    predicateId = Predicates.description,
+                    objectClasses = setOf(Classes.literal)
+                )
+            }
         }
     }
 
@@ -99,6 +124,14 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
 
         every { classService.create(any()) } returns id
         every { classService.findById(id) } returns createClass(id = id, label = label, uri = uri).toOptional()
+        every {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        } returns pageOf()
 
         post("/api/classes/")
             .content(request)
@@ -132,6 +165,14 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             })
         }
         verify(exactly = 1) { classService.findById(id) }
+        verify(exactly = 1) {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        }
     }
 
     @Test
@@ -150,6 +191,14 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
                 uri = URI.create("https://example.org/some/new#URI")
             )
         )
+        every {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        } returns pageOf()
 
         documentedPutRequestTo("/api/classes/{id}", id)
             .content(body)
@@ -177,6 +226,14 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             })
         }
         verify(exactly = 1) { classService.findById(id) }
+        verify(exactly = 1) {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = id,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        }
     }
 
     @Test

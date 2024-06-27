@@ -312,6 +312,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         every { listService.findAllElementsById(id, any()) } returns PageImpl(elements)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         mockMvc.perform(documentedGetRequestTo("/api/lists/{id}/elements", id))
             .andExpect(status().isOk)
@@ -330,7 +331,11 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { listService.findAllElementsById(id, any()) }
+        verify(exactly = 1) {
+            listService.findAllElementsById(id, any())
+            statementService.countIncomingStatements(any<Set<ThingId>>())
+            statementService.findAllDescriptions(any())
+        }
     }
 
     @Test

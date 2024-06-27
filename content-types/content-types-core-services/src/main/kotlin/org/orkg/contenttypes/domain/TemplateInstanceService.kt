@@ -94,7 +94,7 @@ class TemplateInstanceService(
             TemplateInstanceTemplateValidator(templateService),
             TemplateInstanceSubjectValidator(resourceRepository, this),
             TemplateInstanceThingDefinitionValidator(thingRepository, classRepository),
-            TemplateInstancePropertyValueValidator(thingRepository, classRepository),
+            TemplateInstancePropertyValueValidator(thingRepository, classRepository, statementRepository),
             TemplateInstanceSubjectUpdater(resourceRepository),
             TemplateInstancePropertyValueUpdater(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )

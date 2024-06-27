@@ -88,6 +88,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     @DisplayName("Given several statements, when filtering by no parameters, then status is 200 OK and statements are returned")
     fun getPaged() {
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createStatement())
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/statements")
             .accept(MediaType.APPLICATION_JSON)
@@ -97,7 +98,10 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpectStatement("$.content[*]")
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
+        verify(exactly = 1) {
+            statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            statementService.findAllDescriptions(any())
+        }
     }
 
     @Test
@@ -109,6 +113,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
         )
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(statement)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         val subjectClasses = (statement.subject as Resource).classes
         val subjectId = statement.subject.id
@@ -169,8 +174,9 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
                 objectId = objectId,
                 objectLabel = objectLabel
             )
+            statementService.countIncomingStatements(any<Set<ThingId>>())
+            statementService.findAllDescriptions(any())
         }
-        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -353,6 +359,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             )
         } returns pageOf(statement)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         mockMvc.perform(get("/api/statements/predicate/${statement.predicate.id}/literals?q=${statement.`object`.label}"))
             .andExpect(status().isOk)
@@ -365,6 +372,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
                 pageable = any()
             )
             statementService.countIncomingStatements(any<Set<ThingId>>())
+            statementService.findAllDescriptions(any())
         }
     }
 

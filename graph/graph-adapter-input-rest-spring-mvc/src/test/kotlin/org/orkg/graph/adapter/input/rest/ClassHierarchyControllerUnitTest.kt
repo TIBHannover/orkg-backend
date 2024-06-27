@@ -10,19 +10,24 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.domain.ChildClass
 import org.orkg.graph.domain.ClassHierarchyEntry
 import org.orkg.graph.domain.ClassNotFound
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidSubclassRelation
 import org.orkg.graph.domain.ParentClassAlreadyExists
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassHierarchyUseCases
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.pageOf
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -60,6 +65,9 @@ internal class ClassHierarchyControllerUnitTest {
     private lateinit var resourceService: ResourceUseCases
 
     @MockkBean
+    private lateinit var statementService: StatementUseCases
+
+    @MockkBean
     private lateinit var classHierarchyService: ClassHierarchyUseCases
 
     @BeforeEach
@@ -74,12 +82,15 @@ internal class ClassHierarchyControllerUnitTest {
         val response = ChildClass(createClass(id = childId), 1)
 
         every { classHierarchyService.findChildren(parentId, any()) } returns PageImpl(listOf(response))
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         get("/api/classes/$parentId/children")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].class.id").value(response.`class`.id.value))
             .andExpect(jsonPath("$.content[0].child_count").value(response.childCount))
             .andExpect(jsonPath("$.totalElements").value(1))
+
+        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
     }
 
     @Test
@@ -98,10 +109,27 @@ internal class ClassHierarchyControllerUnitTest {
         val childId = ThingId("child")
 
         every { classHierarchyService.findParent(childId) } returns Optional.of(createClass(id = parentId))
+        every {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = parentId,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        } returns pageOf()
 
         get("/api/classes/$childId/parent")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(parentId.value))
+
+        verify(exactly = 1) {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = parentId,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        }
     }
 
     @Test
@@ -130,10 +158,27 @@ internal class ClassHierarchyControllerUnitTest {
         val childId = ThingId("child")
 
         every { classHierarchyService.findRoot(childId) } returns Optional.of(createClass(id = rootId))
+        every {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = rootId,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        } returns pageOf()
 
         get("/api/classes/$childId/root")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(rootId.value))
+
+        verify(exactly = 1) {
+            statementService.findAll(
+                pageable = PageRequests.SINGLE,
+                subjectId = rootId,
+                predicateId = Predicates.description,
+                objectClasses = setOf(Classes.literal)
+            )
+        }
     }
 
     @Test
@@ -417,12 +462,15 @@ internal class ClassHierarchyControllerUnitTest {
                 ClassHierarchyEntry(childClass, parentId)
             )
         )
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         get("/api/classes/$childId/hierarchy")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].class.id").value(childId.value))
             .andExpect(jsonPath("$.content[0].parent_id").value(parentId.value))
             .andExpect(jsonPath("$.totalElements").value(1))
+
+        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
     }
 
     @Test

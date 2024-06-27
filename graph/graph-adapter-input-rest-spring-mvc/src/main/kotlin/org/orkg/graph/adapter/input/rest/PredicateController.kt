@@ -9,6 +9,7 @@ import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase.ReplaceCommand
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -31,6 +32,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/predicates/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PredicateController(
+    override val statementService: StatementUseCases,
     private val service: PredicateUseCases
 ) : PredicateRepresentationAdapter {
 

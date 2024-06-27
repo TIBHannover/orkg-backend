@@ -134,16 +134,16 @@ fun createDummySmartReview() = SmartReview(
         SmartReviewPredicateSection(
             id = ThingId("R15696541"),
             heading = "predicate section heading",
-            predicate = PredicateReference(ThingId("P1"), "some predicate label", "some predicate description")
+            predicate = PredicateReference(ThingId("P1"), "some predicate label")
         ),
         SmartReviewOntologySection(
             id = ThingId("R16532"),
             heading = "ontology section heading",
             entities = listOf(
                 ResourceReference(ThingId("R1"), "some resource label", classes = setOf(Classes.problem)),
-                PredicateReference(ThingId("P1"), "some predicate label", "some predicate description")
+                PredicateReference(ThingId("P1"), "some predicate label")
             ),
-            predicates = listOf(PredicateReference(ThingId("P1"), "some predicate label", "some predicate description"))
+            predicates = listOf(PredicateReference(ThingId("P1"), "some predicate label"))
         )
     ),
     references = listOf("@misc{R615465, title = {reference 1}}", "@misc{R615465, title = {reference 2}}")

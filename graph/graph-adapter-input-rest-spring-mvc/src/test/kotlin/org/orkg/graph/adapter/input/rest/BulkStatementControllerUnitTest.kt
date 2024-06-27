@@ -93,6 +93,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { statementService.findAll(subjectId = r1, pageable = any()) } returns pageOf(s1, pageable = pageable)
         every { statementService.findAll(subjectId = r3, pageable = any()) } returns pageOf(s2, pageable = pageable)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         mockMvc
             .perform(documentedGetRequestTo("/api/statements/subjects/?ids={ids}", "$r1,$r3"))
@@ -118,6 +119,9 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         }
         verify(exactly = 2) {
             statementService.countIncomingStatements(any<Set<ThingId>>())
+        }
+        verify(exactly = 2) {
+            statementService.findAllDescriptions(any())
         }
     }
 
@@ -146,6 +150,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { statementService.findAll(objectId = r2, pageable = any()) } returns pageOf(s1, pageable = pageable)
         every { statementService.findAll(objectId = r4, pageable = any()) } returns pageOf(s2, pageable = pageable)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         mockMvc
             .perform(documentedGetRequestTo("/api/statements/objects/?ids={ids}", "$r2,$r4"))
@@ -171,6 +176,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         }
         verify(exactly = 2) {
             statementService.countIncomingStatements(any<Set<ThingId>>())
+            statementService.findAllDescriptions(any())
         }
     }
 
@@ -222,6 +228,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { statementService.findById(s1.id) } returns Optional.of(newS1)
         every { statementService.findById(s2.id) } returns Optional.of(newS2)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         mockMvc
             .perform(documentedPutRequestTo("/api/statements/?ids={ids}", "${s1.id},${s2.id}").content(payload))
@@ -247,6 +254,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
             statementService.findById(s1.id)
             statementService.findById(s2.id)
             statementService.countIncomingStatements(any<Set<ThingId>>())
+            statementService.findAllDescriptions(any())
         }
     }
 

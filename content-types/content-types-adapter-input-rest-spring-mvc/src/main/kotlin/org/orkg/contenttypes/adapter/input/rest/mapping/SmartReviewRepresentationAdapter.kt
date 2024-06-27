@@ -19,7 +19,8 @@ import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.springframework.data.domain.Page
 
-interface SmartReviewRepresentationAdapter : AuthorRepresentationAdapter, VersionRepresentationAdapter, LabeledObjectRepresentationAdapter {
+interface SmartReviewRepresentationAdapter : AuthorRepresentationAdapter, VersionRepresentationAdapter,
+    LabeledObjectRepresentationAdapter, ThingReferenceRepresentationAdapter {
 
     fun Optional<SmartReview>.mapToSmartReviewRepresentation(): Optional<SmartReviewRepresentation> =
         map { it.toSmartReviewRepresentation() }
@@ -49,11 +50,32 @@ interface SmartReviewRepresentationAdapter : AuthorRepresentationAdapter, Versio
 
     private fun SmartReviewSection.toSmartReviewSectionRepresentation(): SmartReviewSectionRepresentation =
         when (this) {
-            is SmartReviewComparisonSection -> SmartReviewComparisonSectionRepresentation(id, heading, comparison)
-            is SmartReviewVisualizationSection -> SmartReviewVisualizationSectionRepresentation(id, heading, visualization)
-            is SmartReviewResourceSection -> SmartReviewResourceSectionRepresentation(id, heading, resource)
-            is SmartReviewPredicateSection -> SmartReviewPredicateSectionRepresentation(id, heading, predicate)
-            is SmartReviewOntologySection -> SmartReviewOntologySectionRepresentation(id, heading, entities, predicates)
+            is SmartReviewComparisonSection -> SmartReviewComparisonSectionRepresentation(
+                id = id,
+                heading = heading,
+                comparison = comparison?.toResourceReferenceRepresentation()
+            )
+            is SmartReviewVisualizationSection -> SmartReviewVisualizationSectionRepresentation(
+                id = id,
+                heading = heading,
+                visualization = visualization?.toResourceReferenceRepresentation()
+            )
+            is SmartReviewResourceSection -> SmartReviewResourceSectionRepresentation(
+                id = id,
+                heading = heading,
+                resource = resource?.toResourceReferenceRepresentation()
+            )
+            is SmartReviewPredicateSection -> SmartReviewPredicateSectionRepresentation(
+                id = id,
+                heading = heading,
+                predicate = predicate?.toPredicateReferenceRepresentation()
+            )
+            is SmartReviewOntologySection -> SmartReviewOntologySectionRepresentation(
+                id = id,
+                heading = heading,
+                entities = entities.map { it.toThingReferenceRepresentation() },
+                predicates = predicates.map { it.toPredicateReferenceRepresentation() }
+            )
             is SmartReviewTextSection -> SmartReviewTextSectionRepresentation(id, heading, classes, text)
         }
 }

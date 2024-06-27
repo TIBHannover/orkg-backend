@@ -4,12 +4,24 @@ plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm")
     id("jacoco")
+    id("idea")
     id("org.orkg.gradle.base")
     id("org.orkg.gradle.consistent-resolution")
     id("com.diffplug.spotless")
 }
 
 val javaLanguageVersion = JavaLanguageVersion.of(17)
+
+// Support downloading JavaDoc and sources artifacts by enabling it via Gradle properties
+val downloadJavadoc: String? by project
+val downloadSources: String? by project
+
+idea {
+    module {
+        isDownloadJavadoc = downloadJavadoc?.let(String::toBoolean) ?: false
+        isDownloadSources = downloadSources?.let(String::toBoolean) ?: false
+    }
+}
 
 kotlin {
     jvmToolchain {

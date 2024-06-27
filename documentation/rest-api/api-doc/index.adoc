@@ -255,6 +255,27 @@ To safely delete a resource, the resource shouldn't have any statements related 
 
 operation::resource-controller-integration-test-delete-resource-forbidden[snippets='curl-request,http-response']
 
+[[resources-import]]
+=== Importing a resource
+
+The {orkg} REST API provides two endpoints for importing resources from external ontologies.
+
+[[resources-import-by-uri]]
+==== Importing a resource by URI
+
+A `POST` request imports a resource from an external ontology by a given URI.
+The response will be `201 Created` when successful, even when the resource was already imported previously.
+
+operation::import-import-resource-by-uri[snippets='curl-request,http-response,request-fields']
+
+[[resources-import-by-short-form]]
+==== Importing a resource by short form
+
+A `POST` request imports a resource from an external ontology by a given short form id.
+The response will be `201 Created` when successful, even when the resource was already imported.
+
+operation::import-import-resource-by-short-form[snippets='curl-request,http-response,request-fields']
+
 [[predicates]]
 == Predicates
 
@@ -310,6 +331,26 @@ Predicates can be looked up by label by providing a search fragment.
 
 operation::predicate-controller-integration-test-lookup[snippets='curl-request,http-response']
 
+[[predicates-import]]
+=== Importing a predicate
+
+The {orkg} REST API provides two endpoints for importing predicates from external ontologies.
+
+[[predicates-import-by-uri]]
+==== Importing a predicate by URI
+
+A `POST` request imports a predicate from an external ontology by a given URI.
+
+operation::import-import-predicate-by-uri[snippets='curl-request,http-response,request-fields']
+The response will be `201 Created` when successful, even when the predicate was already imported previously.
+
+[[predicates-import-by-short-form]]
+==== Importing a predicate by short form
+
+A `POST` request imports a predicate from an external ontology by a given short form id.
+The response will be `201 Created` when successful, even when the predicate was already imported previously.
+
+operation::import-import-predicate-by-short-form[snippets='curl-request,http-response,request-fields']
 
 [[literals]]
 == Literals
@@ -512,6 +553,8 @@ By default, sorting is done by the `created_at` property (time-based).
 | obj.created_by | The id of the curator who originally created the object of the statement
 |==============================================================================================
 
+[[external-sources]]
+include::parts/external-sources.adoc[leveloffset=+1]
 
 == Representations
 

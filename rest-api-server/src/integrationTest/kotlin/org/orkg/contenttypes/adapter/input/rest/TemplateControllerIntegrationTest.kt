@@ -204,7 +204,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.label shouldBe "example template"
             it.description shouldBe "template description"
             it.formattedLabel shouldBe "{P32}"
-            it.targetClass shouldBe ClassReference(ThingId("C123"), "C123", null)
+            it.targetClass shouldBe ClassReferenceRepresentation(ThingId("C123"), "C123", null)
             it.relations shouldBe TemplateRelationRepresentation(
                 researchFields = listOf(ObjectIdAndLabel(ThingId("R12"), "Computer Science")),
                 researchProblems = listOf(ObjectIdAndLabel(ThingId("R15"), "label")),
@@ -233,7 +233,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\d+"
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-                property.datatype shouldBe ClassReference(ThingId("String"), "String", URI.create(Literals.XSD.STRING.uri))
+                property.datatype shouldBe ClassReferenceRepresentation(ThingId("String"), "String", URI.create(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -248,7 +248,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.minInclusive shouldBe -1
                 property.maxInclusive shouldBe 10
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-                property.datatype shouldBe ClassReference(ThingId("Integer"), "Integer", URI.create(Literals.XSD.INT.uri))
+                property.datatype shouldBe ClassReferenceRepresentation(ThingId("Integer"), "Integer", URI.create(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -261,7 +261,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
-                property.datatype shouldBe ClassReference(ThingId("C25"), "C25", null)
+                property.datatype shouldBe ClassReferenceRepresentation(ThingId("C25"), "C25", null)
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }

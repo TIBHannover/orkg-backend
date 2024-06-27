@@ -4,20 +4,13 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.graph.domain.Classes
+import org.orkg.graph.adapter.output.neo4j.reservedLabels
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
 import org.springframework.data.neo4j.core.schema.DynamicLabels
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
-
-private val ReservedClassIds = setOf(
-    Classes.literal,
-    Classes.`class`,
-    Classes.predicate,
-    Classes.resource
-)
 
 @Node("Resource")
 class Neo4jResource : Neo4jThing() {
@@ -61,7 +54,7 @@ class Neo4jResource : Neo4jThing() {
         id = id!!,
         label = label!!,
         createdAt = created_at!!,
-        classes = classes - ReservedClassIds,
+        classes = classes - reservedLabels,
         createdBy = created_by,
         observatoryId = observatory_id,
         extractionMethod = extraction_method,

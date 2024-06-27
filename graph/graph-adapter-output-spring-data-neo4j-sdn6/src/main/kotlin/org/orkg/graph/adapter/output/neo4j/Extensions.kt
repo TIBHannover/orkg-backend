@@ -30,6 +30,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.List
@@ -45,13 +46,15 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
-private val reservedClassIds = setOf(
-    "Thing",
-    "Literal",
-    "Class",
-    "Predicate",
-    "Resource"
+val reservedLabels = setOf(
+    Classes.literal,
+    Classes.`class`,
+    Classes.predicate,
+    Classes.resource,
+    Classes.thing
 )
+
+val reservedLabelsAsStrings = reservedLabels.map { it.value }
 
 data class StatementMapper(
     val predicateRepository: PredicateRepository,
@@ -148,7 +151,7 @@ fun Node.toClass() = Class(
 fun Node.toResource() = Resource(
     id = this["id"].toThingId()!!,
     label = this["label"].asString(),
-    classes = this.labels().filter { it !in reservedClassIds }.map(::ThingId).toSet(),
+    classes = this.labels().filter { it !in reservedLabelsAsStrings }.map(::ThingId).toSet(),
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),
     observatoryId = this["observatory_id"].toObservatoryId(),

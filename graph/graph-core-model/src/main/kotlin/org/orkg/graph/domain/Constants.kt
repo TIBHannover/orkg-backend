@@ -157,6 +157,7 @@ object Classes {
     val supplementaryInformationDescription = ThingId("SupplementaryInformationDescription")
     val sustainableDevelopmentGoal = ThingId("SustainableDevelopmentGoal")
     val textSection = ThingId("TextSection")
+    val thing = ThingId("Thing")
     val time = ThingId("Time")
     val uri = ThingId("URI")
     val venue = ThingId("Venue")

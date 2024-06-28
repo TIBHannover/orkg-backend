@@ -310,7 +310,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the literature list belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the literature list belongs to. (optional)").optional(),
                         fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
-                        subsectionWithPath("sections").description("The list of updated of the literature list (optional). See <<literature-list-sections,literature list sections>> for more information."),
+                        subsectionWithPath("sections").description("The list of updated sections of the literature list (optional). See <<literature-list-sections,literature list sections>> for more information."),
                     ).and(authorListFields("literature list"))
                 )
             )
@@ -749,22 +749,18 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             )
         )
 
-    companion object {
-        @JvmStatic
-        private fun textSectionRequest() =
-            LiteratureListController.TextSectionRequest(
-                heading = "heading",
-                headingSize = 1,
-                text = "text contents"
-            )
+    private fun textSectionRequest() =
+        LiteratureListController.TextSectionRequest(
+            heading = "heading",
+            headingSize = 1,
+            text = "text contents"
+        )
 
-        @JvmStatic
-        private fun listSectionRequest() =
-            LiteratureListController.ListSectionRequest(
-                entries = listOf(
-                    Entry(ThingId("R123"), "Example description of an entry"),
-                    Entry(ThingId("R456"))
-                )
+    private fun listSectionRequest() =
+        LiteratureListController.ListSectionRequest(
+            entries = listOf(
+                Entry(ThingId("R123"), "Example description of an entry"),
+                Entry(ThingId("R456"))
             )
-    }
+        )
 }

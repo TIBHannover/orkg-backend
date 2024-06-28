@@ -108,4 +108,44 @@ fun <
             }
         }
     }
+
+    describe("listing classes") {
+        context("without description") {
+            val classes: List<Class> = fabricator.random<List<Class>>()
+            classes.forEach(classRepository::save)
+
+            val description = fabricator.random<Predicate>().copy(id = Predicates.description)
+
+            classes.take(6).forEach { item ->
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = item,
+                        predicate = description,
+                        `object` = fabricator.random<Literal>()
+                    )
+                )
+            }
+
+            val expected = classes.drop(6).sortedBy { it.createdAt }
+            val result = repository.findAllClassesWithoutDescriptions(PageRequest.of(0, 10))
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+    }
 }

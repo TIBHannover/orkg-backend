@@ -9,3 +9,11 @@ Curation endpoints provide specialised views for entities of the graph.
 A `GET` request lists all <<predicates,predicates>> without descriptions:
 
 operation::curation-find-all-predicates-without-descriptions[snippets='curl-request,http-response']
+
+[[curation-list-classes-without-descriptions]]
+== Listing classes without descriptions
+
+A `GET` request lists all <<classes,classes>> without descriptions:
+
+operation::curation-find-all-classes-without-descriptions[snippets='curl-request,http-response']
+

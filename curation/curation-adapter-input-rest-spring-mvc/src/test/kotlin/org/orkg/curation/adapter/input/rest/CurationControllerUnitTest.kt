@@ -13,8 +13,10 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.curation.input.RetrieveCurationUseCase
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.andExpectClass
 import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
@@ -58,5 +60,20 @@ internal class CurationControllerUnitTest : RestDocsTest("curation") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findAllPredicatesWithoutDescriptions(any()) }
+    }
+
+    @Test
+    @DisplayName("Given several classes, when fetching all classes without descriptions, then status is 200 OK and classes are returned")
+    fun findAllClassesWithoutDescriptions() {
+        every { service.findAllClassesWithoutDescriptions(any()) } returns pageOf(createClass())
+
+        documentedGetRequestTo("/api/curation/classes-without-descriptions")
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectClass("$.content[*]")
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { service.findAllClassesWithoutDescriptions(any()) }
     }
 }

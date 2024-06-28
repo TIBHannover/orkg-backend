@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added endpoint for creating literature list sections at a specific index.
+  (See: [!974](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/974)
+- Added endpoint for deleting individual literature list sections.
+  (See: [!975](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/975)
+- Download documentation and source artifacts in all Kotlin subprojects.
+  (See: [!991](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/991)
+- Added import endpoints for resources, classes and predicates from external ontologies.
+  (See: [!970](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/970)
+- Added curation endpoint for fetching predicates without descriptions.
+  (See: [!993](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/993)
+- Added curation endpoint for fetching classes without descriptions.
+  (See: [!994](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/994)
+- Added endpoint for soft-deleting rosetta stone statements.
+  (See: [!982](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/982)
+- Added endpoint for deleting rosetta stone statements. Requires curator status.
+  (See: [!983](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/983)
+
+### Fixed
+- Fixed predicate descriptions missing from all requests except when being fetched by id.
+  (See: [!984](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/984))
+- Fixed class descriptions missing from all requests except when being fetched by id.
+  (See: [!985](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/985))
+- It is no longer possible to modify published literature lists when using literature list content-type endpoints.
+  (See: [!976](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/976))
+- It is no longer possible to create or update a rosetta stone statement with a nested rosetta stone statement as an input.
+  (See: [!988](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/988))
 
 ## [0.60.0] - 2024-06-21
 ### Added
@@ -22,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Resources can now be deleted even when there are still used as a subject in a statement.
   (See: [!971](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/971))
 - Predicates can no longer be deleted when still being used in a rosetta stone statement.
-  (See: [!971](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/971))
+  (See: [!972](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/972))
 - Fixed empty rosetta stone statement objects not being correctly retrieved.
   (See: [!980](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/980))
 

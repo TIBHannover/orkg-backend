@@ -10,21 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.61.0] - 2024-06-28
 ### Added
 - Added endpoint for creating literature list sections at a specific index.
-  (See: [!974](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/974)
+  (See: [!974](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/974))
 - Added endpoint for deleting individual literature list sections.
-  (See: [!975](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/975)
+  (See: [!975](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/975))
 - Download documentation and source artifacts in all Kotlin subprojects.
-  (See: [!991](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/991)
+  (See: [!991](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/991))
 - Added import endpoints for resources, classes and predicates from external ontologies.
-  (See: [!970](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/970)
+  (See: [!970](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/970))
 - Added curation endpoint for fetching predicates without descriptions.
-  (See: [!993](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/993)
+  (See: [!993](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/993))
 - Added curation endpoint for fetching classes without descriptions.
-  (See: [!994](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/994)
+  (See: [!994](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/994))
 - Added endpoint for soft-deleting rosetta stone statements.
-  (See: [!982](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/982)
+  (See: [!982](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/982))
 - Added endpoint for deleting rosetta stone statements. Requires curator status.
-  (See: [!983](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/983)
+  (See: [!983](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/983))
 
 ### Fixed
 - Fixed predicate descriptions missing from all requests except when being fetched by id.
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Resources can no longer be deleted when still being used in a rosetta stone statement.
   (See: [!971](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/971))
-- Resources can now be deleted even when there are still used as a subject in a statement.
+- Resources can now be deleted even when they are still used as a subject in a statement.
   (See: [!971](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/971))
 - Predicates can no longer be deleted when still being used in a rosetta stone statement.
   (See: [!972](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/972))

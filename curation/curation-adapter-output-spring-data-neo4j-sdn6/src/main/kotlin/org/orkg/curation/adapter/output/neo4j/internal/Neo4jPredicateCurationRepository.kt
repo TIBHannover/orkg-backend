@@ -13,7 +13,6 @@ private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} $PAGE_PARAMS"
 private const val WITH_NODE_PROPERTIES =
     """WITH node, node.label AS label, node.id AS id, node.created_at AS created_at"""
 
-
 interface Neo4jPredicateCurationRepository : Neo4jRepository<Neo4jPredicate, ThingId> {
     @Query(
         value = """
@@ -29,6 +28,4 @@ interface Neo4jPredicateCurationRepository : Neo4jRepository<Neo4jPredicate, Thi
         """
     )
     fun findAllPredicatesWithoutDescriptions(pageable: Pageable): Page<Neo4jPredicate>
-
 }
-

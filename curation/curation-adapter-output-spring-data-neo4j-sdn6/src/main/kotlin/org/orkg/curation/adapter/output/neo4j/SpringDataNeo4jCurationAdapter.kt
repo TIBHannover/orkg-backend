@@ -23,5 +23,5 @@ class SpringDataNeo4jCurationAdapter(
 
     override fun findAllClassesWithoutDescriptions(pageable: Pageable): Page<Class> =
         classRepository.findAllClassesWithoutDescriptions(pageable.withDefaultSort { Sort.by("created_at") })
-            .map{ it.toClass() }
+            .map { it.toClass() }
 }

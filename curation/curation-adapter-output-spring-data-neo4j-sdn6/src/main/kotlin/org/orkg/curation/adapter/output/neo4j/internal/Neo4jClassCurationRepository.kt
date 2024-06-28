@@ -29,5 +29,4 @@ interface Neo4jClassCurationRepository : Neo4jRepository<Neo4jClass, ThingId> {
             """
     )
     fun findAllClassesWithoutDescriptions(pageable: Pageable): Page<Neo4jClass>
-
 }

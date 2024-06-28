@@ -126,7 +126,7 @@ fun <
                 )
             }
 
-            val expected = (classes.drop(6) + description).sortedBy { it.createdAt }
+            val expected = classes.drop(6).sortedBy { it.createdAt }
             val result = repository.findAllClassesWithoutDescriptions(PageRequest.of(0, 10))
 
             it("returns the correct result") {

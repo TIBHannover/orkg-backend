@@ -13,7 +13,6 @@ interface ManageUserSettingUseCases {
     fun checkPassword(userId: UUID, aPassword: String): Boolean
     fun updatePassword(userId: UUID, aPassword: String)
     fun updateName(userId: UUID, newName: String)
-    fun updateRole(userId: UUID)
 }
 
 interface FindUserUseCases {

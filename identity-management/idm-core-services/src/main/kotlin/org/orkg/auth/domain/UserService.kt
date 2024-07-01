@@ -58,12 +58,4 @@ class UserService(
         user = user.copy(displayName = newName)
         repository.save(user)
     }
-
-    override fun updateRole(userId: UUID) {
-        var user = repository.findById(userId).orElseThrow { UserNotFound(userId) }
-        val role =
-            roleRepository.findByName("ORGANIZATION_OWNER").orElseThrow { IllegalStateException("Role missing.") }
-        user = user.copy(roles = user.roles + role)
-        repository.save(user)
-    }
 }

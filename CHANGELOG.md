@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Removed
+- The following statement related endpoints have beeen removed from the api
+  (Closes [#549](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/549)):
+  - `/api/statements/subject/{subjectId}`
+  - `/api/statements/subject/{subjectId}/predicate/{predicateId}`
+  - `/api/statements/predicate/{predicateId}`
+  - `/api/statements/predicate/{predicateId}/literal/{literal}`
+  - `/api/statements/predicate/{predicateId}/literals`
+  - `/api/statements/object/{objectId}`
+  - `/api/statements/object/{objectId}/predicate/{predicateId}`
+- The following endpoint has beeen removed from the api
+  (See: [#967](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/967)):
+  - `/api/user/role`
 
 ## [0.61.0] - 2024-06-28
 ### Added

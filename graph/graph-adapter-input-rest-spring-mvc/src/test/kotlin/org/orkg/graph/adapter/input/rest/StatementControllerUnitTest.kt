@@ -32,7 +32,6 @@ import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
-import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.FixedClockConfig
@@ -339,40 +338,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
                 .andExpect(status().isForbidden)
 
             verify(exactly = 0) { statementService.delete(id) }
-        }
-    }
-
-    @Test
-    fun `Given several statements, when searched by predicate id and object literal, then status is 200 OK and statements are returned`() {
-        val statement = createStatement(
-            subject = createResource(),
-            predicate = createPredicate(),
-            `object` = createLiteral(label = "path/to/resource")
-        )
-
-        every {
-            statementService.findAll(
-                predicateId = statement.predicate.id,
-                objectClasses = setOf(Classes.literal),
-                objectLabel = statement.`object`.label,
-                pageable = any()
-            )
-        } returns pageOf(statement)
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-        every { statementService.findAllDescriptions(any()) } returns emptyMap()
-
-        mockMvc.perform(get("/api/statements/predicate/${statement.predicate.id}/literals?q=${statement.`object`.label}"))
-            .andExpect(status().isOk)
-
-        verify(exactly = 1) {
-            statementService.findAll(
-                predicateId = statement.predicate.id,
-                objectClasses = setOf(Classes.literal),
-                objectLabel = statement.`object`.label,
-                pageable = any()
-            )
-            statementService.countIncomingStatements(any<Set<ThingId>>())
-            statementService.findAllDescriptions(any())
         }
     }
 

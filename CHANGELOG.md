@@ -18,8 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `/api/statements/predicate/{predicateId}/literals`
   - `/api/statements/object/{objectId}`
   - `/api/statements/object/{objectId}/predicate/{predicateId}`
-- The following endpoint has beeen removed from the api
-  (See: [#967](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/967)):
+- The following endpoint has been removed from the api
+  (See: [!967](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/967)):
   - `/api/user/role`
 
 ## [0.61.0] - 2024-06-28

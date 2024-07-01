@@ -16,6 +16,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.graph.domain.ClassNotFound
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.StatementRepository
@@ -49,8 +50,9 @@ class TemplateTargetClassValidatorUnitTest {
         every { classRepository.findById(targetClass) } returns Optional.of(createClass())
         every {
             statementRepository.findAll(
-                objectId = targetClass,
+                subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
+                objectId = targetClass,
                 pageable = PageRequests.SINGLE
             )
         } returns pageOf()
@@ -60,8 +62,9 @@ class TemplateTargetClassValidatorUnitTest {
         verify(exactly = 1) { classRepository.findById(targetClass) }
         verify(exactly = 1) {
             statementRepository.findAll(
-                objectId = targetClass,
+                subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
+                objectId = targetClass,
                 pageable = PageRequests.SINGLE
             )
         }
@@ -93,8 +96,9 @@ class TemplateTargetClassValidatorUnitTest {
         every { classRepository.findById(targetClassId) } returns Optional.of(targetClass)
         every {
             statementRepository.findAll(
-                objectId = targetClassId,
+                subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
+                objectId = targetClassId,
                 pageable = PageRequests.SINGLE
             )
         } returns pageOf(
@@ -110,8 +114,9 @@ class TemplateTargetClassValidatorUnitTest {
         verify(exactly = 1) { classRepository.findById(targetClassId) }
         verify(exactly = 1) {
             statementRepository.findAll(
-                objectId = targetClassId,
+                subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
+                objectId = targetClassId,
                 pageable = PageRequests.SINGLE
             )
         }

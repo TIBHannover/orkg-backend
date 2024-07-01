@@ -5,6 +5,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.graph.domain.ClassNotFound
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.StatementRepository
@@ -21,6 +22,7 @@ class TemplateTargetClassValidator<T, S>(
         if (newTargetClass != null && newTargetClass != oldTargetClass) {
             classRepository.findById(newTargetClass).orElseThrow { ClassNotFound.withThingId(newTargetClass) }
             val statements = statementRepository.findAll(
+                subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = newTargetClass,
                 pageable = PageRequests.SINGLE

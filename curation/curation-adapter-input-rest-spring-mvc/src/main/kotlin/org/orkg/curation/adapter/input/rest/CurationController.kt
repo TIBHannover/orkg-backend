@@ -29,4 +29,9 @@ class CurationController(
     fun findAllClassesWithoutDescriptions(pageable: Pageable): Page<ClassRepresentation> =
         service.findAllClassesWithoutDescriptions(pageable)
             .map { it.toClassRepresentation(null) }
+
+    @GetMapping("/papers-per-researchfield")
+    fun findAllPapersPerResearchField(pageable: Pageable): Page<ResearchFieldPaperCount> =
+        service.findAllPapersPerResearchField(pageable)
+            .map{ }
 }

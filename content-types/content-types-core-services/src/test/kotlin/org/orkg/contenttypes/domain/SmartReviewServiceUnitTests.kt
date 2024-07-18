@@ -16,7 +16,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -24,8 +27,14 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -39,12 +48,28 @@ class SmartReviewServiceUnitTests {
     private val smartReviewRepository: SmartReviewRepository = mockk()
     private val smartReviewPublishedRepository: SmartReviewPublishedRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
+    private val observatoryRepository: ObservatoryRepository = mockk()
+    private val organizationRepository: OrganizationRepository = mockk()
+    private val predicateRepository: PredicateRepository = mockk()
+    private val thingRepository: ThingRepository = mockk()
+    private val resourceService: ResourceUseCases = mockk()
+    private val literalService: LiteralUseCases = mockk()
+    private val statementService: StatementUseCases = mockk()
+    private val listService: ListUseCases = mockk()
 
     private val service = SmartReviewService(
         resourceRepository = resourceRepository,
         smartReviewRepository = smartReviewRepository,
         smartReviewPublishedRepository = smartReviewPublishedRepository,
-        statementRepository = statementRepository
+        statementRepository = statementRepository,
+        observatoryRepository = observatoryRepository,
+        organizationRepository = organizationRepository,
+        predicateRepository = predicateRepository,
+        thingRepository = thingRepository,
+        resourceService = resourceService,
+        literalService = literalService,
+        statementService = statementService,
+        listService = listService
     )
 
     @BeforeEach
@@ -58,7 +83,15 @@ class SmartReviewServiceUnitTests {
             resourceRepository,
             smartReviewRepository,
             smartReviewPublishedRepository,
-            statementRepository
+            statementRepository,
+            observatoryRepository,
+            organizationRepository,
+            predicateRepository,
+            thingRepository,
+            resourceService,
+            literalService,
+            statementService,
+            listService
         )
     }
 
@@ -141,15 +174,6 @@ class SmartReviewServiceUnitTests {
                     classes = setOf(Classes.sustainableDevelopmentGoal),
                     label = "No poverty",
                     id = ThingId("SDG_1")
-                )
-            ),
-            createStatement(
-                subject = expected,
-                predicate = createPredicate(Predicates.hasResearchField),
-                `object` = createResource(
-                    id = researchFieldId,
-                    classes = setOf(Classes.researchField),
-                    label = "Research Field 1"
                 )
             ),
             createStatement(
@@ -285,6 +309,23 @@ class SmartReviewServiceUnitTests {
                 `object` = createLiteral(label = "reference 2")
             )
         )
+        every {
+            statementRepository.findAll(
+                subjectId = expected.id,
+                objectClasses = setOf(Classes.researchField),
+                pageable = PageRequests.ALL
+            )
+        } returns pageOf(
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasResearchField),
+                `object` = createResource(
+                    id = researchFieldId,
+                    classes = setOf(Classes.researchField),
+                    label = "Research Field 1"
+                )
+            )
+        )
 
         val actual = service.findById(expected.id)
 
@@ -353,6 +394,13 @@ class SmartReviewServiceUnitTests {
                 id = expected.id,
                 configuration = bundleConfiguration,
                 sort = Sort.unsorted()
+            )
+        }
+        verify(exactly = 1) {
+            statementRepository.findAll(
+                subjectId = expected.id,
+                objectClasses = setOf(Classes.researchField),
+                pageable = PageRequests.ALL
             )
         }
     }

@@ -5,11 +5,10 @@
 flowchart LR
     SmartReviewPublished[SmartReviewPublished \n Resource] --> |"P26 \n has DOI"| doi[Literal \n xsd:string]
     SmartReviewPublished --> |"description"| description[Literal \n xsd:string]
-	SmartReview[SmartReview \n Resource] --> |"hasPublishedVersion"| SmartReviewPublished
-	SmartReview --> |"P31 \n has Contribution"| Contribution
+	SmartReview --> |"P31 \n has Contribution"| contribution
     SmartReview --> |"hasAuthors"| authorList[List \n Resource]
 	SmartReview --> |"P30 \n has research field"| researchField[ResearchField \n Resource]
-	SmartReview --> |"HasReference"| reference[Literal \n xsd:string]
+	SmartReview[SmartReview \n Resource] --> |"hasPublishedVersion"| SmartReviewPublished
     subgraph Author List
         authorList --> |"hasListElement"| Author
 		subgraph Author
@@ -35,7 +34,7 @@ flowchart LR
 			end
 		end
     end
-    Contribution[ContributionSmartReview] --> |"HasSection"| smartReviewSections
+    contribution[ContributionSmartReview \n Contribution] --> |"HasSection"| smartReviewSections
 	subgraph smartReviewSections[Smart Review Sections]
 		comparisonSection[ComparisonSection \n Resource]
 		visualizationSection[VisualizationSection \n Resource]
@@ -63,5 +62,6 @@ flowchart LR
 			ontologySection --> |"ShowProperty"| showProperty[Predicate]
 		end
 	end
+    contribution --> |"HasReference"| reference[Literal \n xsd:string]
 	SmartReview --> |"sustainableDevelopmentGoal"| sdg[SustainableDevelopmentGoal \n Resource]
 ----

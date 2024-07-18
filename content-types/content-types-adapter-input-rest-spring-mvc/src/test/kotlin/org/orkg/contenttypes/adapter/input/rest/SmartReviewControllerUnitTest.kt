@@ -7,9 +7,11 @@ import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.verify
+import java.net.URI
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -21,31 +23,40 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.SmartReviewUseCases
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectSmartReview
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [SmartReviewController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [SmartReviewController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [SmartReviewController::class])
 @DisplayName("Given a SmartReview controller")
 internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
@@ -266,4 +277,149 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             smartReviewService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a smart review create request, when service succeeds, it creates the smart review")
+    fun create() {
+        val id = ThingId("R123")
+        every { smartReviewService.create(any()) } returns id
+
+        documentedPostRequestTo("/api/smart-reviews")
+            .content(createSmartReviewRequest())
+            .accept(SMART_REVIEW_JSON_V1)
+            .contentType(SMART_REVIEW_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("title").description("The title of the smart review."),
+                        fieldWithPath("research_fields").description("The list of research fields the smart review will be assigned to."),
+                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the smart review will be assigned to. (optional)"),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the smart review belongs to. (optional)").optional(),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the smart review belongs to. (optional)").optional(),
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
+//                        subsectionWithPath("sections").description("The list of updated sections of the smart review (optional). See <<smart-review-sections,smart review sections>> for more information."),
+                        fieldWithPath("sections").description("The list of sections of the smart review."),
+                        fieldWithPath("sections[].heading").description("The heading of the section.").optional(),
+                        fieldWithPath("sections[].comparison").description("The id of the linked comparison.").optional(),
+                        fieldWithPath("sections[].visualization").description("The id of the linked visualization..").optional(),
+                        fieldWithPath("sections[].resource").description("The id of the linked resource.").optional(),
+                        fieldWithPath("sections[].predicate").description("The id of the linked predicate.").optional(),
+                        fieldWithPath("sections[].entities[]").description("The id of the entities that should be shown in the ontology section.").optional(),
+                        fieldWithPath("sections[].predicates[]").description("The ids of the predicates that should be shown in the ontology section.").optional(),
+                        fieldWithPath("sections[].text").description("The text contents of the text section.").optional(),
+                        fieldWithPath("sections[].class").description("The id of the class that indicates the type of the text section.").optional(),
+                        fieldWithPath("references[]").description("The list of bibtex references of the smart review."),
+                    ).and(authorListFields("smart review"))
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { smartReviewService.create(any()) }
+    }
+
+    private fun createSmartReviewRequest() =
+        SmartReviewController.CreateSmartReviewRequest(
+            title = "Dummy Smart Review Label",
+            researchFields = listOf(ThingId("R14")),
+            authors = listOf(
+                AuthorDTO(
+                    id = ThingId("R123"),
+                    name = "Author with id",
+                    identifiers = null,
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with orcid",
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = ThingId("R456"),
+                    name = "Author with id and orcid",
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with homepage",
+                    identifiers = null,
+                    homepage = URI.create("http://example.org/author")
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author that just has a name",
+                    identifiers = null,
+                    homepage = null
+                )
+            ),
+            sustainableDevelopmentGoals = setOf(
+                ThingId("SDG_3"),
+                ThingId("SDG_4")
+            ),
+            observatories = listOf(
+                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            ),
+            organizations = listOf(
+                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            ),
+            extractionMethod = ExtractionMethod.MANUAL,
+            sections = listOf(
+                comparisonSectionRequest(),
+                visualizationSection(),
+                resourceSectionRequest(),
+                predicateSectionRequest(),
+                ontologySectionRequest(),
+                textSectionRequest()
+            ),
+            references = listOf(
+                "reference 1",
+                "reference 2"
+            )
+        )
+
+    private fun comparisonSectionRequest() =
+        SmartReviewController.SmartReviewComparisonSectionRequest(
+            heading = "comparison section heading",
+            comparison = ThingId("comparisonId")
+        )
+
+    private fun visualizationSection() =
+        SmartReviewController.SmartReviewVisualizationSection(
+            heading = "visualization section heading",
+            visualization = ThingId("visualizationId")
+        )
+
+    private fun resourceSectionRequest() =
+        SmartReviewController.SmartReviewResourceSectionRequest(
+            heading = "resource section heading",
+            resource = ThingId("resourceId")
+        )
+
+    private fun predicateSectionRequest() =
+        SmartReviewController.SmartReviewPredicateSectionRequest(
+            heading = "predicate section heading",
+            predicate = ThingId("predicateId")
+        )
+
+    private fun ontologySectionRequest() =
+        SmartReviewController.SmartReviewOntologySectionRequest(
+            heading = "ontology section heading",
+            entities = listOf(ThingId("resourceId")),
+            predicates = listOf(ThingId("predicateId"))
+        )
+
+    private fun textSectionRequest() =
+        SmartReviewController.SmartReviewTextSectionRequest(
+            heading = "text section heading",
+            `class` = Classes.epilogue,
+            text = "epilogue"
+        )
 }

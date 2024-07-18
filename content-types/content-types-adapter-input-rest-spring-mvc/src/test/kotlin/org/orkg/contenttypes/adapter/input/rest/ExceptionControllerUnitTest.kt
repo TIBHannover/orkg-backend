@@ -10,6 +10,7 @@ import org.orkg.contenttypes.adapter.input.rest.ExceptionControllerUnitTest.Fake
 import org.orkg.contenttypes.domain.ComparisonNotModifiable
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotModifiable
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
+import org.orkg.contenttypes.domain.InvalidBibTeXReference
 import org.orkg.contenttypes.domain.InvalidBounds
 import org.orkg.contenttypes.domain.InvalidDatatype
 import org.orkg.contenttypes.domain.InvalidHeadingSize
@@ -708,6 +709,21 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun invalidBibTeXReference() {
+        val reference = "not bibtex"
+
+        get("/invalid-bibtex-reference")
+            .param("reference", reference)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-bibtex-reference"))
+            .andExpect(jsonPath("$.message").value("""Invalid BibTeX reference "$reference"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -977,6 +993,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/missing-formatted-label-placeholder")
         fun missingFormattedLabelPlaceholder(@RequestParam index: Int) {
             throw MissingFormattedLabelPlaceholder(index)
+        }
+
+        @GetMapping("/invalid-bibtex-reference")
+        fun invalidBibTeXReference(@RequestParam reference: String) {
+            throw InvalidBibTeXReference(reference)
         }
     }
 

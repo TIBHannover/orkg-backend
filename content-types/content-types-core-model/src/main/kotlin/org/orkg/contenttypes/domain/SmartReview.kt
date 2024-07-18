@@ -147,6 +147,34 @@ data class SmartReviewTextSection(
     val text: String
 ) : SmartReviewSection {
     companion object {
+        val types = setOf(
+            Classes.acknowledgements,
+            Classes.background,
+            Classes.caption,
+            Classes.conclusion,
+            Classes.contribution,
+            Classes.data,
+            Classes.datasetDescription,
+            Classes.discussion,
+            Classes.epilogue,
+            Classes.evaluation,
+            Classes.externalResourceDescription,
+            Classes.futureWork,
+            Classes.introduction,
+            Classes.legend,
+            Classes.materials,
+            Classes.methods,
+            Classes.model,
+            Classes.motivation,
+            Classes.postscript,
+            Classes.problemStatement,
+            Classes.prologue,
+            Classes.relatedWork,
+            Classes.results,
+            Classes.scenario,
+            Classes.supplementaryInformationDescription
+        )
+
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): SmartReviewTextSection =
             SmartReviewTextSection(
                 id = root.id,

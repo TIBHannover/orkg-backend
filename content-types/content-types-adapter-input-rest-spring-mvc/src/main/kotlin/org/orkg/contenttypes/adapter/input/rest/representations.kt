@@ -18,8 +18,6 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.ListSectionRequest
-import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.TextSectionRequest
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.ClassReference
@@ -449,8 +447,8 @@ data class LiteratureListRepresentation(
     property = "type"
 )
 @JsonSubTypes(value = [
-    JsonSubTypes.Type(ListSectionRequest::class),
-    JsonSubTypes.Type(TextSectionRequest::class)
+    JsonSubTypes.Type(ListSectionRepresentation::class),
+    JsonSubTypes.Type(TextSectionRepresentation::class)
 ])
 sealed interface LiteratureListSectionRepresentation {
     val id: ThingId
@@ -503,54 +501,66 @@ data class SmartReviewRepresentation(
     override val jsonClass: String = "smart-review"
 ) : ContentTypeRepresentation
 
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
+)
+@JsonSubTypes(value = [
+    JsonSubTypes.Type(SmartReviewComparisonSectionRepresentation::class),
+    JsonSubTypes.Type(SmartReviewVisualizationSectionRepresentation::class),
+    JsonSubTypes.Type(SmartReviewResourceSectionRepresentation::class),
+    JsonSubTypes.Type(SmartReviewPredicateSectionRepresentation::class),
+    JsonSubTypes.Type(SmartReviewOntologySectionRepresentation::class),
+    JsonSubTypes.Type(SmartReviewTextSectionRepresentation::class)
+])
 sealed interface SmartReviewSectionRepresentation {
     val id: ThingId
     val heading: String
-    val type: String
 }
 
+@JsonTypeName("comparison")
 data class SmartReviewComparisonSectionRepresentation(
     override val id: ThingId,
     override val heading: String,
-    val comparison: ResourceReferenceRepresentation?,
-    override val type: String = "comparison"
+    val comparison: ResourceReferenceRepresentation?
 ) : SmartReviewSectionRepresentation
 
+@JsonTypeName("visualization")
 data class SmartReviewVisualizationSectionRepresentation(
     override val id: ThingId,
     override val heading: String,
-    val visualization: ResourceReferenceRepresentation?,
-    override val type: String = "visualization"
+    val visualization: ResourceReferenceRepresentation?
 ) : SmartReviewSectionRepresentation
 
+@JsonTypeName("resource")
 data class SmartReviewResourceSectionRepresentation(
     override val id: ThingId,
     override val heading: String,
-    val resource: ResourceReferenceRepresentation?,
-    override val type: String = "resource"
+    val resource: ResourceReferenceRepresentation?
 ) : SmartReviewSectionRepresentation
 
+@JsonTypeName("property")
 data class SmartReviewPredicateSectionRepresentation(
     override val id: ThingId,
     override val heading: String,
-    val predicate: PredicateReferenceRepresentation?,
-    override val type: String = "property"
+    val predicate: PredicateReferenceRepresentation?
 ) : SmartReviewSectionRepresentation
 
+@JsonTypeName("ontology")
 data class SmartReviewOntologySectionRepresentation(
     override val id: ThingId,
     override val heading: String,
     val entities: List<ThingReferenceRepresentation>,
-    val predicates: List<PredicateReferenceRepresentation>,
-    override val type: String = "ontology"
+    val predicates: List<PredicateReferenceRepresentation>
 ) : SmartReviewSectionRepresentation
 
+@JsonTypeName("text")
 data class SmartReviewTextSectionRepresentation(
     override val id: ThingId,
     override val heading: String,
     val classes: Set<ThingId>,
-    val text: String,
-    override val type: String = "text"
+    val text: String
 ) : SmartReviewSectionRepresentation
 
 data class RosettaStoneStatementRepresentation(

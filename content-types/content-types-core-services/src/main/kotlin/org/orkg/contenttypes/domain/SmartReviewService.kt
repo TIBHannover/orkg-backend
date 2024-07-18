@@ -5,7 +5,29 @@ import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.domain.actions.Action
+import org.orkg.contenttypes.domain.actions.BibTeXReferencesValidator
+import org.orkg.contenttypes.domain.actions.CreateSmartReviewCommand
+import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
+import org.orkg.contenttypes.domain.actions.LabelValidator
+import org.orkg.contenttypes.domain.actions.ObservatoryValidator
+import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
+import org.orkg.contenttypes.domain.actions.SDGValidator
+import org.orkg.contenttypes.domain.actions.execute
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreateValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewContributionCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewReferencesCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewResearchFieldCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewResourceCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSDGCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsCreateValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsCreator
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
@@ -16,8 +38,14 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -28,7 +56,15 @@ class SmartReviewService(
     private val resourceRepository: ResourceRepository,
     private val smartReviewRepository: SmartReviewRepository,
     private val smartReviewPublishedRepository: SmartReviewPublishedRepository,
-    private val statementRepository: StatementRepository
+    private val statementRepository: StatementRepository,
+    private val observatoryRepository: ObservatoryRepository,
+    private val organizationRepository: OrganizationRepository,
+    private val predicateRepository: PredicateRepository,
+    private val thingRepository: ThingRepository,
+    private val resourceService: ResourceUseCases,
+    private val literalService: LiteralUseCases,
+    private val statementService: StatementUseCases,
+    private val listService: ListUseCases,
 ) : SmartReviewUseCases {
     override fun findById(id: ThingId): Optional<SmartReview> =
         resourceRepository.findById(id)
@@ -60,6 +96,27 @@ class SmartReviewService(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toSmartReview() }
 
+    override fun create(command: CreateSmartReviewCommand): ThingId {
+        val steps = listOf<Action<CreateSmartReviewCommand, CreateSmartReviewState>>(
+            LabelValidator("title") { it.title },
+            BibTeXReferencesValidator({ it.references }),
+            ResearchFieldValidator(resourceRepository, { it.researchFields }),
+            SmartReviewAuthorCreateValidator(resourceRepository, statementRepository),
+            SDGValidator({ it.sustainableDevelopmentGoals }),
+            OrganizationValidator(organizationRepository, { it.organizations }),
+            ObservatoryValidator(observatoryRepository, { it.observatories }),
+            SmartReviewSectionsCreateValidator(resourceRepository, predicateRepository, thingRepository),
+            SmartReviewResourceCreator(resourceService),
+            SmartReviewContributionCreator(resourceService, statementService),
+            SmartReviewReferencesCreator(literalService, statementService),
+            SmartReviewResearchFieldCreator(literalService, statementService),
+            SmartReviewAuthorCreator(resourceService, statementService, literalService, listService),
+            SmartReviewSDGCreator(literalService, statementService),
+            SmartReviewSectionsCreator(literalService, resourceService, statementService)
+        )
+        return steps.execute(command, CreateSmartReviewState()).smartReviewId!!
+    }
+
     internal fun Resource.toSmartReview(): SmartReview {
         var root = id
         val statements = when {
@@ -89,6 +146,10 @@ class SmartReviewService(
                         whitelist = emptyList()
                     ),
                     sort = Sort.unsorted()
+                ) + statementRepository.findAll(
+                    subjectId = id,
+                    objectClasses = setOf(Classes.researchField),
+                    pageable = PageRequests.ALL
                 )
             }
             else -> throw IllegalStateException("""Unable to convert resource "$id" to smart review. This is a bug.""")

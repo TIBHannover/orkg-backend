@@ -13,6 +13,7 @@ import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosettaStoneStatementAction
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.CreateRosettaStoneTemplateAction
+import org.orkg.contenttypes.domain.actions.smartreviews.CreateSmartReviewAction
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.instances.UpdateTemplateInstanceAction
@@ -26,6 +27,7 @@ import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.CreateRosettaStoneStatementUseCase
 import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
+import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
@@ -49,6 +51,7 @@ internal typealias CreateTemplateCommand = CreateTemplateUseCase.CreateCommand
 internal typealias CreateTemplatePropertyCommand = CreateTemplatePropertyUseCase.CreateCommand
 internal typealias CreateLiteratureListCommand = CreateLiteratureListUseCase.CreateCommand
 internal typealias CreateLiteratureListSectionCommand = CreateLiteratureListSectionUseCase.CreateCommand
+internal typealias CreateSmartReviewCommand = CreateSmartReviewUseCase.CreateCommand
 internal typealias CreateRosettaStoneTemplateCommand = CreateRosettaStoneTemplateUseCase.CreateCommand
 internal typealias CreateRosettaStoneStatementCommand = CreateRosettaStoneStatementUseCase.CreateCommand
 
@@ -87,6 +90,8 @@ internal typealias UpdateTemplateInstanceState = UpdateTemplateInstanceAction.St
 
 internal typealias CreateLiteratureListState = CreateLiteratureListAction.State
 internal typealias UpdateLiteratureListState = UpdateLiteratureListAction.State
+
+internal typealias CreateSmartReviewState = CreateSmartReviewAction.State
 
 internal typealias CreateLiteratureListSectionState = CreateLiteratureListSectionAction.State
 internal typealias UpdateLiteratureListSectionState = UpdateLiteratureListSectionAction.State

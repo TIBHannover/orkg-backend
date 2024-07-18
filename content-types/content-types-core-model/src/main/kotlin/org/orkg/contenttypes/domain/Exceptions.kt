@@ -281,3 +281,12 @@ class NestedRosettaStoneStatement(id: ThingId, index: Int) : SimpleMessageExcept
     status = HttpStatus.BAD_REQUEST,
     message = """Rosetta stone statement "$id" for input position $index already contains a rosetta stone statement in one of its input positions."""
 )
+
+class InvalidBibTeXReference(reference: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid BibTeX reference "$reference".""")
+
+class OntologyEntityNotFound(entities: Set<ThingId>) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Ontology entity not found among entities ${entities.joinToString { """"$it"""" }}.""")
+
+class InvalidSmartReviewTextSectionType(type: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid smart review text section type "$type".""")

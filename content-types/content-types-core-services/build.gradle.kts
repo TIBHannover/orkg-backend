@@ -8,6 +8,7 @@ dependencies {
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
     api("org.springframework:spring-tx")
+    api(libs.jbibtex)
     api(project(":common"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input")) // used in LegacyPaperService

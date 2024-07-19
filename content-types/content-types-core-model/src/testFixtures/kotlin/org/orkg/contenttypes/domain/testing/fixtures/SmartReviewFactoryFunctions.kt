@@ -117,7 +117,11 @@ fun createDummySmartReview() = SmartReview(
         createDummySmartReviewPredicateSection(),
         createDummySmartReviewOntologySection()
     ),
-    references = listOf("@misc{R615465, title = {reference 1}}", "@misc{R615465, title = {reference 2}}")
+    references = listOf("@misc{R615465, title = {reference 1}}", "@misc{R615465, title = {reference 2}}"),
+    acknowledgements = mapOf(
+        ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620") to 0.75,
+        ContributorId.UNKNOWN to 0.25
+    )
 )
 
 fun createDummySmartReviewComparisonSection() = SmartReviewComparisonSection(

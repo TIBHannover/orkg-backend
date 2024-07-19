@@ -31,7 +31,8 @@ data class SmartReview(
     val unlistedBy: ContributorId? = null,
     val published: Boolean,
     val sections: List<SmartReviewSection>,
-    val references: List<String>
+    val references: List<String>,
+    val acknowledgements: Map<ContributorId, Double>
 ) : ContentType {
     companion object {
         fun from(resource: Resource, root: ThingId, statements: Map<ThingId, List<GeneralStatement>>): SmartReview {
@@ -42,6 +43,22 @@ data class SmartReview(
             }
                 ?.let { statements[it.`object`.id] }
                 .orEmpty()
+            val versions = VersionInfo(
+                head = HeadVersion(directStatements.firstOrNull()?.subject ?: resource),
+                published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
+                    .sortedByDescending { it.createdAt }
+                    .objects()
+                    .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
+            )
+            val sections = contributionStatements.wherePredicate(Predicates.hasSection)
+                .filter { it.`object` is Resource }
+                .sortedBy { it.createdAt }
+                .map { it.`object` as Resource }
+            val contributors = listOf(
+                versions.head.createdBy,
+                *versions.published.map { it.createdBy }.toTypedArray(),
+                *sections.flatMap { SmartReviewSection.contributors(it, statements) }.toTypedArray()
+            )
             return SmartReview(
                 id = resource.id,
                 title = resource.label,
@@ -49,13 +66,7 @@ data class SmartReview(
                     .objectIdsAndLabel()
                     .sortedBy { it.id },
                 authors = statements.authors(root).ifEmpty { statements.legacyAuthors(root) },
-                versions = VersionInfo(
-                    head = HeadVersion(directStatements.firstOrNull()?.subject ?: resource),
-                    published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
-                        .sortedByDescending { it.createdAt }
-                        .objects()
-                        .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
-                ),
+                versions = versions,
                 sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
                     .objectIdsAndLabel()
                     .sortedBy { it.id }
@@ -68,14 +79,14 @@ data class SmartReview(
                 visibility = resource.visibility,
                 unlistedBy = resource.unlistedBy,
                 published = Classes.smartReviewPublished in resource.classes,
-                sections = contributionStatements.wherePredicate(Predicates.hasSection)
-                    .filter { it.`object` is Resource }
-                    .sortedBy { it.createdAt }
-                    .map { SmartReviewSection.from(it.`object` as Resource, statements) },
+                sections = sections.map { SmartReviewSection.from(it, statements) },
                 references = contributionStatements.wherePredicate(Predicates.hasReference)
                     .filter { it.`object` is Literal }
                     .sortedBy { it.createdAt }
-                    .map { it.`object`.label }
+                    .map { it.`object`.label },
+                acknowledgements = contributors.groupingBy { it }
+                    .eachCount()
+                    .mapValues { (_, value) -> value.toDouble() / contributors.size }
             )
         }
     }
@@ -96,6 +107,17 @@ sealed interface SmartReviewSection {
                 Classes.section in root.classes -> SmartReviewTextSection.from(root, statements)
                 else -> throw IllegalStateException("Cannot convert section ${root.id} to smart review section. This is a bug.")
             }
+
+        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+            when {
+                Classes.comparisonSection in root.classes -> SmartReviewComparisonSection.contributors(root, statements)
+                Classes.visualizationSection in root.classes -> SmartReviewVisualizationSection.contributors(root, statements)
+                Classes.resourceSection in root.classes -> SmartReviewResourceSection.contributors(root, statements)
+                Classes.propertySection in root.classes -> SmartReviewPredicateSection.contributors(root, statements)
+                Classes.ontologySection in root.classes -> SmartReviewOntologySection.contributors(root, statements)
+                Classes.section in root.classes -> SmartReviewTextSection.contributors(root, statements)
+                else -> throw IllegalStateException("Cannot convert section ${root.id} to smart review section. This is a bug.")
+            }
     }
 }
 
@@ -112,6 +134,9 @@ data class SmartReviewComparisonSection(
                 comparison = statements[root.id]?.hasLinkStatementTo<Resource>()
                     ?.let { ResourceReference(it.`object` as Resource) }
             )
+
+        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+            listOfNotNull(root.createdBy, statements[root.id]?.hasLinkStatementTo<Resource>()?.`object`?.createdBy)
     }
 }
 
@@ -128,6 +153,9 @@ data class SmartReviewVisualizationSection(
                 visualization = statements[root.id]?.hasLinkStatementTo<Resource>()
                     ?.let { ResourceReference(it.`object` as Resource) }
             )
+
+        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+            listOfNotNull(root.createdBy, statements[root.id]?.hasLinkStatementTo<Resource>()?.`object`?.createdBy)
     }
 }
 
@@ -144,6 +172,9 @@ data class SmartReviewResourceSection(
                 resource = statements[root.id]?.hasLinkStatementTo<Resource>()
                     ?.let { ResourceReference(it.`object` as Resource) }
             )
+
+        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+            listOfNotNull(root.createdBy, statements[root.id]?.hasLinkStatementTo<Resource>()?.`object`?.createdBy)
     }
 }
 
@@ -160,6 +191,9 @@ data class SmartReviewPredicateSection(
                 predicate = statements[root.id]?.hasLinkStatementTo<Predicate>()
                     ?.let { PredicateReference(it.`object` as Predicate) }
             )
+
+        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+            listOfNotNull(root.createdBy, statements[root.id]?.hasLinkStatementTo<Resource>()?.`object`?.createdBy)
     }
 }
 
@@ -185,6 +219,17 @@ data class SmartReviewOntologySection(
                     ?.map { PredicateReference(it.`object` as Predicate) }
                     .orEmpty()
             )
+
+        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+            listOf(root.createdBy) +
+                statements[root.id]?.wherePredicate(Predicates.hasEntity)
+                    ?.filter { it.`object` is Predicate || it.`object` is Resource }
+                    ?.map { it.`object`.createdBy }
+                    .orEmpty() +
+                statements[root.id]?.wherePredicate(Predicates.showProperty)
+                    ?.filter { it.`object` is Predicate }
+                    ?.map { it.`object`.createdBy }
+                    .orEmpty()
     }
 }
 
@@ -233,6 +278,9 @@ data class SmartReviewTextSection(
                     ?.singleObjectLabel()
                     .orEmpty()
             )
+
+        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+            listOf(root.createdBy)
     }
 }
 

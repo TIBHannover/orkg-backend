@@ -14,6 +14,7 @@ import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
@@ -390,6 +391,10 @@ class SmartReviewServiceUnitTests {
                 )
             )
             it.references shouldBe listOf("reference 1", "reference 2")
+            it.acknowledgements shouldBe mapOf(
+                ContributorId.UNKNOWN to 0.875,
+                ContributorId("a56cfd65-8d29-4eae-a252-1b806fe88d3c") to 0.125
+            )
         }
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }
@@ -702,6 +707,10 @@ class SmartReviewServiceUnitTests {
                 )
             )
             it.references shouldBe listOf("reference 1", "reference 2")
+            it.acknowledgements shouldBe mapOf(
+                ContributorId.UNKNOWN to 0.875,
+                ContributorId("a56cfd65-8d29-4eae-a252-1b806fe88d3c") to 0.125
+            )
         }
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }

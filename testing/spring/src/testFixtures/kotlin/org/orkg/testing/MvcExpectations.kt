@@ -391,6 +391,7 @@ fun ResultActions.andExpectSmartReview(path: String = "$"): ResultActions = this
     // text section specific
     .andExpect(jsonPath("$path.sections[*].text", `is`(notNullValue())))
     .andExpect(jsonPath("$path.references").isArray)
+    .andExpect(jsonPath("$path.acknowledgements", `is`(notNullValue())))
     .andExpect(jsonPath("$path._class").value("smart-review"))
 
 fun ResultActions.andExpectObservatory(path: String = "$"): ResultActions = this

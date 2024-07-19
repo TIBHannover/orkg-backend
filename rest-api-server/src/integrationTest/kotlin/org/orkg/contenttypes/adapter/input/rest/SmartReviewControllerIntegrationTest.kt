@@ -324,6 +324,10 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
                 "@misc{R615465, title = {reference 1}}",
                 "@misc{R154146, title = {reference 2}}"
             )
+            it.acknowledgements shouldBe mapOf(
+                ContributorId(MockUserId.USER) to (7.0 / 13.0),
+                ContributorId.UNKNOWN to (6.0 / 13.0)
+            )
         }
 
         put("/api/smart-reviews/{id}", id)
@@ -422,6 +426,10 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             it.references shouldBe listOf(
                 "@misc{R615465, title = {reference 1}}",
                 "@misc{R154146, title = {reference 2}}"
+            )
+            it.acknowledgements shouldBe mapOf(
+                ContributorId(MockUserId.USER) to (7.0 / 13.0),
+                ContributorId.UNKNOWN to (6.0 / 13.0)
             )
         }
     }

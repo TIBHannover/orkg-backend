@@ -498,6 +498,7 @@ data class SmartReviewRepresentation(
     val published: Boolean,
     val sections: List<SmartReviewSectionRepresentation>,
     val references: List<String>,
+    val acknowledgements: Map<ContributorId, Double>,
     override val jsonClass: String = "smart-review"
 ) : ContentTypeRepresentation
 

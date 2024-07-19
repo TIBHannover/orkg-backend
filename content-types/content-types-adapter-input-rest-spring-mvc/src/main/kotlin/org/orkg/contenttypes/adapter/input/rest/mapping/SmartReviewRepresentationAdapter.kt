@@ -45,7 +45,8 @@ interface SmartReviewRepresentationAdapter : AuthorRepresentationAdapter, Versio
             unlistedBy = unlistedBy,
             published = published,
             sections = sections.map { it.toSmartReviewSectionRepresentation() },
-            references = references
+            references = references,
+            acknowledgements = acknowledgements
         )
 
     private fun SmartReviewSection.toSmartReviewSectionRepresentation(): SmartReviewSectionRepresentation =

@@ -22,6 +22,8 @@ import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
+import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionCommand
+import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreator
@@ -37,7 +39,10 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSec
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionDeleter
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionExistenceCreateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionExistenceDeleteValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionExistenceUpdateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionIndexValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionUpdateValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionUpdater
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
@@ -134,6 +139,15 @@ class SmartReviewService(
             SmartReviewSectionCreator(literalService, resourceService, statementService)
         )
         return steps.execute(command, CreateSmartReviewSectionState()).smartReviewSectionId!!
+    }
+
+    override fun updateSection(command: UpdateSmartReviewSectionCommand) {
+        val steps = listOf<Action<UpdateSmartReviewSectionCommand, UpdateSmartReviewSectionState>>(
+            SmartReviewSectionExistenceUpdateValidator(this, resourceRepository),
+            SmartReviewSectionUpdateValidator(resourceRepository, predicateRepository, thingRepository),
+            SmartReviewSectionUpdater(literalService, resourceService, statementService)
+        )
+        steps.execute(command, UpdateSmartReviewSectionState())
     }
 
     override fun deleteSection(command: DeleteSmartReviewSectionCommand) {

@@ -9,6 +9,8 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewControllerExceptionUnitTest.FakeExceptionController
 import org.orkg.contenttypes.domain.InvalidSmartReviewTextSectionType
 import org.orkg.contenttypes.domain.OntologyEntityNotFound
+import org.orkg.contenttypes.domain.SmartReviewSectionTypeMismatch
+import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -71,6 +73,95 @@ internal class SmartReviewControllerExceptionUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun unrelatedSmartReviewSection() {
+        val smartReviewId = "R123"
+        val smartReviewSectionId = "R456"
+
+        get("/unrelated-smart-review-section")
+            .param("smartReviewId", smartReviewId)
+            .param("smartReviewSectionId", smartReviewSectionId)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/unrelated-smart-review-section"))
+            .andExpect(jsonPath("$.message").value("""Smart review section "$smartReviewSectionId" does not belong to smart review "$smartReviewId"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun smartReviewSectionTypeMismatchMustBeComparisonSection() {
+        get("/smart-review-section-type-mismatch-must-be-comparison-section")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-comparison-section"))
+            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be a comparison section."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun smartReviewSectionTypeMismatchMustBeVisualizationSection() {
+        get("/smart-review-section-type-mismatch-must-be-visualization-section")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-visualization-section"))
+            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be a visualization section."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun smartReviewSectionTypeMismatchMustBeResourceSection() {
+        get("/smart-review-section-type-mismatch-must-be-resource-section")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-resource-section"))
+            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be a resource section."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun smartReviewSectionTypeMismatchMustBePredicateSection() {
+        get("/smart-review-section-type-mismatch-must-be-predicate-section")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-predicate-section"))
+            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be a predicate section."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun smartReviewSectionTypeMismatchMustBeOntologySection() {
+        get("/smart-review-section-type-mismatch-must-be-ontology-section")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-ontology-section"))
+            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be an ontology section."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun smartReviewSectionTypeMismatchMustBeTextSection() {
+        get("/smart-review-section-type-mismatch-must-be-text-section")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/smart-review-section-type-mismatch-must-be-text-section"))
+            .andExpect(jsonPath("$.message").value("""Invalid smart review section type. Must be a text section."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -82,6 +173,44 @@ internal class SmartReviewControllerExceptionUnitTest {
         @GetMapping("/invalid-smart-review-text-section-type")
         fun invalidSmartReviewTextSectionType(@RequestParam type: ThingId) {
             throw InvalidSmartReviewTextSectionType(type)
+        }
+
+        @GetMapping("/unrelated-smart-review-section")
+        fun unrelatedSmartReviewSection(
+            @RequestParam smartReviewId: ThingId,
+            @RequestParam smartReviewSectionId: ThingId
+        ) {
+            throw UnrelatedSmartReviewSection(smartReviewId, smartReviewSectionId)
+        }
+
+        @GetMapping("/smart-review-section-type-mismatch-must-be-comparison-section")
+        fun smartReviewSectionTypeMismatchMustBeComparisonSection() {
+            throw SmartReviewSectionTypeMismatch.mustBeComparisonSection()
+        }
+
+        @GetMapping("/smart-review-section-type-mismatch-must-be-visualization-section")
+        fun smartReviewSectionTypeMismatchMustBeVisualizationSection() {
+            throw SmartReviewSectionTypeMismatch.mustBeVisualizationSection()
+        }
+
+        @GetMapping("/smart-review-section-type-mismatch-must-be-resource-section")
+        fun smartReviewSectionTypeMismatchMustBeResourceSection() {
+            throw SmartReviewSectionTypeMismatch.mustBeResourceSection()
+        }
+
+        @GetMapping("/smart-review-section-type-mismatch-must-be-predicate-section")
+        fun smartReviewSectionTypeMismatchMustBePredicateSection() {
+            throw SmartReviewSectionTypeMismatch.mustBePredicateSection()
+        }
+
+        @GetMapping("/smart-review-section-type-mismatch-must-be-ontology-section")
+        fun smartReviewSectionTypeMismatchMustBeOntologySection() {
+            throw SmartReviewSectionTypeMismatch.mustBeOntologySection()
+        }
+
+        @GetMapping("/smart-review-section-type-mismatch-must-be-text-section")
+        fun smartReviewSectionTypeMismatchMustBeTextSection() {
+            throw SmartReviewSectionTypeMismatch.mustBeTextSection()
         }
     }
 

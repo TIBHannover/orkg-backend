@@ -235,6 +235,22 @@ class LiteratureListSectionTypeMismatch private constructor(
 class PublishedLiteratureListContentNotFound(literatureListId: ThingId, contentId: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Literature list content "$contentId" not found for literature list "$literatureListId".""")
 
+class UnrelatedSmartReviewSection(smartReviewId: ThingId, smartReviewSectionId: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Smart review section "$smartReviewSectionId" does not belong to smart review "$smartReviewId".""")
+
+class SmartReviewSectionTypeMismatch private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message) {
+    companion object {
+        fun mustBeComparisonSection() = SmartReviewSectionTypeMismatch("""Invalid smart review section type. Must be a comparison section.""")
+        fun mustBeVisualizationSection() = SmartReviewSectionTypeMismatch("""Invalid smart review section type. Must be a visualization section.""")
+        fun mustBeResourceSection() = SmartReviewSectionTypeMismatch("""Invalid smart review section type. Must be a resource section.""")
+        fun mustBePredicateSection() = SmartReviewSectionTypeMismatch("""Invalid smart review section type. Must be a predicate section.""")
+        fun mustBeOntologySection() = SmartReviewSectionTypeMismatch("""Invalid smart review section type. Must be an ontology section.""")
+        fun mustBeTextSection() = SmartReviewSectionTypeMismatch("""Invalid smart review section type. Must be a text section.""")
+    }
+}
+
 class InvalidSubjectPositionCardinality : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
     message = """Invalid subject position cardinality. Minimum cardinality must be at least one."""

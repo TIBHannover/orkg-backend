@@ -24,6 +24,7 @@ import org.orkg.contenttypes.input.SmartReviewResourceSectionCommand
 import org.orkg.contenttypes.input.SmartReviewSectionDefinition
 import org.orkg.contenttypes.input.SmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.SmartReviewVisualizationSectionCommand
+import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 
@@ -122,6 +123,62 @@ fun dummyCreateSmartReviewTextSectionCommand() =
         contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
         smartReviewId = ThingId("R123"),
         index = null,
+        heading = "Heading",
+        `class` = Classes.introduction,
+        text = "text section contents"
+    )
+
+fun dummyUpdateSmartReviewComparisonSectionCommand() =
+    UpdateSmartReviewSectionUseCase.UpdateComparisonSectionCommand(
+        smartReviewSectionId = ThingId("R456"),
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
+        heading = "comparison section heading",
+        comparison = ThingId("R6416")
+    )
+
+fun dummyUpdateSmartReviewVisualizationSectionCommand() =
+    UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand(
+        smartReviewSectionId = ThingId("R456"),
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
+        heading = "visualization section heading",
+        visualization = ThingId("R215648")
+    )
+
+fun dummyUpdateSmartReviewResourceSectionCommand() =
+    UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand(
+        smartReviewSectionId = ThingId("R456"),
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
+        heading = "resource section heading",
+        resource = ThingId("R14565")
+    )
+
+fun dummyUpdateSmartReviewPredicateSectionCommand() =
+    UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand(
+        smartReviewSectionId = ThingId("R456"),
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
+        heading = "predicate section heading",
+        predicate = ThingId("R15696541")
+    )
+
+fun dummyUpdateSmartReviewOntologySectionCommand() =
+    UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand(
+        smartReviewSectionId = ThingId("R456"),
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
+        heading = "ontology section heading",
+        entities = listOf(ThingId("R1"), ThingId("P1")),
+        predicates = listOf(ThingId("P1"))
+    )
+
+fun dummyUpdateSmartReviewTextSectionCommand() =
+    UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand(
+        smartReviewSectionId = ThingId("R456"),
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
         heading = "Heading",
         `class` = Classes.introduction,
         text = "text section contents"

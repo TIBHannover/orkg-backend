@@ -31,6 +31,7 @@ import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.SmartReviewUseCases
+import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -46,6 +47,7 @@ import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
+import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -736,6 +738,243 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                 it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()
                 it.index shouldBe index
             })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a comparison section update request, when service succeeds, it updates the comparison section at the specified index")
+    fun updateComparisonSection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = comparisonSectionRequest()
+
+        every { smartReviewService.updateSection(any()) } just runs
+
+        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("sectionId").description("The id of the section.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("The updated heading of the comparison section."),
+                        fieldWithPath("comparison").description("The updated id of the linked comparison.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdateComparisonSectionCommand>())
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a visualization section update request, when service succeeds, it updates the visualization section at the specified index")
+    fun updateVisualizationSection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = visualizationSectionRequest()
+
+        every { smartReviewService.updateSection(any()) } just runs
+
+        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("sectionId").description("The id of the section.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("The updated heading of the visualization section."),
+                        fieldWithPath("visualization").description("The updated id of the linked visualization.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand>())
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a resource section update request, when service succeeds, it updates the resource section at the specified index")
+    fun updateResourceSection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = resourceSectionRequest()
+
+        every { smartReviewService.updateSection(any()) } just runs
+
+        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("sectionId").description("The id of the section.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("The updated heading of the resource section."),
+                        fieldWithPath("resource").description("The updated id of the linked resource.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand>())
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a predicate section update request, when service succeeds, it updates the predicate section at the specified index")
+    fun updatePredicateSection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = predicateSectionRequest()
+
+        every { smartReviewService.updateSection(any()) } just runs
+
+        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("sectionId").description("The id of the section.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("The updated heading of the predicate section."),
+                        fieldWithPath("predicate").description("The updated id of the linked predicate. (optional)").optional()
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand>())
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a ontology section update request, when service succeeds, it updates the ontology section at the specified index")
+    fun updateOntologySection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = ontologySectionRequest()
+
+        every { smartReviewService.updateSection(any()) } just runs
+
+        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("sectionId").description("The id of the section.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("The updated heading of the ontology section."),
+                        fieldWithPath("entities[]").description("The updated id of the entities that should be shown in the ontology section."),
+                        fieldWithPath("predicates[]").description("The updated ids of the predicates that should be shown in the ontology section.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand>())
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a text section update request, when service succeeds, it updates the text section at the specified index")
+    fun updateTextSection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = textSectionRequest()
+
+        every { smartReviewService.updateSection(any()) } just runs
+
+        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("sectionId").description("The id of the section.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+
+                        fieldWithPath("heading").description("The updated heading of the text section."),
+                        fieldWithPath("text").description("The updated text contents of the text section."),
+                        fieldWithPath("class").description("The updated id of the class that indicates the type of the text section."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.updateSection(any<UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand>())
         }
     }
 

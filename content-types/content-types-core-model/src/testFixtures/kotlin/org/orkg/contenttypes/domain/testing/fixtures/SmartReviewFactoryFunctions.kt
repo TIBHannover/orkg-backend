@@ -254,7 +254,7 @@ fun SmartReviewOntologySection.toGroupedStatements(): Map<ThingId, List<GeneralS
 }
 
 fun SmartReviewTextSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
-    val root = createResource(id, label = heading, classes = classes)
+    val root = createResource(id, label = heading, classes = classes + Classes.section)
     val statements = listOf(
         createStatement(
             id = StatementId("S1"),

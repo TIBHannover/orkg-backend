@@ -27,6 +27,7 @@ import org.orkg.contenttypes.input.SmartReviewSectionDefinition
 import org.orkg.contenttypes.input.SmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.SmartReviewVisualizationSectionCommand
+import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -126,6 +128,24 @@ class SmartReviewController(
     }
 
     @PreAuthorizeUser
+    @PutMapping("/{smartReviewId}/sections/{sectionId}", consumes = [SMART_REVIEW_SECTION_JSON_V1], produces = [SMART_REVIEW_SECTION_JSON_V1])
+    fun updateSection(
+        @PathVariable smartReviewId: ThingId,
+        @PathVariable sectionId: ThingId,
+        @RequestBody @Valid request: SmartReviewSectionRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.updateSection(request.toUpdateCommand(sectionId, userId, smartReviewId))
+        val location = uriComponentsBuilder
+            .path("api/smart-reviews/{id}")
+            .buildAndExpand(smartReviewId)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @PreAuthorizeUser
     @DeleteMapping("/{smartReviewId}/sections/{sectionId}", produces = [SMART_REVIEW_SECTION_JSON_V1])
     fun deleteSection(
         @PathVariable smartReviewId: ThingId,
@@ -197,6 +217,12 @@ class SmartReviewController(
             smartReviewId: ThingId,
             index: Int?
         ): CreateSmartReviewSectionUseCase.CreateCommand
+
+        fun toUpdateCommand(
+            smartReviewSectionId: ThingId,
+            contributorId: ContributorId,
+            smartReviewId: ThingId
+        ): UpdateSmartReviewSectionUseCase.UpdateCommand
     }
 
     data class SmartReviewComparisonSectionRequest(
@@ -213,6 +239,15 @@ class SmartReviewController(
         ): CreateSmartReviewSectionUseCase.CreateCommand =
             CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand(
                 contributorId, smartReviewId, index, heading, comparison
+            )
+
+        override fun toUpdateCommand(
+            smartReviewSectionId: ThingId,
+            contributorId: ContributorId,
+            smartReviewId: ThingId
+        ): UpdateSmartReviewSectionUseCase.UpdateCommand =
+            UpdateSmartReviewSectionUseCase.UpdateComparisonSectionCommand(
+                smartReviewSectionId, contributorId, smartReviewId, heading, comparison
             )
     }
 
@@ -231,6 +266,15 @@ class SmartReviewController(
             CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand(
                 contributorId, smartReviewId, index, heading, visualization
             )
+
+        override fun toUpdateCommand(
+            smartReviewSectionId: ThingId,
+            contributorId: ContributorId,
+            smartReviewId: ThingId
+        ): UpdateSmartReviewSectionUseCase.UpdateCommand =
+            UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand(
+                smartReviewSectionId, contributorId, smartReviewId, heading, visualization
+            )
     }
 
     data class SmartReviewResourceSectionRequest(
@@ -248,6 +292,15 @@ class SmartReviewController(
             CreateSmartReviewSectionUseCase.CreateResourceSectionCommand(
                 contributorId, smartReviewId, index, heading, resource
             )
+
+        override fun toUpdateCommand(
+            smartReviewSectionId: ThingId,
+            contributorId: ContributorId,
+            smartReviewId: ThingId
+        ): UpdateSmartReviewSectionUseCase.UpdateCommand =
+            UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand(
+                smartReviewSectionId, contributorId, smartReviewId, heading, resource
+            )
     }
 
     data class SmartReviewPredicateSectionRequest(
@@ -264,6 +317,15 @@ class SmartReviewController(
         ): CreateSmartReviewSectionUseCase.CreateCommand =
             CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand(
                 contributorId, smartReviewId, index, heading, predicate
+            )
+
+        override fun toUpdateCommand(
+            smartReviewSectionId: ThingId,
+            contributorId: ContributorId,
+            smartReviewId: ThingId
+        ): UpdateSmartReviewSectionUseCase.UpdateCommand =
+            UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand(
+                smartReviewSectionId, contributorId, smartReviewId, heading, predicate
             )
     }
 
@@ -283,6 +345,15 @@ class SmartReviewController(
             CreateSmartReviewSectionUseCase.CreateOntologySectionCommand(
                 contributorId, smartReviewId, index, heading, entities, predicates
             )
+
+        override fun toUpdateCommand(
+            smartReviewSectionId: ThingId,
+            contributorId: ContributorId,
+            smartReviewId: ThingId
+        ): UpdateSmartReviewSectionUseCase.UpdateCommand =
+            UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand(
+                smartReviewSectionId, contributorId, smartReviewId, heading, entities, predicates
+            )
     }
 
     data class SmartReviewTextSectionRequest(
@@ -300,6 +371,15 @@ class SmartReviewController(
         ): CreateSmartReviewSectionUseCase.CreateCommand =
             CreateSmartReviewSectionUseCase.CreateTextSectionCommand(
                 contributorId, smartReviewId, index, heading, `class`, text
+            )
+
+        override fun toUpdateCommand(
+            smartReviewSectionId: ThingId,
+            contributorId: ContributorId,
+            smartReviewId: ThingId
+        ): UpdateSmartReviewSectionUseCase.UpdateCommand =
+            UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand(
+                smartReviewSectionId, contributorId, smartReviewId, heading, `class`, text
             )
     }
 }

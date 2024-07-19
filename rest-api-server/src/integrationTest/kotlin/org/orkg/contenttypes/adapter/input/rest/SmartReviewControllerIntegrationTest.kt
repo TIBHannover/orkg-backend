@@ -56,6 +56,7 @@ import org.springframework.test.web.servlet.RequestBuilder
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -131,6 +132,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             "Dataset",
             "ResearchField",
             "Author",
+            Classes.section.value,
             Classes.sustainableDevelopmentGoal.value,
             *SmartReviewTextSection.types.map { it.value }.toTypedArray()
         )
@@ -155,8 +157,16 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
         resourceService.createResource(id = "R14565", label = "Some dataset resource", classes = setOf("Dataset"))
         resourceService.createResource(id = "R1", label = "Some ontology resource")
 
+        resourceService.createResource(id = "R26416", label = "Some other comparison", classes = setOf("Comparison"))
+        resourceService.createResource(id = "R2215648", label = "Some other visualization", classes = setOf("Visualization"))
+        resourceService.createResource(id = "R214565", label = "Some other dataset resource", classes = setOf("Dataset"))
+        resourceService.createResource(id = "R21", label = "Some other ontology resource")
+
         predicateService.createPredicate(id = ThingId("R15696541"), label = "Some predicate")
         predicateService.createPredicate(id = ThingId("P1"), label = "Some ontology predicate")
+
+        predicateService.createPredicate(id = ThingId("R215696541"), label = "Some other predicate")
+        predicateService.createPredicate(id = ThingId("P21"), label = "Some other ontology predicate")
 
         resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
         resourceService.createResource(id = "SDG_1", label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal.value))
@@ -317,7 +327,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     @TestWithMockUser
-    fun createAndFetchComparisonSection() {
+    fun createAndFetchAndUpdateComparisonSection() {
         val smartReviewId = createSmartReview()
 
         post("/api/smart-reviews/$smartReviewId/sections")
@@ -337,11 +347,30 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             it.heading shouldBe "new comparison section heading"
             it.comparison shouldBe ResourceReference(ThingId("R6416"), "Some comparison", setOf(Classes.comparison))
         }
+
+        val smartReviewSectionId = smartReview.sections.last().id
+
+        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+            .content(updateComparisonSectionJson)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedSmartReview = smartReviewService.findById(smartReviewId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+
+        updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewComparisonSection>().asClue {
+            it.id shouldBe smartReviewSectionId
+            it.heading shouldBe "updated comparison section heading"
+            it.comparison shouldBe ResourceReference(ThingId("R26416"), "Some other comparison", setOf(Classes.comparison))
+        }
     }
 
     @Test
     @TestWithMockUser
-    fun createAndFetchVisualizationSection() {
+    fun createAndFetchAndUpdateVisualizationSection() {
         val smartReviewId = createSmartReview()
 
         post("/api/smart-reviews/$smartReviewId/sections")
@@ -361,11 +390,30 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             it.heading shouldBe "new visualization section heading"
             it.visualization shouldBe ResourceReference(ThingId("R215648"), "Some visualization", setOf(Classes.visualization))
         }
+
+        val smartReviewSectionId = smartReview.sections.last().id
+
+        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+            .content(updateVisualizationSectionJson)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedSmartReview = smartReviewService.findById(smartReviewId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+
+        updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewVisualizationSection>().asClue {
+            it.id shouldBe smartReviewSectionId
+            it.heading shouldBe "updated visualization section heading"
+            it.visualization shouldBe ResourceReference(ThingId("R2215648"), "Some other visualization", setOf(Classes.visualization))
+        }
     }
 
     @Test
     @TestWithMockUser
-    fun createAndFetchResourceSection() {
+    fun createAndFetchAndUpdateResourceSection() {
         val smartReviewId = createSmartReview()
 
         post("/api/smart-reviews/$smartReviewId/sections")
@@ -385,11 +433,30 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             it.heading shouldBe "new resource section heading"
             it.resource shouldBe ResourceReference(ThingId("R14565"), "Some dataset resource", setOf(Classes.dataset))
         }
+
+        val smartReviewSectionId = smartReview.sections.last().id
+
+        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+            .content(updateResourceSectionJson)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedSmartReview = smartReviewService.findById(smartReviewId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+
+        updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewResourceSection>().asClue {
+            it.id shouldBe smartReviewSectionId
+            it.heading shouldBe "updated resource section heading"
+            it.resource shouldBe ResourceReference(ThingId("R214565"), "Some other dataset resource", setOf(Classes.dataset))
+        }
     }
 
     @Test
     @TestWithMockUser
-    fun createAndFetchPredicateSection() {
+    fun createAndFetchAndUpdatePredicateSection() {
         val smartReviewId = createSmartReview()
 
         post("/api/smart-reviews/$smartReviewId/sections")
@@ -409,11 +476,30 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             it.heading shouldBe "new predicate section heading"
             it.predicate shouldBe PredicateReference(ThingId("R15696541"), "Some predicate")
         }
+
+        val smartReviewSectionId = smartReview.sections.last().id
+
+        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+            .content(updatePredicateSectionJson)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedSmartReview = smartReviewService.findById(smartReviewId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+
+        updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewPredicateSection>().asClue {
+            it.id shouldBe smartReviewSectionId
+            it.heading shouldBe "updated predicate section heading"
+            it.predicate shouldBe PredicateReference(ThingId("R215696541"), "Some other predicate")
+        }
     }
 
     @Test
     @TestWithMockUser
-    fun createAndFetchOntologySection() {
+    fun createAndFetchAndUpdateOntologySection() {
         val smartReviewId = createSmartReview()
 
         post("/api/smart-reviews/$smartReviewId/sections")
@@ -437,11 +523,34 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             )
             it.predicates shouldBe listOf(PredicateReference(ThingId("P1"), "Some ontology predicate"))
         }
+
+        val smartReviewSectionId = smartReview.sections.last().id
+
+        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+            .content(updateOntologySectionJson)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedSmartReview = smartReviewService.findById(smartReviewId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+
+        updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewOntologySection>().asClue {
+            it.id shouldBe smartReviewSectionId
+            it.heading shouldBe "updated ontology section heading"
+            it.entities shouldBe listOf(
+                ResourceReference(ThingId("R21"), "Some other ontology resource", emptySet()),
+                PredicateReference(ThingId("P1"), "Some ontology predicate")
+            )
+            it.predicates shouldBe listOf(PredicateReference(ThingId("P21"), "Some other ontology predicate"))
+        }
     }
 
     @Test
     @TestWithMockUser
-    fun createAndFetchTextSection() {
+    fun createAndFetchAndUpdateTextSection() {
         val smartReviewId = createSmartReview()
 
         post("/api/smart-reviews/$smartReviewId/sections")
@@ -461,6 +570,26 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             it.heading shouldBe "new text section heading"
             it.classes shouldBe setOf(Classes.epilogue)
             it.text shouldBe "Epilogue text section contents"
+        }
+
+        val smartReviewSectionId = smartReview.sections.last().id
+
+        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+            .content(updateTextSectionJson)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedSmartReview = smartReviewService.findById(smartReviewId)
+            .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
+
+        updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewTextSection>().asClue {
+            it.id shouldBe smartReviewSectionId
+            it.heading shouldBe "updated text section heading"
+            it.classes shouldBe setOf(Classes.introduction)
+            it.text shouldBe "Introduction text section contents"
         }
     }
 
@@ -584,4 +713,36 @@ private const val createTextSectionJson = """{
   "heading": "new text section heading",
   "class": "Epilogue",
   "text": "Epilogue text section contents"
+}"""
+
+private const val updateComparisonSectionJson = """{
+  "heading": "updated comparison section heading",
+  "comparison": "R26416"
+}"""
+
+private const val updateVisualizationSectionJson = """{
+  "heading": "updated visualization section heading",
+  "visualization": "R2215648"
+}"""
+
+private const val updateResourceSectionJson = """{
+  "heading": "updated resource section heading",
+  "resource": "R214565"
+}"""
+
+private const val updatePredicateSectionJson = """{
+  "heading": "updated predicate section heading",
+  "predicate": "R215696541"
+}"""
+
+private const val updateOntologySectionJson = """{
+  "heading": "updated ontology section heading",
+  "entities": ["R21", "P1"],
+  "predicates": ["P21"]
+}"""
+
+private const val updateTextSectionJson = """{
+  "heading": "updated text section heading",
+  "class": "Introduction",
+  "text": "Introduction text section contents"
 }"""

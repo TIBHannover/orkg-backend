@@ -103,3 +103,13 @@ fun <T> HttpClient.send(httpRequest: HttpRequest, serviceName: String, successCa
         throw ServiceUnavailable.create(serviceName, e)
     }
 }
+
+fun <T : Any> mutableSetOfNotNull(vararg elements: T?): MutableSet<T> {
+    val result = mutableSetOf<T>()
+    elements.forEach {
+        if (it != null) {
+            result.add(it)
+        }
+    }
+    return result
+}

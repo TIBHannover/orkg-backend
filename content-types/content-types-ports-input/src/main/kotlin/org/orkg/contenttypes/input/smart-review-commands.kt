@@ -12,6 +12,7 @@ import org.orkg.contenttypes.domain.SmartReviewResourceSection
 import org.orkg.contenttypes.domain.SmartReviewSection
 import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
+import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase.CreateCommand
 import org.orkg.graph.domain.ExtractionMethod
 
 interface CreateSmartReviewUseCase {
@@ -89,6 +90,66 @@ interface CreateSmartReviewSectionUseCase {
         override val `class`: ThingId,
         override val text: String
     ) : CreateCommand, SmartReviewTextSectionDefinition
+}
+
+interface UpdateSmartReviewSectionUseCase {
+    fun updateSection(command: UpdateCommand)
+
+    sealed interface UpdateCommand {
+        val smartReviewSectionId: ThingId
+        val contributorId: ContributorId
+        val smartReviewId: ThingId
+    }
+
+    data class UpdateComparisonSectionCommand(
+        override val smartReviewSectionId: ThingId,
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val heading: String,
+        override val comparison: ThingId?
+    ) : UpdateCommand, SmartReviewComparisonSectionDefinition
+
+    data class UpdateVisualizationSectionCommand(
+        override val smartReviewSectionId: ThingId,
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val heading: String,
+        override val visualization: ThingId?
+    ) : UpdateCommand, SmartReviewVisualizationSectionDefinition
+
+    data class UpdateResourceSectionCommand(
+        override val smartReviewSectionId: ThingId,
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val heading: String,
+        override val resource: ThingId?
+    ) : UpdateCommand, SmartReviewResourceSectionDefinition
+
+    data class UpdatePredicateSectionCommand(
+        override val smartReviewSectionId: ThingId,
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val heading: String,
+        override val predicate: ThingId?
+    ) : UpdateCommand, SmartReviewPredicateSectionDefinition
+
+    data class UpdateOntologySectionCommand(
+        override val smartReviewSectionId: ThingId,
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val heading: String,
+        override val entities: List<ThingId>,
+        override val predicates: List<ThingId>
+    ) : UpdateCommand, SmartReviewOntologySectionDefinition
+
+    data class UpdateTextSectionCommand(
+        override val smartReviewSectionId: ThingId,
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val heading: String,
+        override val `class`: ThingId,
+        override val text: String
+    ) : UpdateCommand, SmartReviewTextSectionDefinition
 }
 
 interface DeleteSmartReviewSectionUseCase {

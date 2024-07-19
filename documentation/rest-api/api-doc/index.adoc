@@ -427,6 +427,9 @@ include::parts/literature-list-sections.adoc[leveloffset=+1]
 [[smart-reviews]]
 include::parts/smart-reviews.adoc[leveloffset=+1]
 
+[[smart-review-sections]]
+include::parts/smart-review-sections.adoc[leveloffset=+1]
+
 [[templates]]
 include::parts/templates.adoc[leveloffset=+1]
 

@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
 import java.net.URI
+import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -13,6 +14,7 @@ import org.orkg.contenttypes.domain.SmartReviewResourceSection
 import org.orkg.contenttypes.domain.SmartReviewSection
 import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
+import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.SmartReviewComparisonSectionCommand
 import org.orkg.contenttypes.input.SmartReviewOntologySectionCommand
@@ -67,6 +69,62 @@ fun dummyCreateSmartReviewCommand() = CreateSmartReviewUseCase.CreateCommand(
         "@misc{R456789,title = {Another super important paper}"
     )
 )
+
+fun dummyCreateSmartReviewComparisonSectionCommand() =
+    CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand(
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
+        index = null,
+        heading = "comparison section heading",
+        comparison = ThingId("R6416")
+    )
+
+fun dummyCreateSmartReviewVisualizationSectionCommand() =
+    CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand(
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
+        index = null,
+        heading = "visualization section heading",
+        visualization = ThingId("R215648")
+    )
+
+fun dummyCreateSmartReviewResourceSectionCommand() =
+    CreateSmartReviewSectionUseCase.CreateResourceSectionCommand(
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
+        index = null,
+        heading = "resource section heading",
+        resource = ThingId("R14565")
+    )
+
+fun dummyCreateSmartReviewPredicateSectionCommand() =
+    CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand(
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
+        index = null,
+        heading = "predicate section heading",
+        predicate = ThingId("R15696541")
+    )
+
+fun dummyCreateSmartReviewOntologySectionCommand() =
+    CreateSmartReviewSectionUseCase.CreateOntologySectionCommand(
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
+        index = null,
+        heading = "ontology section heading",
+        entities = listOf(ThingId("R1"), ThingId("P1")),
+        predicates = listOf(ThingId("P1"))
+    )
+
+fun dummyCreateSmartReviewTextSectionCommand() =
+    CreateSmartReviewSectionUseCase.CreateTextSectionCommand(
+        contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+        smartReviewId = ThingId("R123"),
+        index = null,
+        heading = "Heading",
+        `class` = Classes.introduction,
+        text = "text section contents"
+    )
 
 fun dummySmartReviewComparisonSectionDefinition(): SmartReviewComparisonSectionCommand =
     SmartReviewComparisonSectionCommand(

@@ -25,6 +25,6 @@ interface ResearchFieldHierarchyUseCases : RetrieveResearchFieldHierarchyUseCase
 interface LiteratureListUseCases : RetrieveLiteratureListUseCase, CreateLiteratureListUseCase,
     CreateLiteratureListSectionUseCase, UpdateLiteratureListUseCase, UpdateLiteratureListSectionUseCase, DeleteLiteratureListSectionUseCase
 
-interface SmartReviewUseCases : RetrieveSmartReviewUseCase, CreateSmartReviewUseCase
+interface SmartReviewUseCases : RetrieveSmartReviewUseCase, CreateSmartReviewUseCase, CreateSmartReviewSectionUseCase
 
 interface ContentTypeUseCases : RetrieveContentTypeUseCase

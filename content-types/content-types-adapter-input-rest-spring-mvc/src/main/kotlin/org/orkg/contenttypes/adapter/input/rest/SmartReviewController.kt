@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.OffsetDateTime
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.PositiveOrZero
 import javax.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -15,6 +16,7 @@ import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.adapter.input.rest.mapping.SmartReviewRepresentationAdapter
 import org.orkg.contenttypes.domain.SmartReviewNotFound
+import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.SmartReviewComparisonSectionCommand
 import org.orkg.contenttypes.input.SmartReviewOntologySectionCommand
@@ -45,6 +47,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 const val SMART_REVIEW_JSON_V1 = "application/vnd.orkg.smart-review.v1+json"
+const val SMART_REVIEW_SECTION_JSON_V1 = "application/vnd.orkg.smart-review-section.v1+json"
 
 @RestController
 @RequestMapping("/api/smart-reviews", produces = [SMART_REVIEW_JSON_V1])
@@ -101,6 +104,24 @@ class SmartReviewController(
         return created(location).build()
     }
 
+    @PreAuthorizeUser
+    @PostMapping(value = ["/{id}/sections", "/{id}/sections/{index}"], consumes = [SMART_REVIEW_SECTION_JSON_V1], produces = [SMART_REVIEW_SECTION_JSON_V1])
+    fun createSection(
+        @PathVariable id: ThingId,
+        @PathVariable(required = false) @PositiveOrZero index: Int?,
+        @RequestBody @Valid request: SmartReviewSectionRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.createSection(request.toCreateCommand(userId, id, index))
+        val location = uriComponentsBuilder
+            .path("api/smart-reviews/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return created(location).build()
+    }
+
     data class CreateSmartReviewRequest(
         @field:NotBlank
         val title: String,
@@ -150,6 +171,12 @@ class SmartReviewController(
         val heading: String
 
         fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition
+
+        fun toCreateCommand(
+            contributorId: ContributorId,
+            smartReviewId: ThingId,
+            index: Int?
+        ): CreateSmartReviewSectionUseCase.CreateCommand
     }
 
     data class SmartReviewComparisonSectionRequest(
@@ -158,6 +185,15 @@ class SmartReviewController(
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewComparisonSectionCommand(heading, comparison)
+
+        override fun toCreateCommand(
+            contributorId: ContributorId,
+            smartReviewId: ThingId,
+            index: Int?
+        ): CreateSmartReviewSectionUseCase.CreateCommand =
+            CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand(
+                contributorId, smartReviewId, index, heading, comparison
+            )
     }
 
     data class SmartReviewVisualizationSection(
@@ -166,6 +202,15 @@ class SmartReviewController(
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewVisualizationSectionCommand(heading, visualization)
+
+        override fun toCreateCommand(
+            contributorId: ContributorId,
+            smartReviewId: ThingId,
+            index: Int?
+        ): CreateSmartReviewSectionUseCase.CreateCommand =
+            CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand(
+                contributorId, smartReviewId, index, heading, visualization
+            )
     }
 
     data class SmartReviewResourceSectionRequest(
@@ -174,6 +219,15 @@ class SmartReviewController(
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewResourceSectionCommand(heading, resource)
+
+        override fun toCreateCommand(
+            contributorId: ContributorId,
+            smartReviewId: ThingId,
+            index: Int?
+        ): CreateSmartReviewSectionUseCase.CreateCommand =
+            CreateSmartReviewSectionUseCase.CreateResourceSectionCommand(
+                contributorId, smartReviewId, index, heading, resource
+            )
     }
 
     data class SmartReviewPredicateSectionRequest(
@@ -182,6 +236,15 @@ class SmartReviewController(
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewPredicateSectionCommand(heading, predicate)
+
+        override fun toCreateCommand(
+            contributorId: ContributorId,
+            smartReviewId: ThingId,
+            index: Int?
+        ): CreateSmartReviewSectionUseCase.CreateCommand =
+            CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand(
+                contributorId, smartReviewId, index, heading, predicate
+            )
     }
 
     data class SmartReviewOntologySectionRequest(
@@ -191,6 +254,15 @@ class SmartReviewController(
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewOntologySectionCommand(heading, entities, predicates)
+
+        override fun toCreateCommand(
+            contributorId: ContributorId,
+            smartReviewId: ThingId,
+            index: Int?
+        ): CreateSmartReviewSectionUseCase.CreateCommand =
+            CreateSmartReviewSectionUseCase.CreateOntologySectionCommand(
+                contributorId, smartReviewId, index, heading, entities, predicates
+            )
     }
 
     data class SmartReviewTextSectionRequest(
@@ -200,5 +272,14 @@ class SmartReviewController(
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
             SmartReviewTextSectionCommand(heading, `class`, text)
+
+        override fun toCreateCommand(
+            contributorId: ContributorId,
+            smartReviewId: ThingId,
+            index: Int?
+        ): CreateSmartReviewSectionUseCase.CreateCommand =
+            CreateSmartReviewSectionUseCase.CreateTextSectionCommand(
+                contributorId, smartReviewId, index, heading, `class`, text
+            )
     }
 }

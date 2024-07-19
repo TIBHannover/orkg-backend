@@ -26,6 +26,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
 import org.orkg.contenttypes.input.ContributionUseCases
+import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
@@ -47,10 +48,12 @@ import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -304,17 +307,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the smart review belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the smart review belongs to. (optional)").optional(),
                         fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
-//                        subsectionWithPath("sections").description("The list of updated sections of the smart review (optional). See <<smart-review-sections,smart review sections>> for more information."),
-                        fieldWithPath("sections").description("The list of sections of the smart review."),
-                        fieldWithPath("sections[].heading").description("The heading of the section.").optional(),
-                        fieldWithPath("sections[].comparison").description("The id of the linked comparison.").optional(),
-                        fieldWithPath("sections[].visualization").description("The id of the linked visualization..").optional(),
-                        fieldWithPath("sections[].resource").description("The id of the linked resource.").optional(),
-                        fieldWithPath("sections[].predicate").description("The id of the linked predicate.").optional(),
-                        fieldWithPath("sections[].entities[]").description("The id of the entities that should be shown in the ontology section.").optional(),
-                        fieldWithPath("sections[].predicates[]").description("The ids of the predicates that should be shown in the ontology section.").optional(),
-                        fieldWithPath("sections[].text").description("The text contents of the text section.").optional(),
-                        fieldWithPath("sections[].class").description("The id of the class that indicates the type of the text section.").optional(),
+                        subsectionWithPath("sections").description("The list of sections of the smart review. See <<smart-review-sections,smart review sections>> for more information."),
                         fieldWithPath("references[]").description("The list of bibtex references of the smart review."),
                     ).and(authorListFields("smart review"))
                 )
@@ -322,6 +315,423 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { smartReviewService.create(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a comparison section create request, when service succeeds, it creates the comparison section")
+    fun createComparisonSection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = comparisonSectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()
+                it.index shouldBe null
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a comparison section create request, when service succeeds, it creates the comparison section at the specified index")
+    fun createComparisonSectionAtIndex() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val index = 5
+        val request = comparisonSectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("index").description("The insertion index the of the section. Otherwise, the created comparison section will be appended at the end of the smart review. (optional)")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("The heading of the comparison section."),
+                        fieldWithPath("comparison").description("The id of the linked comparison. (optional)").optional()
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()
+                it.index shouldBe index
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a visualization section create request, when service succeeds, it creates the visualization section")
+    fun createVisualizationSection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = visualizationSectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()
+                it.index shouldBe null
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a visualization section create request, when service succeeds, it creates the visualization section at the specified index")
+    fun createVisualizationSectionAtIndex() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val index = 5
+        val request = visualizationSectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("index").description("The insertion index the of the section. Otherwise, the created visualization section will be appended at the end of the smart review. (optional)")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("The heading of the visualization section."),
+                        fieldWithPath("visualization").description("The id of the linked visualization. (optional)").optional()
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()
+                it.index shouldBe index
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a resource section create request, when service succeeds, it creates the resource section")
+    fun createResourceSection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = resourceSectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()
+                it.index shouldBe null
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a resource section create request, when service succeeds, it creates the resource section at the specified index")
+    fun createResourceSectionAtIndex() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val index = 5
+        val request = resourceSectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("index").description("The insertion index the of the section. Otherwise, the created resource section will be appended at the end of the smart review. (optional)")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("The heading of the resource section."),
+                        fieldWithPath("resource").description("The id of the linked resource. (optional)").optional()
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()
+                it.index shouldBe index
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a predicate section create request, when service succeeds, it creates the predicate section")
+    fun createPredicateSection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = predicateSectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()
+                it.index shouldBe null
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a predicate section create request, when service succeeds, it creates the predicate section at the specified index")
+    fun createPredicateSectionAtIndex() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val index = 5
+        val request = predicateSectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("index").description("The insertion index the of the section. Otherwise, the created predicate section will be appended at the end of the smart review. (optional)")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("The heading of the predicate section."),
+                        fieldWithPath("predicate").description("The id of the linked predicate. (optional)").optional()
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()
+                it.index shouldBe index
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a ontology section create request, when service succeeds, it creates the ontology section")
+    fun createOntologySection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = ontologySectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()
+                it.index shouldBe null
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a ontology section create request, when service succeeds, it creates the ontology section at the specified index")
+    fun createOntologySectionAtIndex() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val index = 5
+        val request = ontologySectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("index").description("The insertion index the of the section. Otherwise, the created ontology section will be appended at the end of the smart review. (optional)")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("heading").description("The heading of the ontology section."),
+                        fieldWithPath("entities[]").description("The id of the entities that should be shown in the ontology section."),
+                        fieldWithPath("predicates[]").description("The ids of the predicates that should be shown in the ontology section.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()
+                it.index shouldBe index
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a text section create request, when service succeeds, it creates the text section")
+    fun createTextSection() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val request = textSectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()
+                it.index shouldBe null
+            })
+        }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a text section create request, when service succeeds, it creates the text section at the specified index")
+    fun createTextSectionAtIndex() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+        val index = 5
+        val request = textSectionRequest()
+
+        every { smartReviewService.createSection(any()) } returns id
+
+        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+            .content(request)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .contentType(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("index").description("The insertion index the of the section. Otherwise, the created text section will be appended at the end of the smart review. (optional)")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
+                    ),
+                    requestFields(
+
+                        fieldWithPath("heading").description("The heading of the text section."),
+                        fieldWithPath("text").description("The text contents of the text section."),
+                        fieldWithPath("class").description("The id of the class that indicates the type of the text section."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.createSection(withArg {
+                it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()
+                it.index shouldBe index
+            })
+        }
     }
 
     private fun createSmartReviewRequest() =
@@ -373,7 +783,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             extractionMethod = ExtractionMethod.MANUAL,
             sections = listOf(
                 comparisonSectionRequest(),
-                visualizationSection(),
+                visualizationSectionRequest(),
                 resourceSectionRequest(),
                 predicateSectionRequest(),
                 ontologySectionRequest(),
@@ -391,7 +801,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             comparison = ThingId("comparisonId")
         )
 
-    private fun visualizationSection() =
+    private fun visualizationSectionRequest() =
         SmartReviewController.SmartReviewVisualizationSection(
             heading = "visualization section heading",
             visualization = ThingId("visualizationId")

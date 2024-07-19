@@ -12,6 +12,8 @@ import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.BibTeXReferencesValidator
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewCommand
+import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionCommand
+import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
@@ -28,6 +30,10 @@ import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewResourceCrea
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSDGCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsCreateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionCreateValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionExistenceCreateValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionIndexValidator
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
@@ -115,6 +121,16 @@ class SmartReviewService(
             SmartReviewSectionsCreator(literalService, resourceService, statementService)
         )
         return steps.execute(command, CreateSmartReviewState()).smartReviewId!!
+    }
+
+    override fun createSection(command: CreateSmartReviewSectionCommand): ThingId {
+        val steps = listOf<Action<CreateSmartReviewSectionCommand, CreateSmartReviewSectionState>>(
+            SmartReviewSectionExistenceCreateValidator(statementRepository),
+            SmartReviewSectionIndexValidator(statementRepository),
+            SmartReviewSectionCreateValidator(resourceRepository, predicateRepository, thingRepository),
+            SmartReviewSectionCreator(literalService, resourceService, statementService)
+        )
+        return steps.execute(command, CreateSmartReviewSectionState()).smartReviewSectionId!!
     }
 
     internal fun Resource.toSmartReview(): SmartReview {

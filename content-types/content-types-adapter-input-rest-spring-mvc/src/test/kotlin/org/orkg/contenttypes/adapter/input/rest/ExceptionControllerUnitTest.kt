@@ -37,6 +37,7 @@ import org.orkg.contenttypes.domain.ObjectIsNotAPredicate
 import org.orkg.contenttypes.domain.ObjectMustNotBeALiteral
 import org.orkg.contenttypes.domain.PaperNotModifiable
 import org.orkg.contenttypes.domain.ResourceIsNotAnInstanceOfTargetClass
+import org.orkg.contenttypes.domain.SmartReviewNotModifiable
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.TemplateNotApplicable
 import org.orkg.contenttypes.domain.TooManyPropertyValues
@@ -571,6 +572,21 @@ internal class ExceptionControllerUnitTest {
     }
 
     @Test
+    fun smartReviewNotModifiable() {
+        val id = "R123"
+
+        get("/smart-review-not-modifiable")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/smart-review-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Smart review "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
     fun invalidListSectionEntry() {
         val id = "R123"
         val expectedAnyInstanceOf = arrayOf("C1", "C2")
@@ -940,6 +956,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/literature-list-not-modifiable")
         fun literatureListNotModifiable(@RequestParam id: ThingId) {
             throw LiteratureListNotModifiable(id)
+        }
+
+        @GetMapping("/smart-review-not-modifiable")
+        fun smartReviewNotModifiable(@RequestParam id: ThingId) {
+            throw SmartReviewNotModifiable(id)
         }
 
         @GetMapping("/invalid-list-section-entry")

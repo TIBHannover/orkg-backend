@@ -1,0 +1,79 @@
+= Smart Review Sections
+
+Smart Reviews Sections represent a collection of concepts in the knowledge graph and can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+They are used to define the contents of a smart review.
+The provided endpoints aggregate these concepts into a smart review section representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[smart-review-sections-comparison-sections]]
+== Comparison Sections
+
+[[smart-review-sections-create-comparison-section]]
+=== Creating a comparison section
+
+A `POST` request creates a new comparison section and adds it to the specified smart review.
+The response will be `201 Created` when successful.
+The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::smart-reviews-create-comparison-section-at-index[snippets='curl-request,path-parameters,request-fields,http-response']
+
+[[smart-review-sections-visualization-sections]]
+== Visualization Sections
+
+[[smart-review-sections-create-visualization-section]]
+=== Creating a visualization section
+
+A `POST` request creates a new visualization section and adds it to the specified smart review.
+The response will be `201 Created` when successful.
+The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::smart-reviews-create-visualization-section-at-index[snippets='curl-request,path-parameters,request-fields,http-response']
+
+[[smart-review-sections-resource-sections]]
+== Resource Sections
+
+[[smart-review-sections-create-resource-section]]
+=== Creating a resource section
+
+A `POST` request creates a new resource section and adds it to the specified smart review.
+The response will be `201 Created` when successful.
+The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::smart-reviews-create-resource-section-at-index[snippets='curl-request,path-parameters,request-fields,http-response']
+
+[[smart-review-sections-predicate-sections]]
+== Predicate Sections
+
+[[smart-review-sections-create-predicate-section]]
+=== Creating a predicate section
+
+A `POST` request creates a new predicate section and adds it to the specified smart review.
+The response will be `201 Created` when successful.
+The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::smart-reviews-create-predicate-section-at-index[snippets='curl-request,path-parameters,request-fields,http-response']
+
+[[smart-review-sections-ontology-sections]]
+== Ontology Sections
+
+[[smart-review-sections-create-ontology-section]]
+=== Creating an ontology section
+
+A `POST` request creates a new ontology section and adds it to the specified smart review.
+The response will be `201 Created` when successful.
+The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::smart-reviews-create-ontology-section-at-index[snippets='curl-request,path-parameters,request-fields,http-response']
+
+[[smart-review-sections-text-sections]]
+== Text Sections
+
+[[smart-review-sections-create-text-section]]
+=== Creating a text section
+
+A `POST` request creates a new text section and adds it to the specified smart review.
+The response will be `201 Created` when successful.
+The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::smart-reviews-create-text-section-at-index[snippets='curl-request,path-parameters,request-fields,http-response']

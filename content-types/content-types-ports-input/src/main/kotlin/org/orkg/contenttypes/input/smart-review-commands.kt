@@ -31,6 +31,66 @@ interface CreateSmartReviewUseCase {
     )
 }
 
+interface CreateSmartReviewSectionUseCase {
+    fun createSection(command: CreateCommand): ThingId
+
+    sealed interface CreateCommand {
+        val contributorId: ContributorId
+        val smartReviewId: ThingId
+        val index: Int?
+    }
+
+    data class CreateComparisonSectionCommand(
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val index: Int?,
+        override val heading: String,
+        override val comparison: ThingId?
+    ) : CreateCommand, SmartReviewComparisonSectionDefinition
+
+    data class CreateVisualizationSectionCommand(
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val index: Int?,
+        override val heading: String,
+        override val visualization: ThingId?
+    ) : CreateCommand, SmartReviewVisualizationSectionDefinition
+
+    data class CreateResourceSectionCommand(
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val index: Int?,
+        override val heading: String,
+        override val resource: ThingId?
+    ) : CreateCommand, SmartReviewResourceSectionDefinition
+
+    data class CreatePredicateSectionCommand(
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val index: Int?,
+        override val heading: String,
+        override val predicate: ThingId?
+    ) : CreateCommand, SmartReviewPredicateSectionDefinition
+
+    data class CreateOntologySectionCommand(
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val index: Int?,
+        override val heading: String,
+        override val entities: List<ThingId>,
+        override val predicates: List<ThingId>
+    ) : CreateCommand, SmartReviewOntologySectionDefinition
+
+    data class CreateTextSectionCommand(
+        override val contributorId: ContributorId,
+        override val smartReviewId: ThingId,
+        override val index: Int?,
+        override val heading: String,
+        override val `class`: ThingId,
+        override val text: String
+    ) : CreateCommand, SmartReviewTextSectionDefinition
+}
+
 sealed interface SmartReviewSectionDefinition {
     val heading: String
 

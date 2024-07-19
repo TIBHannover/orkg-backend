@@ -33,3 +33,16 @@ The response will be `201 Created` when successful.
 The smart review (object) can be retrieved by following the URI in the `Location` header field.
 
 operation::smart-reviews-create[snippets='request-fields,curl-request,http-response']
+
+[[smart-reviews-edit]]
+== Editing a smart review
+
+A `PUT` request updates an existing smart review with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
+
+WARNING: Author names will not be updated if a resource id is specified for a given author.
+
+operation::smart-reviews-update[snippets='request-fields,curl-request,http-response']

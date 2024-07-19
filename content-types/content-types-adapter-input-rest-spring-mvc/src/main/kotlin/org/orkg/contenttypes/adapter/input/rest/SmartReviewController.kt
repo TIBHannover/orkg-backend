@@ -14,6 +14,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
+import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.SmartReviewRepresentationAdapter
 import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
@@ -28,6 +29,7 @@ import org.orkg.contenttypes.input.SmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.SmartReviewVisualizationSectionCommand
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
+import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -128,6 +130,23 @@ class SmartReviewController(
     }
 
     @PreAuthorizeUser
+    @PutMapping("/{id}", consumes = [SMART_REVIEW_JSON_V1])
+    fun update(
+        @PathVariable id: ThingId,
+        @RequestBody @Valid request: UpdateSmartReviewRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.update(request.toUpdateCommand(id, userId))
+        val location = uriComponentsBuilder
+            .path("api/smart-reviews/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @PreAuthorizeUser
     @PutMapping("/{smartReviewId}/sections/{sectionId}", consumes = [SMART_REVIEW_SECTION_JSON_V1], produces = [SMART_REVIEW_SECTION_JSON_V1])
     fun updateSection(
         @PathVariable smartReviewId: ThingId,
@@ -194,6 +213,43 @@ class SmartReviewController(
                 organizations = organizations,
                 extractionMethod = extractionMethod,
                 sections = sections.map { it.toSmartReviewSectionDefinition() },
+                references = references
+            )
+    }
+
+    data class UpdateSmartReviewRequest(
+        @field:NullableNotBlank
+        val title: String?,
+        @field:Size(min = 1, max = 1)
+        @JsonProperty("research_fields")
+        val researchFields: List<ThingId>?,
+        @field:Valid
+        val authors: List<AuthorDTO>?,
+        @JsonProperty("sdgs")
+        val sustainableDevelopmentGoals: Set<ThingId>?,
+        @field:Size(max = 1)
+        val observatories: List<ObservatoryId>?,
+        @field:Size(max = 1)
+        val organizations: List<OrganizationId>?,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod?,
+        @field:Valid
+        val sections: List<SmartReviewSectionRequest>?,
+        @field:Valid
+        val references: List<@NotBlank String>?
+    ) {
+        fun toUpdateCommand(smartReviewId: ThingId, contributorId: ContributorId): UpdateSmartReviewUseCase.UpdateCommand =
+            UpdateSmartReviewUseCase.UpdateCommand(
+                smartReviewId = smartReviewId,
+                contributorId = contributorId,
+                title = title,
+                researchFields = researchFields,
+                authors = authors?.map { it.toAuthor() },
+                sustainableDevelopmentGoals = sustainableDevelopmentGoals,
+                observatories = observatories,
+                organizations = organizations,
+                extractionMethod = extractionMethod,
+                sections = sections?.map { it.toSmartReviewSectionDefinition() },
                 references = references
             )
     }

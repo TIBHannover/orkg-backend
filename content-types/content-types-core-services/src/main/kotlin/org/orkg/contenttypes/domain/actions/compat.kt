@@ -14,6 +14,7 @@ import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosett
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.CreateRosettaStoneTemplateAction
 import org.orkg.contenttypes.domain.actions.smartreviews.CreateSmartReviewAction
+import org.orkg.contenttypes.domain.actions.smartreviews.UpdateSmartReviewAction
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.CreateSmartReviewSectionAction
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.DeleteSmartReviewSectionAction
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.UpdateSmartReviewSectionAction
@@ -43,6 +44,7 @@ import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.contenttypes.input.UpdateRosettaStoneStatementUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
+import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.UpdateTemplateUseCase
@@ -69,6 +71,7 @@ internal typealias UpdateTemplatePropertyCommand = UpdateTemplatePropertyUseCase
 internal typealias UpdateTemplateInstanceCommand = UpdateTemplateInstanceUseCase.UpdateCommand
 internal typealias UpdateLiteratureListCommand = UpdateLiteratureListUseCase.UpdateCommand
 internal typealias UpdateLiteratureListSectionCommand = UpdateLiteratureListSectionUseCase.UpdateCommand
+internal typealias UpdateSmartReviewCommand = UpdateSmartReviewUseCase.UpdateCommand
 internal typealias UpdateSmartReviewSectionCommand = UpdateSmartReviewSectionUseCase.UpdateCommand
 internal typealias UpdateRosettaStoneStatementCommand = UpdateRosettaStoneStatementUseCase.UpdateCommand
 
@@ -101,6 +104,7 @@ internal typealias CreateLiteratureListState = CreateLiteratureListAction.State
 internal typealias UpdateLiteratureListState = UpdateLiteratureListAction.State
 
 internal typealias CreateSmartReviewState = CreateSmartReviewAction.State
+internal typealias UpdateSmartReviewState = UpdateSmartReviewAction.State
 
 internal typealias CreateLiteratureListSectionState = CreateLiteratureListSectionAction.State
 internal typealias UpdateLiteratureListSectionState = UpdateLiteratureListSectionAction.State

@@ -22,18 +22,30 @@ import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
+import org.orkg.contenttypes.domain.actions.UpdateSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionState
+import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorUpdateValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewContributionCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewExistenceValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewModifiableValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewReferencesCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewReferencesUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewResearchFieldCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewResearchFieldUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewResourceCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewResourceUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSDGCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSDGUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsCreateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsUpdateValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionCreateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionDeleter
@@ -56,6 +68,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -79,6 +92,7 @@ class SmartReviewService(
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases,
     private val listService: ListUseCases,
+    private val listRepository: ListRepository
 ) : SmartReviewUseCases {
     override fun findById(id: ThingId): Optional<SmartReview> =
         resourceRepository.findById(id)
@@ -139,6 +153,28 @@ class SmartReviewService(
             SmartReviewSectionCreator(literalService, resourceService, statementService)
         )
         return steps.execute(command, CreateSmartReviewSectionState()).smartReviewSectionId!!
+    }
+
+    override fun update(command: UpdateSmartReviewCommand) {
+        val steps = listOf<Action<UpdateSmartReviewCommand, UpdateSmartReviewState>>(
+            SmartReviewExistenceValidator(this, resourceRepository),
+            SmartReviewModifiableValidator(),
+            LabelValidator("title") { it.title },
+            BibTeXReferencesValidator({ it.references }),
+            ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.smartReview!!.researchFields.ids }),
+            SmartReviewAuthorUpdateValidator(resourceRepository, statementRepository),
+            SDGValidator({ it.sustainableDevelopmentGoals }, { it.smartReview!!.sustainableDevelopmentGoals.ids }),
+            OrganizationValidator(organizationRepository, { it.organizations }, { it.smartReview!!.organizations }),
+            ObservatoryValidator(observatoryRepository, { it.observatories }, { it.smartReview!!.observatories }),
+            SmartReviewSectionsUpdateValidator(resourceRepository, predicateRepository, thingRepository),
+            SmartReviewResourceUpdater(resourceService),
+            SmartReviewReferencesUpdater(literalService, statementService),
+            SmartReviewResearchFieldUpdater(literalService, statementService),
+            SmartReviewAuthorUpdater(resourceService, statementService, literalService, listService, listRepository),
+            SmartReviewSDGUpdater(literalService, statementService),
+            SmartReviewSectionsUpdater(literalService, resourceService, statementService)
+        )
+        steps.execute(command, UpdateSmartReviewState())
     }
 
     override fun updateSection(command: UpdateSmartReviewSectionCommand) {

@@ -77,7 +77,7 @@ class IdentifierUpdaterUnitTest {
                 contributorId = contributorId,
                 subjectId = authorId,
                 predicateId = any(),
-                literals = any()
+                literals = any<Set<String>>()
             )
         } just runs
 

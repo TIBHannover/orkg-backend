@@ -92,6 +92,24 @@ interface CreateSmartReviewSectionUseCase {
     ) : CreateCommand, SmartReviewTextSectionDefinition
 }
 
+interface UpdateSmartReviewUseCase {
+    fun update(command: UpdateCommand)
+
+    data class UpdateCommand(
+        val smartReviewId: ThingId,
+        val contributorId: ContributorId,
+        val title: String?,
+        val researchFields: List<ThingId>?,
+        val authors: List<Author>?,
+        val sustainableDevelopmentGoals: Set<ThingId>?,
+        val observatories: List<ObservatoryId>?,
+        val organizations: List<OrganizationId>?,
+        val extractionMethod: ExtractionMethod?,
+        val sections: List<SmartReviewSectionDefinition>?,
+        val references: List<String>?
+    )
+}
+
 interface UpdateSmartReviewSectionUseCase {
     fun updateSection(command: UpdateCommand)
 

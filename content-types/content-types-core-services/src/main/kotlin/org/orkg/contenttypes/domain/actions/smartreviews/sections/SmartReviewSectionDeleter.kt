@@ -2,10 +2,8 @@ package org.orkg.contenttypes.domain.actions.smartreviews.sections
 
 import org.orkg.contenttypes.domain.actions.DeleteSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionDeleter
+import org.orkg.contenttypes.domain.actions.smartreviews.findContributionId
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.DeleteSmartReviewSectionAction.State
-import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.Predicates
-import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -22,10 +20,7 @@ class SmartReviewSectionDeleter(
         if (section != null) {
             abstractSmartReviewSectionDeleter.delete(
                 contributorId = command.contributorId,
-                contributionId = state.statements[command.smartReviewId]!!.single {
-                    it.predicate.id == Predicates.hasContribution && it.`object` is Resource &&
-                        Classes.contributionSmartReview in (it.`object` as Resource).classes
-                }.`object`.id,
+                contributionId = state.statements.findContributionId(command.smartReviewId)!!,
                 section = section,
                 statements = state.statements
             )

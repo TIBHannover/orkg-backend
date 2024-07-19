@@ -25,10 +25,56 @@ import org.orkg.contenttypes.input.SmartReviewSectionDefinition
 import org.orkg.contenttypes.input.SmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.SmartReviewVisualizationSectionCommand
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
+import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 
 fun dummyCreateSmartReviewCommand() = CreateSmartReviewUseCase.CreateCommand(
+    contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+    title = "Dummy SmartReview Label",
+    researchFields = listOf(ThingId("R12")),
+    authors = listOf(
+        Author(
+            id = ThingId("R123"),
+            name = "Author with id"
+        ),
+        Author(
+            name = "Author with orcid",
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
+        ),
+        Author(
+            id = ThingId("R456"),
+            name = "Author with id and orcid",
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
+        ),
+        Author(
+            name = "Author with homepage",
+            homepage = URI.create("http://example.org/author")
+        ),
+        Author(
+            name = "Author that just has a name"
+        )
+    ),
+    sustainableDevelopmentGoals = setOf(ThingId("SDG_3")),
+    observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
+    organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
+    extractionMethod = ExtractionMethod.MANUAL,
+    sections = listOf(
+        dummySmartReviewComparisonSectionDefinition(),
+        dummySmartReviewVisualizationSectionDefinition(),
+        dummySmartReviewResourceSectionDefinition(),
+        dummySmartReviewPredicateSectionDefinition(),
+        dummySmartReviewOntologySectionDefinition(),
+        dummySmartReviewTextSectionDefinition()
+    ),
+    references = listOf(
+        "@misc{R123456,title = {Fancy title of a super important paper}",
+        "@misc{R456789,title = {Another super important paper}"
+    )
+)
+
+fun dummyUpdateSmartReviewCommand() = UpdateSmartReviewUseCase.UpdateCommand(
+    smartReviewId = ThingId("R123"),
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     title = "Dummy SmartReview Label",
     researchFields = listOf(ThingId("R12")),

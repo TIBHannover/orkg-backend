@@ -31,6 +31,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -56,6 +57,7 @@ class SmartReviewServiceUnitTests {
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val listService: ListUseCases = mockk()
+    private val listRepository: ListRepository = mockk()
 
     private val service = SmartReviewService(
         resourceRepository = resourceRepository,
@@ -69,7 +71,8 @@ class SmartReviewServiceUnitTests {
         resourceService = resourceService,
         literalService = literalService,
         statementService = statementService,
-        listService = listService
+        listService = listService,
+        listRepository = listRepository
     )
 
     @BeforeEach
@@ -91,7 +94,8 @@ class SmartReviewServiceUnitTests {
             resourceService,
             literalService,
             statementService,
-            listService
+            listService,
+            listRepository
         )
     }
 

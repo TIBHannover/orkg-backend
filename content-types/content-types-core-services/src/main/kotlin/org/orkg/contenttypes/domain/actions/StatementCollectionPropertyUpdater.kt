@@ -178,4 +178,55 @@ class StatementCollectionPropertyUpdater(
             )
         }
     }
+
+    internal fun update(
+        statements: List<GeneralStatement>,
+        contributorId: ContributorId,
+        subjectId: ThingId,
+        predicateId: ThingId,
+        literals: List<String>,
+        datatype: String = Literals.XSD.STRING.prefixedUri
+    ) {
+        val statementsIterator = statements.wherePredicate(predicateId)
+            .sortedBy { it.createdAt }
+            .listIterator()
+        val literalIterator = literals.listIterator()
+        val toRemove = mutableSetOf<StatementId>()
+
+        while (literalIterator.hasNext()) {
+            val literal = literalIterator.next()
+            var matchingStatement: GeneralStatement? = null
+            while (statementsIterator.hasNext()) {
+                val statement = statementsIterator.next()
+                if (statement.`object`.label == literal) {
+                    matchingStatement = statement
+                    break
+                }
+                toRemove += statement.id
+            }
+            if (matchingStatement == null) {
+                val literalId = literalService.create(
+                    CreateLiteralUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        label = literal,
+                        datatype = datatype
+                    )
+                )
+                statementService.add(
+                    userId = contributorId,
+                    subject = subjectId,
+                    predicate = predicateId,
+                    `object` = literalId
+                )
+            }
+        }
+
+        while (statementsIterator.hasNext()) {
+            toRemove += statementsIterator.next().id
+        }
+
+        if (toRemove.isNotEmpty()) {
+            statementService.delete(toRemove)
+        }
+    }
 }

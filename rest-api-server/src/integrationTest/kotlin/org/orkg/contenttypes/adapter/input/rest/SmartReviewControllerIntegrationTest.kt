@@ -18,10 +18,12 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
+import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PredicateReference
 import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.SmartReviewComparisonSection
+import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.domain.SmartReviewOntologySection
 import org.orkg.contenttypes.domain.SmartReviewPredicateSection
 import org.orkg.contenttypes.domain.SmartReviewResourceSection
@@ -220,7 +222,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     @WithUserDetails(userDetailsServiceBeanName = "mockUserDetailsService")
-    fun createAndFetch() {
+    fun createAndFetchAndUpdate() {
         val id = createSmartReview()
 
         val smartReview = get("/api/smart-reviews/{id}", id)
@@ -317,6 +319,105 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
                 section.heading shouldBe "Heading"
                 section.classes shouldBe setOf(Classes.introduction)
                 section.text shouldBe "text section contents"
+            }
+            it.references shouldBe listOf(
+                "@misc{R615465, title = {reference 1}}",
+                "@misc{R154146, title = {reference 2}}"
+            )
+        }
+
+        put("/api/smart-reviews/{id}", id)
+            .content(updateSmartReviewJson)
+            .accept(SMART_REVIEW_JSON_V1)
+            .contentType(SMART_REVIEW_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedSmartReview = smartReviewService.findById(id).orElseThrow { SmartReviewNotFound(id) }
+
+        updatedSmartReview.asClue {
+            it.id shouldBe id
+            it.title shouldBe "updated smart review title"
+            it.researchFields shouldBe listOf(
+                ObjectIdAndLabel(ThingId("R194"), "Engineering")
+            )
+            it.authors.size shouldBe 5
+            it.authors[0] shouldBe Author(
+                name = "Author with id",
+                id = ThingId("R123"),
+                identifiers = emptyMap(),
+                homepage = null
+            )
+            it.authors[1] shouldBe Author(
+                name = "Author with orcid",
+                id = ThingId("R4567"),
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+                homepage = null
+            )
+            it.authors[2] shouldBe Author(
+                name = "Author with id and orcid",
+                id = ThingId("R456"),
+                identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444", "4444-3333-2222-1111")),
+                homepage = null
+            )
+            it.authors[3].asClue { author ->
+                author.name shouldBe "Author with homepage"
+                author.id shouldNotBe null
+                author.identifiers shouldBe emptyMap()
+                author.homepage shouldBe URI("http://example.org/author")
+            }
+            it.authors[4] shouldBe Author(
+                name = "Another author that just has a name",
+                id = null,
+                identifiers = emptyMap(),
+                homepage = null
+            )
+            it.sustainableDevelopmentGoals shouldBe setOf(
+                ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"),
+                ObjectIdAndLabel(ThingId("SDG_4"), "Quality education")
+            )
+            it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
+            it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+            it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+            it.createdAt shouldNotBe null
+            it.createdBy shouldBe ContributorId(MockUserId.USER)
+            it.visibility shouldBe Visibility.DEFAULT
+            it.unlistedBy shouldBe null
+            it.sections[0].shouldBeInstanceOf<SmartReviewComparisonSection>().asClue { section ->
+                section.id shouldNotBe null
+                section.heading shouldBe "updated comparison section heading"
+                section.comparison shouldBe ResourceReference(ThingId("R26416"), "Some other comparison", setOf(Classes.comparison))
+            }
+            it.sections[1].shouldBeInstanceOf<SmartReviewVisualizationSection>().asClue { section ->
+                section.id shouldNotBe null
+                section.heading shouldBe "updated visualization section heading"
+                section.visualization shouldBe ResourceReference(ThingId("R2215648"), "Some other visualization", setOf(Classes.visualization))
+            }
+            it.sections[2].shouldBeInstanceOf<SmartReviewResourceSection>().asClue { section ->
+                section.id shouldNotBe null
+                section.heading shouldBe "updated resource section heading"
+                section.resource shouldBe ResourceReference(ThingId("R214565"), "Some other dataset resource", setOf(Classes.dataset))
+            }
+            it.sections[3].shouldBeInstanceOf<SmartReviewPredicateSection>().asClue { section ->
+                section.id shouldNotBe null
+                section.heading shouldBe "updated predicate section heading"
+                section.predicate shouldBe PredicateReference(ThingId("R215696541"), "Some other predicate")
+            }
+            it.sections[4].shouldBeInstanceOf<SmartReviewOntologySection>().asClue { section ->
+                section.id shouldNotBe null
+                section.heading shouldBe "updated ontology section heading"
+                section.entities shouldBe listOf(
+                    ResourceReference(ThingId("R21"), "Some other ontology resource", emptySet()),
+                    PredicateReference(ThingId("P1"), "Some ontology predicate")
+                )
+                section.predicates shouldBe listOf(PredicateReference(ThingId("P21"), "Some other ontology predicate"))
+            }
+            it.sections[5].shouldBeInstanceOf<SmartReviewTextSection>().asClue { section ->
+                section.id shouldNotBe null
+                section.heading shouldBe "updated text section heading"
+                section.classes shouldBe setOf(Classes.introduction)
+                section.text shouldBe "Introduction text section contents"
             }
             it.references shouldBe listOf(
                 "@misc{R615465, title = {reference 1}}",
@@ -680,6 +781,79 @@ private const val createSmartReviewJson = """{
   "references": [
     "@misc{R615465, title = {reference 1}}",
     "@misc{R154146, title = {reference 2}}"
+  ]
+}"""
+
+private const val updateSmartReviewJson = """{
+  "title": "updated smart review title",
+  "research_fields": [
+    "R194"
+  ],
+  "authors": [
+    {
+      "name": "Author with id",
+      "id": "R123"
+    },
+    {
+      "name": "Author with orcid",
+      "identifiers": {
+        "orcid": ["0000-1111-2222-3333"]
+      }
+    },
+    {
+      "name": "Author with id and orcid",
+      "id": "R456",
+      "identifiers": {
+        "orcid": ["4444-3333-2222-1111"]
+      }
+    },
+    {
+      "name": "Author with homepage",
+      "homepage": "http://example.org/author"
+    },
+    {
+      "name": "Another author that just has a name"
+    }
+  ],
+  "sdgs": ["SDG_3", "SDG_4"],
+  "observatories": [
+    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+  ],
+  "organizations": [
+    "edc18168-c4ee-4cb8-a98a-136f748e912e"
+  ],
+  "extraction_method": "UNKNOWN",
+  "sections": [
+    {
+      "heading": "updated comparison section heading",
+      "comparison": "R26416"
+    },
+    {
+      "heading": "updated visualization section heading",
+      "visualization": "R2215648"
+    },
+    {
+      "heading": "updated resource section heading",
+      "resource": "R214565"
+    },
+    {
+      "heading": "updated predicate section heading",
+      "predicate": "R215696541"
+    },
+    {
+      "heading": "updated ontology section heading",
+      "entities": ["R21", "P1"],
+      "predicates": ["P21"]
+    },
+    {
+      "heading": "updated text section heading",
+      "class": "Introduction",
+      "text": "Introduction text section contents"
+    }
+  ],
+  "references": [
+    "@misc{R615465, title = {updated reference 1}}",
+    "@misc{R154146, title = {updated reference 2}}"
   ]
 }"""
 

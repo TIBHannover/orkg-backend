@@ -743,6 +743,42 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
     @Test
     @TestWithMockUser
+    @DisplayName("Given a smart review update request, when service succeeds, it updates the smart review")
+    fun update() {
+        val id = ThingId("R123")
+        every { smartReviewService.update(any()) } just runs
+
+        documentedPutRequestTo("/api/smart-reviews/{id}", id)
+            .content(updateSmartReviewRequest())
+            .accept(SMART_REVIEW_JSON_V1)
+            .contentType(SMART_REVIEW_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("title").description("The title of the smart review. (optional)"),
+                        fieldWithPath("research_fields").description("The list of research fields the smart review will be assigned to. (optional)"),
+                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the smart review will be assigned to. (optional)"),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the smart review belongs to. (optional)").optional(),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the smart review belongs to. (optional)").optional(),
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
+                        subsectionWithPath("sections").description("The list of updated sections of the smart review (optional). See <<smart-review-sections,smart review sections>> for more information."),
+                        fieldWithPath("references[]").description("The list of updated bibtex references of the smart review."),
+                    ).and(authorListFields("smart review"))
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { smartReviewService.update(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
     @DisplayName("Given a comparison section update request, when service succeeds, it updates the comparison section at the specified index")
     fun updateComparisonSection() {
         val smartReviewId = ThingId("R3541")
@@ -1065,6 +1101,67 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             references = listOf(
                 "reference 1",
                 "reference 2"
+            )
+        )
+
+    private fun updateSmartReviewRequest() =
+        SmartReviewController.UpdateSmartReviewRequest(
+            title = "Dummy Smart Review Label",
+            researchFields = listOf(ThingId("R14")),
+            authors = listOf(
+                AuthorDTO(
+                    id = ThingId("R123"),
+                    name = "Author with id",
+                    identifiers = null,
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with orcid",
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = ThingId("R456"),
+                    name = "Author with id and orcid",
+                    identifiers = IdentifierMapDTO(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with homepage",
+                    identifiers = null,
+                    homepage = URI.create("http://example.org/author")
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author that just has a name",
+                    identifiers = null,
+                    homepage = null
+                )
+            ),
+            sustainableDevelopmentGoals = setOf(
+                ThingId("SDG_3"),
+                ThingId("SDG_4")
+            ),
+            observatories = listOf(
+                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            ),
+            organizations = listOf(
+                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            ),
+            extractionMethod = ExtractionMethod.MANUAL,
+            sections = listOf(
+                comparisonSectionRequest(),
+                visualizationSectionRequest(),
+                resourceSectionRequest(),
+                predicateSectionRequest(),
+                ontologySectionRequest(),
+                textSectionRequest()
+            ),
+            references = listOf(
+                "updated reference 1",
+                "updated reference 2"
             )
         )
 

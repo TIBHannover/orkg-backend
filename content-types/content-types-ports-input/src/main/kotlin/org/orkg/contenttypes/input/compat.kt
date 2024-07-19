@@ -26,6 +26,6 @@ interface LiteratureListUseCases : RetrieveLiteratureListUseCase, CreateLiteratu
     CreateLiteratureListSectionUseCase, UpdateLiteratureListUseCase, UpdateLiteratureListSectionUseCase, DeleteLiteratureListSectionUseCase
 
 interface SmartReviewUseCases : RetrieveSmartReviewUseCase, CreateSmartReviewUseCase, CreateSmartReviewSectionUseCase,
-    UpdateSmartReviewSectionUseCase, DeleteSmartReviewSectionUseCase
+    UpdateSmartReviewUseCase, UpdateSmartReviewSectionUseCase, DeleteSmartReviewSectionUseCase
 
 interface ContentTypeUseCases : RetrieveContentTypeUseCase

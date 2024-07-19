@@ -91,6 +91,16 @@ interface CreateSmartReviewSectionUseCase {
     ) : CreateCommand, SmartReviewTextSectionDefinition
 }
 
+interface DeleteSmartReviewSectionUseCase {
+    fun deleteSection(command: DeleteCommand)
+
+    data class DeleteCommand(
+        val smartReviewId: ThingId,
+        val sectionId: ThingId,
+        val contributorId: ContributorId
+    )
+}
+
 sealed interface SmartReviewSectionDefinition {
     val heading: String
 

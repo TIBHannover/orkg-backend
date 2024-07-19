@@ -77,3 +77,12 @@ The response will be `201 Created` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
 operation::smart-reviews-create-text-section-at-index[snippets='curl-request,path-parameters,request-fields,http-response']
+
+[[smart-review-sections-delete]]
+== Deleting a smart review section
+
+A `DELETE` request deletes a smart review section by ID.
+The response will be `204 No Content` when successful.
+The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::smart-reviews-delete-section[snippets='curl-request,path-parameters,http-response']

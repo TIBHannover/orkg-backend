@@ -18,6 +18,7 @@ import org.orkg.contenttypes.adapter.input.rest.mapping.SmartReviewRepresentatio
 import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
+import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.SmartReviewComparisonSectionCommand
 import org.orkg.contenttypes.input.SmartReviewOntologySectionCommand
 import org.orkg.contenttypes.input.SmartReviewPredicateSectionCommand
@@ -35,8 +36,10 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -120,6 +123,23 @@ class SmartReviewController(
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
+    }
+
+    @PreAuthorizeUser
+    @DeleteMapping("/{smartReviewId}/sections/{sectionId}", produces = [SMART_REVIEW_SECTION_JSON_V1])
+    fun deleteSection(
+        @PathVariable smartReviewId: ThingId,
+        @PathVariable sectionId: ThingId,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.deleteSection(DeleteSmartReviewSectionUseCase.DeleteCommand(smartReviewId, sectionId, userId))
+        val location = uriComponentsBuilder
+            .path("api/smart-reviews/{id}")
+            .buildAndExpand(smartReviewId)
+            .toUri()
+        return noContent().location(location).build()
     }
 
     data class CreateSmartReviewRequest(

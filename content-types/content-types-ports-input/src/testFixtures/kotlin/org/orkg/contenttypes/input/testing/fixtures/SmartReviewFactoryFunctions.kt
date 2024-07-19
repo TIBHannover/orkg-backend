@@ -16,6 +16,7 @@ import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
+import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.SmartReviewComparisonSectionCommand
 import org.orkg.contenttypes.input.SmartReviewOntologySectionCommand
 import org.orkg.contenttypes.input.SmartReviewPredicateSectionCommand
@@ -163,6 +164,12 @@ fun dummySmartReviewTextSectionDefinition(): SmartReviewTextSectionCommand =
         `class` = Classes.introduction,
         text = "text section contents"
     )
+
+fun dummyDeleteSmartReviewSectionCommand() = DeleteSmartReviewSectionUseCase.DeleteCommand(
+    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
+    smartReviewId = ThingId("R123"),
+    sectionId = ThingId("R456")
+)
 
 fun SmartReviewSection.toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =
     when (this) {

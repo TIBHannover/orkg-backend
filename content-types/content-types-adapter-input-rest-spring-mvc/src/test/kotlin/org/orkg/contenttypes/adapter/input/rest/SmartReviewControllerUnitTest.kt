@@ -6,6 +6,8 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
 import java.time.OffsetDateTime
@@ -27,18 +29,21 @@ import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
+import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectSmartReview
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
@@ -732,6 +737,35 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                 it.index shouldBe index
             })
         }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a smart review section delete request, when service succeeds, it returns status 204 NO CONTENT")
+    fun deleteSection() {
+        val smartReviewId = ThingId("R3541")
+        val sectionId = ThingId("R123")
+        val command = DeleteSmartReviewSectionUseCase.DeleteCommand(
+            smartReviewId, sectionId, ContributorId(MockUserId.USER)
+        )
+        every { smartReviewService.deleteSection(command) } just runs
+
+        documentedDeleteRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, sectionId)
+            .accept(SMART_REVIEW_SECTION_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the smart review the section belongs to."),
+                        parameterWithName("sectionId").description("The id of the section.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { smartReviewService.deleteSection(command) }
     }
 
     private fun createSmartReviewRequest() =

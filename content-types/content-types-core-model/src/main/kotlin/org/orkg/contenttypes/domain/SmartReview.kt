@@ -8,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
@@ -31,7 +32,54 @@ data class SmartReview(
     val published: Boolean,
     val sections: List<SmartReviewSection>,
     val references: List<String>
-) : ContentType
+) : ContentType {
+    companion object {
+        fun from(resource: Resource, root: ThingId, statements: Map<ThingId, List<GeneralStatement>>): SmartReview {
+            val directStatements = statements[root].orEmpty()
+            val contributionStatements = directStatements.singleOrNull {
+                it.predicate.id == Predicates.hasContribution && it.`object` is Resource &&
+                    Classes.contributionSmartReview in (it.`object` as Resource).classes
+            }
+                ?.let { statements[it.`object`.id] }
+                .orEmpty()
+            return SmartReview(
+                id = resource.id,
+                title = resource.label,
+                researchFields = directStatements.wherePredicate(Predicates.hasResearchField)
+                    .objectIdsAndLabel()
+                    .sortedBy { it.id },
+                authors = statements.authors(root).ifEmpty { statements.legacyAuthors(root) },
+                versions = VersionInfo(
+                    head = HeadVersion(directStatements.firstOrNull()?.subject ?: resource),
+                    published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
+                        .sortedByDescending { it.createdAt }
+                        .objects()
+                        .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
+                ),
+                sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
+                    .objectIdsAndLabel()
+                    .sortedBy { it.id }
+                    .toSet(),
+                observatories = listOf(resource.observatoryId),
+                organizations = listOf(resource.organizationId),
+                extractionMethod = resource.extractionMethod,
+                createdAt = resource.createdAt,
+                createdBy = resource.createdBy,
+                visibility = resource.visibility,
+                unlistedBy = resource.unlistedBy,
+                published = Classes.smartReviewPublished in resource.classes,
+                sections = contributionStatements.wherePredicate(Predicates.hasSection)
+                    .filter { it.`object` is Resource }
+                    .sortedBy { it.createdAt }
+                    .map { SmartReviewSection.from(it.`object` as Resource, statements) },
+                references = contributionStatements.wherePredicate(Predicates.hasReference)
+                    .filter { it.`object` is Literal }
+                    .sortedBy { it.createdAt }
+                    .map { it.`object`.label }
+            )
+        }
+    }
+}
 
 sealed interface SmartReviewSection {
     val id: ThingId

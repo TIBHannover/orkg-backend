@@ -15,6 +15,8 @@ import org.orkg.contenttypes.domain.actions.CreateSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
+import org.orkg.contenttypes.domain.actions.DeleteSmartReviewSectionCommand
+import org.orkg.contenttypes.domain.actions.DeleteSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
@@ -32,14 +34,15 @@ import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsCrea
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionCreateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionDeleter
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionExistenceCreateValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionExistenceDeleteValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionIndexValidator
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
@@ -133,12 +136,20 @@ class SmartReviewService(
         return steps.execute(command, CreateSmartReviewSectionState()).smartReviewSectionId!!
     }
 
-    internal fun Resource.toSmartReview(): SmartReview {
-        var root = id
+    override fun deleteSection(command: DeleteSmartReviewSectionCommand) {
+        val steps = listOf<Action<DeleteSmartReviewSectionCommand, DeleteSmartReviewSectionState>>(
+            SmartReviewSectionExistenceDeleteValidator(this, resourceRepository),
+            SmartReviewSectionDeleter(statementService, resourceService)
+        )
+        steps.execute(command, DeleteSmartReviewSectionState())
+    }
+
+    internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
+        var root = resource.id
         val statements = when {
-            Classes.smartReviewPublished in classes -> {
-                val published = smartReviewPublishedRepository.findById(id)
-                    .orElseThrow { SmartReviewNotFound(id) }
+            Classes.smartReviewPublished in resource.classes -> {
+                val published = smartReviewPublishedRepository.findById(resource.id)
+                    .orElseThrow { SmartReviewNotFound(resource.id) }
                 root = published.rootId
                 val versions = statementRepository.fetchAsBundle(
                     id = root,
@@ -152,9 +163,9 @@ class SmartReviewService(
                 )
                 published.subgraph.filter { it.predicate.id != Predicates.hasPublishedVersion } + versions
             }
-            Classes.smartReview in classes -> {
+            Classes.smartReview in resource.classes -> {
                 statementRepository.fetchAsBundle(
-                    id = id,
+                    id = resource.id,
                     configuration = BundleConfiguration(
                         minLevel = null,
                         maxLevel = 3,
@@ -163,53 +174,16 @@ class SmartReviewService(
                     ),
                     sort = Sort.unsorted()
                 ) + statementRepository.findAll(
-                    subjectId = id,
+                    subjectId = resource.id,
                     objectClasses = setOf(Classes.researchField),
                     pageable = PageRequests.ALL
                 )
             }
-            else -> throw IllegalStateException("""Unable to convert resource "$id" to smart review. This is a bug.""")
-        }.groupBy { it.subject.id }
-        val directStatements = statements[root].orEmpty()
-        val contributionStatements = directStatements.singleOrNull {
-                it.predicate.id == Predicates.hasContribution && it.`object` is Resource && Classes.contributionSmartReview in (it.`object` as Resource).classes
-            }
-            ?.let { statements[it.`object`.id] }
-            .orEmpty()
-        return SmartReview(
-            id = id,
-            title = label,
-            researchFields = directStatements.wherePredicate(Predicates.hasResearchField)
-                .objectIdsAndLabel()
-                .sortedBy { it.id },
-            authors = statements.authors(root).ifEmpty { statements.legacyAuthors(root) },
-            versions = VersionInfo(
-                head = HeadVersion(directStatements.firstOrNull()?.subject ?: this),
-                published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
-                    .sortedByDescending { it.createdAt }
-                    .objects()
-                    .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
-            ),
-            sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
-                .objectIdsAndLabel()
-                .sortedBy { it.id }
-                .toSet(),
-            observatories = listOf(observatoryId),
-            organizations = listOf(organizationId),
-            extractionMethod = extractionMethod,
-            createdAt = createdAt,
-            createdBy = createdBy,
-            visibility = visibility,
-            unlistedBy = unlistedBy,
-            published = Classes.smartReviewPublished in classes,
-            sections = contributionStatements.wherePredicate(Predicates.hasSection)
-                .filter { it.`object` is Resource }
-                .sortedBy { it.createdAt }
-                .map { SmartReviewSection.from(it.`object` as Resource, statements) },
-            references = contributionStatements.wherePredicate(Predicates.hasReference)
-                .filter { it.`object` is Literal }
-                .sortedBy { it.createdAt }
-                .map { it.`object`.label }
-        )
+            else -> throw IllegalStateException("""Unable to convert resource "${resource.id}" to smart review. This is a bug.""")
+        }
+        return ContentTypeSubgraph(root, statements.groupBy { it.subject.id })
     }
+
+    internal fun Resource.toSmartReview(): SmartReview =
+        findSubgraph(this).let { SmartReview.from(this, it.root, it.statements) }
 }

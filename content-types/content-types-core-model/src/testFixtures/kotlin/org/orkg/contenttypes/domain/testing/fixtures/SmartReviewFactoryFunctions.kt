@@ -17,12 +17,20 @@ import org.orkg.contenttypes.domain.SmartReviewComparisonSection
 import org.orkg.contenttypes.domain.SmartReviewOntologySection
 import org.orkg.contenttypes.domain.SmartReviewPredicateSection
 import org.orkg.contenttypes.domain.SmartReviewResourceSection
+import org.orkg.contenttypes.domain.SmartReviewSection
 import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.testing.fixtures.createLiteral
+import org.orkg.graph.testing.fixtures.createPredicate
+import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.createStatement
 
 fun createDummySmartReview() = SmartReview(
     id = ThingId("R1456"),
@@ -102,49 +110,158 @@ fun createDummySmartReview() = SmartReview(
     unlistedBy = null,
     published = false,
     sections = listOf(
-        SmartReviewTextSection(
-            id = ThingId("R154686"),
-            heading = "Heading",
-            classes = setOf(Classes.introduction),
-            text = "text section contents"
-        ),
-        SmartReviewComparisonSection(
-            id = ThingId("R456351"),
-            heading = "comparison section heading",
-            comparison = ResourceReference(
-                id = ThingId("R6416"),
-                label = "Comparison",
-                classes = setOf(Classes.comparison)
-            )
-        ),
-        SmartReviewVisualizationSection(
-            id = ThingId("R6521"),
-            heading = "visualization section heading",
-            visualization = ResourceReference(
-                id = ThingId("R215648"),
-                label = "Visualization",
-                classes = setOf(Classes.visualization)
-            )
-        ),
-        SmartReviewResourceSection(
-            id = ThingId("R14565"),
-            heading = "resource section heading",
-            resource = ResourceReference(ThingId("R1"), "some resource label", classes = setOf(Classes.problem))
-        ),
-        SmartReviewPredicateSection(
-            id = ThingId("R15696541"),
-            heading = "predicate section heading",
-            predicate = PredicateReference(ThingId("P1"), "some predicate label")
-        ),
-        SmartReviewOntologySection(
-            id = ThingId("R16532"),
-            heading = "ontology section heading",
-            entities = listOf(
-                ResourceReference(ThingId("R1"), "some resource label", classes = setOf(Classes.problem)),
-                PredicateReference(ThingId("P1"), "some predicate label")
-            ),
-            predicates = listOf(PredicateReference(ThingId("P1"), "some predicate label"))
-        )
+        createDummySmartReviewTextSection(),
+        createDummySmartReviewComparisonSection(),
+        createDummySmartReviewVisualizationSection(),
+        createDummySmartReviewResourceSection(),
+        createDummySmartReviewPredicateSection(),
+        createDummySmartReviewOntologySection()
     ),
     references = listOf("@misc{R615465, title = {reference 1}}", "@misc{R615465, title = {reference 2}}")
 )
+
+fun createDummySmartReviewComparisonSection() = SmartReviewComparisonSection(
+    id = ThingId("R456351"),
+    heading = "comparison section heading",
+    comparison = ResourceReference(
+        id = ThingId("R6416"),
+        label = "Comparison",
+        classes = setOf(Classes.comparison)
+    )
+)
+
+fun createDummySmartReviewVisualizationSection() = SmartReviewVisualizationSection(
+    id = ThingId("R6521"),
+    heading = "visualization section heading",
+    visualization = ResourceReference(
+        id = ThingId("R215648"),
+        label = "Visualization",
+        classes = setOf(Classes.visualization)
+    )
+)
+
+fun createDummySmartReviewResourceSection() = SmartReviewResourceSection(
+    id = ThingId("R14565"),
+    heading = "resource section heading",
+    resource = ResourceReference(ThingId("R1"), "some resource label", classes = setOf(Classes.problem))
+)
+
+fun createDummySmartReviewPredicateSection() = SmartReviewPredicateSection(
+    id = ThingId("R15696541"),
+    heading = "predicate section heading",
+    predicate = PredicateReference(ThingId("P1"), "some predicate label")
+)
+
+fun createDummySmartReviewOntologySection() = SmartReviewOntologySection(
+    id = ThingId("R16532"),
+    heading = "ontology section heading",
+    entities = listOf(
+        ResourceReference(ThingId("R1"), "some resource label", classes = setOf(Classes.problem)),
+        PredicateReference(ThingId("P1"), "some predicate label")
+    ),
+    predicates = listOf(PredicateReference(ThingId("P1"), "some predicate label"))
+)
+
+fun createDummySmartReviewTextSection() = SmartReviewTextSection(
+    id = ThingId("R154686"),
+    heading = "Heading",
+    classes = setOf(Classes.introduction),
+    text = "text section contents"
+)
+
+fun SmartReviewSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> =
+    when (this) {
+        is SmartReviewComparisonSection -> toGroupedStatements()
+        is SmartReviewVisualizationSection -> toGroupedStatements()
+        is SmartReviewResourceSection -> toGroupedStatements()
+        is SmartReviewPredicateSection -> toGroupedStatements()
+        is SmartReviewOntologySection -> toGroupedStatements()
+        is SmartReviewTextSection -> toGroupedStatements()
+    }
+
+fun SmartReviewComparisonSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
+    val root = createResource(id, label = heading, classes = setOf(Classes.comparisonSection))
+    val statements = listOf(
+        createStatement(
+            id = StatementId("S1"),
+            subject = root,
+            predicate = createPredicate(Predicates.hasLink),
+            `object` = createResource(comparison!!.id, classes = setOf(Classes.comparison))
+        )
+    )
+    return statements.groupBy { it.subject.id }
+}
+
+fun SmartReviewVisualizationSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
+    val root = createResource(id, label = heading, classes = setOf(Classes.visualizationSection))
+    val statements = listOf(
+        createStatement(
+            id = StatementId("S1"),
+            subject = root,
+            predicate = createPredicate(Predicates.hasLink),
+            `object` = createResource(visualization!!.id, classes = setOf(Classes.visualization))
+        )
+    )
+    return statements.groupBy { it.subject.id }
+}
+
+fun SmartReviewResourceSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
+    val root = createResource(id, label = heading, classes = setOf(Classes.resourceSection))
+    val statements = listOf(
+        createStatement(
+            id = StatementId("S1"),
+            subject = root,
+            predicate = createPredicate(Predicates.hasLink),
+            `object` = createResource(resource!!.id)
+        )
+    )
+    return statements.groupBy { it.subject.id }
+}
+
+fun SmartReviewPredicateSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
+    val root = createResource(id, label = heading, classes = setOf(Classes.propertySection))
+    val statements = listOf(
+        createStatement(
+            id = StatementId("S1"),
+            subject = root,
+            predicate = createPredicate(Predicates.hasLink),
+            `object` = createPredicate(predicate!!.id)
+        )
+    )
+    return statements.groupBy { it.subject.id }
+}
+
+fun SmartReviewOntologySection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
+    val root = createResource(id, label = heading, classes = setOf(Classes.ontologySection))
+    val statements = mutableListOf<GeneralStatement>()
+    entities.forEach { entity ->
+        statements += createStatement(
+            id = StatementId("S${statements.size}"),
+            subject = root,
+            predicate = createPredicate(Predicates.hasEntity),
+            `object` = createResource(entity.id!!)
+        )
+    }
+    predicates.forEach { predicate ->
+        statements += createStatement(
+            id = StatementId("S${statements.size}"),
+            subject = root,
+            predicate = createPredicate(Predicates.showProperty),
+            `object` = createPredicate(predicate.id)
+        )
+    }
+    return statements.groupBy { it.subject.id }
+}
+
+fun SmartReviewTextSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
+    val root = createResource(id, label = heading, classes = classes)
+    val statements = listOf(
+        createStatement(
+            id = StatementId("S1"),
+            subject = root,
+            predicate = createPredicate(Predicates.hasContent),
+            `object` = createLiteral(label = text)
+        )
+    )
+    return statements.groupBy { it.subject.id }
+}

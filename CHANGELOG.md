@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added content-type endpoint for creating smart reviews.
+  (See: [!995](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/995))
+- Added content-type endpoint for creating smart review sections.
+  (See: [!996](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/996))
+- Added content-type endpoint for updating smart reviews.
+  (See: [!999](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/999))
+- Added content-type endpoint for updating smart review sections.
+  (See: [!998](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/998))
+- Added content-type endpoint for deleting smart review sections.
+  (See: [!997](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/997))
+- Added acknowledgements to smart review responses.
+  (See: [!1000](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1000))
+
+### Changed
+- The fields `authors`, `sdgs`, `organizations`, `observatories` and `sections` are now optional when creating a literature list.
+  (See: [!1001](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1001))
+
+### Fixed
+- Fixed retrieval of research fields for smart reviews.
+  (See: [!995](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/995))
+- Fixed deletion process of literature list sections.
+  (See: [!1001](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1001))
 
 ## [0.61.2] - 2024-07-04
 ### Fixed

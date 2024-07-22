@@ -55,6 +55,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewComparisonSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -77,7 +78,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -88,11 +89,13 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewComparisonSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
         val otherStatementAboutComparisonSection = createStatement(
+            id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
             `object` = createResource(section.id)
@@ -123,7 +126,8 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val contributionId = ThingId("R123")
         val section = createDummySmartReviewComparisonSection()
         val statements = section.toGroupedStatements()
-        val smartReviewHasSectionStatement = createStatement(
+        val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -134,7 +138,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 objectId = section.id,
                 pageable = PageRequests.ALL
             )
-        } returns pageOf(smartReviewHasSectionStatement)
+        } returns pageOf(contributionHasSectionStatement)
         every { statementService.delete(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
@@ -148,7 +152,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -159,6 +163,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewVisualizationSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -181,7 +186,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -192,11 +197,13 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewVisualizationSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
         val otherStatementAboutVisualizationSection = createStatement(
+            id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
             `object` = createResource(section.id)
@@ -227,7 +234,8 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val contributionId = ThingId("R123")
         val section = createDummySmartReviewVisualizationSection()
         val statements = section.toGroupedStatements()
-        val smartReviewHasSectionStatement = createStatement(
+        val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -238,7 +246,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 objectId = section.id,
                 pageable = PageRequests.ALL
             )
-        } returns pageOf(smartReviewHasSectionStatement)
+        } returns pageOf(contributionHasSectionStatement)
         every { statementService.delete(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
@@ -252,7 +260,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -263,6 +271,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewResourceSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -285,7 +294,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -296,11 +305,13 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewResourceSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
         val otherStatementAboutResourceSection = createStatement(
+            id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
             `object` = createResource(section.id)
@@ -331,7 +342,8 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val contributionId = ThingId("R123")
         val section = createDummySmartReviewResourceSection()
         val statements = section.toGroupedStatements()
-        val smartReviewHasSectionStatement = createStatement(
+        val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -342,7 +354,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 objectId = section.id,
                 pageable = PageRequests.ALL
             )
-        } returns pageOf(smartReviewHasSectionStatement)
+        } returns pageOf(contributionHasSectionStatement)
         every { statementService.delete(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
@@ -356,7 +368,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -367,6 +379,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewPredicateSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -389,7 +402,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -400,11 +413,13 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewPredicateSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
         val otherStatementAboutPredicateSection = createStatement(
+            id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
             `object` = createResource(section.id)
@@ -471,6 +486,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewOntologySection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -493,7 +509,16 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) {
+            statementService.delete(
+                setOf(
+                    StatementId("S0"),
+                    StatementId("S1"),
+                    StatementId("S2"),
+                    StatementId("S123")
+                )
+            )
+        }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -540,6 +565,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewOntologySection()
         val statements = section.toGroupedStatements()
         val smartReviewHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -564,7 +590,16 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) {
+            statementService.delete(
+                setOf(
+                    StatementId("S0"),
+                    StatementId("S1"),
+                    StatementId("S2"),
+                    StatementId("S123")
+                )
+            )
+        }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -575,6 +610,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewTextSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -597,7 +633,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -608,11 +644,13 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val section = createDummySmartReviewTextSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
         val otherStatementAboutTextSection = createStatement(
+            id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
             `object` = createResource(section.id)
@@ -643,7 +681,8 @@ class AbstractSmartReviewSectionDeleterUnitTest {
         val contributionId = ThingId("R123")
         val section = createDummySmartReviewTextSection()
         val statements = section.toGroupedStatements()
-        val smartReviewHasSectionStatement = createStatement(
+        val contributionHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -654,7 +693,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 objectId = section.id,
                 pageable = PageRequests.ALL
             )
-        } returns pageOf(smartReviewHasSectionStatement)
+        } returns pageOf(contributionHasSectionStatement)
         every { statementService.delete(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
@@ -668,7 +707,7 @@ class AbstractSmartReviewSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 }

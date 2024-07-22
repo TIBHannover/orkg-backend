@@ -19,6 +19,7 @@ import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.domain.Author
+import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PredicateReference
 import org.orkg.contenttypes.domain.ResourceReference
@@ -29,6 +30,7 @@ import org.orkg.contenttypes.domain.SmartReviewPredicateSection
 import org.orkg.contenttypes.domain.SmartReviewResourceSection
 import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
+import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.createClasses
 import org.orkg.createLiteral
@@ -272,6 +274,10 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
                 identifiers = emptyMap(),
                 homepage = null
             )
+            it.versions shouldBe VersionInfoRepresentation(
+                head = HeadVersionRepresentation(id, it.title, it.createdAt, it.createdBy),
+                published = emptyList()
+            )
             it.sustainableDevelopmentGoals shouldBe setOf(
                 LabeledObjectRepresentation(ThingId("SDG_1"), "No poverty"),
                 LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger")
@@ -377,6 +383,10 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
                 identifiers = emptyMap(),
                 homepage = null
             )
+            it.versions shouldBe VersionInfo(
+                head = HeadVersion(id, it.title, it.createdAt, it.createdBy),
+                published = emptyList()
+            )
             it.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"),
                 ObjectIdAndLabel(ThingId("SDG_4"), "Quality education")
@@ -388,6 +398,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             it.createdBy shouldBe ContributorId(MockUserId.USER)
             it.visibility shouldBe Visibility.DEFAULT
             it.unlistedBy shouldBe null
+            it.published shouldBe false
             it.sections[0].shouldBeInstanceOf<SmartReviewComparisonSection>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "updated comparison section heading"

@@ -35,27 +35,27 @@ class AbstractSmartReviewSectionValidator(
 
         when (section) {
             is SmartReviewComparisonSectionDefinition -> {
-                validateWitchCache(section.comparison, validIds) { comparisonId ->
+                validateWithCache(section.comparison, validIds) { comparisonId ->
                     resourceRepository.findById(comparisonId)
                         .filter { Classes.comparison in it.classes }
                         .orElseThrow { ComparisonNotFound(comparisonId) }
                 }
             }
             is SmartReviewVisualizationSectionDefinition -> {
-                validateWitchCache(section.visualization, validIds) { visualizationId ->
+                validateWithCache(section.visualization, validIds) { visualizationId ->
                     resourceRepository.findById(visualizationId)
                         .filter { Classes.visualization in it.classes }
                         .orElseThrow { VisualizationNotFound(visualizationId) }
                 }
             }
             is SmartReviewResourceSectionDefinition -> {
-                validateWitchCache(section.resource, validIds) { resourceId ->
+                validateWithCache(section.resource, validIds) { resourceId ->
                     resourceRepository.findById(resourceId)
                         .orElseThrow { ResourceNotFound.withId(resourceId) }
                 }
             }
             is SmartReviewPredicateSectionDefinition -> {
-                validateWitchCache(section.predicate, validIds) { predicateId ->
+                validateWithCache(section.predicate, validIds) { predicateId ->
                     predicateRepository.findById(predicateId)
                         .orElseThrow { PredicateNotFound(predicateId) }
                 }
@@ -69,7 +69,7 @@ class AbstractSmartReviewSectionValidator(
                     validIds += section.entities
                 }
                 section.predicates.forEach { predicateId ->
-                    validateWitchCache(predicateId, validIds) {
+                    validateWithCache(predicateId, validIds) {
                         predicateRepository.findById(predicateId)
                             .orElseThrow { PredicateNotFound(predicateId) }
                     }
@@ -84,7 +84,7 @@ class AbstractSmartReviewSectionValidator(
         }
     }
 
-    private inline fun <T> validateWitchCache(element: T?, cache: MutableSet<T>, block: (T) -> Unit) {
+    private inline fun <T> validateWithCache(element: T?, cache: MutableSet<T>, block: (T) -> Unit) {
         if (element != null && element !in cache) {
             block(element)
             cache += element

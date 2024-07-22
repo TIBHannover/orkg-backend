@@ -130,7 +130,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                         fieldWithPath("created_by").description("The UUID of the user or service who created this smart review."),
                         fieldWithPath("visibility").description("""Visibility of the smart review. Can be one of "default", "featured", "unlisted" or "deleted"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this smart review.").optional(),
-                        fieldWithPath("published").description("Whether the literature is published or not."),
+                        fieldWithPath("published").description("Whether the smart review is published or not."),
                         fieldWithPath("sections").description("The list of sections of the smart review."),
                         fieldWithPath("sections[].id").description("The id of the section."),
                         fieldWithPath("sections[].heading").description("The heading of the section.").optional(),
@@ -311,12 +311,12 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                     requestFields(
                         fieldWithPath("title").description("The title of the smart review."),
                         fieldWithPath("research_fields").description("The list of research fields the smart review will be assigned to."),
-                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the smart review will be assigned to. (optional)"),
+                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the smart review will be assigned to. (optional)").optional(),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the smart review belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the smart review belongs to. (optional)").optional(),
                         fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
-                        subsectionWithPath("sections").description("The list of sections of the smart review. See <<smart-review-sections,smart review sections>> for more information."),
-                        fieldWithPath("references[]").description("The list of bibtex references of the smart review."),
+                        subsectionWithPath("sections").description("The list of sections of the smart review. See <<smart-review-sections,smart review sections>> for more information. (optional)").optional(),
+                        fieldWithPath("references[]").description("The list of bibtex references of the smart review. (optional)").optional(),
                     ).and(authorListFields("smart review"))
                 )
             )

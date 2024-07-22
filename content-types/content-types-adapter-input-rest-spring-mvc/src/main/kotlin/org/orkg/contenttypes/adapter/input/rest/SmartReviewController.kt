@@ -188,32 +188,32 @@ class SmartReviewController(
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
-        val authors: List<AuthorDTO>,
+        val authors: List<AuthorDTO>?,
         @JsonProperty("sdgs")
-        val sustainableDevelopmentGoals: Set<ThingId>,
+        val sustainableDevelopmentGoals: Set<ThingId>?,
         @field:Size(max = 1)
-        val observatories: List<ObservatoryId>,
+        val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
-        val organizations: List<OrganizationId>,
+        val organizations: List<OrganizationId>?,
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         @field:Valid
-        val sections: List<SmartReviewSectionRequest>,
+        val sections: List<SmartReviewSectionRequest>?,
         @field:Valid
-        val references: List<@NotBlank String>
+        val references: List<@NotBlank String>?
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateSmartReviewUseCase.CreateCommand =
             CreateSmartReviewUseCase.CreateCommand(
                 contributorId = contributorId,
                 title = title,
                 researchFields = researchFields,
-                authors = authors.map { it.toAuthor() },
-                sustainableDevelopmentGoals = sustainableDevelopmentGoals,
-                observatories = observatories,
-                organizations = organizations,
+                authors = authors?.map { it.toAuthor() }.orEmpty(),
+                sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
+                observatories = observatories.orEmpty(),
+                organizations = organizations.orEmpty(),
                 extractionMethod = extractionMethod,
-                sections = sections.map { it.toSmartReviewSectionDefinition() },
-                references = references
+                sections = sections?.map { it.toSmartReviewSectionDefinition() }.orEmpty(),
+                references = references.orEmpty()
             )
     }
 

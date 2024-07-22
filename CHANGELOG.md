@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.62.0] - 2024-07-22
 ### Added
 - Added content-type endpoint for creating smart reviews.
   (See: [!995](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/995))
@@ -1055,7 +1057,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.61.2...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.62.0...master
+[0.62.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.62.0
 [0.61.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.61.2
 [0.61.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.61.1
 [0.61.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.61.0

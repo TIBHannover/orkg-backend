@@ -2,9 +2,9 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.ListSectionDefinition
+import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
-import org.orkg.contenttypes.input.TextSectionDefinition
+import org.orkg.contenttypes.input.LiteratureListTextSectionDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -24,13 +24,13 @@ class AbstractLiteratureListSectionCreator(
         section: LiteratureListSectionDefinition
     ): ThingId =
         when (section) {
-            is ListSectionDefinition -> createListSection(contributorId, section)
-            is TextSectionDefinition -> createTextSection(contributorId, section)
+            is LiteratureListListSectionDefinition -> createListSection(contributorId, section)
+            is LiteratureListTextSectionDefinition -> createTextSection(contributorId, section)
         }
 
     internal fun createListSectionEntry(
         contributorId: ContributorId,
-        entry: ListSectionDefinition.Entry
+        entry: LiteratureListListSectionDefinition.Entry
     ): ThingId {
         val entryId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
@@ -64,7 +64,7 @@ class AbstractLiteratureListSectionCreator(
 
     private fun createListSection(
         contributorId: ContributorId,
-        section: ListSectionDefinition
+        section: LiteratureListListSectionDefinition
     ): ThingId {
         val sectionId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
@@ -87,7 +87,7 @@ class AbstractLiteratureListSectionCreator(
 
     private fun createTextSection(
         contributorId: ContributorId,
-        section: TextSectionDefinition
+        section: LiteratureListTextSectionDefinition
     ): ThingId {
         val sectionId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(

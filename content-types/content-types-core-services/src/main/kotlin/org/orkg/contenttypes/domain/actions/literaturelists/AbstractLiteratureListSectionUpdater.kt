@@ -2,13 +2,13 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.ListSection
-import org.orkg.contenttypes.domain.TextSection
+import org.orkg.contenttypes.domain.LiteratureListListSection
+import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.tryDelete
 import org.orkg.contenttypes.domain.wherePredicate
-import org.orkg.contenttypes.input.ListSectionDefinition
-import org.orkg.contenttypes.input.TextSectionDefinition
+import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
+import org.orkg.contenttypes.input.LiteratureListTextSectionDefinition
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -48,11 +48,11 @@ class AbstractLiteratureListSectionUpdater(
      */
     internal fun updateListSection(
         contributorId: ContributorId,
-        newSection: ListSectionDefinition,
-        oldSection: ListSection,
+        newSection: LiteratureListListSectionDefinition,
+        oldSection: LiteratureListListSection,
         statements: Map<ThingId, List<GeneralStatement>>
     ) {
-        if (newSection.entries != oldSection.entries.map { ListSectionDefinition.Entry(it.value.id, it.description) }) {
+        if (newSection.entries != oldSection.entries.map { LiteratureListListSectionDefinition.Entry(it.value.id, it.description) }) {
             val connectionIterator = statements[oldSection.id].orEmpty()
                 .filter { it.predicate.id == Predicates.hasEntry }
                 .sortedBy { it.createdAt }
@@ -127,8 +127,8 @@ class AbstractLiteratureListSectionUpdater(
 
     internal fun updateTextSection(
         contributorId: ContributorId,
-        newSection: TextSectionDefinition,
-        oldSection: TextSection,
+        newSection: LiteratureListTextSectionDefinition,
+        oldSection: LiteratureListTextSection,
         statements: Map<ThingId, List<GeneralStatement>>
     ) {
         if (newSection.heading != oldSection.heading) {
@@ -165,8 +165,8 @@ class AbstractLiteratureListSectionUpdater(
         val hasLinkStatement: GeneralStatement,
         val hasDescriptionStatement: GeneralStatement?
     ) {
-        fun toEntry(): ListSectionDefinition.Entry =
-            ListSectionDefinition.Entry(
+        fun toEntry(): LiteratureListListSectionDefinition.Entry =
+            LiteratureListListSectionDefinition.Entry(
                 hasLinkStatement.`object`.id,
                 hasDescriptionStatement?.`object`?.label
             )

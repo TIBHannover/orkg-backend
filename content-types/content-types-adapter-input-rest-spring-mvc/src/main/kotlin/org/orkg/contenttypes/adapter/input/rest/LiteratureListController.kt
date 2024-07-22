@@ -24,11 +24,11 @@ import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
-import org.orkg.contenttypes.input.ListSectionCommand
-import org.orkg.contenttypes.input.ListSectionDefinition
+import org.orkg.contenttypes.input.LiteratureListListSectionCommand
+import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListUseCases
-import org.orkg.contenttypes.input.TextSectionCommand
+import org.orkg.contenttypes.input.LiteratureListTextSectionCommand
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.featureflags.output.FeatureFlagService
@@ -209,29 +209,29 @@ class LiteratureListController(
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
-        val authors: List<AuthorDTO>,
+        val authors: List<AuthorDTO>?,
         @JsonProperty("sdgs")
-        val sustainableDevelopmentGoals: Set<ThingId>,
+        val sustainableDevelopmentGoals: Set<ThingId>?,
         @field:Size(max = 1)
-        val observatories: List<ObservatoryId>,
+        val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
-        val organizations: List<OrganizationId>,
+        val organizations: List<OrganizationId>?,
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         @field:Valid
-        val sections: List<LiteratureListSectionRequest>
+        val sections: List<LiteratureListSectionRequest>?
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateLiteratureListUseCase.CreateCommand =
             CreateLiteratureListUseCase.CreateCommand(
                 contributorId = contributorId,
                 title = title,
                 researchFields = researchFields,
-                authors = authors.map { it.toAuthor() },
-                sustainableDevelopmentGoals = sustainableDevelopmentGoals,
-                observatories = observatories,
-                organizations = organizations,
+                authors = authors?.map { it.toAuthor() }.orEmpty(),
+                sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
+                observatories = observatories.orEmpty(),
+                organizations = organizations.orEmpty(),
                 extractionMethod = extractionMethod,
-                sections = sections.map { it.toLiteratureListSectionDefinition() }
+                sections = sections?.map { it.toLiteratureListSectionDefinition() }.orEmpty()
             )
     }
 
@@ -271,8 +271,8 @@ class LiteratureListController(
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
     @JsonSubTypes(value = [
-        JsonSubTypes.Type(ListSectionRequest::class),
-        JsonSubTypes.Type(TextSectionRequest::class)
+        JsonSubTypes.Type(LiteratureListListSectionRequest::class),
+        JsonSubTypes.Type(LiteratureListTextSectionRequest::class)
     ])
     sealed interface LiteratureListSectionRequest {
         fun toLiteratureListSectionDefinition(): LiteratureListSectionDefinition
@@ -290,19 +290,19 @@ class LiteratureListController(
         ): UpdateLiteratureListSectionUseCase.UpdateCommand
     }
 
-    data class ListSectionRequest(
+    data class LiteratureListListSectionRequest(
         val entries: List<Entry>
     ) : LiteratureListSectionRequest {
         data class Entry(
             val id: ThingId,
             val description: String? = null
         ) {
-            fun toDefinitionEntry(): ListSectionDefinition.Entry =
-                ListSectionDefinition.Entry(id, description)
+            fun toDefinitionEntry(): LiteratureListListSectionDefinition.Entry =
+                LiteratureListListSectionDefinition.Entry(id, description)
         }
 
         override fun toLiteratureListSectionDefinition(): LiteratureListSectionDefinition =
-            ListSectionCommand(entries.map { it.toDefinitionEntry() })
+            LiteratureListListSectionCommand(entries.map { it.toDefinitionEntry() })
 
         override fun toCreateCommand(
             contributorId: ContributorId,
@@ -323,7 +323,7 @@ class LiteratureListController(
             )
     }
 
-    data class TextSectionRequest(
+    data class LiteratureListTextSectionRequest(
         val heading: String,
         @field:Positive
         @JsonProperty("heading_size")
@@ -331,7 +331,7 @@ class LiteratureListController(
         val text: String
     ) : LiteratureListSectionRequest {
         override fun toLiteratureListSectionDefinition(): LiteratureListSectionDefinition =
-            TextSectionCommand(heading, headingSize, text)
+            LiteratureListTextSectionCommand(heading, headingSize, text)
 
         override fun toCreateCommand(
             contributorId: ContributorId,

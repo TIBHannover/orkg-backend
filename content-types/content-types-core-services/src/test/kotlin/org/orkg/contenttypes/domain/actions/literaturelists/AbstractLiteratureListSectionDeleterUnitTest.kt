@@ -15,8 +15,8 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyListSection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTextSection
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureListListSection
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureListTextSection
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.Predicates
@@ -32,7 +32,7 @@ class AbstractLiteratureListSectionDeleterUnitTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 
-    private val abstractTemplatePropertyDeleter = AbstractLiteratureListSectionDeleter(statementService, resourceService)
+    private val abstractLiteratureListSectionDeleter = AbstractLiteratureListSectionDeleter(statementService, resourceService)
 
     @BeforeEach
     fun resetState() {
@@ -45,12 +45,13 @@ class AbstractLiteratureListSectionDeleterUnitTest {
     }
 
     @Test
-    fun `Given a list section, when referenced by no resource other than the template, it deletes the list section`() {
+    fun `Given a list section, when referenced by no resource other than the literature list, it deletes the list section`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyListSection()
+        val section = createDummyLiteratureListListSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -65,7 +66,7 @@ class AbstractLiteratureListSectionDeleterUnitTest {
         every { statementService.delete(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
-        abstractTemplatePropertyDeleter.delete(contributorId, literatureListId, section, statements)
+        abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -79,7 +80,8 @@ class AbstractLiteratureListSectionDeleterUnitTest {
                 StatementId("S1"),
                 StatementId("S0_2"),
                 StatementId("S1_2"),
-                StatementId("S0_3")
+                StatementId("S0_3"),
+                literatureListHasSectionStatement.id
             ))
         }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
@@ -91,14 +93,16 @@ class AbstractLiteratureListSectionDeleterUnitTest {
     fun `Given a list section, when referenced by another resource, it just removes the list section from the literature list`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyListSection()
+        val section = createDummyLiteratureListListSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
         val otherStatementAboutListSection = createStatement(
+            id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
             `object` = createResource(section.id)
@@ -112,7 +116,7 @@ class AbstractLiteratureListSectionDeleterUnitTest {
         } returns pageOf(literatureListHasSectionStatement, otherStatementAboutListSection)
         every { statementService.delete(setOf(literatureListHasSectionStatement.id)) } just runs
 
-        abstractTemplatePropertyDeleter.delete(contributorId, literatureListId, section, statements)
+        abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -127,9 +131,10 @@ class AbstractLiteratureListSectionDeleterUnitTest {
     fun `Given a list section, when list section is owned by another user, it does not throw an exception`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyListSection()
+        val section = createDummyLiteratureListListSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -145,7 +150,7 @@ class AbstractLiteratureListSectionDeleterUnitTest {
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
         assertDoesNotThrow {
-            abstractTemplatePropertyDeleter.delete(contributorId, literatureListId, section, statements)
+            abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)
         }
 
         verify(exactly = 1) {
@@ -160,7 +165,8 @@ class AbstractLiteratureListSectionDeleterUnitTest {
                 StatementId("S1"),
                 StatementId("S0_2"),
                 StatementId("S1_2"),
-                StatementId("S0_3")
+                StatementId("S0_3"),
+                literatureListHasSectionStatement.id
             ))
         }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
@@ -169,12 +175,13 @@ class AbstractLiteratureListSectionDeleterUnitTest {
     }
 
     @Test
-    fun `Given a text section, when referenced by no resource other than the template, it deletes the text section`() {
+    fun `Given a text section, when referenced by no resource other than the literature list, it deletes the text section`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyTextSection()
+        val section = createDummyLiteratureListTextSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -189,7 +196,7 @@ class AbstractLiteratureListSectionDeleterUnitTest {
         every { statementService.delete(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
 
-        abstractTemplatePropertyDeleter.delete(contributorId, literatureListId, section, statements)
+        abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -197,7 +204,7 @@ class AbstractLiteratureListSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), StatementId("S2"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), StatementId("S2"), literatureListHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 
@@ -205,14 +212,16 @@ class AbstractLiteratureListSectionDeleterUnitTest {
     fun `Given a text section, when referenced by another resource, it just removes the text section from the literature list`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyTextSection()
+        val section = createDummyLiteratureListTextSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
         )
         val otherStatementAboutTextSection = createStatement(
+            id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
             `object` = createResource(section.id)
@@ -226,7 +235,7 @@ class AbstractLiteratureListSectionDeleterUnitTest {
         } returns pageOf(literatureListHasSectionStatement, otherStatementAboutTextSection)
         every { statementService.delete(setOf(literatureListHasSectionStatement.id)) } just runs
 
-        abstractTemplatePropertyDeleter.delete(contributorId, literatureListId, section, statements)
+        abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)
 
         verify(exactly = 1) {
             statementService.findAll(
@@ -241,9 +250,10 @@ class AbstractLiteratureListSectionDeleterUnitTest {
     fun `Given a text section, when text section is owned by another user, it does not throw an exception`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyTextSection()
+        val section = createDummyLiteratureListTextSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
+            id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
             `object` = createResource(section.id)
@@ -259,7 +269,7 @@ class AbstractLiteratureListSectionDeleterUnitTest {
         every { resourceService.delete(any(), contributorId) } throws NeitherOwnerNorCurator(contributorId)
 
         assertDoesNotThrow {
-            abstractTemplatePropertyDeleter.delete(contributorId, literatureListId, section, statements)
+            abstractLiteratureListSectionDeleter.delete(contributorId, literatureListId, section, statements)
         }
 
         verify(exactly = 1) {
@@ -268,7 +278,7 @@ class AbstractLiteratureListSectionDeleterUnitTest {
                 pageable = PageRequests.ALL
             )
         }
-        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), StatementId("S2"))) }
+        verify(exactly = 1) { statementService.delete(setOf(StatementId("S1"), StatementId("S2"), literatureListHasSectionStatement.id)) }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
     }
 }

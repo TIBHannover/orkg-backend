@@ -27,7 +27,7 @@ import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.ListSectionRequest.Entry
+import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.LiteratureListListSectionRequest.Entry
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
@@ -305,12 +305,12 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                     ),
                     requestFields(
                         fieldWithPath("title").description("The title of the literature list."),
-                        fieldWithPath("research_fields").description("The list of research fields the literature list will be assigned to."),
-                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the literature list will be assigned to. (optional)"),
+                        fieldWithPath("research_fields").description("The list of research fields the literature list will be assigned to. (optional)").optional(),
+                        fieldWithPath("sdgs").description("The set of ids of sustainable development goals the literature list will be assigned to. (optional)").optional(),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the literature list belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the literature list belongs to. (optional)").optional(),
                         fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
-                        subsectionWithPath("sections").description("The list of updated sections of the literature list (optional). See <<literature-list-sections,literature list sections>> for more information."),
+                        subsectionWithPath("sections").description("The list of updated sections of the literature list (optional). See <<literature-list-sections,literature list sections>> for more information. (optional)").optional(),
                     ).and(authorListFields("literature list"))
                 )
             )
@@ -325,7 +325,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     fun createListSection() {
         val literatureListId = ThingId("R3541")
         val id = ThingId("R123")
-        val request = LiteratureListController.ListSectionRequest(
+        val request = LiteratureListController.LiteratureListListSectionRequest(
             entries = listOf(
                 Entry(ThingId("R123")),
                 Entry(ThingId("R456"))
@@ -356,7 +356,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         val literatureListId = ThingId("R3541")
         val id = ThingId("R123")
         val index = 5
-        val request = LiteratureListController.ListSectionRequest(
+        val request = LiteratureListController.LiteratureListListSectionRequest(
             entries = listOf(
                 Entry(ThingId("R123")),
                 Entry(ThingId("R456"))
@@ -403,7 +403,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     fun createTextSection() {
         val literatureListId = ThingId("R3541")
         val id = ThingId("R123")
-        val request = LiteratureListController.TextSectionRequest(
+        val request = LiteratureListController.LiteratureListTextSectionRequest(
             heading = "heading",
             headingSize = 2,
             text = "text contents"
@@ -433,7 +433,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         val literatureListId = ThingId("R3541")
         val id = ThingId("R123")
         val index = 5
-        val request = LiteratureListController.TextSectionRequest(
+        val request = LiteratureListController.LiteratureListTextSectionRequest(
             heading = "heading",
             headingSize = 2,
             text = "text contents"
@@ -514,7 +514,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     fun updateListSection() {
         val literatureListId = ThingId("R3541")
         val id = ThingId("R123")
-        val request = LiteratureListController.ListSectionRequest(
+        val request = LiteratureListController.LiteratureListListSectionRequest(
             entries = listOf(Entry(ThingId("R123")), Entry(ThingId("R456")))
         )
         every { literatureListService.updateSection(any()) } just runs
@@ -579,7 +579,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     fun updateTextSection() {
         val literatureListId = ThingId("R3541")
         val id = ThingId("R123")
-        val request = LiteratureListController.TextSectionRequest(
+        val request = LiteratureListController.LiteratureListTextSectionRequest(
             heading = "updated heading",
             headingSize = 3,
             text = "updated text contents"
@@ -750,14 +750,14 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         )
 
     private fun textSectionRequest() =
-        LiteratureListController.TextSectionRequest(
+        LiteratureListController.LiteratureListTextSectionRequest(
             heading = "heading",
             headingSize = 1,
             text = "text contents"
         )
 
     private fun listSectionRequest() =
-        LiteratureListController.ListSectionRequest(
+        LiteratureListController.LiteratureListListSectionRequest(
             entries = listOf(
                 Entry(ThingId("R123"), "Example description of an entry"),
                 Entry(ThingId("R456"))

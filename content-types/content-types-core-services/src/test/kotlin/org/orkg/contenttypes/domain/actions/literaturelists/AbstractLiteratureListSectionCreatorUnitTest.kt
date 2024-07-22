@@ -13,9 +13,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.input.ListSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyListSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyTextSectionDefinition
+import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.dummyLiteratureListListSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.dummyLiteratureListTextSectionDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -47,8 +47,8 @@ class AbstractLiteratureListSectionCreatorUnitTest {
     fun `Given a list section definition, when creating a section entry with a description, it returns success`() {
         val entry = ThingId("R2315")
         val description = "test description"
-        val section = dummyListSectionDefinition().copy(
-            entries = listOf(ListSectionDefinition.Entry(entry, description))
+        val section = dummyLiteratureListListSectionDefinition().copy(
+            entries = listOf(LiteratureListListSectionDefinition.Entry(entry, description))
         )
         val contributorId = ContributorId(UUID.randomUUID())
         val sectionId = ThingId("R123")
@@ -156,8 +156,8 @@ class AbstractLiteratureListSectionCreatorUnitTest {
     @Test
     fun `Given a list section definition, when creating a section entry without a description, it returns success`() {
         val entry = ThingId("R2315")
-        val section = dummyListSectionDefinition().copy(
-            entries = listOf(ListSectionDefinition.Entry(entry))
+        val section = dummyLiteratureListListSectionDefinition().copy(
+            entries = listOf(LiteratureListListSectionDefinition.Entry(entry))
         )
         val contributorId = ContributorId(UUID.randomUUID())
         val sectionId = ThingId("R123")
@@ -238,7 +238,7 @@ class AbstractLiteratureListSectionCreatorUnitTest {
 
     @Test
     fun `Given a text section definition, when creating, it returns success`() {
-        val section = dummyTextSectionDefinition()
+        val section = dummyLiteratureListTextSectionDefinition()
         val contributorId = ContributorId(UUID.randomUUID())
         val sectionId = ThingId("R123")
         val headingSizeId = ThingId("R456")

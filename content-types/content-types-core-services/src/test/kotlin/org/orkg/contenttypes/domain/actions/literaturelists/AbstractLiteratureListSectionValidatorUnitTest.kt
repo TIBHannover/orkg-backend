@@ -15,9 +15,9 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.InvalidHeadingSize
 import org.orkg.contenttypes.domain.InvalidListSectionEntry
-import org.orkg.contenttypes.input.ListSectionDefinition.Entry
-import org.orkg.contenttypes.input.testing.fixtures.dummyListSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyTextSectionDefinition
+import org.orkg.contenttypes.input.LiteratureListListSectionDefinition.Entry
+import org.orkg.contenttypes.input.testing.fixtures.dummyLiteratureListListSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.dummyLiteratureListTextSectionDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
@@ -42,7 +42,7 @@ class AbstractLiteratureListSectionValidatorUnitTest {
 
     @Test
     fun `Given a list section definition, when validating, it returns success`() {
-        val section = dummyListSectionDefinition()
+        val section = dummyLiteratureListListSectionDefinition()
         val validIds = mutableSetOf<ThingId>()
 
         every {
@@ -62,7 +62,7 @@ class AbstractLiteratureListSectionValidatorUnitTest {
 
     @Test
     fun `Given a list section definition, when validating, it does not validate an id twice`() {
-        val section = dummyListSectionDefinition().copy(
+        val section = dummyLiteratureListListSectionDefinition().copy(
             entries = listOf(
                 Entry(ThingId("R2315")),
                 Entry(ThingId("R2315"))
@@ -83,7 +83,7 @@ class AbstractLiteratureListSectionValidatorUnitTest {
 
     @Test
     fun `Given a list section definition, when validating, it does not check already valid ids`() {
-        val section = dummyListSectionDefinition()
+        val section = dummyLiteratureListListSectionDefinition()
         val validIds = mutableSetOf(ThingId("R2315"))
 
         every {
@@ -99,7 +99,7 @@ class AbstractLiteratureListSectionValidatorUnitTest {
 
     @Test
     fun `Given a list section definition, when description is invalid, it throws an exception`() {
-        val section = dummyListSectionDefinition().copy(
+        val section = dummyLiteratureListListSectionDefinition().copy(
             entries = listOf(Entry(ThingId("R2315"), "a".repeat(MAX_LABEL_LENGTH + 1)))
         )
         val validIds = mutableSetOf<ThingId>()
@@ -109,7 +109,7 @@ class AbstractLiteratureListSectionValidatorUnitTest {
 
     @Test
     fun `Given a list section definition, when resource is not allowed, it throws an exception`() {
-        val section = dummyListSectionDefinition()
+        val section = dummyLiteratureListListSectionDefinition()
         val validIds = mutableSetOf<ThingId>()
 
         every {
@@ -123,7 +123,7 @@ class AbstractLiteratureListSectionValidatorUnitTest {
 
     @Test
     fun `Given a text section definition, when validating, it returns success`() {
-        val section = dummyTextSectionDefinition()
+        val section = dummyLiteratureListTextSectionDefinition()
         val validIds = mutableSetOf<ThingId>()
 
         abstractLiteratureListSectionValidator.validate(section, validIds)
@@ -133,7 +133,7 @@ class AbstractLiteratureListSectionValidatorUnitTest {
 
     @Test
     fun `Given a text section definition, when heading is invalid, it throws an exception`() {
-        val section = dummyTextSectionDefinition().copy(heading = "\n")
+        val section = dummyLiteratureListTextSectionDefinition().copy(heading = "\n")
         val validIds = mutableSetOf<ThingId>()
 
         assertThrows<InvalidLabel> { abstractLiteratureListSectionValidator.validate(section, validIds) }.asClue {
@@ -143,7 +143,7 @@ class AbstractLiteratureListSectionValidatorUnitTest {
 
     @Test
     fun `Given a text section definition, when text is invalid, it throws an exception`() {
-        val section = dummyTextSectionDefinition().copy(text = "\n")
+        val section = dummyLiteratureListTextSectionDefinition().copy(text = "\n")
         val validIds = mutableSetOf<ThingId>()
 
         assertThrows<InvalidDescription> { abstractLiteratureListSectionValidator.validate(section, validIds) }.asClue {
@@ -153,7 +153,7 @@ class AbstractLiteratureListSectionValidatorUnitTest {
 
     @Test
     fun `Given a text section definition, when heading size is too low, it throws an exception`() {
-        val section = dummyTextSectionDefinition().copy(headingSize = 0)
+        val section = dummyLiteratureListTextSectionDefinition().copy(headingSize = 0)
         val validIds = mutableSetOf<ThingId>()
 
         assertThrows<InvalidHeadingSize> { abstractLiteratureListSectionValidator.validate(section, validIds) }

@@ -7,16 +7,16 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
-import org.orkg.contenttypes.domain.ListSection
+import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListSection
-import org.orkg.contenttypes.domain.TextSection
+import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.CreateLiteratureListUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
-import org.orkg.contenttypes.input.ListSectionCommand
-import org.orkg.contenttypes.input.ListSectionDefinition.Entry
+import org.orkg.contenttypes.input.LiteratureListListSectionCommand
+import org.orkg.contenttypes.input.LiteratureListListSectionDefinition.Entry
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
-import org.orkg.contenttypes.input.TextSectionCommand
+import org.orkg.contenttypes.input.LiteratureListTextSectionCommand
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.graph.domain.ExtractionMethod
@@ -52,8 +52,8 @@ fun dummyCreateLiteratureListCommand() = CreateLiteratureListUseCase.CreateComma
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     extractionMethod = ExtractionMethod.MANUAL,
     sections = listOf(
-        dummyTextSectionDefinition(),
-        dummyListSectionDefinition()
+        dummyLiteratureListTextSectionDefinition(),
+        dummyLiteratureListListSectionDefinition()
     )
 )
 
@@ -89,12 +89,12 @@ fun dummyUpdateLiteratureListCommand() = UpdateLiteratureListUseCase.UpdateComma
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     extractionMethod = ExtractionMethod.MANUAL,
     sections = listOf(
-        dummyTextSectionDefinition(),
-        dummyListSectionDefinition()
+        dummyLiteratureListTextSectionDefinition(),
+        dummyLiteratureListListSectionDefinition()
     )
 )
 
-fun dummyCreateListSectionCommand() = CreateLiteratureListSectionUseCase.CreateListSectionCommand(
+fun dummyCreateLiteratureListListSectionCommand() = CreateLiteratureListSectionUseCase.CreateListSectionCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
     index = null,
@@ -104,7 +104,7 @@ fun dummyCreateListSectionCommand() = CreateLiteratureListSectionUseCase.CreateL
     )
 )
 
-fun dummyCreateTextSectionCommand() = CreateLiteratureListSectionUseCase.CreateTextSectionCommand(
+fun dummyCreateLiteratureListTextSectionCommand() = CreateLiteratureListSectionUseCase.CreateTextSectionCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
     index = null,
@@ -113,7 +113,7 @@ fun dummyCreateTextSectionCommand() = CreateLiteratureListSectionUseCase.CreateT
     text = "updated text section contents"
 )
 
-fun dummyUpdateListSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateListSectionCommand(
+fun dummyUpdateLiteratureListListSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateListSectionCommand(
     literatureListSectionId = ThingId("R456"),
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
@@ -123,7 +123,7 @@ fun dummyUpdateListSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateL
     )
 )
 
-fun dummyUpdateTextSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand(
+fun dummyUpdateLiteratureListTextSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand(
     literatureListSectionId = ThingId("R456"),
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
@@ -132,22 +132,22 @@ fun dummyUpdateTextSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateT
     text = "updated text section contents"
 )
 
-fun dummyListSectionDefinition(): ListSectionCommand =
-    ListSectionCommand(
+fun dummyLiteratureListListSectionDefinition(): LiteratureListListSectionCommand =
+    LiteratureListListSectionCommand(
         entries = listOf(
             Entry(ThingId("R2315"), "dummy description"),
             Entry(ThingId("R3512")),
         )
     )
 
-fun dummyTextSectionDefinition(): TextSectionCommand =
-    TextSectionCommand(
+fun dummyLiteratureListTextSectionDefinition(): LiteratureListTextSectionCommand =
+    LiteratureListTextSectionCommand(
         heading = "Updated Heading",
         headingSize = 3,
         text = "updated text section contents"
     )
 
-fun dummyDeleteSectionCommand() = DeleteLiteratureListSectionUseCase.DeleteCommand(
+fun dummyDeleteLiteratureListSectionCommand() = DeleteLiteratureListSectionUseCase.DeleteCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
     sectionId = ThingId("R456")
@@ -155,15 +155,15 @@ fun dummyDeleteSectionCommand() = DeleteLiteratureListSectionUseCase.DeleteComma
 
 fun LiteratureListSection.toLiteratureListSectionDefinition(): LiteratureListSectionDefinition =
     when (this) {
-        is ListSection -> toListSectionDefinition()
-        is TextSection -> toTextSectionDefinition()
+        is LiteratureListListSection -> toLiteratureListListSectionDefinition()
+        is LiteratureListTextSection -> toLiteratureListTextSectionDefinition()
     }
 
-fun ListSection.toListSectionDefinition(): ListSectionCommand =
-    ListSectionCommand(entries.map { Entry(it.value.id, it.description) })
+fun LiteratureListListSection.toLiteratureListListSectionDefinition(): LiteratureListListSectionCommand =
+    LiteratureListListSectionCommand(entries.map { Entry(it.value.id, it.description) })
 
-fun TextSection.toTextSectionDefinition(): TextSectionCommand =
-    TextSectionCommand(heading, headingSize, text)
+fun LiteratureListTextSection.toLiteratureListTextSectionDefinition(): LiteratureListTextSectionCommand =
+    LiteratureListTextSectionCommand(heading, headingSize, text)
 
-fun ListSection.Entry.toDefinitionEntry(): Entry =
+fun LiteratureListListSection.Entry.toDefinitionEntry(): Entry =
     Entry(value.id, description)

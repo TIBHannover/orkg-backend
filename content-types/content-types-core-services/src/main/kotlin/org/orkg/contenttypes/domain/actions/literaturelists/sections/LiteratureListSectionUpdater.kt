@@ -1,13 +1,13 @@
 package org.orkg.contenttypes.domain.actions.literaturelists.sections
 
-import org.orkg.contenttypes.domain.ListSection
-import org.orkg.contenttypes.domain.TextSection
+import org.orkg.contenttypes.domain.LiteratureListListSection
+import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionUpdater
-import org.orkg.contenttypes.input.ListSectionDefinition
+import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
-import org.orkg.contenttypes.input.TextSectionDefinition
+import org.orkg.contenttypes.input.LiteratureListTextSectionDefinition
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -26,18 +26,18 @@ class LiteratureListSectionUpdater(
         state: UpdateLiteratureListSectionState
     ): UpdateLiteratureListSectionState {
         val section = state.literatureList!!.sections.single { it.id == command.literatureListSectionId }
-        if (!(command as LiteratureListSectionDefinition).matchesListSection(section)) {
+        if (!(command as LiteratureListSectionDefinition).matchesLiteratureListSection(section)) {
             when (command) {
-                is ListSectionDefinition -> abstractLiteratureListSectionUpdater.updateListSection(
+                is LiteratureListListSectionDefinition -> abstractLiteratureListSectionUpdater.updateListSection(
                     contributorId = command.contributorId,
                     newSection = command,
-                    oldSection = section as ListSection,
+                    oldSection = section as LiteratureListListSection,
                     statements = state.statements
                 )
-                is TextSectionDefinition -> abstractLiteratureListSectionUpdater.updateTextSection(
+                is LiteratureListTextSectionDefinition -> abstractLiteratureListSectionUpdater.updateTextSection(
                     contributorId = command.contributorId,
                     newSection = command,
-                    oldSection = section as TextSection,
+                    oldSection = section as LiteratureListTextSection,
                     statements = state.statements
                 )
             }

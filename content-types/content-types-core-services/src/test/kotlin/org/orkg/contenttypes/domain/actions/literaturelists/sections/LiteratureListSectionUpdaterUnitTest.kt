@@ -14,16 +14,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.ListSection
+import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListSection
-import org.orkg.contenttypes.domain.TextSection
+import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionUpdater
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
-import org.orkg.contenttypes.input.ListSectionDefinition
-import org.orkg.contenttypes.input.TextSectionDefinition
+import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
+import org.orkg.contenttypes.input.LiteratureListTextSectionDefinition
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase.UpdateListSectionCommand
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.toDefinitionEntry
@@ -75,8 +75,8 @@ class LiteratureListSectionUpdaterUnitTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionUpdater.updateTextSection(
                 contributorId = command.contributorId,
-                newSection = command as TextSectionDefinition,
-                oldSection = oldSection as TextSection,
+                newSection = command as LiteratureListTextSectionDefinition,
+                oldSection = oldSection as LiteratureListTextSection,
                 statements = state.statements
             )
         }
@@ -105,7 +105,7 @@ class LiteratureListSectionUpdaterUnitTest {
         )
         val command = oldSection.toUpdateListSectionCommand(contributorId, literatureList.id)
             .shouldBeInstanceOf<UpdateListSectionCommand>()
-            .copy(entries = listOf(ListSectionDefinition.Entry(ThingId("other"))))
+            .copy(entries = listOf(LiteratureListListSectionDefinition.Entry(ThingId("other"))))
 
         every { abstractLiteratureListSectionUpdater.updateListSection(any(), any(), any(), any()) } just runs
 
@@ -114,8 +114,8 @@ class LiteratureListSectionUpdaterUnitTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionUpdater.updateListSection(
                 contributorId = command.contributorId,
-                newSection = command as ListSectionDefinition,
-                oldSection = oldSection as ListSection,
+                newSection = command as LiteratureListListSectionDefinition,
+                oldSection = oldSection as LiteratureListListSection,
                 statements = state.statements
             )
         }
@@ -126,11 +126,11 @@ class LiteratureListSectionUpdaterUnitTest {
         literatureListId: ThingId
     ): UpdateLiteratureListSectionCommand =
         when (this) {
-            is ListSection -> toUpdateListSectionCommand(contributorId, literatureListId)
-            is TextSection -> toUpdateTextSectionCommand(contributorId, literatureListId)
+            is LiteratureListListSection -> toUpdateListSectionCommand(contributorId, literatureListId)
+            is LiteratureListTextSection -> toUpdateTextSectionCommand(contributorId, literatureListId)
         }
 
-    private fun ListSection.toUpdateListSectionCommand(
+    private fun LiteratureListListSection.toUpdateListSectionCommand(
         contributorId: ContributorId,
         literatureListId: ThingId
     ): UpdateListSectionCommand = UpdateListSectionCommand(
@@ -140,7 +140,7 @@ class LiteratureListSectionUpdaterUnitTest {
         entries = entries.map { it.toDefinitionEntry() }
     )
 
-    private fun TextSection.toUpdateTextSectionCommand(
+    private fun LiteratureListTextSection.toUpdateTextSectionCommand(
         contributorId: ContributorId,
         literatureListId: ThingId
     ): UpdateTextSectionCommand = UpdateTextSectionCommand(

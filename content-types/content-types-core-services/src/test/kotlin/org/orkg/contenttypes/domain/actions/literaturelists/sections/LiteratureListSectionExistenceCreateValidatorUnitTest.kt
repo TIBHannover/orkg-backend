@@ -15,12 +15,12 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.LiteratureListNotModifiable
-import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateListSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTextSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListListSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListTextSectionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -45,9 +45,9 @@ class LiteratureListSectionExistenceCreateValidatorUnitTest {
     @MethodSource("createLiteratureListSectionCommands")
     fun `Given a literature list section create command, when searching for an existing literature list, it returns success`(command: CreateLiteratureListSectionCommand) {
         val state = CreateLiteratureListSectionState()
-        val template = createResource(id = command.literatureListId, classes = setOf(Classes.literatureList))
+        val literatureList = createResource(id = command.literatureListId, classes = setOf(Classes.literatureList))
 
-        every { resourceRepository.findById(command.literatureListId) } returns Optional.of(template)
+        every { resourceRepository.findById(command.literatureListId) } returns Optional.of(literatureList)
 
         val result = literatureListSectionExistenceCreateValidator(command, state)
 
@@ -62,9 +62,9 @@ class LiteratureListSectionExistenceCreateValidatorUnitTest {
     @MethodSource("createLiteratureListSectionCommands")
     fun `Given a literature list section create command, when existing literature list is published, it throws an exception`(command: CreateLiteratureListSectionCommand) {
         val state = CreateLiteratureListSectionState()
-        val template = createResource(id = command.literatureListId, classes = setOf(Classes.literatureListPublished))
+        val literatureList = createResource(id = command.literatureListId, classes = setOf(Classes.literatureListPublished))
 
-        every { resourceRepository.findById(command.literatureListId) } returns Optional.of(template)
+        every { resourceRepository.findById(command.literatureListId) } returns Optional.of(literatureList)
 
         assertThrows<LiteratureListNotModifiable> { literatureListSectionExistenceCreateValidator(command, state) }
 
@@ -78,7 +78,7 @@ class LiteratureListSectionExistenceCreateValidatorUnitTest {
 
         every { resourceRepository.findById(command.literatureListId) } returns Optional.empty()
 
-        assertThrows<TemplateNotFound> { literatureListSectionExistenceCreateValidator(command, state) }
+        assertThrows<LiteratureListNotFound> { literatureListSectionExistenceCreateValidator(command, state) }
 
         verify(exactly = 1) { resourceRepository.findById(command.literatureListId) }
     }
@@ -86,8 +86,8 @@ class LiteratureListSectionExistenceCreateValidatorUnitTest {
     companion object {
         @JvmStatic
         fun createLiteratureListSectionCommands(): Stream<Arguments> = Stream.of(
-            Arguments.of(dummyCreateListSectionCommand()),
-            Arguments.of(dummyCreateTextSectionCommand())
+            Arguments.of(dummyCreateLiteratureListListSectionCommand()),
+            Arguments.of(dummyCreateLiteratureListTextSectionCommand())
         )
     }
 }

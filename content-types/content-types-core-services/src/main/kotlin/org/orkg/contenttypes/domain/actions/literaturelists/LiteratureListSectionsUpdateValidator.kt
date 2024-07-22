@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.domain.actions.literaturelists
 
-import org.orkg.contenttypes.domain.ListSection
+import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.graph.output.ResourceRepository
@@ -15,7 +15,7 @@ class LiteratureListSectionsUpdateValidator(
         state: UpdateLiteratureListState
     ): UpdateLiteratureListState {
         command.sections?.let { sections ->
-            val validIds = state.literatureList!!.sections.filterIsInstance<ListSection>()
+            val validIds = state.literatureList!!.sections.filterIsInstance<LiteratureListListSection>()
                 .flatMapTo(mutableSetOf()) { it.entries.map { entry -> entry.value.id } }
             sections.forEach { section ->
                 abstractLiteratureListSectionValidator.validate(section, validIds)

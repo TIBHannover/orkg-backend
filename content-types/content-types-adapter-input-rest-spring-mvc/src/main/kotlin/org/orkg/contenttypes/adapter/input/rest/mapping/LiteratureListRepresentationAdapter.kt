@@ -5,10 +5,10 @@ import org.orkg.contenttypes.adapter.input.rest.ListSectionRepresentation
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListRepresentation
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListSectionRepresentation
 import org.orkg.contenttypes.adapter.input.rest.TextSectionRepresentation
-import org.orkg.contenttypes.domain.ListSection
+import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureList
 import org.orkg.contenttypes.domain.LiteratureListSection
-import org.orkg.contenttypes.domain.TextSection
+import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.springframework.data.domain.Page
 
 interface LiteratureListRepresentationAdapter : AuthorRepresentationAdapter, VersionRepresentationAdapter,
@@ -42,10 +42,10 @@ interface LiteratureListRepresentationAdapter : AuthorRepresentationAdapter, Ver
 
     private fun LiteratureListSection.toLiteratureListSectionRepresentation(): LiteratureListSectionRepresentation =
         when (this) {
-            is ListSection -> ListSectionRepresentation(id, entries.map { it.toEntryRepresentation() })
-            is TextSection -> TextSectionRepresentation(id, heading, headingSize, text)
+            is LiteratureListListSection -> ListSectionRepresentation(id, entries.map { it.toEntryRepresentation() })
+            is LiteratureListTextSection -> TextSectionRepresentation(id, heading, headingSize, text)
         }
 
-    private fun ListSection.Entry.toEntryRepresentation(): ListSectionRepresentation.EntryRepresentation =
+    private fun LiteratureListListSection.Entry.toEntryRepresentation(): ListSectionRepresentation.EntryRepresentation =
         ListSectionRepresentation.EntryRepresentation(value.toResourceReferenceRepresentation(), description)
 }

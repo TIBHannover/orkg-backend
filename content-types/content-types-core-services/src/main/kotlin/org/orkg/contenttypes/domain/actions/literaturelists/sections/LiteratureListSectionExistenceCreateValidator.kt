@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain.actions.literaturelists.sections
 
+import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.LiteratureListNotModifiable
-import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
 import org.orkg.graph.domain.Classes
@@ -21,7 +21,7 @@ class LiteratureListSectionExistenceCreateValidator(
                 }
                 Classes.literatureList in it.classes
             }
-            .orElseThrow { TemplateNotFound(command.literatureListId) }
+            .orElseThrow { LiteratureListNotFound(command.literatureListId) }
         return state
     }
 }

@@ -305,11 +305,11 @@ class LiteratureListServiceUnitTests {
             it.unlistedBy shouldBe expected.unlistedBy
             it.published shouldBe false
             it.sections shouldBe listOf(
-                TextSection(textSection.id, textSection.label, 4, textContent),
-                ListSection(
+                LiteratureListTextSection(textSection.id, textSection.label, 4, textContent),
+                LiteratureListListSection(
                     listSection.id, listOf(
-                        ListSection.Entry(ResourceReference(paper), paperEntryDescription),
-                        ListSection.Entry(ResourceReference(comparison))
+                        LiteratureListListSection.Entry(ResourceReference(paper), paperEntryDescription),
+                        LiteratureListListSection.Entry(ResourceReference(comparison))
                     )
                 )
             )
@@ -548,12 +548,12 @@ class LiteratureListServiceUnitTests {
             it.unlistedBy shouldBe expected.unlistedBy
             it.published shouldBe true
             it.sections shouldBe listOf(
-                TextSection(textSection.id, textSection.label, 4, textContent),
-                ListSection(
+                LiteratureListTextSection(textSection.id, textSection.label, 4, textContent),
+                LiteratureListListSection(
                     listSection.id,
                     listOf(
-                        ListSection.Entry(ResourceReference(paper), paperEntryDescription),
-                        ListSection.Entry(ResourceReference(comparison))
+                        LiteratureListListSection.Entry(ResourceReference(paper), paperEntryDescription),
+                        LiteratureListListSection.Entry(ResourceReference(comparison))
                     )
                 )
             )

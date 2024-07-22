@@ -84,21 +84,21 @@ sealed interface LiteratureListSection {
     companion object {
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): LiteratureListSection =
             when {
-                Classes.listSection in root.classes -> ListSection.from(root, statements)
-                Classes.textSection in root.classes -> TextSection.from(root, statements)
+                Classes.listSection in root.classes -> LiteratureListListSection.from(root, statements)
+                Classes.textSection in root.classes -> LiteratureListTextSection.from(root, statements)
                 else -> throw IllegalStateException("Cannot convert section ${root.id} to literature list section. This is a bug.")
             }
 
         fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
             when {
-                Classes.listSection in root.classes -> ListSection.contributors(root, statements)
-                Classes.textSection in root.classes -> TextSection.contributors(root, statements)
+                Classes.listSection in root.classes -> LiteratureListListSection.contributors(root, statements)
+                Classes.textSection in root.classes -> LiteratureListTextSection.contributors(root, statements)
                 else -> throw IllegalStateException("Cannot convert section ${root.id} to literature list section. This is a bug.")
             }
     }
 }
 
-data class ListSection(
+data class LiteratureListListSection(
     override val id: ThingId,
     val entries: List<Entry>
 ) : LiteratureListSection {
@@ -108,8 +108,8 @@ data class ListSection(
     )
 
     companion object {
-        fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): ListSection =
-            ListSection(
+        fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): LiteratureListListSection =
+            LiteratureListListSection(
                 id = root.id,
                 entries = statements[root.id]
                     ?.wherePredicate(Predicates.hasEntry)
@@ -144,15 +144,15 @@ data class ListSection(
     }
 }
 
-data class TextSection(
+data class LiteratureListTextSection(
     override val id: ThingId,
     val heading: String,
     val headingSize: Int,
     val text: String
 ) : LiteratureListSection {
     companion object {
-        fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): TextSection =
-            TextSection(
+        fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): LiteratureListTextSection =
+            LiteratureListTextSection(
                 id = root.id,
                 heading = root.label,
                 headingSize = statements[root.id]

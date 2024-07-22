@@ -18,8 +18,8 @@ import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionValidator
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateListSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTextSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListListSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListTextSectionCommand
 
 class LiteratureListSectionUpdateValidatorUnitTest {
     private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator = mockk()
@@ -38,7 +38,7 @@ class LiteratureListSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a literature list section update command, when section is not related to the literature list, it throws an exception`() {
-        val command = dummyUpdateTextSectionCommand()
+        val command = dummyUpdateLiteratureListTextSectionCommand()
         val state = UpdateLiteratureListSectionState(literatureList = createDummyLiteratureList())
 
         assertThrows<UnrelatedLiteratureListSection> { literatureListSectionUpdateValidator(command, state) }
@@ -48,7 +48,7 @@ class LiteratureListSectionUpdateValidatorUnitTest {
     fun `Given a text section update command, when validation succeeds, it returns success`() {
         val literatureList = createDummyLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
-        val command = dummyUpdateTextSectionCommand().copy(literatureListSectionId = literatureList.sections.first().id)
+        val command = dummyUpdateLiteratureListTextSectionCommand().copy(literatureListSectionId = literatureList.sections.first().id)
 
         every { abstractLiteratureListSectionValidator.validate(any(), any()) } just runs
 
@@ -66,7 +66,7 @@ class LiteratureListSectionUpdateValidatorUnitTest {
     fun `Given a text section update command, when types mismatch, it throws an exception`() {
         val literatureList = createDummyLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
-        val command = dummyUpdateTextSectionCommand().copy(literatureListSectionId = literatureList.sections.last().id)
+        val command = dummyUpdateLiteratureListTextSectionCommand().copy(literatureListSectionId = literatureList.sections.last().id)
 
         assertThrows<LiteratureListSectionTypeMismatch> { literatureListSectionUpdateValidator(command, state) }
     }
@@ -75,7 +75,7 @@ class LiteratureListSectionUpdateValidatorUnitTest {
     fun `Given a list section update command, when validation succeeds, it returns success`() {
         val literatureList = createDummyLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
-        val command = dummyUpdateListSectionCommand().copy(literatureListSectionId = literatureList.sections.last().id)
+        val command = dummyUpdateLiteratureListListSectionCommand().copy(literatureListSectionId = literatureList.sections.last().id)
 
         every { abstractLiteratureListSectionValidator.validate(any(), any()) } just runs
 
@@ -93,7 +93,7 @@ class LiteratureListSectionUpdateValidatorUnitTest {
     fun `Given a list section update command, when types mismatch, it throws an exception`() {
         val literatureList = createDummyLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
-        val command = dummyUpdateListSectionCommand().copy(literatureListSectionId = literatureList.sections.first().id)
+        val command = dummyUpdateLiteratureListListSectionCommand().copy(literatureListSectionId = literatureList.sections.first().id)
 
         assertThrows<LiteratureListSectionTypeMismatch> { literatureListSectionUpdateValidator(command, state) }
     }

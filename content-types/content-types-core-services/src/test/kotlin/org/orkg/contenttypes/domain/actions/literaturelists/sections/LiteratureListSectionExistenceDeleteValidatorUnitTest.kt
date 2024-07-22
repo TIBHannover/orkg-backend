@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.DeleteLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListExistenceValidator
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
-import org.orkg.contenttypes.input.testing.fixtures.dummyDeleteSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyDeleteLiteratureListSectionCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
 class LiteratureListSectionExistenceDeleteValidatorUnitTest {
@@ -35,7 +35,7 @@ class LiteratureListSectionExistenceDeleteValidatorUnitTest {
     @Test
     fun `Given a literature list section delete command, when checking for literature list existence, it returns success`() {
         val literatureList = createDummyLiteratureList()
-        val command = dummyDeleteSectionCommand().copy(literatureListId = literatureList.id)
+        val command = dummyDeleteLiteratureListSectionCommand().copy(literatureListId = literatureList.id)
         val state = DeleteLiteratureListSectionState()
         val statements = listOf(createStatement()).groupBy { it.subject.id }
 

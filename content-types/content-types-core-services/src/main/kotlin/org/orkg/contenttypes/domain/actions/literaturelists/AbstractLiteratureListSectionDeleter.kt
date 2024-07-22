@@ -2,9 +2,9 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.ListSection
+import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListSection
-import org.orkg.contenttypes.domain.TextSection
+import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.domain.actions.ContentTypePartDeleter
 import org.orkg.contenttypes.domain.actions.tryDelete
 import org.orkg.graph.domain.GeneralStatement
@@ -27,35 +27,41 @@ class AbstractLiteratureListSectionDeleter(
         section: LiteratureListSection,
         statements: Map<ThingId, List<GeneralStatement>>
     ) = when (section) {
-        is ListSection -> deleteListSection(contributorId, literatureListId, section, statements)
-        is TextSection -> deleteTextSection(contributorId, literatureListId, section, statements)
+        is LiteratureListListSection -> deleteListSection(contributorId, literatureListId, section, statements)
+        is LiteratureListTextSection -> deleteTextSection(contributorId, literatureListId, section, statements)
     }
 
     private fun deleteListSection(
         contributorId: ContributorId,
         literatureListId: ThingId,
-        section: ListSection,
+        section: LiteratureListListSection,
         statements: Map<ThingId, List<GeneralStatement>>
-    ) = contentTypePartDeleter.delete(literatureListId, section.id) {
-        val entryNodes = statements[section.id]?.map { it.`object`.id }.orEmpty()
-        val toRemove = statements[section.id]?.map { it.id }.orEmpty() + entryNodes.flatMap { node -> statements[node]?.map { it.id }.orEmpty() }
-        if (toRemove.isNotEmpty()) {
-            statementService.delete(toRemove.toSet())
+    ) {
+        contentTypePartDeleter.delete(literatureListId, section.id) { incomingStatements ->
+            val entryNodes = statements[section.id]?.map { it.`object`.id }.orEmpty()
+            val toRemove = statements[section.id]?.map { it.id }.orEmpty() +
+                entryNodes.flatMap { node -> statements[node]?.map { it.id }.orEmpty() } +
+                incomingStatements.map { it.id }
+            if (toRemove.isNotEmpty()) {
+                statementService.delete(toRemove.toSet())
+            }
+            entryNodes.forEach { resourceService.tryDelete(it, contributorId) }
+            resourceService.tryDelete(section.id, contributorId)
         }
-        entryNodes.forEach { resourceService.tryDelete(it, contributorId) }
-        resourceService.tryDelete(section.id, contributorId)
     }
 
     private fun deleteTextSection(
         contributorId: ContributorId,
         literatureListId: ThingId,
-        section: TextSection,
+        section: LiteratureListTextSection,
         statements: Map<ThingId, List<GeneralStatement>>
-    ) = contentTypePartDeleter.delete(literatureListId, section.id) {
-        val toRemove = statements[section.id]?.map { it.id }.orEmpty()
-        if (toRemove.isNotEmpty()) {
-            statementService.delete(toRemove.toSet())
+    ) {
+        contentTypePartDeleter.delete(literatureListId, section.id) { incomingStatements ->
+            val toRemove = statements[section.id]?.map { it.id }.orEmpty() + incomingStatements.map { it.id }
+            if (toRemove.isNotEmpty()) {
+                statementService.delete(toRemove.toSet())
+            }
+            resourceService.tryDelete(section.id, contributorId)
         }
-        resourceService.tryDelete(section.id, contributorId)
     }
 }

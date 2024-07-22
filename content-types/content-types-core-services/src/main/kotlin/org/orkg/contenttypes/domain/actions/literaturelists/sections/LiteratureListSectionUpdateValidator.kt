@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.domain.actions.literaturelists.sections
 
-import org.orkg.contenttypes.domain.ListSection
+import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListSectionTypeMismatch
-import org.orkg.contenttypes.domain.TextSection
+import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.domain.UnrelatedLiteratureListSection
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
@@ -23,7 +23,7 @@ class LiteratureListSectionUpdateValidator(
         val section = state.literatureList!!.sections.singleOrNull { it.id == command.literatureListSectionId }
             ?: throw UnrelatedLiteratureListSection(command.literatureListId, command.literatureListSectionId)
         if (command is UpdateLiteratureListSectionUseCase.UpdateListSectionCommand) {
-            if (section !is ListSection) {
+            if (section !is LiteratureListListSection) {
                 throw LiteratureListSectionTypeMismatch.mustBeListSection()
             }
             abstractLiteratureListSectionValidator.validate(
@@ -31,7 +31,7 @@ class LiteratureListSectionUpdateValidator(
                 validIds = section.entries.map { it.value.id }.toMutableSet()
             )
         } else if (command is UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand) {
-            if (section !is TextSection) {
+            if (section !is LiteratureListTextSection) {
                 throw LiteratureListSectionTypeMismatch.mustBeTextSection()
             }
             abstractLiteratureListSectionValidator.validate(

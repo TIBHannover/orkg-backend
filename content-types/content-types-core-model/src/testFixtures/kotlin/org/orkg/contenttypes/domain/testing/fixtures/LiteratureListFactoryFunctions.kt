@@ -8,13 +8,13 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.HeadVersion
-import org.orkg.contenttypes.domain.ListSection
+import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureList
 import org.orkg.contenttypes.domain.LiteratureListSection
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PublishedVersion
 import org.orkg.contenttypes.domain.ResourceReference
-import org.orkg.contenttypes.domain.TextSection
+import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
@@ -106,8 +106,8 @@ fun createDummyLiteratureList() = LiteratureList(
     unlistedBy = null,
     published = false,
     sections = listOf(
-        createDummyTextSection(),
-        createDummyListSection()
+        createDummyLiteratureListTextSection(),
+        createDummyLiteratureListListSection()
     ),
     acknowledgements = mapOf(
         ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620") to 0.75,
@@ -115,19 +115,19 @@ fun createDummyLiteratureList() = LiteratureList(
     )
 )
 
-fun createDummyTextSection(): TextSection =
-    TextSection(
+fun createDummyLiteratureListTextSection(): LiteratureListTextSection =
+    LiteratureListTextSection(
         id = ThingId("R154686"),
         heading = "Heading",
         headingSize = 2,
         text = "text section contents"
     )
 
-fun createDummyListSection(): ListSection =
-    ListSection(
+fun createDummyLiteratureListListSection(): LiteratureListListSection =
+    LiteratureListListSection(
         id = ThingId("R456351"),
         entries = listOf(
-            ListSection.Entry(
+            LiteratureListListSection.Entry(
                 ResourceReference(
                     id = ThingId("R154686"),
                     label = "Paper",
@@ -135,7 +135,7 @@ fun createDummyListSection(): ListSection =
                 ),
                 "paper entry description"
             ),
-            ListSection.Entry(
+            LiteratureListListSection.Entry(
                 ResourceReference(
                     id = ThingId("R6416"),
                     label = "Comparison",
@@ -147,11 +147,11 @@ fun createDummyListSection(): ListSection =
 
 fun LiteratureListSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> =
     when (this) {
-        is ListSection -> toGroupedStatements()
-        is TextSection -> toGroupedStatements()
+        is LiteratureListListSection -> toGroupedStatements()
+        is LiteratureListTextSection -> toGroupedStatements()
     }
 
-fun ListSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
+fun LiteratureListListSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
     val statements = mutableSetOf<GeneralStatement>()
     val root = createResource(id)
     entries.forEachIndexed { index, entry ->
@@ -180,7 +180,7 @@ fun ListSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
     return statements.groupBy { it.subject.id }
 }
 
-fun TextSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
+fun LiteratureListTextSection.toGroupedStatements(): Map<ThingId, List<GeneralStatement>> {
     val root = createResource(id, label = heading)
     val statements = listOf(
         createStatement(

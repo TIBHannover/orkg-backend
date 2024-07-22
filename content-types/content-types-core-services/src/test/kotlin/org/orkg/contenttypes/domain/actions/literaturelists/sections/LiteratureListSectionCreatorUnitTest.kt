@@ -22,8 +22,8 @@ import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionCreator
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateListSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTextSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListListSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListTextSectionCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -95,7 +95,7 @@ class LiteratureListSectionCreatorUnitTest {
     @Test
     fun `Given a literature list section create command, when index is specified, it creates a new section and links it to the existing literature list at the specified index`() {
         val sectionId = ThingId("R456")
-        val command = dummyCreateListSectionCommand().copy(index = 1)
+        val command = dummyCreateLiteratureListListSectionCommand().copy(index = 1)
         val statements = listOf(
             createStatement(
                 subject = createResource(command.literatureListId),
@@ -154,7 +154,7 @@ class LiteratureListSectionCreatorUnitTest {
     @Test
     fun `Given a literature list section create command, when index is specified but higher than existing sections count, it creates a new section and appends it to the existing literature list`() {
         val sectionId = ThingId("R456")
-        val command = dummyCreateListSectionCommand().copy(index = 15)
+        val command = dummyCreateLiteratureListListSectionCommand().copy(index = 15)
         val statements = listOf(
             createStatement(
                 subject = createResource(command.literatureListId),
@@ -213,8 +213,8 @@ class LiteratureListSectionCreatorUnitTest {
     companion object {
         @JvmStatic
         fun createLiteratureListSectionCommands(): Stream<Arguments> = Stream.of(
-            Arguments.of(dummyCreateListSectionCommand()),
-            Arguments.of(dummyCreateTextSectionCommand())
+            Arguments.of(dummyCreateLiteratureListListSectionCommand()),
+            Arguments.of(dummyCreateLiteratureListTextSectionCommand())
         )
     }
 }

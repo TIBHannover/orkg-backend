@@ -19,11 +19,13 @@ import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.domain.Author
-import org.orkg.contenttypes.domain.ListSection
+import org.orkg.contenttypes.domain.HeadVersion
+import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.ResourceReference
-import org.orkg.contenttypes.domain.TextSection
+import org.orkg.contenttypes.domain.LiteratureListTextSection
+import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.createClasses
 import org.orkg.createLiteral
@@ -253,6 +255,10 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
                 identifiers = emptyMap(),
                 homepage = null
             )
+            it.versions shouldBe VersionInfoRepresentation(
+                head = HeadVersionRepresentation(id, it.title, it.createdAt, it.createdBy),
+                published = emptyList()
+            )
             it.sustainableDevelopmentGoals shouldBe setOf(
                 LabeledObjectRepresentation(ThingId("SDG_1"), "No poverty"),
                 LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger")
@@ -264,6 +270,7 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
             it.createdBy shouldBe ContributorId(MockUserId.USER)
             it.visibility shouldBe Visibility.DEFAULT
             it.unlistedBy shouldBe null
+            it.published shouldBe false
             it.sections.size shouldBe 2
             it.sections[0].shouldBeInstanceOf<TextSectionRepresentation>().asClue { section ->
                 section.id shouldNotBe null
@@ -337,6 +344,10 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
                 identifiers = emptyMap(),
                 homepage = null
             )
+            it.versions shouldBe VersionInfo(
+                head = HeadVersion(id, it.title, it.createdAt, it.createdBy),
+                published = emptyList()
+            )
             it.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"),
                 ObjectIdAndLabel(ThingId("SDG_4"), "Quality education")
@@ -348,24 +359,25 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
             it.createdBy shouldBe ContributorId(MockUserId.USER)
             it.visibility shouldBe Visibility.DEFAULT
             it.unlistedBy shouldBe null
-            it.sections[0].shouldBeInstanceOf<TextSection>().asClue { section ->
+            it.published shouldBe false
+            it.sections[0].shouldBeInstanceOf<LiteratureListTextSection>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "updated heading"
                 section.headingSize shouldBe 3
                 section.text shouldBe "updated text contents"
             }
-            it.sections[1].shouldBeInstanceOf<ListSection>().asClue { section ->
+            it.sections[1].shouldBeInstanceOf<LiteratureListListSection>().asClue { section ->
                 section.id shouldNotBe null
                 section.entries shouldBe listOf(
-                    ListSection.Entry(
+                    LiteratureListListSection.Entry(
                         ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
                         "new description"
                     ),
-                    ListSection.Entry(
+                    LiteratureListListSection.Entry(
                         ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
                         null
                     ),
-                    ListSection.Entry(
+                    LiteratureListListSection.Entry(
                         ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset)),
                         "updated example description"
                     )
@@ -395,7 +407,7 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         literatureList.sections.size shouldBe 3
-        literatureList.sections.last().shouldBeInstanceOf<TextSection>().asClue {
+        literatureList.sections.last().shouldBeInstanceOf<LiteratureListTextSection>().asClue {
             it.id shouldNotBe null
             it.heading shouldBe "text section heading"
             it.headingSize shouldBe 2
@@ -415,7 +427,7 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
         val updatedLiteratureList = literatureListService.findById(literatureListId)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
-        updatedLiteratureList.sections.last().shouldBeInstanceOf<TextSection>().asClue {
+        updatedLiteratureList.sections.last().shouldBeInstanceOf<LiteratureListTextSection>().asClue {
             it.id shouldBe literatureListSectionId
             it.heading shouldBe "updated text section heading"
             it.headingSize shouldBe 3
@@ -440,18 +452,18 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         literatureList.sections.size shouldBe 3
-        literatureList.sections.last().shouldBeInstanceOf<ListSection>().asClue {
+        literatureList.sections.last().shouldBeInstanceOf<LiteratureListListSection>().asClue {
             it.id shouldNotBe null
             it.entries shouldBe listOf(
-                ListSection.Entry(
+                LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(ThingId("Dataset"))),
                     "example description"
                 ),
-                ListSection.Entry(
+                LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3004"), "Some other resource", setOf(ThingId("Software"))),
                     null
                 ),
-                ListSection.Entry(
+                LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3003"), "Some resource", setOf(ThingId("Paper"))),
                     null
                 )
@@ -471,18 +483,18 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
         val updatedLiteratureList = literatureListService.findById(literatureListId)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
-        updatedLiteratureList.sections.last().shouldBeInstanceOf<ListSection>().asClue {
+        updatedLiteratureList.sections.last().shouldBeInstanceOf<LiteratureListListSection>().asClue {
             it.id shouldBe literatureListSectionId
             it.entries shouldBe listOf(
-                ListSection.Entry(
+                LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3003"), "Some resource", setOf(ThingId("Paper"))),
                     null
                 ),
-                ListSection.Entry(
+                LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3004"), "Some other resource", setOf(ThingId("Software"))),
                     "new description"
                 ),
-                ListSection.Entry(
+                LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(ThingId("Dataset"))),
                     "updated example description"
                 )

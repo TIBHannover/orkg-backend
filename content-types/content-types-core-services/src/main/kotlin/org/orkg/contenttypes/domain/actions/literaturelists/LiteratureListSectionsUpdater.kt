@@ -30,7 +30,7 @@ class LiteratureListSectionsUpdater(
         command.sections?.let { sections ->
             val oldSections = state.literatureList!!.sections.toMutableList()
             val new2old = sections.associateWith { newSection ->
-                oldSections.firstOrNull { newSection.matchesListSection(it) }?.also { oldSections.remove(it) }
+                oldSections.firstOrNull { newSection.matchesLiteratureListSection(it) }?.also { oldSections.remove(it) }
             }
             val sectionIds = sections.map { newSection ->
                 new2old[newSection]?.id ?: abstractLiteratureListSectionCreator.create(command.contributorId, newSection)

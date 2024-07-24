@@ -1,0 +1,71 @@
+= Statements
+
+A statement represents a kind of sentence in the knowledge graph,
+similar to RDF triples.
+Similar to a real sentence, it is a tuple of a subject, a predicate, and
+an object.
+
+Subjects and objects represent nodes in the graph are formed from a
+<<Resources,resource>>.
+Objects can also be a <<Literals,literal value>>.
+
+<<Predicates>> represent edges (relationships) in the graph.
+
+Resources and predicates are identifiable by an ID, whereas literals are
+not since they represent a value.
+
+Statements can also be referenced by their IDs.
+This allows storing and retrieving provenance information about them.
+
+[[statements-fetch]]
+== Fetching a statement
+
+A `GET` request provides information about a statement.
+
+operation::statement-controller-integration-test-fetch[snippets='curl-request,http-response,response-fields']
+
+[[statements-list]]
+== Listing statements
+
+A `GET` request lists all the statements:
+
+TIP: {pagination_note}
+
+operation::statements-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::statements-get-paged-with-parameters[snippets='request-parameters,curl-request']
+
+[[statements-create]]
+== Creating statements
+A `POST` request creates a new statement.
+The response will be `201 Created` when successful.
+The statement can be retrieved by following the URI in the `Location` header field.
+
+NOTE: The response body contains the created statement for convenience. This might be subject to change.
+
+operation::statement-controller-integration-test-add-with-resource[snippets='curl-request,http-response']
+
+[[statements-delete]]
+== Deleting a statement
+Delete a statement by providing the ID of the statement via a `DELETE` call:
+
+The response will be `204 No Content` when successful.
+
+operation::statements-delete-by-id_is-no-content[snippets='curl-request,http-response']
+
+[[statements-fetch-as-bundle]]
+== Fetching statements for a thing as a bundle
+
+A `GET` request that fetches the entire subgraph of a certain entity and returns all the statements as a bundle.
+
+A `Bundle` is a collection of statements that represents the sub-graph starting from a certain `Thing` in the KG.
+
+When fetching a bundle of statements, filtering is possible via specifying certain parameters in the request.
+The number of levels in the tree being fetched can be filtered using the two query parameters `minLevel` & `minLevel`.
+Furthermore, to be able to further control which statements to fetch, a black/white listing operation can be introduced via the query parameters `blacklist` & `whitelist` - this filter applies to classes of subjects and objects of statements only -
+
+The endpoint also provide the parameter `includeFirst` which by default is `True` meaning it will not apply black/white listing on first level.
+
+operation::statement-controller-integration-test-fetch-bundle[snippets='curl-request,http-response,response-fields']

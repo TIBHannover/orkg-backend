@@ -1,0 +1,41 @@
+= Comparison Related Figures
+
+Comparison Related Figures represent a collection of concepts in the knowledge graph and can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+They are used to define figures for comparisons.
+The provided endpoints aggregate these concepts into a comparison related figure representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[comparisons-related-figure-fetch]]
+== Fetching a related figure for a comparison
+
+A `GET` request provides information about a comparison related figure.
+
+operation::comparisons-related-figure-get-single[snippets='curl-request,http-response,response-fields']
+
+[[comparisons-related-figure-list]]
+== Listing related figures for a comparison
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-figure-fetch,comparison related figures>>.
+
+operation::comparisons-related-figure-get-paged[snippets='curl-request']
+
+[[comparisons-related-figure-create]]
+== Creating comparison related figures
+
+A `POST` request creates a new comparison related figure with all the given parameters.
+The response will be `201 Created` when successful.
+The comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::comparisons-create-comparison-related-figure[snippets='path-parameters,request-fields,curl-request,http-response']
+
+[[comparisons-related-figure-edit]]
+== Editing a comparison related figure
+
+A `PUT` request updates an existing comparison related figure with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: Top level fields that were mandatory when creating the comparison related figure can be omitted or `null`, meaning that the corresponding fields should not be updated.
+
+operation::comparisons-update-comparison-related-figure[snippets='request-fields,curl-request,http-response']

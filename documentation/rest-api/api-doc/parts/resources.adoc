@@ -1,0 +1,78 @@
+= Resources
+
+Resources represent nodes in the knowledge graph.
+They can appear in the subject or object position in <<Statements,statements>>.
+
+[[resources-fetch]]
+== Fetching a resource
+
+A `GET` request provides information about a resource.
+
+operation::resource-controller-integration-test-fetch[snippets='curl-request,http-response,response-fields']
+
+[[resources-list]]
+== Listing resources
+
+A `GET` request lists all resources.
+
+TIP: {pagination_note}
+
+operation::resources-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::resources-get-paged-with-parameters[snippets='request-parameters,curl-request']
+
+[[resources-create]]
+== Creating resources
+
+A `POST` request creates a new resource with a given label.
+An optional set of classes can be provided.
+The response will be `201 Created` when successful.
+The resource can be retrieved by following the URI in the `Location` header field.
+
+NOTE: The created resource is returned in the body for convenience. This might be subject to change.
+
+operation::resource-controller-integration-test-add[snippets='request-fields,curl-request,http-response,response-fields']
+
+[[resources-edit]]
+== Editing a resource
+
+A `PUT` request updates a resource with a new given label.
+The response will be `200 OK` when successful.
+The created resource is returned in the body for convenience.
+
+operation::resource-controller-integration-test-edit[snippets='request-fields,curl-request,http-response']
+
+[[resources-delete]]
+== Delete a resource
+
+A `DELETE` request with the id of the resource to delete.
+The response will be `204 NO CONTENT` when successful.
+If the resource doesn't exist, the will return status `404 NOT FOUND`.
+To safely delete a resource, the resource shouldn't have any incoming statements.
+
+Note: This request is only acceptable if you have sufficient permissions. Otherwise, a status `403 FORBIDDEN` will be returned.
+
+operation::resource-controller-integration-test-delete-resource-success[snippets='curl-request,http-response']
+
+[[resources-import]]
+== Importing a resource
+
+The {orkg} REST API provides two endpoints for importing resources from external ontologies.
+
+[[resources-import-by-uri]]
+=== Importing a resource by URI
+
+A `POST` request imports a resource from an external ontology by a given URI.
+The response will be `201 Created` when successful, even when the resource was already imported previously.
+
+operation::import-import-resource-by-uri[snippets='request-fields,curl-request,http-response']
+
+[[resources-import-by-short-form]]
+=== Importing a resource by short form
+
+A `POST` request imports a resource from an external ontology by a given short form id.
+The response will be `201 Created` when successful, even when the resource was already imported.
+
+operation::import-import-resource-by-short-form[snippets='request-fields,curl-request,http-response']

@@ -7,90 +7,10 @@
 include::../_default-attributes.adoc[]
 :pagination_note: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>.
 
+// General instructions on how to use the api
+
 [[overview]]
-== Overview
-
-This document describes the REST API of the {orkg}.
-
-WARNING: This API is still **in development** and therefore **unstable** and **subject to change**!
-         Be aware that the API can (and will) break without notice, so beware if you intend to consume it directly.
-         We will support a stable API in the future, but it is uncertain when that will be.
-         This documentation will be updated to reflect that.
-
-////
-=== Current version
-=== Schema
-=== Authentication
-=== Parameters
-=== Root endpoint
-=== Client errors
-=== HTTP redirects
-////
-
-[[overview-http-verbs]]
-=== HTTP verbs
-
-The {orkg} REST API tries to adhere as closely as possible to standard
- HTTP and REST conventions in its use of HTTP verbs.
-|===
-| Verb | Usage
-
-| `GET`
-| Used to retrieve a resource
-
-| `POST`
-| Used to create a new resource
-|===
-
-The verbs `PATCH`, `PUT`, and `DELETE` are (currently) unsupported.
-////
-| `PATCH`
-| Used to update an existing resource, including partial updates
-
-| `PUT`
-| Used to update an existing resource, full updates only
-
-| `DELETE`
-| Used to delete an existing resource
-|===
-////
-
-[[overview-http-status-codes]]
-=== HTTP status codes
-The {orkg} REST API tries to adhere as closely as possible to standard
- HTTP and REST conventions in its use of HTTP status codes.
-
-|===
-| Status code | Usage
-
-| `200 OK`
-| Standard response for successful HTTP requests.
-The actual response will depend on the request method used.
-In a `GET` request, the response will contain an entity corresponding to the requested resource.
-In a `POST` request, the response will contain an entity describing or containing the result of the action.
-
-| `201 Created`
-| The request has been fulfilled and resulted in a new resource being created.
-
-| `204 No Content`
-| The server successfully processed the request, but is not returning any content.
-
-| `400 Bad Request`
-| The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).
-
-| `404 Not Found`
-| The requested resource could not be found but may be available again in the future. Subsequent requests by the client are permissible.
-|===
-
-All responses with error codes that do not indicate success will contain a payload that describes the error.
-Their structure is documented in the section about <<error-represenation,Error representation>>.
-
-////
-=== Hypermedia
-=== Pagination
-=== Conditional requests
-=== Cross origin resource sharing
-////
+include::parts/overview.adoc[leveloffset=+1]
 
 [[authentication]]
 include::parts/auth.adoc[leveloffset=+1]
@@ -98,322 +18,70 @@ include::parts/auth.adoc[leveloffset=+1]
 [[content-negotiation]]
 include::parts/content-negotiation.adoc[leveloffset=+1]
 
-[[statements]]
-== Statements
+// Common metadata
 
-A statement represents a kind of sentence in the knowledge graph,
- similar to RDF triples.
-Similar to a real sentence, it is a tuple of a subject, a predicate, and
- an object.
+[[contributors]]
+include::parts/contributors.adoc[leveloffset=+1]
 
-Subjects and objects represent nodes in the graph are formed from a
- <<Resources,resource>>.
-Objects can also be a <<Literals,literal value>>.
+[[organizations]]
+include::parts/organizations.adoc[leveloffset=+1]
 
-<<Predicates>> represent edges (relationships) in the graph.
+[[observatories]]
+include::parts/observatories.adoc[leveloffset=+1]
 
-Resources and predicates are identifiable by an ID, whereas literals are
- not since they represent a value.
+[[observatory-filters]]
+include::parts/observatory-filters.adoc[leveloffset=+1]
 
-Statements can also be referenced by their IDs.
-This allows storing and retrieving provenance information about them.
+// Basic building blocks of the graph
 
-[[statements-list]]
-=== Listing statements
-
-A `GET` request lists all the statements:
-
-operation::statements-get-paged[snippets='curl-request']
-
-The following list of request parameters are supported:
-
-operation::statements-get-paged-with-parameters[snippets='request-parameters,curl-request']
-
-TIP: {pagination_note}
-
-[[statements-create]]
-=== Creating statements
-A `POST` request creates a new statement.
-The response will be `201 Created` when successful.
-The statement can be retrieved by following the URI in the `Location` header field.
-
-NOTE: The response body contains the created statement for convenience. This might be subject to change.
-
-Creating statements can be done in two ways:
-
-1. For objects of type resource, send three IDs.
-2. For objects of type literal, send two IDs and the literal value in the body.
-
-[[statements-create-objects-resource]]
-==== Creating statements with resource objects
-
-Create a statement by submitting three IDs via `POST`:
-
-operation::statement-controller-integration-test-add-with-resource[snippets='curl-request,http-response']
-
-[[statements-delete]]
-=== Deleting a statement
-Delete a statement by providing the ID of the statement via a `DELETE` call:
-
-The response will be `204 No Content` when successful.
-
-operation::statements-delete-by-id_is-no-content[snippets='curl-request,http-response']
-
-[[statements-fetch]]
-=== Fetching a statement
-
-A `GET` request provides information about a statement.
-
-operation::statement-controller-integration-test-fetch[snippets='curl-request,http-response']
-
-[[statements-fetch-as-bundle]]
-=== Fetching statements for a thing as a bundle
-
-A `GET` request that fetches the entire subgraph of a certain entity and returns all the statements as a bundle.
-
-A `Bundle` is a collection of statements that represents the sub-graph starting from a certain `Thing` in the KG.
-
-When fetching a bundle of statements, filtering is possible via specifying certain parameters in the request.
-The number of levels in the tree being fetched can be filtered using the two query parameters `minLevel` & `minLevel`.
-Furthermore, to be able to further control which statements to fetch, a black/white listing operation can be introduced via the query parameters `blacklist` & `whitelist` - this filter applies to classes of subjects and objects of statements only -
-
-The endpoint also provide the parameter `includeFirst` which by default is `True` meaning it will not apply black/white listing on first level.
-
-operation::statement-controller-integration-test-fetch-bundle[snippets='curl-request,http-response']
-
-include::parts/bulk-statements.adoc[]
-
-include::parts/classes.adoc[]
+[[classes]]
+include::parts/classes.adoc[leveloffset=+1]
 
 [[resources]]
-== Resources
-
-Resources represent nodes in the knowledge graph.
-They can appear in the subject or object position in <<Statements,statements>>.
-
-[[resources-list]]
-=== Listing resources
-
-A `GET` request lists all resources.
-
-operation::resources-get-paged[snippets='curl-request']
-
-The following list of request parameters are supported:
-
-operation::resources-get-paged-with-parameters[snippets='request-parameters,curl-request']
-
-TIP: {pagination_note}
-
-[[resources-create]]
-=== Creating resources
-
-A `POST` request creates a new resource with a given label.
-An optional set of classes can be provided.
-The response will be `201 Created` when successful.
-The resource can be retrieved by following the URI in the `Location` header field.
-
-NOTE: The created resource is returned in the body for convenience. This might be subject to change.
-
-operation::resource-controller-integration-test-add[snippets='request-fields,curl-request,http-response']
-
-The response body consists of the following fields:
-
-operation::resource-controller-integration-test-add[snippets='response-fields']
-
-[[resources-edit]]
-=== Editing a resource
-
-A `PUT` request updates a resource with a new given label.
-The response will be `200 OK` when successful.
-The created resource is returned in the body for convenience.
-
-operation::resource-controller-integration-test-edit[snippets='request-fields,curl-request,http-response']
-
-[[resources-fetch]]
-=== Fetching a resource
-
-A `GET` request provides information about a resource.
-
-operation::resource-controller-integration-test-fetch[snippets='curl-request,http-response']
-
-[[resources-delete]]
-=== Delete a resource
-
-A `DELETE` request with the id of the resource to delete.
-
-Note: This request is only acceptable if you have sufficient permissions.
-
-a successful request return a No-Content HTTP status code.
-
-operation::resource-controller-integration-test-delete-resource-success[snippets='curl-request,http-response']
-
-If the resource doesn't exist, the API returns a 404 status code.
-
-operation::resource-controller-integration-test-delete-resource-not-found[snippets='curl-request,http-response']
-
-To safely delete a resource, the resource shouldn't have any statements related to it. In this case a Forbidden HTTP status is returned.
-
-operation::resource-controller-integration-test-delete-resource-forbidden[snippets='curl-request,http-response']
-
-[[resources-import]]
-=== Importing a resource
-
-The {orkg} REST API provides two endpoints for importing resources from external ontologies.
-
-[[resources-import-by-uri]]
-==== Importing a resource by URI
-
-A `POST` request imports a resource from an external ontology by a given URI.
-The response will be `201 Created` when successful, even when the resource was already imported previously.
-
-operation::import-import-resource-by-uri[snippets='curl-request,http-response,request-fields']
-
-[[resources-import-by-short-form]]
-==== Importing a resource by short form
-
-A `POST` request imports a resource from an external ontology by a given short form id.
-The response will be `201 Created` when successful, even when the resource was already imported.
-
-operation::import-import-resource-by-short-form[snippets='curl-request,http-response,request-fields']
+include::parts/resources.adoc[leveloffset=+1]
 
 [[predicates]]
-== Predicates
-
-Predicates represent edges (relationships between nodes) in the
- knowledge graph.
-They consist of an ID and a label (for presentation).
-IDs always start with "P", followed by a number.
-
-[[predicates-list]]
-=== Listing predicates
-
-A `GET` request lists all predicates:
-
-operation::predicate-controller-integration-test-index[snippets='request-parameters,curl-request,http-response']
-
-TIP: {pagination_note}
-
-[[predicates-create]]
-=== Creating predicates
-
-A `POST` request creates a new predicate with a given label.
-The response will be `201 Created` when successful.
-The predicate can be retrieved by following the URI in the `Location` header field.
-
-NOTE: The response body contains the created predicate for convenience. This might be subject to change.
-
-operation::predicates-create[snippets='request-fields,curl-request,http-response']
-
-The response body consists of the following fields:
-
-operation::predicates-create[snippets='response-fields']
-
-[[predicates-edit]]
-=== Editing a predicate
-
-A `PUT` request updates a predicate with a new given label.
-The response will be `200 OK` when successful.
-The created predicate is returned in the body for convenience.
-
-operation::predicate-controller-integration-test-edit[snippets='curl-request,http-response']
-
-[[predicates-fetch]]
-=== Fetching a predicate
-
-A `GET` request provides information about a predicate.
-
-operation::predicate-controller-integration-test-fetch[snippets='curl-request,http-response']
-
-[[predicates-lookup]]
-=== Lookup a predicate by label
-
-Predicates can be looked up by label by providing a search fragment.
-
-operation::predicate-controller-integration-test-lookup[snippets='curl-request,http-response']
-
-[[predicates-import]]
-=== Importing a predicate
-
-The {orkg} REST API provides two endpoints for importing predicates from external ontologies.
-
-[[predicates-import-by-uri]]
-==== Importing a predicate by URI
-
-A `POST` request imports a predicate from an external ontology by a given URI.
-
-operation::import-import-predicate-by-uri[snippets='curl-request,http-response,request-fields']
-The response will be `201 Created` when successful, even when the predicate was already imported previously.
-
-[[predicates-import-by-short-form]]
-==== Importing a predicate by short form
-
-A `POST` request imports a predicate from an external ontology by a given short form id.
-The response will be `201 Created` when successful, even when the predicate was already imported previously.
-
-operation::import-import-predicate-by-short-form[snippets='curl-request,http-response,request-fields']
+include::parts/predicates.adoc[leveloffset=+1]
 
 [[literals]]
-== Literals
+include::parts/literals.adoc[leveloffset=+1]
 
-Literals represent nodes in the knowledge graph.
-They can appear in the object position in <<Statements,statements>>.
+[[statements]]
+include::parts/statements.adoc[leveloffset=+1]
 
-[[literals-list]]
-=== Listing Literals
+[[bulk-statements]]
+include::parts/bulk-statements.adoc[leveloffset=+1]
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of literals.
-If no paging request parameters are provided, the default values will be used.
+[[lists]]
+include::parts/lists.adoc[leveloffset=+1]
 
-operation::literals-get-paged[snippets='curl-request,http-response']
+// Resources with special properties
 
-[[literals-create]]
-=== Creating Literals
+[[research-fields]]
+include::parts/research-fields.adoc[leveloffset=+1]
 
-A `POST` request creates a new literal with a given label (its value).
-The response will be `201 Created` when successful.
-The resource can be retrieved by following the URI in the `Location` header field.
+[[problems]]
+include::parts/research-problems.adoc[leveloffset=+1]
 
-NOTE: The created literal is returned in the body for convenience. This might be subject to change.
+// Content-types
 
-operation::literal-controller-integration-test-add[snippets='request-fields,curl-request,http-response']
-
-The response body consists of the following fields:
-
-operation::literal-controller-integration-test-add[snippets='response-fields']
-
-[[literals-edit]]
-=== Editing a literal
-
-A `PUT` request updates a literal with a new value through the label property.
-The response will be `200 OK` when successful.
-The created literal is returned in the body for convenience.
-
-operation::literal-controller-integration-test-edit[snippets='curl-request,http-response']
-
-[[literals-fetch]]
-=== Fetching a literal
-
-A `GET` request provides information about a <<literal-represenation,literal>>.
-
-operation::literals-get-single[snippets='curl-request,http-response']
-
-[[literals-lookup]]
-=== Lookup a literal by label
-
-Literals can be looked up by label by providing a search fragment.
-
-operation::literal-controller-integration-test-lookup[snippets='curl-request,http-response']
-
-include::parts/lists.adoc[]
+[[content-types]]
+include::parts/content-types.adoc[leveloffset=+1]
 
 [[papers]]
-include::parts/papers.adoc[]
+include::parts/papers.adoc[leveloffset=+1]
 
 [[contributions]]
-include::parts/contributions.adoc[]
+include::parts/contributions.adoc[leveloffset=+1]
 
 [[comparisons]]
 include::parts/comparisons.adoc[leveloffset=+1]
+
+[[comparisons-related-figures]]
+include::parts/comparison-related-figures.adoc[leveloffset=+1]
+
+[[comparison-related-resources]]
+include::parts/comparison-related-resources.adoc[leveloffset=+1]
 
 [[visualizations]]
 include::parts/visualizations.adoc[leveloffset=+1]
@@ -430,6 +98,9 @@ include::parts/smart-reviews.adoc[leveloffset=+1]
 [[smart-review-sections]]
 include::parts/smart-review-sections.adoc[leveloffset=+1]
 
+[[datasets-benchmarks]]
+include::parts/datasets-benchmarks.adoc[leveloffset=+1]
+
 [[templates]]
 include::parts/templates.adoc[leveloffset=+1]
 
@@ -439,160 +110,49 @@ include::parts/template-properties.adoc[leveloffset=+1]
 [[template-instances]]
 include::parts/template-instances.adoc[leveloffset=+1]
 
+// Rosetta Stone
+
 [[rosetta-stone-templates]]
 include::parts/rosetta-stone-templates.adoc[leveloffset=+1]
 
 [[rosetta-stone-statements]]
 include::parts/rosetta-stone-statements.adoc[leveloffset=+1]
 
-[[content-types]]
-include::parts/content-types.adoc[leveloffset=+1]
+// Curation & Statistics
 
 [[curation]]
 include::parts/curation.adoc[leveloffset=+1]
 
-[[rdf-integration]]
-include::parts/rdf.adoc[leveloffset=+1]
-
-[[contributors]]
-include::parts/contributors.adoc[leveloffset=+1]
-
-include::parts/organizations.adoc[]
-
-include::parts/observatories.adoc[]
-
-include::parts/observatory-filters.adoc[leveloffset=+1]
-
-include::parts/problems.adoc[]
-
-include::parts/research-fields.adoc[]
-
-include::parts/datasets-benchmarks.adoc[]
+[[statistics]]
+include::parts/statistics.adoc[leveloffset=+1]
 
 [[reproducibility-score]]
-== Reproducibility Score
-The reproducibility score measures the availability, accessibility, linkability, and license of a resource.
+include::parts/reproducibility-score.adoc[leveloffset=+1]
 
-include::parts/licenses.adoc[]
+// Integration
+
+[[rdf-integration]]
+include::parts/rdf.adoc[leveloffset=+1]
 
 [[widget]]
 include::parts/widget.adoc[leveloffset=+1]
 
-[[statistics]]
-include::parts/statistics.adoc[leveloffset=+1]
+[[external-sources]]
+include::parts/external-sources.adoc[leveloffset=+1]
+
+// Glossary
+
+[[representations]]
+include::parts/representations.adoc[leveloffset=+1]
+
+[[sorting-and-pagination]]
+include::parts/sorting-and-pagination.adoc[leveloffset=+1]
 
 [[identifiers]]
 include::parts/identifiers.adoc[leveloffset=+1]
 
 [[visibility-filter]]
-== Visibility filter
-
-Most content types support visibility filtering.
-The filtering is supported in `GET` requests via the "visibility" request parameter:
-
-operation::visibility-request-params[snippets='request-parameters']
-
-[[visibility-filtering-legacy]]
-=== Visibility filtering (obsolete)
-
-To be backwards compatible, some endpoints support visibility filtering via additional request parameters in addition to the `<<visibility-filter,visibility>>` request parameter.
-If the `visibilty` request parameter is used, both `featured` and `unlisted` are ignored.
-If it is absent, it will be set according to the values of the two parameters.
-
-WARNING: The use of these request parameters is deprecated and may be removed at some point.
-         Clients are encouraged to transition to using the mechanism described in <<visibility-filter>>.
-
-operation::visibility-legacy-request-params[snippets='request-parameters']
+include::parts/visibility-filters.adoc[leveloffset=+1]
 
 [[filter-config]]
 include::parts/filter-configs.adoc[leveloffset=+1]
-
-[[sorting-and-pagination]]
-== Sorting and Pagination
-
-For all request that lists entities, pagination and sorting are applied automatically.
-The attributes of paged responses are described in the section about <<page-representation, Page representations>>.
-
-Endpoints supporting paging all take the following (optional) request parameters:
-
-[cols="1,3"]
-include::{snippets}/paged-page/request-parameters.adoc[]
-
-An example of a response of a paged list looks like this:
-
-include::{snippets}/paged-page/response-body.adoc[]
-
-NOTE: The elements in `content` can be objects of arbitrary structure and are sorted according to the request parameters, if the endpoint supports it.
-
-By default, sorting is done by the `created_at` property (time-based).
-
-.Sorting keys allowed by the API
-[options="header"]
-|==============================================================================================
-| Key            | Description
-2+^| *For sorting resources*
-| id             | The id of the resource
-| label          | The label of the resource
-| created_at     | The datetime timestamp of the creation
-| created_by     | The id of the curator who originally created the resource
-| visibility     | The visibility of the resource
-2+^| *For sorting predicates, classes & literals*
-| id             | The id of the predicate, class or literal
-| label          | The label of the predicate, class or literal
-| created_at     | The datetime timestamp of the creation
-| created_by     | The id of the curator who originally created the predicate, class or literal
-2+^| *For sorting statements*
-| id             | The statement id
-| index          | The index of the statement
-| created_at     | The datetime timestamp of the creation
-| created_by     | The id of the curator who originally created the statement
-| sub.id         | The id of the subject
-| sub.label      | The label of the subject
-| sub.created_at | The creation timestamp of the subject
-| sub.created_by | The id of the curator who originally created the subject of the statement
-| obj.id         | The id of the object
-| obj.label      | The label of the object
-| obj.created_at | The creation timestamp of the object
-| obj.created_by | The id of the curator who originally created the object of the statement
-|==============================================================================================
-
-[[external-sources]]
-include::parts/external-sources.adoc[leveloffset=+1]
-
-== Representations
-
-This section contains the _resource definitions_ (also called _representations_) of the entities of this API.
-
-=== Basic Types
-
-[[timestamp-representation]]
-==== Timestamps
-
-All timestamps used in this API are in https://wikipedia.org/wiki/ISO_8601[ISO 8601] format.
-Although nanosecond precision is available currently, clients MUST NOT rely on it, as it might be subject to change.
-
-[[error-represenation]]
-=== Errors
-
-[cols="1,1,3"]
-include::{snippets}/errors-simple-message-exception/response-fields.adoc[]
-
-[[page-representation]]
-=== Pages
-
-[cols="1,1,3"]
-include::{snippets}/paged-page/response-fields.adoc[]
-
-=== Entities
-
-[[resource-representation]]
-==== Resource
-
-[cols="1,1,3"]
-include::{snippets}/resources-get-single/response-fields.adoc[]
-
-[[literal-represenation]]
-==== Literal
-
-[cols="1,1,3"]
-include::{snippets}/literals-get-single/response-fields.adoc[]

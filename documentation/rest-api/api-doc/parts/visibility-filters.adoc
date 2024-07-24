@@ -1,0 +1,18 @@
+= Visibility filter
+
+Most content types support visibility filtering.
+The filtering is supported in `GET` requests via the "visibility" request parameter:
+
+operation::visibility-request-params[snippets='request-parameters']
+
+[[visibility-filtering-legacy]]
+== Visibility filtering (obsolete)
+
+To be backwards compatible, some endpoints support visibility filtering via additional request parameters in addition to the `<<visibility-filter,visibility>>` request parameter.
+If the `visibilty` request parameter is used, both `featured` and `unlisted` are ignored.
+If it is absent, it will be set according to the values of the two parameters.
+
+WARNING: The use of these request parameters is deprecated and may be removed at some point.
+         Clients are encouraged to transition to using the mechanism described in <<visibility-filter>>.
+
+operation::visibility-legacy-request-params[snippets='request-parameters']

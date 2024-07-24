@@ -1,0 +1,63 @@
+= Predicates
+
+Predicates represent edges (relationships between nodes) in the
+knowledge graph.
+They consist of an ID and a label (for presentation).
+IDs always start with "P", followed by a number.
+
+[[predicates-fetch]]
+== Fetching a predicate
+
+A `GET` request provides information about a predicate.
+
+operation::predicate-controller-integration-test-fetch[snippets='curl-request,http-response,response-fields']
+
+[[predicates-list]]
+== Listing predicates
+
+A `GET` request lists all predicates:
+
+TIP: {pagination_note}
+
+operation::predicate-controller-integration-test-lookup[snippets='request-parameters,curl-request']
+
+[[predicates-create]]
+== Creating predicates
+
+A `POST` request creates a new predicate with a given label.
+The response will be `201 Created` when successful.
+The predicate can be retrieved by following the URI in the `Location` header field.
+
+NOTE: The response body contains the created predicate for convenience. This might be subject to change.
+
+operation::predicates-create[snippets='request-fields,curl-request,http-response']
+
+[[predicates-edit]]
+== Editing a predicate
+
+A `PUT` request updates a predicate with a new given label.
+The response will be `200 OK` when successful.
+The created predicate is returned in the body for convenience.
+
+operation::predicate-controller-integration-test-edit[snippets='curl-request,http-response']
+
+[[predicates-import]]
+== Importing a predicate
+
+The {orkg} REST API provides two endpoints for importing predicates from external ontologies.
+
+[[predicates-import-by-uri]]
+=== Importing a predicate by URI
+
+A `POST` request imports a predicate from an external ontology by a given URI.
+
+operation::import-import-predicate-by-uri[snippets='request-fields,curl-request,http-response']
+The response will be `201 Created` when successful, even when the predicate was already imported previously.
+
+[[predicates-import-by-short-form]]
+=== Importing a predicate by short form
+
+A `POST` request imports a predicate from an external ontology by a given short form id.
+The response will be `201 Created` when successful, even when the predicate was already imported previously.
+
+operation::import-import-predicate-by-short-form[snippets='request-fields,curl-request,http-response']

@@ -1,11 +1,10 @@
-[[datasets-benchmarks]]
-== Datasets & Benchmarks
+= Datasets & Benchmarks
 
 Some datasets and benchmarks on said datasets are imported into the ORKG.
 Certain statistics can be obtained through the benchmark endpoint of the rest API.
 
 [[research-fields-with-bechmark-list]]
-=== Listing research fields with benchmarks
+== Listing research fields with benchmarks
 
 A `GET` request lists all the research fields with benchmarks (i.e., all research fields that have papers containing benchmarks in their contributions).
 
@@ -13,7 +12,7 @@ operation::benchmark-controller-test-fetch-research-fields-with-benchmarks[snipp
 
 
 [[benchmarks-by-field-list]]
-=== Listing Benchmarks by Field
+== Listing Benchmarks by Field
 
 A `GET` request lists benchmarks under a certain research field.
 
@@ -21,14 +20,14 @@ operation::benchmark-controller-test-fetch-benchmark-summary-for-research-field[
 
 
 [[benchmarks-summary]]
-=== Benchmark Summary
+== Benchmark Summary
 
 A `GET` request lists the datasets for a research problem (a.k.a. Benchmark Summary)
 
 operation::benchmark-controller-test-fetch-dataset-for-research-problem[snippets='curl-request,http-response']
 
 [[benchmark-unpacked]]
-=== Benchmark Unpacked
+== Benchmark Unpacked
 
 A `GET` request lists summary for a dataset (a.k.a. Benchmark unpacked).
 

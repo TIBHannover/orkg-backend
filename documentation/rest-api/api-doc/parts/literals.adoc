@@ -1,0 +1,43 @@
+= Literals
+
+Literals represent nodes in the knowledge graph.
+They can appear in the object position in <<Statements,statements>>.
+
+[[literals-fetch]]
+== Fetching a literal
+
+A `GET` request provides information about a <<literal-represenation,literal>>.
+
+operation::literals-get-single[snippets='curl-request,http-response,response-fields']
+
+[[literals-list]]
+== Listing Literals
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of literals.
+If no paging request parameters are provided, the default values will be used.
+
+operation::literals-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::literal-controller-integration-test-lookup[snippets='request-parameters']
+
+[[literals-create]]
+== Creating Literals
+
+A `POST` request creates a new literal with a given label (its value).
+The response will be `201 Created` when successful.
+The resource can be retrieved by following the URI in the `Location` header field.
+
+NOTE: The created literal is returned in the body for convenience. This might be subject to change.
+
+operation::literal-controller-integration-test-add[snippets='request-fields,curl-request,http-response']
+
+[[literals-edit]]
+== Editing a literal
+
+A `PUT` request updates a literal with a new value through the label property.
+The response will be `200 OK` when successful.
+The created literal is returned in the body for convenience.
+
+operation::literal-controller-integration-test-edit[snippets='request-fields,curl-request,http-response']

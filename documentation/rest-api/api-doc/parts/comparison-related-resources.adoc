@@ -1,0 +1,41 @@
+= Comparison Related Resources
+
+Comparison Related Resources represent a collection of concepts in the knowledge graph and can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+They are used to define resources for comparisons.
+The provided endpoints aggregate these concepts into a comparison related resource representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[comparisons-related-resource-fetch]]
+== Fetching a related resource for a comparison
+
+A `GET` request provides information about a comparison related resource.
+
+operation::comparisons-related-resource-get-single[snippets='curl-request,http-response,response-fields']
+
+[[comparisons-related-resource-list]]
+== Listing related resources for a comparison
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-resource-fetch,comparison related resources>>.
+
+operation::comparisons-related-resource-get-paged[snippets='curl-request']
+
+[[comparisons-related-resource-create]]
+== Creating comparison related resources
+
+A `POST` request creates a new comparison related resource with all the given parameters.
+The response will be `201 Created` when successful.
+The comparison related resource (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::comparisons-create-comparison-related-resource[snippets='path-parameters,request-fields,curl-request,http-response']
+
+[[comparisons-related-resource-edit]]
+== Editing a comparison related resource
+
+A `PUT` request updates an existing comparison related resource with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated comparison related resource (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: Top level fields that were mandatory when creating the comparison related resource can be omitted or `null`, meaning that the corresponding fields should not be updated.
+
+operation::comparisons-update-comparison-related-resource[snippets='request-fields,curl-request,http-response']

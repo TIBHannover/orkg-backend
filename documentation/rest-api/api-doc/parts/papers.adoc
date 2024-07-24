@@ -1,4 +1,4 @@
-== Papers
+= Papers
 
 Papers represent a collection of concepts in the knowledge graph.
 They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
@@ -7,14 +7,14 @@ The provided endpoints aggregate these concepts into a paper representation.
 NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
 
 [[papers-fetch]]
-=== Fetching a paper
+== Fetching a paper
 
 A `GET` request provides information about a paper.
 
-operation::papers-get-single[snippets='curl-request,response-fields']
+operation::papers-get-single[snippets='curl-request,http-response,response-fields']
 
 [[papers-list]]
-=== Listing papers
+== Listing papers
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<papers-fetch,papers>>.
 If no paging request parameters are provided, the default values will be used.
@@ -26,14 +26,14 @@ The following list of request parameters are supported:
 operation::papers-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 [[papers-contributors]]
-=== Fetching contributors for a paper
+== Fetching contributors for a paper
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributor>> ids.
 
 operation::papers-get-contributors[snippets='curl-request']
 
 [[papers-create]]
-=== Creating papers
+== Creating papers
 
 A `POST` request creates a new paper with all the given parameters.
 The response will be `201 Created` when successful.
@@ -42,7 +42,7 @@ The paper (object) can be retrieved by following the URI in the `Location` heade
 operation::papers-create[snippets='request-fields,curl-request,http-response']
 
 [[papers-edit]]
-=== Editing a paper
+== Editing a paper
 
 A `PUT` request updates an existing paper with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -55,7 +55,7 @@ WARNING: Author names will not be updated if a resource id is specified for a gi
 operation::papers-update[snippets='request-fields,curl-request,http-response']
 
 [[papers-publish]]
-=== Publishing papers
+== Publishing papers
 
 A `POST` request publishes an existing paper with the given parameters.
 It assigns a DOI to the paper and adds additional publication information, such as month and year published.

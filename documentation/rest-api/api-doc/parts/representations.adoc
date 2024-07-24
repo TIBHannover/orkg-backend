@@ -1,0 +1,24 @@
+= Representations
+
+This section contains the _resource definitions_ (also called _representations_) of the entities of this API.
+
+[[basic-types]]
+== Basic Types
+
+[[timestamp-representation]]
+=== Timestamps
+
+All timestamps used in this API are in https://wikipedia.org/wiki/ISO_8601[ISO 8601] format.
+Although nanosecond precision is available currently, clients MUST NOT rely on it, as it might be subject to change.
+
+[[error-represenation]]
+== Errors
+
+[cols="1,1,3"]
+include::{snippets}/errors-simple-message-exception/response-fields.adoc[]
+
+[[page-representation]]
+== Pages
+
+[cols="1,1,3"]
+include::{snippets}/paged-page/response-fields.adoc[]

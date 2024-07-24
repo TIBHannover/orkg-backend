@@ -14,7 +14,6 @@ import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.PaperCountPerResearchProblem
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -35,7 +34,6 @@ import org.orkg.testing.toAsciidoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.payload.FieldDescriptor
-import org.springframework.restdocs.payload.PayloadDocumentation.beneathPath
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
@@ -106,6 +104,7 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
                     ),
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -129,18 +128,14 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
         val id = ThingId("RF1234")
         `given a research field with a research problem with several papers`(id)
 
-        documentedGetRequestTo("/api/research-fields/{id}/problems", id)
+        documentedGetRequestTo("/api/research-fields/{id}/research-problems", id)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
             .andDo(
                 documentationHandler.document(
                     responseFields(
-                        beneathPath("content[]").withSubsectionId("papers-per-problem"),
-                        *problemsPerFieldResponseFields(),
-                    ),
-                    responseFields(
-                        subsectionWithPath("content").description("A (sorted) array of problems and paper counts (see below)."),
+                        subsectionWithPath("content").description("A (sorted) array of problems resources."),
                         *ignorePageableFieldsExceptContent(),
                     )
                 )
@@ -232,12 +227,13 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
     private fun `given a research field with a research problem with several papers`(id: ThingId) {
         val fieldResource = createResource(id = id, classes = setOf(Classes.researchField), label = "Fancy research")
         val problemResource = createResource(id = ThingId("RP234"), classes = setOf(Classes.problem))
-        val papersPerProblem = PaperCountPerResearchProblem(problemResource, 5)
 
         every { resourceService.findById(fieldResource.id) } returns Optional.of(fieldResource)
         every { statementService.countIncomingStatements(setOf(fieldResource.id)) } returns mapOf(fieldResource.id to 12)
         every { statementService.countIncomingStatements(setOf(problemResource.id)) } returns mapOf(fieldResource.id to 4)
-        every { useCases.getResearchProblemsOfField(fieldResource.id, any()) } returns pageOf(papersPerProblem)
+        every { useCases.findAllResearchProblemsByResearchField(fieldResource.id, any(), any(), any()) } returns pageOf(
+            problemResource
+        )
     }
 
     private fun `given a research field with several papers`(id: ThingId) {

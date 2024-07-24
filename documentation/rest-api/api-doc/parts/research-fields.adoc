@@ -1,153 +1,141 @@
-[[research-fields]]
-== Research Fields
+= Research Fields
 
 Research fields are meta-objects that help better classify the content within the ORKG.
 The research field is essentially a <<Resources,resource>> and hence inherits all the specifications of resource.
 
-All `GET` requests share the same path parameter, listed below, and support <<visibility-filter,visibility filtering>>.
-The responses are <<sorting-and-pagination,paged>>.
-
-==== Path parameters
-include::{snippets}/research-fields-get-paged/path-parameters.adoc[]
-
 NOTE: In the following sections, the response fields of the page object are omitted for brevity.
 
-
-=== Research fields and content types
+== Research fields and content types
 
 [[research-fields-fetch]]
-==== Fetching content types of a research field
+=== Fetching content types of a research field
 
-A `GET` request for a given research field returns a <<sorting-and-pagination,paged>> list of content type resources that belong to this research field.
-Certain subsets of content types are obtained via the `classes` parameter.
+A `GET` request for a given research field returns a <<sorting-and-pagination,paged>> list of content type <<resources,resources>> that belong to the given research field.
 The endpoint supports <<visibility-filtering-legacy>>.
 
-operation::research-fields-get-paged[snippets='path-parameters,request-parameters,response-fields',curl-request]
+operation::research-fields-get-paged[snippets='path-parameters,request-parameters,curl-request']
 
 [[research-fields-fetch-with-subfields]]
-==== Fetching content types of a research field and its subfields
+=== Fetching content types of a research field and its subfields
 
-A `GET` request to `/api/research-fields/{id}/subfields` returns a <<sorting-and-pagination,paged>> list of content type resources belonging to a given research field and its subfields.
+A `GET` request to `/api/research-fields/{id}/subfields` returns a <<sorting-and-pagination,paged>> list of content type <<resources,resources>> belonging to a given research field and its subfields.
+
 All path, request and response parameters are exactly the same as on the <<research-fields-fetch,endpoint without subfields>>.
 
 
-=== Research fields and research problems
+== Research fields and research problems
 
 [[research-fields-list-research-problems]]
-==== Listing research problems of a research field
+=== Listing research problems of a research field
 
-A `GET` request to `/api/research-fields/{id}/problems` lists all research problems used within all papers under the specified research field, along with their paper count.
+A `GET` request returns a <<sorting-and-pagination,paged>> list of all research problem <<resources,resources>> belonging to a given research field.
 The endpoint supports <<visibility-filtering-legacy>>.
 
-operation::research-fields-get-problems-per-field[snippets='response-fields']
-
-The response objects have the following form:
-
-include::{snippets}/research-fields-get-problems-per-field/response-fields-papers-per-problem.adoc[]
-
-operation::research-fields-get-problems-per-field[snippets='curl-request,http-response']
+operation::research-fields-get-problems-per-field[snippets='curl-request']
 
 [[research-fields-list-research-problems-with-subfields]]
-==== Listing Problems in field including sub research fields
+=== Listing Problems in field including sub research fields
 
-A `GET` request to `/api/research-fields/{id}/subfields/research-problems` returns a <<sorting-and-pagination,paged>> list of research problem resources belonging to a given research field and its subfields.
+A `GET` request to `/api/research-fields/{id}/subfields/research-problems` returns a <<sorting-and-pagination,paged>> list of research problem <<resources,resources>> belonging to a given research field and its subfields.
+
 All path and request parameters are exactly the same as on the <<research-fields-fetch,endpoint without subfields>>.
 
 
-=== Research fields and papers
-
-[[research-fields-list-papers]]
-==== Listing Papers of a research field
-
-A `GET` request to `/api/research-fields/{id}/papers` returns a <<sorting-and-pagination,paged>> list of paper resources belonging to a given research field.
-
-operation::research-fields-get-papers-per-field[snippets='response-fields,curl-request,http-response']
-
-
-[[research-fields-list-papers-including-subfields]]
-==== Listing Papers of a research field and its subfields
-
-A `GET` request to `/api/research-fields/{id}/subfields/papers` returns a <<sorting-and-pagination,paged>> list of paper resources belonging to a given research field and its subfields.
-All path and request parameters are exactly the same as on the <<research-fields-list-papers,endpoint without subfields>>.
-
-
-=== Research fields and contributors
+== Research fields and contributors
 
 [[research-fields-list-contributors]]
-==== Listing Contributors of a research field
+=== Listing Contributors of a research field
 
-A `GET` request to `/api/research-fields/{id}/contributors` returns a <<sorting-and-pagination,paged>> list of contributors that contributed to a given research field.
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributors>> that contributed to a given research field.
 
 WARNING: This endpoint does *not* support <<visibility-filter,visibility filtering>>!
          The only supported path parameter is `featured`.
 
-operation::research-fields-get-contributors-per-field[snippets='response-fields,curl-request,http-response']
+operation::research-fields-get-contributors-per-field[snippets='curl-request']
 
 [[research-fields-list-contributors-with-subfields]]
-==== Listing Contributors of a research field and its subfields
+=== Listing Contributors of a research field and its subfields
 
 A `GET` request to `/api/research-fields/{id}/subfields/contributors` returns a <<sorting-and-pagination,paged>> list of contributors that contributed to a given research field and its subfields.
 All path and request parameters are exactly the same as on the <<research-fields-list-comparisons,endpoint without subfields>>.
 
 
-=== Research fields and comparisons
+== Research fields and papers
+
+[[research-fields-list-papers]]
+=== Listing Papers of a research field
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of paper <<resources,resources>> belonging to a given research field.
+
+operation::research-fields-get-papers-per-field[snippets='curl-request']
+
+
+[[research-fields-list-papers-including-subfields]]
+=== Listing Papers of a research field and its subfields
+
+A `GET` request to `/api/research-fields/{id}/subfields/papers` returns a <<sorting-and-pagination,paged>> list of paper <<resources,resources>> belonging to a given research field and its subfields.
+
+All path and request parameters are exactly the same as on the <<research-fields-list-papers,endpoint without subfields>>.
+
+
+== Research fields and comparisons
 
 [[research-fields-list-comparisons]]
-==== Listing comparisons of a research field
+=== Listing comparisons of a research field
 
-A `GET` request to `/api/research-fields/{id}/comparisons` returns a <<sorting-and-pagination,paged>> list of comparison resources belonging to a given research field.
+A `GET` request returns a <<sorting-and-pagination,paged>> list of comparison <<resources,resources>> belonging to a given research field.
 
-operation::research-fields-get-comparisons-per-field[snippets='response-fields,curl-request,http-response']
+operation::research-fields-get-comparisons-per-field[snippets='curl-request']
 
 [[research-fields-list-comparisons-including-subfields]]
-==== Listing comparisons of a research field and its subfields
+=== Listing comparisons of a research field and its subfields
 
-A `GET` request to `/api/research-fields/{id}/subfields/comparisons` returns a <<sorting-and-pagination,paged>> list of comparison resources belonging to a given research field and its subfields.
+A `GET` request to `/api/research-fields/{id}/subfields/comparisons` returns a <<sorting-and-pagination,paged>> list of comparison <<resources,resources>> belonging to a given research field and its subfields.
+
 All path and request parameters are exactly the same as on the <<research-fields-list-comparisons,endpoint without subfields>>.
 
-
 [[research-fields-list-children]]
-=== Listing subfields
+== Listing subfields
 
-A `GET` request lists all sub research fields of a research field.
+A `GET` request returns a <<sorting-and-pagination,paged>> list of all sub research field <<resources,resources>> for a given research field.
 
-operation::research-fields-find-children[snippets='curl-request,http-response']
+operation::research-fields-find-children[snippets='curl-request']
 
 include::{snippets}/research-fields-research-field-with-child-count/response-fields.adoc[]
 
 [[research-fields-list-parents]]
-=== Listing parent research fields
+== Listing parent research fields
 
-A `GET` request lists all parent research fields of a research field.
+A `GET` request returns a <<sorting-and-pagination,paged>> list of all parent research field <<resources,resources>> for a given research field.
 
-operation::research-fields-find-parents[snippets='curl-request,http-response']
+operation::research-fields-find-parents[snippets='curl-request']
 
 [[research-fields-list-roots]]
-=== Listing root research fields of a subfield
+== Listing root research fields of a subfield
 
-A `GET` request lists all root research fields of the specified research field.
+A `GET` request returns a <<sorting-and-pagination,paged>> list of all root research field <<resources,resources>> for a given research field.
 
-operation::research-fields-find-roots[snippets='curl-request,http-response']
+operation::research-fields-find-roots[snippets='curl-request']
 
 [[research-fields-list-all-roots]]
-=== Listing all root research fields
+== Listing all root research fields
 
-A `GET` requests lists all root research fields.
+A `GET` request returns a <<sorting-and-pagination,paged>> list of all root research field <<resources,resources>>.
 
-operation::research-fields-find-all-roots[snippets='curl-request,http-response']
+operation::research-fields-find-all-roots[snippets='curl-request']
 
 [[research-fields-list-hierarchy]]
-=== Listing research field hierarchy
+== Listing research field hierarchy
 
-A `GET` request lists all paths from root research fields to the specified research field.
+A `GET` request returns a <<sorting-and-pagination,paged>> list of all paths from each root research field <<resources,resource>> to the given research field.
 
 operation::research-fields-find-hierarchy[snippets='curl-request,http-response']
 
 include::{snippets}/research-fields-research-field-hierarchy-entry/response-fields.adoc[]
 
 [[research-fields-statistics]]
-=== Listing statistics about a research field
+== Listing statistics about a research field
 
 A `GET` request lists statistics about a research field. Optionally accounts for subfields.
 
-operation::stats-research-fields[snippets='curl-request,http-response']
+operation::stats-research-fields[snippets='request-parameters,curl-request,http-response,response-fields']

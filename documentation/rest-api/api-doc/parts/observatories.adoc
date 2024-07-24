@@ -1,18 +1,25 @@
-[[observatories]]
-== Observatories
+= Observatories
 
 Observatories are groups of experts affiliated with different institutions that curates and organize ORKG content for a specific discipline.
 Observatories represent groups which are managed by <<organizations>>.
 One Observatory can be managed by many organizations.
+
+[[observatories-fetch]]
+== Fetching an observatory
+
+A `GET` request provides information about a resource.
+
+operation::observatory-controller-integration-test-fetch[snippets='curl-request,http-response,response-fields']
+
 [[observatories-list]]
-=== Listing Observatories
+== Listing Observatories
 
 A `GET` request lists all organizations:
 
-operation::observatory-controller-integration-test-index[snippets='curl-request,http-response']
+operation::observatory-controller-integration-test-index[snippets='curl-request']
 
 [[observatories-create]]
-=== Creating observatories
+== Creating observatories
 
 A `POST` request creates a new observatory with the given parameters.
 The response will be `201 Created` when successful.
@@ -22,15 +29,8 @@ NOTE: The response body contains the created observatory for convenience. This m
 
 operation::observatories-create[snippets='request-fields,curl-request,http-response']
 
-[[observatories-fetch]]
-=== Fetching an observatory
-
-A `GET` request provides information about a resource.
-
-operation::observatory-controller-integration-test-fetch[snippets='curl-request,http-response']
-
 [[observatories-edit]]
-=== Editing an observatory
+== Editing an observatory
 
 A `PATCH` request updates an existing observatory with the given parameters.
 Only fields provided in the response, and therefore non-null, will be updated.
@@ -42,13 +42,13 @@ NOTE: This endpoint can only be accessed by curators.
 operation::observatories-update[snippets='request-fields,curl-request,http-response']
 
 [[observatories-list-papers]]
-=== Listing papers of an observatory
+== Listing papers of an observatory
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of paper <<resources-fetch,resources>>.
 
-operation::observatory-resources-get-paged-with-filter-config[snippets='curl-request,request-parameters']
-
 TIP: This call features filter configs, check the chapter <<filter-config>> for more information on filter configs.
+
+operation::observatory-resources-get-paged-with-filter-config[snippets='curl-request,request-parameters']
 
 NOTE: Sorting is supported for the following fields: `id`, `created_by`, `created_at`.
 It is also possible to sort by the matched value of each search filter.

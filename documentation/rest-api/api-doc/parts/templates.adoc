@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a template.
 
-operation::templates-get-single[snippets='curl-request,response-fields']
+operation::templates-get-single[snippets='curl-request,http-response,response-fields']
 
 [[templates-list]]
 == Listing templates

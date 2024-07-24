@@ -9,7 +9,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a template instance.
 
-operation::template-instances-get-single[snippets='curl-request,response-fields,http-response']
+operation::template-instances-get-single[snippets='curl-request,http-response,response-fields']
 
 [[template-instances-list]]
 == Listing template instances

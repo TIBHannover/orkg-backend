@@ -1,19 +1,25 @@
-[[organizations]]
-== Organizations
+= Organizations
 
 Organizations represent institutes or groups.
 These can handle further smaller groups named <<observatories>>.
 
+[[organizations-fetch]]
+== Fetching an organization
+
+A `GET` request provides information about a resource.
+
+operation::organization-controller-integration-test-fetch[snippets='curl-request,http-response,response-fields']
+
 [[organizations-list]]
-=== Listing Organizations
+== Listing Organizations
 
 A `GET` request lists all organizations:
 
-operation::organization-controller-integration-test-index[snippets='curl-request,http-response']
+operation::organization-controller-integration-test-index[snippets='curl-request']
 
 ////
 [[organization-create]]
-=== Creating organizations
+== Creating organizations
 
 A `POST` request creates a new organizations with a given name.
 The response will be `200 Created` when successful.
@@ -27,10 +33,3 @@ The response body consists of the following fields:
 // FIXME: implement missing test
 operation::organization-controller-test-add[snippets='response-fields']
 ////
-
-[[organizations-fetch]]
-=== Fetching an organization
-
-A `GET` request provides information about a resource.
-
-operation::organization-controller-integration-test-fetch[snippets='curl-request,http-response']

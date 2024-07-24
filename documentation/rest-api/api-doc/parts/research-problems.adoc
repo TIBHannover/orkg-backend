@@ -1,25 +1,28 @@
-[[problems]]
-== Research Problems
+= Research Problems
 
 Research problems in the ORKG are important concepts and thus have their own API enpoint to get all related concepts.
 
+////
 [[problems-fields]]
-=== Fields per problem
+== Fields per problem
 
 A `GET` request get all research fields relating to a problem
 
 //operation::organization-controller-test-index[snippets='curl-request,http-response']
+////
 
 [[problems-users]]
-=== Users per problem
+== Users per problem
 
 A `GET` request to get a paginated list of ORKG users that contributed to contributions where a problem is being addressed.
 
 operation::problem-controller-test-get-users-per-problem[snippets='curl-request,http-response,response-fields']
 
+////
 [[problems-authors]]
-=== Authors per problem
+== Authors per problem
 
 A `GET` request provides a paginated list of authors that have papers addressing a certain research problem
 
 //operation::organization-controller-test-fetch[snippets='curl-request,http-response']
+////

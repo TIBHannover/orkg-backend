@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a literature list.
 
-operation::literature-lists-get-single[snippets='curl-request,response-fields']
+operation::literature-lists-get-single[snippets='curl-request,http-response,response-fields']
 
 [[literature-lists-list]]
 == Listing literature lists

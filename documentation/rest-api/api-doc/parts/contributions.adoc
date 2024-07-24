@@ -1,4 +1,4 @@
-== Contributions
+= Contributions
 
 Contributions represent a collection of concepts in the knowledge graph.
 They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
@@ -7,14 +7,14 @@ The provided endpoints aggregate these concepts and provide a unified contributi
 NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
 
 [[contributions-fetch]]
-=== Fetching a contribution
+== Fetching a contribution
 
 A `GET` request provides information about a contribution.
 
 operation::contributions-get-single[snippets='curl-request,http-response,response-fields']
 
 [[contributions-list]]
-=== Listing contributions
+== Listing contributions
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributions-fetch,contributions>>.
 If no paging request parameters are provided, the default values will be used.
@@ -22,7 +22,7 @@ If no paging request parameters are provided, the default values will be used.
 operation::contributions-get-paged[snippets='curl-request']
 
 [[contributions-create]]
-=== Creating contributions
+== Creating contributions
 
 A `POST` request creates a new contribution with all the given parameters.
 The response will be `201 Created` when successful.

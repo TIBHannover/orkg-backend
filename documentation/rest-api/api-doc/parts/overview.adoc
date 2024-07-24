@@ -1,0 +1,91 @@
+= Overview
+
+This document describes the REST API of the {orkg}.
+
+WARNING: This API is still **in development** and therefore **unstable** and **subject to change**!
+Be aware that the API can (and will) break without notice, so beware if you intend to consume it directly.
+We will support a stable API in the future, but it is uncertain when that will be.
+This documentation will be updated to reflect that.
+
+////
+=== Current version
+=== Schema
+=== Authentication
+=== Parameters
+=== Root endpoint
+=== Client errors
+=== HTTP redirects
+////
+
+[[overview-http-verbs]]
+== HTTP verbs
+
+The {orkg} REST API tries to adhere as closely as possible to standard
+HTTP and REST conventions in its use of HTTP verbs.
+|===
+| Verb | Usage
+
+| `GET`
+| Used to retrieve a resource
+
+| `POST`
+| Used to create a new resource
+
+| `PATCH`
+| Used to update an existing resource
+
+| `PUT`
+| Used to replace an existing resource
+
+| `DELETE`
+| Used to deleta a resource
+|===
+
+////
+| `PATCH`
+| Used to update an existing resource, including partial updates
+
+| `PUT`
+| Used to update an existing resource, full updates only
+
+| `DELETE`
+| Used to delete an existing resource
+|===
+////
+
+[[overview-http-status-codes]]
+== HTTP status codes
+The {orkg} REST API tries to adhere as closely as possible to standard
+HTTP and REST conventions in its use of HTTP status codes.
+
+|===
+| Status code | Usage
+
+| `200 OK`
+| Standard response for successful HTTP requests.
+The actual response will depend on the request method used.
+In a `GET` request, the response will contain an entity corresponding to the requested resource.
+In a `POST` request, the response will contain an entity describing or containing the result of the action.
+
+| `201 Created`
+| The request has been fulfilled and resulted in a new resource being created.
+
+| `204 No Content`
+| The server successfully processed the request, but is not returning any content.
+
+| `400 Bad Request`
+| The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).
+
+| `404 Not Found`
+| The requested resource could not be found but may be available again in the future. Subsequent requests by the client are permissible.
+|===
+
+All responses with error codes that do not indicate success will contain a payload that describes the error.
+Their structure is documented in the section about <<error-represenation,Error representation>>.
+
+////
+=== Hypermedia
+=== Pagination
+=== Conditional requests
+=== Cross origin resource sharing
+////

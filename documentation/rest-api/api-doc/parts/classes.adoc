@@ -1,18 +1,29 @@
-[[classes]]
-== Classes
+= Classes
 
 Classes represent concepts in the knowledge graph.
 They can be attached to <<Resources,resources>> to indicate that the resource belongs to the respective class.
 
+[[classes-fetch]]
+== Fetching a class
+
+A `GET` request provides information about a class.
+
+operation::class-controller-integration-test-fetch[snippets='curl-request,http-response,response-fields']
+
 [[classes-list]]
-=== Listing classes
+== Listing classes
 
-A `GET` request lists all classes:
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<classes-fetch,classes>>.
+If no paging request parameters are provided, the default values will be used.
 
-operation::class-controller-integration-test-index[snippets='curl-request,http-response']
+operation::class-controller-integration-test-index[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::class-controller-integration-test-lookup[snippets='request-parameters,curl-request']
 
 [[classes-create]]
-=== Creating classes
+== Creating classes
 
 A `POST` request creates a new class with a given label.
 An optional URI can be given to link to the class in an external ontology (RDF).
@@ -23,26 +34,11 @@ NOTE: The created class is returned in the body for convenience. This might be s
 
 operation::classes-create[snippets='request-fields,curl-request,http-response']
 
-The response body consists of the following fields:
-
-operation::classes-create[snippets='response-fields']
-
-[[classes-fetch]]
-=== Fetching a class
-
-A `GET` request provides information about a class.
-
-operation::class-controller-integration-test-fetch[snippets='curl-request,http-response']
-
-[[classes-lookup]]
-=== Lookup a class by label
-
-Classes can be looked up by label by providing a search fragment.
-
-operation::class-controller-integration-test-lookup[snippets='curl-request,http-response']
-
 [[classes-edit]]
-=== Editing a class
+== Editing a class
+
+[[classes-update]]
+=== Updating a class
 
 A `PATCH` request updates a class with a new given label and URI.
 Only fields provided in the response, and therefore non-null, will be updated.
@@ -50,30 +46,33 @@ The response will be `200 OK` when successful.
 
 operation::classes-update[snippets='request-fields,curl-request,http-response']
 
+[[classes-replace]]
+=== Replacing a class
+
 A `PUT` request updates a class with a new given label and URI.
 All fields will be updated in the process.
 The response will be `200 OK` when successful.
 The updated class is returned in the body for convenience.
 
-operation::classes-replace[snippets='request-fields,curl-request,http-response']
+operation::classes-replace[snippets='request-fields,curl-request']
 
 [[classes-import]]
-=== Importing a class
+== Importing a class
 
 The {orkg} REST API provides two endpoints for importing classes from external ontologies.
 
 [[classes-import-by-uri]]
-==== Importing a class by URI
+=== Importing a class by URI
 
 A `POST` request imports a class from an external ontology by a given URI.
 The response will be `201 Created` when successful, even when the class was already imported.
 
-operation::import-import-class-by-uri[snippets='curl-request,http-response,request-fields']
+operation::import-import-class-by-uri[snippets='request-fields,curl-request,http-response']
 
 [[classes-import-by-short-form]]
-==== Importing a class by short form
+=== Importing a class by short form
 
 A `POST` request imports a class from an external ontology by a given short form id.
 The response will be `201 Created` when successful, even when the class was already imported.
 
-operation::import-import-class-by-short-form[snippets='curl-request,http-response,request-fields']
+operation::import-import-class-by-short-form[snippets='request-fields,curl-request,http-response']

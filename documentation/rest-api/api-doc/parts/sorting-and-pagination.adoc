@@ -1,0 +1,47 @@
+= Sorting and Pagination
+
+For all request that lists entities, pagination and sorting are applied automatically.
+The attributes of paged responses are described in the section about <<page-representation, Page representations>>.
+
+Endpoints supporting paging all take the following (optional) request parameters:
+
+[cols="1,3"]
+include::{snippets}/paged-page/request-parameters.adoc[]
+
+An example of a response of a paged list looks like this:
+
+include::{snippets}/paged-page/response-body.adoc[]
+
+NOTE: The elements in `content` can be objects of arbitrary structure and are sorted according to the request parameters, if the endpoint supports it.
+
+By default, sorting is done by the `created_at` property (time-based).
+
+.Sorting keys allowed by the API
+[options="header"]
+|==============================================================================================
+| Key            | Description
+2+^| *For sorting resources*
+| id             | The id of the resource
+| label          | The label of the resource
+| created_at     | The datetime timestamp of the creation
+| created_by     | The id of the curator who originally created the resource
+| visibility     | The visibility of the resource
+2+^| *For sorting predicates, classes & literals*
+| id             | The id of the predicate, class or literal
+| label          | The label of the predicate, class or literal
+| created_at     | The datetime timestamp of the creation
+| created_by     | The id of the curator who originally created the predicate, class or literal
+2+^| *For sorting statements*
+| id             | The statement id
+| index          | The index of the statement
+| created_at     | The datetime timestamp of the creation
+| created_by     | The id of the curator who originally created the statement
+| sub.id         | The id of the subject
+| sub.label      | The label of the subject
+| sub.created_at | The creation timestamp of the subject
+| sub.created_by | The id of the curator who originally created the subject of the statement
+| obj.id         | The id of the object
+| obj.label      | The label of the object
+| obj.created_at | The creation timestamp of the object
+| obj.created_by | The id of the curator who originally created the object of the statement
+|==============================================================================================

@@ -301,6 +301,44 @@ class NestedRosettaStoneStatement(id: ThingId, index: Int) : SimpleMessageExcept
     message = """Rosetta stone statement "$id" for input position $index already contains a rosetta stone statement in one of its input positions."""
 )
 
+class MissingSubjectPositionValue(positionPlaceholder: String, min: Int) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Missing input for subject position "$positionPlaceholder". At least $min input(s) are required."""
+)
+
+class MissingObjectPositionValue(positionPlaceholder: String, min: Int) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Missing input for object position "$positionPlaceholder". At least $min input(s) are required."""
+)
+
+class TooManySubjectPositionValues(positionPlaceholder: String, max: Int) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Too many inputs for subject position "$positionPlaceholder". Must be at most $max."""
+)
+
+class TooManyObjectPositionValues(positionPlaceholder: String, max: Int) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Too many inputs for object position "$positionPlaceholder". Must be at most $max."""
+)
+
+class ObjectPositionValueDoesNotMatchPattern(positionPlaceholder: String, label: String, pattern: String) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Value "$label" for object position "$positionPlaceholder" does not match pattern "$pattern"."""
+    )
+
+class ObjectPositionValueTooLow(positionPlaceholder: String, label: String, minInclusive: Number) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Number "$label" for object position "$positionPlaceholder" too low. Must be at least $minInclusive."""
+    )
+
+class ObjectPositionValueTooHigh(positionPlaceholder: String, label: String, maxInclusive: Number) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Number "$label" for object position "$positionPlaceholder" too high. Must be at most $maxInclusive."""
+    )
+
 class InvalidBibTeXReference(reference: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid BibTeX reference "$reference".""")
 

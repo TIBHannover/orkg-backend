@@ -16,13 +16,28 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.Either
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.MissingInputPositions
+import org.orkg.contenttypes.domain.MissingObjectPositionValue
+import org.orkg.contenttypes.domain.MissingPropertyValues
+import org.orkg.contenttypes.domain.MissingSubjectPositionValue
 import org.orkg.contenttypes.domain.NestedRosettaStoneStatement
+import org.orkg.contenttypes.domain.NumberLiteralTemplateProperty
+import org.orkg.contenttypes.domain.NumberTooHigh
+import org.orkg.contenttypes.domain.NumberTooLow
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.ObjectPositionValueDoesNotMatchPattern
+import org.orkg.contenttypes.domain.ObjectPositionValueTooHigh
+import org.orkg.contenttypes.domain.ObjectPositionValueTooLow
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersionNotFound
+import org.orkg.contenttypes.domain.StringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.TooManyInputPositions
+import org.orkg.contenttypes.domain.TooManyObjectPositionValues
+import org.orkg.contenttypes.domain.TooManyPropertyValues
+import org.orkg.contenttypes.domain.TooManySubjectPositionValues
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValueValidator
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyNumberLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralObjectPositionTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createDummySubjectPositionTemplateProperty
@@ -38,7 +53,7 @@ import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createResource
 
-class AbstractRosettaStoneStatementPropertyValueCreateValidatorUnitTest {
+class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     private val thingRepository: ThingRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val rosettaStoneStatementService: RosettaStoneStatementUseCases = mockk()
@@ -328,5 +343,254 @@ class AbstractRosettaStoneStatementPropertyValueCreateValidatorUnitTest {
         verify(exactly = 1) { thingRepository.findByThingId(latestVersionId) }
         verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
         verify(exactly = 1) { rosettaStoneStatementService.findByIdOrVersionId(latestVersionId) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement create command, when too few subject inputs are specified, it throws an exception`() {
+        val templateProperties = listOf(
+            createDummySubjectPositionTemplateProperty(),
+            createDummyStringLiteralObjectPositionTemplateProperty()
+        )
+        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
+        val tempIds = emptySet<String>()
+        val templateId = ThingId("R456")
+        val subjects = emptyList<String>()
+        val objects = listOf(listOf("#temp1", "L123"))
+        val exception = with(templateProperties.first()) { MissingPropertyValues(id, path.id, minCount!!, subjects.size) }
+
+        every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } throws exception
+
+        shouldThrow<MissingSubjectPositionValue> {
+            abstractRosettaStoneStatementPropertyValueValidator.validate(
+                templateProperties = templateProperties,
+                thingDefinitions = thingDefinitions,
+                validatedIdsIn = validatedIds,
+                tempIds = tempIds,
+                templateId = templateId,
+                subjects = subjects,
+                objects = objects
+            )
+        }
+
+        verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement create command, when too few object inputs are specified, it throws an exception`() {
+        val templateProperties = listOf(
+            createDummySubjectPositionTemplateProperty(),
+            createDummyStringLiteralObjectPositionTemplateProperty()
+        )
+        val thingDefinitions = mapOf(
+            "#temp2" to LiteralDefinition("subject")
+        )
+        val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
+        val tempIds = setOf("#temp2")
+        val templateId = ThingId("R456")
+        val subjects = listOf("#temp2")
+        val objects = listOf(emptyList<String>())
+        val exception = with(templateProperties.last()) { MissingPropertyValues(id, path.id, minCount!!, objects.size) }
+
+        every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs andThenThrows exception
+        every { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) } just runs
+
+        shouldThrow<MissingObjectPositionValue> {
+            abstractRosettaStoneStatementPropertyValueValidator.validate(
+                templateProperties = templateProperties,
+                thingDefinitions = thingDefinitions,
+                validatedIdsIn = validatedIds,
+                tempIds = tempIds,
+                templateId = templateId,
+                subjects = subjects,
+                objects = objects
+            )
+        }
+
+        verify(exactly = 2) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
+        verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement create command, when too many subject inputs are specified, it throws an exception`() {
+        val templateProperties = listOf(
+            createDummySubjectPositionTemplateProperty(),
+            createDummyStringLiteralObjectPositionTemplateProperty()
+        )
+        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
+        val tempIds = emptySet<String>()
+        val templateId = ThingId("R456")
+        val subjects = listOf("R123", "R789")
+        val objects = listOf(listOf("#temp1", "L123"))
+        val exception = with(templateProperties.first()) { TooManyPropertyValues(id, path.id, maxCount!!, subjects.size) }
+
+        every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } throws exception
+
+        shouldThrow<TooManySubjectPositionValues> {
+            abstractRosettaStoneStatementPropertyValueValidator.validate(
+                templateProperties = templateProperties,
+                thingDefinitions = thingDefinitions,
+                validatedIdsIn = validatedIds,
+                tempIds = tempIds,
+                templateId = templateId,
+                subjects = subjects,
+                objects = objects
+            )
+        }
+
+        verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement create command, when too many object inputs are specified, it throws an exception`() {
+        val templateProperties = listOf(
+            createDummySubjectPositionTemplateProperty(),
+            createDummyStringLiteralObjectPositionTemplateProperty()
+        )
+        val thingDefinitions = mapOf(
+            "#temp2" to LiteralDefinition("subject")
+        )
+        val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
+        val tempIds = setOf("#temp2")
+        val templateId = ThingId("R456")
+        val subjects = listOf("#temp2")
+        val objects = listOf(listOf("R123", "R789", "R147", "R369"))
+        val exception = with(templateProperties.last()) { TooManyPropertyValues(id, path.id, maxCount!!, objects.size) }
+
+        every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs andThenThrows exception
+        every { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) } just runs
+
+        shouldThrow<TooManyObjectPositionValues> {
+            abstractRosettaStoneStatementPropertyValueValidator.validate(
+                templateProperties = templateProperties,
+                thingDefinitions = thingDefinitions,
+                validatedIdsIn = validatedIds,
+                tempIds = tempIds,
+                templateId = templateId,
+                subjects = subjects,
+                objects = objects
+            )
+        }
+
+        verify(exactly = 2) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
+        verify(exactly = 1) { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement create command, when object position value does not match property pattern, it throws an exception`() {
+        val templateProperties = listOf(
+            createDummySubjectPositionTemplateProperty(),
+            createDummyStringLiteralObjectPositionTemplateProperty()
+        )
+        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val literal = createLiteral(ThingId("L123"), label = "15603")
+        val validatedIds: Map<String, Either<String, Thing>> = mapOf(
+            "L123" to Either.right(literal),
+            "R123" to Either.right(createResource(ThingId("R123")))
+        )
+        val tempIds = setOf("#temp2")
+        val templateId = ThingId("R456")
+        val subjects = listOf("R123")
+        val objects = listOf(listOf("L123", "L789", "L147", "L369"))
+        val exception = with(templateProperties.last() as StringLiteralTemplateProperty) {
+            LabelDoesNotMatchPattern(id, literal.id.value, path.id, literal.label, pattern!!)
+        }
+
+        every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
+        every { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) } just runs andThenThrows exception
+
+        shouldThrow<ObjectPositionValueDoesNotMatchPattern> {
+            abstractRosettaStoneStatementPropertyValueValidator.validate(
+                templateProperties = templateProperties,
+                thingDefinitions = thingDefinitions,
+                validatedIdsIn = validatedIds,
+                tempIds = tempIds,
+                templateId = templateId,
+                subjects = subjects,
+                objects = objects
+            )
+        }
+
+        verify(exactly = 2) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
+        verify(exactly = 2) { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement create command, when object position value is too low, it throws an exception`() {
+        val templateProperties = listOf(
+            createDummySubjectPositionTemplateProperty(),
+            createDummyNumberLiteralTemplateProperty()
+        )
+        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val literal = createLiteral(ThingId("L123"), label = "-20")
+        val validatedIds: Map<String, Either<String, Thing>> = mapOf(
+            "L123" to Either.right(literal),
+            "R123" to Either.right(createResource(ThingId("R123")))
+        )
+        val tempIds = setOf("#temp2")
+        val templateId = ThingId("R456")
+        val subjects = listOf("R123")
+        val objects = listOf(listOf("L123", "L789", "L147", "L369"))
+        val exception = with(templateProperties.last() as NumberLiteralTemplateProperty<*>) {
+            NumberTooLow(id, literal.id.value, path.id, literal.label, minInclusive!!)
+        }
+
+        every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
+        every { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) } just runs andThenThrows exception
+
+        shouldThrow<ObjectPositionValueTooLow> {
+            abstractRosettaStoneStatementPropertyValueValidator.validate(
+                templateProperties = templateProperties,
+                thingDefinitions = thingDefinitions,
+                validatedIdsIn = validatedIds,
+                tempIds = tempIds,
+                templateId = templateId,
+                subjects = subjects,
+                objects = objects
+            )
+        }
+
+        verify(exactly = 2) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
+        verify(exactly = 2) { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given a rosetta stone statement create command, when object position value is too high, it throws an exception`() {
+        val templateProperties = listOf(
+            createDummySubjectPositionTemplateProperty(),
+            createDummyNumberLiteralTemplateProperty()
+        )
+        val literal = createLiteral(ThingId("L123"), label = "20")
+        val thingDefinitions = emptyMap<String, ThingDefinition>()
+        val validatedIds: Map<String, Either<String, Thing>> = mapOf(
+            "L123" to Either.right(literal),
+            "R123" to Either.right(createResource(ThingId("R123")))
+        )
+        val tempIds = setOf("#temp2")
+        val templateId = ThingId("R456")
+        val subjects = listOf("R123")
+        val objects = listOf(listOf("L123", "L789", "L147", "L369"))
+        val exception = with(templateProperties.last() as NumberLiteralTemplateProperty<*>) {
+            NumberTooHigh(id, literal.id.value, path.id, literal.label, maxInclusive!!)
+        }
+
+        every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
+        every { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) } just runs andThenThrows exception
+
+        shouldThrow<ObjectPositionValueTooHigh> {
+            abstractRosettaStoneStatementPropertyValueValidator.validate(
+                templateProperties = templateProperties,
+                thingDefinitions = thingDefinitions,
+                validatedIdsIn = validatedIds,
+                tempIds = tempIds,
+                templateId = templateId,
+                subjects = subjects,
+                objects = objects
+            )
+        }
+
+        verify(exactly = 2) { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
+        verify(exactly = 2) { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) }
     }
 }

@@ -2,12 +2,26 @@ package org.orkg.contenttypes.domain.actions.rosettastone.statements
 
 import org.orkg.common.Either
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.MissingInputPositions
+import org.orkg.contenttypes.domain.MissingObjectPositionValue
+import org.orkg.contenttypes.domain.MissingPropertyValues
+import org.orkg.contenttypes.domain.MissingSubjectPositionValue
 import org.orkg.contenttypes.domain.NestedRosettaStoneStatement
+import org.orkg.contenttypes.domain.NumberLiteralTemplateProperty
+import org.orkg.contenttypes.domain.NumberTooHigh
+import org.orkg.contenttypes.domain.NumberTooLow
+import org.orkg.contenttypes.domain.ObjectPositionValueDoesNotMatchPattern
+import org.orkg.contenttypes.domain.ObjectPositionValueTooHigh
+import org.orkg.contenttypes.domain.ObjectPositionValueTooLow
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersionNotFound
+import org.orkg.contenttypes.domain.StringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.TooManyInputPositions
+import org.orkg.contenttypes.domain.TooManyObjectPositionValues
+import org.orkg.contenttypes.domain.TooManyPropertyValues
+import org.orkg.contenttypes.domain.TooManySubjectPositionValues
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValueValidator
 import org.orkg.contenttypes.domain.actions.ThingIdValidator
 import org.orkg.contenttypes.domain.actions.toThingDefinition
@@ -42,12 +56,26 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
 
         templateProperties.forEachIndexed { index, property ->
             val propertyInstances = inputs[index]
-            abstractTemplatePropertyValueValidator.validateCardinality(property, propertyInstances)
+            try {
+                abstractTemplatePropertyValueValidator.validateCardinality(property, propertyInstances)
+            } catch (e: MissingPropertyValues) {
+                if (property.path.id == Predicates.hasSubjectPosition) {
+                    throw MissingSubjectPositionValue(property.placeholder ?: property.label, property.minCount!!)
+                } else {
+                    throw MissingObjectPositionValue(property.placeholder ?: property.label, property.minCount!!)
+                }
+            } catch (e: TooManyPropertyValues) {
+                if (property.path.id == Predicates.hasSubjectPosition) {
+                    throw TooManySubjectPositionValues(property.placeholder ?: property.label, property.maxCount!!)
+                } else {
+                    throw TooManyObjectPositionValues(property.placeholder ?: property.label, property.maxCount!!)
+                }
+            }
             propertyInstances.forEach { objectId ->
                 val `object` = validateId(objectId, tempIds, validatedIds)
 
                 `object`.onLeft { tempId ->
-                    abstractTemplatePropertyValueValidator.validateObject(property, tempId, thingDefinitions[tempId]!!)
+                    validateObject(property, tempId, thingDefinitions[tempId]!!)
                 }
 
                 `object`.onRight { thing ->
@@ -60,12 +88,39 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                             throw NestedRosettaStoneStatement(thing.id, index)
                         }
                     }
-                    abstractTemplatePropertyValueValidator.validateObject(property, thing.id.value, thing.toThingDefinition(statementRepository))
+                    validateObject(property, thing.id.value, thing.toThingDefinition(statementRepository))
                 }
             }
         }
 
         return validatedIds
+    }
+
+    private fun validateObject(property: TemplateProperty, id: String, `object`: ThingDefinition) {
+        try {
+            abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
+        } catch (e: LabelDoesNotMatchPattern) {
+            throw e.takeIf { property.path.id == Predicates.hasSubjectPosition }
+                ?: ObjectPositionValueDoesNotMatchPattern(
+                    positionPlaceholder = property.placeholder ?: property.label,
+                    label = `object`.label,
+                    pattern = (property as StringLiteralTemplateProperty).pattern!!
+                )
+        } catch (e: NumberTooLow) {
+            throw e.takeIf { property.path.id == Predicates.hasSubjectPosition }
+                ?: ObjectPositionValueTooLow(
+                    positionPlaceholder = property.placeholder ?: property.label,
+                    label = `object`.label,
+                    minInclusive = (property as NumberLiteralTemplateProperty<*>).minInclusive!!
+                )
+        } catch (e: NumberTooHigh) {
+            throw e.takeIf { property.path.id == Predicates.hasSubjectPosition }
+                ?: ObjectPositionValueTooHigh(
+                    positionPlaceholder = property.placeholder ?: property.label,
+                    label = `object`.label,
+                    maxInclusive = (property as NumberLiteralTemplateProperty<*>).maxInclusive!!
+                )
+        }
     }
 
     private fun validateInputPositionCount(templateId: ThingId, objects: List<List<String>>, templateProperties: List<TemplateProperty>) {

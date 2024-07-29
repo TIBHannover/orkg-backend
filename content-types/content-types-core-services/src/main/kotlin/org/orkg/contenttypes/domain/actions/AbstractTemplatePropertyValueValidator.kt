@@ -85,7 +85,7 @@ class AbstractTemplatePropertyValueValidator {
         } else if (property is NumberLiteralTemplateProperty<*>) {
             property.minInclusive?.let { minInclusive ->
                 val invalid = when (property.datatype.id) {
-                    Classes.decimal -> label.toDouble() < minInclusive.toDouble()
+                    Classes.decimal, Classes.double -> label.toDouble() < minInclusive.toDouble()
                     Classes.integer -> label.toInt() < minInclusive.toInt()
                     Classes.float -> label.toFloat() < minInclusive.toFloat()
                     else -> throw IllegalStateException("""Encountered number literal template property "${property.id}" with invalid datatype "${property.datatype}". This is a bug!""")
@@ -96,7 +96,7 @@ class AbstractTemplatePropertyValueValidator {
             }
             property.maxInclusive?.let { maxInclusive ->
                 val invalid = when (property.datatype.id) {
-                    Classes.decimal -> maxInclusive.toDouble() < label.toDouble()
+                    Classes.decimal, Classes.double -> maxInclusive.toDouble() < label.toDouble()
                     Classes.integer -> maxInclusive.toInt() < label.toInt()
                     Classes.float -> maxInclusive.toFloat() < label.toFloat()
                     else -> throw IllegalStateException("""Encountered number literal template property "${property.id}" with invalid datatype "${property.datatype}". This is a bug!""")

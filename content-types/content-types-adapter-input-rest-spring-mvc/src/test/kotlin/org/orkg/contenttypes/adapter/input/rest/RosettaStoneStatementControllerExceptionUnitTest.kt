@@ -9,10 +9,17 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.RosettaStoneStatementControllerExceptionUnitTest.FakeExceptionController
 import org.orkg.contenttypes.domain.CannotDeleteIndividualRosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.MissingInputPositions
+import org.orkg.contenttypes.domain.MissingObjectPositionValue
+import org.orkg.contenttypes.domain.MissingSubjectPositionValue
 import org.orkg.contenttypes.domain.NestedRosettaStoneStatement
+import org.orkg.contenttypes.domain.ObjectPositionValueDoesNotMatchPattern
+import org.orkg.contenttypes.domain.ObjectPositionValueTooHigh
+import org.orkg.contenttypes.domain.ObjectPositionValueTooLow
 import org.orkg.contenttypes.domain.RosettaStoneStatementInUse
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotModifiable
 import org.orkg.contenttypes.domain.TooManyInputPositions
+import org.orkg.contenttypes.domain.TooManyObjectPositionValues
+import org.orkg.contenttypes.domain.TooManySubjectPositionValues
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -140,6 +147,131 @@ internal class RosettaStoneStatementControllerExceptionUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun missingSubjectPositionValue() {
+        val positionPlaceholder = "PERSON"
+        val min = "2"
+
+        get("/missing-subject-position-value")
+            .param("positionPlaceholder", positionPlaceholder)
+            .param("min", min)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-subject-position-value"))
+            .andExpect(jsonPath("$.message").value("""Missing input for subject position "$positionPlaceholder". At least $min input(s) are required."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun missingObjectPositionValue() {
+        val positionPlaceholder = "PERSON"
+        val min = "2"
+
+        get("/missing-object-position-value")
+            .param("positionPlaceholder", positionPlaceholder)
+            .param("min", min)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-object-position-value"))
+            .andExpect(jsonPath("$.message").value("""Missing input for object position "$positionPlaceholder". At least $min input(s) are required."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun tooManySubjectPositionValue() {
+        val positionPlaceholder = "PERSON"
+        val max = "2"
+
+        get("/too-many-subject-position-values")
+            .param("positionPlaceholder", positionPlaceholder)
+            .param("max", max)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/too-many-subject-position-values"))
+            .andExpect(jsonPath("$.message").value("""Too many inputs for subject position "$positionPlaceholder". Must be at most $max."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun tooManyObjectPositionValue() {
+        val positionPlaceholder = "PERSON"
+        val max = "2"
+
+        get("/too-many-object-position-values")
+            .param("positionPlaceholder", positionPlaceholder)
+            .param("max", max)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/too-many-object-position-values"))
+            .andExpect(jsonPath("$.message").value("""Too many inputs for object position "$positionPlaceholder". Must be at most $max."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun objectPositionValueDoesNotMatchPattern() {
+        val positionPlaceholder = "PERSON"
+        val label = "2"
+        val pattern = """\w+"""
+
+        get("/object-position-value-does-not-match-pattern")
+            .param("positionPlaceholder", positionPlaceholder)
+            .param("label", label)
+            .param("pattern", pattern)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/object-position-value-does-not-match-pattern"))
+            .andExpect(jsonPath("$.message").value("""Value "$label" for object position "$positionPlaceholder" does not match pattern "$pattern"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun objectPositionValueTooLow() {
+        val positionPlaceholder = "PERSON"
+        val label = "2"
+        val minInclusive = "5"
+
+        get("/object-position-value-too-low")
+            .param("positionPlaceholder", positionPlaceholder)
+            .param("label", label)
+            .param("minInclusive", minInclusive)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/object-position-value-too-low"))
+            .andExpect(jsonPath("$.message").value("""Number "$label" for object position "$positionPlaceholder" too low. Must be at least $minInclusive."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun objectPositionValueTooHigh() {
+        val positionPlaceholder = "PERSON"
+        val label = "5"
+        val maxInclusive = "2"
+
+        get("/object-position-value-too-high")
+            .param("positionPlaceholder", positionPlaceholder)
+            .param("label", label)
+            .param("maxInclusive", maxInclusive)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/object-position-value-too-high"))
+            .andExpect(jsonPath("$.message").value("""Number "$label" for object position "$positionPlaceholder" too high. Must be at most $maxInclusive."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -175,6 +307,53 @@ internal class RosettaStoneStatementControllerExceptionUnitTest {
         @GetMapping("/nested-rosetta-stone-statement")
         fun nestedRosettaStoneStatement(@RequestParam id: ThingId, @RequestParam index: Int) {
             throw NestedRosettaStoneStatement(id, index)
+        }
+
+        @GetMapping("/missing-subject-position-value")
+        fun missingSubjectPositionValue(@RequestParam positionPlaceholder: String, @RequestParam min: Int) {
+            throw MissingSubjectPositionValue(positionPlaceholder, min)
+        }
+
+        @GetMapping("/missing-object-position-value")
+        fun missingObjectPositionValue(@RequestParam positionPlaceholder: String, @RequestParam min: Int) {
+            throw MissingObjectPositionValue(positionPlaceholder, min)
+        }
+
+        @GetMapping("/too-many-subject-position-values")
+        fun tooManySubjectPositionValues(@RequestParam positionPlaceholder: String, @RequestParam max: Int) {
+            throw TooManySubjectPositionValues(positionPlaceholder, max)
+        }
+
+        @GetMapping("/too-many-object-position-values")
+        fun tooManyObjectPositionValues(@RequestParam positionPlaceholder: String, @RequestParam max: Int) {
+            throw TooManyObjectPositionValues(positionPlaceholder, max)
+        }
+
+        @GetMapping("/object-position-value-does-not-match-pattern")
+        fun objectPositionValueDoesNotMatchPattern(
+            @RequestParam positionPlaceholder: String,
+            @RequestParam label: String,
+            @RequestParam pattern: String
+        ) {
+            throw ObjectPositionValueDoesNotMatchPattern(positionPlaceholder, label, pattern)
+        }
+
+        @GetMapping("/object-position-value-too-low")
+        fun objectPositionValueTooLow(
+            @RequestParam positionPlaceholder: String,
+            @RequestParam label: String,
+            @RequestParam minInclusive: Number
+        ) {
+            throw ObjectPositionValueTooLow(positionPlaceholder, label, minInclusive)
+        }
+
+        @GetMapping("/object-position-value-too-high")
+        fun objectPositionValueTooHigh(
+            @RequestParam positionPlaceholder: String,
+            @RequestParam label: String,
+            @RequestParam maxInclusive: Number
+        ) {
+            throw ObjectPositionValueTooHigh(positionPlaceholder, label, maxInclusive)
         }
     }
 

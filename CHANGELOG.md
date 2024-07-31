@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.63.0] - 2024-07-31
 ### Added
 - Added support for mentionings on paper content-types.
   (See: [!1007](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1007),
@@ -1075,7 +1077,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.62.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.63.0...master
+[0.63.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.63.0
 [0.62.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.62.0
 [0.61.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.61.2
 [0.61.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.61.1

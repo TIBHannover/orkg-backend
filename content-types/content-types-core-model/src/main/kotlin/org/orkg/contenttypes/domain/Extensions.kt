@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.domain
 
-import java.net.URI
 import java.util.stream.Collectors
 import org.orkg.common.ThingId
+import org.orkg.common.toURIOrNull
 import org.orkg.contenttypes.domain.identifiers.Identifier
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
@@ -62,7 +62,7 @@ private fun Resource.toAuthor(statements: List<GeneralStatement>): Author =
         id = id,
         name = label,
         identifiers = statements.associateIdentifiers(Identifiers.author),
-        homepage = statements.wherePredicate(Predicates.hasWebsite).firstObjectLabel()?.let { URI.create(it) }
+        homepage = statements.wherePredicate(Predicates.hasWebsite).firstObjectLabel()?.toURIOrNull()
     )
 
 private fun Literal.toAuthor(): Author =

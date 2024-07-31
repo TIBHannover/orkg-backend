@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.domain
 
 import java.net.URI
+import org.orkg.common.toURIOrNull
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 
@@ -15,7 +16,7 @@ data class PublicationInfo(
             publishedMonth = statements.wherePredicate(Predicates.monthPublished).firstObjectLabel()?.toIntOrNull(),
             publishedYear = statements.wherePredicate(Predicates.yearPublished).firstObjectLabel()?.toLongOrNull(),
             publishedIn = statements.wherePredicate(Predicates.hasVenue).firstOrNull()?.objectIdAndLabel(),
-            url = statements.wherePredicate(Predicates.hasURL).firstObjectLabel()?.let { URI.create(it) }
+            url = statements.wherePredicate(Predicates.hasURL).firstObjectLabel()?.toURIOrNull()
         )
     }
 }

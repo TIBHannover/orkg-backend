@@ -113,3 +113,11 @@ fun <T : Any> mutableSetOfNotNull(vararg elements: T?): MutableSet<T> {
     }
     return result
 }
+
+fun String.toURIOrNull(): URI? {
+    try {
+        return URI(this)
+    } catch (e: Exception) {
+        return null
+    }
+}

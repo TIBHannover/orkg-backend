@@ -65,11 +65,17 @@ class SmartReviewNotModifiable(id: ThingId) :
 class RosettaStoneStatementNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Rosetta stone statement "$id" is not modifiable.""")
 
+class RosettaStoneTemplateNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Rosetta stone template "$id" is not modifiable.""")
+
 class CannotDeleteIndividualRosettaStoneStatementVersion :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Cannot delete individual versions of rosetta stone statements.""")
 
 class RosettaStoneStatementInUse(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete rosetta stone statement "$id" because it is used in at least one (rosetta stone) statement.""")
+
+class RosettaStoneTemplateInUse(id: ThingId) :
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete rosetta stone template "$id" because it is used in at least one (rosetta stone) statement.""")
 
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")

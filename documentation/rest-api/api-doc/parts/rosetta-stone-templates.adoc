@@ -37,3 +37,13 @@ NOTE: The first property of a rosetta stone template defines the subject positio
       At least one property is required to create a new rosetta stone template.
 
 operation::rosetta-stone-templates-create[snippets='request-fields,curl-request,http-response']
+
+[[rosetta-stone-templates-delete]]
+== Deleting a rosetta stone template
+
+A `DELETE` request deletes a rosetta stone template.
+The response will be `204 No Content` when successful.
+
+NOTE: A rosetta stone template can only be deleted when it is not used for any <<rosetta-stone-statements,rosetta stone statement>>.
+
+operation::rosetta-stone-templates-delete[snippets='path-parameters,curl-request,http-response']

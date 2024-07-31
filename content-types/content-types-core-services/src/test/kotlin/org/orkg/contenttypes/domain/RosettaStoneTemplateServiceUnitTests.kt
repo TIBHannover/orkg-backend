@@ -6,22 +6,35 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.community.testing.fixtures.createContributor
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ContributorNotFound
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -31,11 +44,14 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.MockUserId
+import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
 class RosettaStoneTemplateServiceUnitTests {
@@ -49,6 +65,9 @@ class RosettaStoneTemplateServiceUnitTests {
     private val classService: ClassUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
+    private val rosettaStoneStatementRepository: RosettaStoneStatementRepository = mockk()
+    private val contributorRepository: ContributorRepository = mockk()
+    private val thingRepository: ThingRepository = mockk()
 
     private val service = RosettaStoneTemplateService(
         resourceRepository,
@@ -60,7 +79,10 @@ class RosettaStoneTemplateServiceUnitTests {
         resourceService,
         classService,
         statementService,
-        literalService
+        literalService,
+        rosettaStoneStatementRepository,
+        contributorRepository,
+        thingRepository
     )
 
     @BeforeEach
@@ -80,7 +102,10 @@ class RosettaStoneTemplateServiceUnitTests {
             resourceService,
             classService,
             statementService,
-            literalService
+            literalService,
+            rosettaStoneStatementRepository,
+            contributorRepository,
+            thingRepository
         )
     }
 
@@ -570,5 +595,291 @@ class RosettaStoneTemplateServiceUnitTests {
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }
         verify(exactly = 1) { statementRepository.fetchAsBundle(expected.id, any(), any()) }
+    }
+
+    @Test
+    fun `Given a rosetta stone template, when deleting it by id, it deletes the template`() {
+        val template = createDummyRosettaStoneTemplate()
+        val resource = createResource(
+            id = template.id,
+            classes = setOf(Classes.rosettaNodeShape),
+            createdBy = template.createdBy
+        )
+        val property = createResource(
+            id = ThingId("TemplateProperty"),
+            classes = setOf(Classes.propertyShape)
+        )
+        val targetClass = createClass(ThingId("TargetClass"))
+        val contributorId = template.createdBy
+
+        every { resourceService.findById(template.id) } returns Optional.of(resource)
+        every { thingRepository.isUsedAsObject(template.id) } returns false
+        every {
+            rosettaStoneStatementRepository.findAll(
+                templateId = template.id,
+                pageable = PageRequests.SINGLE
+            )
+        } returns pageOf()
+        every {
+            statementRepository.fetchAsBundle(
+                id = resource.id,
+                configuration = any(),
+                sort = Sort.unsorted()
+            )
+        } returns listOf(
+            createStatement(
+                id = StatementId("S1"),
+                subject = resource,
+                predicate = createPredicate(Predicates.shProperty),
+                `object` = property
+            ),
+            createStatement(
+                id = StatementId("S2"),
+                subject = resource,
+                predicate = createPredicate(Predicates.description),
+                `object` = createLiteral()
+            ),
+            createStatement(
+                id = StatementId("S3"),
+                subject = resource,
+                predicate = createPredicate(Predicates.shTargetClass),
+                `object` = targetClass
+            ),
+            createStatement(
+                id = StatementId("S4"),
+                subject = property,
+                predicate = createPredicate(Predicates.shClass),
+                `object` = createClass()
+            ),
+            createStatement(
+                id = StatementId("S5"),
+                subject = property,
+                predicate = createPredicate(Predicates.shPattern),
+                `object` = createLiteral()
+            ),
+            createStatement(
+                id = StatementId("S6"),
+                subject = property,
+                predicate = createPredicate(Predicates.shPath),
+                `object` = createPredicate()
+            ),
+            createStatement(
+                id = StatementId("S7"),
+                subject = targetClass,
+                predicate = createPredicate(Predicates.exampleOfUsage),
+                `object` = createLiteral()
+            )
+        )
+        every { statementRepository.deleteByStatementIds(any()) } just runs
+        every { resourceService.delete(any(), contributorId) } just runs
+
+        service.delete(template.id, contributorId)
+
+        verify(exactly = 1) { resourceService.findById(template.id) }
+        verify(exactly = 1) { thingRepository.isUsedAsObject(template.id) }
+        verify(exactly = 1) {
+            rosettaStoneStatementRepository.findAll(
+                templateId = template.id,
+                pageable = PageRequests.SINGLE
+            )
+        }
+        verify(exactly = 1) {
+            statementRepository.fetchAsBundle(
+                id = resource.id,
+                configuration = any(),
+                sort = Sort.unsorted()
+            )
+        }
+        verify(exactly = 1) {
+            statementRepository.deleteByStatementIds(
+                setOf(
+                    StatementId("S1"),
+                    StatementId("S2"),
+                    StatementId("S3"),
+                    StatementId("S4"),
+                    StatementId("S5"),
+                    StatementId("S6")
+                )
+            )
+        }
+        verify(exactly = 1) { resourceService.delete(template.id, contributorId) }
+        verify(exactly = 1) { resourceService.delete(property.id, contributorId) }
+    }
+
+    @Test
+    fun `Given a rosetta stone template, when deleting it by id and template is not found, it does nothing`() {
+        val id = ThingId("R123")
+        val contributorId = ContributorId(MockUserId.USER)
+
+        every { resourceService.findById(id) } returns Optional.empty()
+
+        service.delete(id, contributorId)
+
+        verify(exactly = 1) { resourceService.findById(id) }
+    }
+
+    @Test
+    fun `Given a rosetta stone template, when deleting it by id and id does not belong to a template, it throws an exception`() {
+        val template = createDummyRosettaStoneTemplate()
+        val resource = createResource(
+            id = template.id,
+            createdBy = template.createdBy
+        )
+        val contributorId = template.createdBy
+
+        every { resourceService.findById(template.id) } returns Optional.of(resource)
+
+        assertThrows<RosettaStoneTemplateNotFound> {
+            service.delete(template.id, contributorId)
+        }
+
+        verify(exactly = 1) { resourceService.findById(template.id) }
+    }
+
+    @Test
+    fun `Given a rosetta stone template, when deleting it by id and template is not modifiable, it throws an exception`() {
+        val template = createDummyRosettaStoneTemplate()
+        val resource = createResource(
+            id = template.id,
+            classes = setOf(Classes.rosettaNodeShape),
+            createdBy = template.createdBy,
+            modifiable = false
+        )
+        val contributorId = template.createdBy
+
+        every { resourceService.findById(template.id) } returns Optional.of(resource)
+
+        assertThrows<RosettaStoneTemplateNotModifiable> {
+            service.delete(template.id, contributorId)
+        }
+
+        verify(exactly = 1) { resourceService.findById(template.id) }
+    }
+
+    @Test
+    fun `Given a rosetta stone template, when deleting it by id and template is used in a statement, it throws an exception`() {
+        val template = createDummyRosettaStoneTemplate()
+        val resource = createResource(
+            id = template.id,
+            classes = setOf(Classes.rosettaNodeShape),
+            createdBy = template.createdBy
+        )
+        val contributorId = template.createdBy
+
+        every { resourceService.findById(template.id) } returns Optional.of(resource)
+        every { thingRepository.isUsedAsObject(template.id) } returns true
+
+        assertThrows<RosettaStoneTemplateInUse> {
+            service.delete(template.id, contributorId)
+        }
+
+        verify(exactly = 1) { resourceService.findById(template.id) }
+        verify(exactly = 1) { thingRepository.isUsedAsObject(template.id) }
+    }
+
+    @Test
+    fun `Given a rosetta stone template, when deleting it by id and template is used in a rosetta stone statement, it throws an exception`() {
+        val template = createDummyRosettaStoneTemplate()
+        val resource = createResource(
+            id = template.id,
+            classes = setOf(Classes.rosettaNodeShape),
+            createdBy = template.createdBy
+        )
+        val contributorId = template.createdBy
+
+        every { resourceService.findById(template.id) } returns Optional.of(resource)
+        every { thingRepository.isUsedAsObject(template.id) } returns false
+        every {
+            rosettaStoneStatementRepository.findAll(
+                templateId = template.id,
+                pageable = PageRequests.SINGLE
+            )
+        } returns pageOf(
+            createDummyRosettaStoneStatement()
+        )
+
+        assertThrows<RosettaStoneTemplateInUse> {
+            service.delete(template.id, contributorId)
+        }
+
+        verify(exactly = 1) { resourceService.findById(template.id) }
+        verify(exactly = 1) { thingRepository.isUsedAsObject(template.id) }
+        verify(exactly = 1) {
+            rosettaStoneStatementRepository.findAll(
+                templateId = template.id,
+                pageable = PageRequests.SINGLE
+            )
+        }
+    }
+
+    @Test
+    fun `Given a rosetta stone template, when deleting it by id and template is not owned by contributor and contributor cannot be found, it throws an exception`() {
+        val template = createDummyRosettaStoneTemplate()
+        val resource = createResource(
+            id = template.id,
+            classes = setOf(Classes.rosettaNodeShape),
+            createdBy = template.createdBy
+        )
+        val contributorId = ContributorId(MockUserId.USER)
+
+        every { resourceService.findById(template.id) } returns Optional.of(resource)
+        every { thingRepository.isUsedAsObject(template.id) } returns false
+        every {
+            rosettaStoneStatementRepository.findAll(
+                templateId = template.id,
+                pageable = PageRequests.SINGLE
+            )
+        } returns pageOf()
+        every { contributorRepository.findById(contributorId) } returns Optional.empty()
+
+        assertThrows<ContributorNotFound> {
+            service.delete(template.id, contributorId)
+        }
+
+        verify(exactly = 1) { resourceService.findById(template.id) }
+        verify(exactly = 1) { thingRepository.isUsedAsObject(template.id) }
+        verify(exactly = 1) {
+            rosettaStoneStatementRepository.findAll(
+                templateId = template.id,
+                pageable = PageRequests.SINGLE
+            )
+        }
+        verify(exactly = 1) { contributorRepository.findById(contributorId) }
+    }
+
+    @Test
+    fun `Given a rosetta stone template, when deleting it by id and template is not owned by contributor and contributor is not a curator, it throws an exception`() {
+        val template = createDummyRosettaStoneTemplate()
+        val resource = createResource(
+            id = template.id,
+            classes = setOf(Classes.rosettaNodeShape),
+            createdBy = template.createdBy
+        )
+        val contributorId = ContributorId(MockUserId.USER)
+        val contributor = createContributor(contributorId)
+
+        every { resourceService.findById(template.id) } returns Optional.of(resource)
+        every { thingRepository.isUsedAsObject(template.id) } returns false
+        every {
+            rosettaStoneStatementRepository.findAll(
+                templateId = template.id,
+                pageable = PageRequests.SINGLE
+            )
+        } returns pageOf()
+        every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
+
+        assertThrows<NeitherOwnerNorCurator> {
+            service.delete(template.id, contributorId)
+        }
+
+        verify(exactly = 1) { resourceService.findById(template.id) }
+        verify(exactly = 1) { thingRepository.isUsedAsObject(template.id) }
+        verify(exactly = 1) {
+            rosettaStoneStatementRepository.findAll(
+                templateId = template.id,
+                pageable = PageRequests.SINGLE
+            )
+        }
+        verify(exactly = 1) { contributorRepository.findById(contributorId) }
     }
 }

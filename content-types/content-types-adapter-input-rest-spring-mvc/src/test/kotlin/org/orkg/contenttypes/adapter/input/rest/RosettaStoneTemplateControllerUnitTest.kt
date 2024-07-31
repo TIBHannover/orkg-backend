@@ -3,11 +3,14 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import java.util.*
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -25,11 +28,13 @@ import org.orkg.contenttypes.input.testing.fixtures.untypedTemplatePropertyReque
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneTemplate
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
@@ -225,6 +230,29 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { templateService.create(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a rosetta stone template, when deleting and service succeeds, then status is 204 NO CONTENT")
+    fun delete() {
+        val id = ThingId("R123")
+        every { templateService.delete(id, any()) } just runs
+
+        documentedDeleteRequestTo("/api/rosetta-stone/templates/{id}", id)
+            .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The id of the rosetta stone template to delete.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { templateService.delete(id, ContributorId(MockUserId.USER)) }
     }
 
     private fun createRosettaStoneTemplateRequest() =

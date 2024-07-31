@@ -20,3 +20,7 @@ interface CreateRosettaStoneTemplateUseCase {
         val organizations: List<OrganizationId>
     )
 }
+
+interface DeleteRosettaStoneTemplateUseCase {
+    fun delete(id: ThingId, contributorId: ContributorId)
+}

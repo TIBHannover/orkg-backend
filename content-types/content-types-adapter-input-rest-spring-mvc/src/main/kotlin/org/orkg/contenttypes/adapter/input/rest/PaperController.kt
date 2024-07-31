@@ -183,6 +183,7 @@ class PaperController(
         val authors: List<AuthorDTO>,
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
+        val mentionings: Set<ThingId>?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)
@@ -252,6 +253,7 @@ class PaperController(
                 publicationInfo = publicationInfo?.toPublicationInfoDefinition(),
                 authors = authors.map { it.toAuthor() },
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
+                mentionings = mentionings.orEmpty(),
                 observatories = observatories,
                 organizations = organizations,
                 contents = contents?.toCreateCommand(),
@@ -274,6 +276,7 @@ class PaperController(
         val authors: List<AuthorDTO>?,
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
+        val mentionings: Set<ThingId>?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
@@ -289,6 +292,7 @@ class PaperController(
                 publicationInfo = publicationInfo?.toPublicationInfoDefinition(),
                 authors = authors?.map { it.toAuthor() },
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals,
+                mentionings = mentionings,
                 observatories = observatories,
                 organizations = organizations
             )

@@ -54,3 +54,5 @@ data class LiteralReference(
 
     override val id: ThingId? get() = null
 }
+
+inline val Set<ThingReference>.ids get() = mapNotNullTo(mutableSetOf()) { it.id }

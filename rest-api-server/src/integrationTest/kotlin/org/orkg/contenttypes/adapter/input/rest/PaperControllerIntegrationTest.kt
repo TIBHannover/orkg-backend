@@ -21,6 +21,7 @@ import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PaperNotFound
+import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.createClasses
 import org.orkg.createLiteral
@@ -116,6 +117,7 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
         predicateService.createPredicate(Predicates.description)
         predicateService.createPredicate(Predicates.hasListElement)
         predicateService.createPredicate(Predicates.sustainableDevelopmentGoal)
+        predicateService.createPredicate(Predicates.mentions)
 
         classService.createClasses(
             "Paper",
@@ -145,6 +147,7 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
 
         resourceService.createResource(id = "R3003", label = "Some resource")
         resourceService.createResource(id = "R3004", label = "Some other resource")
+        resourceService.createResource(id = "R3005", label = "Some other more different resource", classes = setOf(Classes.problem.value))
 
         resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
         resourceService.createResource(id = "SDG_1", label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal.value))
@@ -285,6 +288,10 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
                 LabeledObjectRepresentation(ThingId("SDG_1"), "No poverty"),
                 LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger")
             )
+            it.mentionings shouldBe setOf(
+                ResourceReferenceRepresentation(ThingId("R3003"), "Some resource", emptySet()),
+                ResourceReferenceRepresentation(ThingId("R3004"), "Some other resource", emptySet())
+            )
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
             it.extractionMethod shouldBe ExtractionMethod.MANUAL
@@ -366,6 +373,10 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
             it.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"),
                 ObjectIdAndLabel(ThingId("SDG_4"), "Quality education")
+            )
+            it.mentionings shouldBe setOf(
+                ResourceReference(ThingId("R3004"), "Some other resource", emptySet()),
+                ResourceReference(ThingId("R3005"), "Some other more different resource", setOf(Classes.problem))
             )
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
@@ -475,6 +486,7 @@ private const val createPaperJson = """{
     }
   ],
   "sdgs": ["SDG_1", "SDG_2"],
+  "mentionings": ["R3003", "R3004"],
   "observatories": [
     "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
   ],
@@ -590,6 +602,7 @@ private const val updatePaperJson = """{
     }
   ],
   "sdgs": ["SDG_3", "SDG_4"],
+  "mentionings": ["R3004", "R3005"],
   "observatories": [
     "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
   ],

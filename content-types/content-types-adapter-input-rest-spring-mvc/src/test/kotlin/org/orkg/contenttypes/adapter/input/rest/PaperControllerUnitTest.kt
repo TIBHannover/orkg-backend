@@ -141,6 +141,11 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("contributions[].label").description("The label of the contribution."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to."),
+                        fieldWithPath("mentionings[]").description("Set of important resources in the paper."),
+                        fieldWithPath("mentionings[].id").description("The ID of the mentioned resource."),
+                        fieldWithPath("mentionings[].label").description("The label of the mentioned resource."),
+                        fieldWithPath("mentionings[].classes").description("The class ids of the mentioned resource."),
+                        fieldWithPath("mentionings[]._class").description("Indicates which type of entity was returned. Always has the value `resource_ref`."),
                         fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
                         timestampFieldWithPath("created_at", "the paper resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
@@ -517,6 +522,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)").optional(),
+                        fieldWithPath("mentionings").description("The set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)").optional(),
                         fieldWithPath("contents").description("Definition of the contents of the paper."),
                         fieldWithPath("contents.resources").description("Definition of resources that need to be created."),
                         fieldWithPath("contents.resources.*.label").description("The label of the resource."),
@@ -863,6 +869,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
                         fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)"),
+                        fieldWithPath("mentionings").description("The updated set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)"),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. (optional)").optional()
                     )
@@ -1301,6 +1308,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                 )
             ),
             sustainableDevelopmentGoals = setOf(ThingId("SDG_1")),
+            mentionings = setOf(ThingId("R159"), ThingId("R753")),
             observatories = listOf(
                 ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
             ),
@@ -1427,6 +1435,10 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             sustainableDevelopmentGoals = setOf(
                 ThingId("SDG_3"),
                 ThingId("SDG_4")
+            ),
+            mentionings = setOf(
+                ThingId("R953"),
+                ThingId("R357")
             ),
             observatories = listOf(
                 ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")

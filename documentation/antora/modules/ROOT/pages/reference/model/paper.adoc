@@ -15,6 +15,7 @@ flowchart LR
 	Paper --> |"P29 \n year published"| yearPublished[Literal \n xsd:integer]
 	Paper --> |"HAS_VENUE"| publishedIn[Venue \n Resource]
 	Paper --> |"url"| url[Literal \n xsd:anyURI]
+	Paper --> |"mentions"| mention[Resource]
 	Paper --> |"hasAuthors"| authorList[List \n Resource]
 	subgraph Author List
 		authorList --> |"hasListElement"| Author

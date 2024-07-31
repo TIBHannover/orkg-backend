@@ -6,7 +6,7 @@ import org.orkg.contenttypes.domain.Paper
 import org.springframework.data.domain.Page
 
 interface PaperRepresentationAdapter : AuthorRepresentationAdapter, LabeledObjectRepresentationAdapter,
-    PublicationInfoRepresentationAdapter {
+    PublicationInfoRepresentationAdapter, ThingReferenceRepresentationAdapter {
 
     fun Optional<Paper>.mapToPaperRepresentation(): Optional<PaperRepresentation> =
         map { it.toPaperRepresentation() }
@@ -24,6 +24,7 @@ interface PaperRepresentationAdapter : AuthorRepresentationAdapter, LabeledObjec
             authors = authors.mapToAuthorRepresentation(),
             contributions = contributions.mapToLabeledObjectRepresentation(),
             sustainableDevelopmentGoals = sustainableDevelopmentGoals.mapToLabeledObjectRepresentation(),
+            mentionings = mentionings.map { it.toResourceReferenceRepresentation() }.toSet(),
             observatories = observatories,
             organizations = organizations,
             extractionMethod = extractionMethod,

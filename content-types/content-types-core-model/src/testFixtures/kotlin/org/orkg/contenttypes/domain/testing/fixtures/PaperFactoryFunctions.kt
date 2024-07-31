@@ -10,6 +10,8 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.Paper
 import org.orkg.contenttypes.domain.PublicationInfo
+import org.orkg.contenttypes.domain.ResourceReference
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
 
@@ -69,6 +71,18 @@ fun createDummyPaper() = Paper(
         ObjectIdAndLabel(
             id = ThingId("SDG_2"),
             label = "Zero hunger"
+        )
+    ),
+    mentionings = setOf(
+        ResourceReference(
+            id = ThingId("R159"),
+            label = "Famous Comparison",
+            classes = setOf(Classes.comparison)
+        ),
+        ResourceReference(
+            id = ThingId("R753"),
+            label = "Some Paper",
+            classes = setOf(Classes.paper)
         )
     ),
     observatories = listOf(

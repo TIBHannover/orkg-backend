@@ -51,6 +51,7 @@ fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
         )
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_1"), ThingId("SDG_2")),
+    mentionings = setOf(ThingId("R159"), ThingId("R753")),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     contents = CreatePaperUseCase.CreateCommand.PaperContents(
@@ -153,6 +154,10 @@ fun dummyUpdatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
     sustainableDevelopmentGoals = setOf(
         ThingId("SDG_3"),
         ThingId("SDG_4")
+    ),
+    mentionings = setOf(
+        ThingId("R591"),
+        ThingId("R357")
     ),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc"))

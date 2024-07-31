@@ -201,6 +201,15 @@ class PaperServiceUnitTests {
                     label = "No poverty",
                     id = ThingId("SDG_1")
                 )
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.mentions),
+                `object` = createResource(
+                    classes = setOf(Classes.paper),
+                    label = "Some paper",
+                    id = ThingId("R159")
+                )
             )
         )
         every {
@@ -280,6 +289,13 @@ class PaperServiceUnitTests {
             )
             paper.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
+            )
+            paper.mentionings shouldBe setOf(
+                ResourceReference(
+                    id = ThingId("R159"),
+                    label = "Some paper",
+                    classes = setOf(Classes.paper)
+                )
             )
             paper.observatories shouldBe setOf(expected.observatoryId)
             paper.organizations shouldBe setOf(expected.organizationId)

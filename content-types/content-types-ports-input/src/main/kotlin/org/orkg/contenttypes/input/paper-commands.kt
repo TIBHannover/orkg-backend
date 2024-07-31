@@ -20,6 +20,7 @@ interface CreatePaperUseCase {
         val publicationInfo: PublicationInfoDefinition?,
         val authors: List<Author>,
         val sustainableDevelopmentGoals: Set<ThingId>,
+        val mentionings: Set<ThingId>,
         val observatories: List<ObservatoryId>,
         val organizations: List<OrganizationId>,
         val contents: PaperContents?,
@@ -50,6 +51,7 @@ interface UpdatePaperUseCase {
         val publicationInfo: PublicationInfoDefinition?,
         val authors: List<Author>?,
         val sustainableDevelopmentGoals: Set<ThingId>?,
+        val mentionings: Set<ThingId>?,
         val observatories: List<ObservatoryId>?,
         val organizations: List<OrganizationId>?
     )

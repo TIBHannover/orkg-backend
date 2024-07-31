@@ -20,6 +20,7 @@ data class Paper(
     val authors: List<Author>,
     val contributions: List<ObjectIdAndLabel>,
     val sustainableDevelopmentGoals: Set<ObjectIdAndLabel>,
+    val mentionings: Set<ResourceReference>,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
     val extractionMethod: ExtractionMethod,
@@ -46,6 +47,12 @@ data class Paper(
                 sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
                     .objectIdsAndLabel()
                     .sortedBy { it.id }
+                    .toSet(),
+                mentionings = directStatements.wherePredicate(Predicates.mentions)
+                    .objects()
+                    .filterIsInstance<Resource>()
+                    .map(::ResourceReference)
+                    .sortedBy { it.label }
                     .toSet(),
                 observatories = listOf(resource.observatoryId),
                 organizations = listOf(resource.organizationId),

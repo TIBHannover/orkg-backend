@@ -500,6 +500,10 @@
     {
       "id": "exampleOfUsage",
       "label": "example of usage"
+    },
+    {
+      "id": "mentions",
+      "label": "mentions"
     }
   ],
 

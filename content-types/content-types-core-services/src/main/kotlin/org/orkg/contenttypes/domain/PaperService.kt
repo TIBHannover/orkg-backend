@@ -17,6 +17,7 @@ import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.PublicationInfoValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
+import org.orkg.contenttypes.domain.actions.ResourceValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
@@ -37,6 +38,8 @@ import org.orkg.contenttypes.domain.actions.papers.PaperIdentifierCreateValidato
 import org.orkg.contenttypes.domain.actions.papers.PaperIdentifierCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperIdentifierUpdateValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperIdentifierUpdater
+import org.orkg.contenttypes.domain.actions.papers.PaperMentioningsCreator
+import org.orkg.contenttypes.domain.actions.papers.PaperMentioningsUpdater
 import org.orkg.contenttypes.domain.actions.papers.PaperModifiableValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperPublicationInfoCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperPublicationInfoUpdater
@@ -153,12 +156,14 @@ class PaperService(
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }),
+            ResourceValidator(resourceRepository, { it.mentionings }),
             PaperAuthorCreateValidator(resourceRepository, statementRepository),
             PaperThingDefinitionValidator(thingRepository, classRepository),
             PaperContributionValidator(thingRepository),
             PaperResourceCreator(resourceService),
             PaperIdentifierCreator(statementService, literalService),
             PaperSDGCreator(literalService, statementService),
+            PaperMentioningsCreator(literalService, statementService),
             PaperAuthorCreator(resourceService, statementService, literalService, listService),
             PaperResearchFieldCreator(literalService, statementService),
             PaperPublicationInfoCreator(resourceService, resourceRepository, statementService, literalService),
@@ -187,6 +192,7 @@ class PaperService(
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.paper!!.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.paper!!.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }, { it.paper!!.sustainableDevelopmentGoals.ids }),
+            ResourceValidator(resourceRepository, { it.mentionings }, { it.paper!!.mentionings.ids }),
             PaperTitleUpdateValidator(resourceService),
             PaperIdentifierUpdateValidator(statementRepository),
             PaperAuthorUpdateValidator(resourceRepository, statementRepository),
@@ -195,7 +201,8 @@ class PaperService(
             PaperAuthorUpdater(resourceService, statementService, literalService, listService, listRepository),
             PaperResearchFieldUpdater(literalService, statementService),
             PaperPublicationInfoUpdater(resourceService, resourceRepository, statementService, literalService),
-            PaperSDGUpdater(literalService, statementService)
+            PaperSDGUpdater(literalService, statementService),
+            PaperMentioningsUpdater(literalService, statementService)
         )
         steps.execute(command, UpdatePaperState())
     }

@@ -65,6 +65,18 @@ class LiteralServiceUnitTest : DescribeSpec({
                     )
                 }
             }
+            it("fails if the label does not match the datatype constraints") {
+                val notANumber = "not a number"
+                shouldThrowExactly<InvalidLiteralLabel> {
+                    service.create(
+                        CreateCommand(
+                            contributorId = ContributorId(UUID.randomUUID()),
+                            label = notANumber,
+                            datatype = "xsd:decimal"
+                        )
+                    )
+                }
+            }
             it("fails when literal id is already taken") {
                 val id = ThingId("taken")
 

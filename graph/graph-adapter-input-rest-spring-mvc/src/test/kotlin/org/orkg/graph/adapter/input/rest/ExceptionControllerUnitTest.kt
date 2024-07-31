@@ -19,6 +19,7 @@ import org.orkg.graph.domain.ExternalPredicateNotFound
 import org.orkg.graph.domain.ExternalResourceNotFound
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.InvalidStatement
 import org.orkg.graph.domain.ListInUse
 import org.orkg.graph.domain.LiteralNotModifiable
@@ -413,6 +414,39 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun invalidLiteralLabelTooLong() {
+        get("/invalid-literal-label-too-long")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("label"))
+            .andExpect(jsonPath("$.errors[0].message").value("A literal must be at most $MAX_LABEL_LENGTH characters long."))
+            .andExpect(jsonPath("$.path").value("/invalid-literal-label-too-long"))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidLiteralLabelConstraintViolation() {
+        val label = "not a number"
+        val datatype = "xsd:decimal"
+
+        get("/invalid-literal-label-constraint-violation")
+            .param("label", label)
+            .param("datatype", datatype)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("label"))
+            .andExpect(jsonPath("$.errors[0].message").value("""Literal value "$label" is not a valid "$datatype"."""))
+            .andExpect(jsonPath("$.path").value("/invalid-literal-label-constraint-violation"))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -529,6 +563,16 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/not-a-curator")
         fun notACurator(@RequestParam contributorId: ContributorId) {
             throw NotACurator(contributorId)
+        }
+
+        @GetMapping("/invalid-literal-label-too-long")
+        fun invalidLiteralLabelTooLong() {
+            throw InvalidLiteralLabel()
+        }
+
+        @GetMapping("/invalid-literal-label-constraint-violation")
+        fun invalidLiteralLabelConstraintViolation(@RequestParam label: String, @RequestParam datatype: String) {
+            throw InvalidLiteralLabel(label, datatype)
         }
     }
 

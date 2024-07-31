@@ -185,14 +185,17 @@ object Literals {
         DATE_TIME("dateTime", Classes.dateTime, false, { it.isValidDateTime() }),
         TIME("time", Classes.time, false, { it.isValidTime() });
 
-        val prefixedUri: String get() = "xsd:$fragment"
-        val uri: String get() = "http://www.w3.org/2001/XMLSchema#$fragment"
+        val prefixedUri: String = "xsd:$fragment"
+        val uri: String = "http://www.w3.org/2001/XMLSchema#$fragment"
 
         fun canParse(value: String): Boolean = predicate(value)
 
         companion object {
             fun fromClass(`class`: ThingId): XSD? =
                 XSD.entries.singleOrNull { it.`class` == `class` }
+
+            fun fromString(string: String): XSD? =
+                XSD.entries.singleOrNull { it.prefixedUri == string || it.uri == string }
         }
     }
 }

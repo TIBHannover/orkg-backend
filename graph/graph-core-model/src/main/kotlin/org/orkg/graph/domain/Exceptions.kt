@@ -144,7 +144,10 @@ class InvalidDescription(property: String = "description") : PropertyValidationE
     message = "A description must not be blank and must be at most $MAX_LABEL_LENGTH characters long."
 )
 
-class InvalidLiteralLabel : PropertyValidationException("label", "A literal must be at most $MAX_LABEL_LENGTH characters long.")
+class InvalidLiteralLabel : PropertyValidationException {
+    constructor() : super("label", "A literal must be at most $MAX_LABEL_LENGTH characters long.")
+    constructor(label: String, datatype: String) : super("label", """Literal value "$label" is not a valid "$datatype".""")
+}
 
 class InvalidLiteralDatatype : PropertyValidationException("datatype", "A literal datatype must be a URI or a \"xsd:\"-prefixed type")
 

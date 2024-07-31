@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added support for mentionings on paper content-types.
+  (See: [!1007](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1007),
+        [!1008](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1008))
+- Added content-type endpoint for deleting unused rosetta stone templates.
+  (See: [!1009](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1009))
+
+### Changed
+- Literal values are now validated for known XSD data types.
+  (Closes: [#578](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/578))
+- Reorganized API documentation.
+  (See: [!1003](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1003))
+- Simplified error messages for rosetta stone statement creation.
+  (Closes: [#575](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/575))
+
+### Fixed
+- Fixed URI parsing for publication info url and author website sometimes causing status 500.
+  (Closes: [#578](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/578))
 
 ## [0.62.0] - 2024-07-22
 ### Added

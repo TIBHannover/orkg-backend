@@ -76,7 +76,8 @@ class SpringDataNeo4jPaperAdapter(
         organizationId: OrganizationId?,
         researchField: ThingId?,
         includeSubfields: Boolean,
-        sustainableDevelopmentGoal: ThingId?
+        sustainableDevelopmentGoal: ThingId?,
+        mentionings: Set<ThingId>?
     ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
         .withCommonQuery {
             val node = node("Paper").named("node")
@@ -97,7 +98,11 @@ class SpringDataNeo4jPaperAdapter(
                 sustainableDevelopmentGoal?.let {
                     node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
                         .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))
-                }
+                },
+                *mentionings?.map {
+                    node.relationshipTo(node("Resource").withProperties("id", anonParameter(it.value)), RELATED)
+                        .withProperties("predicate_id", literalOf<String>(Predicates.mentions.value))
+                }.orEmpty().toTypedArray()
             )
             val match = label?.let {
                 when (label) {

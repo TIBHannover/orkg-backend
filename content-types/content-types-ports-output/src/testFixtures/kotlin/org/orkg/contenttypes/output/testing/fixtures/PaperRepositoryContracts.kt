@@ -642,6 +642,120 @@ fun <
                 }
             }
         }
+        context("by mentionings") {
+            context("using a single value") {
+                val expectedCount = 3
+                val resources = fabricator.random<List<Resource>>().toPapers().toMutableList()
+                val mentions = createPredicate(Predicates.mentions)
+                val resourceA = fabricator.random<Resource>()
+                val resourceB = fabricator.random<Resource>()
+
+                val expected = resources.take(expectedCount)
+
+                expected.forEach {
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = it,
+                            predicate = mentions,
+                            `object` = resourceA
+                        )
+                    )
+                }
+
+                resources.drop(expectedCount).forEach {
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = it,
+                            predicate = mentions,
+                            `object` = resourceB
+                        )
+                    )
+                }
+
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    mentionings = setOf(resourceA.id),
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("using multiple values") {
+                val expectedCount = 3
+                val resources = fabricator.random<List<Resource>>().toPapers().toMutableList()
+                val mentions = createPredicate(Predicates.mentions)
+                val resourceA = fabricator.random<Resource>()
+                val resourceB = fabricator.random<Resource>()
+                val resourceC = fabricator.random<Resource>()
+
+                val expected = resources.take(expectedCount)
+
+                expected.forEach {
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = it,
+                            predicate = mentions,
+                            `object` = resourceA
+                        )
+                    )
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = it,
+                            predicate = mentions,
+                            `object` = resourceC
+                        )
+                    )
+                }
+
+                resources.drop(expectedCount).forEach {
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = it,
+                            predicate = mentions,
+                            `object` = resourceB
+                        )
+                    )
+                }
+
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    mentionings = setOf(resourceA.id, resourceC.id),
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+        }
         context("using all parameters") {
             val researchField = fabricator.random<Resource>().copy(
                 classes = setOf(Classes.researchField)

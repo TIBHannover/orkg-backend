@@ -84,6 +84,7 @@ class PaperController(
         @RequestParam("research_field", required = false) researchField: ThingId?,
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
         @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
+        @RequestParam("mentionings", required = false) mentionings: Set<ThingId>?,
         pageable: Pageable
     ): Page<PaperRepresentation> =
         service.findAll(
@@ -99,7 +100,8 @@ class PaperController(
             organizationId = organizationId,
             researchField = researchField,
             includeSubfields = includeSubfields,
-            sustainableDevelopmentGoal = sustainableDevelopmentGoal
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
+            mentionings = mentionings
         ).mapToPaperRepresentation()
 
     @PreAuthorizeUser

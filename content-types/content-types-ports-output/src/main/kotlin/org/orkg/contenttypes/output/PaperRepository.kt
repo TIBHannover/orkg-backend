@@ -27,6 +27,7 @@ interface PaperRepository {
         organizationId: OrganizationId? = null,
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
-        sustainableDevelopmentGoal: ThingId? = null
+        sustainableDevelopmentGoal: ThingId? = null,
+        mentionings: Set<ThingId>? = null
     ): Page<Resource>
 }

@@ -187,7 +187,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @DisplayName("Given several papers, when they are fetched, then status is 200 OK and papers are returned")
     fun getPaged() {
         every {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createDummyPaper())
 
         documentedGetRequestTo("/api/papers")
@@ -200,7 +200,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 
@@ -208,7 +208,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @DisplayName("Given several papers, when filtering by several parameters, then status is 200 OK and papers are returned")
     fun getPagedWithParameters() {
         every {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createDummyPaper())
 
         val title = "label"
@@ -224,6 +224,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val researchFieldId = ThingId("R456")
         val includeSubfields = true
         val sdg = ThingId("SDG_1")
+        val mentionings = setOf(ThingId("R357"))
 
         documentedGetRequestTo("/api/papers")
             .param("title", title)
@@ -239,6 +240,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .param("research_field", researchFieldId.value)
             .param("include_subfields", includeSubfields.toString())
             .param("sdg", sdg.value)
+            .param("mentionings", mentionings.joinToString(","))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -261,6 +263,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         parameterWithName("research_field").description("Filter for research field id. (optional)"),
                         parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
                         parameterWithName("sdg").description("Filter for the sustainable development goal that the paper belongs to. (optional)"),
+                        parameterWithName("mentionings").description("Filter for resources that are linked to the paper via a mentions statement. (optional)"),
                     )
                 )
             )
@@ -282,7 +285,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                 organizationId = organizationId,
                 researchField = researchFieldId,
                 includeSubfields = includeSubfields,
-                sustainableDevelopmentGoal = sdg
+                sustainableDevelopmentGoal = sdg,
+                mentionings = mentionings
             )
         }
     }
@@ -291,7 +295,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     fun `Given several papers, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
         val exception = UnknownSortingProperty("unknown")
         every {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
         mockMvc.perform(get("/api/papers?sort=unknown"))
@@ -303,7 +307,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
 
         verify(exactly = 1) {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 

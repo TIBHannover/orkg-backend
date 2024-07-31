@@ -54,16 +54,6 @@ class ExactSearchString(value: String) : SearchString {
     override val query: String = if (input.isBlank()) "*" else QueryParser.escape(input)
 }
 
-private data class StringReader(val string: String) {
-    var cursor: Int = 0
-
-    fun skip() { cursor++ }
-
-    fun peek(offset: Int = 0): Char = string[cursor + offset]
-
-    fun canRead(offset: Int = 0): Boolean = cursor + offset < string.length
-}
-
 private fun StringReader.readWord(): String {
     val start = cursor
     while (canRead()) {

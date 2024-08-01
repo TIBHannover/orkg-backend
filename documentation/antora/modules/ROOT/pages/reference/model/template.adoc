@@ -34,8 +34,8 @@ flowchart LR
 			    pattern[Literal \n xsd:string]
             end
             subgraph Number Property
-			    minInclusive[Literal \n xsd:integer/xsd:float/xsd:decimal]
-			    maxInclusive[Literal \n xsd:integer/xsd:float/xsd:decimal]
+			    minInclusive[Literal \n xsd:integer or xsd:float or\nxsd:double or xsd:decimal]
+			    maxInclusive[Literal \n xsd:integer or xsd:float or\nxsd:double or xsd:decimal]
             end
 		end
 	end

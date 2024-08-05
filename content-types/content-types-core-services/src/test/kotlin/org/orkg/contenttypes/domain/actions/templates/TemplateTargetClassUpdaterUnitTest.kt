@@ -63,7 +63,7 @@ class TemplateTargetClassUpdaterUnitTest {
     }
 
     @Test
-    fun `Given a template update command, when target class did not change, id noes nothing`() {
+    fun `Given a template update command, when target class did not change, id does nothing`() {
         val command = dummyUpdateTemplateCommand().copy(targetClass = ThingId("targetClass"))
         val state = UpdateTemplateState(template = createDummyTemplate())
 
@@ -75,7 +75,7 @@ class TemplateTargetClassUpdaterUnitTest {
     }
 
     @Test
-    fun `Given a template update command, when new target class is not set, id noes nothing`() {
+    fun `Given a template update command, when new target class is not set, id does nothing`() {
         val command = dummyUpdateTemplateCommand().copy(targetClass = null)
         val state = UpdateTemplateState(template = createDummyTemplate())
 

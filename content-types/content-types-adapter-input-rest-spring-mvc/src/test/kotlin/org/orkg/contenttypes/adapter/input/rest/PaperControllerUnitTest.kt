@@ -502,7 +502,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the newly created paper can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("title").description("The title of the paper."),
@@ -849,7 +849,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the updated paper can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("title").description("The title of the paper. (optional)"),
@@ -1068,7 +1068,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the newly created contribution can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (default: "UNKNOWN")""").optional(),

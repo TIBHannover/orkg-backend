@@ -259,7 +259,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the newly created visualization can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("title").description("The title of the visualization."),

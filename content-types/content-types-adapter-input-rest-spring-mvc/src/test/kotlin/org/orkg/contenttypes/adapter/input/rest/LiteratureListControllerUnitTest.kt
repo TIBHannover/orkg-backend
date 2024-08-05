@@ -301,7 +301,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("title").description("The title of the literature list."),
@@ -490,7 +490,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("title").description("The title of the literature list. (optional)"),

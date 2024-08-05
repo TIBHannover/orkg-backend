@@ -214,7 +214,7 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the newly created rosetta stone template  can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The label of the rosetta stone template."),

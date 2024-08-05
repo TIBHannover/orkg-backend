@@ -329,7 +329,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the newly created template can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The label of the template."),
@@ -585,7 +585,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the updated template can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The label of the template. (optional)"),

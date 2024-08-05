@@ -306,7 +306,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("title").description("The title of the smart review."),
@@ -759,7 +759,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             .andDo(
                 documentationHandler.document(
                     responseHeaders(
-                        headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("title").description("The title of the smart review. (optional)"),

@@ -7,4 +7,5 @@ interface RankingService {
     fun countSumOfDistinctPredicatesForContributions(contributionIds: Set<ThingId>): Long
     fun countComparisonsIncludingPaper(id: ThingId): Long
     fun countLiteratureListsIncludingPaper(id: ThingId): Long
+    fun countRosettaStoneStatementsAssociatedToPaper(id: ThingId): Long
 }

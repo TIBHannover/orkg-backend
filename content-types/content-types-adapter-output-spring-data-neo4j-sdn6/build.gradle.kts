@@ -27,7 +27,6 @@ testing {
                 implementation("io.kotest:kotest-framework-api")
                 implementation("org.springframework.boot:spring-boot-autoconfigure")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
-                implementation("org.springframework.data:spring-data-neo4j:6.3.16")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
@@ -41,6 +40,7 @@ testing {
                 implementation(project())
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
+                runtimeOnly("org.springframework.data:spring-data-neo4j:6.3.16")
                 runtimeOnly(libs.kotest.extensions.spring)
             }
         }

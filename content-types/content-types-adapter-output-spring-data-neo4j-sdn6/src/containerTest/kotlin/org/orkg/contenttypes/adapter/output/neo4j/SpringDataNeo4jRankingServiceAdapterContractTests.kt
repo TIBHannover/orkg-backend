@@ -3,6 +3,7 @@ package org.orkg.contenttypes.adapter.output.neo4j
 import io.kotest.core.spec.style.DescribeSpec
 import org.orkg.contenttypes.adapter.output.neo4j.configuration.ContentTypesNeo4jConfiguration
 import org.orkg.contenttypes.output.RankingService
+import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.contenttypes.output.testing.fixtures.rankingServiceContract
 import org.orkg.graph.adapter.output.facade.ListAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jClassAdapter
@@ -22,7 +23,6 @@ import org.orkg.testing.Neo4jContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
 import org.springframework.test.context.ContextConfiguration
 
 @DataNeo4jTest
@@ -36,6 +36,7 @@ import org.springframework.test.context.ContextConfiguration
         SpringDataNeo4jClassAdapter::class,
         SpringDataNeo4jThingAdapter::class,
         ListAdapter::class,
+        SpringDataNeo4jRosettaStoneStatementAdapter::class,
         SpringDataNeo4jRankingServiceAdapter::class,
         GraphNeo4jConfiguration::class,
         ContentTypesNeo4jConfiguration::class
@@ -51,6 +52,7 @@ internal class SpringDataNeo4jRankingServiceAdapterContractTests(
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
     @Autowired private val listAdapter: ListRepository,
+    @Autowired private val springDataNeo4jRosettaStoneStatementAdapter: RosettaStoneStatementRepository,
     @Autowired private val springDataNeo4jRankingServiceAdapter: RankingService
 ) : DescribeSpec({
     include(
@@ -61,6 +63,7 @@ internal class SpringDataNeo4jRankingServiceAdapterContractTests(
             springDataNeo4jResourceAdapter,
             springDataNeo4jPredicateAdapter,
             listAdapter,
+            springDataNeo4jRosettaStoneStatementAdapter,
             springDataNeo4jRankingServiceAdapter
         )
     )

@@ -46,4 +46,12 @@ class SpringDataNeo4jRankingServiceAdapter(
         ).bindAll(mapOf("id" to id.value))
             .fetchAs<Long>()
             .one() ?: 0
+
+    override fun countRosettaStoneStatementsAssociatedToPaper(id: ThingId): Long =
+        neo4jClient.query("""
+            MATCH (:Resource {id: ${'$'}id})<-[:CONTEXT]-(n:RosettaStoneStatement:LatestVersion)
+            RETURN COUNT(DISTINCT n.id) AS count""".trimIndent()
+        ).bindAll(mapOf("id" to id.value))
+            .fetchAs<Long>()
+            .one() ?: 0
 }

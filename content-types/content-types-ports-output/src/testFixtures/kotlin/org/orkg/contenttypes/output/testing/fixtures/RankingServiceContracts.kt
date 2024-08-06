@@ -6,7 +6,11 @@ import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import org.orkg.contenttypes.domain.RosettaStoneStatement
+import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
+import org.orkg.contenttypes.domain.testing.fixtures.withRosettaStoneStatementMappings
 import org.orkg.contenttypes.output.RankingService
+import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
@@ -23,6 +27,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.withCustomMappings
+import org.orkg.graph.testing.fixtures.withLongerURIs
 
 fun <
     S : StatementRepository,
@@ -31,6 +36,7 @@ fun <
     R : ResourceRepository,
     P : PredicateRepository,
     I : ListRepository,
+    T : RosettaStoneStatementRepository,
     U : RankingService
 > rankingServiceContract(
     statementRepository: S,
@@ -39,9 +45,11 @@ fun <
     resourceRepository: R,
     predicateRepository: P,
     @Suppress("UNUSED_PARAMETER") listRepository: I,
+    rosettaStoneStatementRepository: T,
     service: U
 ) = describeSpec {
     beforeTest {
+        rosettaStoneStatementRepository.deleteAll()
         statementRepository.deleteAll()
         classRepository.deleteAll()
         literalRepository.deleteAll()
@@ -55,7 +63,10 @@ fun <
             collectionSizes = 12..12,
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
         ).withStandardMappings()
-    ).withCustomMappings()
+    )
+        .withCustomMappings()
+        .withRosettaStoneStatementMappings()
+        .withLongerURIs()
 
     val saveThing: (Thing) -> Unit = {
         when (it) {
@@ -72,6 +83,16 @@ fun <
         saveThing(it.`object`)
         statementRepository.save(it)
     }
+
+    fun RosettaStoneStatementVersion.requiredEntities(): Set<Thing> =
+        subjects.toSet() + objects.flatten()
+
+    fun RosettaStoneStatement.requiredEntities(): Set<Thing> =
+        setOfNotNull(
+            fabricator.random<Resource>().copy(id = templateId, classes = setOf(Classes.rosettaNodeShape)),
+            contextId?.let { fabricator.random<Resource>().copy(id = it) },
+            fabricator.random<Class>().copy(id = templateTargetClassId),
+        ) + versions.flatMap { it.requiredEntities() }
 
     describe("finding all statements about a paper") {
         val paper = fabricator.random<Resource>().copy(
@@ -238,6 +259,28 @@ fun <
 
         val expected = 1
         val result = service.countLiteratureListsIncludingPaper(paper.id)
+
+        it("returns the correct result") {
+            result shouldBe expected
+        }
+    }
+
+    describe("counting rosetta stone statement associated to a paper") {
+        val paper = fabricator.random<Resource>().copy(
+            classes = setOf(Classes.paper)
+        )
+        val associatedStatement: RosettaStoneStatement = fabricator.random<RosettaStoneStatement>().copy(
+            contextId = paper.id
+        )
+        associatedStatement.requiredEntities().forEach(saveThing)
+        rosettaStoneStatementRepository.save(associatedStatement)
+
+        val notAssociatedStatement: RosettaStoneStatement = fabricator.random<RosettaStoneStatement>()
+        notAssociatedStatement.requiredEntities().forEach(saveThing)
+        rosettaStoneStatementRepository.save(notAssociatedStatement)
+
+        val expected = 1
+        val result = service.countRosettaStoneStatementsAssociatedToPaper(paper.id)
 
         it("returns the correct result") {
             result shouldBe expected

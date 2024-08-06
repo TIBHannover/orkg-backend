@@ -108,6 +108,7 @@ class PaperRanker(
         }
         stats.comparisons = rankingService.countComparisonsIncludingPaper(paper.id)
         stats.lists = rankingService.countLiteratureListsIncludingPaper(paper.id)
+        stats.rosettaStoneStatements = rankingService.countRosettaStoneStatementsAssociatedToPaper(paper.id)
         return Score(stats)
     }
 
@@ -135,6 +136,7 @@ class PaperRanker(
         var doi: ThingId? = null
         var comparisons: Long = 0
         var lists: Long = 0
+        var rosettaStoneStatements: Long = 0
 
         val hasDoi: Boolean
             get() = doi != null
@@ -149,7 +151,7 @@ class PaperRanker(
         val observatoryScore: Int
     ) {
         constructor(stats: PaperStats) : this(
-            isRejected = !stats.hasTitle || stats.authors == 0 || stats.contributions == 0 || stats.properties == 0L,
+            isRejected = !stats.hasTitle || stats.authors == 0 || stats.contributions == 0 && stats.rosettaStoneStatements == 0L || stats.properties == 0L,
             propertyScore = if (stats.properties > 0) (1 + log10(stats.properties.toDouble())) * 2 else 0.0,
             comparisonScore = if (stats.comparisons > 0) (1 + log10(stats.comparisons.toDouble())) * 2 else 0.0,
             listScore = if (stats.lists > 0) (1 + log10(stats.lists.toDouble())) else 0.0,

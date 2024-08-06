@@ -51,7 +51,6 @@ testing {
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
                 implementation(libs.assertj.core)
-                implementation(libs.forkhandles.fabrikate4k)
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.spring.mockk)
                 implementation(libs.spring.restdocs)

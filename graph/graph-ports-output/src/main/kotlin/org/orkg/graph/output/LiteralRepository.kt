@@ -11,17 +11,15 @@ import org.springframework.data.domain.Pageable
 
 interface LiteralRepository {
     fun exists(id: ThingId): Boolean
-
-    // legacy methods:
     fun nextIdentity(): ThingId
     fun save(literal: Literal)
     fun deleteAll()
-    fun findAll(pageable: Pageable): Page<Literal>
     fun findById(id: ThingId): Optional<Literal>
-    fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Literal>
-    fun findAllWithFilters(
+    fun findAll(
+        pageable: Pageable,
+        label: SearchString? = null,
         createdBy: ContributorId? = null,
-        createdAt: OffsetDateTime? = null,
-        pageable: Pageable
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null
     ): Page<Literal>
 }

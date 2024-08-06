@@ -102,6 +102,15 @@ fun ResultActions.andExpectClass(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.modifiable", `is`(notNullValue())))
     .andExpect(jsonPath("$path._class").value("class"))
 
+fun ResultActions.andExpectLiteral(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.datatype", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.modifiable", `is`(notNullValue())))
+    .andExpect(jsonPath("$path._class").value("literal"))
+
 fun ResultActions.andExpectComparison(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.title", `is`(notNullValue())))

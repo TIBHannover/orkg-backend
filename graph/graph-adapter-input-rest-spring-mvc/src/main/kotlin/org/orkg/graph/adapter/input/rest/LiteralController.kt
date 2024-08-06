@@ -1,7 +1,9 @@
 package org.orkg.graph.adapter.input.rest
 
+import java.time.OffsetDateTime
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
@@ -13,6 +15,8 @@ import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -29,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/literals/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/literals", produces = [MediaType.APPLICATION_JSON_VALUE])
 class LiteralController(
     private val service: LiteralUseCases
 ) : LiteralRepresentationAdapter {
@@ -40,16 +44,22 @@ class LiteralController(
             .mapToLiteralRepresentation()
             .orElseThrow { LiteralNotFound(id) }
 
-    @GetMapping("/")
-    fun findByLabel(
-        @RequestParam("q", required = false) searchString: String?,
+    @GetMapping
+    fun findAll(
+        @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
+        @RequestParam("created_by", required = false) createdBy: ContributorId?,
+        @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
+        @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
         pageable: Pageable
     ): Page<LiteralRepresentation> =
-        when (searchString) {
-            null -> service.findAll(pageable)
-            else -> service.findAllByLabel(SearchString.of(searchString, exactMatch), pageable)
-        }.mapToLiteralRepresentation()
+        service.findAll(
+            pageable = pageable,
+            label = string?.let { SearchString.of(string, exactMatch) },
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+        ).mapToLiteralRepresentation()
 
     @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])

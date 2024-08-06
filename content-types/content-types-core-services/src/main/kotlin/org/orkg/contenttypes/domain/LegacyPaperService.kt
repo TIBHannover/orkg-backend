@@ -271,9 +271,9 @@ class LegacyPaperService(
                         // Check if ORCID is a valid string
                         val orcidValue = ORCID.of(it.orcid!!).value
                         // Check if the orcid exists in the system or not
-                        val foundOrcid = literalService.findAllByLabel(
-                            SearchString.of(orcidValue, exactMatch = true),
-                            PageRequest.of(0, 1)
+                        val foundOrcid = literalService.findAll(
+                            label = SearchString.of(orcidValue, exactMatch = true),
+                            pageable = PageRequest.of(0, 1)
                         ).firstOrNull()
                         if (foundOrcid != null) {
                             // Link existing ORCID

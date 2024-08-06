@@ -13,14 +13,14 @@ operation::literals-get-single[snippets='curl-request,http-response,response-fie
 [[literals-list]]
 == Listing Literals
 
-A `GET` request returns a <<sorting-and-pagination,paged>> list of literals.
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<literals-fetch,literals>>.
 If no paging request parameters are provided, the default values will be used.
 
 operation::literals-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::literal-controller-integration-test-lookup[snippets='request-parameters']
+operation::literals-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 [[literals-create]]
 == Creating Literals

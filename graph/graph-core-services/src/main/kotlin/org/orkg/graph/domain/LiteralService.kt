@@ -3,6 +3,7 @@ package org.orkg.graph.domain
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.toURIOrNull
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -52,14 +53,17 @@ class LiteralService(
     @Transactional(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
 
-    override fun findAll(pageable: Pageable): Page<Literal> =
-        repository.findAll(pageable)
+    override fun findAll(
+        pageable: Pageable,
+        label: SearchString?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?
+    ): Page<Literal> =
+        repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd)
 
     override fun findById(id: ThingId): Optional<Literal> =
         repository.findById(id)
-
-    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Literal> =
-        repository.findAllByLabel(labelSearchString, pageable)
 
     override fun findDOIByContributionId(id: ThingId): Optional<Literal> =
         statementRepository.findDOIByContributionId(id)

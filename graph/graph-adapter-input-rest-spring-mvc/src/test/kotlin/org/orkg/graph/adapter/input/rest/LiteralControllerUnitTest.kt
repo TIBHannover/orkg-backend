@@ -1,8 +1,8 @@
 package org.orkg.graph.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
-import dev.forkhandles.fabrikate.FabricatorConfig
-import dev.forkhandles.fabrikate.Fabrikate
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
@@ -10,6 +10,7 @@ import io.mockk.verify
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.matchesPattern
@@ -18,38 +19,40 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
+import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.LiteralController.LiteralCreateRequest
 import org.orkg.graph.adapter.input.rest.LiteralController.LiteralUpdateRequest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
+import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
-import org.orkg.graph.testing.fixtures.withCustomMappings
-import org.orkg.graph.testing.fixtures.withLiteralIds
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
+import org.orkg.testing.andExpectLiteral
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.annotations.UsesMocking
+import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
+import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -107,22 +110,6 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     }
 
     @Test
-    @DisplayName("correctly serializes multiple literals as page")
-    fun getPaged() {
-        // Keep the collection size small, because the output ends up in the doc. Use a seed to keep output stable.
-        val config = FabricatorConfig(seed = 1, collectionSizes = 3..3).withStandardMappings()
-        val literals = Fabrikate(config).withCustomMappings().withLiteralIds().random<List<Literal>>()
-        // Pretend we wanted to obtain only 3 elements, but 15 are available:
-        val page: Page<Literal> = PageImpl(literals, PageRequest.of(0, literals.size), 15)
-        every { literalService.findAll(any()) } returns page
-
-        mockMvc.perform(documentedGetRequestTo("/api/literals/"))
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andDo(generateDefaultDocSnippets())
-    }
-
-    @Test
     @TestWithMockUser
     fun whenPOST_AndLabelIsEmptyString_ThenSucceed() {
         val literal = createCreateRequestWithEmptyLabel()
@@ -147,6 +134,84 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
         verify(exactly = 1) { literalService.create(command) }
+    }
+
+    @Test
+    @DisplayName("Given several literals, when filtering by no parameters, then status is 200 OK and literals are returned")
+    fun getPaged() {
+        every { literalService.findAll(any()) } returns pageOf(createLiteral())
+
+        documentedGetRequestTo("/api/literals")
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectLiteral("$.content[*]")
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { literalService.findAll(any()) }
+    }
+
+    @Test
+    @DisplayName("Given several literals, when they are fetched with all possible filtering parameters, then status is 200 OK and literals are returned")
+    fun getPagedWithParameters() {
+        every { literalService.findAll(any(), any(), any(), any(), any()) } returns pageOf(createLiteral())
+
+        val label = "label"
+        val exact = true
+        val createdBy = ContributorId(MockUserId.USER)
+        val createdAtStart = OffsetDateTime.now(clock).minusHours(1)
+        val createdAtEnd = OffsetDateTime.now(clock).plusHours(1)
+
+        documentedGetRequestTo("/api/literals")
+            .param("q", label)
+            .param("exact", exact.toString())
+            .param("created_by", createdBy.value.toString())
+            .param("created_at_start", createdAtStart.format(ISO_OFFSET_DATE_TIME))
+            .param("created_at_end", createdAtEnd.format(ISO_OFFSET_DATE_TIME))
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectLiteral("$.content[*]")
+            .andDo(
+                documentationHandler.document(
+                    requestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
+                        parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
+                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created this literal. (optional)"),
+                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned literal can have. (optional)"),
+                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned literal can have. (optional)"),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            literalService.findAll(
+                pageable = any(),
+                label = withArg {
+                    it.shouldBeInstanceOf<ExactSearchString>().input shouldBe label
+                },
+                createdBy = createdBy,
+                createdAtStart = createdAtStart,
+                createdAtEnd = createdAtEnd,
+            )
+        }
+    }
+
+    @Test
+    fun `Given several literals, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
+        val exception = UnknownSortingProperty("unknown")
+        every { literalService.findAll(any()) } throws exception
+
+        mockMvc.perform(get("/api/literals?sort=unknown"))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/literals"))
     }
 
     @Test

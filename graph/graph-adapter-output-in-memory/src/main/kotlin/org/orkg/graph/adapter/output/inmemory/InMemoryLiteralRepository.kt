@@ -10,6 +10,7 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.output.LiteralRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 
 class InMemoryLiteralRepository(inMemoryGraph: InMemoryGraph) :
     InMemoryRepository<ThingId, Literal>(compareBy(Literal::createdAt)), LiteralRepository {
@@ -46,18 +47,34 @@ class InMemoryLiteralRepository(inMemoryGraph: InMemoryGraph) :
 
     override fun findById(id: ThingId) = Optional.ofNullable(entities[id])
 
-    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable) =
-        entities.values
-            .filter { it.label.matches(labelSearchString) }
-            .sortedWith(compareBy { it.label.length })
-            .paged(pageable)
+    override fun findAll(pageable: Pageable): Page<Literal> =
+        findAll(
+            pageable = pageable,
+            label = null,
+            createdBy = null,
+            createdAtStart = null,
+            createdAtEnd = null
+        )
 
-    override fun findAllWithFilters(
+    override fun findAll(
+        pageable: Pageable,
+        label: SearchString?,
         createdBy: ContributorId?,
-        createdAt: OffsetDateTime?,
-        pageable: Pageable
-    ): Page<Literal> = findAllFilteredAndPaged(pageable, pageable.sort.literalComparator) {
-        (createdBy == null || createdBy == it.createdBy) &&
-            (createdAt == null || createdAt == it.createdAt)
-    }
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?
+    ): Page<Literal> =
+        findAllFilteredAndPaged(
+            pageable = pageable,
+            comparator = if (label != null) {
+                compareBy { it.label.length }
+            } else {
+                pageable.withDefaultSort { Sort.by("created_at") }.sort.literalComparator
+            },
+            predicate = {
+                (label == null || it.label.matches(label)) &&
+                    (createdBy == null || it.createdBy == createdBy) &&
+                    (createdAtStart == null || it.createdAt >= createdAtStart) &&
+                    (createdAtEnd == null || it.createdAt <= createdAtEnd)
+            }
+        )
 }

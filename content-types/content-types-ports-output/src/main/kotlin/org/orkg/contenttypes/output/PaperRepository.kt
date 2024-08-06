@@ -18,6 +18,7 @@ interface PaperRepository {
         pageable: Pageable,
         label: SearchString? = null,
         doi: String? = null,
+        doiPrefix: String? = null,
         visibility: VisibilityFilter? = null,
         verified: Boolean? = null,
         createdBy: ContributorId? = null,

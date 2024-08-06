@@ -74,6 +74,7 @@ class PaperController(
         @RequestParam("title", required = false) title: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("doi", required = false) doi: String?,
+        @RequestParam("doi_prefix", required = false) doiPrefix: String?,
         @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
         @RequestParam("verified", required = false) verified: Boolean?,
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
@@ -90,6 +91,7 @@ class PaperController(
         service.findAll(
             pageable = pageable,
             doi = doi,
+            doiPrefix = doiPrefix,
             label = title?.let { SearchString.of(title, exactMatch) },
             visibility = visibility,
             verified = verified,

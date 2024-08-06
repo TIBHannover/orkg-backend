@@ -187,7 +187,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @DisplayName("Given several papers, when they are fetched, then status is 200 OK and papers are returned")
     fun getPaged() {
         every {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createDummyPaper())
 
         documentedGetRequestTo("/api/papers")
@@ -200,7 +200,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 
@@ -208,12 +208,13 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @DisplayName("Given several papers, when filtering by several parameters, then status is 200 OK and papers are returned")
     fun getPagedWithParameters() {
         every {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createDummyPaper())
 
         val title = "label"
         val exact = true
         val doi = "10.456/8764"
+        val doiPrefix = "10.456"
         val visibility = VisibilityFilter.ALL_LISTED
         val verified = true
         val createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
@@ -230,6 +231,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .param("title", title)
             .param("exact", exact.toString())
             .param("doi", doi)
+            .param("doi_prefix", doiPrefix)
             .param("visibility", visibility.name)
             .param("verified", verified.toString())
             .param("created_by", createdBy.value.toString())
@@ -253,6 +255,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         parameterWithName("title").description("A search term that must be contained in the title of the paper. (optional)"),
                         parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("doi").description("Filter for the DOI of the paper. (optional)"),
+                        parameterWithName("doi_prefix").description("Filter for the DOI prefix of the DOI of the paper. (optional)"),
                         parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED"."""),
                         parameterWithName("verified").description("Filter for the verified flag of the paper. (optional)"),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created this paper. (optional)"),
@@ -276,6 +279,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                     it.shouldBeInstanceOf<ExactSearchString>().input shouldBe title
                 },
                 doi = doi,
+                doiPrefix = doiPrefix,
                 visibility = visibility,
                 verified = verified,
                 createdBy = createdBy,
@@ -295,7 +299,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     fun `Given several papers, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
         val exception = UnknownSortingProperty("unknown")
         every {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
         mockMvc.perform(get("/api/papers?sort=unknown"))
@@ -307,7 +311,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers"))
 
         verify(exactly = 1) {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 

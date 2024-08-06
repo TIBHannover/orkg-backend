@@ -67,6 +67,7 @@ class SpringDataNeo4jPaperAdapter(
         pageable: Pageable,
         label: SearchString?,
         doi: String?,
+        doiPrefix: String?,
         visibility: VisibilityFilter?,
         verified: Boolean?,
         createdBy: ContributorId?,
@@ -82,6 +83,7 @@ class SpringDataNeo4jPaperAdapter(
         .withCommonQuery {
             val node = node("Paper").named("node")
             val nodes = name("nodes")
+            val doiLiteral = name("doi")
             val patterns = listOfNotNull(
                 researchField?.let {
                     val researchFieldNode = node(Classes.researchField).withProperties("id", anonParameter(it.value))
@@ -95,6 +97,7 @@ class SpringDataNeo4jPaperAdapter(
                     }
                 },
                 doi?.let { node.relationshipTo(node("Literal").withProperties("label", anonParameter(doi))) },
+                doiPrefix?.let { node.relationshipTo(node("Literal").named(doiLiteral)) },
                 sustainableDevelopmentGoal?.let {
                     node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
                         .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))
@@ -141,6 +144,7 @@ class SpringDataNeo4jPaperAdapter(
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
                 organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
+                doiPrefix.toCondition { doiLiteral.property("label").startsWith(anonParameter(it.dropLastWhile { it == '/' } + '/')) },
                 if (label != null && patterns.isNotEmpty()) node.asExpression().`in`(nodes) else Conditions.noCondition()
             )
         }

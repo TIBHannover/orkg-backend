@@ -228,6 +228,61 @@ fun <
                 }
             }
         }
+        context("by doi prefix") {
+            val expectedCount = 3
+            val resources = fabricator.random<List<Resource>>().toPapers().toMutableList()
+            val doi = "10.564/531453"
+            val doiPrefix = doi.split('/').first()
+            val doiLiteral = fabricator.random<Literal>().copy(
+                label = doi,
+                datatype = Literals.XSD.STRING.prefixedUri
+            )
+            val hasDoi = createPredicate(Predicates.hasDOI)
+            val expected = resources.take(expectedCount)
+
+            expected.forEach {
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = it,
+                        predicate = hasDoi,
+                        `object` = doiLiteral
+                    )
+                )
+            }
+
+            resources.drop(expectedCount)
+                .mapIndexed { index, paper ->
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = paper,
+                        predicate = hasDoi,
+                        `object` = fabricator.random<Literal>().copy(label = "10.565/$index")
+                    )
+                }
+                .forEach(saveStatement)
+
+            val result = repository.findAll(
+                pageable = PageRequest.of(0, 5),
+                doiPrefix = doiPrefix,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expectedCount
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expectedCount
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
         context("by visibility") {
             val resources = fabricator.random<List<Resource>>().toPapers().mapIndexed { index, resource ->
                 resource.copy(

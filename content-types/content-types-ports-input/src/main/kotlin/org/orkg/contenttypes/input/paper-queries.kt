@@ -20,6 +20,7 @@ interface RetrievePaperUseCase {
         pageable: Pageable,
         label: SearchString?,
         doi: String?,
+        doiPrefix: String?,
         visibility: VisibilityFilter?,
         verified: Boolean?,
         createdBy: ContributorId?,

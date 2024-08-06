@@ -26,6 +26,7 @@ dependencies {
     restdocs(project(withSnippets(":statistics:statistics-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":curation:curation-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":widget")))
+    asciidoctor("io.spring.asciidoctor.backends:spring-asciidoctor-backends:0.0.7")
 }
 
 val aggregatedSnippetsDir = layout.buildDirectory.dir("generated-snippets")
@@ -46,12 +47,25 @@ val aggregateRestDocsSnippets by tasks.registering(Copy::class) {
     into(aggregatedSnippetsDir)
 }
 
+val subfolders = listOf("api-doc", "architecture", "references")
+
+val asciidoctorCopyAssets by tasks.registering(Copy::class) {
+    into(asciidoctor.get().outputDir)
+    subfolders.forEach { subfolder ->
+        into(subfolder) {
+            from("rest-api") {
+                include("css/**", "img/**")
+            }
+        }
+    }
+}
+
 val asciidoctor by tasks.existing(AsciidoctorTask::class) {
     sourceDir("rest-api")
 
     // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
     // Other outputs are filtered, because they do not affect the output of this task.
-    val docSources = files(sourceDir).asFileTree.matching { include("**/*.adoc") }
+    val docSources = files(sourceDir).asFileTree.matching { include("**/*.adoc", "**/*.css", "**/*.svg", "**/*.html") }
     inputs.files(docSources, aggregateRestDocsSnippets)
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .ignoreEmptyDirectories()
@@ -82,7 +96,7 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
 
     // outputs.upToDateWhen { false }
     outputOptions {
-        backends("html5")
+        backends("spring-html")
     }
 
     options(mapOf("doctype" to "book"))
@@ -96,6 +110,7 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
             "linkattrs" to "true",
             "encoding" to "utf-8",
             "snippets" to aggregatedSnippetsDir,
+            "docinfo" to "shared,private"
         )
     )
 
@@ -103,11 +118,17 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
         delegateClosureOf<PatternSet> {
             exclude("parts/**")
             include("*.adoc")
-            include("api-doc/*.adoc")
-            include("architecture/*.adoc")
-            include("references/*.adoc")
+            subfolders.forEach { include("$it/*.adoc") }
         }
     )
+
+    resources {
+        from(sourceDir) {
+            include("css/**", "img/**")
+        }
+    }
+
+    finalizedBy("asciidoctorCopyAssets")
 }
 
 val packageHTML by tasks.registering(Jar::class) {

@@ -1,6 +1,7 @@
 [.text-justify]
 = Hexagonal Architecture
 :toc:
+:docinfo: shared,private
 
 == Motivation
 

@@ -7,6 +7,7 @@
 The ORKG Development Team
 // toc-title definition MUST follow document title without blank line!
 :toc-title: Table of Contents
+:docinfo: shared,private
 
 //additional style for arc42 help callouts
 ifdef::basebackend-html[]

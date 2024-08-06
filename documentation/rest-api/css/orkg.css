@@ -1,0 +1,103 @@
+:root {
+    --toc-active-background-color: rgb(128, 134, 155);
+    --toc-active-font-color: rgb(255, 255, 255);
+    --toc-hover-background-color: #e9ebf2;
+    --asciidoctor-admonition-background: rgb(248, 249, 251);
+    --orkg-background-color: #E9EBF2;
+    --orkg-header-background-color: white;
+    --orkg-content-background-color: white;
+    --orkg-block-border-color: #dee2e6;
+    --orkg-toc-background-color: rgb(215, 218, 227);
+}
+
+html.dark-theme {
+    --toc-active-background-color: #3A3F4A;
+    --toc-active-font-color: #E5E5E5;
+    --toc-hover-background-color: #343943;
+    --asciidoctor-admonition-background: #303237;
+    --body-background-color: var(--orkg-background-color);
+    --font-weight: 500;
+    --orkg-background-color: #000000;
+    --orkg-header-background-color: #1D2024;
+    --orkg-content-background-color: #1D2024;
+    --orkg-block-border-color: #3C3F46;
+    --orkg-toc-background-color: #1D2024;
+}
+
+#banner {
+    background-image: url("../img/orkg.svg");
+}
+
+body {
+    background-color: var(--orkg-background-color);
+}
+
+html.dark-theme #banner {
+    background-image: url("../img/orkg.svg");
+}
+
+#doc {
+    background-image: none;
+    background: var(--orkg-content-background-color);
+    box-shadow: 0 0 8px 0 #00000021;
+    border-radius: 6px;
+    margin-top: 1.7rem;
+    margin-bottom: 1.7rem;
+}
+
+#banner-container {
+    background: var(--orkg-header-background-color);
+    box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 8px 0px;
+    border-bottom: none;
+}
+
+html.dark-theme #doc {
+    background-image: none;
+    background: var(--orkg-content-background-color);
+}
+
+@media screen and (max-width: 800px) {
+    html.dark-theme #doc, #doc {
+        background: none;
+    }
+}
+
+#toc.toc2 {
+  width: 23.5em;
+}
+
+#toc {
+    background: var(--orkg-toc-background-color);
+    margin-top: 1.7rem;
+    margin-bottom: 1.7rem;
+    padding-bottom: 1.7rem;
+    border-radius: 6px;
+    border-right: none;
+}
+
+a {
+    color: #e86161 !important;
+}
+
+a:hover {
+    color: #ba4e4e !important;
+    text-decoration: underline !important;
+}
+
+#toc a {
+    color: var(--toc-font-color) !important;
+}
+
+#toc li.active > a {
+    color: var(--toc-active-font-color) !important;
+}
+
+.admonitionblock, .literalblock, .listingblock {
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.125) !important;
+    border-color: var(--orkg-block-border-color) !important;
+}
+
+body.fixed-toc #toc {
+    height: calc(100% - 3.4rem);
+}

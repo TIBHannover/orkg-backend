@@ -2,6 +2,7 @@
 :doctype: book
 :toc: right
 :icons: font
+:docinfo: shared,private
 
 // Non-document attributes
 include::../_default-attributes.adoc[]

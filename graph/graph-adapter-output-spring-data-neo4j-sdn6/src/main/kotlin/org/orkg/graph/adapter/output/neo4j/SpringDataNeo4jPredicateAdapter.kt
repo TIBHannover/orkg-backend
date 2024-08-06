@@ -1,12 +1,20 @@
 package org.orkg.graph.adapter.output.neo4j
 
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
+import org.neo4j.cypherdsl.core.Cypher
+import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.call
+import org.neo4j.cypherdsl.core.Cypher.name
+import org.neo4j.cypherdsl.core.Functions.size
+import org.neo4j.cypherdsl.core.Functions.toLower
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.neo4jdsl.appendOrderByOptimizations
-import org.orkg.common.neo4jdsl.sortedWith
+import org.orkg.common.neo4jdsl.CypherQueryBuilder
+import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
+import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
+import org.orkg.common.neo4jdsl.QueryCache.Uncached
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jPredicate
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jPredicateIdGenerator
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jPredicateRepository
@@ -20,12 +28,14 @@ import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 const val PREDICATE_ID_TO_PREDICATE_CACHE = "predicate-id-to-predicate"
+
+private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_predicate_on_label"
 
 @Component
 @CacheConfig(cacheNames = [PREDICATE_ID_TO_PREDICATE_CACHE])
@@ -34,28 +44,88 @@ class SpringDataNeo4jPredicateAdapter(
     private val idGenerator: Neo4jPredicateIdGenerator,
     private val neo4jClient: Neo4jClient
 ) : PredicateRepository {
-    override fun findAll(pageable: Pageable): Page<Predicate> =
-        findAllWithFilters(pageable = pageable)
-
     override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
-
-    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Predicate> =
-        when (labelSearchString) {
-            is ExactSearchString -> neo4jRepository.findAllByLabel(
-                query = labelSearchString.query,
-                label = labelSearchString.input,
-                pageable = pageable
-            )
-            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(
-                label = labelSearchString.query,
-                minLabelLength = labelSearchString.input.length,
-                pageable = pageable
-            )
-        }.map(Neo4jPredicate::toPredicate)
 
     @Cacheable(key = "#id")
     override fun findById(id: ThingId): Optional<Predicate> =
         neo4jRepository.findById(id).map(Neo4jPredicate::toPredicate)
+
+    override fun findAll(pageable: Pageable): Page<Predicate> =
+        findAll(
+            pageable = pageable,
+            label = null,
+            createdBy = null,
+            createdAtStart = null,
+            createdAtEnd = null
+        )
+
+    override fun findAll(
+        pageable: Pageable,
+        label: SearchString?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?
+    ): Page<Predicate> = CypherQueryBuilder(neo4jClient, Uncached)
+        .withCommonQuery {
+            val node = Cypher.node("Predicate").named("node")
+            val match = label?.let { searchString ->
+                when (searchString) {
+                    is ExactSearchString -> {
+                        call("db.index.fulltext.queryNodes")
+                            .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                            .yield("node")
+                            .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))))
+                            .with(node)
+                    }
+                    is FuzzySearchString -> {
+                        call("db.index.fulltext.queryNodes")
+                            .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                            .yield("node", "score")
+                            .where(size(node.property("label")).gte(anonParameter(searchString.input.length)))
+                            .with(node, name("score"))
+                    }
+                }
+            } ?: Cypher.match(node).with(node)
+            match.where(
+                createdBy.toCondition { node.property("created_by").eq(anonParameter(it.value.toString())) },
+                createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
+                createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) }
+            )
+        }
+        .withQuery { commonQuery ->
+            val node = name("node")
+            val score = if (label != null && label is FuzzySearchString) name("score") else null
+            val variables = listOfNotNull(node, score)
+            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
+            commonQuery
+                .with(variables) // "with" is required because cypher dsl reorders "orderBy" and "where" clauses sometimes, decreasing performance
+                .where(
+                    orderByOptimizations(
+                        node = node,
+                        sort = sort,
+                        properties = arrayOf("id", "label", "created_at", "created_by")
+                    )
+                )
+                .with(variables)
+                .orderBy(
+                    if (score != null) {
+                        listOf(
+                            size(node.property("label")).ascending(),
+                            score.descending(),
+                            node.property("created_at").ascending()
+                        )
+                    } else {
+                        sort.toSortItems(
+                            node = node,
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by")
+                        )
+                    }
+                )
+                .returning(node)
+        }
+        .countOver("node")
+        .mappedBy(PredicateMapper("node"))
+        .fetch(pageable, false)
 
     @Caching(
         evict = [
@@ -94,44 +164,6 @@ class SpringDataNeo4jPredicateAdapter(
             id = idGenerator.nextIdentity()
         } while (neo4jRepository.existsById(id))
         return id
-    }
-
-    override fun findAllWithFilters(
-        createdBy: ContributorId?,
-        createdAt: OffsetDateTime?,
-        pageable: Pageable
-    ): Page<Predicate> {
-        val where = buildString {
-            if (createdBy != null) {
-                append(" AND n.created_by = ${'$'}createdBy")
-            }
-            if (createdAt != null) {
-                append(" AND n.created_at = ${'$'}createdAt")
-            }
-            appendOrderByOptimizations(pageable, createdAt, createdBy?.value)
-        }.replaceFirst(" AND", "WHERE")
-        val query = """
-            MATCH (n:Predicate) $where
-            RETURN n, n.id AS id, n.label AS label, n.created_by AS created_by, n.created_at AS created_at
-            SKIP ${'$'}skip LIMIT ${'$'}limit""".sortedWith(pageable.sort).trimIndent()
-        val countQuery = """
-            MATCH (n:Predicate) $where
-            RETURN COUNT(n)""".trimIndent()
-        val parameters = mapOf(
-            "createdBy" to createdBy?.value?.toString(),
-            "createdAt" to createdAt?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-        )
-        val elements = neo4jClient.query(query)
-            .bindAll(parameters + mapOf("skip" to pageable.offset, "limit" to pageable.pageSize))
-            .fetchAs(Predicate::class.java)
-            .mappedBy(PredicateMapper("n"))
-            .all()
-        val count = neo4jClient.query(countQuery)
-            .bindAll(parameters)
-            .fetchAs(Long::class.java)
-            .one()
-            .orElse(0)
-        return PageImpl(elements.toList(), pageable, count)
     }
 
     override fun isInUse(id: ThingId): Boolean =

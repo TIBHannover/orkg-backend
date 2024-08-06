@@ -10,6 +10,9 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
+import java.time.OffsetDateTime
+import java.util.*
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.GeneralStatement
@@ -23,6 +26,7 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
@@ -100,146 +104,239 @@ fun <
     }
 
     describe("finding several predicates") {
-        context("by label") {
-            val expectedCount = 3
-            val label = "label-to-find"
-            val predicates = fabricator.random<List<Predicate>>().toMutableList()
-            (0 until 3).forEach {
-                predicates[it] = predicates[it].copy(label = label)
-            }
-
-            val expected = predicates.take(expectedCount)
-
-            context("with exact matching") {
-                predicates.forEach(repository::save)
-                val result = repository.findAllByLabel(
-                    SearchString.of(label, exactMatch = true),
-                    PageRequest.of(0, 5)
-                )
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-            context("with fuzzy matching") {
-                predicates.forEach(repository::save)
-                val result = repository.findAllByLabel(
-                    SearchString.of("label find", exactMatch = false),
-                    PageRequest.of(0, 5)
-                )
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-        }
         context("with filters") {
             context("using no parameters") {
-                val resources = fabricator.random<Predicate>(10)
-                resources.forEach(repository::save)
+                val predicates = fabricator.random<List<Predicate>>()
+                predicates.forEach(repository::save)
 
+                val expected = predicates.sortedBy { it.createdAt }.take(10)
                 val pageable = PageRequest.of(0, 10)
-                val result = repository.findAllWithFilters(pageable = pageable)
+                val result = repository.findAll(pageable)
 
                 it("returns the correct result") {
                     result shouldNotBe null
                     result.content shouldNotBe null
-                    result.content.size shouldBe resources.size
-                    result.content shouldContainAll resources
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 10
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe resources.size
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-            context("using several parameters") {
-                val resources = fabricator.random<MutableList<Predicate>>()
-                resources.forEach(repository::save)
-
-                val expected = listOf(resources[0])
-                val pageable = PageRequest.of(0, 10)
-                val result = repository.findAllWithFilters(
-                    createdBy = resources.first().createdBy,
-                    createdAt = resources.first().createdAt,
-                    pageable = pageable
-                )
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expected.size
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 10
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expected.size
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-            context("using sorting parameters") {
-                val resources = fabricator.random<List<Predicate>>()
-                resources.forEach(repository::save)
-
-                val expected = resources.sortedByDescending { it.createdBy.value.toString() }.take(10)
-                val pageable = PageRequest.of(0, 10, Sort.by("created_by").descending())
-                val result = repository.findAllWithFilters(pageable = pageable)
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expected.size
+                    result.content.size shouldBe 10
                     result.content shouldContainAll expected
                 }
                 it("pages the result correctly") {
                     result.size shouldBe 10
                     result.number shouldBe 0
                     result.totalPages shouldBe 2
-                    result.totalElements shouldBe resources.size
+                    result.totalElements shouldBe predicates.size
                 }
-                it("sorts the results by descending created by") {
+                it("sorts the results by creation date by default") {
                     result.content.zipWithNext { a, b ->
-                        a.createdBy.value.toString() shouldBeGreaterThan b.createdBy.value.toString()
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("by label") {
+                val expectedCount = 3
+                val label = "label-to-find"
+                val predicates = fabricator.random<List<Predicate>>().toMutableList()
+                (0 until 3).forEach {
+                    predicates[it] = predicates[it].copy(label = label)
+                }
+
+                val expected = predicates.take(expectedCount)
+
+                context("with exact matching") {
+                    predicates.forEach(repository::save)
+                    val result = repository.findAll(
+                        pageable = PageRequest.of(0, 5),
+                        label = SearchString.of(label, exactMatch = true),
+                    )
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expectedCount
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 5
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expectedCount
+                    }
+                    xit("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
+                        }
+                    }
+                }
+                context("with fuzzy matching") {
+                    predicates.forEach(repository::save)
+                    val result = repository.findAll(
+                        pageable = PageRequest.of(0, 5),
+                        label = SearchString.of("label find", exactMatch = false)
+                    )
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expectedCount
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 5
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expectedCount
+                    }
+                    xit("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
+                        }
+                    }
+                }
+            }
+            context("by created by") {
+                val expectedCount = 3
+                val predicates = fabricator.random<List<Predicate>>().toMutableList()
+                val createdBy = ContributorId(UUID.randomUUID())
+                (0 until 3).forEach {
+                    predicates[it] = predicates[it].copy(createdBy = createdBy)
+                }
+                predicates.forEach(repository::save)
+
+                val expected = predicates.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    createdBy = createdBy
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("by created at start") {
+                val expectedCount = 3
+                val predicates = fabricator.random<List<Predicate>>().mapIndexed { index, predicate ->
+                    predicate.copy(
+                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong())
+                    )
+                }
+                predicates.forEach(repository::save)
+
+                val expected = predicates.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    createdAtStart = expected.last().createdAt
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("by created at end") {
+                val expectedCount = 3
+                val predicates = fabricator.random<List<Predicate>>().mapIndexed { index, predicate ->
+                    predicate.copy(
+                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())
+                    )
+                }
+                predicates.forEach(repository::save)
+
+                val expected = predicates.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    createdAtEnd = expected.last().createdAt
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("using all parameters") {
+                val predicates = fabricator.random<List<Predicate>>()
+                predicates.forEach(repository::save)
+
+                val expected = createPredicate()
+                repository.save(expected)
+
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    label = SearchString.of(expected.label, exactMatch = true),
+                    createdBy = expected.createdBy,
+                    createdAtStart = expected.createdAt,
+                    createdAtEnd = expected.createdAt,
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 1
+                    result.content shouldContainAll setOf(expected)
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe 1
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            it("sorts the results by multiple properties") {
+                val predicates = fabricator.random<List<Predicate>>().toMutableList()
+                predicates[1] = predicates[1].copy(label = predicates[0].label)
+                predicates.forEach(repository::save)
+
+                val sort = Sort.by("label").ascending().and(Sort.by("created_at").descending())
+                val result = repository.findAll(PageRequest.of(0, 12, sort))
+
+                result.content.zipWithNext { a, b ->
+                    if (a.label == b.label) {
+                        a.createdAt shouldBeGreaterThan b.createdAt
+                    } else {
+                        a.label shouldBeLessThan b.label
                     }
                 }
             }

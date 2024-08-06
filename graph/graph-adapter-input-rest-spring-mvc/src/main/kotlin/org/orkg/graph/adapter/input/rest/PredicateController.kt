@@ -1,5 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
+import java.time.OffsetDateTime
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.annotations.RequireLogin
@@ -13,6 +15,8 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase.ReplaceCommand
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -30,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/predicates/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/predicates", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PredicateController(
     override val statementService: StatementUseCases,
     private val service: PredicateUseCases
@@ -40,16 +44,22 @@ class PredicateController(
     fun findById(@PathVariable id: ThingId): PredicateRepresentation =
         service.findById(id).mapToPredicateRepresentation().orElseThrow { PredicateNotFound(id) }
 
-    @GetMapping("/")
-    fun findByLabel(
+    @GetMapping
+    fun findAll(
         @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
+        @RequestParam("created_by", required = false) createdBy: ContributorId?,
+        @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
+        @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
         pageable: Pageable
     ): Page<PredicateRepresentation> =
-        when (string) {
-            null -> service.findAll(pageable)
-            else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
-        }.mapToPredicateRepresentation()
+        service.findAll(
+            pageable = pageable,
+            label = string?.let { SearchString.of(string, exactMatch) },
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+        ).mapToPredicateRepresentation()
 
     @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])

@@ -15,11 +15,14 @@ operation::predicate-controller-integration-test-fetch[snippets='curl-request,ht
 [[predicates-list]]
 == Listing predicates
 
-A `GET` request lists all predicates:
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<predicates-fetch,predicates>>.
+If no paging request parameters are provided, the default values will be used.
 
-TIP: {pagination_note}
+operation::predicates-get-paged[snippets='curl-request']
 
-operation::predicate-controller-integration-test-lookup[snippets='request-parameters,curl-request']
+The following list of request parameters are supported:
+
+operation::predicates-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 [[predicates-create]]
 == Creating predicates

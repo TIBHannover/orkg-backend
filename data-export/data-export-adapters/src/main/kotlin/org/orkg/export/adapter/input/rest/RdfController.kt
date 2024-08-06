@@ -52,7 +52,7 @@ class RdfController(
         if (searchString != null) {
             val labelSearchString = SearchString.of(searchString, exactMatch = exactMatch)
             when (type) {
-                "property" -> predicateRepository.findAllByLabel(labelSearchString, pageable)
+                "property" -> predicateRepository.findAll(label = labelSearchString, pageable = pageable)
                     .mapToPredicateRepresentation()
 
                 "class" -> classRepository.findAll(label = labelSearchString, pageable = pageable)

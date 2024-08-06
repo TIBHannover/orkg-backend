@@ -136,7 +136,10 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
     fun testFilterPredicates() {
         // TODO: Search strings are not comparable, so they cannot be used here.
         every {
-            predicateRepository.findAllByLabel(any<FuzzySearchString>(), any<Pageable>())
+            predicateRepository.findAll(
+                label = any<FuzzySearchString>(),
+                pageable = any<Pageable>()
+            )
         } returns pageOf(
             listOf(createPredicate(id = ThingId("P1234"), label = "Predicate 1234"))
         )

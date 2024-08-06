@@ -41,14 +41,17 @@ class PredicateService(
         return id
     }
 
-    override fun findAll(pageable: Pageable): Page<Predicate> =
-        repository.findAll(pageable)
+    override fun findAll(
+        pageable: Pageable,
+        label: SearchString?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?
+    ): Page<Predicate> =
+        repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd)
 
     override fun findById(id: ThingId): Optional<Predicate> =
         repository.findById(id)
-
-    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Predicate> =
-        repository.findAllByLabel(labelSearchString, pageable)
 
     override fun update(id: ThingId, command: UpdatePredicateUseCase.ReplaceCommand) {
         var found = repository.findById(id).get()

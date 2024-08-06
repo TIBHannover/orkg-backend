@@ -16,11 +16,11 @@ operation::class-controller-integration-test-fetch[snippets='curl-request,http-r
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<classes-fetch,classes>>.
 If no paging request parameters are provided, the default values will be used.
 
-operation::class-controller-integration-test-index[snippets='curl-request']
+operation::classes-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::class-controller-integration-test-lookup[snippets='request-parameters,curl-request']
+operation::classes-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 [[classes-create]]
 == Creating classes

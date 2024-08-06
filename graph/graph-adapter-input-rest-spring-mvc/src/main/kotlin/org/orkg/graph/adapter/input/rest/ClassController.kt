@@ -1,7 +1,9 @@
 package org.orkg.graph.adapter.input.rest
 
 import java.net.URI
+import java.time.OffsetDateTime
 import javax.validation.Valid
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
@@ -14,6 +16,8 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateClassUseCase
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -34,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/classes/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/classes", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ClassController(
     private val service: ClassUseCases,
     override val statementService: StatementUseCases,
@@ -52,16 +56,22 @@ class ClassController(
     fun findByIds(@RequestParam ids: List<ThingId>, pageable: Pageable): Page<ClassRepresentation> =
         service.findAllById(ids, pageable).mapToClassRepresentation()
 
-    @GetMapping("/")
-    fun findByLabel(
+    @GetMapping
+    fun findAll(
         @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
+        @RequestParam("created_by", required = false) createdBy: ContributorId?,
+        @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
+        @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
         pageable: Pageable
     ): Page<ClassRepresentation> =
-        when (string) {
-            null -> service.findAll(pageable)
-            else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
-        }.mapToClassRepresentation()
+        service.findAll(
+            pageable = pageable,
+            label = string?.let { SearchString.of(string, exactMatch) },
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+        ).mapToClassRepresentation()
 
     @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])

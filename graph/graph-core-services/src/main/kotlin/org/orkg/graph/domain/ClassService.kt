@@ -52,17 +52,21 @@ class ClassService(
     @Transactional(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
 
-    override fun findAll(pageable: Pageable): Page<Class> =
-        repository.findAll(pageable)
+    override fun findAll(
+        pageable: Pageable,
+        label: SearchString?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?
+    ): Page<Class> =
+        repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd)
 
+    @Deprecated("For removal")
     override fun findAllById(ids: Iterable<ThingId>, pageable: Pageable): Page<Class> =
         repository.findAllById(ids, pageable)
 
     override fun findById(id: ThingId): Optional<Class> =
         repository.findById(id)
-
-    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Class> =
-        repository.findAllByLabel(labelSearchString, pageable)
 
     override fun update(command: UpdateClassUseCase.UpdateCommand) {
         if (command.label == null && command.uri == null) {

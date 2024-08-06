@@ -2,13 +2,13 @@ package org.orkg.export.adapter.input.rest
 
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.adapter.input.rest.ThingRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.adapter.input.rest.ThingRepresentation
 import org.orkg.graph.input.FormattedLabelUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
@@ -55,7 +55,7 @@ class RdfController(
                 "property" -> predicateRepository.findAllByLabel(labelSearchString, pageable)
                     .mapToPredicateRepresentation()
 
-                "class" -> classRepository.findAllByLabel(labelSearchString, pageable)
+                "class" -> classRepository.findAll(label = labelSearchString, pageable = pageable)
                     .mapToClassRepresentation()
 
                 else -> resourceRepository.findAll(label = labelSearchString, pageable = pageable)

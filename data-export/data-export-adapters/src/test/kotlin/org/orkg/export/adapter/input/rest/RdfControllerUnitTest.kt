@@ -115,7 +115,12 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
     @Test
     fun testFilterClasses() {
         // TODO: Search strings are not comparable, so they cannot be used here.
-        every { classRepository.findAllByLabel(any<FuzzySearchString>(), any<Pageable>()) } returns PageImpl(
+        every {
+            classRepository.findAll(
+                label = any<FuzzySearchString>(),
+                pageable = any<Pageable>()
+            )
+        } returns PageImpl(
             listOf(createClass(id = ThingId("C1234"), label = "Class 1234"))
         )
         every { statementService.findAllDescriptions(any()) } returns emptyMap()

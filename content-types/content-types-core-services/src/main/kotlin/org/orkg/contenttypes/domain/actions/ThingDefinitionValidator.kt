@@ -8,6 +8,7 @@ import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Label
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.ReservedClass
 import org.orkg.graph.domain.Thing
@@ -70,6 +71,11 @@ open class ThingDefinitionValidator(
         thingDefinitions.literals.values.forEach {
             if (it.label.length > MAX_LABEL_LENGTH) {
                 throw InvalidLiteralLabel()
+            }
+            Literals.XSD.fromString(it.dataType)?.let { xsd ->
+                if (!xsd.canParse(it.label)) {
+                    throw InvalidLiteralLabel(it.label, it.dataType)
+                }
             }
         }
         thingDefinitions.predicates.values.forEach {

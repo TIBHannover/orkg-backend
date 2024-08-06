@@ -72,7 +72,7 @@ class LiteralServiceUnitTest : DescribeSpec({
                         CreateCommand(
                             contributorId = ContributorId(UUID.randomUUID()),
                             label = notANumber,
-                            datatype = "xsd:decimal"
+                            datatype = Literals.XSD.DECIMAL.prefixedUri
                         )
                     )
                 }

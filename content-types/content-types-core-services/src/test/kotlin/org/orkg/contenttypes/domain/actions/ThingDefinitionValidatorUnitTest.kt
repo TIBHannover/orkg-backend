@@ -210,12 +210,35 @@ class ThingDefinitionValidatorUnitTest {
     }
 
     @Test
-    fun `Given paper contents, when label of literal is invalid, it throws an exception`() {
+    fun `Given paper contents, when label of literal is too long, it throws an exception`() {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = emptyMap(),
             literals = mapOf(
                 "#temp1" to LiteralDefinition(
                     label = "a".repeat(MAX_LABEL_LENGTH + 1)
+                )
+            ),
+            predicates = emptyMap(),
+            contributions = emptyList()
+        )
+
+        assertThrows<InvalidLiteralLabel> {
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
+                thingDefinitions = contents,
+                tempIds = emptySet(),
+                validatedIds = mutableMapOf()
+            )
+        }
+    }
+
+    @Test
+    fun `Given paper contents, when label of literal does not match datatype constraints, it throws an exception`() {
+        val contents = CreatePaperUseCase.CreateCommand.PaperContents(
+            resources = emptyMap(),
+            literals = mapOf(
+                "#temp1" to LiteralDefinition(
+                    label = "not a number",
+                    dataType = Literals.XSD.DECIMAL.prefixedUri
                 )
             ),
             predicates = emptyMap(),

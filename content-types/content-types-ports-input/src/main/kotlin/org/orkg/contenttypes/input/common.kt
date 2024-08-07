@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.input
 
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Literals
 
@@ -8,7 +8,7 @@ data class PublicationInfoDefinition(
     val publishedMonth: Int?,
     val publishedYear: Long?,
     val publishedIn: String?,
-    val url: URI?
+    val url: ParsedIRI?
 )
 
 sealed interface ThingDefinitions {
@@ -33,7 +33,7 @@ data class ResourceDefinition(
 
 data class ClassDefinition(
     override val label: String,
-    val uri: URI? = null
+    val uri: ParsedIRI? = null
 ) : ThingDefinition
 
 data class ListDefinition(

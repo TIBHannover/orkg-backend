@@ -1,6 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.BeforeEach
@@ -496,7 +496,7 @@ internal class ExceptionControllerUnitTest {
         }
 
         @GetMapping("/uri-already-in-use")
-        fun uriAlreadyInUse(@RequestParam id: ThingId, @RequestParam uri: URI) {
+        fun uriAlreadyInUse(@RequestParam id: ThingId, @RequestParam uri: ParsedIRI) {
             throw URIAlreadyInUse(uri, id)
         }
 

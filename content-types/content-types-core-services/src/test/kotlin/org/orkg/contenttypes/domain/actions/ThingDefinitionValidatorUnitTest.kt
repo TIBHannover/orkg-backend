@@ -6,8 +6,8 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -324,7 +324,7 @@ class ThingDefinitionValidatorUnitTest {
 
     @Test
     fun `Given thing definitions, when specified class uri already exists, it throws an exception`() {
-        val uri = URI.create("https://orkg.org/class/C1")
+        val uri = ParsedIRI("https://orkg.org/class/C1")
         val contents = dummyUpdateTemplateInstanceCommand().copy(
             resources = emptyMap(),
             literals = emptyMap(),

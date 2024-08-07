@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
-import java.net.URI
 import java.time.OffsetDateTime
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -67,5 +67,5 @@ fun createDummyStringLiteralObjectPositionTemplateProperty() = StringLiteralTemp
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.hasObjectPosition, "has object position"),
-    datatype = ClassReference(Classes.string, "string literal property class label", URI.create(Literals.XSD.STRING.uri))
+    datatype = ClassReference(Classes.string, "string literal property class label", ParsedIRI(Literals.XSD.STRING.uri))
 )

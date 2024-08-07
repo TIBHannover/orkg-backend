@@ -4,8 +4,8 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -125,7 +125,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
         ).forEach { classService.createClass(label = it.value, id = it.value) }
 
         Literals.XSD.entries.forEach {
-            classService.createClass(label = it.`class`.value, id = it.`class`.value, uri = URI.create(it.uri))
+            classService.createClass(label = it.`class`.value, id = it.`class`.value, uri = ParsedIRI(it.uri))
         }
 
         resourceService.createResource(
@@ -230,7 +230,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\d+"
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
-                property.datatype shouldBe ClassReferenceRepresentation(ThingId("String"), "String", URI.create(Literals.XSD.STRING.uri))
+                property.datatype shouldBe ClassReferenceRepresentation(ThingId("String"), "String", ParsedIRI(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -245,7 +245,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.minInclusive shouldBe -1
                 property.maxInclusive shouldBe 10
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
-                property.datatype shouldBe ClassReferenceRepresentation(ThingId("Integer"), "Integer", URI.create(Literals.XSD.INT.uri))
+                property.datatype shouldBe ClassReferenceRepresentation(ThingId("Integer"), "Integer", ParsedIRI(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }

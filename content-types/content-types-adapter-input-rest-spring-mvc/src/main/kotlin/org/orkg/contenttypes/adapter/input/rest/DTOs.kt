@@ -1,9 +1,9 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.net.URI
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.PositiveOrZero
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ClassDefinition
 import org.orkg.contenttypes.input.ListDefinition
@@ -71,7 +71,7 @@ data class ResourceDefinitionDTO(
 data class ClassDefinitionDTO(
     @field:NotBlank
     val label: String,
-    val uri: URI? = null
+    val uri: ParsedIRI? = null
 ) {
     fun toCreateCommand(): ClassDefinition =
         ClassDefinition(

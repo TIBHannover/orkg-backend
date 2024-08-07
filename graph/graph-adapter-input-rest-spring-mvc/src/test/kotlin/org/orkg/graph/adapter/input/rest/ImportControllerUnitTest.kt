@@ -3,7 +3,7 @@ package org.orkg.graph.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.CoreMatchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -39,7 +39,7 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
     fun importResourceByURI() {
         val id = ThingId("R123")
         val request = ImportController.ImportByURIRequest(
-            uri = URI.create("https://www.wikidata.org/entity/Q42"),
+            uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
             ontology = "wikidata"
         )
 
@@ -115,7 +115,7 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
     fun importPredicateByURI() {
         val id = ThingId("P123")
         val request = ImportController.ImportByURIRequest(
-            uri = URI.create("https://www.wikidata.org/entity/P30"),
+            uri = ParsedIRI("https://www.wikidata.org/entity/P30"),
             ontology = "wikidata"
         )
 
@@ -191,7 +191,7 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
     fun importClassByURI() {
         val id = ThingId("C123")
         val request = ImportController.ImportByURIRequest(
-            uri = URI.create("https://www.wikidata.org/entity/Q42"),
+            uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
             ontology = "wikidata"
         )
 

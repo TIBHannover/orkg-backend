@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
-import java.net.URI
 import java.time.OffsetDateTime
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -48,7 +48,7 @@ fun createDummyLiteratureList() = LiteratureList(
             identifiers = mapOf(
                 "orcid" to listOf("0000-0002-1825-0097")
             ),
-            homepage = URI.create("https://example.org")
+            homepage = ParsedIRI("https://example.org")
         ),
         Author(
             id = null,

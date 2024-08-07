@@ -11,6 +11,11 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpResponse
+import java.util.stream.Stream
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -21,10 +26,6 @@ import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpResponse
-import java.util.stream.Stream
 import org.springframework.web.util.UriComponentsBuilder
 
 class OLSRepositoryAdapterUnitTest {
@@ -69,7 +70,7 @@ class OLSRepositoryAdapterUnitTest {
 
         verify(exactly = 1) {
             httpClient.send(withArg {
-                it.uri() shouldBe if (userInput is URI) {
+                it.uri() shouldBe if (userInput is ParsedIRI) {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
                     UriComponentsBuilder.fromHttpUrl(olsHostUrl)
                         .path("/ontologies/$ontologyId/terms")
@@ -110,7 +111,7 @@ class OLSRepositoryAdapterUnitTest {
 
         verify(exactly = 1) {
             httpClient.send(withArg {
-                it.uri() shouldBe if (userInput is URI) {
+                it.uri() shouldBe if (userInput is ParsedIRI) {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
                     UriComponentsBuilder.fromHttpUrl(olsHostUrl)
                         .path("/ontologies/$ontologyId/terms")
@@ -152,7 +153,7 @@ class OLSRepositoryAdapterUnitTest {
 
         verify(exactly = 1) {
             httpClient.send(withArg {
-                it.uri() shouldBe if (userInput is URI) {
+                it.uri() shouldBe if (userInput is ParsedIRI) {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
                     UriComponentsBuilder.fromHttpUrl(olsHostUrl)
                         .path("/ontologies/$ontologyId/terms")
@@ -194,19 +195,19 @@ class OLSRepositoryAdapterUnitTest {
                 OLSServiceAdapter::findClassByShortForm,
                 olsSuccessResponseJson,
                 ExternalThing(
-                    uri = URI.create("http://www.w3.org/2004/02/skos/core#Collection"),
+                    uri = ParsedIRI("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
                     description = "A meaningful collection of concepts."
                 )
             ),
             Arguments.of(
                 "Collection",
-                URI.create("https://sws.geonames.org/2950159"),
+                ParsedIRI("https://sws.geonames.org/2950159"),
                 "skos",
                 OLSServiceAdapter::findClassByURI,
                 olsSuccessResponseJson,
                 ExternalThing(
-                    uri = URI.create("http://www.w3.org/2004/02/skos/core#Collection"),
+                    uri = ParsedIRI("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
                     description = "A meaningful collection of concepts."
                 )
@@ -216,7 +217,7 @@ class OLSRepositoryAdapterUnitTest {
         @JvmStatic
         fun invalidInputs(): Stream<Arguments> = Stream.of(
             Arguments.of("abc", "!invalid", OLSServiceAdapter::findClassByShortForm),
-            Arguments.of(URI.create("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findClassByURI),
+            Arguments.of(ParsedIRI("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findClassByURI),
         )
     }
 }

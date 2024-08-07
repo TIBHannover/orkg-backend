@@ -9,10 +9,10 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.net.URI
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -1071,7 +1071,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = URI.create("http://example.org/author")
+                    homepage = ParsedIRI("http://example.org/author")
                 ),
                 AuthorDTO(
                     id = null,
@@ -1132,7 +1132,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = URI.create("http://example.org/author")
+                    homepage = ParsedIRI("http://example.org/author")
                 ),
                 AuthorDTO(
                     id = null,

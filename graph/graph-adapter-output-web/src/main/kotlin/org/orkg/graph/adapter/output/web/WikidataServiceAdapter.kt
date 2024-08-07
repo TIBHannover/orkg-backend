@@ -1,10 +1,10 @@
 package org.orkg.graph.adapter.output.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.util.regex.Pattern
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.send
 import org.orkg.graph.domain.ExternalThing
@@ -32,19 +32,19 @@ class WikidataServiceAdapter(
     override fun findResourceByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
         fetch(ontologyId, shortForm, itemIdPattern)
 
-    override fun findResourceByURI(ontologyId: String, uri: URI): ExternalThing? =
+    override fun findResourceByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
         fetch(ontologyId, uri.toString(), itemPattern)
 
     override fun findClassByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
         fetch(ontologyId, shortForm, itemIdPattern)
 
-    override fun findClassByURI(ontologyId: String, uri: URI): ExternalThing? =
+    override fun findClassByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
         fetch(ontologyId, uri.toString(), itemPattern)
 
     override fun findPredicateByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
         fetch(ontologyId, shortForm, propertyIdPattern)
 
-    override fun findPredicateByURI(ontologyId: String, uri: URI): ExternalThing? =
+    override fun findPredicateByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
         fetch(ontologyId, uri.toString(), propertyPattern)
 
     private fun fetch(ontologyId: String, input: String, pattern: Pattern): ExternalThing? {
@@ -76,7 +76,7 @@ class WikidataServiceAdapter(
             }
             val entity = tree.path("entities").path(id)
             ExternalThing(
-                uri = URI.create("https://www.wikidata.org/entity/$id"),
+                uri = ParsedIRI("https://www.wikidata.org/entity/$id"),
                 label = entity.path("labels").path("en").path("value").asText(),
                 description = entity.path("descriptions").path("en").path("value").asText()
             )

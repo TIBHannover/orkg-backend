@@ -4,12 +4,14 @@ plugins {
 
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
+    api("org.eclipse.rdf4j:rdf4j-util")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-web")
     api(libs.forkhandles.values4k)
     api(project(":common"))
     implementation("org.apache.lucene:lucene-queryparser") // Search string parsing
 
+    testFixturesApi("org.eclipse.rdf4j:rdf4j-util")
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
     testFixturesApi(libs.forkhandles.fabrikate4k)
     testFixturesApi(project(":common"))

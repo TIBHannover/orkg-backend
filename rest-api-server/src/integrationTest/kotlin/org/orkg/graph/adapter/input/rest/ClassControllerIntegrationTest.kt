@@ -1,7 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
-import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -75,7 +75,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         // Arrange
         val id = "dummy"
         val label = "dummy label"
-        val uri = URI.create("http://example.org/exists")
+        val uri = ParsedIRI("http://example.org/exists")
         service.createClass(id = id, label = label, uri = uri)
 
         // Act and Assert

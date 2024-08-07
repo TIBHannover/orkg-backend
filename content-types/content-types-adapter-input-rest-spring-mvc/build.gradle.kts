@@ -7,6 +7,7 @@ plugins {
 }
 
 dependencies {
+    api("org.eclipse.rdf4j:rdf4j-util")
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-core")
     api("org.springframework.data:spring-data-commons")

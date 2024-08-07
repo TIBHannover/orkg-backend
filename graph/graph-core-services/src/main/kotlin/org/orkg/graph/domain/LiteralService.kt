@@ -5,7 +5,7 @@ import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.toURIOrNull
+import org.orkg.common.toIRIOrNull
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.output.LiteralRepository
@@ -28,7 +28,7 @@ class LiteralService(
         }
         // Note: "xsd:foo" is a valid URI, so is everything starting with a letter followed by a colon.
         // There is no easy way around that, because other valid URIs use "prefix-like" structures, such as URNs.
-        if (command.datatype.startsWith("xsd:").not() && command.datatype.toURIOrNull() == null)
+        if (command.datatype.startsWith("xsd:").not() && command.datatype.toIRIOrNull() == null)
             throw InvalidLiteralDatatype()
         Literals.XSD.fromString(command.datatype)?.let { xsd ->
             if (!xsd.canParse(command.label)) {

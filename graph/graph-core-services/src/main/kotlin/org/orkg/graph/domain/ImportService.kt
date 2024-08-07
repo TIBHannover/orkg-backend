@@ -1,6 +1,6 @@
 package org.orkg.graph.domain
 
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
@@ -67,7 +67,7 @@ class ImportService(
     override fun importResourceByURI(
         contributorId: ContributorId,
         ontologyId: String,
-        uri: URI
+        uri: ParsedIRI
     ): ThingId {
         val statements = statementService.findAll(
             pageable = PageRequests.SINGLE,
@@ -119,7 +119,7 @@ class ImportService(
     override fun importPredicateByURI(
         contributorId: ContributorId,
         ontologyId: String,
-        uri: URI
+        uri: ParsedIRI
     ): ThingId {
         val statements = statementService.findAll(
             pageable = PageRequests.SINGLE,
@@ -165,7 +165,7 @@ class ImportService(
     override fun importClassByURI(
         contributorId: ContributorId,
         ontologyId: String,
-        uri: URI
+        uri: ParsedIRI
     ): ThingId {
         val existingClass = classService.findByURI(uri)
         if (existingClass.isPresent) {

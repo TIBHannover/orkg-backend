@@ -2,7 +2,7 @@ package org.orkg.contenttypes.domain.actions
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.InvalidMonth
@@ -19,7 +19,7 @@ class PublicationInfoValidatorUnitTest {
                 publishedMonth = 1,
                 publishedYear = 2024,
                 publishedIn = "valid venue",
-                url = URI.create("https://orkg.org/paper/R1000")
+                url = ParsedIRI("https://orkg.org/paper/R1000")
             ),
             Unit
         )

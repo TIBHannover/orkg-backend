@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Resource
 
@@ -11,7 +11,7 @@ data class Author(
     val name: String,
     val id: ThingId? = null,
     val identifiers: Map<String, List<String>>? = null,
-    val homepage: URI? = null
+    val homepage: ParsedIRI? = null
 )
 
 data class ComparisonAuthor(

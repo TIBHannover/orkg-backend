@@ -15,6 +15,7 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
 import java.util.stream.Stream
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -177,7 +178,7 @@ class WikidataRepositoryAdapterUnitTest {
                 wikidataItemSuccessResponseJson,
                 wikidataNotFoundResponseJson,
                 ExternalThing(
-                    uri = URI.create("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
@@ -189,7 +190,7 @@ class WikidataRepositoryAdapterUnitTest {
                 wikidataItemSuccessResponseJson,
                 wikidataNotFoundResponseJson,
                 ExternalThing(
-                    uri = URI.create("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
@@ -201,43 +202,43 @@ class WikidataRepositoryAdapterUnitTest {
                 wikidataPropertySuccessResponseJson,
                 wikidataNotFoundResponseJson,
                 ExternalThing(
-                    uri = URI.create("https://www.wikidata.org/entity/P30"),
+                    uri = ParsedIRI("https://www.wikidata.org/entity/P30"),
                     label = "continent",
                     description = "continent of which the subject is a part"
                 )
             ),
             Arguments.of(
                 "Q42",
-                URI.create("https://www.wikidata.org/entity/Q42"),
+                ParsedIRI("https://www.wikidata.org/entity/Q42"),
                 WikidataServiceAdapter::findResourceByURI,
                 wikidataItemSuccessResponseJson,
                 wikidataNotFoundResponseJson,
                 ExternalThing(
-                    uri = URI.create("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
             ),
             Arguments.of(
                 "Q42",
-                URI.create("https://www.wikidata.org/entity/Q42"),
+                ParsedIRI("https://www.wikidata.org/entity/Q42"),
                 WikidataServiceAdapter::findClassByURI,
                 wikidataItemSuccessResponseJson,
                 wikidataNotFoundResponseJson,
                 ExternalThing(
-                    uri = URI.create("https://www.wikidata.org/entity/Q42"),
+                    uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
                     description = "English author and humourist (1952-2001)"
                 )
             ),
             Arguments.of(
                 "P30",
-                URI.create("https://www.wikidata.org/entity/P30"),
+                ParsedIRI("https://www.wikidata.org/entity/P30"),
                 WikidataServiceAdapter::findPredicateByURI,
                 wikidataPropertySuccessResponseJson,
                 wikidataNotFoundResponseJson,
                 ExternalThing(
-                    uri = URI.create("https://www.wikidata.org/entity/P30"),
+                    uri = ParsedIRI("https://www.wikidata.org/entity/P30"),
                     label = "continent",
                     description = "continent of which the subject is a part"
                 )
@@ -249,12 +250,12 @@ class WikidataRepositoryAdapterUnitTest {
             Arguments.of("A42", WikidataServiceAdapter::findResourceByShortForm),
             Arguments.of("A42", WikidataServiceAdapter::findClassByShortForm),
             Arguments.of("A30", WikidataServiceAdapter::findPredicateByShortForm),
-            Arguments.of(URI.create("https://www.wikidata.org/entity/A42"), WikidataServiceAdapter::findResourceByURI),
-            Arguments.of(URI.create("https://www.wikidata.org/entity/A42"), WikidataServiceAdapter::findClassByURI),
-            Arguments.of(URI.create("https://www.wikidata.org/entity/A30"), WikidataServiceAdapter::findPredicateByURI),
-            Arguments.of(URI.create("https://www.wikidata.org/abc/A42"), WikidataServiceAdapter::findResourceByURI),
-            Arguments.of(URI.create("https://www.wikidata.org/abc/A42"), WikidataServiceAdapter::findClassByURI),
-            Arguments.of(URI.create("https://www.wikidata.org/abc/A30"), WikidataServiceAdapter::findPredicateByURI),
+            Arguments.of(ParsedIRI("https://www.wikidata.org/entity/A42"), WikidataServiceAdapter::findResourceByURI),
+            Arguments.of(ParsedIRI("https://www.wikidata.org/entity/A42"), WikidataServiceAdapter::findClassByURI),
+            Arguments.of(ParsedIRI("https://www.wikidata.org/entity/A30"), WikidataServiceAdapter::findPredicateByURI),
+            Arguments.of(ParsedIRI("https://www.wikidata.org/abc/A42"), WikidataServiceAdapter::findResourceByURI),
+            Arguments.of(ParsedIRI("https://www.wikidata.org/abc/A42"), WikidataServiceAdapter::findClassByURI),
+            Arguments.of(ParsedIRI("https://www.wikidata.org/abc/A30"), WikidataServiceAdapter::findPredicateByURI),
         )
     }
 }

@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -26,7 +26,7 @@ fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",
-        url = URI.create("http://example.org")
+        url = ParsedIRI("http://example.org")
     ),
     authors = listOf(
         Author(
@@ -44,7 +44,7 @@ fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = URI.create("http://example.org/author")
+            homepage = ParsedIRI("http://example.org/author")
         ),
         Author(
             name = "Author that just has a name"
@@ -127,7 +127,7 @@ fun dummyUpdatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",
-        url = URI.create("http://example.org")
+        url = ParsedIRI("http://example.org")
     ),
     authors = listOf(
         Author(
@@ -145,7 +145,7 @@ fun dummyUpdatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = URI.create("http://example.org/author")
+            homepage = ParsedIRI("http://example.org/author")
         ),
         Author(
             name = "Author that just has a name"

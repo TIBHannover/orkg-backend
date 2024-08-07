@@ -1,10 +1,10 @@
 package org.orkg.graph.domain
 
 import com.redfin.contractual.EqualsContract
-import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
 import java.util.function.Supplier
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 
@@ -22,7 +22,7 @@ internal class ClassEqualsContractTest : EqualsContract<Class> {
         label = "some label",
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(contributorUUID),
-        uri = URI.create(uri),
+        uri = ParsedIRI(uri),
     )
 
     override fun getEqualInstanceSupplier(): Supplier<Class> = Supplier {
@@ -31,7 +31,7 @@ internal class ClassEqualsContractTest : EqualsContract<Class> {
             label = "some label",
             createdAt = OffsetDateTime.parse(timeStamp),
             createdBy = ContributorId(contributorUUID),
-            uri = URI.create(uri)
+            uri = ParsedIRI(uri)
         )
     }
 
@@ -40,6 +40,6 @@ internal class ClassEqualsContractTest : EqualsContract<Class> {
         label = "some label",
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(contributorUUID),
-        uri = URI.create("https://example.com/different")
+        uri = ParsedIRI("https://example.com/different")
     )
 }

@@ -3,9 +3,9 @@ package org.orkg.export.domain
 import io.mockk.every
 import io.mockk.mockk
 import java.io.StringWriter
-import java.net.URI
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.graph.output.ClassHierarchyRepository
@@ -39,7 +39,7 @@ internal class ClassRDFTest {
             |<http://orkg.org/orkg/class/C100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val `class` = createClass(id = ThingId("C100"), label = "some dummy label", uri = URI("null"))
+        val `class` = createClass(id = ThingId("C100"), label = "some dummy label", uri = ParsedIRI("null"))
 
         every { classHierarchyRepository.findParent(`class`.id) } returns Optional.empty()
 

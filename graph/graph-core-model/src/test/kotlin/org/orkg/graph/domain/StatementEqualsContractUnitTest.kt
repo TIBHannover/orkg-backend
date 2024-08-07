@@ -1,10 +1,10 @@
 package org.orkg.graph.domain
 
 import com.redfin.contractual.EqualsContract
-import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
 import java.util.function.Supplier
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -82,7 +82,7 @@ internal class NastyBugOnStatementEqualsContractUnitTest : EqualsContract<Genera
     private val objectResource = Class(
         id = ThingId("C9041462869371419946"),
         label = "5ACqHV4e6",
-        uri = URI.create("https://agf1.com"),
+        uri = ParsedIRI("https://agf1.com"),
         createdAt = OffsetDateTime.parse("1976-02-06T23:39:51Z"),
         createdBy = ContributorId("6b0a50b3-6900-01cd-fabb-849228db2613"),
     )

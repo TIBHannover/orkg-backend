@@ -10,9 +10,9 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
-import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
@@ -379,7 +379,7 @@ fun <
     describe("finding a class") {
         context("by uri") {
             val expected = fabricator.random<Class>().copy(
-                uri = URI.create("https://example.org/uri/to/find")
+                uri = ParsedIRI("https://example.org/uri/to/find")
             )
             val classes = fabricator.random<List<Class>>().plus(expected)
 

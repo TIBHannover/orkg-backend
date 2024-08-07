@@ -7,11 +7,11 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.net.URI
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -209,7 +209,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
     @DisplayName("Given a class is created, when service succeeds, then status is 200 OK and class is returned")
     fun create() {
         val id = ThingId("C123")
-        val uri = URI.create("http://example.org/bar")
+        val uri = ParsedIRI("http://example.org/bar")
         val label = "foo"
         val request = mapOf("id" to id, "label" to label, "uri" to uri)
 
@@ -279,7 +279,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             createClass(
                 id = id,
                 label = "new label",
-                uri = URI.create("https://example.org/some/new#URI")
+                uri = ParsedIRI("https://example.org/some/new#URI")
             )
         )
         every {
@@ -313,7 +313,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             classService.replace(withArg {
                 it.id shouldBe id
                 it.label shouldBe "new label"
-                it.uri shouldBe URI.create("https://example.org/some/new#URI")
+                it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
             })
         }
         verify(exactly = 1) { classService.findById(id) }
@@ -353,7 +353,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             classService.update(withArg {
                 it.id shouldBe id
                 it.label shouldBe "some label"
-                it.uri shouldBe URI.create("https://example.org/some/new#URI")
+                it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
             })
         }
     }
@@ -394,7 +394,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             classService.update(withArg {
                 it.id shouldBe id
                 it.label shouldBe null
-                it.uri shouldBe URI.create("https://example.org/some/new#URI")
+                it.uri shouldBe ParsedIRI("https://example.org/some/new#URI")
             })
         }
     }
@@ -408,6 +408,6 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
         id = ThingId("C1"),
         label = "test class",
         createdAt = OffsetDateTime.now(clock),
-        uri = URI.create("http://example.org/exists")
+        uri = ParsedIRI("http://example.org/exists")
     )
 }

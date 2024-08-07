@@ -1,8 +1,8 @@
 package org.orkg.graph.adapter.input.rest
 
-import java.net.URI
 import java.time.OffsetDateTime
 import javax.validation.Valid
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
@@ -49,7 +49,7 @@ class ClassController(
         service.findById(id).mapToClassRepresentation().orElseThrow { ClassNotFound.withThingId(id) }
 
     @GetMapping("/", params = ["uri"])
-    fun findByURI(@RequestParam uri: URI): ClassRepresentation =
+    fun findByURI(@RequestParam uri: ParsedIRI): ClassRepresentation =
         service.findByURI(uri).mapToClassRepresentation().orElseThrow { ClassNotFound.withURI(uri) }
 
     @GetMapping("/", params = ["ids"])
@@ -119,16 +119,16 @@ class ClassController(
     data class CreateClassRequest(
         val id: ThingId?,
         val label: String,
-        val uri: URI?
+        val uri: ParsedIRI?
     )
 
     data class UpdateClassRequest(
         val label: String? = null,
-        val uri: URI? = null,
+        val uri: ParsedIRI? = null,
     )
 
     data class ReplaceClassRequest(
         val label: String,
-        val uri: URI? = null,
+        val uri: ParsedIRI? = null,
     )
 }

@@ -6,7 +6,7 @@ import org.orkg.common.isValidDateTime
 import org.orkg.common.isValidDecimal
 import org.orkg.common.isValidDuration
 import org.orkg.common.isValidTime
-import org.orkg.common.isValidURI
+import org.orkg.common.isValidIRI
 
 val reservedClassIds = setOf(
     Classes.literal,
@@ -180,7 +180,7 @@ object Literals {
         BOOLEAN("boolean", Classes.boolean, false, { it.toBooleanStrictOrNull() != null }),
         FLOAT("float", Classes.float, true, { it.toFloatOrNull() != null }),
         DOUBLE("double", Classes.double, true, { it.toDoubleOrNull() != null }),
-        URI("anyURI", Classes.uri, false, { it.isValidURI() }),
+        URI("anyURI", Classes.uri, false, { it.isValidIRI() }),
         DURATION("duration", Classes.duration, false, { it.isValidDuration() }),
         DATE_TIME("dateTime", Classes.dateTime, false, { it.isValidDateTime() }),
         TIME("time", Classes.time, false, { it.isValidTime() });

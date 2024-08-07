@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.domain.actions
 
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
@@ -104,7 +104,7 @@ abstract class PublicationInfoCreator(
     protected fun linkPublicationUrl(
         contributorId: ContributorId,
         subjectId: ThingId,
-        url: URI
+        url: ParsedIRI
     ) {
         val urlLiteralId = literalService.create(
             CreateCommand(

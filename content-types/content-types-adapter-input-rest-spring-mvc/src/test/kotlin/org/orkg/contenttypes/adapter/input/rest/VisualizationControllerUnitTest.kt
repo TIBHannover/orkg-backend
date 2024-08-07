@@ -3,8 +3,8 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import java.net.URI
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
@@ -391,7 +391,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = URI.create("http://example.org/author")
+                    homepage = ParsedIRI("http://example.org/author")
                 ),
                 AuthorDTO(
                     id = null,

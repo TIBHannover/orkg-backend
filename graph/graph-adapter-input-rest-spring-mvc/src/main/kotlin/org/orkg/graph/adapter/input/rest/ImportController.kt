@@ -3,7 +3,7 @@ package org.orkg.graph.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
 import org.orkg.graph.input.ImportUseCases
@@ -106,7 +106,7 @@ class ImportController(
     sealed interface ImportRequest
 
     data class ImportByURIRequest(
-        val uri: URI,
+        val uri: ParsedIRI,
         val ontology: String
     ) : ImportRequest
 

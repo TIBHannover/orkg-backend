@@ -1,8 +1,8 @@
 package org.orkg.graph.domain
 
-import java.net.URI
 import java.util.*
 import kotlin.collections.List
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ForbiddenOperationException
@@ -32,7 +32,7 @@ class ClassNotFound private constructor(
     companion object {
         fun withThingId(id: ThingId) = withId(id.value)
         fun withId(id: String) = ClassNotFound("""Class "$id" not found.""")
-        fun withURI(uri: URI) = ClassNotFound("""Class with URI "$uri" not found.""")
+        fun withURI(uri: ParsedIRI) = ClassNotFound("""Class with URI "$uri" not found.""")
     }
 }
 
@@ -53,17 +53,17 @@ class ThingNotFound : SimpleMessageException {
 
 class ExternalResourceNotFound : SimpleMessageException {
     constructor(ontologyId: String, id: String) : super(HttpStatus.NOT_FOUND, """External resource "$id" for ontology "$ontologyId" not found.""")
-    constructor(ontologyId: String, uri: URI) : this(ontologyId, uri.toString())
+    constructor(ontologyId: String, uri: ParsedIRI) : this(ontologyId, uri.toString())
 }
 
 class ExternalPredicateNotFound : SimpleMessageException {
     constructor(ontologyId: String, id: String) : super(HttpStatus.NOT_FOUND, """External predicate "$id" for ontology "$ontologyId" not found.""")
-    constructor(ontologyId: String, uri: URI) : this(ontologyId, uri.toString())
+    constructor(ontologyId: String, uri: ParsedIRI) : this(ontologyId, uri.toString())
 }
 
 class ExternalClassNotFound : SimpleMessageException {
     constructor(ontologyId: String, id: String) : super(HttpStatus.NOT_FOUND, """External class "$id" for ontology "$ontologyId" not found.""")
-    constructor(ontologyId: String, uri: URI) : this(ontologyId, uri.toString())
+    constructor(ontologyId: String, uri: ParsedIRI) : this(ontologyId, uri.toString())
 }
 
 class ListNotFound(id: ThingId) : SimpleMessageException(HttpStatus.NOT_FOUND, """List "$id" not found.""")
@@ -131,7 +131,7 @@ class InvalidClassCollection(ids: Iterable<ThingId>) :
 class ReservedClass(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Class "$id" is reserved and therefor cannot be set.""")
 
-class URIAlreadyInUse(uri: URI, id: ThingId) :
+class URIAlreadyInUse(uri: ParsedIRI, id: ThingId) :
     PropertyValidationException("uri", """The URI <$uri> is already assigned to class with ID "$id".""")
 
 class InvalidLabel(property: String = "label") : PropertyValidationException(

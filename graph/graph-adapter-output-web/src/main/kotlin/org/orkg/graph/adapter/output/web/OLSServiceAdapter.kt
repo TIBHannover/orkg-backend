@@ -1,17 +1,18 @@
 package org.orkg.graph.adapter.output.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.util.regex.Pattern
+import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.send
 import org.orkg.graph.domain.ExternalThing
 import org.orkg.graph.output.ExternalClassService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.util.regex.Pattern
-import org.orkg.common.send
 
 @Component
 class OLSServiceAdapter(
@@ -33,7 +34,7 @@ class OLSServiceAdapter(
         )
     }
 
-    override fun findClassByURI(ontologyId: String, uri: URI): ExternalThing? {
+    override fun findClassByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? {
         if (!supportsOntology(ontologyId)) return null
         return fetch(
             UriComponentsBuilder.fromHttpUrl(host)
@@ -55,7 +56,7 @@ class OLSServiceAdapter(
             val item = tree.path("_embedded").path("terms").toList().singleOrNull()
                 ?: return@send null
             ExternalThing(
-                uri = URI.create(item.path("iri").asText()),
+                uri = ParsedIRI(item.path("iri").asText()),
                 label = item.path("label").asText(),
                 description = item.path("description").toList()
                     .firstOrNull()?.asText()

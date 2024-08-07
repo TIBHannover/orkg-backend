@@ -1,8 +1,8 @@
 package org.orkg.graph.domain
 
-import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 
@@ -16,7 +16,7 @@ val PUBLISHABLE_CLASSES: Set<ThingId> = setOf(
 data class Class(
     override val id: ThingId,
     override val label: String,
-    val uri: URI?,
+    val uri: ParsedIRI?,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId = ContributorId.UNKNOWN,
     override val modifiable: Boolean = true

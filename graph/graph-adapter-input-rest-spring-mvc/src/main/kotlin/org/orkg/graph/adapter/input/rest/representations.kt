@@ -3,8 +3,8 @@ package org.orkg.graph.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.net.URI
 import java.time.OffsetDateTime
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -61,7 +61,7 @@ data class LiteralRepresentation(
 data class ClassRepresentation(
     override val id: ThingId,
     val label: String,
-    val uri: URI?,
+    val uri: ParsedIRI?,
     val description: String?,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,

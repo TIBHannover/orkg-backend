@@ -12,6 +12,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -342,7 +343,7 @@ class PaperPublicationInfoCreatorUnitTest {
     @Test
     fun `Given a paper create command, when linking publication url, it returns success`() {
         val paperId = ThingId("R123")
-        val url = URI.create("https://orkg.org")
+        val url = ParsedIRI("https://orkg.org")
         val command = dummyCreatePaperCommand().copy(
             publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,

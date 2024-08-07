@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.output.testing.fixtures
 
 import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.output.DoiService
@@ -20,7 +21,7 @@ fun dummyRegisterDoiCommand(): DoiService.RegisterCommand =
                 identifiers = mapOf(
                     "orcid" to listOf("0000-0002-1825-0097")
                 ),
-                homepage = URI.create("https://example.org")
+                homepage = ParsedIRI("https://example.org")
             ),
             Author(
                 id = null,

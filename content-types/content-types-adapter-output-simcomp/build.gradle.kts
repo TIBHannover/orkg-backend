@@ -16,6 +16,7 @@ dependencies {
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-output"))
     api(project(":graph:graph-core-model"))
+    implementation("org.eclipse.rdf4j:rdf4j-util")
     implementation("org.springframework:spring-web")
 }
 

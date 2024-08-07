@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    api("org.eclipse.rdf4j:rdf4j-util")
     api("org.springframework.data:spring-data-commons")
     api(project(":common"))
     api(project(":community:community-core-model"))
@@ -15,4 +16,5 @@ dependencies {
     testFixturesApi(project(":content-types:content-types-ports-input"))
     testFixturesImplementation(libs.forkhandles.values4k)
     testFixturesImplementation(project(":graph:graph-core-model"))
+    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-util")
 }

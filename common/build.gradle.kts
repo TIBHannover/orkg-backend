@@ -14,6 +14,7 @@ dependencies {
     api("org.springframework:spring-core")
     api("org.springframework:spring-web")
     api("org.springframework:spring-webmvc")
+    api("org.eclipse.rdf4j:rdf4j-util") // for RFC 3987 compliant IRIs
     implementation("com.fasterxml.jackson.core:jackson-core")
     implementation("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
     implementation("org.slf4j:jcl-over-slf4j") // for org.apache.commons.logging.LogFactory in ResponseEntityExceptionHandler

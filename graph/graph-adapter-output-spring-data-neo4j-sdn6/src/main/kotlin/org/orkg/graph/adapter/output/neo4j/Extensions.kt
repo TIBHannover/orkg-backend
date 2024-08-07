@@ -1,9 +1,9 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import java.net.URI
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.function.BiFunction
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.jetbrains.annotations.Contract
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Conditions
@@ -142,7 +142,7 @@ fun Node.toThing(): Thing = when {
 fun Node.toClass() = Class(
     id = this["id"].toThingId()!!,
     label = this["label"].asString(),
-    uri = this["uri"].toURI(),
+    uri = this["uri"].toIRI(),
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),
     modifiable = this["modifiable"].asBoolean()
@@ -173,7 +173,7 @@ fun Node.toPredicate() = Predicate(
 
 internal fun Value.asNullableBoolean(): Boolean? = if (isNull) null else isTrue
 internal fun Value.toOffsetDateTime() = OffsetDateTime.parse(asString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-internal fun Value.toURI() = if (isNull) null else URI.create(asString())
+internal fun Value.toIRI() = if (isNull) null else ParsedIRI(asString())
 internal fun Value.toStatementId() = StatementId(asString())
 internal fun Value.toContributorId() = if (isNull) ContributorId.UNKNOWN else ContributorId(asString())
 internal fun Value.toNullableContributorId() = if (isNull) null else ContributorId(asString())

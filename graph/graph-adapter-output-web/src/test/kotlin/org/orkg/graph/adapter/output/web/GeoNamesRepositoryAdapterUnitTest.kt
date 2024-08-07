@@ -11,6 +11,11 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpResponse
+import java.util.stream.Stream
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -21,10 +26,6 @@ import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpResponse
-import java.util.stream.Stream
 
 class GeoNamesRepositoryAdapterUnitTest {
     private val geoNamesHostUrl = "https://example.org/geonames"
@@ -173,18 +174,18 @@ class GeoNamesRepositoryAdapterUnitTest {
                 GeoNamesServiceAdapter::findResourceByShortForm,
                 geonamesSuccessResponseJson,
                 ExternalThing(
-                    uri = URI.create("https://sws.geonames.org/2950159"),
+                    uri = ParsedIRI("https://sws.geonames.org/2950159"),
                     label = "Berlin",
                     description = null
                 )
             ),
             Arguments.of(
                 "2950159",
-                URI.create("https://sws.geonames.org/2950159"),
+                ParsedIRI("https://sws.geonames.org/2950159"),
                 GeoNamesServiceAdapter::findResourceByURI,
                 geonamesSuccessResponseJson,
                 ExternalThing(
-                    uri = URI.create("https://sws.geonames.org/2950159"),
+                    uri = ParsedIRI("https://sws.geonames.org/2950159"),
                     label = "Berlin",
                     description = null
                 )
@@ -195,8 +196,8 @@ class GeoNamesRepositoryAdapterUnitTest {
         fun invalidInputs(): Stream<Arguments> = Stream.of(
             Arguments.of("abc", GeoNamesServiceAdapter::findResourceByShortForm),
             Arguments.of("46568486468", GeoNamesServiceAdapter::findResourceByShortForm),
-            Arguments.of(URI.create("https://sws.geonames.org/abc"), GeoNamesServiceAdapter::findResourceByURI),
-            Arguments.of(URI.create("https://www.geonames.org/46568486468"), GeoNamesServiceAdapter::findResourceByURI),
+            Arguments.of(ParsedIRI("https://sws.geonames.org/abc"), GeoNamesServiceAdapter::findResourceByURI),
+            Arguments.of(ParsedIRI("https://www.geonames.org/46568486468"), GeoNamesServiceAdapter::findResourceByURI),
         )
     }
 }

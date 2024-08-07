@@ -1,17 +1,17 @@
 package org.orkg.graph.adapter.output.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.util.regex.Pattern
+import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.send
 import org.orkg.graph.domain.ExternalThing
 import org.orkg.graph.output.ExternalResourceService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.util.regex.Pattern
-import org.orkg.common.send
 
 @Component
 class GeoNamesServiceAdapter(
@@ -40,14 +40,14 @@ class GeoNamesServiceAdapter(
             .build()
         return httpClient.send(request, "GeoNames") { response ->
             ExternalThing(
-                uri = URI.create("https://sws.geonames.org/$shortForm"),
+                uri = ParsedIRI("https://sws.geonames.org/$shortForm"),
                 label = objectMapper.readTree(response).path("name").asText(),
                 description = null
             )
         }
     }
 
-    override fun findResourceByURI(ontologyId: String, uri: URI): ExternalThing? {
+    override fun findResourceByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? {
         val id = pattern.matchSingleGroupOrNull(uri.toString()) ?: return null
         return findResourceByShortForm(ontologyId, id)
     }

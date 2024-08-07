@@ -7,9 +7,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -159,7 +159,7 @@ class SubgraphCreatorUnitTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val classDefinition = ClassDefinition(
             label = "Some class",
-            uri = URI.create("https://example.org")
+            uri = ParsedIRI("https://example.org")
         )
         val contents = dummyCreateRosettaStoneStatementCommand().copy(
             resources = emptyMap(),
@@ -205,7 +205,7 @@ class SubgraphCreatorUnitTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val classDefinition = ClassDefinition(
             label = "Some class",
-            uri = URI.create("https://example.org")
+            uri = ParsedIRI("https://example.org")
         )
         val contents = dummyCreateRosettaStoneStatementCommand().copy(
             resources = emptyMap(),

@@ -27,7 +27,6 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.withCustomMappings
-import org.orkg.graph.testing.fixtures.withLongerURIs
 
 fun <
     S : StatementRepository,
@@ -66,7 +65,6 @@ fun <
     )
         .withCustomMappings()
         .withRosettaStoneStatementMappings()
-        .withLongerURIs()
 
     val saveThing: (Thing) -> Unit = {
         when (it) {

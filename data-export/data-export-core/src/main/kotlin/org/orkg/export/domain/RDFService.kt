@@ -1,8 +1,8 @@
 package org.orkg.export.domain
 
 import java.io.Writer
-import java.net.URI
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.OWL
@@ -162,7 +162,7 @@ fun GeneralStatement.toNTriple(writer: Writer) {
 /**
  * Checks whether a URI is valid to be included in RDF .nt serialization.
  */
-fun URI.isValidForNTriple(): Boolean {
+fun ParsedIRI.isValidForNTriple(): Boolean {
     // FIXME: what makes a URI valid to the N-Triple format ? See #349 and #220
     return !toString().equals("null", ignoreCase = true)
 }

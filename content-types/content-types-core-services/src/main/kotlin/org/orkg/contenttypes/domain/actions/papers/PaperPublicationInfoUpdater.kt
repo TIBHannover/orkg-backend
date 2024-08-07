@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.domain.actions.papers
 
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.PublicationInfoCreator
@@ -106,7 +106,7 @@ class PaperPublicationInfoUpdater(
 
     private fun updateOrLinkPublicationUrl(
         statements: List<GeneralStatement>,
-        newUrl: URI?,
+        newUrl: ParsedIRI?,
         contributorId: ContributorId,
         subjectId: ThingId
     ) {

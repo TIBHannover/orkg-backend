@@ -6,8 +6,8 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -97,7 +97,7 @@ class AuthorValidatorUnitTest {
             ),
             Author(
                 name = "Author with homepage",
-                homepage = URI.create("http://example.org/author")
+                homepage = ParsedIRI("http://example.org/author")
             ),
             Author(
                 name = "Author that just has a name"

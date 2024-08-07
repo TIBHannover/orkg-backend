@@ -6,9 +6,9 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -90,7 +90,7 @@ class ClassServiceUnitTests {
 
     @Test
     fun `given a class is created, when an already existing uri is given, then an exception is thrown`() {
-        val mockClass = createClass(uri = URI.create("https://orkg.org/class/C1"))
+        val mockClass = createClass(uri = ParsedIRI("https://orkg.org/class/C1"))
         every { repository.findByUri(mockClass.uri.toString()) } returns mockClass.toOptional()
 
         assertThrows<URIAlreadyInUse> {
@@ -204,7 +204,7 @@ class ClassServiceUnitTests {
         every { repository.findById(id) } returns Optional.empty()
 
         assertThrows<ClassNotFound> {
-            service.update(UpdateClassUseCase.UpdateCommand(id, uri = URI.create("https://example.org/foo")))
+            service.update(UpdateClassUseCase.UpdateCommand(id, uri = ParsedIRI("https://example.org/foo")))
         }
 
         verify(exactly = 1) { repository.findById(id) }
@@ -213,12 +213,12 @@ class ClassServiceUnitTests {
     @Test
     fun `given a class exists and has no URI, when updating the URI and the URI is valid and the URI is not already used, it returns success`() {
         val originalClass = createClassWithoutURI()
-        val expectedClass = originalClass.copy(uri = URI.create("https://example.org/NEW"))
+        val expectedClass = originalClass.copy(uri = ParsedIRI("https://example.org/NEW"))
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns Unit
 
-        service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = URI.create("https://example.org/NEW")))
+        service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = ParsedIRI("https://example.org/NEW")))
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
         verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
@@ -228,13 +228,13 @@ class ClassServiceUnitTests {
     @Test
     fun `given a class exists and has no URI, when updating the URI and the URI is valid and the URI is already used, it returns an appropriate error`() {
         val originalClass = createClassWithoutURI()
-        val expectedClass = originalClass.copy(uri = URI.create("https://example.org/NEW"))
+        val expectedClass = originalClass.copy(uri = ParsedIRI("https://example.org/NEW"))
         val differentWithSameURI = createClassWithoutURI().copy(id = ThingId("different"), uri = expectedClass.uri)
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
 
         assertThrows<URIAlreadyInUse> {
-            service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = URI.create("https://example.org/NEW")))
+            service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = ParsedIRI("https://example.org/NEW")))
         }
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
@@ -247,7 +247,7 @@ class ClassServiceUnitTests {
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
 
         assertThrows<CannotResetURI> {
-            service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = URI.create("https://example.org/DIFFERENT")))
+            service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = ParsedIRI("https://example.org/DIFFERENT")))
         }
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
@@ -264,7 +264,7 @@ class ClassServiceUnitTests {
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
 
         assertThrows<ClassNotModifiable> {
-            service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = URI.create("https://example.com/DIFFERENT")))
+            service.update(UpdateClassUseCase.UpdateCommand(originalClass.id, uri = ParsedIRI("https://example.com/DIFFERENT")))
         }
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
@@ -288,7 +288,7 @@ class ClassServiceUnitTests {
 
     @Test
     fun `given a class is replaced, when an invalid label is provided, then returns an error`() {
-        val replacingClass = createClass(label = "invalid\nlabel", uri = URI.create("https://example.com/NEW"))
+        val replacingClass = createClass(label = "invalid\nlabel", uri = ParsedIRI("https://example.com/NEW"))
 
         assertThrows<InvalidLabel> { service.replace(replacingClass.toReplaceCommand()) }
     }
@@ -326,7 +326,7 @@ class ClassServiceUnitTests {
     fun `given a class is replaced, when a URI is provided and the class has no URI and the URI is not already used, then updates return success`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
-        val replacingClass = existingClass.copy(uri = URI.create("https://example.com/NEW"))
+        val replacingClass = existingClass.copy(uri = ParsedIRI("https://example.com/NEW"))
         val expectedClass = existingClass.copy(id = classToReplace, uri = replacingClass.uri)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
@@ -343,7 +343,7 @@ class ClassServiceUnitTests {
     fun `given a class is replaced, when a URI is provided and the class has no URI and the URI is already used, then returns an error`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
-        val replacingClass = existingClass.copy(uri = URI.create("https://example.com/NEW"))
+        val replacingClass = existingClass.copy(uri = ParsedIRI("https://example.com/NEW"))
         val expectedClass = existingClass.copy(id = classToReplace, uri = replacingClass.uri)
         val differentWithSameURI = createClassWithoutURI().copy(id = ThingId("different"), uri = expectedClass.uri)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
@@ -358,7 +358,7 @@ class ClassServiceUnitTests {
     @Test
     fun `given a class is replaced, when a URI is provided and the class has a different URI, then returns an error`() {
         val classToReplace = ThingId("ToReplace")
-        val replacingClass = createClass(id = classToReplace, label = "other label", uri = URI.create("https://example.com/NEW"))
+        val replacingClass = createClass(id = classToReplace, label = "other label", uri = ParsedIRI("https://example.com/NEW"))
         val existingClass = createClass(id = classToReplace)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
 

@@ -3,8 +3,8 @@ package org.orkg.graph.testing.fixtures
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import dev.forkhandles.fabrikate.StringFabricator
-import java.net.URI
 import kotlin.math.absoluteValue
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Thing
@@ -17,6 +17,10 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
     // register fabricator for ThingId because of id constraints
     config.register {
         ThingId(random<Long>().absoluteValue.toString())
+    }
+    // register fabricator for ParsedIRI because of IRI constraints
+    config.register {
+        ParsedIRI("https://example.com/${StringFabricator(random = config.random, length = IntRange(10, 20))()}")
     }
     // register fabricator for Things because it's just an interface
     config.register<Thing> {
@@ -103,10 +107,4 @@ fun Fabrikate.withLiteralIds(): Fabrikate = apply {
 
 inline fun <reified T : Any> Fabrikate.random(size: Int): List<T> {
     return (0 until size).map { random() }
-}
-
-fun Fabrikate.withLongerURIs(): Fabrikate = apply {
-    config.register {
-        URI.create("https://${StringFabricator(random = config.random, length = IntRange(10, 20))()}.com")
-    }
 }

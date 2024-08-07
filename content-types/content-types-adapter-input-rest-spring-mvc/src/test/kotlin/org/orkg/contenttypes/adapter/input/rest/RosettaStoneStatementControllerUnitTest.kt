@@ -5,10 +5,10 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import java.net.URI
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -442,7 +442,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
             classes = mapOf(
                 "#temp5" to ClassDefinitionDTO(
                     label = "class",
-                    uri = URI.create("https://orkg.org/class/C1")
+                    uri = ParsedIRI("https://orkg.org/class/C1")
                 )
             ),
             observatories = listOf(
@@ -487,7 +487,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
             classes = mapOf(
                 "#temp5" to ClassDefinitionDTO(
                     label = "class",
-                    uri = URI.create("https://orkg.org/class/C1")
+                    uri = ParsedIRI("https://orkg.org/class/C1")
                 )
             ),
             observatories = listOf(

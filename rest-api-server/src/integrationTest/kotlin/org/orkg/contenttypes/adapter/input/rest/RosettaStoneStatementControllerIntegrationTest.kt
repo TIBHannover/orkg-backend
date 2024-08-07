@@ -4,8 +4,8 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -147,7 +147,7 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
             classService.createClass(
                 label = it.`class`.value,
                 id = it.`class`.value,
-                uri = URI.create(it.uri)
+                uri = ParsedIRI(it.uri)
             )
         }
 

@@ -7,6 +7,7 @@ dependencies {
 
     api("com.fasterxml.jackson.core:jackson-core")
     api("jakarta.validation:jakarta.validation-api")
+    api("org.eclipse.rdf4j:rdf4j-util")
     api("org.springframework.boot:spring-boot-autoconfigure")
     api("org.springframework:spring-context")
     api(libs.jackson.databind)

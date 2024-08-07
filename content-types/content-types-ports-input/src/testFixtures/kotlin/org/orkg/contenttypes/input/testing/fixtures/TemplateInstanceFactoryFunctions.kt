@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ClassDefinition
@@ -57,7 +57,7 @@ fun dummyUpdateTemplateInstanceCommand() = UpdateTemplateInstanceUseCase.UpdateC
     classes = mapOf(
         "#temp6" to ClassDefinition(
             label = "some class",
-            uri = URI("https://orkg.org/C1")
+            uri = ParsedIRI("https://orkg.org/C1")
         )
     ),
     extractionMethod = ExtractionMethod.MANUAL

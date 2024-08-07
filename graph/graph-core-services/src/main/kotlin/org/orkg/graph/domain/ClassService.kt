@@ -1,10 +1,10 @@
 package org.orkg.graph.domain
 
 import dev.forkhandles.values.ofOrNull
-import java.net.URI
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.input.ClassUseCases
@@ -107,6 +107,6 @@ class ClassService(
 
     override fun removeAll() = repository.deleteAll()
 
-    override fun findByURI(uri: URI): Optional<Class> =
+    override fun findByURI(uri: ParsedIRI): Optional<Class> =
         repository.findByUri(uri.toString())
 }

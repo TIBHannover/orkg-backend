@@ -12,6 +12,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -727,7 +728,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             publishedMonth = null,
             publishedYear = null,
             publishedIn = null,
-            url = URI.create("https://orkg.org/")
+            url = ParsedIRI("https://orkg.org/")
         )
         val paper = createDummyPaper().copy(
             publicationInfo = publicationInfo
@@ -752,7 +753,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = URI.create("https://orkg.org/")
+                url = ParsedIRI("https://orkg.org/")
             )
         )
         val command = dummyUpdatePaperCommand().copy(
@@ -797,7 +798,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 url = null
             )
         )
-        val url = URI.create("https://orkg.org/")
+        val url = ParsedIRI("https://orkg.org/")
         val command = dummyUpdatePaperCommand().copy(
             publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
@@ -860,7 +861,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = URI.create("https://example.org")
+                url = ParsedIRI("https://example.org")
             )
         )
         val command = dummyUpdatePaperCommand().copy(
@@ -868,7 +869,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = URI.create("https://orkg.org")
+                url = ParsedIRI("https://orkg.org")
             )
         )
         val oldUrlLiteral = createLiteral(

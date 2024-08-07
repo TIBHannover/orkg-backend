@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import java.net.URI
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -41,7 +41,7 @@ fun dummyCreateLiteratureListCommand() = CreateLiteratureListUseCase.CreateComma
         ),
         Author(
             name = "Author with homepage",
-            homepage = URI.create("http://example.org/author")
+            homepage = ParsedIRI("http://example.org/author")
         ),
         Author(
             name = "Author that just has a name"
@@ -78,7 +78,7 @@ fun dummyUpdateLiteratureListCommand() = UpdateLiteratureListUseCase.UpdateComma
         ),
         Author(
             name = "Author with homepage",
-            homepage = URI.create("http://example.org/author")
+            homepage = ParsedIRI("http://example.org/author")
         ),
         Author(
             name = "Author that just has a name"

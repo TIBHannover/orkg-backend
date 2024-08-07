@@ -11,6 +11,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.net.URI
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -264,7 +265,7 @@ class PaperServiceUnitTests {
                 publicationInfo.publishedMonth shouldBe publishedMonth
                 publicationInfo.publishedYear shouldBe publishedYear
                 publicationInfo.publishedIn shouldBe ObjectIdAndLabel(publishedInId, publishedIn)
-                publicationInfo.url shouldBe URI.create(publishedUrl)
+                publicationInfo.url shouldBe ParsedIRI(publishedUrl)
             }
             paper.authors shouldNotBe null
             paper.authors shouldBe listOf(
@@ -280,7 +281,7 @@ class PaperServiceUnitTests {
                     identifiers = mapOf(
                         "orcid" to listOf("0000-1111-2222-3333")
                     ),
-                    homepage = URI.create("https://example.org")
+                    homepage = ParsedIRI("https://example.org")
                 )
             )
             paper.contributions shouldNotBe null
@@ -368,7 +369,7 @@ class PaperServiceUnitTests {
                 identifiers = mapOf(
                     "orcid" to listOf("0000-1111-2222-3333")
                 ),
-                homepage = URI.create("https://example.org")
+                homepage = ParsedIRI("https://example.org")
             )
         )
 

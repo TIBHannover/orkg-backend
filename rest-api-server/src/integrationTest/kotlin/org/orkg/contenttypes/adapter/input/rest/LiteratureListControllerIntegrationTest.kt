@@ -4,8 +4,8 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -22,9 +22,9 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListNotFound
+import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.ResourceReference
-import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.createClasses
@@ -247,7 +247,7 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe URI("http://example.org/author")
+                author.homepage shouldBe ParsedIRI("http://example.org/author")
             }
             it.authors[4] shouldBe AuthorRepresentation(
                 name = "Author that just has a name",
@@ -336,7 +336,7 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe URI("http://example.org/author")
+                author.homepage shouldBe ParsedIRI("http://example.org/author")
             }
             it.authors[4] shouldBe Author(
                 name = "Another author that just has a name",

@@ -14,6 +14,7 @@ import io.mockk.verify
 import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -368,7 +369,7 @@ class ComparisonServiceUnitTests {
                 identifiers = mapOf(
                     "orcid" to listOf("0000-1111-2222-3333")
                 ),
-                homepage = URI.create("https://example.org")
+                homepage = ParsedIRI("https://example.org")
             )
         )
 
@@ -424,7 +425,7 @@ class ComparisonServiceUnitTests {
                 identifiers = mapOf(
                     "orcid" to listOf("0000-1111-2222-3333")
                 ),
-                homepage = URI.create("https://example.org")
+                homepage = ParsedIRI("https://example.org")
             )
         )
 

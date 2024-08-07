@@ -7,13 +7,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.JsonTypeName
-import java.net.URI
 import java.time.OffsetDateTime
 import javax.validation.Valid
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -75,14 +75,14 @@ data class PublicationInfoRepresentation(
     val publishedYear: Long?,
     @get:JsonProperty("published_in")
     val publishedIn: ObjectIdAndLabel?,
-    val url: URI?
+    val url: ParsedIRI?
 )
 
 data class AuthorRepresentation(
     val id: ThingId?,
     val name: String,
     val identifiers: Map<String, List<String>>,
-    val homepage: URI?
+    val homepage: ParsedIRI?
 )
 
 data class LabeledObjectRepresentation(
@@ -218,7 +218,7 @@ data class AuthorDTO(
     val name: String,
     @field:Valid
     val identifiers: IdentifierMapDTO?,
-    val homepage: URI?
+    val homepage: ParsedIRI?
 ) {
     fun toAuthor(): Author =
         Author(
@@ -239,7 +239,7 @@ data class PublicationInfoDTO(
     @field:Size(min = 1)
     @JsonProperty("published_in")
     val publishedIn: String?,
-    val url: URI?
+    val url: ParsedIRI?
 ) {
     fun toPublicationInfoDefinition(): PublicationInfoDefinition =
         PublicationInfoDefinition(
@@ -637,7 +637,7 @@ data class PredicateReferenceRepresentation(
 data class ClassReferenceRepresentation(
     override val id: ThingId,
     override val label: String,
-    val uri: URI?
+    val uri: ParsedIRI?
 ) : ThingReferenceRepresentation
 
 @JsonTypeName("literal_ref")

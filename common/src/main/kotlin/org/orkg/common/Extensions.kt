@@ -1,7 +1,6 @@
 package org.orkg.common
 
 import java.io.IOException
-import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -11,6 +10,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.format.ResolverStyle
 import java.util.regex.Pattern
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
@@ -34,9 +34,12 @@ fun String.toSnakeCase(): String =
 fun <T> T.withCacheControl(duration: Duration): ResponseEntity<T> =
     ResponseEntity.ok().cacheControl(CacheControl.maxAge(duration)).body(this)
 
-fun String.isValidURI(): Boolean {
+/**
+ * Checks whether the given string is a [RFC 3987](https://www.ietf.org/rfc/rfc3987.txt) compliant IRI.
+ */
+fun String.isValidIRI(): Boolean {
     try {
-        URI(this)
+        ParsedIRI(this)
     } catch (e: Exception) {
         return false
     }
@@ -114,9 +117,9 @@ fun <T : Any> mutableSetOfNotNull(vararg elements: T?): MutableSet<T> {
     return result
 }
 
-fun String.toURIOrNull(): URI? {
+fun String.toIRIOrNull(): ParsedIRI? {
     try {
-        return URI(this)
+        return ParsedIRI(this)
     } catch (e: Exception) {
         return null
     }

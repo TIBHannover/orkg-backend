@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -91,17 +91,17 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         classService.createClass(
             label = "Quantity",
             labelsAndClasses.quantityClass,
-            uri = URI("http://qudt.org/2.1/schema/qudt/Quantity")
+            uri = ParsedIRI("http://qudt.org/2.1/schema/qudt/Quantity")
         )
         classService.createClass(
             label = "Quantity",
             labelsAndClasses.quantityValueClass,
-            uri = URI("http://qudt.org/2.1/schema/qudt/QuantityValue")
+            uri = ParsedIRI("http://qudt.org/2.1/schema/qudt/QuantityValue")
         )
         classService.createClass(
             label = "Quantity Kind",
             labelsAndClasses.metricClass,
-            uri = URI("http://qudt.org/2.1/schema/qudt/QuantityKind")
+            uri = ParsedIRI("http://qudt.org/2.1/schema/qudt/QuantityKind")
         )
         classService.createClass("Dataset", labelsAndClasses.datasetClass)
         classService.createClass("Benchmark", labelsAndClasses.benchmarkClass)

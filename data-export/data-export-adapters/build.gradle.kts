@@ -16,6 +16,7 @@ testing {
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.hamcrest:hamcrest")
+                implementation("org.eclipse.rdf4j:rdf4j-util")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")

@@ -1,11 +1,11 @@
 package org.orkg
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.net.URI
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import javax.validation.constraints.NotBlank
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Predicate
@@ -116,7 +116,7 @@ class InitialDataSetup(
         }
     }
 
-    data class CreateClassCommand(val id: ThingId, val label: String, val uri: URI?)
+    data class CreateClassCommand(val id: ThingId, val label: String, val uri: ParsedIRI?)
     data class CreatePredicatesCommand(val id: ThingId, val label: String)
     data class CreateResourcesCommand(val id: ThingId, val label: String, val classes: Set<ThingId>)
     data class CreateMainCommand(

@@ -9,6 +9,7 @@ import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -211,7 +212,7 @@ class AuthorCreatorUnitTest {
             identifiers = mapOf(
                 "orcid" to listOf(orcid)
             ),
-            homepage = URI.create("https://orkg.org")
+            homepage = ParsedIRI("https://orkg.org")
         )
         val authorId = ThingId("R456")
         val contributorId = ContributorId(UUID.randomUUID())

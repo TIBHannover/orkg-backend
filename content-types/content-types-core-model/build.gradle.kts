@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
+    api("org.eclipse.rdf4j:rdf4j-util")
     api("org.springframework.boot:spring-boot")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-context")
@@ -19,6 +20,7 @@ dependencies {
     testFixturesApi(project(":common"))
     testFixturesApi(project(":graph:graph-core-model"))
     testFixturesApi(libs.forkhandles.fabrikate4k)
+    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-util")
     testFixturesImplementation(libs.forkhandles.values4k)
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
 }

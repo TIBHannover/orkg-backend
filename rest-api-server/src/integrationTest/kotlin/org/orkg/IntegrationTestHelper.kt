@@ -1,6 +1,6 @@
 package org.orkg
 
-import java.net.URI
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -36,7 +36,7 @@ fun CreateClassUseCase.createClass(
     label: String,
     id: String? = null,
     contributorId: ContributorId? = null,
-    uri: URI? = null,
+    uri: ParsedIRI? = null,
     modifiable: Boolean = true
 ): ThingId =
     create(CreateClassUseCase.CreateCommand(label, id?.let(::ThingId), contributorId, uri, modifiable))

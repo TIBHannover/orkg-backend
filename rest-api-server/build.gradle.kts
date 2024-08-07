@@ -206,6 +206,7 @@ dependencies {
 
     // Direct transitive dependencies
     implementation("org.apache.tomcat.embed:tomcat-embed-core")
+    implementation("org.eclipse.rdf4j:rdf4j-util")
     implementation("org.neo4j.driver:neo4j-java-driver")
     implementation("org.slf4j:slf4j-api")
     implementation("org.springframework.boot:spring-boot-actuator-autoconfigure")
@@ -272,6 +273,7 @@ dependencies {
     "integrationTestApi"(project(":media-storage:media-storage-core-model"))
     "integrationTestApi"(testFixtures(project(":testing:spring")))
     "integrationTestApi"("com.fasterxml.jackson.core:jackson-annotations")
+    "integrationTestApi"("org.eclipse.rdf4j:rdf4j-util")
     "integrationTestApi"("org.junit.jupiter:junit-jupiter-api")
     "integrationTestApi"("org.junit.jupiter:junit-jupiter-params")
     "integrationTestApi"("org.springframework.boot:spring-boot-autoconfigure")

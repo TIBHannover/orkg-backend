@@ -1,6 +1,6 @@
 package org.orkg.graph.adapter.output.neo4j.internal
 
-import java.net.URI
+import org.orkg.common.toIRIOrNull
 import org.orkg.graph.domain.Class
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
@@ -16,7 +16,7 @@ class Neo4jClass : Neo4jThing() {
     fun toClass() = Class(
         id = id!!,
         label = label!!,
-        uri = if (uri != null) URI.create(uri!!) else null,
+        uri = uri?.let { it.toIRIOrNull() },
         createdAt = created_at!!,
         createdBy = created_by,
         modifiable = modifiable!!

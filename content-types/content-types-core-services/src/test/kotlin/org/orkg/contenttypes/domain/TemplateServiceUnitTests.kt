@@ -8,8 +8,8 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
 import java.util.*
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -99,7 +99,7 @@ class TemplateServiceUnitTests {
         val formattedLabel = FormattedLabel.of("{P32}")
         val targetClassId = ThingId("targetClass")
         val targetClassLabel = "Target Class"
-        val targetClassURI = URI("https://orkg.org/class/targetClass")
+        val targetClassURI = ParsedIRI("https://orkg.org/class/targetClass")
         val researchFieldId = ThingId("R20")
         val researchFieldLabel = "Research Field 1"
         val researchProblemId = ThingId("R21")

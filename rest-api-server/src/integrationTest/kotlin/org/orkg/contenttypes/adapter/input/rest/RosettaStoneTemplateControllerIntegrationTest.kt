@@ -18,7 +18,14 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
+import org.orkg.contenttypes.domain.ClassReference
+import org.orkg.contenttypes.domain.NumberLiteralTemplateProperty
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.OtherLiteralTemplateProperty
+import org.orkg.contenttypes.domain.ResourceTemplateProperty
+import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
+import org.orkg.contenttypes.domain.StringLiteralTemplateProperty
+import org.orkg.contenttypes.domain.UntypedTemplateProperty
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.createClass
 import org.orkg.createClasses
@@ -28,6 +35,7 @@ import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.createUser
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
@@ -46,6 +54,7 @@ import org.springframework.test.web.servlet.RequestBuilder
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -172,7 +181,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
 
     @Test
     @TestWithMockUser
-    fun create() {
+    fun createAndUpdate() {
         val id = createRosettaStoneTemplate()
 
         val rosettaStoneTemplate = get("/api/rosetta-stone/templates/{id}", id)
@@ -282,6 +291,113 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
             it.visibility shouldBe Visibility.DEFAULT
             it.unlistedBy shouldBe null
         }
+
+        put("/api/rosetta-stone/templates/{id}", id)
+            .content(updateRosettaStoneTemplateJson)
+            .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
+            .contentType(ROSETTA_STONE_TEMPLATE_JSON_V1)
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+
+        val updatedRosettaStoneTemplate = rosettaStoneTemplateService.findById(id)
+            .orElseThrow { RosettaStoneTemplateNotFound(id) }
+
+        updatedRosettaStoneTemplate.asClue {
+            it.id shouldBe id
+            it.label shouldBe "updated rosetta stone template"
+            it.description shouldBe "updated rosetta stone template description"
+            it.formattedLabel shouldBe FormattedLabel.of("updated {0} {1} {2} {3} {4} {5}")
+            it.exampleUsage shouldBe "updated example statement usage"
+            it.targetClass shouldBe rosettaStoneTemplate.targetClass
+            it.properties.size shouldBe 6
+            it.properties[0].shouldBeInstanceOf<ResourceTemplateProperty>().asClue { property ->
+                property.id shouldNotBe null
+                property.label shouldBe "updated subject position"
+                property.placeholder shouldBe "updated subject"
+                property.description shouldBe "updated subject"
+                property.order shouldBe 0
+                property.minCount shouldBe 2
+                property.maxCount shouldBe 5
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasSubjectPosition, "label")
+                property.`class` shouldBe ObjectIdAndLabel(ThingId("C28"), "C28")
+                property.createdAt shouldNotBe null
+                property.createdBy shouldBe ContributorId(MockUserId.USER)
+            }
+            it.properties[1].shouldBeInstanceOf<UntypedTemplateProperty>().asClue { property ->
+                property.id shouldNotBe null
+                property.label shouldBe "updated property label"
+                property.placeholder shouldBe "updated property placeholder"
+                property.description shouldBe "updated property description"
+                property.order shouldBe 1
+                property.minCount shouldBe 2
+                property.maxCount shouldBe 3
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.createdAt shouldNotBe null
+                property.createdBy shouldBe ContributorId(MockUserId.USER)
+            }
+            it.properties[2].shouldBeInstanceOf<StringLiteralTemplateProperty>().asClue { property ->
+                property.id shouldNotBe null
+                property.label shouldBe "updated string literal property label"
+                property.placeholder shouldBe "updated string literal property placeholder"
+                property.description shouldBe "updated string literal property description"
+                property.order shouldBe 2
+                property.minCount shouldBe 2
+                property.maxCount shouldBe 3
+                property.pattern shouldBe "\\w+"
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.datatype shouldBe ClassReference(ThingId("String"), "String", ParsedIRI(Literals.XSD.STRING.uri))
+                property.createdAt shouldNotBe null
+                property.createdBy shouldBe ContributorId(MockUserId.USER)
+            }
+            it.properties[3].shouldBeInstanceOf<NumberLiteralTemplateProperty<*>>().asClue { property ->
+                property.id shouldNotBe null
+                property.label shouldBe "updated number literal property label"
+                property.placeholder shouldBe "updated number literal property placeholder"
+                property.description shouldBe "updated number literal property description"
+                property.order shouldBe 3
+                property.minCount shouldBe 2
+                property.maxCount shouldBe 3
+                property.minInclusive shouldBe 0
+                property.maxInclusive shouldBe 11
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.datatype shouldBe ClassReference(ThingId("Integer"), "Integer", ParsedIRI(Literals.XSD.INT.uri))
+                property.createdAt shouldNotBe null
+                property.createdBy shouldBe ContributorId(MockUserId.USER)
+            }
+            it.properties[4].shouldBeInstanceOf<OtherLiteralTemplateProperty>().asClue { property ->
+                property.id shouldNotBe null
+                property.label shouldBe "updated literal property label"
+                property.placeholder shouldBe "updated literal property placeholder"
+                property.description shouldBe "updated literal property description"
+                property.order shouldBe 4
+                property.minCount shouldBe 2
+                property.maxCount shouldBe 3
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.datatype shouldBe ClassReference(ThingId("C25"), "C25", null)
+                property.createdAt shouldNotBe null
+                property.createdBy shouldBe ContributorId(MockUserId.USER)
+            }
+            it.properties[5].shouldBeInstanceOf<ResourceTemplateProperty>().asClue { property ->
+                property.id shouldNotBe null
+                property.label shouldBe "updated resource property label"
+                property.placeholder shouldBe "updated resource property placeholder"
+                property.description shouldBe "updated resource property description"
+                property.order shouldBe 5
+                property.minCount shouldBe 4
+                property.maxCount shouldBe 5
+                property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
+                property.`class` shouldBe ObjectIdAndLabel(ThingId("C28"), "C28")
+                property.createdAt shouldNotBe null
+                property.createdBy shouldBe ContributorId(MockUserId.USER)
+            }
+            it.createdAt shouldNotBe null
+            it.createdBy shouldBe ContributorId(MockUserId.USER)
+            it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
+            it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+            it.visibility shouldBe Visibility.DEFAULT
+            it.unlistedBy shouldBe null
+        }
     }
 
     private fun createRosettaStoneTemplate(): ThingId =
@@ -361,6 +477,77 @@ private const val createRosettaStoneTemplateJson = """{
       "description": "resource property description",
       "min_count": 3,
       "max_count": 4,
+      "path": "hasObjectPosition",
+      "class": "C28"
+    }
+  ],
+  "observatories": [
+    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+  ],
+  "organizations": [
+    "edc18168-c4ee-4cb8-a98a-136f748e912e"
+  ]
+}"""
+
+private const val updateRosettaStoneTemplateJson = """{
+  "label": "updated rosetta stone template",
+  "description": "updated rosetta stone template description",
+  "formatted_label": "updated {0} {1} {2} {3} {4} {5}",
+  "example_usage": "updated example statement usage",
+  "properties": [
+    {
+      "label": "updated subject position",
+      "placeholder": "updated subject",
+      "description": "updated subject",
+      "min_count": 2,
+      "max_count": 5,
+      "path": "hasSubjectPosition",
+      "class": "C28"
+    },
+    {
+      "label": "updated property label",
+      "placeholder": "updated property placeholder",
+      "description": "updated property description",
+      "min_count": 2,
+      "max_count": 3,
+      "path": "hasObjectPosition"
+    },
+    {
+      "label": "updated string literal property label",
+      "placeholder": "updated string literal property placeholder",
+      "description": "updated string literal property description",
+      "min_count": 2,
+      "max_count": 3,
+      "pattern": "\\w+",
+      "path": "hasObjectPosition",
+      "datatype": "String"
+    },
+    {
+      "label": "updated number literal property label",
+      "placeholder": "updated number literal property placeholder",
+      "description": "updated number literal property description",
+      "min_count": 2,
+      "max_count": 3,
+      "min_inclusive": 0,
+      "max_inclusive": 11,
+      "path": "hasObjectPosition",
+      "datatype": "Integer"
+    },
+    {
+      "label": "updated literal property label",
+      "placeholder": "updated literal property placeholder",
+      "description": "updated literal property description",
+      "min_count": 2,
+      "max_count": 3,
+      "path": "hasObjectPosition",
+      "datatype": "C25"
+    },
+    {
+      "label": "updated resource property label",
+      "placeholder": "updated resource property placeholder",
+      "description": "updated resource property description",
+      "min_count": 4,
+      "max_count": 5,
       "path": "hasObjectPosition",
       "class": "C28"
     }

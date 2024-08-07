@@ -37,6 +37,7 @@ import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
+import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
@@ -234,6 +235,41 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
 
     @Test
     @TestWithMockUser
+    @DisplayName("Given a rosetta stone template update request, when service succeeds, it updates the rosetta stone template")
+    fun update() {
+        val id = ThingId("R123")
+        every { templateService.update(any()) } just runs
+
+        documentedPutRequestTo("/api/rosetta-stone/templates/{id}", id)
+            .content(updateRosettaStoneTemplateRequest())
+            .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
+            .contentType(ROSETTA_STONE_TEMPLATE_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/rosetta-stone/templates/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated rosetta stone template can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The updated label of the rosetta stone template. (optional)"),
+                        fieldWithPath("description").description("The updated description of the rosetta stone template. (optional)"),
+                        fieldWithPath("formatted_label").description("The updated formatted label pattern of the rosetta stone template. (optional)"),
+                        fieldWithPath("example_usage").description("One or more updated example sentences that demonstrate the usage of the statement that this template models. (optional)"),
+                        subsectionWithPath("properties").description("""The updated list of properties of the rosetta stone template. The first property defines the subject position of the statement and is required to have a path of `hasSubjectPosition`, must have a minimum cardinality of at least one and is not a literal template property. All other properties define a object position, which must have a path of `hasObjectPosition`. See <<template-properties,template properties>> for more information. (optional)"""),
+                        fieldWithPath("organizations[]").description("The updated list of IDs of the organizations the rosetta stone template belongs to. (optional)"),
+                        fieldWithPath("observatories[]").description("The updated list of IDs of the observatories the rosetta stone template belongs to. (optional)"),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { templateService.update(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
     @DisplayName("Given a rosetta stone template, when deleting and service succeeds, then status is 204 NO CONTENT")
     fun delete() {
         val id = ThingId("R123")
@@ -257,6 +293,27 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
 
     private fun createRosettaStoneTemplateRequest() =
         RosettaStoneTemplateController.CreateRosettaStoneTemplateRequest(
+            label = "Dummy Rosetta Stone Template Label",
+            description = "Some description about the Rosetta Stone Template",
+            formattedLabel = "{P32}",
+            exampleUsage = "example sentence of the statement",
+            properties = listOf(
+                untypedTemplatePropertyRequest(),
+                stringLiteralTemplatePropertyRequest(),
+                numberLiteralTemplatePropertyRequest(),
+                otherLiteralTemplatePropertyRequest(),
+                resourceTemplatePropertyRequest()
+            ),
+            observatories = listOf(
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+            ),
+            organizations = listOf(
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+            )
+        )
+
+    private fun updateRosettaStoneTemplateRequest() =
+        RosettaStoneTemplateController.UpdateRosettaStoneTemplateRequest(
             label = "Dummy Rosetta Stone Template Label",
             description = "Some description about the Rosetta Stone Template",
             formattedLabel = "{P32}",

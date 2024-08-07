@@ -1,28 +1,28 @@
-package org.orkg.contenttypes.domain.actions.templates
+package org.orkg.contenttypes.domain.actions.rosettastone.templates
 
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertiesUpdater
-import org.orkg.contenttypes.domain.actions.UpdateTemplateCommand
-import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction.State
+import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateCommand
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.UpdateRosettaStoneTemplateAction.State
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-class TemplatePropertiesUpdater(
-    private val abstractTemplatePropertiesUpdater: AbstractTemplatePropertiesUpdater
-) : UpdateTemplateAction {
+class RosettaStoneTemplatePropertiesUpdater(
+    private val abstractRosettaStoneTemplatePropertiesUpdater: AbstractTemplatePropertiesUpdater
+) : UpdateRosettaStoneTemplateAction {
     constructor(
         literalService: LiteralUseCases,
         resourceService: ResourceUseCases,
         statementService: StatementUseCases,
     ) : this(AbstractTemplatePropertiesUpdater(literalService, resourceService, statementService))
 
-    override fun invoke(command: UpdateTemplateCommand, state: State): State {
+    override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
         command.properties?.let { properties ->
-            abstractTemplatePropertiesUpdater.update(
+            abstractRosettaStoneTemplatePropertiesUpdater.update(
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 newProperties = properties,
-                oldProperties = state.template!!.properties,
+                oldProperties = state.rosettaStoneTemplate!!.properties,
                 statements = state.statements
             )
         }

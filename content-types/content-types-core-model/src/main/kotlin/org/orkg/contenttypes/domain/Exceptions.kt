@@ -68,14 +68,31 @@ class RosettaStoneStatementNotModifiable(id: ThingId) :
 class RosettaStoneTemplateNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Rosetta stone template "$id" is not modifiable.""")
 
+class RosettaStoneTemplatePropertyNotModifiable(id: ThingId) :
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Rosetta stone template property "$id" is not modifiable.""")
+
 class CannotDeleteIndividualRosettaStoneStatementVersion :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Cannot delete individual versions of rosetta stone statements.""")
 
 class RosettaStoneStatementInUse(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete rosetta stone statement "$id" because it is used in at least one (rosetta stone) statement.""")
 
-class RosettaStoneTemplateInUse(id: ThingId) :
-    SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete rosetta stone template "$id" because it is used in at least one (rosetta stone) statement.""")
+class RosettaStoneTemplateInUse private constructor(
+    status: HttpStatus,
+    message: String
+) : SimpleMessageException(status, message) {
+    companion object {
+        fun cantBeDeleted(id: ThingId) = RosettaStoneTemplateInUse(
+            status = HttpStatus.FORBIDDEN,
+            message = """Unable to delete rosetta stone template "$id" because it is used in at least one (rosetta stone) statement."""
+        )
+
+        fun cantUpdateProperty(id: ThingId, property: String) = RosettaStoneTemplateInUse(
+            status = HttpStatus.FORBIDDEN,
+            message = """Unable to update $property of rosetta stone template "$id" because it is used in at least one rosetta stone statement."""
+        )
+    }
+}
 
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")
@@ -287,9 +304,51 @@ class MissingPropertyPlaceholder(index: Int) : SimpleMessageException(
     message = """Missing placeholder for property at index "$index"."""
 )
 
-class MissingFormattedLabelPlaceholder(index: Int) : SimpleMessageException(
+class MissingFormattedLabelPlaceholder : SimpleMessageException {
+    constructor(index: Int) : super(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Missing formatted label placeholder "{$index}"."""
+    )
+
+    constructor(placeholder: String) : super(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Missing formatted label placeholder for input position "$placeholder"."""
+    )
+}
+
+class RosettaStoneTemplateLabelMustStartWithPreviousVersion() : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
-    message = """Missing formatted label placeholder "{$index}"."""
+    message = """The updated formmated label must start with the previous label."""
+)
+
+class TooManyNewRosettaStoneTemplateLabelSections() : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """Too many new formatted label sections. Must be exactly one optional section per new template property."""
+)
+
+class RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties() : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """The formatted label can only be updated in combination with the addition of new template properties."""
+)
+
+class NewRosettaStoneTemplateLabelSectionsMustBeOptional() : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """New sections of the formatted label must be optional."""
+)
+
+class RosettaStoneTemplateLabelMustBeUpdated() : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """The formatted label must be updated when updating template properties."""
+)
+
+class NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage() : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """New example usage must start with the previous example usage."""
+)
+
+class NewRosettaStoneTemplatePropertyMustBeOptional(placeholder: String) : SimpleMessageException(
+    status = HttpStatus.BAD_REQUEST,
+    message = """New rosetta stone template property "$placeholder" must be optional."""
 )
 
 class TooManyInputPositions(exceptedCount: Int, templateId: ThingId) : SimpleMessageException(

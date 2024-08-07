@@ -7,30 +7,26 @@ import org.orkg.contenttypes.domain.InvalidSubjectPositionType
 import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
 import org.orkg.contenttypes.domain.MissingSubjectPosition
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
-import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateCommand
-import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.input.LiteralTemplatePropertyDefinition
+import org.orkg.contenttypes.input.TemplatePropertyDefinition
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 
-class RosettaStoneTemplatePropertiesValidator(
+class AbstractRosettaStoneTemplatePropertiesValidator(
     private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator
-) : CreateRosettaStoneTemplateAction {
+) {
     constructor(
         predicateRepository: PredicateRepository,
         classRepository: ClassRepository,
     ) : this(AbstractTemplatePropertyValidator(predicateRepository, classRepository))
 
-    override fun invoke(
-        command: CreateRosettaStoneTemplateCommand,
-        state: CreateRosettaStoneTemplateState
-    ): CreateRosettaStoneTemplateState {
-        if (command.properties.isEmpty()) {
+    internal fun validate(properties: List<TemplatePropertyDefinition>) {
+        if (properties.isEmpty()) {
             throw MissingSubjectPosition()
         }
 
-        command.properties.first().let { subject ->
+        properties.first().let { subject ->
             if (subject.path != Predicates.hasSubjectPosition) {
                 throw InvalidSubjectPositionPath()
             }
@@ -42,19 +38,17 @@ class RosettaStoneTemplatePropertiesValidator(
             }
         }
 
-        command.properties.withIndex().drop(1).forEach { (index, `object`) ->
+        properties.withIndex().drop(1).forEach { (index, `object`) ->
             if (`object`.path != Predicates.hasObjectPosition) {
                 throw InvalidObjectPositionPath(index)
             }
         }
 
-        command.properties.forEachIndexed { index, property ->
+        properties.forEachIndexed { index, property ->
             if (property.placeholder == null) {
                 throw MissingPropertyPlaceholder(index)
             }
             abstractTemplatePropertyValidator.validate(property)
         }
-
-        return state
     }
 }

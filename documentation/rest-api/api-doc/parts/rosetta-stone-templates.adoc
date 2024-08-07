@@ -38,6 +38,18 @@ NOTE: The first property of a rosetta stone template defines the subject positio
 
 operation::rosetta-stone-templates-create[snippets='request-fields,curl-request,http-response']
 
+[[rosetta-stone-templates-edit]]
+== Editing a rosetta stone template
+
+A `PUT` request updates an existing rosetta stone template with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated rosetta stone template (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: Only rosetta stone templates that have not been used to create a rosetta stone statement can be fully updated.
+      Otherwise, it is only possible to add new object positions and to insert a section for that specific object position properties into the formatted label.
+
+operation::rosetta-stone-templates-update[snippets='request-fields,curl-request,http-response']
+
 [[rosetta-stone-templates-delete]]
 == Deleting a rosetta stone template
 

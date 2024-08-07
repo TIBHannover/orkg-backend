@@ -15,7 +15,7 @@ dependencies {
     api(libs.forkhandles.values4k)
     api(project(":common"))
     api(project(":graph:graph-core-model"))
-    implementation("org.springframework:spring-web")
+    api("org.springframework:spring-web")
 
     testFixturesApi(project(":common"))
     testFixturesApi(project(":graph:graph-core-model"))

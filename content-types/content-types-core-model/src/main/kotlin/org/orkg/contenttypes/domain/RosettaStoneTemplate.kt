@@ -25,7 +25,8 @@ data class RosettaStoneTemplate(
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
     val visibility: Visibility,
-    val unlistedBy: ContributorId? = null
+    val unlistedBy: ContributorId? = null,
+    val modifiable: Boolean
 ) {
     companion object {
         fun from(resource: Resource, statements: Map<ThingId, List<GeneralStatement>>): RosettaStoneTemplate {
@@ -60,7 +61,8 @@ data class RosettaStoneTemplate(
                 organizations = listOf(resource.organizationId),
                 observatories = listOf(resource.observatoryId),
                 visibility = resource.visibility,
-                unlistedBy = resource.unlistedBy
+                unlistedBy = resource.unlistedBy,
+                modifiable = resource.modifiable
             )
         }
     }

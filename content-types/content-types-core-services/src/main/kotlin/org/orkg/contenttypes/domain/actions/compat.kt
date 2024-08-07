@@ -13,6 +13,7 @@ import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosettaStoneStatementAction
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.CreateRosettaStoneTemplateAction
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.UpdateRosettaStoneTemplateAction
 import org.orkg.contenttypes.domain.actions.smartreviews.CreateSmartReviewAction
 import org.orkg.contenttypes.domain.actions.smartreviews.UpdateSmartReviewAction
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.CreateSmartReviewSectionAction
@@ -43,6 +44,7 @@ import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.contenttypes.input.UpdateRosettaStoneStatementUseCase
+import org.orkg.contenttypes.input.UpdateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
@@ -73,6 +75,7 @@ internal typealias UpdateLiteratureListCommand = UpdateLiteratureListUseCase.Upd
 internal typealias UpdateLiteratureListSectionCommand = UpdateLiteratureListSectionUseCase.UpdateCommand
 internal typealias UpdateSmartReviewCommand = UpdateSmartReviewUseCase.UpdateCommand
 internal typealias UpdateSmartReviewSectionCommand = UpdateSmartReviewSectionUseCase.UpdateCommand
+internal typealias UpdateRosettaStoneTemplateCommand = UpdateRosettaStoneTemplateUseCase.UpdateCommand
 internal typealias UpdateRosettaStoneStatementCommand = UpdateRosettaStoneStatementUseCase.UpdateCommand
 
 internal typealias DeleteLiteratureListSectionCommand = DeleteLiteratureListSectionUseCase.DeleteCommand
@@ -88,6 +91,7 @@ internal typealias CreateTemplatePropertyState = CreateTemplatePropertyAction.St
 internal typealias UpdateTemplatePropertyState = UpdateTemplatePropertyAction.State
 
 internal typealias CreateRosettaStoneTemplateState = CreateRosettaStoneTemplateAction.State
+internal typealias UpdateRosettaStoneTemplateState = UpdateRosettaStoneTemplateAction.State
 
 internal typealias CreateRosettaStoneStatementState = CreateRosettaStoneStatementAction.State
 internal typealias UpdateRosettaStoneStatementState = UpdateRosettaStoneStatementAction.State

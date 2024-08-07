@@ -10,10 +10,12 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
+import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.RosettaStoneTemplateRepresentationAdapter
 import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
 import org.orkg.contenttypes.input.CreateRosettaStoneTemplateUseCase
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
+import org.orkg.contenttypes.input.UpdateRosettaStoneTemplateUseCase
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -82,6 +85,23 @@ class RosettaStoneTemplateController(
     }
 
     @PreAuthorizeUser
+    @PutMapping("/{id}", consumes = [ROSETTA_STONE_TEMPLATE_JSON_V1])
+    fun update(
+        @PathVariable id: ThingId,
+        @RequestBody @Valid request: UpdateRosettaStoneTemplateRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.update(request.toUpdateCommand(id, userId))
+        val location = uriComponentsBuilder
+            .path("api/rosetta-stone/templates/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @PreAuthorizeUser
     @DeleteMapping("/{id}")
     fun delete(
         @PathVariable id: ThingId,
@@ -119,6 +139,39 @@ class RosettaStoneTemplateController(
                 formattedLabel = FormattedLabel.of(formattedLabel),
                 exampleUsage = exampleUsage,
                 properties = properties.map { it.toTemplatePropertyDefinition() },
+                observatories = observatories,
+                organizations = organizations
+            )
+    }
+
+    data class UpdateRosettaStoneTemplateRequest(
+        @field:NotBlank
+        val label: String?,
+        @field:NullableNotBlank
+        val description: String?,
+        @field:NullableNotBlank
+        @JsonProperty("formatted_label")
+        val formattedLabel: String?,
+        @field:NotBlank
+        @JsonProperty("example_usage")
+        val exampleUsage: String?,
+        @field:Valid
+        @field:Size(min = 1)
+        val properties: List<TemplatePropertyRequest>?,
+        @field:Size(max = 1)
+        val observatories: List<ObservatoryId>?,
+        @field:Size(max = 1)
+        val organizations: List<OrganizationId>?,
+    ) {
+        fun toUpdateCommand(templateId: ThingId, contributorId: ContributorId): UpdateRosettaStoneTemplateUseCase.UpdateCommand =
+            UpdateRosettaStoneTemplateUseCase.UpdateCommand(
+                templateId = templateId,
+                contributorId = contributorId,
+                label = label,
+                description = description,
+                formattedLabel = formattedLabel?.let { FormattedLabel.of(it) },
+                exampleUsage = exampleUsage,
+                properties = properties?.map { it.toTemplatePropertyDefinition() },
                 observatories = observatories,
                 organizations = organizations
             )

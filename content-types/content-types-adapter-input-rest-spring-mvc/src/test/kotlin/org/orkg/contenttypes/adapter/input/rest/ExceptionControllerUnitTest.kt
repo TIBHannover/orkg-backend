@@ -24,7 +24,6 @@ import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.LiteratureListNotModifiable
 import org.orkg.contenttypes.domain.LiteratureListSectionTypeMismatch
 import org.orkg.contenttypes.domain.MismatchedDataType
-import org.orkg.contenttypes.domain.MissingFormattedLabelPlaceholder
 import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
 import org.orkg.contenttypes.domain.MissingPropertyValues
 import org.orkg.contenttypes.domain.MissingSubjectPosition
@@ -711,21 +710,6 @@ internal class ExceptionControllerUnitTest {
     }
 
     @Test
-    fun missingFormattedLabelPlaceholder() {
-        val index = "4"
-
-        get("/missing-formatted-label-placeholder")
-            .param("index", index)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/missing-formatted-label-placeholder"))
-            .andExpect(jsonPath("$.message").value("""Missing formatted label placeholder "{$index}"."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
     fun invalidBibTeXReference() {
         val reference = "not bibtex"
 
@@ -1009,11 +993,6 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/missing-property-placeholder")
         fun missingPropertyPlaceholder(@RequestParam index: Int) {
             throw MissingPropertyPlaceholder(index)
-        }
-
-        @GetMapping("/missing-formatted-label-placeholder")
-        fun missingFormattedLabelPlaceholder(@RequestParam index: Int) {
-            throw MissingFormattedLabelPlaceholder(index)
         }
 
         @GetMapping("/invalid-bibtex-reference")

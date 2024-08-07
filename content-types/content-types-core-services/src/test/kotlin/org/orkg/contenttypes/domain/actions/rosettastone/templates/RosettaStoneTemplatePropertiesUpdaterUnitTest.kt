@@ -1,4 +1,4 @@
-package org.orkg.contenttypes.domain.actions.templates
+package org.orkg.contenttypes.domain.actions.rosettastone.templates
 
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
@@ -11,16 +11,16 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertiesUpdater
-import org.orkg.contenttypes.domain.actions.UpdateTemplateState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
+import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class TemplatePropertiesUpdaterUnitTest {
+class RosettaStoneTemplatePropertiesUpdaterUnitTest {
     private val abstractTemplatePropertiesUpdater: AbstractTemplatePropertiesUpdater = mockk()
 
-    private val templatePropertiesUpdater = TemplatePropertiesUpdater(abstractTemplatePropertiesUpdater)
+    private val rosettaStoneTemplatePropertiesUpdater = RosettaStoneTemplatePropertiesUpdater(abstractTemplatePropertiesUpdater)
 
     @BeforeEach
     fun resetState() {
@@ -34,22 +34,22 @@ class TemplatePropertiesUpdaterUnitTest {
 
     @Test
     fun `Given a template update command, when properties are not set, it does nothing`() {
-        val template = createDummyTemplate()
-        val command = dummyUpdateTemplateCommand().copy(
+        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
             properties = null
         )
-        val state = UpdateTemplateState(template)
+        val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate)
 
-        templatePropertiesUpdater(command, state)
+        rosettaStoneTemplatePropertiesUpdater(command, state)
     }
 
     @Test
     fun `Given a template update command, when properties are set, it validates each property`() {
-        val template = createDummyTemplate()
-        val command = dummyUpdateTemplateCommand()
-        val state = UpdateTemplateState(
-            template = template,
-            statements = listOf(createStatement(subject = createResource(template.id))).groupBy { it.subject.id }
+        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val command = dummyUpdateRosettaStoneTemplateCommand()
+        val state = UpdateRosettaStoneTemplateState(
+            rosettaStoneTemplate = rosettaStoneTemplate,
+            statements = listOf(createStatement(subject = createResource(rosettaStoneTemplate.id))).groupBy { it.subject.id }
         )
 
         every {
@@ -57,19 +57,19 @@ class TemplatePropertiesUpdaterUnitTest {
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 newProperties = command.properties!!,
-                oldProperties = state.template!!.properties,
+                oldProperties = state.rosettaStoneTemplate!!.properties,
                 statements = state.statements
             )
         } just runs
 
-        templatePropertiesUpdater(command, state)
+        rosettaStoneTemplatePropertiesUpdater(command, state)
 
         verify(exactly = 1) {
             abstractTemplatePropertiesUpdater.update(
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 newProperties = command.properties!!,
-                oldProperties = state.template!!.properties,
+                oldProperties = state.rosettaStoneTemplate!!.properties,
                 statements = state.statements
             )
         }

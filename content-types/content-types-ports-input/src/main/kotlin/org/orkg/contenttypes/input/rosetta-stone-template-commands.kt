@@ -21,6 +21,22 @@ interface CreateRosettaStoneTemplateUseCase {
     )
 }
 
+interface UpdateRosettaStoneTemplateUseCase {
+    fun update(command: UpdateCommand)
+
+    data class UpdateCommand(
+        val templateId: ThingId,
+        val contributorId: ContributorId,
+        val label: String?,
+        val description: String?,
+        val formattedLabel: FormattedLabel?,
+        val exampleUsage: String?,
+        val properties: List<TemplatePropertyDefinition>?,
+        val observatories: List<ObservatoryId>?,
+        val organizations: List<OrganizationId>?
+    )
+}
+
 interface DeleteRosettaStoneTemplateUseCase {
     fun delete(id: ThingId, contributorId: ContributorId)
 }

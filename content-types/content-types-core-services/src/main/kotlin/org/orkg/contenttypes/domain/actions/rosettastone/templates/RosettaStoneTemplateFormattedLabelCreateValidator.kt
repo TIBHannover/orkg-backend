@@ -4,7 +4,7 @@ import org.orkg.contenttypes.domain.MissingFormattedLabelPlaceholder
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 
-class RosettaStoneTemplateFormattedLabelValidator : CreateRosettaStoneTemplateAction {
+class RosettaStoneTemplateFormattedLabelCreateValidator : CreateRosettaStoneTemplateAction {
     override fun invoke(
         command: CreateRosettaStoneTemplateCommand,
         state: CreateRosettaStoneTemplateState

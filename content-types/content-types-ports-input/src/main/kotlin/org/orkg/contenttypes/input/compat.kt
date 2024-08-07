@@ -14,7 +14,7 @@ interface TemplateUseCases : RetrieveTemplateUseCase, CreateTemplateUseCase, Cre
 interface TemplateInstanceUseCases : RetrieveTemplateInstanceUseCase, UpdateTemplateInstanceUseCase
 
 interface RosettaStoneTemplateUseCases : RetrieveRosettaStoneTemplateUseCase, CreateRosettaStoneTemplateUseCase,
-    DeleteRosettaStoneTemplateUseCase
+    UpdateRosettaStoneTemplateUseCase, DeleteRosettaStoneTemplateUseCase
 
 interface RosettaStoneStatementUseCases : RetrieveRosettaStoneStatementUseCase, CreateRosettaStoneStatementUseCase,
     UpdateRosettaStoneStatementUseCase, DeleteRosettaStoneStatementUseCase

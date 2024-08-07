@@ -7,20 +7,35 @@ import org.orkg.common.ThingId
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.actions.DescriptionValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateCommand
+import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.actions.execute
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDescriptionUpdater
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateExampleUsageUpdater
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelUpdater
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateClosedCreator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDescriptionCreator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDescriptionUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateExampleUsageUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateExistenceValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelCreateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelCreator
-import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateLabelUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateModifiableValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplatePropertiesCreateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplatePropertiesCreator
-import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplatePropertiesValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplatePropertiesUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplatePropertiesUpdater
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateResourceCreator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateResourceUpdater
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateTargetClassCreator
 import org.orkg.contenttypes.domain.actions.tryDelete
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
@@ -86,8 +101,8 @@ class RosettaStoneTemplateService(
         val steps = listOf(
             LabelValidator { it.label },
             DescriptionValidator { it.description },
-            RosettaStoneTemplateFormattedLabelValidator(),
-            RosettaStoneTemplatePropertiesValidator(predicateRepository, classRepository),
+            RosettaStoneTemplateFormattedLabelCreateValidator(),
+            RosettaStoneTemplatePropertiesCreateValidator(predicateRepository, classRepository),
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             RosettaStoneTemplateResourceCreator(resourceService),
@@ -98,6 +113,26 @@ class RosettaStoneTemplateService(
             RosettaStoneTemplatePropertiesCreator(resourceService, literalService, statementService)
         )
         return steps.execute(command, CreateRosettaStoneTemplateState()).rosettaStoneTemplateId!!
+    }
+
+    override fun update(command: UpdateRosettaStoneTemplateCommand) {
+        val steps = listOf<Action<UpdateRosettaStoneTemplateCommand, UpdateRosettaStoneTemplateState>>(
+            RosettaStoneTemplateExistenceValidator(this, resourceRepository),
+            RosettaStoneTemplateModifiableValidator(rosettaStoneStatementRepository),
+            RosettaStoneTemplateLabelUpdateValidator(),
+            RosettaStoneTemplateDescriptionUpdateValidator(),
+            RosettaStoneTemplateFormattedLabelUpdateValidator(),
+            RosettaStoneTemplateExampleUsageUpdateValidator(),
+            RosettaStoneTemplatePropertiesUpdateValidator(predicateRepository, classRepository),
+            OrganizationValidator(organizationRepository, { it.organizations }, { it.rosettaStoneTemplate!!.organizations }),
+            ObservatoryValidator(observatoryRepository, { it.observatories }, { it.rosettaStoneTemplate!!.observatories }),
+            RosettaStoneTemplateResourceUpdater(resourceService),
+            RosettaStoneTemplateDescriptionUpdater(literalService, statementService),
+            RosettaStoneTemplateFormattedLabelUpdater(literalService, statementService),
+            RosettaStoneTemplateExampleUsageUpdater(literalService, statementService),
+            RosettaStoneTemplatePropertiesUpdater(literalService, resourceService, statementService),
+        )
+        steps.execute(command, UpdateRosettaStoneTemplateState())
     }
 
     override fun delete(id: ThingId, contributorId: ContributorId) {
@@ -111,7 +146,7 @@ class RosettaStoneTemplateService(
             }
 
             if (thingRepository.isUsedAsObject(template.id))
-                throw RosettaStoneTemplateInUse(template.id)
+                throw RosettaStoneTemplateInUse.cantBeDeleted(template.id)
 
             val rosettaStoneStatements = rosettaStoneStatementRepository.findAll(
                 templateId = template.id,
@@ -119,7 +154,7 @@ class RosettaStoneTemplateService(
             )
 
             if (rosettaStoneStatements.totalElements > 0) {
-                throw RosettaStoneTemplateInUse(template.id)
+                throw RosettaStoneTemplateInUse.cantBeDeleted(template.id)
             }
 
             if (!template.isOwnedBy(contributorId)) {

@@ -10,6 +10,7 @@ import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
 import org.orkg.contenttypes.input.ResourcePropertyDefinition
 import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
 import org.orkg.contenttypes.input.UntypedPropertyDefinition
+import org.orkg.contenttypes.input.UpdateRosettaStoneTemplateUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
@@ -36,6 +37,25 @@ fun dummyCreateRosettaStoneTemplateCommand() = CreateRosettaStoneTemplateUseCase
         OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
         OrganizationId("1f63b1da-3c70-4492-82e0-770ca94287ea")
     )
+)
+
+fun dummyUpdateRosettaStoneTemplateCommand() = UpdateRosettaStoneTemplateUseCase.UpdateCommand(
+    templateId = ThingId("R123"),
+    contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+    label = "Updated dummy Rosetta Stone Template Label",
+    description = "Updated description about the rosetta stone template",
+    formattedLabel = FormattedLabel.of("Updated {0} {1} {2} {3} {4} {5}"),
+    exampleUsage = "updated example sentence of the statement",
+    properties = listOf(
+        dummyCreateSubjectPositionTemplatePropertyCommand(),
+        dummyCreateUntypedObjectPositionTemplatePropertyCommand(),
+        dummyCreateStringLiteralObjectPositionTemplatePropertyCommand(),
+        dummyCreateNumberLiteralObjectPositionTemplatePropertyCommand(),
+        dummyCreateOtherLiteralObjectPositionTemplatePropertyCommand(),
+        dummyCreateResourceObjectPositionTemplatePropertyCommand()
+    ),
+    observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
+    organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc"))
 )
 
 //    TODO: return CreateRosettaStoneTemplatePropertyUseCase.CreateCommand

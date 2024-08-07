@@ -8,6 +8,7 @@
     --orkg-content-background-color: white;
     --orkg-block-border-color: #dee2e6;
     --orkg-toc-background-color: rgb(215, 218, 227);
+	--toc-width: 23.5rem;
 }
 
 html.dark-theme {
@@ -63,7 +64,7 @@ html.dark-theme #doc {
 }
 
 #toc.toc2 {
-  width: 23.5em;
+  width: calc(var(--toc-width) - 1.7em);
 }
 
 #toc {

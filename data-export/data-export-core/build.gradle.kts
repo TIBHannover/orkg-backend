@@ -38,6 +38,7 @@ testing {
                 implementation("org.assertj:assertj-core")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.junit.jupiter:junit-jupiter-params")
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
                 implementation(testFixtures(project(":data-export:data-export-core")))
                 implementation(testFixtures(project(":graph:graph-core-model")))

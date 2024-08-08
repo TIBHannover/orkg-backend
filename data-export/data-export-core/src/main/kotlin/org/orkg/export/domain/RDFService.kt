@@ -115,7 +115,7 @@ fun Class.toNTriple(writer: Writer, classHierarchyRepository: ClassHierarchyRepo
     val cPrefix = RdfConstants.CLASS_NS
     writer.write("<$cPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
     if (uri?.isValidForNTriple() == true) writer.write("<$cPrefix${this.id}> <${OWL.EQUIVALENTCLASS}> <$uri> .\n")
-    writer.write("<$cPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
+    writer.write("<$cPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiteral(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
     classHierarchyRepository.findParent(id).ifPresent {
         writer.write("<$cPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <$cPrefix${it.id}> .\n")
     }
@@ -125,7 +125,7 @@ fun Predicate.toNTriple(writer: Writer) {
     val cPrefix = RdfConstants.CLASS_NS
     val pPrefix = RdfConstants.PREDICATE_NS
     val predicate = "<$pPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" + "<$pPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${
-        escapeLiterals(
+        escapeLiteral(
             label
         )
     }\"^^<http://www.w3.org/2001/XMLSchema#string> .\n"
@@ -141,7 +141,7 @@ fun Resource.toNTriple(writer: Writer) {
         writer.write("<$rPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
         classes.forEach { writer.write("<$rPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
     }
-    writer.write("<$rPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
+    writer.write("<$rPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiteral(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
 }
 
 /**
@@ -175,7 +175,7 @@ private fun serializeThing(thing: Thing): String {
         is Resource -> "<$rPrefix${thing.id}>"
         is Predicate -> "<$pPrefix${thing.id}>"
         is Class -> "<$cPrefix${thing.id}>"
-        is Literal -> "\"${escapeLiterals(thing.label)}\"^^<${thing.datatype.toDatatypeURL()}>"
+        is Literal -> "\"${escapeLiteral(thing.label)}\"^^<${thing.datatype.toDatatypeURL()}>"
     }
 }
 

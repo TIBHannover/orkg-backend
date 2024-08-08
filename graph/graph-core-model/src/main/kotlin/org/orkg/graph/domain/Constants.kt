@@ -1,12 +1,13 @@
 package org.orkg.graph.domain
 
 import org.orkg.common.ThingId
+import org.orkg.common.isValidBoolean
 import org.orkg.common.isValidDate
 import org.orkg.common.isValidDateTime
 import org.orkg.common.isValidDecimal
 import org.orkg.common.isValidDuration
-import org.orkg.common.isValidTime
 import org.orkg.common.isValidIRI
+import org.orkg.common.isValidTime
 
 val reservedClassIds = setOf(
     Classes.literal,
@@ -177,7 +178,7 @@ object Literals {
         INT("integer", Classes.integer, true, { it.toIntOrNull() != null }),
         DECIMAL("decimal", Classes.decimal, true, { it.isValidDecimal() }),
         DATE("date", Classes.date, false, { it.isValidDate() }),
-        BOOLEAN("boolean", Classes.boolean, false, { it.toBooleanStrictOrNull() != null }),
+        BOOLEAN("boolean", Classes.boolean, false, { it.isValidBoolean() }),
         FLOAT("float", Classes.float, true, { it.toFloatOrNull() != null }),
         DOUBLE("double", Classes.double, true, { it.toDoubleOrNull() != null }),
         URI("anyURI", Classes.uri, false, { it.isValidIRI() }),

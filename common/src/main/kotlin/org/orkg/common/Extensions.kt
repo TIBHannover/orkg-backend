@@ -124,3 +124,9 @@ fun String.toIRIOrNull(): ParsedIRI? {
         return null
     }
 }
+
+fun String.isValidBoolean(): Boolean =
+    when (this) {
+        "true", "1", "false", "0" -> true
+        else -> false
+    }

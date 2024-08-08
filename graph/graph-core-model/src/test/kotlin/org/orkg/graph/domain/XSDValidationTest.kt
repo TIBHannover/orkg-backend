@@ -59,13 +59,13 @@ class XSDValidationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["true", "false"])
+    @ValueSource(strings = ["true", "false", "1", "0"])
     fun `Given a boolean, when tested, it is valid`(value: String) {
         BOOLEAN.canParse(value) shouldBe true
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["", "   ", "abc", "\n", "1", "0", "TRUE", "FALSE", "True", "False"])
+    @ValueSource(strings = ["", "   ", "abc", "\n", "TRUE", "FALSE", "True", "False"])
     fun `Given a malformed boolean, when tested, it is not valid`(value: String) {
         BOOLEAN.canParse(value) shouldBe false
     }

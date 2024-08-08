@@ -32,8 +32,7 @@ interface RetrieveResourceUseCase {
     // Legacy methods:
     fun findAllPapersByTitle(title: String?): Iterable<Resource>
 
-    /** Find any resource by DOI that has one of the publishable classes. */
-    fun findByDOI(doi: String): Optional<Resource>
+    fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource>
 
     /** Find a paper resource by DOI. */
     fun findById(id: ThingId): Optional<Resource>

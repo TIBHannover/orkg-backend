@@ -564,7 +564,7 @@ class SpringDataNeo4jStatementAdapter(
         .mappedBy(LiteralMapper("doi"))
         .one()
 
-    override fun findByDOI(doi: String): Optional<Resource> = CypherQueryBuilder(neo4jClient)
+    override fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource> = CypherQueryBuilder(neo4jClient, Uncached)
         .withQuery {
             val p = node("Resource").named("p")
             val l = name("l")
@@ -572,8 +572,10 @@ class SpringDataNeo4jStatementAdapter(
                 p.relationshipTo(node("Literal").named(l), RELATED)
                     .withProperties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
             ).where(
-                toUpper(l.property("label")).eq(toUpper(parameter("doi")))
+                (classes.map { p.hasLabels(it.value) } + toUpper(l.property("label")).eq(toUpper(parameter("doi"))))
+                    .reduceOrNull(Condition::and)
             ).returning(p)
+                .orderBy(p.property("created_at").descending())
                 .limit(1)
         }
         .withParameters("doi" to doi)

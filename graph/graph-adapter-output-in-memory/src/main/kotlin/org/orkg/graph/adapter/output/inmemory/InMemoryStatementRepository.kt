@@ -264,11 +264,15 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             }
         })
 
-    override fun findByDOI(doi: String): Optional<Resource> =
-        Optional.ofNullable(entities.values.find {
-            it.subject is Resource && it.predicate.id == Predicates.hasDOI &&
+    override fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource> =
+        entities.values.filter {
+            it.subject is Resource && (it.subject as Resource).classes.containsAny(classes) &&
+                it.predicate.id == Predicates.hasDOI &&
                 it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
-        }).map { it.subject as Resource }
+        }
+            .map { it.subject as Resource }
+            .maxByOrNull { it.createdAt }
+            .let { Optional.ofNullable(it) }
 
     override fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource> =
         entities.values

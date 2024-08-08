@@ -58,8 +58,7 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
     fun findDOIByContributionId(id: ThingId): Optional<Literal>
 
-    /** Find any resource by DOI. */
-    fun findByDOI(doi: String): Optional<Resource>
+    fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource>
     fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource>
 
     fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>

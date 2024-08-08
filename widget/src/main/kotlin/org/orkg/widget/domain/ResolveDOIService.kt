@@ -3,6 +3,7 @@ package org.orkg.widget.domain
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.PUBLISHABLE_CLASSES
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.widget.input.ResolveDOIUseCase
 import org.orkg.widget.input.ResolveDOIUseCase.WidgetInfo
@@ -19,7 +20,8 @@ class ResolveDOIService(
         if (doi != null && title != null)
             throw TooManyParameters.requiresExactlyOneOf("doi", "title")
         val resource = when {
-            doi != null -> service.findByDOI(doi).orElseThrow { ResourceNotFound.withDOI(doi) }
+            doi != null -> service.findByDOI(doi, classes = PUBLISHABLE_CLASSES + Classes.paperVersion)
+                .orElseThrow { ResourceNotFound.withDOI(doi) }
             title != null -> service.findPaperByTitle(title).orElseThrow { ResourceNotFound.withLabel(title) }
             else -> throw MissingParameter.requiresAtLeastOneOf("doi", "title")
         }

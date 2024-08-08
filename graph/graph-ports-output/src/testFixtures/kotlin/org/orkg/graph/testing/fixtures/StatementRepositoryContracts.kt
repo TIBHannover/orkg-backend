@@ -1114,28 +1114,55 @@ fun <
     }
 
     describe("finding a resource by DOI") {
-        it("always returns the resource") {
+        it("returns the correct result") {
             val hasDOI = createPredicate(id = Predicates.hasDOI)
             val doi = fabricator.random<String>()
-            val resource = createResource(classes = setOf(ThingId(fabricator.random())))
-            val resourceHasDoi = createStatement(
-                subject = resource,
-                predicate = hasDOI,
-                `object` = createLiteral(label = doi)
+            val resource1 = createResource(
+                id = ThingId("R1"),
+                classes = setOf(Classes.paper)
             )
-            saveStatement(resourceHasDoi)
+            val resource2 = resource1.copy(
+                id = ThingId("R2"),
+                createdAt = resource1.createdAt.minusHours(1)
+            )
+            val resource3 = resource1.copy(
+                id = ThingId("R3"),
+                classes = setOf(ThingId(fabricator.random())),
+                createdAt = resource1.createdAt.plusHours(1)
+            )
+            val resource1HasDoi = createStatement(
+                id = fabricator.random(),
+                subject = resource1,
+                predicate = hasDOI,
+                `object` = createLiteral(id = fabricator.random(), label = doi)
+            )
+            val resource2HasDoi = createStatement(
+                id = fabricator.random(),
+                subject = resource2,
+                predicate = hasDOI,
+                `object` = createLiteral(id = fabricator.random(), label = doi)
+            )
+            val resource3HasDoi = createStatement(
+                id = fabricator.random(),
+                subject = resource3,
+                predicate = hasDOI,
+                `object` = createLiteral(id = fabricator.random(), label = doi)
+            )
+            saveStatement(resource1HasDoi)
+            saveStatement(resource2HasDoi)
+            saveStatement(resource3HasDoi)
 
-            val actual = repository.findByDOI(doi)
+            val actual = repository.findByDOI(doi, setOf(Classes.paper))
             actual.isPresent shouldBe true
-            actual.get() shouldBe resource
+            actual.get() shouldBe resource1
 
-            val upper = repository.findByDOI(doi.uppercase())
+            val upper = repository.findByDOI(doi.uppercase(), setOf(Classes.paper))
             upper.isPresent shouldBe true
-            upper.get() shouldBe resource
+            upper.get() shouldBe resource1
 
-            val lower = repository.findByDOI(doi.lowercase())
+            val lower = repository.findByDOI(doi.lowercase(), setOf(Classes.paper))
             lower.isPresent shouldBe true
-            lower.get() shouldBe resource
+            lower.get() shouldBe resource1
         }
     }
 

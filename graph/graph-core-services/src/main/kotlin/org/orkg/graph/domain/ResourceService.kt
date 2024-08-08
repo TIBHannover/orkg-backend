@@ -88,9 +88,8 @@ class ResourceService(
     override fun findById(id: ThingId): Optional<Resource> =
         repository.findById(id)
 
-    override fun findByDOI(doi: String): Optional<Resource> =
-        statementRepository.findByDOI(doi)
-            .filter(Resource::hasPublishableClasses)
+    override fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource> =
+        statementRepository.findByDOI(doi, classes)
 
     override fun findPaperByTitle(title: String): Optional<Resource> =
         repository.findPaperByLabel(title)

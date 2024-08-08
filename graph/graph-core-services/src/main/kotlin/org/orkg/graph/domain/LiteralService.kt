@@ -26,14 +26,13 @@ class LiteralService(
         if (command.label.length > MAX_LABEL_LENGTH) {
             throw InvalidLiteralLabel()
         }
-        // Note: "xsd:foo" is a valid URI, so is everything starting with a letter followed by a colon.
+        // Note: "xsd:foo" is a valid IRI, so is everything starting with a letter followed by a colon.
         // There is no easy way around that, because other valid URIs use "prefix-like" structures, such as URNs.
-        if (command.datatype.startsWith("xsd:").not() && command.datatype.toIRIOrNull() == null)
+        val xsd = Literals.XSD.fromString(command.datatype)
+        if (xsd != null && !xsd.canParse(command.label)) {
+            throw InvalidLiteralLabel(command.label, command.datatype)
+        } else if (command.datatype.toIRIOrNull()?.isAbsolute != true) {
             throw InvalidLiteralDatatype()
-        Literals.XSD.fromString(command.datatype)?.let { xsd ->
-            if (!xsd.canParse(command.label)) {
-                throw InvalidLiteralLabel(command.label, command.datatype)
-            }
         }
         val id = command.id
             ?.also { id -> repository.findById(id).ifPresent { throw LiteralAlreadyExists(id) } }

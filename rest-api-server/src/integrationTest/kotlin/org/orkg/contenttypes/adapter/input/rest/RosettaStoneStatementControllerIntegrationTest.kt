@@ -168,7 +168,7 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
 
         literalService.createLiteral(id = ThingId("L123"), label = "123456")
         literalService.createLiteral(id = ThingId("L456"), label = "5", datatype = Literals.XSD.INT.prefixedUri)
-        literalService.createLiteral(id = ThingId("L789"), label = "custom type", datatype = "C25")
+        literalService.createLiteral(id = ThingId("L789"), label = "custom type", datatype = "http://orkg.org/orkg/class/C25")
 
         val userId = userService.createUser()
 
@@ -257,8 +257,8 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
                 }
                 objects[3].asClue { position ->
                     position.size shouldBe 2
-                    position[0] shouldBe LiteralReferenceRepresentation("custom type", "C25")
-                    position[1] shouldBe LiteralReferenceRepresentation("some literal value", "C25")
+                    position[0] shouldBe LiteralReferenceRepresentation("custom type", "http://orkg.org/orkg/class/C25")
+                    position[1] shouldBe LiteralReferenceRepresentation("some literal value", "http://orkg.org/orkg/class/C25")
                 }
                 objects[4].asClue { position ->
                     position.size shouldBe 3
@@ -378,11 +378,11 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
                         position.size shouldBe 2
                         position[0].shouldBeInstanceOf<Literal>().asClue { `object` ->
                             `object`.label shouldBe "custom type"
-                            `object`.datatype shouldBe "C25"
+                            `object`.datatype shouldBe "http://orkg.org/orkg/class/C25"
                         }
                         position[1].shouldBeInstanceOf<Literal>().asClue { `object` ->
                             `object`.label shouldBe "some literal value"
-                            `object`.datatype shouldBe "C25"
+                            `object`.datatype shouldBe "http://orkg.org/orkg/class/C25"
                         }
                     }
                     objects[4].asClue { position ->
@@ -483,11 +483,11 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
                         position.size shouldBe 2
                         position[0].shouldBeInstanceOf<Literal>().asClue { `object` ->
                             `object`.label shouldBe "some updated literal value"
-                            `object`.datatype shouldBe "C25"
+                            `object`.datatype shouldBe "http://orkg.org/orkg/class/C25"
                         }
                         position[1].shouldBeInstanceOf<Literal>().asClue { `object` ->
                             `object`.label shouldBe "custom type"
-                            `object`.datatype shouldBe "C25"
+                            `object`.datatype shouldBe "http://orkg.org/orkg/class/C25"
                         }
                     }
                     objects[4].asClue { position ->
@@ -661,7 +661,7 @@ private const val createRosettaStoneStatementJson = """{
     },
     "#temp6": {
       "label": "some literal value",
-      "data_type": "C25"
+      "data_type": "http://orkg.org/orkg/class/C25"
     }
   },
   "lists": {
@@ -719,7 +719,7 @@ private const val updateRosettaStoneStatementJson = """{
     },
     "#temp6": {
       "label": "some updated literal value",
-      "data_type": "C25"
+      "data_type": "http://orkg.org/orkg/class/C25"
     }
   },
   "lists": {

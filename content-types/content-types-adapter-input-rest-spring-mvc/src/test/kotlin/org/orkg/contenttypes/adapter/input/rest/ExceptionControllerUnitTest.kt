@@ -359,7 +359,7 @@ internal class ExceptionControllerUnitTest {
     fun mismatchedDataType() {
         val templatePropertyId = "R123"
         val predicateId = "P123"
-        val expectedDataType = "Boolean"
+        val expectedDataType = "xsd:boolean"
         val id = "#temp1"
         val foundDataType = "String"
 
@@ -856,7 +856,7 @@ internal class ExceptionControllerUnitTest {
         fun mismatchedDataType(
             @RequestParam templatePropertyId: ThingId,
             @RequestParam predicateId: ThingId,
-            @RequestParam expectedDataType: ThingId,
+            @RequestParam expectedDataType: String,
             @RequestParam id: String,
             @RequestParam foundDataType: String
         ) {

@@ -38,6 +38,8 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 
+private const val ORKG_CLASS_NS = "http://orkg.org/orkg/class/"
+
 class AbstractTemplatePropertyValueValidatorUnitTest {
     private val abstractTemplatePropertyValueValidator = AbstractTemplatePropertyValueValidator()
 
@@ -459,11 +461,10 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
         shouldThrow<MismatchedDataType> {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
         }.asClue {
-            it.message shouldBe """Object "#temp1" with data type "unknown" for property "R26" with predicate "${Predicates.hasWikidataId}" does not match expected data type "Software"."""
+            it.message shouldBe """Object "#temp1" with data type "unknown" for property "R26" with predicate "${Predicates.hasWikidataId}" does not match expected data type "$ORKG_CLASS_NS${Classes.software}"."""
         }
     }
 
-    // TODO: do we allow the id of a orkg class to be used as a datatype?
     @Test
     fun `Given a literal template property with a custom datatype, when object data type matches the id of the custom data type, it returns success`() {
         val property = createDummyOtherLiteralTemplateProperty().copy(
@@ -473,7 +474,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
         val id = "#temp1"
         val `object` = LiteralDefinition(
             label = "some value",
-            dataType = Classes.software.value
+            dataType = "$ORKG_CLASS_NS${Classes.software}"
         )
 
         assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
@@ -494,7 +495,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
         shouldThrow<MismatchedDataType> {
             abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
         }.asClue {
-            it.message shouldBe """Object "#temp1" with data type "unknown" for property "R26" with predicate "${Predicates.hasWikidataId}" does not match expected data type "Software"."""
+            it.message shouldBe """Object "#temp1" with data type "unknown" for property "R26" with predicate "${Predicates.hasWikidataId}" does not match expected data type "$ORKG_CLASS_NS${Classes.software}"."""
         }
     }
 }

@@ -28,6 +28,8 @@ import org.orkg.contenttypes.input.ThingDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 
+private const val ORKG_CLASS_NS = "http://orkg.org/orkg/class/"
+
 class AbstractTemplatePropertyValueValidator {
     internal fun validateCardinality(property: TemplateProperty, propertyInstances: List<String>) {
         if (property.minCount != null && property.minCount!! > 0 && propertyInstances.size < property.minCount!!) {
@@ -67,8 +69,14 @@ class AbstractTemplatePropertyValueValidator {
                     if (!xsd.canParse(`object`.label)) {
                         throw InvalidLiteral(property.id, property.path.id, property.datatype.id, id, `object`.label)
                     }
-                } else if (property.datatype.uri?.toString() != `object`.dataType && property.datatype.id.value != `object`.dataType) {
-                    throw MismatchedDataType(property.id, property.path.id, property.datatype.id, id, `object`.dataType)
+                } else if (property.datatype.uri?.toString() != `object`.dataType && "$ORKG_CLASS_NS${property.datatype.id}" != `object`.dataType) {
+                    throw MismatchedDataType(
+                        templatePropertyId = property.id,
+                        predicateId = property.path.id,
+                        expectedDataType = property.datatype.uri?.toString() ?: "$ORKG_CLASS_NS${property.datatype.id}",
+                        id = id,
+                        foundDataType = `object`.dataType
+                    )
                 }
             }
             is UntypedTemplateProperty -> {}

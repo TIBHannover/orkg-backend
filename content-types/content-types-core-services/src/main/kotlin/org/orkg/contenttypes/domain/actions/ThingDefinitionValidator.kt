@@ -2,10 +2,12 @@ package org.orkg.contenttypes.domain.actions
 
 import dev.forkhandles.values.ofOrNull
 import org.orkg.common.Either
+import org.orkg.common.toIRIOrNull
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.input.ThingDefinitions
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Literals
@@ -72,10 +74,11 @@ open class ThingDefinitionValidator(
             if (it.label.length > MAX_LABEL_LENGTH) {
                 throw InvalidLiteralLabel()
             }
-            Literals.XSD.fromString(it.dataType)?.let { xsd ->
-                if (!xsd.canParse(it.label)) {
-                    throw InvalidLiteralLabel(it.label, it.dataType)
-                }
+            val xsd = Literals.XSD.fromString(it.dataType)
+            if (xsd != null && !xsd.canParse(it.label)) {
+                throw InvalidLiteralLabel(it.label, it.dataType)
+            } else if (it.dataType.toIRIOrNull()?.isAbsolute != true) {
+                throw InvalidLiteralDatatype()
             }
         }
         thingDefinitions.predicates.values.forEach {

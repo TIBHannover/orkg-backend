@@ -223,7 +223,7 @@ class TooManyPropertyValues(templatePropertyId: ThingId, predicateId: ThingId, m
 class InvalidLiteral(templatePropertyId: ThingId, predicateId: ThingId, datatype: ThingId, id: String, value: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" with value "$value" for property "$templatePropertyId" with predicate "$predicateId" is not a valid "$datatype".""")
 
-class MismatchedDataType(templatePropertyId: ThingId, predicateId: ThingId, expectedDataType: ThingId, id: String, foundDataType: String) : SimpleMessageException(
+class MismatchedDataType(templatePropertyId: ThingId, predicateId: ThingId, expectedDataType: String, id: String, foundDataType: String) : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
     message = """Object "$id" with data type "$foundDataType" for property "$templatePropertyId" with predicate "$predicateId" does not match expected data type "$expectedDataType"."""
 )

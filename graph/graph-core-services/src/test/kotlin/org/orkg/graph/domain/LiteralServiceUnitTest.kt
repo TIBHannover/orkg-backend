@@ -42,14 +42,13 @@ class LiteralServiceUnitTest : DescribeSpec({
                     )
                 }
             }
-            xit("fails when the datatype has an invalid prefix") {
+            it("fails when the datatype has an invalid prefix") {
                 shouldThrowExactly<InvalidLiteralDatatype> {
-                    // This cannot be tested easily, since foo:string is a valid URI.
                     service.create(
                         CreateCommand(
                             contributorId = ContributorId(UUID.randomUUID()),
                             label = "irrelevant",
-                            datatype = "foo:string"
+                            datatype = "foo_bar:string"
                         )
                     )
                 }

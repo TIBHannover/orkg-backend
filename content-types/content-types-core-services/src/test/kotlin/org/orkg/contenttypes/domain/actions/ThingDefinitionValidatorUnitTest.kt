@@ -24,6 +24,7 @@ import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
 import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
@@ -246,6 +247,29 @@ class ThingDefinitionValidatorUnitTest {
         )
 
         assertThrows<InvalidLiteralLabel> {
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
+                thingDefinitions = contents,
+                tempIds = emptySet(),
+                validatedIds = mutableMapOf()
+            )
+        }
+    }
+
+    @Test
+    fun `Given paper contents, when datatype of literal is invalid, it throws an exception`() {
+        val contents = CreatePaperUseCase.CreateCommand.PaperContents(
+            resources = emptyMap(),
+            literals = mapOf(
+                "#temp1" to LiteralDefinition(
+                    label = "imvalid",
+                    dataType = "foo_bar:string"
+                )
+            ),
+            predicates = emptyMap(),
+            contributions = emptyList()
+        )
+
+        assertThrows<InvalidLiteralDatatype> {
             thingDefinitionValidator.validateThingDefinitionsInPlace(
                 thingDefinitions = contents,
                 tempIds = emptySet(),

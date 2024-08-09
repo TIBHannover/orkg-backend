@@ -17,7 +17,7 @@ internal class NTripleLiteralEscapeTest {
         @JvmStatic
         fun literals(): Stream<Arguments> = Stream.of(
             Arguments.of("abc", "abc"),
-            Arguments.of("string with echars \"\n\r\t\u000C\b\\", """string with echars \"\n\r\t\f\b\"""),
+            Arguments.of("string with echars \"\n\r\t\u000C\b\\", """string with echars \"\n\r\t\f\b\\"""),
             Arguments.of("string with illegal bmp codepoint \uFFFF", """string with illegal bmp codepoint \uFFFF"""),
             Arguments.of("string with illegal non-bmp codepoint \uDC00\uDC00", """string with illegal non-bmp codepoint \uDC00\uDC00"""),
             Arguments.of("string with legal bmp codepoint does not get escaped \uF600", "string with legal bmp codepoint does not get escaped \uF600"),

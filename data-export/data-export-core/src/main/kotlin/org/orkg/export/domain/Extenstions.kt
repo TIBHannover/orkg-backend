@@ -17,7 +17,7 @@ private val illegalCharRanges = arrayOf(
  */
 internal fun escapeLiteral(literal: String): String {
     val echarEscaped = literal
-        .replace("\\", """\""")
+        .replace("\\", """\\""")
         .replace("\t", """\t""")
         .replace("\u0008", """\b""")
         .replace("\n", """\n""")

@@ -11,11 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added filtering parameter `doi_prefix` to paper content-type endpoint.
   (Closes: [#577](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/577))
-- Added endpoint `/api/classes` now supports filtering by `created_by`, `created_at_start`, `created_at_end`.
+- The endpoint `/api/classes` now supports filtering by `created_by`, `created_at_start`, `created_at_end`.
   (See: [!1018](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1018))
-- Added endpoint `/api/predicates` now supports filtering by `created_by`, `created_at_start`, `created_at_end`.
+- The endpoint `/api/predicates` now supports filtering by `created_by`, `created_at_start`, `created_at_end`.
   (See: [!1019](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1019))
-- Added endpoint `/api/literals` now supports filtering by `created_by`, `created_at_start`, `created_at_end`.
+- The endpoint `/api/literals` now supports filtering by `created_by`, `created_at_start`, `created_at_end`.
   (See: [!1020](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1020))
 - Added content-type endpoint for updating rosetta stone templates.
   (See: [!1016](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1016))
@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1018](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1018),
         [!1019](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1019).
         [!1020](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1020))
-- The widget endpoint now returns the latest resource assigned to a DOI and supports returning PaperVersion instances.
+- The widget endpoint now always returns the latest resource related to a DOI and supports returning PaperVersion instances.
   (See: [!1023](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1023))
 - Literal data types now must be an absolute IRI.
   (See: [!1022](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1022))
@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1013](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1013))
 - Papers containing no contributions but rosetta stone statements are no longer being unlisted automatically.
   (See: [!1015](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1015))
-- URI validation now matches RFC 3987 as described in the [W3C specification](https://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/datatypes.html#anyURI).
+- URI validation now matches RFC 3987 as described in the [W3C XSD specification](https://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/datatypes.html#anyURI).
   (See: [!1021](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1021))
 - Literal boolean values "0" and "1" are now considered valid.
 - Literals are now escaped according to the [W3C RDF N-Triple specification](https://www.w3.org/TR/rdf12-n-triples/#canonical-ntriples).

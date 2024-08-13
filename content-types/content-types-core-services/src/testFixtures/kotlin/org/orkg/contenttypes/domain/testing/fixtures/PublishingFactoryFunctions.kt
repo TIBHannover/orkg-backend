@@ -6,9 +6,10 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.PublishingService
+import org.orkg.contenttypes.domain.PublishingService.SnapshotCreator
 import org.orkg.graph.domain.Classes
 
-fun dummyPublishCommand(): PublishingService.PublishCommand =
+fun dummyPublishCommand(snapshotCreator: SnapshotCreator): PublishingService.PublishCommand =
     PublishingService.PublishCommand(
         id = ThingId("R123"),
         title = "Paper title",
@@ -33,5 +34,6 @@ fun dummyPublishCommand(): PublishingService.PublishCommand =
             )
         ),
         resourceType = Classes.paper,
-        relatedIdentifiers = listOf("10.1000/183")
+        relatedIdentifiers = listOf("10.1000/183"),
+        snapshotCreator = snapshotCreator
     )

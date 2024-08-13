@@ -224,7 +224,8 @@ class PaperService(
                 url = URI.create("$paperPublishBaseUri/").resolve(paper.id.value),
                 creators = command.authors,
                 resourceType = Classes.paper,
-                relatedIdentifiers = emptyList()
+                relatedIdentifiers = emptyList(),
+                snapshotCreator = { paper.id }
             )
         )
     }

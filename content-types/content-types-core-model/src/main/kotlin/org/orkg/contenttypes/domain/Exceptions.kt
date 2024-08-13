@@ -151,9 +151,6 @@ class EmptyContribution : SimpleMessageException {
     constructor(index: Int) : super(HttpStatus.BAD_REQUEST, """Contribution at index "$index" does not contain any statements.""")
 }
 
-class DoiAlreadyRegistered(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Resource "$id" already has a DOI.""")
-
 class UnpublishableThing(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Thing "$id" cannot be published.""")
 

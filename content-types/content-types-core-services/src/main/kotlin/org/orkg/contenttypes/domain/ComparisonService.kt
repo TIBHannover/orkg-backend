@@ -347,7 +347,8 @@ class ComparisonService(
                 url = URI.create("$comparisonPublishBaseUri/").resolve(comparison.id.value),
                 creators = command.authors,
                 resourceType = Classes.comparison,
-                relatedIdentifiers = comparisonRepository.findAllDOIsRelatedToComparison(comparison.id).toList()
+                relatedIdentifiers = comparisonRepository.findAllDOIsRelatedToComparison(comparison.id).toList(),
+                snapshotCreator = { comparison.id }
             )
         )
     }

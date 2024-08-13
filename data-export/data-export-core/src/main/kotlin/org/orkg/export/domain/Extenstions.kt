@@ -10,33 +10,43 @@ private val illegalCharRanges = arrayOf(
     IntRange(0x00110000, 0x7FFFFFFF), // range not allowed by XML
 )
 
+private const val backslashCodepoint = '\\'.code
+private const val horizontalTabCodepoint = '\t'.code
+private const val backspaceCodepoint = '\u0008'.code
+private const val newLineCodepoint = '\n'.code
+private const val carriageReturnCodepoint = '\r'.code
+private const val formFeedCodepoint = '\u000C'.code
+private const val doubleQuotesCodepoint = '\"'.code
+
 /**
  * This method escapes a given string following the rules of the
  * [W3C RDF N-Triple specification](https://www.w3.org/TR/rdf12-n-triples/#canonical-ntriples),
  * where the returned string represents a valid STRING_LITERAL_QUOTE.
  */
-internal fun escapeLiteral(literal: String): String {
-    val echarEscaped = literal
-        .replace("\\", """\\""")
-        .replace("\t", """\t""")
-        .replace("\u0008", """\b""")
-        .replace("\n", """\n""")
-        .replace("\r", """\r""")
-        .replace("\u000C", """\f""")
-        .replace("\"", """\"""")
-    val ucharEscaped = buildString {
-        echarEscaped.codePoints().forEach { codePoint ->
-            val isIllegal = illegalCharRanges.any { codePoint in it }
-            if (isIllegal) {
-                if (Character.isBmpCodePoint(codePoint)) {
-                    append("""\u%04X""".format(codePoint))
+internal fun escapeLiteral(literal: String): String = buildString(literal.length) {
+    literal.codePoints().forEach { codePoint ->
+        when (codePoint) {
+            backslashCodepoint -> append("""\\""")
+            horizontalTabCodepoint -> append("""\t""")
+            backspaceCodepoint -> append("""\b""")
+            newLineCodepoint -> append("""\n""")
+            carriageReturnCodepoint -> append("""\r""")
+            formFeedCodepoint -> append("""\f""")
+            doubleQuotesCodepoint -> append("""\"""")
+            else -> {
+                val isIllegal = illegalCharRanges.any { codePoint in it }
+                if (isIllegal) {
+                    if (Character.isBmpCodePoint(codePoint)) {
+                        append("""\u%04X""".format(codePoint))
+                    } else {
+                        val high = Character.highSurrogate(codePoint).code
+                        val low = Character.lowSurrogate(codePoint).code
+                        append("""\u%04X\u%04X""".format(high, low))
+                    }
                 } else {
-                    append("""\u%04X\u%04X""".format(Character.highSurrogate(codePoint).code, Character.lowSurrogate(codePoint).code))
+                    appendCodePoint(codePoint)
                 }
-            } else {
-                appendCodePoint(codePoint)
             }
         }
     }
-    return ucharEscaped
 }

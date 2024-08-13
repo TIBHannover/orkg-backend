@@ -58,7 +58,7 @@ interface UpdatePaperUseCase {
 }
 
 interface PublishPaperUseCase {
-    fun publish(command: PublishCommand)
+    fun publish(command: PublishCommand): ThingId
 
     data class PublishCommand(
         val id: ThingId,

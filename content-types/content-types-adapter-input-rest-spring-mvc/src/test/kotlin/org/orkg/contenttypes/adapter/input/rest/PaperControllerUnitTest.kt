@@ -364,8 +364,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             "description" to description,
             "authors" to authors
         )
+        val paperVersionId = ThingId("R456")
 
-        every { paperService.publish(any()) } just runs
+        every { paperService.publish(any()) } returns paperVersionId
 
         documentedPostRequestTo("/api/papers/{id}/publish", id)
             .content(request)
@@ -373,7 +374,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("api/papers/$id")))
+            .andExpect(header().string("Location", endsWith("api/resources/$paperVersionId")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(

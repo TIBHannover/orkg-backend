@@ -3,7 +3,6 @@ package org.orkg.contenttypes.domain
 import java.net.URI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ResourceNotFound
@@ -20,7 +19,7 @@ class PublishingService(
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases
 ) {
-    fun publish(command: PublishCommand): DOI {
+    fun publish(command: PublishCommand): ThingId {
         val resource = resourceRepository.findById(command.id)
             .orElseThrow { ResourceNotFound.withId(command.id) }
         if (!resource.hasPublishableClasses()) {
@@ -51,7 +50,7 @@ class PublishingService(
                 )
             )
         )
-        return doi
+        return snapshotId
     }
 
     data class PublishCommand(

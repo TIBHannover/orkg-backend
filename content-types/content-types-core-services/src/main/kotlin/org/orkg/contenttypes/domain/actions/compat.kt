@@ -10,6 +10,7 @@ import org.orkg.contenttypes.domain.actions.literaturelists.sections.DeleteLiter
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.UpdateLiteratureListSectionAction
 import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
+import org.orkg.contenttypes.domain.actions.papers.snapshot.SnapshotPaperAction
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosettaStoneStatementAction
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.CreateRosettaStoneTemplateAction
@@ -83,6 +84,7 @@ internal typealias DeleteSmartReviewSectionCommand = DeleteSmartReviewSectionUse
 
 internal typealias CreatePaperState = CreatePaperAction.State
 internal typealias UpdatePaperState = UpdatePaperAction.State
+internal typealias SnapshotPaperState = SnapshotPaperAction.State
 
 internal typealias CreateTemplateState = CreateTemplateAction.State
 internal typealias UpdateTemplateState = UpdateTemplateAction.State

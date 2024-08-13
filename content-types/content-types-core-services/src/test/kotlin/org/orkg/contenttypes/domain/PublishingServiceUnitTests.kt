@@ -67,7 +67,7 @@ class PublishingServiceUnitTests {
         every { statementService.create(command.contributorId, snapshotId, Predicates.hasDOI, doiLiteralId) } returns StatementId("S123")
 
         val result = service.publish(command)
-        result shouldBe doi
+        result shouldBe snapshotId
 
         verify(exactly = 1) { resourceRepository.findById(id) }
         verify(exactly = 1) { snapshotCreator.createSnapshot() }

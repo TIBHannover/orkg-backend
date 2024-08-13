@@ -9,6 +9,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
@@ -19,6 +20,7 @@ import org.orkg.contenttypes.domain.actions.PublicationInfoValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.ResourceValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
+import org.orkg.contenttypes.domain.actions.SnapshotPaperState
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsCreator
@@ -53,8 +55,13 @@ import org.orkg.contenttypes.domain.actions.papers.PaperTempIdValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperTitleCreateValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperTitleUpdateValidator
+import org.orkg.contenttypes.domain.actions.papers.snapshot.PaperSnapshotArchiver
+import org.orkg.contenttypes.domain.actions.papers.snapshot.PaperSnapshotHistoryUpdater
+import org.orkg.contenttypes.domain.actions.papers.snapshot.PaperSnapshotPaperCloner
+import org.orkg.contenttypes.domain.actions.papers.snapshot.PaperSnapshotPaperLoader
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.PublishPaperUseCase
+import org.orkg.contenttypes.output.PaperPublishedRepository
 import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -95,6 +102,7 @@ class PaperService(
     private val publishingService: PublishingService,
     private val paperRepository: PaperRepository,
     private val classRepository: ClassRepository,
+    private val paperPublishedRepository: PaperPublishedRepository,
     @Value("\${orkg.publishing.base-url.paper}")
     private val paperPublishBaseUri: String = "http://localhost/paper/"
 ) : PaperUseCases {
@@ -211,10 +219,10 @@ class PaperService(
         steps.execute(command, UpdatePaperState())
     }
 
-    override fun publish(command: PublishPaperUseCase.PublishCommand) {
+    override fun publish(command: PublishPaperUseCase.PublishCommand): ThingId {
         val paper = resourceRepository.findPaperById(command.id)
             .orElseThrow { PaperNotFound(command.id) }
-        publishingService.publish(
+        return publishingService.publish(
             PublishingService.PublishCommand(
                 id = paper.id,
                 title = paper.label,
@@ -225,9 +233,19 @@ class PaperService(
                 creators = command.authors,
                 resourceType = Classes.paper,
                 relatedIdentifiers = emptyList(),
-                snapshotCreator = { paper.id }
+                snapshotCreator = { createSnapshot(paper, command) }
             )
         )
+    }
+
+    internal fun createSnapshot(resource: Resource, command: PublishPaperUseCase.PublishCommand): ThingId {
+        val steps = listOf<Action<PublishPaperUseCase.PublishCommand, SnapshotPaperState>>(
+            PaperSnapshotPaperLoader(this),
+            PaperSnapshotPaperCloner(resourceRepository, statementRepository, resourceService, statementService, literalService, listService),
+            PaperSnapshotHistoryUpdater(statementService),
+            PaperSnapshotArchiver(statementService, paperPublishedRepository)
+        )
+        return steps.execute(command, SnapshotPaperState(resource)).paperVersionId!!
     }
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {

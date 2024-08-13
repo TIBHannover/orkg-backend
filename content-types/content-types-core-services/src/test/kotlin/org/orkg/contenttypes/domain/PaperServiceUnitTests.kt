@@ -23,8 +23,8 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.PublishPaperUseCase
+import org.orkg.contenttypes.output.PaperPublishedRepository
 import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -65,6 +65,7 @@ class PaperServiceUnitTests {
     private val paperRepository: PaperRepository = mockk()
     private val classRepository: ClassRepository = mockk()
     private val listRepository: ListRepository = mockk()
+    private val paperPublishedRepository: PaperPublishedRepository = mockk()
 
     private val service = PaperService(
         resourceRepository = resourceRepository,
@@ -82,6 +83,7 @@ class PaperServiceUnitTests {
         publishingService = publishingService,
         paperRepository = paperRepository,
         classRepository = classRepository,
+        paperPublishedRepository = paperPublishedRepository,
         paperPublishBaseUri = "https://orkg.org/paper/"
     )
 
@@ -107,7 +109,8 @@ class PaperServiceUnitTests {
             listRepository,
             publishingService,
             paperRepository,
-            classRepository
+            classRepository,
+            paperPublishedRepository
         )
     }
 
@@ -372,11 +375,12 @@ class PaperServiceUnitTests {
                 homepage = ParsedIRI("https://example.org")
             )
         )
+        val paperVersionId = ThingId("R156416")
 
         every { resourceRepository.findPaperById(paper.id) } returns Optional.of(paper)
-        every { publishingService.publish(any()) } returns DOI.of("10.1234/56789")
+        every { publishingService.publish(any()) } returns paperVersionId
 
-        service.publish(
+        val result = service.publish(
             PublishPaperUseCase.PublishCommand(
                 id = paper.id,
                 contributorId = contributorId,
@@ -385,6 +389,7 @@ class PaperServiceUnitTests {
                 authors = authors
             )
         )
+        result shouldBe paperVersionId
 
         verify(exactly = 1) { resourceRepository.findPaperById(paper.id) }
         verify(exactly = 1) {
@@ -399,6 +404,7 @@ class PaperServiceUnitTests {
                     it.creators shouldBe authors
                     it.resourceType shouldBe Classes.paper
                     it.relatedIdentifiers shouldBe emptyList()
+                    it.snapshotCreator shouldNotBe null
                 }
             )
         }

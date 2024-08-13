@@ -24,7 +24,6 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.output.ComparisonRepository
@@ -372,10 +371,11 @@ class ComparisonServiceUnitTests {
                 homepage = ParsedIRI("https://example.org")
             )
         )
+        val paperVersionId = comparison.id // TODO: replace with snapshot id
 
         every { resourceRepository.findById(comparison.id) } returns Optional.of(comparison)
         every { comparisonRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf(relatedDoi)
-        every { publishingService.publish(any()) } returns DOI.of("10.1234/56789")
+        every { publishingService.publish(any()) } returns paperVersionId
 
         service.publish(
             PublishComparisonUseCase.PublishCommand(
@@ -401,6 +401,7 @@ class ComparisonServiceUnitTests {
                     it.creators shouldBe authors
                     it.resourceType shouldBe Classes.comparison
                     it.relatedIdentifiers shouldBe listOf(relatedDoi)
+                    it.snapshotCreator shouldNotBe null
                 }
             )
         }

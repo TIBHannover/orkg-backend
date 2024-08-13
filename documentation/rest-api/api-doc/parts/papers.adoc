@@ -58,7 +58,8 @@ operation::papers-update[snippets='request-fields,curl-request,http-response']
 == Publishing papers
 
 A `POST` request publishes an existing paper with the given parameters.
-It assigns a DOI to the paper and adds additional publication information, such as month and year published.
+In the process, a new paper version resource is created and linked to the original paper resource.
+All contribution statements of the original paper are archived in a separate database.
 The response will be `204 No Content` when successful.
 
 operation::papers-publish[snippets='request-fields,curl-request,http-response']

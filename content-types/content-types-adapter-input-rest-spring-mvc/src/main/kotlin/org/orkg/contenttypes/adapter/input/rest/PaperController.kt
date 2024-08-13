@@ -165,10 +165,10 @@ class PaperController(
         @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
-        service.publish(request.toPublishCommand(id, contributorId))
+        val paperVersionId = service.publish(request.toPublishCommand(id, contributorId))
         val location = uriComponentsBuilder
-            .path("api/papers/{id}")
-            .buildAndExpand(id)
+            .path("api/resources/{id}")
+            .buildAndExpand(paperVersionId)
             .toUri()
         return noContent().location(location).build()
     }

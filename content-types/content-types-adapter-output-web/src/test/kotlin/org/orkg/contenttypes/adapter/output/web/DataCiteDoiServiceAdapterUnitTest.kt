@@ -15,20 +15,18 @@ import io.mockk.verify
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
-import java.net.http.HttpRequest.BodyPublisher
 import java.net.http.HttpResponse
-import java.nio.ByteBuffer
 import java.time.Clock
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.*
-import java.util.concurrent.Flow
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.exceptions.ServiceUnavailable
+import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.testing.fixtures.dummyRegisterDoiCommand
@@ -40,8 +38,8 @@ class DataCiteDoiServiceAdapterUnitTest {
     private val objectMapper = ObjectMapper().registerKotlinModule()
     private val fixedTime = OffsetDateTime.of(2023, 9, 8, 13, 9, 34, 12345, ZoneOffset.ofHours(1))
     private val staticClock = Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
-    private val adapter = DataCiteDoiServiceAdapter(dataciteConfiguration, objectMapper, httpClient,
-        DataCiteDoiServiceAdapterUnitTest::TestBodyPublisher, staticClock)
+    private val adapter =
+        DataCiteDoiServiceAdapter(dataciteConfiguration, objectMapper, httpClient, ::TestBodyPublisher, staticClock)
 
     @BeforeEach
     fun resetState() {
@@ -136,15 +134,6 @@ class DataCiteDoiServiceAdapterUnitTest {
         verify(exactly = 1) { response.body() }
 
         confirmVerified(response)
-    }
-
-    // Testing class that enables easily accessible body contents
-    class TestBodyPublisher(val content: String) : BodyPublisher {
-        private val delegate: BodyPublisher = HttpRequest.BodyPublishers.ofString(content)
-
-        override fun subscribe(subscriber: Flow.Subscriber<in ByteBuffer>?) = delegate.subscribe(subscriber)
-
-        override fun contentLength(): Long = delegate.contentLength()
     }
 }
 

@@ -2,6 +2,7 @@ package org.orkg.contenttypes.adapter.output.simcomp.json
 
 import com.fasterxml.jackson.databind.module.SimpleDeserializers
 import com.fasterxml.jackson.databind.module.SimpleModule
+import org.orkg.contenttypes.domain.PublishedContentType
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
@@ -19,5 +20,6 @@ class SimCompJacksonModule : SimpleModule() {
             addDeserializer(Predicate::class.java, PredicateDeserializer())
         })
         context?.setMixInAnnotations(GeneralStatement::class.java, StatementMixin::class.java)
+        context?.setMixInAnnotations(PublishedContentType::class.java, PublishedContentTypeMixin::class.java)
     }
 }

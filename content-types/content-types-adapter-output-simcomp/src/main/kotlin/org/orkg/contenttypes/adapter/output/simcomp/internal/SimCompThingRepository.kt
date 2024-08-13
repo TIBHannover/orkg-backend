@@ -1,14 +1,17 @@
 package org.orkg.contenttypes.adapter.output.simcomp.internal
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.io.IOException
 import java.net.http.HttpClient
 import java.net.http.HttpClient.Version.HTTP_1_1
 import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.util.*
 import org.orkg.common.ThingId
+import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.send
-import org.orkg.contenttypes.domain.PublishedContentType
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
@@ -17,10 +20,11 @@ import org.springframework.web.util.UriComponentsBuilder
 class SimCompThingRepository(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
+    private val bodyPublisherFactory: (String) -> HttpRequest.BodyPublisher = HttpRequest.BodyPublishers::ofString,
     @Value("\${orkg.simcomp.host}")
     private val host: String = "http://localhost/simcomp"
 ) {
-    fun findById(id: ThingId, type: ThingType): Optional<PublishedContentType> {
+    fun findById(id: ThingId, type: ThingType): Optional<BaseThing> {
         val uri = UriComponentsBuilder.fromHttpUrl(host)
             .path("/thing/") // The trailing slash is important, otherwise we get a redirect (307)
             .queryParam("thing_type", type.name)
@@ -34,10 +38,36 @@ class SimCompThingRepository(
             .GET()
             .build()
         val result = httpClient.send(request, "SimComp") { response ->
-            with(objectMapper.readValue(response, ThingGetResponse::class.java).payload.thing.data) {
-                PublishedContentType(rootResource, statements)
-            }
+            objectMapper.readValue(response, ThingGetResponse::class.java).payload.thing
         }
         return Optional.ofNullable(result)
+    }
+
+    fun save(id: ThingId, type: ThingType, data: Any, config: Map<String, Any> = emptyMap()) {
+        val body = ThingAddRequest(
+            thingType = type,
+            thingKey = id,
+            config = config,
+            data = data
+        )
+        val uri = UriComponentsBuilder.fromHttpUrl(host)
+            .path("/thing/") // The trailing slash is important, otherwise we get a redirect (307)
+            .build()
+            .toUri()
+        val request = HttpRequest.newBuilder()
+            .uri(uri)
+            .version(HTTP_1_1)
+            .header("Accept", MediaType.APPLICATION_JSON_VALUE)
+            .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+            .POST(bodyPublisherFactory(objectMapper.writeValueAsString(body)))
+            .build()
+        try {
+            val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+            if (response.statusCode() != HttpStatus.CREATED.value()) {
+                throw ServiceUnavailable.create("SimComp", response.statusCode(), response.body())
+            }
+        } catch (e: IOException) {
+            throw ServiceUnavailable.create("SimComp", e)
+        }
     }
 }

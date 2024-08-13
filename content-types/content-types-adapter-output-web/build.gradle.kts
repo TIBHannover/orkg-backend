@@ -30,6 +30,7 @@ testing {
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.kotest.runner)
+                implementation(testFixtures(project(":common")))
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
             }
         }

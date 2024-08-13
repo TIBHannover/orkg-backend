@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.output.simcomp
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.output.simcomp.internal.SimCompThingRepository
@@ -15,9 +16,10 @@ const val THING_ID_TO_PUBLISHED_LITERATURE_LIST_CACHE = "thing-id-to-published-l
 @Component
 @CacheConfig(cacheNames = [THING_ID_TO_PUBLISHED_LITERATURE_LIST_CACHE])
 class SimCompLiteratureListPublishedAdapter(
+    private val objectMapper: ObjectMapper,
     private val repository: SimCompThingRepository
 ) : LiteratureListPublishedRepository {
     @Cacheable(key = "#id", cacheNames = [THING_ID_TO_PUBLISHED_LITERATURE_LIST_CACHE])
     override fun findById(id: ThingId): Optional<PublishedContentType> =
-        repository.findById(id, ThingType.LIST)
+        repository.findById(id, ThingType.LIST).map { it.toPublishedContentType(objectMapper) }
 }

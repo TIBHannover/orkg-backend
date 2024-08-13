@@ -24,6 +24,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation("io.kotest:kotest-assertions-api")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.kotest:kotest-common")
                 implementation("io.mockk:mockk-dsl")
@@ -33,9 +34,12 @@ testing {
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework:spring-test")
                 implementation(libs.kotest.runner)
+                implementation(libs.kotest.assertions.core)
                 implementation(project(":common:serialization"))
                 implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
+                implementation(testFixtures(project(":common")))
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
+                implementation(testFixtures(project(":graph:graph-core-model")))
             }
         }
     }

@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.output.simcomp
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.output.simcomp.internal.SimCompThingRepository
@@ -15,9 +16,10 @@ const val THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE = "thing-id-to-published-smar
 @Component
 @CacheConfig(cacheNames = [THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE])
 class SimCompSmartReviewPublishedAdapter(
+    private val objectMapper: ObjectMapper,
     private val repository: SimCompThingRepository
 ) : SmartReviewPublishedRepository {
     @Cacheable(key = "#id", cacheNames = [THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE])
     override fun findById(id: ThingId): Optional<PublishedContentType> =
-        repository.findById(id, ThingType.REVIEW)
+        repository.findById(id, ThingType.REVIEW).map { it.toPublishedContentType(objectMapper) }
 }

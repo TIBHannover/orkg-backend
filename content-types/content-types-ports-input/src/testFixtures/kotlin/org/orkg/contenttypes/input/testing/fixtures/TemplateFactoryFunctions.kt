@@ -23,6 +23,7 @@ import org.orkg.contenttypes.input.UntypedPropertyDefinition
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.UpdateTemplateUseCase
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
 
@@ -48,7 +49,8 @@ fun dummyCreateTemplateCommand() = CreateTemplateUseCase.CreateCommand(
     organizations = listOf(
         OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
         OrganizationId("1f63b1da-3c70-4492-82e0-770ca94287ea")
-    )
+    ),
+    extractionMethod = ExtractionMethod.MANUAL
 )
 
 fun dummyUpdateTemplateCommand() = UpdateTemplateUseCase.UpdateCommand(
@@ -72,7 +74,8 @@ fun dummyUpdateTemplateCommand() = UpdateTemplateUseCase.UpdateCommand(
     ),
     isClosed = true,
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
-    organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc"))
+    organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
+    extractionMethod = ExtractionMethod.MANUAL
 )
 
 fun dummyCreateUntypedTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateUntypedPropertyCommand(

@@ -26,6 +26,7 @@ import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.createUser
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
@@ -174,7 +175,8 @@ class TemplateInstanceControllerIntegrationTest : RestDocumentationBaseTest() {
                 ),
                 organizations = listOf(
                     OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
-                )
+                ),
+                extractionMethod = ExtractionMethod.UNKNOWN
             )
         )
         statementService.create(

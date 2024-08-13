@@ -7,6 +7,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
@@ -26,6 +27,7 @@ data class Template(
     val createdAt: OffsetDateTime,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
+    val extractionMethod: ExtractionMethod,
     val visibility: Visibility,
     val unlistedBy: ContributorId? = null
 ) : ContentType {
@@ -60,6 +62,7 @@ data class Template(
                 createdBy = resource.createdBy,
                 organizations = listOf(resource.organizationId),
                 observatories = listOf(resource.observatoryId),
+                extractionMethod = resource.extractionMethod,
                 visibility = resource.visibility,
                 unlistedBy = resource.unlistedBy
             )

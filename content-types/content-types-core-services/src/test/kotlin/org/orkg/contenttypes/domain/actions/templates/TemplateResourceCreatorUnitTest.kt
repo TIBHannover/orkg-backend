@@ -42,7 +42,8 @@ class TemplateResourceCreatorUnitTest {
             classes = setOf(Classes.nodeShape),
             contributorId = command.contributorId,
             observatoryId = command.observatories.firstOrNull(),
-            organizationId = command.organizations.firstOrNull()
+            organizationId = command.organizations.firstOrNull(),
+            extractionMethod = command.extractionMethod
         )
         val id = ThingId("Template")
 

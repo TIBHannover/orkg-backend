@@ -235,6 +235,7 @@ fun ResultActions.andExpectTemplate(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
     .andExpect(jsonPath("$path.observatories").isArray)
     .andExpect(jsonPath("$path.organizations").isArray)
+    .andExpect(jsonPath("$path.extraction_method", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
     .andExpect(jsonPath("$path._class").value("template"))
 

@@ -36,6 +36,7 @@ import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.createUser
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -283,6 +284,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.createdBy shouldBe ContributorId(MockUserId.USER)
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+            it.extractionMethod shouldBe ExtractionMethod.AUTOMATIC
             it.visibility shouldBe Visibility.DEFAULT
             it.unlistedBy shouldBe null
         }
@@ -381,6 +383,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.createdBy shouldBe ContributorId(MockUserId.USER)
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+            it.extractionMethod shouldBe ExtractionMethod.MANUAL
             it.visibility shouldBe Visibility.DEFAULT
             it.unlistedBy shouldBe null
         }
@@ -763,7 +766,8 @@ private const val createTemplateJson = """{
   ],
   "organizations": [
     "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ]
+  ],
+  "extraction_method": "AUTOMATIC"
 }"""
 
 private const val updateTemplateJson = """{
@@ -831,7 +835,8 @@ private const val updateTemplateJson = """{
   ],
   "organizations": [
     "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ]
+  ],
+  "extraction_method": "MANUAL"
 }"""
 
 private const val createUntypedTemplatePropertyJson = """{

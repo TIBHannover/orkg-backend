@@ -28,6 +28,7 @@ interface TemplateRepresentationAdapter : TemplateRelationRepresentationAdapter,
             createdBy = createdBy,
             organizations = organizations,
             observatories = observatories,
+            extractionMethod = extractionMethod,
             visibility = visibility,
             unlistedBy = unlistedBy
         )

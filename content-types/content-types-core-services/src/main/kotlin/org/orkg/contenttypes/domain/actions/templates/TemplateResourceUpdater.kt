@@ -15,7 +15,8 @@ class TemplateResourceUpdater(
                     id = command.templateId,
                     label = command.label,
                     observatoryId = command.observatories?.singleOrNull(),
-                    organizationId = command.organizations?.singleOrNull()
+                    organizationId = command.organizations?.singleOrNull(),
+                    extractionMethod = command.extractionMethod
                 )
             )
         }

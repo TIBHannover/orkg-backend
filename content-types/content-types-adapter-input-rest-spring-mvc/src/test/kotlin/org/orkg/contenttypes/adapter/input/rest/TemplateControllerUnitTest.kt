@@ -55,6 +55,7 @@ import org.orkg.contenttypes.input.testing.fixtures.stringLiteralTemplatePropert
 import org.orkg.contenttypes.input.testing.fixtures.untypedTemplatePropertyRequest
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.ResearchProblemNotFound
@@ -146,6 +147,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to."),
+                        fieldWithPath("extraction_method").description("""The method used to extract the template resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
                         timestampFieldWithPath("created_at", "the template resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this template."),
@@ -344,6 +346,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to."),
+                        fieldWithPath("extraction_method").description("""The method used to extract the template resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""")
                     )
                 )
             )
@@ -600,6 +603,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
                         fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified. (optional)"),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to. (optional)"),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to. (optional)"),
+                        fieldWithPath("extraction_method").description("""The updated method used to extract the template resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""")
                     )
                 )
             )
@@ -987,7 +991,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             ),
             organizations = listOf(
                 OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
-            )
+            ),
+            extractionMethod = ExtractionMethod.MANUAL
         )
 
     companion object {

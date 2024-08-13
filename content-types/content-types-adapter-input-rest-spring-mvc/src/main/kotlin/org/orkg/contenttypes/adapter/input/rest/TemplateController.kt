@@ -20,6 +20,7 @@ import org.orkg.contenttypes.input.TemplateRelationsDefinition
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.UpdateTemplateUseCase
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -178,6 +179,8 @@ class TemplateController(
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateTemplateUseCase.CreateCommand =
             CreateTemplateUseCase.CreateCommand(
@@ -190,7 +193,8 @@ class TemplateController(
                 properties = properties.map { it.toTemplatePropertyDefinition() },
                 isClosed = isClosed,
                 observatories = observatories,
-                organizations = organizations
+                organizations = organizations,
+                extractionMethod = extractionMethod
             )
     }
 
@@ -215,6 +219,8 @@ class TemplateController(
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod?
     ) {
         fun toUpdateCommand(templateId: ThingId, contributorId: ContributorId): UpdateTemplateUseCase.UpdateCommand =
             UpdateTemplateUseCase.UpdateCommand(
@@ -228,7 +234,8 @@ class TemplateController(
                 properties = properties?.map { it.toTemplatePropertyDefinition() },
                 isClosed = isClosed,
                 observatories = observatories,
-                organizations = organizations
+                organizations = organizations,
+                extractionMethod = extractionMethod
             )
     }
 

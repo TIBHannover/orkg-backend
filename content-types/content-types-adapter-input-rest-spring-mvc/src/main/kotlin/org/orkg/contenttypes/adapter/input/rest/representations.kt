@@ -268,6 +268,8 @@ data class TemplateRepresentation(
     val createdBy: ContributorId,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
+    @get:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")

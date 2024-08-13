@@ -10,6 +10,7 @@ import org.orkg.contenttypes.domain.ResourceTemplateProperty
 import org.orkg.contenttypes.domain.StringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.UntypedTemplateProperty
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 
 interface CreateTemplateUseCase {
@@ -25,7 +26,8 @@ interface CreateTemplateUseCase {
         val properties: List<TemplatePropertyDefinition>,
         val isClosed: Boolean,
         val observatories: List<ObservatoryId>,
-        val organizations: List<OrganizationId>
+        val organizations: List<OrganizationId>,
+        val extractionMethod: ExtractionMethod
     )
 }
 
@@ -114,7 +116,8 @@ interface UpdateTemplateUseCase {
         val properties: List<TemplatePropertyDefinition>?,
         val isClosed: Boolean?,
         val observatories: List<ObservatoryId>?,
-        val organizations: List<OrganizationId>?
+        val organizations: List<OrganizationId>?,
+        val extractionMethod: ExtractionMethod?
     )
 }
 

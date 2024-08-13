@@ -16,6 +16,7 @@ import org.orkg.contenttypes.domain.Template
 import org.orkg.contenttypes.domain.TemplateRelations
 import org.orkg.contenttypes.domain.UntypedTemplateProperty
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -52,6 +53,7 @@ fun createDummyTemplate() = Template(
         OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
         OrganizationId("1f63b1da-3c70-4492-82e0-770ca94287ea")
     ),
+    extractionMethod = ExtractionMethod.UNKNOWN,
     createdAt = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     visibility = Visibility.DEFAULT

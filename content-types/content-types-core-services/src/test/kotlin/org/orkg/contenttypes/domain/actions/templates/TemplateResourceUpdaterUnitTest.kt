@@ -41,7 +41,8 @@ class TemplateResourceUpdaterUnitTest {
             id = command.templateId,
             label = command.label,
             observatoryId = command.observatories!!.single(),
-            organizationId = command.organizations!!.single()
+            organizationId = command.organizations!!.single(),
+            extractionMethod = command.extractionMethod
         )
 
         every { resourceService.update(resourceUpdateCommand) } just runs

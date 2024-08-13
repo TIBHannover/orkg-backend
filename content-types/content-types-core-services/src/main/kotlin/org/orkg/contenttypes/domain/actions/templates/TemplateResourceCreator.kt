@@ -16,7 +16,8 @@ class TemplateResourceCreator(
                 classes = setOf(Classes.nodeShape),
                 contributorId = command.contributorId,
                 observatoryId = command.observatories.firstOrNull(),
-                organizationId = command.organizations.firstOrNull()
+                organizationId = command.organizations.firstOrNull(),
+                extractionMethod = command.extractionMethod
             )
         )
         return state.copy(templateId = templateId)

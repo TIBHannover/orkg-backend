@@ -7,6 +7,7 @@ import org.orkg.common.isValidDateTime
 import org.orkg.common.isValidDecimal
 import org.orkg.common.isValidDuration
 import org.orkg.common.isValidIRI
+import org.orkg.common.isValidInteger
 import org.orkg.common.isValidTime
 
 val reservedClassIds = setOf(
@@ -175,7 +176,7 @@ object Literals {
         private val predicate: (String) -> Boolean
     ) {
         STRING("string", Classes.string, false, { true }),
-        INT("integer", Classes.integer, true, { it.toIntOrNull() != null }),
+        INT("integer", Classes.integer, true, { it.isValidInteger() }),
         DECIMAL("decimal", Classes.decimal, true, { it.isValidDecimal() }),
         DATE("date", Classes.date, false, { it.isValidDate() }),
         BOOLEAN("boolean", Classes.boolean, false, { it.isValidBoolean() }),

@@ -59,6 +59,10 @@ private val DECIMAL_MATCHER = Pattern.compile("""([+-])?([0-9]+(\.[0-9]*)?|\.[0-
 
 fun String.isValidDecimal(): Boolean = DECIMAL_MATCHER.test(this)
 
+private val INTEGER_MATCHER = Pattern.compile("""[+-]?[0-9]+""").asMatchPredicate()
+
+fun String.isValidInteger(): Boolean = INTEGER_MATCHER.test(this)
+
 fun String.isValidDuration(): Boolean {
     try {
         Duration.parse(this)

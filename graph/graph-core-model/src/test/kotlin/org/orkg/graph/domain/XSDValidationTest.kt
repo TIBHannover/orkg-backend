@@ -23,7 +23,7 @@ class XSDValidationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["0", "451", "-0", "-5"])
+    @ValueSource(strings = ["0", "451", "-0", "-5", "4294967297", "-4294967297"])
     fun `Given an integer, when tested, it is valid`(value: String) {
         INT.canParse(value) shouldBe true
     }

@@ -62,6 +62,8 @@ abstract class RestDocumentationBaseTest {
                     .operationPreprocessors()
                     .withRequestDefaults(prettyPrint())
                     .withResponseDefaults(prettyPrint())
+                    .and()
+                    .uris().withScheme("https").withHost("incubating.orkg.org").withPort(443)
             )
             .alwaysDo<DefaultMockMvcBuilder>(
                 document(

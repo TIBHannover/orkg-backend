@@ -4,6 +4,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.neo4j.cypherdsl.core.Condition
+import org.neo4j.cypherdsl.core.Conditions
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.asExpression
@@ -572,8 +573,8 @@ class SpringDataNeo4jStatementAdapter(
                 p.relationshipTo(node("Literal").named(l), RELATED)
                     .withProperties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
             ).where(
-                (classes.map { p.hasLabels(it.value) } + toUpper(l.property("label")).eq(toUpper(parameter("doi"))))
-                    .reduceOrNull(Condition::and)
+                toUpper(l.property("label")).eq(toUpper(parameter("doi")))
+                    .and(classes.map { p.hasLabels(it.value) }.reduceOrNull(Condition::or) ?: Conditions.noCondition())
             ).returning(p)
                 .orderBy(p.property("created_at").descending())
                 .limit(1)

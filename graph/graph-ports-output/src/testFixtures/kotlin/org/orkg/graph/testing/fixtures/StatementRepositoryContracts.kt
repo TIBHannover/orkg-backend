@@ -1152,15 +1152,15 @@ fun <
             saveStatement(resource2HasDoi)
             saveStatement(resource3HasDoi)
 
-            val actual = repository.findByDOI(doi, setOf(Classes.paper))
+            val actual = repository.findByDOI(doi, setOf(Classes.paper, Classes.comparison))
             actual.isPresent shouldBe true
             actual.get() shouldBe resource1
 
-            val upper = repository.findByDOI(doi.uppercase(), setOf(Classes.paper))
+            val upper = repository.findByDOI(doi.uppercase(), setOf(Classes.paper, Classes.comparison))
             upper.isPresent shouldBe true
             upper.get() shouldBe resource1
 
-            val lower = repository.findByDOI(doi.lowercase(), setOf(Classes.paper))
+            val lower = repository.findByDOI(doi.lowercase(), setOf(Classes.paper, Classes.comparison))
             lower.isPresent shouldBe true
             lower.get() shouldBe resource1
         }

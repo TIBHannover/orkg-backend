@@ -20,7 +20,7 @@ dependencies {
     api(project(":identity-management:idm-core-model"))
     api(project(":identity-management:idm-ports-output")) // transitive
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation(libs.jakarta.validation)
+    implementation("jakarta.validation:jakarta.validation-api")
     implementation(project(":graph:graph-core-model"))
     implementation(project(":media-storage:media-storage-core-model"))
 

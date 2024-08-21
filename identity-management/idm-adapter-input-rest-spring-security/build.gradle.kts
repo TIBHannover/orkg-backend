@@ -32,7 +32,7 @@ testing {
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("org.springframework:spring-web")
-    api(libs.jakarta.validation)
+    api("jakarta.validation:jakarta.validation-api")
     api(project(":identity-management:idm-core-model"))
     api(project(":identity-management:idm-ports-input"))
     implementation("org.springframework.boot:spring-boot-starter-validation")

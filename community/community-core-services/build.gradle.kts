@@ -15,7 +15,6 @@ dependencies {
     api(project(":graph:graph-ports-output"))
     api(project(":media-storage:media-storage-core-model"))
     api(project(":media-storage:media-storage-ports-input"))
-    implementation(libs.javax.activation)
     implementation(project(":content-types:content-types-core-model"))
     implementation(project(":graph:graph-core-model")) // for ResearchFields
 }

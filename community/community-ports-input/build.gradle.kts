@@ -7,7 +7,6 @@ plugins {
 
 dependencies {
     api("org.springframework.data:spring-data-commons")
-    api(libs.javax.activation)
     api(project(":common"))
     api(project(":community:community-core-model"))
     api(project(":media-storage:media-storage-core-model"))

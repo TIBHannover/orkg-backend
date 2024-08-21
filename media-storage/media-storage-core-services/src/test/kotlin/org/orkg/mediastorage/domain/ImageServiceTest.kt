@@ -4,12 +4,12 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import jakarta.activation.MimeType
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.*
-import javax.activation.MimeType
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.community.input.UpdateOrganizationUseCases

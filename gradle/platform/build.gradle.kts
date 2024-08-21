@@ -25,8 +25,14 @@ dependencies {
     api("org.apache.lucene:lucene-queryparser:9.5.0")
     api("com.epages:restdocs-api-spec:0.16.4")
     api("org.springframework.boot:spring-boot-autoconfigure:2.7.8!!") // mis-alignment in tests; required for Neo4j Migrations
-    // Related to capability resolution:
-    api("com.sun.activation:jakarta.activation:1.2.2!!")
+    // Related to the Jakarta madness:
+    api("jakarta.activation:jakarta.activation-api:2.1.3!!")
+    api("jakarta.annotation:jakarta.annotation-api:2.1.0!!")
+    api("jakarta.validation:jakarta.validation-api:2.0.2!!")
+    api("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1!!")
+    api("org.glassfish.jaxb:jaxb-runtime:2.3.9!!")
+    api("org.glassfish.jaxb:txw2:2.3.9!!")
+
     // Version alignment
     api("io.mockk:mockk:1.13.8") // anchor for MockKVirtualPlatformAlignmentRule
 

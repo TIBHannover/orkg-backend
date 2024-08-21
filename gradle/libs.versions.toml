@@ -27,9 +27,6 @@ forkhandles-values4k = { module = "dev.forkhandles:values4k", version.ref = "for
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version = "" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "" }
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version = "" }
-jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "" }
-javax-activation = { module = "com.sun.activation:jakarta.activation", version = "" }
-jaxb-api = { module = "javax.xml.bind:jaxb-api", version = "2.3.0" }
 jbibtex = { module = "org.jbibtex:jbibtex", version = "1.0.20" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-extensions-spring = { module = "io.kotest.extensions:kotest-extensions-spring", version = "1.1.2" }
@@ -49,7 +46,6 @@ testcontainers-neo4j = { module = "org.testcontainers:neo4j", version.ref = "tes
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 
 [bundles]
-jaxb = ["javax-activation", "jaxb-api"]
 kotest = ["kotest-runner", "kotest-assertions-core", "kotest-property", "kotest-extensions-spring", "kotest-extensions-testcontainers", "kotest-framework-datatest"]
 testcontainers = ["testcontainers-core", "testcontainers-junit5", "testcontainers-postgresql", "testcontainers-neo4j"]
 

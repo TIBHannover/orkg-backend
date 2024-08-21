@@ -223,7 +223,7 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation(libs.jackson.core)
     implementation(libs.jackson.databind)
-    implementation(libs.jakarta.validation)
+    implementation("jakarta.validation:jakarta.validation-api")
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 

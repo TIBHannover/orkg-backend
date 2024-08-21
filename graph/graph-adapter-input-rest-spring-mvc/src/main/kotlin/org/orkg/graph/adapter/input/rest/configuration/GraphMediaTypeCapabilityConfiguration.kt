@@ -1,6 +1,6 @@
 package org.orkg.graph.adapter.input.rest.configuration
 
-import javax.annotation.PostConstruct
+import jakarta.annotation.PostConstruct
 import org.orkg.common.MediaTypeCapabilityRegistry
 import org.orkg.graph.adapter.input.rest.FORMATTED_LABELS_CAPABILITY
 import org.springframework.context.annotation.Configuration

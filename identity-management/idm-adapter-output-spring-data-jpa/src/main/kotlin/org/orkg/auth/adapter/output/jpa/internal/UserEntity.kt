@@ -15,7 +15,6 @@ import javax.persistence.Table
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
-import kotlin.properties.Delegates
 import org.orkg.auth.domain.User
 
 @Entity

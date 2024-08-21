@@ -21,7 +21,7 @@ dependencies {
     api("org.springframework.security:spring-security-core")
     api("org.springframework:spring-tx")
     api(project(":identity-management:idm-core-model"))
-    implementation(libs.jakarta.validation)
+    implementation("jakarta.validation:jakarta.validation-api")
 }
 
 testing {

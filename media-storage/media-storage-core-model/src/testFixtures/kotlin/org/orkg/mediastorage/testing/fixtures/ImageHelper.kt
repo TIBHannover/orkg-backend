@@ -1,12 +1,13 @@
 package org.orkg.mediastorage.testing.fixtures
 
+import jakarta.activation.MimeType
 import java.io.BufferedReader
 import java.net.URI
+import java.nio.file.Files
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
-import javax.activation.MimeType
-import javax.activation.MimetypesFileTypeMap
+import kotlin.io.path.Path
 import org.orkg.common.ContributorId
 import org.orkg.community.input.UpdateOrganizationUseCases
 import org.orkg.mediastorage.domain.Image
@@ -31,7 +32,7 @@ fun loadImage(
 
 fun loadRawImage(uri: URI): UpdateOrganizationUseCases.RawImage {
     uri.inputStream.use {
-        val mimeType = MimetypesFileTypeMap().run { getContentType(uri.path) }.let(::MimeType)
+        val mimeType = Files.probeContentType(Path(uri.path)).let(::MimeType)
         val data = ImageData(it.readBytes())
         return UpdateOrganizationUseCases.RawImage(data, mimeType)
     }

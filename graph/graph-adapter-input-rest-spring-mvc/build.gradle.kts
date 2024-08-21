@@ -16,16 +16,13 @@ dependencies {
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
     api(libs.jackson.databind)
-    api(libs.jakarta.validation)
+    api("jakarta.validation:jakarta.validation-api")
     api(project(":common"))
     api(project(":community:community-ports-input"))
     api(project(":content-types:content-types-core-model"))
     api(project(":feature-flags:feature-flags-ports"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(project(":community:community-core-model"))
 
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
@@ -56,6 +53,7 @@ testing {
                 implementation(libs.spring.mockk)
                 implementation(libs.spring.restdocs)
                 runtimeOnly("com.jayway.jsonpath:json-path")
+                runtimeOnly("org.springframework.boot:spring-boot-starter-validation")
             }
         }
     }

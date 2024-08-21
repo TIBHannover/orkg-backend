@@ -1,8 +1,8 @@
 package org.orkg.mediastorage.domain
 
 import java.time.OffsetDateTime
-import javax.activation.MimeType
 import org.orkg.common.ContributorId
+import jakarta.activation.MimeType
 
 data class Image(
     val id: ImageId,

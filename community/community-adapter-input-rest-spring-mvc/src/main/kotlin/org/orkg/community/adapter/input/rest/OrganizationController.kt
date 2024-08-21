@@ -1,10 +1,10 @@
 package org.orkg.community.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import jakarta.activation.MimeType
+import jakarta.activation.MimeTypeParseException
 import java.io.ByteArrayInputStream
 import java.util.*
-import javax.activation.MimeType
-import javax.activation.MimeTypeParseException
 import javax.servlet.http.HttpServletResponse
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank

@@ -1,8 +1,8 @@
 package org.orkg.mediastorage.adapter.output.jpa.internal
 
+import jakarta.activation.MimeType
 import java.time.OffsetDateTime
 import java.util.*
-import javax.activation.MimeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id

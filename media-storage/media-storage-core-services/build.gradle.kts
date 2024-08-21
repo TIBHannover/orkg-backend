@@ -7,7 +7,6 @@ dependencies {
     api(project(":media-storage:media-storage-core-model"))
     api(project(":media-storage:media-storage-ports-input"))
     api(project(":media-storage:media-storage-ports-output"))
-    implementation(libs.javax.activation)
     implementation(project(":common"))
 }
 

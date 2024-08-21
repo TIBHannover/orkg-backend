@@ -24,7 +24,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation(libs.jakarta.validation)
+    implementation("jakarta.validation:jakarta.validation-api")
 
     containerTestApi("org.springframework.boot:spring-boot-test-autoconfigure")
     containerTestApi("org.springframework:spring-test")

@@ -11,7 +11,7 @@ dependencies {
     // api("com.fasterxml.jackson.core:jackson-core")
     api("org.springframework:spring-web")
     // api(libs.jackson.databind)
-    api(libs.jakarta.validation)
+    api("jakarta.validation:jakarta.validation-api")
     api(project(":common"))
     implementation(project(":community:community-core-model"))
     api(project(":community:community-ports-input-legacy"))

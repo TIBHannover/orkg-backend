@@ -6,10 +6,11 @@ This section lists the supported identifiers for content-type endpoints.
 == Document identifiers
 
 [options="header"]
-|==========================
-| Name | Key | Predicate ID
-| DOI  | doi | P26
-|==========================
+|===
+| Name  | Key  | Predicate ID
+| DOI   | doi  | P26
+| ISBN  | isbn | P37140
+|===
 
 [[author-identifiers]]
 == Author identifiers

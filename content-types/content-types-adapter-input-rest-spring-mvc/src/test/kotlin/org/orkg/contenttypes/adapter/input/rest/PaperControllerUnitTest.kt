@@ -136,6 +136,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("research_fields[].label").description("The label of the research field."),
                         fieldWithPath("identifiers").description("The unique identifiers of the paper."),
                         fieldWithPath("identifiers.doi").description("The list of DOIs of the paper. (optional)").optional(),
+                        fieldWithPath("identifiers.isbn").type("Array").description("The list of ISBNs of the paper. (optional)").optional(),
                         fieldWithPath("contributions").description("The list of contributions of the paper."),
                         fieldWithPath("contributions[].id").description("The ID of the contribution."),
                         fieldWithPath("contributions[].label").description("The label of the contribution."),

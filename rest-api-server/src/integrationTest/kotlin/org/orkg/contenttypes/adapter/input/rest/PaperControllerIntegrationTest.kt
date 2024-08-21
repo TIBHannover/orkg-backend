@@ -103,6 +103,7 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
         assertThat(organizationService.listConferences()).hasSize(0)
 
         predicateService.createPredicate(Predicates.hasDOI)
+        predicateService.createPredicate(Predicates.hasISBN)
         predicateService.createPredicate(Predicates.hasAuthors)
         predicateService.createPredicate(Predicates.monthPublished)
         predicateService.createPredicate(Predicates.yearPublished)
@@ -320,7 +321,8 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
                 ObjectIdAndLabel(ThingId("R194"), "Engineering")
             )
             it.identifiers shouldBe mapOf(
-                "doi" to listOf("10.48550/arXiv.2304.05328")
+                "doi" to listOf("10.48550/arXiv.2304.05328"),
+                "isbn" to listOf("978-123456789-0")
             )
             it.publicationInfo.asClue { publicationInfo ->
                 publicationInfo.publishedMonth shouldBe 6
@@ -567,7 +569,8 @@ private const val updatePaperJson = """{
     "R194"
   ],
   "identifiers": {
-    "doi": ["10.48550/arXiv.2304.05328"]
+    "doi": ["10.48550/arXiv.2304.05328"],
+    "isbn": ["978-123456789-0"]
   },
   "publication_info": {
     "published_month": 6,

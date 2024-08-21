@@ -504,6 +504,10 @@
     {
       "id": "mentions",
       "label": "mentions"
+    },
+    {
+      "id": "P37140",
+      "label": "ISBN"
     }
   ],
 

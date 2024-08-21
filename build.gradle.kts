@@ -1,6 +1,28 @@
 import com.autonomousapps.tasks.BuildHealthTask
 import org.orkg.gradle.plugins.PrintCoverageTask
 
+// TODO: Work-around for broken dependencies in AsciiDoctor Gradle plugin. Should be fine for versions >= 4.0.2.
+buildscript {
+    configurations.all {
+        resolutionStrategy.dependencySubstitution {
+            // Change group name and version
+            substitute(module("com.burgstaller:okhttp-digest")).using(module("io.github.rburgst:okhttp-digest:1.21"))
+        }
+    }
+}
+
+// TODO: Work-around for broken dependencies in AsciiDoctor Gradle plugin. Should be fine for versions >= 4.0.2.
+subprojects {
+    buildscript {
+        configurations.all {
+            resolutionStrategy.dependencySubstitution {
+                // Change group name and version
+                substitute(module("com.burgstaller:okhttp-digest")).using(module("io.github.rburgst:okhttp-digest:1.21"))
+            }
+        }
+    }
+}
+
 plugins {
     id("org.orkg.gradle.root")
 

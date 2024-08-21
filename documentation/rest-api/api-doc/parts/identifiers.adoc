@@ -10,6 +10,7 @@ This section lists the supported identifiers for content-type endpoints.
 | Name  | Key  | Predicate ID
 | DOI   | doi  | P26
 | ISBN  | isbn | P37140
+| ISSN  | issn | P74029
 |===
 
 [[author-identifiers]]

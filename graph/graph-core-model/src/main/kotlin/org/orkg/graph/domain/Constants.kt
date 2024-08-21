@@ -37,6 +37,7 @@ object Predicates {
     val hasHeadingLevel = ThingId("HasHeadingLevel")
     val hasImage = ThingId("Image")
     val hasISBN = ThingId("P37140")
+    val hasISSN = ThingId("P74029")
     val hasLink = ThingId("HasLink")
     val hasLinkedInId = ThingId("linkedInID")
     val hasListElement = ThingId("hasListElement")

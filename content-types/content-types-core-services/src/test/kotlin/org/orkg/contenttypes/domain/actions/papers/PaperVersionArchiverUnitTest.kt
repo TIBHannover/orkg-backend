@@ -1,4 +1,4 @@
-package org.orkg.contenttypes.domain.actions.papers.snapshot
+package org.orkg.contenttypes.domain.actions.papers
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.SnapshotPaperState
+import org.orkg.contenttypes.domain.actions.PublishPaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
 import org.orkg.contenttypes.input.testing.fixtures.createPaperPublishCommand
 import org.orkg.contenttypes.output.PaperPublishedRepository
@@ -22,15 +22,14 @@ import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.springframework.data.domain.Sort
 
-class PaperSnapshotArchiverUnitTest {
+class PaperVersionArchiverUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val paperPublishedRepository: PaperPublishedRepository = mockk()
 
-    private val paperSnapshotResourceCreator = PaperSnapshotArchiver(statementService, paperPublishedRepository)
+    private val paperVersionArchiver = PaperVersionArchiver(statementService, paperPublishedRepository)
 
     @BeforeEach
     fun resetState() {
@@ -46,15 +45,9 @@ class PaperSnapshotArchiverUnitTest {
     fun `Given a paper publish command, it archives all paper contribution statements`() {
         val paper = createDummyPaper()
         val command = createPaperPublishCommand().copy(id = paper.id)
-        val resource = createResource(
-            id = paper.id,
-            label = paper.title,
-            classes = setOf(Classes.paper)
-        )
         val statements = listOf(createStatement()).groupBy { it.subject.id }
         val paperVersionId = ThingId("R321")
-        val state = SnapshotPaperState(
-            resource = resource,
+        val state = PublishPaperState(
             paper = paper,
             statements = statements,
             paperVersionId = paperVersionId
@@ -81,8 +74,7 @@ class PaperSnapshotArchiverUnitTest {
         }
         every { paperPublishedRepository.save(any()) } just runs
 
-        paperSnapshotResourceCreator(command, state).asClue {
-            it.resource shouldBe resource
+        paperVersionArchiver(command, state).asClue {
             it.paper shouldBe paper
             it.statements shouldBe statements
             it.paperVersionId shouldBe paperVersionId

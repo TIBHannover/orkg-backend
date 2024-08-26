@@ -1,4 +1,4 @@
-package org.orkg.contenttypes.domain.actions.papers.snapshot
+package org.orkg.contenttypes.domain.actions.papers
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.SnapshotPaperState
+import org.orkg.contenttypes.domain.actions.PublishPaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
 import org.orkg.contenttypes.input.testing.fixtures.createPaperPublishCommand
 import org.orkg.graph.domain.Classes
@@ -24,10 +24,10 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class PaperSnapshotHistoryUpdaterUnitTest {
+class PaperVersionHistoryUpdaterUnitTest {
     private val statementService: StatementUseCases = mockk()
 
-    private val paperSnapshotHistoryUpdater = PaperSnapshotHistoryUpdater(statementService)
+    private val paperVersionHistoryUpdater = PaperVersionHistoryUpdater(statementService)
 
     @BeforeEach
     fun resetState() {
@@ -43,15 +43,9 @@ class PaperSnapshotHistoryUpdaterUnitTest {
     fun `Given a paper publish command, when paper does not yet have a published version, it creates a new hasPreviousVersion statement`() {
         val paper = createDummyPaper()
         val command = createPaperPublishCommand().copy(id = paper.id)
-        val resource = createResource(
-            id = paper.id,
-            label = paper.title,
-            classes = setOf(Classes.paper)
-        )
         val statements = listOf(createStatement()).groupBy { it.subject.id }
         val paperVersionId = ThingId("R321")
-        val state = SnapshotPaperState(
-            resource = resource,
+        val state = PublishPaperState(
             paper = paper,
             statements = statements,
             paperVersionId = paperVersionId
@@ -66,8 +60,7 @@ class PaperSnapshotHistoryUpdaterUnitTest {
             )
         } just runs
 
-        paperSnapshotHistoryUpdater(command, state).asClue {
-            it.resource shouldBe resource
+        paperVersionHistoryUpdater(command, state).asClue {
             it.paper shouldBe paper
             it.statements shouldBe statements
             it.paperVersionId shouldBe paperVersionId
@@ -110,8 +103,7 @@ class PaperSnapshotHistoryUpdaterUnitTest {
             )
         ).groupBy { it.subject.id }
         val paperVersionId = ThingId("R321")
-        val state = SnapshotPaperState(
-            resource = resource,
+        val state = PublishPaperState(
             paper = paper,
             statements = statements,
             paperVersionId = paperVersionId
@@ -135,8 +127,7 @@ class PaperSnapshotHistoryUpdaterUnitTest {
             )
         } just runs
 
-        paperSnapshotHistoryUpdater(command, state).asClue {
-            it.resource shouldBe resource
+        paperVersionHistoryUpdater(command, state).asClue {
             it.paper shouldBe paper
             it.statements shouldBe statements
             it.paperVersionId shouldBe paperVersionId

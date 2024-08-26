@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.domain
 
-import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
@@ -17,10 +16,11 @@ import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.PublicationInfoValidator
+import org.orkg.contenttypes.domain.actions.PublishPaperCommand
+import org.orkg.contenttypes.domain.actions.PublishPaperState
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.ResourceValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
-import org.orkg.contenttypes.domain.actions.SnapshotPaperState
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsCreator
@@ -45,6 +45,7 @@ import org.orkg.contenttypes.domain.actions.papers.PaperMentioningsUpdater
 import org.orkg.contenttypes.domain.actions.papers.PaperModifiableValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperPublicationInfoCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperPublicationInfoUpdater
+import org.orkg.contenttypes.domain.actions.papers.PaperPublishableValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperResearchFieldCreator
 import org.orkg.contenttypes.domain.actions.papers.PaperResearchFieldUpdater
 import org.orkg.contenttypes.domain.actions.papers.PaperResourceCreator
@@ -55,12 +56,12 @@ import org.orkg.contenttypes.domain.actions.papers.PaperTempIdValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperTitleCreateValidator
 import org.orkg.contenttypes.domain.actions.papers.PaperTitleUpdateValidator
-import org.orkg.contenttypes.domain.actions.papers.snapshot.PaperSnapshotArchiver
-import org.orkg.contenttypes.domain.actions.papers.snapshot.PaperSnapshotHistoryUpdater
-import org.orkg.contenttypes.domain.actions.papers.snapshot.PaperSnapshotPaperCloner
-import org.orkg.contenttypes.domain.actions.papers.snapshot.PaperSnapshotPaperLoader
+import org.orkg.contenttypes.domain.actions.papers.PaperVersionArchiver
+import org.orkg.contenttypes.domain.actions.papers.PaperVersionCreator
+import org.orkg.contenttypes.domain.actions.papers.PaperVersionDoiPublisher
+import org.orkg.contenttypes.domain.actions.papers.PaperVersionHistoryUpdater
 import org.orkg.contenttypes.input.PaperUseCases
-import org.orkg.contenttypes.input.PublishPaperUseCase
+import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.PaperPublishedRepository
 import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -99,7 +100,7 @@ class PaperService(
     private val predicateService: PredicateUseCases,
     private val listService: ListUseCases,
     private val listRepository: ListRepository,
-    private val publishingService: PublishingService,
+    private val doiService: DoiService,
     private val paperRepository: PaperRepository,
     private val classRepository: ClassRepository,
     private val paperPublishedRepository: PaperPublishedRepository,
@@ -219,33 +220,15 @@ class PaperService(
         steps.execute(command, UpdatePaperState())
     }
 
-    override fun publish(command: PublishPaperUseCase.PublishCommand): ThingId {
-        val paper = resourceRepository.findPaperById(command.id)
-            .orElseThrow { PaperNotFound(command.id) }
-        return publishingService.publish(
-            PublishingService.PublishCommand(
-                id = paper.id,
-                title = paper.label,
-                contributorId = command.contributorId,
-                subject = command.subject,
-                description = command.description,
-                url = URI.create("$paperPublishBaseUri/").resolve(paper.id.value),
-                creators = command.authors,
-                resourceType = Classes.paper,
-                relatedIdentifiers = emptyList(),
-                snapshotCreator = { createSnapshot(paper, command) }
-            )
+    override fun publish(command: PublishPaperCommand): ThingId {
+        val steps = listOf<Action<PublishPaperCommand, PublishPaperState>>(
+            PaperPublishableValidator(this, resourceRepository),
+            PaperVersionCreator(resourceRepository, statementRepository, resourceService, statementService, literalService, listService),
+            PaperVersionArchiver(statementService, paperPublishedRepository),
+            PaperVersionHistoryUpdater(statementService),
+            PaperVersionDoiPublisher(statementService, literalService, doiService, paperPublishBaseUri)
         )
-    }
-
-    internal fun createSnapshot(resource: Resource, command: PublishPaperUseCase.PublishCommand): ThingId {
-        val steps = listOf<Action<PublishPaperUseCase.PublishCommand, SnapshotPaperState>>(
-            PaperSnapshotPaperLoader(this),
-            PaperSnapshotPaperCloner(resourceRepository, statementRepository, resourceService, statementService, literalService, listService),
-            PaperSnapshotHistoryUpdater(statementService),
-            PaperSnapshotArchiver(statementService, paperPublishedRepository)
-        )
-        return steps.execute(command, SnapshotPaperState(resource)).paperVersionId!!
+        return steps.execute(command, PublishPaperState()).paperVersionId!!
     }
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {

@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.domain
 
 import io.kotest.assertions.asClue
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
@@ -9,21 +8,19 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.contenttypes.input.PublishPaperUseCase
+import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.PaperPublishedRepository
 import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -61,7 +58,7 @@ class PaperServiceUnitTests {
     private val literalService: LiteralUseCases = mockk()
     private val predicateService: PredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
-    private val publishingService: PublishingService = mockk()
+    private val doiService: DoiService = mockk()
     private val paperRepository: PaperRepository = mockk()
     private val classRepository: ClassRepository = mockk()
     private val listRepository: ListRepository = mockk()
@@ -80,7 +77,7 @@ class PaperServiceUnitTests {
         predicateService = predicateService,
         listService = listService,
         listRepository = listRepository,
-        publishingService = publishingService,
+        doiService = doiService,
         paperRepository = paperRepository,
         classRepository = classRepository,
         paperPublishedRepository = paperPublishedRepository,
@@ -107,7 +104,7 @@ class PaperServiceUnitTests {
             predicateService,
             listService,
             listRepository,
-            publishingService,
+            doiService,
             paperRepository,
             classRepository,
             paperPublishedRepository
@@ -351,84 +348,5 @@ class PaperServiceUnitTests {
 
         verify(exactly = 1) { resourceRepository.findPaperById(id) }
         verify(exactly = 0) { statementRepository.findAllContributorsByResourceId(id, any()) }
-    }
-
-    @Test
-    fun `Given a paper, when publishing, it returns success`() {
-        val paper = createResource()
-        val subject = "Paper subject"
-        val description = "Fancy paper description"
-        val contributorId = ContributorId(UUID.randomUUID())
-        val authors = listOf(
-            Author(
-                id = null,
-                name = "Author 1",
-                identifiers = emptyMap(),
-                homepage = null
-            ),
-            Author(
-                id = ThingId("R132564"),
-                name = "Author 2",
-                identifiers = mapOf(
-                    "orcid" to listOf("0000-1111-2222-3333")
-                ),
-                homepage = ParsedIRI("https://example.org")
-            )
-        )
-        val paperVersionId = ThingId("R156416")
-
-        every { resourceRepository.findPaperById(paper.id) } returns Optional.of(paper)
-        every { publishingService.publish(any()) } returns paperVersionId
-
-        val result = service.publish(
-            PublishPaperUseCase.PublishCommand(
-                id = paper.id,
-                contributorId = contributorId,
-                subject = subject,
-                description = description,
-                authors = authors
-            )
-        )
-        result shouldBe paperVersionId
-
-        verify(exactly = 1) { resourceRepository.findPaperById(paper.id) }
-        verify(exactly = 1) {
-            publishingService.publish(
-                withArg {
-                    it.id shouldBe paper.id
-                    it.title shouldBe paper.label
-                    it.contributorId shouldBe contributorId
-                    it.subject shouldBe subject
-                    it.description shouldBe description
-                    it.url shouldBe URI.create("https://orkg.org/paper/${paper.id}")
-                    it.creators shouldBe authors
-                    it.resourceType shouldBe Classes.paper
-                    it.relatedIdentifiers shouldBe emptyList()
-                    it.snapshotCreator shouldNotBe null
-                }
-            )
-        }
-    }
-
-    @Test
-    fun `Given a paper, when publishing but service reports missing paper, it throws an exception`() {
-        val id = ThingId("Missing")
-        val contributorId = ContributorId(UUID.randomUUID())
-
-        every { resourceRepository.findPaperById(id) } returns Optional.empty()
-
-        shouldThrow<PaperNotFound> {
-            service.publish(
-                PublishPaperUseCase.PublishCommand(
-                    id = id,
-                    contributorId = contributorId,
-                    subject = "Paper subject",
-                    description = "Fancy paper description",
-                    authors = emptyList()
-                )
-            )
-        }
-
-        verify(exactly = 1) { resourceRepository.findPaperById(id) }
     }
 }

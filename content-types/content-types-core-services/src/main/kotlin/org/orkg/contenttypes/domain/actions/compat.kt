@@ -9,8 +9,8 @@ import org.orkg.contenttypes.domain.actions.literaturelists.sections.CreateLiter
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.DeleteLiteratureListSectionAction
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.UpdateLiteratureListSectionAction
 import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction
+import org.orkg.contenttypes.domain.actions.papers.PublishPaperAction
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction
-import org.orkg.contenttypes.domain.actions.papers.snapshot.SnapshotPaperAction
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.CreateRosettaStoneStatementAction
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.CreateRosettaStoneTemplateAction
@@ -40,6 +40,7 @@ import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
+import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
@@ -82,9 +83,11 @@ internal typealias UpdateRosettaStoneStatementCommand = UpdateRosettaStoneStatem
 internal typealias DeleteLiteratureListSectionCommand = DeleteLiteratureListSectionUseCase.DeleteCommand
 internal typealias DeleteSmartReviewSectionCommand = DeleteSmartReviewSectionUseCase.DeleteCommand
 
+internal typealias PublishPaperCommand = PublishPaperUseCase.PublishCommand
+
 internal typealias CreatePaperState = CreatePaperAction.State
 internal typealias UpdatePaperState = UpdatePaperAction.State
-internal typealias SnapshotPaperState = SnapshotPaperAction.State
+internal typealias PublishPaperState = PublishPaperAction.State
 
 internal typealias CreateTemplateState = CreateTemplateAction.State
 internal typealias UpdateTemplateState = UpdateTemplateAction.State

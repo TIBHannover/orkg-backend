@@ -1,19 +1,12 @@
-package org.orkg.contenttypes.domain.actions.papers.snapshot
+package org.orkg.contenttypes.domain.actions.papers
 
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperState
+import org.orkg.contenttypes.domain.actions.PublishPaperCommand
 import org.orkg.contenttypes.domain.actions.execute
-import org.orkg.contenttypes.domain.actions.papers.PaperAuthorCreateValidator
-import org.orkg.contenttypes.domain.actions.papers.PaperAuthorCreator
-import org.orkg.contenttypes.domain.actions.papers.PaperIdentifierCreator
-import org.orkg.contenttypes.domain.actions.papers.PaperMentioningsCreator
-import org.orkg.contenttypes.domain.actions.papers.PaperPublicationInfoCreator
-import org.orkg.contenttypes.domain.actions.papers.PaperResearchFieldCreator
-import org.orkg.contenttypes.domain.actions.papers.PaperSDGCreator
-import org.orkg.contenttypes.domain.actions.papers.snapshot.SnapshotPaperAction.State
+import org.orkg.contenttypes.domain.actions.papers.PublishPaperAction.State
 import org.orkg.contenttypes.domain.ids
 import org.orkg.contenttypes.input.PublicationInfoDefinition
-import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
@@ -21,15 +14,15 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
-class PaperSnapshotPaperCloner(
+class PaperVersionCreator(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val resourceService: ResourceUseCases,
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases
-) : SnapshotPaperAction {
-    override fun invoke(command: PublishPaperUseCase.PublishCommand, state: State): State {
+) : PublishPaperAction {
+    override fun invoke(command: PublishPaperCommand, state: State): State {
         val paper = state.paper!!
         val createPaperCommand = CreatePaperCommand(
             contributorId = command.contributorId,

@@ -1,8 +1,8 @@
-package org.orkg.contenttypes.domain.actions.papers.snapshot
+package org.orkg.contenttypes.domain.actions.papers
 
 import org.orkg.contenttypes.domain.PublishedContentType
-import org.orkg.contenttypes.domain.actions.papers.snapshot.SnapshotPaperAction.State
-import org.orkg.contenttypes.input.PublishPaperUseCase
+import org.orkg.contenttypes.domain.actions.PublishPaperCommand
+import org.orkg.contenttypes.domain.actions.papers.PublishPaperAction.State
 import org.orkg.contenttypes.output.PaperPublishedRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -16,11 +16,11 @@ private val bundleConfiguration = BundleConfiguration(
     whitelist = emptyList()
 )
 
-class PaperSnapshotArchiver(
+class PaperVersionArchiver(
     private val statementService: StatementUseCases,
     private val paperPublishedRepository: PaperPublishedRepository
-) : SnapshotPaperAction {
-    override fun invoke(command: PublishPaperUseCase.PublishCommand, state: State): State {
+) : PublishPaperAction {
+    override fun invoke(command: PublishPaperCommand, state: State): State {
         val statementsToPersist = state.paper!!.contributions.flatMap { (id, _) ->
             statementService.fetchAsBundle(
                 thingId = id,

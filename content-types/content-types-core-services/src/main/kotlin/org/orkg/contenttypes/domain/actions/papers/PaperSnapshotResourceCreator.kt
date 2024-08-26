@@ -1,8 +1,6 @@
-package org.orkg.contenttypes.domain.actions.papers.snapshot
+package org.orkg.contenttypes.domain.actions.papers
 
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
-import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction
-import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction.State
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
@@ -10,7 +8,7 @@ import org.orkg.graph.input.ResourceUseCases
 class PaperSnapshotResourceCreator(
     private val resourceService: ResourceUseCases
 ) : CreatePaperAction {
-    override fun invoke(command: CreatePaperCommand, state: State): State {
+    override fun invoke(command: CreatePaperCommand, state: CreatePaperAction.State): CreatePaperAction.State {
         val paperId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
                 label = command.title,

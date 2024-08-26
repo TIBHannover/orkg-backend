@@ -11,6 +11,7 @@ import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.contenttypes.input.PublicationInfoDefinition
+import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.graph.domain.ExtractionMethod
@@ -161,4 +162,33 @@ fun dummyUpdatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
     ),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc"))
+)
+
+fun dummyPublishPaperCommand() = PublishPaperUseCase.PublishCommand(
+    id = ThingId("R123"),
+    contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+    subject = "subject of the paper",
+    description = "review about important topic",
+    authors = listOf(
+        Author(
+            id = ThingId("R123"),
+            name = "Author with id"
+        ),
+        Author(
+            name = "Author with orcid",
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
+        ),
+        Author(
+            id = ThingId("R456"),
+            name = "Author with id and orcid",
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
+        ),
+        Author(
+            name = "Author with homepage",
+            homepage = ParsedIRI("http://example.org/author")
+        ),
+        Author(
+            name = "Author that just has a name"
+        )
+    )
 )

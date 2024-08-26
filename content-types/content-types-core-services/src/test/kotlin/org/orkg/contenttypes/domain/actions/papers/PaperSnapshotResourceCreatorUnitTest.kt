@@ -1,4 +1,4 @@
-package org.orkg.contenttypes.domain.actions.papers.snapshot
+package org.orkg.contenttypes.domain.actions.papers
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe

@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added support for extraction method field on templates.
+  (See: [!1026](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1026))
+- Added support for ISBN identifiers on papers.
+  (See: [!1032](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1032))
+- Added support for ISSN identifiers on papers.
+  (See: [!1033](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1033))
+
+### Changes
+- Adjusted paper publishing endpoint to reflect front-end behavior.
+  (See: [!1030](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1030))
+- Integer literals (xsd:integer) can now exceed 32 bit range.
+
+### Fixed
+- The widget endpoint once again returns results when looking up entities by DOI.
+  (See: [!1037](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1037))
+- The rest-api server hostname is now the same across all documentation snippets.
 
 ## [0.64.1] - 2024-08-09
 ### Fixed
@@ -32,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1004](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1004))
 - The endpoints `/api/classes`, `/api/predicates` and `/api/literals` no longer require a trailing `/`.
   (See: [!1018](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1018),
-        [!1019](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1019).
+        [!1019](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1019),
         [!1020](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1020))
 - The widget endpoint now always returns the latest resource related to a DOI and supports returning PaperVersion instances.
   (See: [!1023](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1023))

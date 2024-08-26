@@ -513,10 +513,10 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                     ),
                     requestFields(
                         fieldWithPath("title").description("The title of the paper."),
-                        fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to."),
-                        fieldWithPath("identifiers").description("The unique identifiers of the paper."),
+                        fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to. Must be exactly one research field."),
+                        fieldWithPath("identifiers").description("The unique identifiers of the paper. (optional)"),
                         fieldWithPath("identifiers.doi").description("The DOI of the paper. (optional)").optional(),
-                        fieldWithPath("publication_info").description("The publication info of the paper.").optional(),
+                        fieldWithPath("publication_info").description("The publication info of the paper. (optional)").optional(),
                         fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
                         fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
                         fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
@@ -534,7 +534,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)").optional(),
                         fieldWithPath("mentionings").description("The set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)").optional(),
-                        fieldWithPath("contents").description("Definition of the contents of the paper."),
+                        fieldWithPath("contents").description("Definition of the contents of the paper. (optional)"),
                         fieldWithPath("contents.resources").description("Definition of resources that need to be created."),
                         fieldWithPath("contents.resources.*.label").description("The label of the resource."),
                         fieldWithPath("contents.resources.*.classes").description("The list of classes of the resource."),
@@ -552,8 +552,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("contents.contributions[].classes").description("The classes of the contribution resource."),
                         subsectionWithPath("contents.contributions[].statements").description("Recursive map of statements contained within the contribution."),
                         fieldWithPath("contents.contributions[].statements.*[].id").description("The ID of the object of the statement."),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to."),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to."),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. Can be at most one organization id."),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. Can be at most one observatory id."),
                         fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC".""")
                     )
                 )

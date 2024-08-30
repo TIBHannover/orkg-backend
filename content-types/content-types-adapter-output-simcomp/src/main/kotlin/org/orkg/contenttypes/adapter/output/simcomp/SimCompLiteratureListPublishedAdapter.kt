@@ -22,4 +22,8 @@ class SimCompLiteratureListPublishedAdapter(
     @Cacheable(key = "#id", cacheNames = [THING_ID_TO_PUBLISHED_LITERATURE_LIST_CACHE])
     override fun findById(id: ThingId): Optional<PublishedContentType> =
         repository.findById(id, ThingType.LIST).map { it.toPublishedContentType(objectMapper) }
+
+    override fun save(literatureList: PublishedContentType) {
+        repository.save(literatureList.rootId, ThingType.LIST, literatureList)
+    }
 }

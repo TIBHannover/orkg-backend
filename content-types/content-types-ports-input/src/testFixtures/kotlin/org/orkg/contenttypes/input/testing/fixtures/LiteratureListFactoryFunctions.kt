@@ -17,6 +17,7 @@ import org.orkg.contenttypes.input.LiteratureListListSectionCommand
 import org.orkg.contenttypes.input.LiteratureListListSectionDefinition.Entry
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListTextSectionCommand
+import org.orkg.contenttypes.input.PublishLiteratureListUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.graph.domain.ExtractionMethod
@@ -167,3 +168,9 @@ fun LiteratureListTextSection.toLiteratureListTextSectionDefinition(): Literatur
 
 fun LiteratureListListSection.Entry.toDefinitionEntry(): Entry =
     Entry(value.id, description)
+
+fun dummyPublishLiteratureListCommand() = PublishLiteratureListUseCase.PublishCommand(
+    id = ThingId("R123"),
+    contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+    changelog = "new release"
+)

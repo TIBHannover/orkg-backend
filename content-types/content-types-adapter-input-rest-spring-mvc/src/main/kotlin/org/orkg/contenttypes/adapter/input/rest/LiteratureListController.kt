@@ -18,6 +18,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
+import org.orkg.contenttypes.adapter.input.rest.PaperController.PublishRequest
 import org.orkg.contenttypes.adapter.input.rest.mapping.LiteratureListRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
 import org.orkg.contenttypes.domain.LiteratureListNotFound
@@ -27,8 +28,9 @@ import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.LiteratureListListSectionCommand
 import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
-import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.LiteratureListTextSectionCommand
+import org.orkg.contenttypes.input.LiteratureListUseCases
+import org.orkg.contenttypes.input.PublishLiteratureListUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.featureflags.output.FeatureFlagService
@@ -202,6 +204,23 @@ class LiteratureListController(
         return noContent().location(location).build()
     }
 
+    @PreAuthorizeUser
+    @PostMapping("/{id}/publish", consumes = [LITERATURE_LIST_JSON_V1])
+    fun publish(
+        @PathVariable id: ThingId,
+        @RequestBody @Valid request: PublishRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val contributorId = currentUser.contributorId()
+        val literatureListVersionId = service.publish(request.toPublishCommand(id, contributorId))
+        val location = uriComponentsBuilder
+            .path("api/literature-lists/{id}")
+            .buildAndExpand(literatureListVersionId)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
     data class CreateLiteratureListRequest(
         @field:NotBlank
         val title: String,
@@ -349,6 +368,18 @@ class LiteratureListController(
         ): UpdateLiteratureListSectionUseCase.UpdateCommand =
             UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand(
                 literatureListSectionId, contributorId, literatureListId, heading, headingSize, text
+            )
+    }
+
+    data class PublishRequest(
+        @field:NotBlank
+        val changelog: String
+    ) {
+        fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishLiteratureListUseCase.PublishCommand =
+            PublishLiteratureListUseCase.PublishCommand(
+                id = id,
+                contributorId = contributorId,
+                changelog = changelog
             )
     }
 }

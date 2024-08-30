@@ -71,6 +71,9 @@ class RosettaStoneTemplateNotModifiable(id: ThingId) :
 class RosettaStoneTemplatePropertyNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Rosetta stone template property "$id" is not modifiable.""")
 
+class LiteratureListAlreadyPublished(id: ThingId) :
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Literature list "$id" is already published.""")
+
 class CannotDeleteIndividualRosettaStoneStatementVersion :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Cannot delete individual versions of rosetta stone statements.""")
 

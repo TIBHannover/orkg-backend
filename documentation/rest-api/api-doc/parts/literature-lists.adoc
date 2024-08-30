@@ -47,6 +47,16 @@ WARNING: Author names will not be updated if a resource id is specified for a gi
 
 operation::literature-lists-update[snippets='request-fields,curl-request,http-response']
 
+[[literature-lists-publish]]
+== Publishing literature lists
+
+A `POST` request publishes an existing literature list with the given parameters.
+In the process, a new literature list published resource is created and linked to the original literature list resource.
+All statements containing the sections of the original literature list are archived in a separate database.
+The response will be `204 No Content` when successful.
+
+operation::literature-lists-publish[snippets='request-fields,curl-request,http-response']
+
 [[literature-lists-published-contents]]
 == Fetching published literature list contents
 

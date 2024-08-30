@@ -105,6 +105,16 @@ interface DeleteLiteratureListSectionUseCase {
     )
 }
 
+interface PublishLiteratureListUseCase {
+    fun publish(command: PublishCommand): ThingId
+
+    data class PublishCommand(
+        val id: ThingId,
+        val contributorId: ContributorId,
+        val changelog: String
+    )
+}
+
 sealed interface LiteratureListSectionDefinition {
     fun matchesLiteratureListSection(section: LiteratureListSection): Boolean
 }

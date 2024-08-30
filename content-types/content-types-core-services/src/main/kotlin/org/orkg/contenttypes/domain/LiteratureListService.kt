@@ -16,9 +16,12 @@ import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.contenttypes.domain.actions.DeleteLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.DeleteLiteratureListSectionState
+import org.orkg.contenttypes.domain.actions.DescriptionValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.PublishLiteratureListCommand
+import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
@@ -30,8 +33,10 @@ import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthor
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorUpdateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListChangelogCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListExistenceValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListModifiableValidator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListPublishableValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListResearchFieldCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListResearchFieldUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListResourceCreator
@@ -42,6 +47,9 @@ import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectio
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsUpdateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsUpdater
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListVersionArchiver
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListVersionCreator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListVersionHistoryUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionCreateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionCreator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionDeleter
@@ -198,6 +206,18 @@ class LiteratureListService(
             LiteratureListSectionsUpdater(literalService, resourceService, statementService)
         )
         steps.execute(command, UpdateLiteratureListState())
+    }
+
+    override fun publish(command: PublishLiteratureListCommand): ThingId {
+        val steps = listOf(
+            LiteratureListPublishableValidator(this),
+            DescriptionValidator("changelog") { it.changelog },
+            LiteratureListVersionCreator(resourceRepository, statementRepository, resourceService, statementService, literalService, listService),
+            LiteratureListChangelogCreator(literalService, statementService),
+            LiteratureListVersionArchiver(statementService, literatureListPublishedRepository),
+            LiteratureListVersionHistoryUpdater(statementService)
+        )
+        return steps.execute(command, PublishLiteratureListState()).literatureListVersionId!!
     }
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {

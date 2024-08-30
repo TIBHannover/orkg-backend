@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListControllerExceptionUnitTest.FakeExceptionController
+import org.orkg.contenttypes.domain.LiteratureListAlreadyPublished
 import org.orkg.contenttypes.domain.PublishedLiteratureListContentNotFound
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
@@ -57,12 +58,32 @@ internal class LiteratureListControllerExceptionUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun literatureListAlreadyPublished() {
+        val id = "R123"
+
+        get("/literature-list-already-published")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.error", `is`("Forbidden")))
+            .andExpect(jsonPath("$.path").value("/literature-list-already-published"))
+            .andExpect(jsonPath("$.message").value("""Literature list "$id" is already published."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
         @GetMapping("/published-literature-list-content-not-found")
         fun publishedLiteratureListContentNotFound(@RequestParam literatureListId: ThingId, @RequestParam contentId: ThingId) {
             throw PublishedLiteratureListContentNotFound(literatureListId, contentId)
+        }
+
+        @GetMapping("/literature-list-already-published")
+        fun literatureListAlreadyPublished(@RequestParam id: ThingId) {
+            throw LiteratureListAlreadyPublished(id)
         }
     }
 

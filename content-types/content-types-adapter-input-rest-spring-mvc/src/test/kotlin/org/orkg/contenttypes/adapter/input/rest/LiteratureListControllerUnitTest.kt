@@ -643,6 +643,49 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         verify(exactly = 1) { literatureListService.deleteSection(command) }
     }
 
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a literature list, when publishing, then status 204 NO CONTENT")
+    fun publish() {
+        val id = ThingId("R123")
+        val changelog = "new papers added"
+        val request = mapOf(
+            "changelog" to changelog
+        )
+        val literatureListVersionId = ThingId("R456")
+
+        every { literatureListService.publish(any()) } returns literatureListVersionId
+
+        documentedPostRequestTo("/api/literature-lists/{id}/publish", id)
+            .content(request)
+            .accept(LITERATURE_LIST_JSON_V1)
+            .contentType(LITERATURE_LIST_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("api/literature-lists/$literatureListVersionId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the literature list to publish.")
+                    ),
+                    requestFields(
+                        fieldWithPath("changelog").description("The description of changes that have been made since the previous version."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            literatureListService.publish(
+                withArg {
+                    it.id shouldBe id
+                    it.contributorId shouldBe ContributorId(MockUserId.USER)
+                    it.changelog shouldBe changelog
+                }
+            )
+        }
+    }
+
     private fun createLiteratureListRequest() =
         LiteratureListController.CreateLiteratureListRequest(
             title = "Dummy Literature List Label",

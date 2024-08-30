@@ -1,11 +1,18 @@
 package org.orkg.graph.domain
 
 import org.orkg.common.ThingId
+import org.orkg.common.isValidBase64
 import org.orkg.common.isValidBoolean
 import org.orkg.common.isValidDate
 import org.orkg.common.isValidDateTime
 import org.orkg.common.isValidDecimal
 import org.orkg.common.isValidDuration
+import org.orkg.common.isValidGregorianDay
+import org.orkg.common.isValidGregorianMonth
+import org.orkg.common.isValidGregorianMonthDay
+import org.orkg.common.isValidGregorianYear
+import org.orkg.common.isValidGregorianYearMonth
+import org.orkg.common.isValidHexBinary
 import org.orkg.common.isValidIRI
 import org.orkg.common.isValidInteger
 import org.orkg.common.isValidTime
@@ -95,6 +102,7 @@ object Classes {
     val acknowledgements = ThingId("Acknowledgements")
     val author = ThingId("Author")
     val background = ThingId("Background")
+    val base64Binary = ThingId("Base64Binary")
     val boolean = ThingId("Boolean")
     val caption = ThingId("Caption")
     val classes = ThingId("Classes")
@@ -120,6 +128,12 @@ object Classes {
     val externalResourceDescription = ThingId("ExternalResourceDescription")
     val float = ThingId("Float")
     val futureWork = ThingId("FutureWork")
+    val gregorianDay = ThingId("GregorianDay")
+    val gregorianMonth = ThingId("GregorianMonth")
+    val gregorianMonthDay = ThingId("GregorianMonthDay")
+    val gregorianYear = ThingId("GregorianYear")
+    val gregorianYearMonth = ThingId("GregorianYearMonth")
+    val hexBinary = ThingId("HexBinary")
     val integer = ThingId("Integer")
     val introduction = ThingId("Introduction")
     val legend = ThingId("Legend")
@@ -172,7 +186,7 @@ object Classes {
 
 object Literals {
     enum class XSD(
-        private val fragment: String,
+        fragment: String,
         val `class`: ThingId,
         val isNumber: Boolean,
         private val predicate: (String) -> Boolean
@@ -187,7 +201,14 @@ object Literals {
         URI("anyURI", Classes.uri, false, { it.isValidIRI() }),
         DURATION("duration", Classes.duration, false, { it.isValidDuration() }),
         DATE_TIME("dateTime", Classes.dateTime, false, { it.isValidDateTime() }),
-        TIME("time", Classes.time, false, { it.isValidTime() });
+        TIME("time", Classes.time, false, { it.isValidTime() }),
+        GREGORIAN_YEAR_MONTH("gYearMonth", Classes.gregorianYearMonth, false, { it.isValidGregorianYearMonth() }),
+        GREGORIAN_YEAR("gYear", Classes.gregorianYear, false, { it.isValidGregorianYear() }),
+        GREGORIAN_MONTH_DAY("gMonthDay", Classes.gregorianMonthDay, false, { it.isValidGregorianMonthDay() }),
+        GREGORIAN_DAY("gDay", Classes.gregorianDay, false, { it.isValidGregorianDay() }),
+        GREGORIAN_MONTH("gMonth", Classes.gregorianMonth, false, { it.isValidGregorianMonth() }),
+        HEX_BINARY("hexBinary", Classes.hexBinary, false, { it.isValidHexBinary() }),
+        BASE_64_BINARY("base64Binary", Classes.base64Binary, false, { it.isValidBase64() });
 
         val prefixedUri: String = "xsd:$fragment"
         val uri: String = "http://www.w3.org/2001/XMLSchema#$fragment"

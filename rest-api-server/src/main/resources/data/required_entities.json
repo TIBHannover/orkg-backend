@@ -261,6 +261,41 @@
     {
       "id": "Time",
       "label": "Time"
+    },
+    {
+      "id": "GregorianYearMonth",
+      "label": "Gregorian Year Month",
+      "uri": "http://www.w3.org/2001/XMLSchema#gYearMonth"
+    },
+    {
+      "id": "GregorianYear",
+      "label": "Gregorian Year",
+      "uri": "http://www.w3.org/2001/XMLSchema#gYear"
+    },
+    {
+      "id": "GregorianMonthDay",
+      "label": "Gregorian Month Day",
+      "uri": "http://www.w3.org/2001/XMLSchema#gMonthDay"
+    },
+    {
+      "id": "GregorianDay",
+      "label": "Gregorian Day",
+      "uri": "http://www.w3.org/2001/XMLSchema#gDay"
+    },
+    {
+      "id": "GregorianMonth",
+      "label": "Gregorian Month",
+      "uri": "http://www.w3.org/2001/XMLSchema#gMonth"
+    },
+    {
+      "id": "HexBinary",
+      "label": "Hexadecimal Binary",
+      "uri": "http://www.w3.org/2001/XMLSchema#hexBinary"
+    },
+    {
+      "id": "Base64Binary",
+      "label": "Base64 Binary",
+      "uri": "http://www.w3.org/2001/XMLSchema#base64Binary"
     }
   ],
 

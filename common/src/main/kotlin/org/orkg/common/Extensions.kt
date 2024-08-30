@@ -5,10 +5,14 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Duration
+import java.time.MonthDay
+import java.time.YearMonth
 import java.time.chrono.IsoChronology
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.format.ResolverStyle
+import java.time.format.SignStyle
+import java.time.temporal.ChronoField
 import java.util.regex.Pattern
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.exceptions.ServiceUnavailable
@@ -97,6 +101,112 @@ fun String.isValidTime(): Boolean {
     }
     return true
 }
+
+private val GREGORIAN_YEAR_MONTH = DateTimeFormatterBuilder()
+    .appendValue(ChronoField.YEAR, 4, 10, SignStyle.EXCEEDS_PAD)
+    .appendLiteral('-')
+    .appendValue(ChronoField.MONTH_OF_YEAR, 2)
+    .optionalStart()
+    .appendOffsetId()
+    .toFormatter()
+    .withChronology(IsoChronology.INSTANCE)
+    .withResolverStyle(ResolverStyle.STRICT)
+
+fun String.isValidGregorianYearMonth(): Boolean {
+    try {
+        YearMonth.parse(this, GREGORIAN_YEAR_MONTH)
+    } catch (e: Exception) {
+        return false
+    }
+    return true
+}
+
+private val GREGORIAN_YEAR = DateTimeFormatterBuilder()
+    .appendValue(ChronoField.YEAR, 4, 10, SignStyle.EXCEEDS_PAD)
+    .optionalStart()
+    .appendOffsetId()
+    .toFormatter()
+    .withChronology(IsoChronology.INSTANCE)
+    .withResolverStyle(ResolverStyle.STRICT)
+
+fun String.isValidGregorianYear(): Boolean {
+    try {
+        GREGORIAN_YEAR.parse(this)
+    } catch (e: Exception) {
+        return false
+    }
+    return true
+}
+
+private val GREGORIAN_MONTH_DAY = DateTimeFormatterBuilder()
+    .appendLiteral("--")
+    .appendValue(ChronoField.MONTH_OF_YEAR, 2)
+    .appendLiteral('-')
+    .appendValue(ChronoField.DAY_OF_MONTH, 2)
+    .optionalStart()
+    .appendOffsetId()
+    .toFormatter()
+    .withChronology(IsoChronology.INSTANCE)
+    .withResolverStyle(ResolverStyle.STRICT)
+
+fun String.isValidGregorianMonthDay(): Boolean {
+    try {
+        MonthDay.parse(this, GREGORIAN_MONTH_DAY)
+    } catch (e: Exception) {
+        return false
+    }
+    return true
+}
+
+private val GREGORIAN_DAY = DateTimeFormatterBuilder()
+    .appendLiteral("---")
+    .appendValue(ChronoField.DAY_OF_MONTH, 2)
+    .optionalStart()
+    .appendOffsetId()
+    .toFormatter()
+    .withChronology(IsoChronology.INSTANCE)
+    .withResolverStyle(ResolverStyle.STRICT)
+
+fun String.isValidGregorianDay(): Boolean {
+    try {
+        val temporalAccessor = GREGORIAN_DAY.parse(this)
+        val dayOfMonth = temporalAccessor.get(ChronoField.DAY_OF_MONTH)
+        ChronoField.DAY_OF_MONTH.checkValidValue(dayOfMonth.toLong())
+    } catch (e: Exception) {
+        return false
+    }
+    return true
+}
+
+private val GREGORIAN_MONTH = DateTimeFormatterBuilder()
+    .appendLiteral("--")
+    .appendValue(ChronoField.MONTH_OF_YEAR, 2)
+    .optionalStart()
+    .appendOffsetId()
+    .toFormatter()
+    .withChronology(IsoChronology.INSTANCE)
+    .withResolverStyle(ResolverStyle.STRICT)
+
+fun String.isValidGregorianMonth(): Boolean {
+    try {
+        val temporalAccessor = GREGORIAN_MONTH.parse(this)
+        val monthOfYear = temporalAccessor.get(ChronoField.MONTH_OF_YEAR)
+        ChronoField.MONTH_OF_YEAR.checkValidValue(monthOfYear.toLong())
+    } catch (e: Exception) {
+        return false
+    }
+    return true
+}
+
+private val HEX_BINARY_MATCHER = Pattern.compile("""^([0-9a-fA-F]{2})*$""").asMatchPredicate()
+
+fun String.isValidHexBinary(): Boolean = HEX_BINARY_MATCHER.test(this)
+
+private val BASE_64_BINARY_MATCHER =
+    Pattern.compile("""^((([A-Za-z0-9+/] ?){4})*(([A-Za-z0-9+/] ?){3}[A-Za-z0-9+/]|([A-Za-z0-9+/] ?){2}[AEIMQUYcgkosw048] ?=|[A-Za-z0-9+/] ?[AQgw] ?= ?=))?$""")
+        .asMatchPredicate()
+
+fun String.isValidBase64(): Boolean = BASE_64_BINARY_MATCHER.test(this)
 
 fun <T> HttpClient.send(httpRequest: HttpRequest, serviceName: String, successCallback: (String) -> T): T? {
     try {

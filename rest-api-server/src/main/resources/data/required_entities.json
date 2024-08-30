@@ -296,6 +296,96 @@
       "id": "Base64Binary",
       "label": "Base64 Binary",
       "uri": "http://www.w3.org/2001/XMLSchema#base64Binary"
+    },
+    {
+      "id": "NormalizedString",
+      "label": "Normalized String",
+      "uri": "http://www.w3.org/2001/XMLSchema#normalizedString"
+    },
+    {
+      "id": "Token",
+      "label": "Token",
+      "uri": "http://www.w3.org/2001/XMLSchema#token"
+    },
+    {
+      "id": "LanguageTag",
+      "label": "Language",
+      "uri": "http://www.w3.org/2001/XMLSchema#languagae"
+    },
+    {
+      "id": "Int",
+      "label": "Int (32-bit)",
+      "uri": "http://www.w3.org/2001/XMLSchema#int"
+    },
+    {
+      "id": "NonPositiveInteger",
+      "label": "Non-Positive Integer",
+      "uri": "http://www.w3.org/2001/XMLSchema#nonPositiveInteger"
+    },
+    {
+      "id": "NegativeInteger",
+      "label": "Negative Integer",
+      "uri": "http://www.w3.org/2001/XMLSchema#negativeInteger"
+    },
+    {
+      "id": "Long",
+      "label": "Long",
+      "uri": "http://www.w3.org/2001/XMLSchema#long"
+    },
+    {
+      "id": "Short",
+      "label": "Short",
+      "uri": "http://www.w3.org/2001/XMLSchema#short"
+    },
+    {
+      "id": "Byte",
+      "label": "Byte",
+      "uri": "http://www.w3.org/2001/XMLSchema#byte"
+    },
+    {
+      "id": "NonNegativeInteger",
+      "label": "Non-Negative Integer",
+      "uri": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+    },
+    {
+      "id": "UnsignedLong",
+      "label": "Unsigned Long",
+      "uri": "http://www.w3.org/2001/XMLSchema#unsignedLong"
+    },
+    {
+      "id": "UnsignedInt",
+      "label": "Unsigned Int",
+      "uri": "http://www.w3.org/2001/XMLSchema#unsignedInt"
+    },
+    {
+      "id": "UnsignedShort",
+      "label": "Unsigned Short",
+      "uri": "http://www.w3.org/2001/XMLSchema#unsignedShort"
+    },
+    {
+      "id": "UnsignedByte",
+      "label": "Unsigned Byte",
+      "uri": "http://www.w3.org/2001/XMLSchema#unsignedByte"
+    },
+    {
+      "id": "PositiveInteger",
+      "label": "Positive Integer",
+      "uri": "http://www.w3.org/2001/XMLSchema#positiveInteger"
+    },
+    {
+      "id": "YearMonthDuration",
+      "label": "Year Month Duration",
+      "uri": "http://www.w3.org/2001/XMLSchema#yearMonthDuration"
+    },
+    {
+      "id": "DayTimeDuration",
+      "label": "Day Time Duration",
+      "uri": "http://www.w3.org/2001/XMLSchema#dayTimeDuration"
+    },
+    {
+      "id": "DateTimeStamp",
+      "label": "Date Time Stamp",
+      "uri": "http://www.w3.org/2001/XMLSchema#dateTimeStamp"
     }
   ],
 

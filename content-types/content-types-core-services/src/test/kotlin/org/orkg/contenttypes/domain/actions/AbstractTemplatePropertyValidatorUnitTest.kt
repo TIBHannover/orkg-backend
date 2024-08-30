@@ -26,6 +26,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateUntypedTemplatePr
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
@@ -226,7 +227,9 @@ class AbstractTemplatePropertyValidatorUnitTest {
     @Test
     fun `Given a number template property definition, when datatype does not match xsd integer, decimal or float, it throws an exception`() {
         val property = dummyCreateNumberLiteralTemplatePropertyCommand().copy(datatype = Classes.string)
-        val exception = InvalidDatatype(property.datatype, Classes.integer, Classes.decimal, Classes.float, Classes.double)
+        val exception = InvalidDatatype(
+            property.datatype, *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray()
+        )
 
         assertThrows<InvalidDatatype> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message
     }

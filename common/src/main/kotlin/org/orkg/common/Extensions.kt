@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatterBuilder
 import java.time.format.ResolverStyle
 import java.time.format.SignStyle
 import java.time.temporal.ChronoField
+import java.util.*
 import java.util.regex.Pattern
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.exceptions.ServiceUnavailable
@@ -207,6 +208,81 @@ private val BASE_64_BINARY_MATCHER =
         .asMatchPredicate()
 
 fun String.isValidBase64(): Boolean = BASE_64_BINARY_MATCHER.test(this)
+
+fun String.isNormalized(): Boolean {
+    for (c in this) {
+        if (c == '\n' || c == '\r' || c == '\t') {
+            return false
+        }
+    }
+    return true
+}
+
+fun String.isValidToken(): Boolean =
+    isNormalized() && isNotBlank() && trim().replace(Regex(" +"), " ") == this
+
+fun String.isValidLanguageTag(): Boolean =
+    Locale.forLanguageTag(this).let { it != null && it.toLanguageTag() != "und" }
+
+private val POSITIVE_INTEGER_MATCHER = Pattern.compile("""^\+?\d*[1-9]\d*$""").asMatchPredicate()
+
+fun String.isValidPositiveInteger(): Boolean = POSITIVE_INTEGER_MATCHER.test(this)
+
+private val NON_POSITIVE_INTEGER_MATCHER = Pattern.compile("""^-\d+|[+-]?0+$""").asMatchPredicate()
+
+fun String.isValidNonPositiveInteger(): Boolean = NON_POSITIVE_INTEGER_MATCHER.test(this)
+
+private val NEGATIVE_INTEGER_MATCHER = Pattern.compile("""^-\d*[1-9]\d*$""").asMatchPredicate()
+
+fun String.isValidNegativeInteger(): Boolean = NEGATIVE_INTEGER_MATCHER.test(this)
+
+private val NON_NEGATIVE_INTEGER_MATCHER = Pattern.compile("""^\+?\d+|[+-]?0+$""").asMatchPredicate()
+
+fun String.isValidNonNegativeInteger(): Boolean = NON_NEGATIVE_INTEGER_MATCHER.test(this)
+
+private val MINUS_ZERO_REGEX = Regex("^-0+$")
+
+fun String.isValidUnsignedLong(): Boolean =
+    // Kotlin does not accept '-' signs for zero values
+    replaceFirst(MINUS_ZERO_REGEX, "0").toULongOrNull() != null
+
+fun String.isValidUnsignedInt(): Boolean =
+    // Kotlin does not accept '-' signs for zero values
+    replaceFirst(MINUS_ZERO_REGEX, "0").toUIntOrNull() != null
+
+fun String.isValidUnsignedShort(): Boolean =
+    // Kotlin does not accept '-' signs for zero values
+    replaceFirst(MINUS_ZERO_REGEX, "0").toUShortOrNull() != null
+
+fun String.isValidUnsignedByte(): Boolean =
+    // Kotlin does not accept '-' signs for zero values
+    replaceFirst(MINUS_ZERO_REGEX, "0").toUByteOrNull() != null
+
+private val YEAR_MONTH_DURATION_MATCHER =
+    Pattern.compile("""^-?P(((\d+Y)(\d+M)?)|(\d+M))$""").asMatchPredicate()
+
+fun String.isValidYearMonthDuration(): Boolean = YEAR_MONTH_DURATION_MATCHER.test(this)
+
+private val DAY_TIME_DURATION_MATCHER =
+    Pattern.compile("""^-?P((\d+H)(\d+M)?(\d+(\.\d+)?S)?|(\d+M)(\d+(\.\d+)?S)?|(\d+(\.\d+)?S))$""").asMatchPredicate()
+
+fun String.isValidDayTimeDuration(): Boolean = DAY_TIME_DURATION_MATCHER.test(this)
+
+private val DATE_TIME_STAMP = DateTimeFormatterBuilder()
+    .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+    .appendOffsetId()
+    .toFormatter()
+    .withChronology(IsoChronology.INSTANCE)
+    .withResolverStyle(ResolverStyle.STRICT)
+
+fun String.isValidDateTimeStamp(): Boolean {
+    try {
+        DATE_TIME_STAMP.parse(this)
+    } catch (e: Exception) {
+        return false
+    }
+    return true
+}
 
 fun <T> HttpClient.send(httpRequest: HttpRequest, serviceName: String, successCallback: (String) -> T): T? {
     try {

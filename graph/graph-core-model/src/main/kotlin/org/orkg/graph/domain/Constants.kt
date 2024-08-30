@@ -1,10 +1,13 @@
 package org.orkg.graph.domain
 
 import org.orkg.common.ThingId
+import org.orkg.common.isNormalized
 import org.orkg.common.isValidBase64
 import org.orkg.common.isValidBoolean
 import org.orkg.common.isValidDate
 import org.orkg.common.isValidDateTime
+import org.orkg.common.isValidDateTimeStamp
+import org.orkg.common.isValidDayTimeDuration
 import org.orkg.common.isValidDecimal
 import org.orkg.common.isValidDuration
 import org.orkg.common.isValidGregorianDay
@@ -15,7 +18,18 @@ import org.orkg.common.isValidGregorianYearMonth
 import org.orkg.common.isValidHexBinary
 import org.orkg.common.isValidIRI
 import org.orkg.common.isValidInteger
+import org.orkg.common.isValidLanguageTag
+import org.orkg.common.isValidNegativeInteger
+import org.orkg.common.isValidNonNegativeInteger
+import org.orkg.common.isValidNonPositiveInteger
+import org.orkg.common.isValidPositiveInteger
 import org.orkg.common.isValidTime
+import org.orkg.common.isValidToken
+import org.orkg.common.isValidUnsignedByte
+import org.orkg.common.isValidUnsignedInt
+import org.orkg.common.isValidUnsignedLong
+import org.orkg.common.isValidUnsignedShort
+import org.orkg.common.isValidYearMonthDuration
 
 val reservedClassIds = setOf(
     Classes.literal,
@@ -104,6 +118,7 @@ object Classes {
     val background = ThingId("Background")
     val base64Binary = ThingId("Base64Binary")
     val boolean = ThingId("Boolean")
+    val byte = ThingId("Byte")
     val caption = ThingId("Caption")
     val classes = ThingId("Classes")
     val comparison = ThingId("Comparison")
@@ -118,6 +133,8 @@ object Classes {
     val datasetDescription = ThingId("DatasetDescription")
     val date = ThingId("Date")
     val dateTime = ThingId("DateTime")
+    val dateTimeStamp = ThingId("DateTimeStamp")
+    val dayTimeDuration = ThingId("DayTimeDuration")
     val decimal = ThingId("Decimal")
     val deletedComparison = ThingId("ComparisonDeleted")
     val discussion = ThingId("Discussion")
@@ -134,23 +151,31 @@ object Classes {
     val gregorianYear = ThingId("GregorianYear")
     val gregorianYearMonth = ThingId("GregorianYearMonth")
     val hexBinary = ThingId("HexBinary")
+    val int32 = ThingId("Int")
     val integer = ThingId("Integer")
     val introduction = ThingId("Introduction")
+    val language = ThingId("LanguageTag")
     val legend = ThingId("Legend")
     val list = ThingId("List")
     val listSection = ThingId("ListSection")
     val literal = ThingId("Literal")
     val literatureList = ThingId("LiteratureList")
     val literatureListPublished = ThingId("LiteratureListPublished")
+    val long = ThingId("Long")
     val materials = ThingId("Materials")
     val methods = ThingId("Methods")
     val model = ThingId("Model")
     val motivation = ThingId("Motivation")
+    val negativeInteger = ThingId("NegativeInteger")
     val nodeShape = ThingId("NodeShape")
+    val nonNegativeInteger = ThingId("NonNegativeInteger")
+    val nonPositiveInteger = ThingId("NonPositiveInteger")
+    val normalizedString = ThingId("NormalizedString")
     val ontologySection = ThingId("OntologySection")
     val paper = ThingId("Paper")
     val paperDeleted = ThingId("PaperDeleted")
     val paperVersion = ThingId("PaperVersion")
+    val positiveInteger = ThingId("PositiveInteger")
     val postscript = ThingId("Postscript")
     val predicate = ThingId("Predicate")
     val predicates = ThingId("Predicates")
@@ -167,8 +192,10 @@ object Classes {
     val results = ThingId("Results")
     val rosettaNodeShape = ThingId("RosettaNodeShape")
     val rosettaStoneStatement = ThingId("RosettaStoneStatement")
+    val token = ThingId("Token")
     val scenario = ThingId("Scenario")
     val section = ThingId("Section")
+    val short = ThingId("Short")
     val smartReview = ThingId("SmartReview")
     val smartReviewPublished = ThingId("SmartReviewPublished")
     val software = ThingId("Software")
@@ -178,10 +205,15 @@ object Classes {
     val textSection = ThingId("TextSection")
     val thing = ThingId("Thing")
     val time = ThingId("Time")
+    val unsignedByte = ThingId("UnsignedByte")
+    val unsignedInt = ThingId("UnsignedInt")
+    val unsignedLong = ThingId("UnsignedLong")
+    val unsignedShort = ThingId("UnsignedShort")
     val uri = ThingId("URI")
     val venue = ThingId("Venue")
     val visualization = ThingId("Visualization")
     val visualizationSection = ThingId("VisualizationSection")
+    val yearMonthDuration = ThingId("YearMonthDuration")
 }
 
 object Literals {
@@ -208,7 +240,25 @@ object Literals {
         GREGORIAN_DAY("gDay", Classes.gregorianDay, false, { it.isValidGregorianDay() }),
         GREGORIAN_MONTH("gMonth", Classes.gregorianMonth, false, { it.isValidGregorianMonth() }),
         HEX_BINARY("hexBinary", Classes.hexBinary, false, { it.isValidHexBinary() }),
-        BASE_64_BINARY("base64Binary", Classes.base64Binary, false, { it.isValidBase64() });
+        BASE_64_BINARY("base64Binary", Classes.base64Binary, false, { it.isValidBase64() }),
+        NORMALIZED_STRING("normalizedString", Classes.normalizedString, false, { it.isNormalized() }),
+        TOKEN("token", Classes.token, false, { it.isValidToken() }),
+        LANGUAGE("language", Classes.language, false, { it.isValidLanguageTag() }),
+        INT32("int", Classes.int32, true, { it.toIntOrNull() != null }),
+        NON_POSITIVE_INTEGER("nonPositiveInteger", Classes.nonPositiveInteger, true, { it.isValidNonPositiveInteger() }),
+        NEGATIVE_INTEGER("negativeInteger", Classes.negativeInteger, true, { it.isValidNegativeInteger() }),
+        LONG("long", Classes.long, true, { it.toLongOrNull() != null }),
+        SHORT("short", Classes.short, true, { it.toShortOrNull() != null }),
+        BYTE("byte", Classes.byte, true, { it.toByteOrNull() != null }),
+        NON_NEGATIVE_INTEGER("nonNegativeInteger", Classes.nonNegativeInteger, true, { it.isValidNonNegativeInteger() }),
+        UNSIGNED_LONG("unsignedLong", Classes.unsignedLong, true, { it.isValidUnsignedLong() }),
+        UNSIGNED_INT("unsignedInt", Classes.unsignedInt, true, { it.isValidUnsignedInt() }),
+        UNSIGNED_SHORT("unsignedShort", Classes.unsignedShort, true, { it.isValidUnsignedShort() }),
+        UNSIGNED_BYTE("unsignedByte", Classes.unsignedByte, true, { it.isValidUnsignedByte() }),
+        POSITIVE_INTEGER("positiveInteger", Classes.positiveInteger, true, { it.isValidPositiveInteger() }),
+        YEAR_MONTH_DURATION("yearMonthDuration", Classes.yearMonthDuration, false, { it.isValidYearMonthDuration() }),
+        DAY_TIME_DURATION("dayTimeDuration", Classes.dayTimeDuration, false, { it.isValidDayTimeDuration() }),
+        DATE_TIME_STAMP("dateTimeStamp", Classes.dateTimeStamp, false, { it.isValidDateTimeStamp() });
 
         val prefixedUri: String = "xsd:$fragment"
         val uri: String = "http://www.w3.org/2001/XMLSchema#$fragment"

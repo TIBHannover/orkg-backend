@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.ValueSource
@@ -132,14 +133,21 @@ class XSDValidationTest {
         URI.canParse(value) shouldBe false
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = ["PT20.345S", "PT15M", "PT10H", "P2D", "P2DT3H4M", "PT-6H3M", "-PT6H3M", "-PT-6H+3M"])
-    fun `Given a duration, when tested, it is valid`(value: String) {
-        DURATION.canParse(value) shouldBe true
+    @Test
+    fun `Given a duration, when tested, it is valid`() {
+        validDurations().forEach { value ->
+            DURATION.canParse(value) shouldBe true
+        }
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["", "   ", "abc", "+-5", "\n", "PT15Z", "AT10H", "+-PT-6H+3M"])
+    @ValueSource(
+        strings = [
+            "", "   ", "abc", "+-5", "\n", "PT15Z", "AT10H", "+-PT-6H+3M", "--P10M", "p10M",
+            "P10m", "P10h", "P10s", "P.5S", "P1.S", "P-10H", "P-10M", "P-10S", "P", "PHMS",
+            "PH", "PM", "PS", "P5H", "P5S", "P.5S", "P0.5S", "PT"
+        ]
+    )
     fun `Given a malformed duration, when tested, it is not valid`(value: String) {
         DURATION.canParse(value) shouldBe false
     }
@@ -495,6 +503,76 @@ class XSDValidationTest {
     }
 
     companion object {
+        @JvmStatic
+        fun validDurations(): Iterator<String> = iterator {
+            val signs = listOf("", "-")
+            val ys = listOf(null, "0", "00", "2", "17", "25")
+            val ws = listOf(null, "0", "00", "2", "41", "65")
+            val ds = listOf(null, "0", "00", "2", "41", "65")
+            val hs = listOf(null, "0", "00", "2", "17", "25")
+            val ms = listOf(null, "0", "00", "2", "41", "65")
+            val ss = listOf(null, "0", "00", "2", "41", "65")
+            val fs = listOf(null, "0", "00", "2", "54", "78956")
+
+            for (sign in signs) {
+                for (y in ys) {
+                    for (w in ws) {
+                        for (d in ds) {
+                            for (h in hs) {
+                                for (m in ms) {
+                                    for (s in ss) {
+                                        for (f in fs) {
+                                            val duration = buildString {
+                                                append(sign)
+                                                append("P")
+
+                                                if (y != null) {
+                                                    append(y)
+                                                    append("Y")
+                                                }
+                                                if (w != null) {
+                                                    append(w)
+                                                    append("M")
+                                                }
+                                                if (d != null) {
+                                                    append(d)
+                                                    append("D")
+                                                }
+
+                                                if (h != null || m != null || s != null) {
+                                                    append("T")
+                                                }
+
+                                                if (h != null) {
+                                                    append(h)
+                                                    append("H")
+                                                }
+                                                if (m != null) {
+                                                    append(m)
+                                                    append("M")
+                                                }
+                                                if (s != null) {
+                                                    append(s)
+                                                    if (f != null) {
+                                                        append(".")
+                                                        append(f)
+                                                    }
+                                                    append("S")
+                                                }
+                                            }
+                                            if (!duration.endsWith("P")) {
+                                                yield(duration)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         @JvmStatic
         fun validDayTimeDuration(): Iterator<String> = iterator {
             val signs = listOf("", "-")

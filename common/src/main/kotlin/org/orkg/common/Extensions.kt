@@ -68,14 +68,11 @@ private val INTEGER_MATCHER = Pattern.compile("""[+-]?[0-9]+""").asMatchPredicat
 
 fun String.isValidInteger(): Boolean = INTEGER_MATCHER.test(this)
 
-fun String.isValidDuration(): Boolean {
-    try {
-        Duration.parse(this)
-    } catch (e: Exception) {
-        return false
-    }
-    return true
-}
+private val DURATION_MATCHER =
+    Pattern.compile("""^-?P(((\d+Y(\d+M)?(\d+D)?|(\d+M)(\d+D)?|(\d+D))(T((\d+H)(\d+M)?(\d+(\.\d+)?S)?|(\d+M)(\d+(\.\d+)?S)?|(\d+(\.\d+)?S)))?)|(T((\d+H)(\d+M)?(\d+(\.\d+)?S)?|(\d+M)(\d+(\.\d+)?S)?|(\d+(\.\d+)?S))))$""")
+        .asMatchPredicate()
+
+fun String.isValidDuration(): Boolean = DURATION_MATCHER.test(this)
 
 private val STRICT_ISO_8601_DATE_TIME = DateTimeFormatterBuilder()
     .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)

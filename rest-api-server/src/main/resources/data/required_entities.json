@@ -51,11 +51,13 @@
     },
     {
       "id": "Date",
-      "label": "Date"
+      "label": "Date",
+      "uri": "http://www.w3.org/2001/XMLSchema#date"
     },
     {
       "id": "String",
-      "label": "String"
+      "label": "String",
+      "uri": "http://www.w3.org/2001/XMLSchema#string"
     },
     {
       "id": "Number",
@@ -228,39 +230,48 @@
     },
     {
       "id": "Integer",
-      "label": "Integer"
+      "label": "Integer",
+        "uri": "http://www.w3.org/2001/XMLSchema#integer"
     },
     {
       "id": "Decimal",
-      "label": "Decimal"
+      "label": "Decimal",
+        "uri": "http://www.w3.org/2001/XMLSchema#decimal"
     },
     {
       "id": "Boolean",
-      "label": "Boolean"
+      "label": "Boolean",
+        "uri": "http://www.w3.org/2001/XMLSchema#boolean"
     },
     {
       "id": "Float",
-      "label": "Float"
+      "label": "Float",
+      "uri": "http://www.w3.org/2001/XMLSchema#float"
     },
     {
       "id": "Double",
-      "label": "Double"
+      "label": "Double",
+        "uri": "http://www.w3.org/2001/XMLSchema#float"
     },
     {
       "id": "URI",
-      "label": "URI"
+      "label": "URI",
+      "uri": "http://www.w3.org/2001/XMLSchema#anyURI"
     },
     {
       "id": "Duration",
-      "label": "Duration"
+      "label": "Duration",
+        "uri": "http://www.w3.org/2001/XMLSchema#duration"
     },
     {
       "id": "DateTime",
-      "label": "DateTime"
+      "label": "DateTime",
+        "uri": "http://www.w3.org/2001/XMLSchema#dateTime"
     },
     {
       "id": "Time",
-      "label": "Time"
+      "label": "Time",
+        "uri": "http://www.w3.org/2001/XMLSchema#time"
     },
     {
       "id": "GregorianYearMonth",

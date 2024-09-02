@@ -129,13 +129,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
         mockMvc.perform(postRequestWithBody("/api/statements/", body))
             .andExpect(status().isCreated)
-            .andDo(
-                document(
-                    snippet,
-                    createdResponseHeaders(),
-                    statementWithResourceResponseFields()
-                )
-            )
     }
 
     @Test
@@ -153,14 +146,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
         mockMvc.perform(postRequestWithBody("/api/statements/", body))
             .andExpect(status().isCreated)
-            .andDo(
-                document(
-                    snippet,
-                    requestBody(),
-                    createdResponseHeaders(),
-                    statementWithLiteralResponseFields()
-                )
-            )
     }
 
     @Test

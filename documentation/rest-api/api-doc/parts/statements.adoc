@@ -45,7 +45,7 @@ The statement can be retrieved by following the URI in the `Location` header fie
 
 NOTE: The response body contains the created statement for convenience. This might be subject to change.
 
-operation::statement-controller-integration-test-add-with-resource[snippets='curl-request,http-response']
+operation::statements-create[snippets='request-fields,curl-request,http-response,response-fields']
 
 [[statements-delete]]
 == Deleting a statement

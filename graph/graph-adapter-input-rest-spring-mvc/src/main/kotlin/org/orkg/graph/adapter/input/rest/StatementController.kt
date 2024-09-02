@@ -101,7 +101,7 @@ class StatementController(
         )
         val location = uriComponentsBuilder
             .path("api/statements/{id}")
-            .buildAndExpand(statement.id)
+            .buildAndExpand(id)
             .toUri()
         return created(location)
             .body(statementService.findById(id).mapToStatementRepresentation(capabilities).get())

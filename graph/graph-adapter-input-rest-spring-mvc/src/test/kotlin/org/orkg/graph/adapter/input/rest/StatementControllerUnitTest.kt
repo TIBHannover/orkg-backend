@@ -10,6 +10,8 @@ import io.mockk.verify
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -22,7 +24,10 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
+import org.orkg.graph.adapter.input.rest.testing.fixtures.statementResponseFields
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.CreateStatement
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementObjectNotFound
@@ -48,6 +53,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
@@ -56,10 +65,11 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [StatementController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
+@ContextConfiguration(classes = [StatementController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [StatementController::class])
 @DisplayName("Given a Statement controller")
 @UsesMocking
@@ -192,6 +202,58 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpect(jsonPath("$.path").value("/api/statements"))
 
         verify(exactly = 1) { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a statement is created, when service succeeds, then status is 200 OK and statement is returned")
+    fun create() {
+        val id = StatementId("S123")
+        val statement = createStatement().copy(id = id, subject = createResource(), `object` = createLiteral())
+        val request = CreateStatement(
+            id = id,
+            subjectId = statement.subject.id,
+            predicateId = statement.predicate.id,
+            objectId = statement.`object`.id
+        )
+
+        every { statementService.create(any(), any(), any(), any()) } returns id
+        every { statementService.findById(id) } returns Optional.of(statement)
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+
+        RestDocumentationRequestBuilders.post("/api/statements/")
+            .content(request)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/statements/$id")))
+            .andExpectStatement()
+            .andDo(
+                documentationHandler.document(
+                    requestFields(
+                        fieldWithPath("id").description("The statement id. (optional)"),
+                        fieldWithPath("subject_id").description("The id of the subject of the statement."),
+                        fieldWithPath("predicate_id").description("The id of the predicate of the statement."),
+                        fieldWithPath("object_id").description("The id of the object of the statement.")
+                    ),
+                    responseFields(statementResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            statementService.create(
+                userId = ContributorId(MockUserId.USER),
+                subject = request.subjectId,
+                predicate = request.predicateId,
+                `object` = request.objectId
+            )
+        }
+        verify(exactly = 1) { statementService.findById(id) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
     }
 
     @Test

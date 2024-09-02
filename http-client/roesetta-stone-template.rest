@@ -7,6 +7,7 @@ Authorization: Bearer {{access_token}}
     "label": "traveling statement",
     "description": "This is a template that implements the Rosetta Stone light modeling paradigm for statements with 'travels' as their verb/predicate. E.g. Peter travels from Berlin to Paris by train on the 24th of January 2023.",
     "formatted_label": "{0} travels by {1} from {2} to {3} on the {4}",
+    "example_usage": "Peter travels by train from Hanover to Berlin on the 02.09.2024",
     "properties": [
         {
             "label": "Person",

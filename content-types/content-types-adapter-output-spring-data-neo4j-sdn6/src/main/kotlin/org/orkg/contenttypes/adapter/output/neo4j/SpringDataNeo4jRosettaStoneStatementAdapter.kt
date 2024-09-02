@@ -7,7 +7,6 @@ import java.util.*
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Conditions
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
-import org.neo4j.cypherdsl.core.Cypher.caseExpression
 import org.neo4j.cypherdsl.core.Cypher.listOf
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
@@ -25,9 +24,9 @@ import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResourceRepository
-import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.toCondition
+import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
@@ -66,9 +65,12 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)-[:METADATA]->(metadata:RosettaStoneStatementMetadata),
                   (latest)-[:TEMPLATE]->(template:RosettaNodeShape)
             MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(subject:Thing)
-            OPTIONAL MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
-            WITH latest, context.id AS contextId, template.id AS templateId, metadata, version, object, COLLECT([subject, subjectNode.index]) AS subjects, objectNode
-            WITH latest, contextId, templateId, metadata, version, CASE WHEN object IS NOT NULL THEN COLLECT([object, objectNode.index, objectNode.position]) ELSE [] END AS objects, subjects
+            WITH latest, context.id AS contextId, template.id AS templateId, metadata, version, COLLECT([subject, subjectNode.index]) AS subjects
+            CALL {
+                WITH version
+                MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
+                RETURN COLLECT([object, objectNode.index, objectNode.position]) AS objects
+            }
             WITH latest, contextId, templateId, COLLECT([version, metadata, subjects, objects]) AS versions
             RETURN latest, contextId, templateId, versions""".trimIndent()
         )
@@ -114,7 +116,6 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     latest.relationshipTo(template, "TEMPLATE")
                 )
                 .match(version.relationshipTo(subjectNode, "SUBJECT").relationshipTo(subject, "VALUE"))
-                .optionalMatch(version.relationshipTo(objectNode, "OBJECT").relationshipTo(`object`, "VALUE"))
                 .let { match ->
                     templateTargetClassId?.let {
                         val targetClass = node("Class").withProperties("id", anonParameter(it.value))
@@ -128,9 +129,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     metadata,
                     version,
                     subject,
-                    subjectNode,
-                    `object`,
-                    objectNode
+                    subjectNode
                 )
                 .where(
                     context.toCondition { contextNode.property("id").eq(anonParameter(it.value)) },
@@ -151,23 +150,13 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     template.property("id").`as`(templateIdVar),
                     metadata,
                     version,
-                    `object`,
                     collect(listOf(subject.asExpression(), subjectNode.property("index"))).`as`(subjects),
-                    objectNode
                 )
-                .with(
-                    latest,
-                    contextId,
-                    templateIdVar,
-                    metadata,
-                    version,
-                    // TODO: refactor query to workaround implicit aggregation key caused by case expression
-                    caseExpression()
-                        .`when`(`object`.isNotNull)
-                        .then(collect(listOf(`object`.asExpression(), objectNode.property("index"), objectNode.property("position"))))
-                        .elseDefault(listOf())
-                        .`as`(objects),
-                    subjects
+                .call(
+                    match(version.relationshipTo(objectNode, "OBJECT").relationshipTo(`object`, "VALUE"))
+                        .returning(collect(listOf(`object`.asExpression(), objectNode.property("index"), objectNode.property("position"))).`as`(objects))
+                        .build(),
+                    version
                 )
                 .with(
                     latest,

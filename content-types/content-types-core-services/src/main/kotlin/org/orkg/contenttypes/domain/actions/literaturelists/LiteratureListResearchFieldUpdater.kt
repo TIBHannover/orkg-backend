@@ -22,8 +22,7 @@ class LiteratureListResearchFieldUpdater(
     ): UpdateLiteratureListState {
         if (command.researchFields != null && command.researchFields != state.literatureList!!.researchFields.ids) {
             statementCollectionPropertyUpdater.update(
-                statements = state.statements[command.literatureListId].orEmpty()
-                    .filter { it.predicate.id == Predicates.hasResearchField },
+                statements = state.statements[command.literatureListId].orEmpty(),
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasResearchField,

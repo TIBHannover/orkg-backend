@@ -103,9 +103,7 @@ class LiteratureListResearchFieldUpdaterUnitTest {
 
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
-                statements = listOf(
-                    createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasResearchField))
-                ),
+                statements = state.statements[command.literatureListId]!!,
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasResearchField,

@@ -207,6 +207,12 @@ class ComparisonService(
                 classes = setOf(Classes.comparisonRelatedResource)
             )
         )
+        statementService.add(
+            userId = command.contributorId,
+            subject = command.comparisonId,
+            predicate = Predicates.hasRelatedResource,
+            `object` = resourceId
+        )
         if (command.image != null) {
             statementService.add(
                 userId = command.contributorId,

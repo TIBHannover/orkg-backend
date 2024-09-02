@@ -474,6 +474,14 @@ class ComparisonServiceUnitTests {
             )
         } returns resourceId
         every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = command.comparisonId,
+                predicate = Predicates.hasRelatedResource,
+                `object` = resourceId
+            )
+        } just runs
+        every {
             literalService.create(
                 CreateCommand(
                     contributorId = command.contributorId,
@@ -532,6 +540,14 @@ class ComparisonServiceUnitTests {
                     label = command.label,
                     classes = setOf(Classes.comparisonRelatedResource),
                 )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = command.comparisonId,
+                predicate = Predicates.hasRelatedResource,
+                `object` = resourceId
             )
         }
         verify(exactly = 1) {

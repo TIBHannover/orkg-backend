@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import io.kotest.assertions.asClue
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -289,7 +290,7 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
             it.visualizations shouldBe emptyList()
             it.relatedFigures shouldBe emptyList()
             it.relatedResources shouldBe emptyList()
-            it.references shouldContainExactlyInAnyOrder listOf("https://orkg.org/resources/R1000", "paper citation")
+            it.references shouldContainExactly listOf("https://orkg.org/resources/R1000", "paper citation")
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
             it.isAnonymized shouldBe false
@@ -358,7 +359,7 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
             it.visualizations shouldBe emptyList()
             it.relatedFigures shouldBe emptyList()
             it.relatedResources shouldBe emptyList()
-            it.references shouldContainExactlyInAnyOrder listOf("paper citation", "other paper citation")
+            it.references shouldContainExactly listOf("other paper citation", "paper citation")
             it.observatories shouldBe listOf(ObservatoryId("33d0776f-59ad-465f-a22c-cd794694edc6"))
             it.organizations shouldBe listOf(OrganizationId("dc9a860c-1a1b-4977-bd6a-9dc21de46df6"))
             it.isAnonymized shouldBe true
@@ -458,8 +459,8 @@ private const val updateComparisonJson = """{
     "R6541", "R5364", "R3120", "R7864"
   ],
   "references": [
-    "paper citation",
-    "other paper citation"
+    "other paper citation",
+    "paper citation"
   ],
   "observatories": [
     "33d0776f-59ad-465f-a22c-cd794694edc6"

@@ -439,6 +439,7 @@ class ComparisonService(
                 .withoutObjectsWithBlankLabels()
                 .objects()
                 .filterIsInstance<Literal>()
+                .sortedBy { it.createdAt }
                 .map { it.label },
             observatories = listOf(observatoryId),
             organizations = listOf(organizationId),

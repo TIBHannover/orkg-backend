@@ -351,11 +351,11 @@ class ComparisonController(
 
     data class UpdateComparisonRelatedResourceRequest(
         val label: String?,
-        @field:NotBlank
+        @field:NullableNotBlank
         val image: String?,
-        @field:NotBlank
+        @field:NullableNotBlank
         val url: String?,
-        @field:NotBlank
+        @field:NullableNotBlank
         val description: String?
     ) {
         fun toUpdateCommand(comparisonId: ThingId, comparisonRelatedResourceId: ThingId, contributorId: ContributorId) =

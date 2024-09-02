@@ -366,9 +366,9 @@ class ComparisonController(
 
     data class CreateComparisonRelatedFigureRequest(
         val label: String,
-        @field:NotBlank
+        @field:NullableNotBlank
         val image: String?,
-        @field:NotBlank
+        @field:NullableNotBlank
         val description: String?
     ) {
         fun toCreateCommand(comparisonId: ThingId, contributorId: ContributorId) =

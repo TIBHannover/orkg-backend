@@ -656,6 +656,14 @@ class ComparisonServiceUnitTests {
             )
         } returns figureId
         every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = command.comparisonId,
+                predicate = Predicates.hasRelatedFigure,
+                `object` = figureId
+            )
+        } just runs
+        every {
             literalService.create(
                 CreateCommand(
                     contributorId = command.contributorId,
@@ -698,6 +706,14 @@ class ComparisonServiceUnitTests {
                     label = command.label,
                     classes = setOf(Classes.comparisonRelatedFigure),
                 )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = command.comparisonId,
+                predicate = Predicates.hasRelatedFigure,
+                `object` = figureId
             )
         }
         verify(exactly = 1) {

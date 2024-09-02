@@ -693,14 +693,15 @@ class SpringDataNeo4jStatementAdapter(
                 val node = name("node")
                 val createdBy = name("createdBy")
                 val ms = name("ms")
-                val timestamp = name("timestamp")
                 val edit = listOf(
                     createdBy,
-                    call("apoc.date.format").withArgs(
-                        ms,
-                        literalOf<String>("ms"),
-                        literalOf<String>("yyyy-MM-dd'T'HH:mm:ssXXX")
-                    ).asFunction()
+                    call("apoc.date.format")
+                        .withArgs(
+                            ms,
+                            literalOf<String>("ms"),
+                            literalOf<String>("yyyy-MM-dd'T'HH:mm:'00'XXX")
+                        )
+                        .asFunction()
                 ).`as`("edit")
 
                 match(
@@ -722,19 +723,11 @@ class SpringDataNeo4jStatementAdapter(
                     )
                     .with(
                         node.property("created_by").`as`(createdBy),
-                        call("apoc.text.regreplace").withArgs(
-                            node.property("created_at"),
-                            literalOf<String>("""^(\d+-\d+-\d+T\d+:\d+):\d+(?:\.\d+)?(.*)$"""),
-                            literalOf<String>("$1:00$2")
-                        ).asFunction().`as`(timestamp)
-                    ).with(
-                        createdBy,
-                        call("apoc.date.parse").withArgs(
-                            timestamp,
-                            literalOf<String>("ms"),
-                            literalOf<String>("yyyy-MM-dd'T'HH:mm:ssXXX")
-                        ).asFunction().`as`(ms).asExpression()
-                    ).withDistinct(edit)
+                        call("custom.parseIsoOffsetDateTime")
+                            .withArgs(node.property("created_at"), literalOf<String>("ms"))
+                            .asFunction().`as`(ms).asExpression()
+                    )
+                    .withDistinct(edit)
             }
             .withQuery { commonQuery ->
                 val edit = name("edit")

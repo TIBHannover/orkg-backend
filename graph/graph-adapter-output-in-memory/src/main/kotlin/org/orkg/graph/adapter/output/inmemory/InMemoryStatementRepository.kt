@@ -336,9 +336,9 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             .map {
                 ResourceContributor(
                     it.contributor.value.toString(),
-                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").apply {
-                        timeZone = TimeZone.getTimeZone("UTC")
-                    }.format(it.millis - (it.millis % 60000))
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:'00'XXX")
+                        .apply { timeZone = TimeZone.getTimeZone("UTC") }
+                        .format(it.millis)
                 )
             }.distinct()
             .sortedByDescending { it.createdAt }

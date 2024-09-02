@@ -15,8 +15,8 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import java.time.format.DateTimeFormatter.ofPattern
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -1669,21 +1669,17 @@ fun <
             )
             saveStatement(resourceRelatesToOldResource)
 
-            val formatter = ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:'00'XXX")
             val expected = setOf(
                 resource.createdBy to resource.createdAt,
                 otherResource.createdBy to otherResource.createdAt,
                 resourceRelatesToOtherResource.createdBy to resourceRelatesToOtherResource.createdAt,
                 anotherResource.createdBy to anotherResource.createdAt,
                 otherResourceRelatesToAnotherResource.createdBy to otherResourceRelatesToAnotherResource.createdAt
-            ).map {
+            ).map { (createdBy, createdAt) ->
                 ResourceContributor(
-                    it.first.toString(),
-                    it.second!!
-                        .withSecond(0)
-                        .withNano(0)
-                        .atZoneSameInstant(ZoneOffset.UTC)
-                        .format(formatter)
+                    createdBy.toString(),
+                    formatter.format(createdAt!!.atZoneSameInstant(ZoneOffset.UTC))
                 )
             }
 

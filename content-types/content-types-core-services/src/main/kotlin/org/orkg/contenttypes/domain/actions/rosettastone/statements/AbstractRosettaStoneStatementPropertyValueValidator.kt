@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.statements
 
+import kotlin.math.absoluteValue
 import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
@@ -126,7 +127,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
     private fun validateInputPositionCount(templateId: ThingId, objects: List<List<String>>, templateProperties: List<TemplateProperty>) {
         val objectPositionDifference = objects.size - templateProperties.size + 1
         if (objectPositionDifference < 0) {
-            throw MissingInputPositions(templateProperties.size, templateId, objectPositionDifference)
+            throw MissingInputPositions(templateProperties.size, templateId, objectPositionDifference.absoluteValue)
         } else if (objectPositionDifference > 0) {
             throw TooManyInputPositions(templateProperties.size, templateId)
         }

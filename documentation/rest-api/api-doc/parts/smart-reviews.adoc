@@ -46,3 +46,14 @@ NOTE: All fields at the top level in the request can be omitted or `null`, meani
 WARNING: Author names will not be updated if a resource id is specified for a given author.
 
 operation::smart-reviews-update[snippets='request-fields,curl-request,http-response']
+
+[[smart-reviews-publish]]
+== Publishing smart reviews
+
+A `POST` request publishes an existing smart review with the given parameters.
+In the process, a new smart review published resource is created and linked to the original smart review resource.
+All statements containing the sections of the original smart review are archived in a separate database.
+Optionally, a DOI can be assigned to the published smart review resource.
+The response will be `204 No Content` when successful.
+
+operation::smart-reviews-publish[snippets='request-fields,curl-request,http-response']

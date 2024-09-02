@@ -20,6 +20,7 @@ import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
+import org.orkg.contenttypes.input.PublishSmartReviewUseCase
 import org.orkg.contenttypes.input.SmartReviewComparisonSectionCommand
 import org.orkg.contenttypes.input.SmartReviewOntologySectionCommand
 import org.orkg.contenttypes.input.SmartReviewPredicateSectionCommand
@@ -174,6 +175,23 @@ class SmartReviewController(
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.deleteSection(DeleteSmartReviewSectionUseCase.DeleteCommand(smartReviewId, sectionId, userId))
+        val location = uriComponentsBuilder
+            .path("api/smart-reviews/{id}")
+            .buildAndExpand(smartReviewId)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @PreAuthorizeUser
+    @PostMapping("/{id}/publish", produces = [SMART_REVIEW_JSON_V1])
+    fun publish(
+        @PathVariable id: ThingId,
+        @RequestBody @Valid request: PublishRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val contributorId = currentUser.contributorId()
+        val smartReviewId = service.publish(request.toPublishCommand(id, contributorId))
         val location = uriComponentsBuilder
             .path("api/smart-reviews/{id}")
             .buildAndExpand(smartReviewId)
@@ -437,5 +455,17 @@ class SmartReviewController(
             UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand(
                 smartReviewSectionId, contributorId, smartReviewId, heading, `class`, text
             )
+    }
+
+    data class PublishRequest(
+        @field:NotBlank
+        val changelog: String,
+        @JsonProperty("assign_doi")
+        val assignDOI: Boolean,
+        @field:NullableNotBlank
+        val description: String?
+    ) {
+        fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishSmartReviewUseCase.PublishCommand =
+            PublishSmartReviewUseCase.PublishCommand(id, contributorId, changelog, assignDOI, description)
     }
 }

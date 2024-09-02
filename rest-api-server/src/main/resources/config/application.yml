@@ -48,6 +48,7 @@ orkg:
     base-url:
       paper: "http://localhost/paper/"
       comparison: "http://localhost/comparison/"
+      smart-review: "http://localhost/review/"
   simcomp:
     host: "https://orkg.org/simcomp"
 management:

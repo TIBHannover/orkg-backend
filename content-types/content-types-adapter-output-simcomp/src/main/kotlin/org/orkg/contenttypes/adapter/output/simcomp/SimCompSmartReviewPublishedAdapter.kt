@@ -22,4 +22,8 @@ class SimCompSmartReviewPublishedAdapter(
     @Cacheable(key = "#id", cacheNames = [THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE])
     override fun findById(id: ThingId): Optional<PublishedContentType> =
         repository.findById(id, ThingType.REVIEW).map { it.toPublishedContentType(objectMapper) }
+
+    override fun save(smartReview: PublishedContentType) {
+        repository.save(smartReview.rootId, ThingType.REVIEW, smartReview)
+    }
 }

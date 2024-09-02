@@ -17,6 +17,7 @@ import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosett
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.CreateRosettaStoneTemplateAction
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.UpdateRosettaStoneTemplateAction
 import org.orkg.contenttypes.domain.actions.smartreviews.CreateSmartReviewAction
+import org.orkg.contenttypes.domain.actions.smartreviews.PublishSmartReviewAction
 import org.orkg.contenttypes.domain.actions.smartreviews.UpdateSmartReviewAction
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.CreateSmartReviewSectionAction
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.DeleteSmartReviewSectionAction
@@ -43,6 +44,7 @@ import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.PublishLiteratureListUseCase
 import org.orkg.contenttypes.input.PublishPaperUseCase
+import org.orkg.contenttypes.input.PublishSmartReviewUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
@@ -87,6 +89,7 @@ internal typealias DeleteSmartReviewSectionCommand = DeleteSmartReviewSectionUse
 
 internal typealias PublishPaperCommand = PublishPaperUseCase.PublishCommand
 internal typealias PublishLiteratureListCommand = PublishLiteratureListUseCase.PublishCommand
+internal typealias PublishSmartReviewCommand = PublishSmartReviewUseCase.PublishCommand
 
 internal typealias CreatePaperState = CreatePaperAction.State
 internal typealias UpdatePaperState = UpdatePaperAction.State
@@ -118,6 +121,7 @@ internal typealias PublishLiteratureListState = PublishLiteratureListAction.Stat
 
 internal typealias CreateSmartReviewState = CreateSmartReviewAction.State
 internal typealias UpdateSmartReviewState = UpdateSmartReviewAction.State
+internal typealias PublishSmartReviewState = PublishSmartReviewAction.State
 
 internal typealias CreateLiteratureListSectionState = CreateLiteratureListSectionAction.State
 internal typealias UpdateLiteratureListSectionState = UpdateLiteratureListSectionAction.State

@@ -8,7 +8,6 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
@@ -22,6 +21,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -60,6 +60,7 @@ class SmartReviewServiceUnitTests {
     private val statementService: StatementUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val listRepository: ListRepository = mockk()
+    private val doiService: DoiService = mockk()
 
     private val service = SmartReviewService(
         resourceRepository = resourceRepository,
@@ -74,7 +75,9 @@ class SmartReviewServiceUnitTests {
         literalService = literalService,
         statementService = statementService,
         listService = listService,
-        listRepository = listRepository
+        listRepository = listRepository,
+        doiService = doiService,
+        smartReviewPublishBaseUri = "https://orkg.org/review/"
     )
 
     @BeforeEach
@@ -97,7 +100,8 @@ class SmartReviewServiceUnitTests {
             literalService,
             statementService,
             listService,
-            listRepository
+            listRepository,
+            doiService
         )
     }
 

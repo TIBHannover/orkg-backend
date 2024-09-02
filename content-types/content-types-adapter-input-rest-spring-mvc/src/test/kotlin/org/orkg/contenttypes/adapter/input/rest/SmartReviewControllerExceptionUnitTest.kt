@@ -9,6 +9,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewControllerExceptionUnitTest.FakeExceptionController
 import org.orkg.contenttypes.domain.InvalidSmartReviewTextSectionType
 import org.orkg.contenttypes.domain.OntologyEntityNotFound
+import org.orkg.contenttypes.domain.SmartReviewAlreadyPublished
 import org.orkg.contenttypes.domain.SmartReviewSectionTypeMismatch
 import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
 import org.orkg.testing.FixedClockConfig
@@ -162,6 +163,21 @@ internal class SmartReviewControllerExceptionUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun smartReviewAlreadyPublished() {
+        val id = "R123"
+
+        get("/smart-review-already-published")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.error", `is`("Forbidden")))
+            .andExpect(jsonPath("$.path").value("/smart-review-already-published"))
+            .andExpect(jsonPath("$.message").value("""Smart review "$id" is already published."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -211,6 +227,11 @@ internal class SmartReviewControllerExceptionUnitTest {
         @GetMapping("/smart-review-section-type-mismatch-must-be-text-section")
         fun smartReviewSectionTypeMismatchMustBeTextSection() {
             throw SmartReviewSectionTypeMismatch.mustBeTextSection()
+        }
+
+        @GetMapping("/smart-review-already-published")
+        fun smartReviewAlreadyPublished(@RequestParam id: ThingId) {
+            throw SmartReviewAlreadyPublished(id)
         }
     }
 

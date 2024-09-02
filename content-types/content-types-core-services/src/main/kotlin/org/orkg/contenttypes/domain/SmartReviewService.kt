@@ -17,9 +17,12 @@ import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
 import org.orkg.contenttypes.domain.actions.DeleteSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.DeleteSmartReviewSectionState
+import org.orkg.contenttypes.domain.actions.DescriptionValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.PublishSmartReviewCommand
+import org.orkg.contenttypes.domain.actions.PublishSmartReviewState
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewCommand
@@ -31,9 +34,11 @@ import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreate
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorUpdateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorUpdater
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewChangelogCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewContributionCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewExistenceValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewModifiableValidator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewPublishableValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewReferencesCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewReferencesUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewResearchFieldCreator
@@ -46,6 +51,10 @@ import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsCrea
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsUpdateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewSectionsUpdater
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewVersionArchiver
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewVersionCreator
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewVersionDoiPublisher
+import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewVersionHistoryUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionCreateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionDeleter
@@ -56,6 +65,7 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSec
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionUpdateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionUpdater
 import org.orkg.contenttypes.input.SmartReviewUseCases
+import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -73,6 +83,7 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -92,7 +103,10 @@ class SmartReviewService(
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases,
     private val listService: ListUseCases,
-    private val listRepository: ListRepository
+    private val listRepository: ListRepository,
+    private val doiService: DoiService,
+    @Value("\${orkg.publishing.base-url.smart-review}")
+    private val smartReviewPublishBaseUri: String = "http://localhost/review/"
 ) : SmartReviewUseCases {
     override fun findById(id: ThingId): Optional<SmartReview> =
         resourceRepository.findById(id)
@@ -192,6 +206,20 @@ class SmartReviewService(
             SmartReviewSectionDeleter(statementService, resourceService)
         )
         steps.execute(command, DeleteSmartReviewSectionState())
+    }
+
+    override fun publish(command: PublishSmartReviewCommand): ThingId {
+        val steps = listOf<Action<PublishSmartReviewCommand, PublishSmartReviewState>>(
+            SmartReviewPublishableValidator(this),
+            DescriptionValidator("changelog") { it.changelog },
+            DescriptionValidator { it.description?.takeIf { _ -> it.assignDOI } },
+            SmartReviewVersionCreator(resourceRepository, statementRepository, resourceService, statementService, literalService, listService),
+            SmartReviewChangelogCreator(literalService, statementService),
+            SmartReviewVersionArchiver(statementService, smartReviewPublishedRepository),
+            SmartReviewVersionHistoryUpdater(statementService),
+            SmartReviewVersionDoiPublisher(statementService, literalService, doiService, smartReviewPublishBaseUri)
+        )
+        return steps.execute(command, PublishSmartReviewState()).smartReviewVersionId!!
     }
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {

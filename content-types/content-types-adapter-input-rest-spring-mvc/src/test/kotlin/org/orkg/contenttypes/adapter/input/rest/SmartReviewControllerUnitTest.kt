@@ -1044,6 +1044,57 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
         verify(exactly = 1) { smartReviewService.deleteSection(command) }
     }
 
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a smart review, when publishing, then status 204 NO CONTENT")
+    fun publish() {
+        val id = ThingId("R123")
+        val changelog = "new papers added"
+        val assignDOI = true
+        val description = "review description"
+        val request = mapOf(
+            "changelog" to changelog,
+            "assign_doi" to assignDOI,
+            "description" to description
+        )
+        val smartReviewVersionId = ThingId("R456")
+
+        every { smartReviewService.publish(any()) } returns smartReviewVersionId
+
+        documentedPostRequestTo("/api/smart-reviews/{id}/publish", id)
+            .content(request)
+            .accept(SMART_REVIEW_JSON_V1)
+            .contentType(SMART_REVIEW_JSON_V1)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("api/smart-reviews/$smartReviewVersionId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the smart review to publish.")
+                    ),
+                    requestFields(
+                        fieldWithPath("changelog").description("The description of changes that have been made since the previous version."),
+                        fieldWithPath("assign_doi").description("Whether to assign a new DOI for the smart review when publishing."),
+                        fieldWithPath("description").description("The description of the contents of the smart review. This description is used for the DOI metadata. It will be ignored when `assign_doi` is set to `false`. (optional)"),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            smartReviewService.publish(
+                withArg {
+                    it.smartReviewId shouldBe id
+                    it.contributorId shouldBe ContributorId(MockUserId.USER)
+                    it.changelog shouldBe changelog
+                    it.assignDOI shouldBe assignDOI
+                    it.description shouldBe description
+                }
+            )
+        }
+    }
+
     private fun createSmartReviewRequest() =
         SmartReviewController.CreateSmartReviewRequest(
             title = "Dummy Smart Review Label",

@@ -17,6 +17,7 @@ import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
+import org.orkg.contenttypes.input.PublishSmartReviewUseCase
 import org.orkg.contenttypes.input.SmartReviewComparisonSectionCommand
 import org.orkg.contenttypes.input.SmartReviewOntologySectionCommand
 import org.orkg.contenttypes.input.SmartReviewPredicateSectionCommand
@@ -301,3 +302,11 @@ fun SmartReviewOntologySection.toSmartReviewOntologySectionDefinition(): SmartRe
 
 fun SmartReviewTextSection.toSmartReviewTextSectionDefinition(): SmartReviewTextSectionCommand =
     SmartReviewTextSectionCommand(heading, classes.filter { it in SmartReviewTextSection.types }.single(), text)
+
+fun dummyPublishSmartReviewCommand() = PublishSmartReviewUseCase.PublishCommand(
+    smartReviewId = ThingId("R123"),
+    contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+    changelog = "new release",
+    assignDOI = true,
+    description = "review about important topic"
+)

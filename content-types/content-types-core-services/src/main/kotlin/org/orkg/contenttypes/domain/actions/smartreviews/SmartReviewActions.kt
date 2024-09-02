@@ -5,6 +5,7 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.SmartReview
 import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewCommand
+import org.orkg.contenttypes.domain.actions.PublishSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewCommand
 import org.orkg.graph.domain.GeneralStatement
 
@@ -21,5 +22,12 @@ interface UpdateSmartReviewAction : Action<UpdateSmartReviewCommand, UpdateSmart
         val smartReview: SmartReview? = null,
         val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
         val authors: List<Author> = emptyList()
+    )
+}
+
+interface PublishSmartReviewAction : Action<PublishSmartReviewCommand, PublishSmartReviewAction.State> {
+    data class State(
+        val smartReview: SmartReview? = null,
+        val smartReviewVersionId: ThingId? = null
     )
 }

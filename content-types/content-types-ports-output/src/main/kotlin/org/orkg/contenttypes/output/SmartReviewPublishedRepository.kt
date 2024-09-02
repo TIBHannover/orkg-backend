@@ -6,4 +6,5 @@ import org.orkg.contenttypes.domain.PublishedContentType
 
 interface SmartReviewPublishedRepository {
     fun findById(id: ThingId): Optional<PublishedContentType>
+    fun save(smartReview: PublishedContentType)
 }

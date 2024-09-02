@@ -11,6 +11,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
+import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRelatedFigureRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRelatedResourceRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRepresentationAdapter
@@ -330,11 +331,11 @@ class ComparisonController(
 
     data class CreateComparisonRelatedResourceRequest(
         val label: String,
-        @field:NotBlank
+        @field:NullableNotBlank
         val image: String?,
-        @field:NotBlank
+        @field:NullableNotBlank
         val url: String?,
-        @field:NotBlank
+        @field:NullableNotBlank
         val description: String?
     ) {
         fun toCreateCommand(comparisonId: ThingId, contributorId: ContributorId) =

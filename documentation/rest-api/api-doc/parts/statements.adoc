@@ -22,7 +22,7 @@ This allows storing and retrieving provenance information about them.
 
 A `GET` request provides information about a statement.
 
-operation::statement-controller-integration-test-fetch[snippets='curl-request,http-response,response-fields']
+operation::statements-get-single[snippets='curl-request,http-response,response-fields']
 
 [[statements-list]]
 == Listing statements
@@ -45,7 +45,7 @@ The statement can be retrieved by following the URI in the `Location` header fie
 
 NOTE: The response body contains the created statement for convenience. This might be subject to change.
 
-operation::statements-create[snippets='request-fields,curl-request,http-response,response-fields']
+operation::statements-create[snippets='request-fields,curl-request,http-response']
 
 [[statements-delete]]
 == Deleting a statement

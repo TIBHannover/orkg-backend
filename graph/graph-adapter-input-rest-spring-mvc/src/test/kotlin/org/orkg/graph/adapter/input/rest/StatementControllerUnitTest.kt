@@ -94,6 +94,32 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     }
 
     @Test
+    @DisplayName("Given a statement, when it is fetched by id and service succeeds, then status is 200 OK and statement is returned")
+    fun getSingle() {
+        val statement = createStatement()
+        every { statementService.findById(statement.id) } returns Optional.of(statement)
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+
+        documentedGetRequestTo("/api/statements/{id}", statement.id)
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectStatement()
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the statement to retrieve.")
+                    ),
+                    responseFields(statementResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { statementService.findById(statement.id) }
+        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
+    }
+
+    @Test
     @DisplayName("Given several statements, when filtering by no parameters, then status is 200 OK and statements are returned")
     fun getPaged() {
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createStatement())

@@ -80,12 +80,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/statements/$statement"))
             .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    statementWithResourceResponseFields()
-                )
-            )
     }
 
     @Test
@@ -106,12 +100,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/statements/$statement"))
             .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    statementWithLiteralResponseFields()
-                )
-            )
     }
 
     @Test

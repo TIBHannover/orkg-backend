@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
@@ -24,8 +25,6 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.http.ResponseEntity.notFound
-import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -109,26 +108,20 @@ class StatementController(
 
     @PreAuthorizeUser
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun edit(
+    fun update(
         @PathVariable id: StatementId,
-        @RequestBody(required = true) statementEditRequest: StatementEditRequest,
+        @RequestBody request: UpdateStatementRequest,
         capabilities: MediaTypeCapabilities
-    ): ResponseEntity<StatementRepresentation> {
-        val foundStatement = statementService.findById(id)
-
-        if (!foundStatement.isPresent)
-            return notFound().build()
-
+    ): StatementRepresentation {
         statementService.update(
             UpdateStatementUseCase.UpdateCommand(
                 statementId = id,
-                subjectId = statementEditRequest.subjectId ?: foundStatement.get().subject.id,
-                predicateId = statementEditRequest.predicateId ?: foundStatement.get().predicate.id,
-                objectId = statementEditRequest.objectId ?: foundStatement.get().`object`.id
+                subjectId = request.subjectId,
+                predicateId = request.predicateId,
+                objectId = request.objectId
             )
         )
-
-        return statementService.findById(id).mapToStatementRepresentation(capabilities).map(::ok).get()
+        return statementService.findById(id).mapToStatementRepresentation(capabilities).get()
     }
 
     @PreAuthorizeUser
@@ -161,4 +154,13 @@ class StatementController(
             includeFirst,
             sort
         ).toBundleRepresentation(capabilities)
+
+    data class UpdateStatementRequest(
+        @JsonProperty("subject_id")
+        val subjectId: ThingId?,
+        @JsonProperty("predicate_id")
+        val predicateId: ThingId?,
+        @JsonProperty("object_id")
+        val objectId: ThingId?
+    )
 }

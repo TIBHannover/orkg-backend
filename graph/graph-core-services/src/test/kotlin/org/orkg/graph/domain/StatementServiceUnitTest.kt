@@ -3,6 +3,7 @@ package org.orkg.graph.domain
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.Runs
 import io.mockk.confirmVerified
@@ -24,6 +25,7 @@ import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
+import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
@@ -157,6 +159,141 @@ class StatementServiceUnitTest : DescribeSpec({
     }
 
     context("updating a statement") {
+        context("with a non-literal object") {
+            it("successfully updates the statement") {
+                val id = StatementId("S1")
+                val statement = createStatement()
+                val newSubject = createResource(ThingId("newSubject"))
+                val newPredicate = createPredicate(ThingId("newPredicate"))
+                val newObject = createResource(ThingId("newObject"))
+                val command = UpdateStatementUseCase.UpdateCommand(
+                    statementId = id,
+                    subjectId = newSubject.id,
+                    predicateId = newPredicate.id,
+                    objectId = newObject.id
+                )
+                every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
+                every { thingRepository.findByThingId(command.subjectId!!) } returns Optional.of(newSubject)
+                every { predicateRepository.findById(command.predicateId!!) } returns Optional.of(newPredicate)
+                every { thingRepository.findByThingId(command.objectId!!) } returns Optional.of(newObject)
+                every { statementRepository.deleteByStatementId(command.statementId) } just runs
+                every { statementRepository.save(any()) } just runs
+
+                withContext(Dispatchers.IO) {
+                    service.update(command)
+                }
+
+                verify(exactly = 1) { statementRepository.findByStatementId(id) }
+                verify(exactly = 1) { thingRepository.findByThingId(command.subjectId!!) }
+                verify(exactly = 1) { predicateRepository.findById(command.predicateId!!) }
+                verify(exactly = 1) { thingRepository.findByThingId(command.objectId!!) }
+                verify(exactly = 1) { statementRepository.deleteByStatementId(command.statementId) }
+                verify(exactly = 1) {
+                    statementRepository.save(withArg {
+                        it.id shouldBe id
+                        it.subject shouldBe newSubject
+                        it.predicate shouldBe newPredicate
+                        it.`object` shouldBe newObject
+                        it.createdBy shouldBe statement.createdBy
+                        it.createdAt shouldBe statement.createdAt
+                        it.modifiable shouldBe statement.modifiable
+                        it.index shouldBe statement.index
+                    })
+                }
+            }
+        }
+        context("with a literal object") {
+            it("successfully updates the statement") {
+                val id = StatementId("S1")
+                val statement = createStatement(`object` = createLiteral())
+                val newSubject = createResource(ThingId("newSubject"))
+                val newPredicate = createPredicate(ThingId("newPredicate"))
+                val command = UpdateStatementUseCase.UpdateCommand(
+                    statementId = id,
+                    subjectId = newSubject.id,
+                    predicateId = newPredicate.id,
+                )
+                every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
+                every { thingRepository.findByThingId(command.subjectId!!) } returns Optional.of(newSubject)
+                every { predicateRepository.findById(command.predicateId!!) } returns Optional.of(newPredicate)
+                every { statementRepository.deleteByStatementId(command.statementId) } just runs
+                every { statementRepository.save(any()) } just runs
+                every { literalRepository.save(any()) } just runs
+
+                withContext(Dispatchers.IO) {
+                    service.update(command)
+                }
+
+                verify(exactly = 1) { statementRepository.findByStatementId(id) }
+                verify(exactly = 1) { thingRepository.findByThingId(command.subjectId!!) }
+                verify(exactly = 1) { predicateRepository.findById(command.predicateId!!) }
+                verify(exactly = 1) { statementRepository.deleteByStatementId(command.statementId) }
+                verify(exactly = 1) {
+                    statementRepository.save(withArg {
+                        it.id shouldBe id
+                        it.subject shouldBe newSubject
+                        it.predicate shouldBe newPredicate
+                        it.`object` shouldBe statement.`object`
+                        it.createdBy shouldBe statement.createdBy
+                        it.createdAt shouldBe statement.createdAt
+                        it.modifiable shouldBe statement.modifiable
+                        it.index shouldBe statement.index
+                    })
+                }
+                verify(exactly = 1) { literalRepository.save(statement.`object` as Literal) }
+            }
+        }
+        context("without any changes") {
+            it("does nothing") {
+                val id = StatementId("S1")
+                val statement = createStatement()
+                val command = UpdateStatementUseCase.UpdateCommand(
+                    statementId = id,
+                    subjectId = statement.subject.id,
+                    predicateId = statement.predicate.id,
+                    objectId = statement.`object`.id
+                )
+                every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
+
+                withContext(Dispatchers.IO) {
+                    service.update(command)
+                }
+
+                verify(exactly = 1) { statementRepository.findByStatementId(id) }
+            }
+        }
+        context("that does not exist") {
+            it("throws an error") {
+                val id = StatementId("S1")
+                val command = UpdateStatementUseCase.UpdateCommand(
+                    statementId = id
+                )
+                every { statementRepository.findByStatementId(id) } returns Optional.empty()
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<StatementNotFound> {
+                        service.update(command)
+                    }
+                }
+
+                verify(exactly = 1) { statementRepository.findByStatementId(id) }
+            }
+        }
+        context("that is non-modifiable") {
+            val id = StatementId("S1")
+            val fakeStatement = createStatement(id, modifiable = false)
+            val command = UpdateStatementUseCase.UpdateCommand(id)
+
+            it("throws an exception") {
+                every { statementRepository.findByStatementId(id) } returns Optional.of(fakeStatement)
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<StatementNotModifiable> { service.update(command) }
+                }
+
+                verify(exactly = 1) { statementRepository.findByStatementId(any()) }
+            }
+        }
         context("that has a list as a subject and hasListElement as a predicate") {
             it("throws an error") {
                 val listId = ThingId("L1")
@@ -187,7 +324,28 @@ class StatementServiceUnitTest : DescribeSpec({
                 verify(exactly = 1) { statementRepository.findByStatementId(id) }
             }
         }
-        context("to a list subject and hasListElement as a predicate") {
+        context("with a non-existing subject entity") {
+            it("throws an error") {
+                val id = StatementId("S1")
+                val statement = createStatement()
+                val command = UpdateStatementUseCase.UpdateCommand(
+                    statementId = id,
+                    subjectId = ThingId("missing")
+                )
+                every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
+                every { thingRepository.findByThingId(command.subjectId!!) } returns Optional.empty()
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<StatementSubjectNotFound> {
+                        service.update(command)
+                    }
+                }
+
+                verify(exactly = 1) { statementRepository.findByStatementId(id) }
+                verify(exactly = 1) { thingRepository.findByThingId(command.subjectId!!) }
+            }
+        }
+        context("with a list resource as a subject and hasListElement as a predicate") {
             it("throws an error") {
                 val listId = ThingId("L1")
                 val id = StatementId("S1")
@@ -254,19 +412,46 @@ class StatementServiceUnitTest : DescribeSpec({
                 }
             }
         }
-        context("that is non-modifiable") {
-            val id = StatementId("S1")
-            val fakeStatement = createStatement(id, modifiable = false)
-            val command = UpdateStatementUseCase.UpdateCommand(id)
-
-            it("throws an exception") {
-                every { statementRepository.findByStatementId(id) } returns Optional.of(fakeStatement)
+        context("with a non-existing predicate") {
+            it("throws an error") {
+                val id = StatementId("S1")
+                val statement = createStatement()
+                val command = UpdateStatementUseCase.UpdateCommand(
+                    statementId = id,
+                    predicateId = ThingId("missing")
+                )
+                every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
+                every { predicateRepository.findById(command.predicateId!!) } returns Optional.empty()
 
                 withContext(Dispatchers.IO) {
-                    shouldThrow<StatementNotModifiable> { service.update(command) }
+                    shouldThrow<StatementPredicateNotFound> {
+                        service.update(command)
+                    }
                 }
 
-                verify(exactly = 1) { statementRepository.findByStatementId(any()) }
+                verify(exactly = 1) { statementRepository.findByStatementId(id) }
+                verify(exactly = 1) { predicateRepository.findById(command.predicateId!!) }
+            }
+        }
+        context("with a non-existing object entity") {
+            it("throws an error") {
+                val id = StatementId("S1")
+                val statement = createStatement()
+                val command = UpdateStatementUseCase.UpdateCommand(
+                    statementId = id,
+                    objectId = ThingId("missing")
+                )
+                every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
+                every { thingRepository.findByThingId(command.objectId!!) } returns Optional.empty()
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<StatementObjectNotFound> {
+                        service.update(command)
+                    }
+                }
+
+                verify(exactly = 1) { statementRepository.findByStatementId(id) }
+                verify(exactly = 1) { thingRepository.findByThingId(command.objectId!!) }
             }
         }
     }

@@ -47,6 +47,15 @@ NOTE: The response body contains the created statement for convenience. This mig
 
 operation::statements-create[snippets='request-fields,curl-request,http-response']
 
+[[statements-edit]]
+== Editing a statement
+
+A `PUT` request updates an existing statement with the given parameters.
+The response will be `200 OK` when successful.
+The updated statement is returned in the body for convenience.
+
+operation::statements-update[snippets='request-fields,curl-request,http-response']
+
 [[statements-delete]]
 == Deleting a statement
 Delete a statement by providing the ID of the statement via a `DELETE` call:

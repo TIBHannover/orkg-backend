@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
-import org.orkg.graph.adapter.input.rest.LiteralControllerIntegrationTest.RestDoc.literalResponseFields
 import org.orkg.graph.adapter.input.rest.PredicateControllerIntegrationTest.RestDoc.predicateResponseFields
 import org.orkg.graph.adapter.input.rest.ResourceControllerIntegrationTest.RestDoc.resourceResponseFields
 import org.orkg.graph.input.LiteralUseCases
@@ -23,7 +22,6 @@ import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -155,13 +153,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.predicate.id").value(p2.value))
             .andExpect(jsonPath("$.object.id").value(o2.value))
-            .andDo(
-                document(
-                    snippet,
-                    requestBody(),
-                    statementWithResourceResponseFields()
-                )
-            )
     }
 
     @Test
@@ -180,13 +171,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         mockMvc.perform(putRequestWithBody("/api/statements/$st", body))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.predicate.id").value(p2.value))
-            .andDo(
-                document(
-                    snippet,
-                    requestBody(),
-                    statementWithLiteralResponseFields()
-                )
-            )
     }
 
     @Test
@@ -279,15 +263,4 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         fieldWithPath("created_by").description("The ID of the user that created the statement. All zeros if unknown."),
         fieldWithPath("modifiable").description("Whether this statement can be modified.")
     )
-
-    private fun sharedStatementResponseFields() =
-        responseFields(statementFields())
-            .andWithPrefix("subject.", resourceResponseFields())
-            .andWithPrefix("predicate.", predicateResponseFields())
-
-    private fun statementWithResourceResponseFields() = sharedStatementResponseFields()
-        .andWithPrefix("object.", resourceResponseFields())
-
-    private fun statementWithLiteralResponseFields() = sharedStatementResponseFields()
-        .andWithPrefix("object.", literalResponseFields())
 }

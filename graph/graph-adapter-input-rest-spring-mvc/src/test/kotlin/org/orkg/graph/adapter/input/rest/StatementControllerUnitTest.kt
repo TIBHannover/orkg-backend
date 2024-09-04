@@ -1,11 +1,13 @@
 package org.orkg.graph.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.shouldBe
 import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import java.time.Clock
 import java.time.OffsetDateTime
@@ -36,7 +38,9 @@ import org.orkg.graph.domain.StatementSubjectNotFound
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createLiteral
+import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.FixedClockConfig
@@ -49,6 +53,7 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Sort
@@ -383,6 +388,59 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
                 ThingId(`object`),
             )
         }
+    }
+
+    @Test
+    @DisplayName("Given a statement is updated, when service succeeds, then status is 200 OK and statement is returned")
+    fun update() {
+        val id = StatementId("S1")
+        val subjectId = ThingId("R123")
+        val predicateId = ThingId("P123")
+        val objectId = ThingId("C123")
+        val request = StatementController.UpdateStatementRequest(
+            subjectId = subjectId,
+            predicateId = predicateId,
+            objectId = objectId,
+        )
+        val updatedStatement = createStatement(
+            id = id,
+            subject = createResource(subjectId),
+            predicate = createPredicate(predicateId),
+            `object` = createClass(objectId)
+        )
+        every { statementService.update(any()) } just runs
+        every { statementService.findById(id) } returns Optional.of(updatedStatement)
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+
+        documentedPutRequestTo("/api/statements/{id}", id)
+            .content(request)
+            .contentType(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectStatement()
+            .andDo(
+                documentationHandler.document(
+                    requestFields(
+                        fieldWithPath("subject_id").description("The updated id of the subject entity of the statement. (optional)"),
+                        fieldWithPath("predicate_id").description("The updated id of the predicate of the statement. (optional)"),
+                        fieldWithPath("object_id").description("The updated id of the object entity of the statement. (optional)")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            statementService.update(withArg {
+                it.statementId shouldBe id
+                it.subjectId shouldBe subjectId
+                it.predicateId shouldBe predicateId
+                it.objectId shouldBe objectId
+            })
+        }
+        verify(exactly = 1) { statementService.findById(id) }
+        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 
     @Nested

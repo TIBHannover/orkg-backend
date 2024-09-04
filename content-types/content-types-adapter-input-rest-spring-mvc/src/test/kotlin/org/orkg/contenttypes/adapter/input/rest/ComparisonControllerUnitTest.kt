@@ -487,18 +487,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     requestFields(
                         fieldWithPath("subject").description("The subject of the comparison."),
                         fieldWithPath("description").description("The description of the comparison."),
-                        fieldWithPath("authors").description("The list of authors that originally contributed to the comparison."),
-                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].name").description("The name of the author."),
-                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
-                    )
+                    ).and(authorListFields("comparison"))
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -617,17 +606,6 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("title").description("The title of the comparison."),
                         fieldWithPath("description").description("The description of the comparison."),
                         fieldWithPath("research_fields").description("The list of research fields the comparison will be assigned to."),
-                        fieldWithPath("authors").description("The list of authors that originally contributed to the comparison."),
-                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].name").description("The name of the author."),
-                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the comparison will be assigned to. (optional)").optional(),
                         fieldWithPath("contributions[]").description("The ids of the contributions the comparison compares."),
                         fieldWithPath("references[]").description("The references to external sources that the comparison refers to."),
@@ -635,7 +613,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to."),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison should be displayed as anonymous."),
                         fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC".""")
-                    )
+                    ).and(authorListFields("comparison"))
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -925,17 +903,6 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("title").description("The title of the comparison. (optional)"),
                         fieldWithPath("description").description("The description of the comparison. (optional)"),
                         fieldWithPath("research_fields").description("The list of research fields the comparison will be assigned to. (optional)"),
-                        fieldWithPath("authors").description("The list of authors that originally contributed to the comparison. (optional)"),
-                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].name").description("The name of the author."),
-                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the comparison will be assigned to. (optional)").optional(),
                         fieldWithPath("contributions[]").description("The ids of the contributions the comparison compares. (optional)"),
                         fieldWithPath("references[]").description("The references to external sources that the comparison refers to. (optional)"),
@@ -943,7 +910,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to. (optional)"),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison should be displayed as anonymous. (optional)"),
                         fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""")
-                    )
+                    ).and(authorListFields("comparison"))
                 )
             )
             .andDo(generateDefaultDocSnippets())

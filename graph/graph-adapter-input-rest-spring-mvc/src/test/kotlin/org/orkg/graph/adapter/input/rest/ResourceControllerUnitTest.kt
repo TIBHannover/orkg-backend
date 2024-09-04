@@ -104,7 +104,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                         // The order here determines the order in the generated table. More relevant items should be up.
                         fieldWithPath("id").description("The identifier of the resource."),
                         fieldWithPath("label").description("The label of the resource. It is intended to be read by humans and should be used for displaying the resource."),
-                        fieldWithPath("formatted_label").description("The formatted label of the resource. See <<content-negotiation,Content Negotiation>> for information on how to obtain this value.").ignored(),
+                        fieldWithPath("formatted_label").type("String").description("The formatted label of the resource. See <<content-negotiation,Content Negotiation>> for information on how to obtain this value.").ignored(),
                         fieldWithPath("classes").description("The set of classes of which this resources is an instance of."),
                         fieldWithPath("shared").description("The number of statements that have this resource in their object position."),
                         fieldWithPath("featured").description("Determine if the resource is featured. Defaults to `false`."),

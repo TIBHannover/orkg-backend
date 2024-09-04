@@ -385,18 +385,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                     requestFields(
                         fieldWithPath("subject").description("The subject of the paper."),
                         fieldWithPath("description").description("The description of the paper."),
-                        fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
-                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].name").description("The name of the author."),
-                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list of ORCIDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
-                    )
+                    ).and(authorListFields("paper"))
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -521,17 +510,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
                         fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
                         fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
-                        fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
-                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].name").description("The name of the author."),
-                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)").optional(),
                         fieldWithPath("mentionings").description("The set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)").optional(),
                         fieldWithPath("contents").description("Definition of the contents of the paper. (optional)"),
@@ -555,7 +533,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. Can be at most one organization id."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. Can be at most one observatory id."),
                         fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC".""")
-                    )
+                    ).and(authorListFields("paper"))
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -868,22 +846,11 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
                         fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
                         fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
-                        fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
-                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].name").description("The name of the author."),
-                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)"),
                         fieldWithPath("mentionings").description("The updated set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)"),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. (optional)").optional()
-                    )
+                    ).and(authorListFields("paper"))
                 )
             )
             .andDo(generateDefaultDocSnippets())

@@ -264,21 +264,10 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
                     requestFields(
                         fieldWithPath("title").description("The title of the visualization."),
                         fieldWithPath("description").description("The description of the visualization."),
-                        fieldWithPath("authors").description("The list of authors that originally contributed to the visualization."),
-                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
-                        fieldWithPath("authors[].name").description("The name of the author."),
-                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
-                        fieldWithPath("authors[].identifiers.orcid").type("Array").description("The list ORCIDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.research_gate").type("Array").description("The list of ResearchGate IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.linked_in").type("Array").description("The list of LinkedIn IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.wikidata").type("Array").description("The list of Wikidata IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].identifiers.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").optional(),
-                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the visualization belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the visualization belongs to."),
                         fieldWithPath("extraction_method").description("""The method used to extract the visualization resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC".""")
-                    )
+                    ).and(authorListFields("visualization"))
                 )
             )
             .andDo(generateDefaultDocSnippets())

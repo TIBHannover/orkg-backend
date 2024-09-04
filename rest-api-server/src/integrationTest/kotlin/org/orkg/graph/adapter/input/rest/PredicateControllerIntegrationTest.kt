@@ -222,7 +222,7 @@ class PredicateControllerIntegrationTest : RestDocumentationBaseTest() {
             fieldWithPath("label").description("The predicate label"),
             fieldWithPath("created_at").description("The predicate creation datetime"),
             fieldWithPath("created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
-            fieldWithPath("description").description("The description of the predicate, if exists.").optional(),
+            fieldWithPath("description").type("String").description("The description of the predicate, if exists.").optional(),
             fieldWithPath("_class").description("Class description").optional().ignored(),
             fieldWithPath("featured").optional().ignored(),
             fieldWithPath("unlisted").optional().ignored(),

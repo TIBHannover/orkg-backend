@@ -383,7 +383,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                     requestFields(
                         fieldWithPath("entries").description("""The list entries that should be part of this section."""),
                         fieldWithPath("entries[].id").description("""The id of the linked resource. Every resource must either be an instance of "Paper", "Dataset" or "Software"."""),
-                        fieldWithPath("entries[].description").description("""The description of the entry. (optional)""")
+                        fieldWithPath("entries[].description").type("String").description("""The description of the entry. (optional)""")
                     )
                 )
             )
@@ -538,7 +538,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                     requestFields(
                         fieldWithPath("entries").description("""The list of updated entries that should be part of this section."""),
                         fieldWithPath("entries[].id").description("""The id of the linked resource. Every resource must either be an instance of "Paper", "Dataset" or "Software"."""),
-                        fieldWithPath("entries[].description").description("""The description of the entry. (optional)""")
+                        fieldWithPath("entries[].description").type("String").description("""The description of the entry. (optional)""")
                     )
                 )
             )

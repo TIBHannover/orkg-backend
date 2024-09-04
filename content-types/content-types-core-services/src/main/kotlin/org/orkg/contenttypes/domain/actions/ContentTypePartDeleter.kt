@@ -17,15 +17,20 @@ class ContentTypePartDeleter(
             objectId = partId,
             pageable = PageRequests.ALL
         ).content
-        if (incomingStatements.isNotEmpty() && incomingStatements.all { it.subject.id == contentTypeId }) {
-            // part is only referenced by specified content-type, part can be deleted fully
+        if (incomingStatements.isOnlyReferencedByContentType(contentTypeId)) {
             delete(incomingStatements)
         } else {
-            // part is referenced by another entity, unlink
-            val toRemove = incomingStatements.filter { it.subject.id == contentTypeId }.map { it.id }
-            if (toRemove.isNotEmpty()) {
-                statementService.delete(toRemove.toSet())
-            }
+            unlinkContentType(incomingStatements, contentTypeId)
         }
     }
+
+    private fun unlinkContentType(incomingStatements: List<GeneralStatement>, contentTypeId: ThingId) {
+        val toRemove = incomingStatements.filter { it.subject.id == contentTypeId }.map { it.id }
+        if (toRemove.isNotEmpty()) {
+            statementService.delete(toRemove.toSet())
+        }
+    }
+
+    private fun MutableList<GeneralStatement>.isOnlyReferencedByContentType(contentTypeId: ThingId) =
+        isNotEmpty() && all { it.subject.id == contentTypeId }
 }

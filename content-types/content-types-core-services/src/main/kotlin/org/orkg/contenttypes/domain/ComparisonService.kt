@@ -38,6 +38,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonModifiableVali
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourceDeleter
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourceUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResearchFieldCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResearchFieldUpdater
@@ -343,6 +344,15 @@ class ComparisonService(
             literalService = literalService,
             statementService = statementService
         ).execute(command)
+    }
+
+    override fun deleteComparisonRelatedResource(
+        comparisonId: ThingId,
+        comparisonRelatedResourceId: ThingId,
+        contributorId: ContributorId
+    ) {
+        ComparisonRelatedResourceDeleter(statementService, resourceService)
+            .execute(comparisonId, comparisonRelatedResourceId, contributorId)
     }
 
     override fun publish(command: PublishComparisonUseCase.PublishCommand) {

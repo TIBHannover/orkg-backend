@@ -4,7 +4,8 @@ interface PaperUseCases : RetrievePaperUseCase, CreatePaperUseCase, CreateContri
 
 interface ContributionUseCases : RetrieveContributionUseCase
 
-interface ComparisonUseCases : RetrieveComparisonUseCase, CreateComparisonUseCase, UpdateComparisonUseCase, PublishComparisonUseCase
+interface ComparisonUseCases : RetrieveComparisonUseCase, CreateComparisonUseCase, UpdateComparisonUseCase,
+    DeleteComparisonUseCase, PublishComparisonUseCase
 
 interface VisualizationUseCases : RetrieveVisualizationUseCase, CreateVisualizationUseCase
 

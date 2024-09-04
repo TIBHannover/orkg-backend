@@ -39,3 +39,12 @@ The updated comparison related resource (object) can be retrieved by following t
 NOTE: Top level fields that were mandatory when creating the comparison related resource can be omitted or `null`, meaning that the corresponding fields should not be updated.
 
 operation::comparisons-update-comparison-related-resource[snippets='request-fields,curl-request,http-response']
+
+[[comparisons-related-resource-delete]]
+== Deleting a comparison related resource
+
+A `DELETE` request deletes a comparison related resource by ID.
+The response will be `204 No Content` when successful.
+The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::comparisons-related-resource-delete[snippets='path-parameters,curl-request,http-response']

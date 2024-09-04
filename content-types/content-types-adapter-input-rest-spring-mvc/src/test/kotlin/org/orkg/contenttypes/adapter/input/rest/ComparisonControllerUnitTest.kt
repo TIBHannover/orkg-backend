@@ -52,6 +52,7 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.documentedPutRequestTo
@@ -1021,6 +1022,45 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { comparisonService.updateComparisonRelatedFigure(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a comparison related resource, when deleting and service succeeds, then status is 204 NO CONTENT")
+    fun relatedResourceDelete() {
+        val comparisonId = ThingId("R123")
+        val comparisonRelatedResourceId = ThingId("R456")
+
+        every {
+            comparisonService.deleteComparisonRelatedResource(
+                comparisonId = comparisonId,
+                comparisonRelatedResourceId = comparisonRelatedResourceId,
+                contributorId = any()
+            )
+        } just runs
+
+        documentedDeleteRequestTo("/api/comparisons/{comparisonId}/related-resources/{id}", comparisonId, comparisonRelatedResourceId)
+            .accept(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("comparisonId").description("The identifier of the comparison."),
+                        parameterWithName("id").description("The identifier of the comparison related resource to delete.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            comparisonService.deleteComparisonRelatedResource(
+                comparisonId = comparisonId,
+                comparisonRelatedResourceId = comparisonRelatedResourceId,
+                contributorId = ContributorId(MockUserId.USER)
+            )
+        }
     }
 
     private fun createComparisonRequest() =

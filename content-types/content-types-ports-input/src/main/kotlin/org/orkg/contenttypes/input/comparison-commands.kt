@@ -86,6 +86,14 @@ interface UpdateComparisonUseCase {
     )
 }
 
+interface DeleteComparisonUseCase {
+    fun deleteComparisonRelatedResource(
+        comparisonId: ThingId,
+        comparisonRelatedResourceId: ThingId,
+        contributorId: ContributorId
+    )
+}
+
 interface PublishComparisonUseCase {
     fun publish(command: PublishCommand)
 

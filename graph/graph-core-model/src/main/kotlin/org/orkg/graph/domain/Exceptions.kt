@@ -108,22 +108,22 @@ class ThingAlreadyExists(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """A thing with id "$id" already exists.""")
 
 class ResourceNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Resource "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Resource "$id" is not modifiable.""")
 
 class ClassNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Class "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Class "$id" is not modifiable.""")
 
 class PredicateNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Predicate "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Predicate "$id" is not modifiable.""")
 
 class LiteralNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Literal "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Literal "$id" is not modifiable.""")
 
 class StatementNotModifiable(id: StatementId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Statement "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Statement "$id" is not modifiable.""")
 
 class ListNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """List "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """List "$id" is not modifiable.""")
 
 class InvalidClassCollection(ids: Iterable<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The collection of classes "$ids" contains one or more invalid classes.""")

@@ -45,25 +45,25 @@ class SustainableDevelopmentGoalNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Sustainable Development Goal "$id" not found.""")
 
 class PaperNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Paper "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Paper "$id" is not modifiable.""")
 
 class ComparisonNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Comparison "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Comparison "$id" is not modifiable.""")
 
 class ComparisonRelatedResourceNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Comparison related resource "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Comparison related resource "$id" is not modifiable.""")
 
 class ComparisonRelatedFigureNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Comparison related figure "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Comparison related figure "$id" is not modifiable.""")
 
 class LiteratureListNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Literature list "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Literature list "$id" is not modifiable.""")
 
 class SmartReviewNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Smart review "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Smart review "$id" is not modifiable.""")
 
 class RosettaStoneStatementNotModifiable(id: ThingId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Rosetta stone statement "$id" is not modifiable.""")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Rosetta stone statement "$id" is not modifiable.""")
 
 class RosettaStoneTemplateNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Rosetta stone template "$id" is not modifiable.""")

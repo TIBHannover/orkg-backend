@@ -6,6 +6,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added content-type endpoint for publishing literature lists.
+  (See: [!1035](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1035))
+- Added content-type endpoint for publishing smart reviews.
+  (See: [!1038](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1038))
+- Added content-type endpoint for deleting comparison related resources.
+  (See: [!1052](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1052))
+- Added content-type endpoint for deleting comparison related figures.
+  (See: [!1053](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1053))
+
+### Changed
+- Literal values for more XSD data types are now being validated.
+  (See: [!1041](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1041),
+        [!1042](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1042))
+- The order of references of a comparison is now retained when updating a comparison.
+  (See: [!1046](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1046))
+
+### Fixed
+- Fixed validation of xsd:duration literal values.
+  (See: [!1043](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1043))
+- Fixed a possible status 500 when fetching timeline of certain resources.
+  (See: [!1044](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1044))
+- Fixed exception message when trying to create a rosetta stone statement with missing input positions.
+- Fixed newly created comparison related resources not being linked to comparison.
+  (See: [!1050](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1050))
+- Fixed optional fields for comparison related resource create requests being mandatory.
+- Fixed optional fields for comparison related resource update requests being mandatory.
+- Fixed newly created comparison related figures not being linked to comparison.
+  (See: [!1051](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1051))
+- Fixed optional fields for comparison related figure create requests being mandatory.
+
+### Removed
+- Removed `statement_id` field from statement update requests because it had no effect.
+  (See: [!1054](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1054))
 
 ## [0.65.0] - 2024-08-26
 ### Added
@@ -16,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for ISSN identifiers on papers.
   (See: [!1033](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1033))
 
-### Changes
+### Changed
 - Adjusted paper publishing endpoint to reflect front-end behavior.
   (See: [!1030](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1030))
 - Integer literals (xsd:integer) can now exceed 32 bit range.
@@ -44,7 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added content-type endpoint for updating rosetta stone templates.
   (See: [!1016](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1016))
 
-### Changes
+### Changed
 - Updated template model diagrams.
   (See: [!1014](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1014))
 - The rest api documentation now uses an ORKG theme.

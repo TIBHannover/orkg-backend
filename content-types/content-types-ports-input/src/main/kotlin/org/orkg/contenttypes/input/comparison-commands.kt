@@ -92,6 +92,11 @@ interface DeleteComparisonUseCase {
         comparisonRelatedResourceId: ThingId,
         contributorId: ContributorId
     )
+    fun deleteComparisonRelatedFigure(
+        comparisonId: ThingId,
+        comparisonRelatedFigureId: ThingId,
+        contributorId: ContributorId
+    )
 }
 
 interface PublishComparisonUseCase {

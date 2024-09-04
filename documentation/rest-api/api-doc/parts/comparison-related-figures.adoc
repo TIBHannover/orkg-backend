@@ -39,3 +39,12 @@ The updated comparison related figure (object) can be retrieved by following the
 NOTE: Top level fields that were mandatory when creating the comparison related figure can be omitted or `null`, meaning that the corresponding fields should not be updated.
 
 operation::comparisons-update-comparison-related-figure[snippets='request-fields,curl-request,http-response']
+
+[[comparisons-related-figure-delete]]
+== Deleting a comparison related figure
+
+A `DELETE` request deletes a comparison related figure by ID.
+The response will be `204 No Content` when successful.
+The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::comparisons-related-figure-delete[snippets='path-parameters,curl-request,http-response']

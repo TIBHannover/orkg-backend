@@ -37,6 +37,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedUp
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonModifiableValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureDeleter
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourceDeleter
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourceUpdater
@@ -353,6 +354,15 @@ class ComparisonService(
     ) {
         ComparisonRelatedResourceDeleter(statementService, resourceService)
             .execute(comparisonId, comparisonRelatedResourceId, contributorId)
+    }
+
+    override fun deleteComparisonRelatedFigure(
+        comparisonId: ThingId,
+        comparisonRelatedFigureId: ThingId,
+        contributorId: ContributorId
+    ) {
+        ComparisonRelatedFigureDeleter(statementService, resourceService)
+            .execute(comparisonId, comparisonRelatedFigureId, contributorId)
     }
 
     override fun publish(command: PublishComparisonUseCase.PublishCommand) {

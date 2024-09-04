@@ -1063,6 +1063,45 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         }
     }
 
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a comparison related figure, when deleting and service succeeds, then status is 204 NO CONTENT")
+    fun relatedFigureDelete() {
+        val comparisonId = ThingId("R123")
+        val comparisonRelatedFigureId = ThingId("R456")
+
+        every {
+            comparisonService.deleteComparisonRelatedFigure(
+                comparisonId = comparisonId,
+                comparisonRelatedFigureId = comparisonRelatedFigureId,
+                contributorId = any()
+            )
+        } just runs
+
+        documentedDeleteRequestTo("/api/comparisons/{comparisonId}/related-figures/{id}", comparisonId, comparisonRelatedFigureId)
+            .accept(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("comparisonId").description("The identifier of the comparison."),
+                        parameterWithName("id").description("The identifier of the comparison related figure to delete.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            comparisonService.deleteComparisonRelatedFigure(
+                comparisonId = comparisonId,
+                comparisonRelatedFigureId = comparisonRelatedFigureId,
+                contributorId = ContributorId(MockUserId.USER)
+            )
+        }
+    }
+
     private fun createComparisonRequest() =
         ComparisonController.CreateComparisonRequest(
             title = "test",

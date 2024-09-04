@@ -250,6 +250,23 @@ class ComparisonController(
     }
 
     @PreAuthorizeUser
+    @DeleteMapping("/{comparisonId}/related-figures/{comparisonRelatedFigureId}", produces = [COMPARISON_JSON_V2])
+    fun deleteRelatedFigure(
+        @PathVariable("comparisonId") comparisonId: ThingId,
+        @PathVariable("comparisonRelatedFigureId") comparisonRelatedFigureId: ThingId,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @AuthenticationPrincipal currentUser: UserDetails?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        service.deleteComparisonRelatedFigure(comparisonId, comparisonRelatedFigureId, userId)
+        val location = uriComponentsBuilder
+            .path("api/comparisons/{id}")
+            .buildAndExpand(comparisonId)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @PreAuthorizeUser
     @PostMapping("/{id}/publish", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun publish(
         @PathVariable id: ThingId,

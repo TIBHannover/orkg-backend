@@ -1,4 +1,4 @@
-package org.orkg.contenttypes.adapter.input.rest.mapping
+package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.BenchmarkSummary

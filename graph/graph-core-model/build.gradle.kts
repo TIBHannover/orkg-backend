@@ -9,7 +9,6 @@ dependencies {
     api("org.springframework:spring-web")
     api(libs.forkhandles.values4k)
     api(project(":common"))
-    implementation("org.apache.lucene:lucene-queryparser") // Search string parsing
 
     testFixturesApi("org.eclipse.rdf4j:rdf4j-util")
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")

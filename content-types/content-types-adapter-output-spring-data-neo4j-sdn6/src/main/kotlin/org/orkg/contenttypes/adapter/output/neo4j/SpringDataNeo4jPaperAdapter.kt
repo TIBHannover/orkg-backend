@@ -31,6 +31,7 @@ import org.orkg.graph.adapter.output.neo4j.internal.Neo4jThing
 import org.orkg.graph.adapter.output.neo4j.node
 import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
+import org.orkg.graph.adapter.output.neo4j.query
 import org.orkg.graph.adapter.output.neo4j.toCondition
 import org.orkg.graph.adapter.output.neo4j.toMatchOrNull
 import org.orkg.graph.adapter.output.neo4j.toSortItems

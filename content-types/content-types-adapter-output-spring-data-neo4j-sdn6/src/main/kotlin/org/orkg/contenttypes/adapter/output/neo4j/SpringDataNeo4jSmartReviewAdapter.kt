@@ -25,6 +25,7 @@ import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.graph.adapter.output.neo4j.ResourceMapper
 import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
+import org.orkg.graph.adapter.output.neo4j.query
 import org.orkg.graph.adapter.output.neo4j.toCondition
 import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where

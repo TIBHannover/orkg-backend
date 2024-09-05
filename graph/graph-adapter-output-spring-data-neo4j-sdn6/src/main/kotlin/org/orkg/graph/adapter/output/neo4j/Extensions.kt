@@ -3,6 +3,7 @@ package org.orkg.graph.adapter.output.neo4j
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.function.BiFunction
+import org.apache.lucene.queryparser.classic.QueryParser
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.jetbrains.annotations.Contract
 import org.neo4j.cypherdsl.core.Condition
@@ -31,7 +32,9 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.List
 import org.orkg.graph.domain.Literal
@@ -39,6 +42,7 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.domain.StringReader
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.output.PredicateRepository
@@ -319,3 +323,60 @@ fun orderByOptimizations(
 
 fun node(label: ThingId, vararg additionalLabels: ThingId) =
     node(label.value, additionalLabels.map { it.value })
+
+val FuzzySearchString.query: String get() {
+    val builder = StringBuilder()
+    val reader = StringReader(input)
+
+    while (reader.canRead()) {
+        val c = reader.peek()
+        if (c.isWordCharacter()) {
+            if (builder.isNotEmpty()) {
+                builder.append(" AND ")
+            }
+            builder.append("*")
+            builder.append(reader.readWord())
+            builder.append("*")
+            reader.skipWhitespace()
+        } else if ((c == '+' || c == '-') && reader.canRead(1) && reader.peek(1).isWordCharacter() &&
+            (builder.isEmpty() || reader.cursor > 0 && reader.peek(-1).isWhitespace())
+        ) {
+            reader.skip()
+            if (builder.isNotEmpty()) {
+                builder.append(" AND ")
+            }
+            builder.append(c)
+            builder.append(reader.readWord())
+            reader.skipWhitespace()
+        } else {
+            reader.skip()
+        }
+    }
+
+    return builder.toString().trim().ifBlank { "*" }
+}
+
+val ExactSearchString.query: String get() =
+    if (input.isBlank()) "*" else QueryParser.escape(input)
+
+private fun StringReader.readWord(): String {
+    val start = cursor
+    while (canRead()) {
+        if (!peek().isWordCharacter()) {
+            break
+        }
+        skip()
+    }
+    return string.substring(start, cursor)
+}
+
+private fun StringReader.skipWhitespace() {
+    while (canRead()) {
+        if (!peek().isWhitespace()) {
+            return
+        }
+        skip()
+    }
+}
+
+private fun Char.isWordCharacter(): Boolean = toString().matches(Regex("\\w"))

@@ -15,6 +15,7 @@ import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.ReservedClass
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.reservedClassIds
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
@@ -95,6 +96,9 @@ open class ThingDefinitionValidator(
     private fun validateClassURIs(thingDefinitions: ThingDefinitions) {
         thingDefinitions.classes.values.forEach {
             if (it.uri != null) {
+                if (!it.uri!!.isAbsolute) {
+                    throw URINotAbsolute(it.uri!!)
+                }
                 classRepository.findByUri(it.uri.toString()).ifPresent { found ->
                     throw URIAlreadyInUse(found.uri!!, found.id)
                 }

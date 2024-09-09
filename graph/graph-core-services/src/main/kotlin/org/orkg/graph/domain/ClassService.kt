@@ -25,6 +25,9 @@ class ClassService(
     override fun create(command: CreateClassUseCase.CreateCommand): ThingId {
         val label = Label.ofOrNull(command.label)?.value ?: throw InvalidLabel()
         command.uri?.let { uri ->
+            if (!uri.isAbsolute) {
+                throw URINotAbsolute(uri)
+            }
             repository.findByUri(uri.toString()).ifPresent {
                 throw URIAlreadyInUse(uri, it.id)
             }

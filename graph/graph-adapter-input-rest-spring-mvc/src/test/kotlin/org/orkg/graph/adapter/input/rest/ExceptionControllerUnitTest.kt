@@ -32,6 +32,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementNotModifiable
 import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.springframework.beans.factory.annotation.Autowired
@@ -214,6 +215,23 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.errors[0].field").value("uri"))
             .andExpect(jsonPath("$.errors[0].message").value("""The URI <$uri> is already assigned to class with ID "$id"."""))
             .andExpect(jsonPath("$.path").value("/uri-already-in-use"))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun uriNotAbsolute() {
+        val uri = "invalid"
+
+        get("/uri-not-absolute")
+            .param("uri", uri)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("uri"))
+            .andExpect(jsonPath("$.errors[0].message").value("""The URI <$uri> is not absolute."""))
+            .andExpect(jsonPath("$.path").value("/uri-not-absolute"))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
@@ -498,6 +516,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/uri-already-in-use")
         fun uriAlreadyInUse(@RequestParam id: ThingId, @RequestParam uri: ParsedIRI) {
             throw URIAlreadyInUse(uri, id)
+        }
+
+        @GetMapping("/uri-not-absolute")
+        fun uriNotAbsolute(@RequestParam uri: ParsedIRI) {
+            throw URINotAbsolute(uri)
         }
 
         @GetMapping("/class-not-allowed")

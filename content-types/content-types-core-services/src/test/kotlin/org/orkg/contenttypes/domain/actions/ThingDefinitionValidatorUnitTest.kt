@@ -32,6 +32,7 @@ import org.orkg.graph.domain.ReservedClass
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.reservedClassIds
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
@@ -338,6 +339,31 @@ class ThingDefinitionValidatorUnitTest {
         )
 
         assertThrows<InvalidLabel> {
+            thingDefinitionValidator.validateThingDefinitionsInPlace(
+                thingDefinitions = contents,
+                tempIds = emptySet(),
+                validatedIds = mutableMapOf()
+            )
+        }
+    }
+
+    @Test
+    fun `Given thing definitions, when specified class uri is not absolute, it throws an exception`() {
+        val uri = ParsedIRI("invalid")
+        val contents = dummyUpdateTemplateInstanceCommand().copy(
+            resources = emptyMap(),
+            literals = emptyMap(),
+            predicates = emptyMap(),
+            lists = emptyMap(),
+            classes = mapOf(
+                "#temp1" to ClassDefinition(
+                    label = "irrelevant",
+                    uri = uri
+                )
+            )
+        )
+
+        assertThrows<URINotAbsolute> {
             thingDefinitionValidator.validateThingDefinitionsInPlace(
                 thingDefinitions = contents,
                 tempIds = emptySet(),

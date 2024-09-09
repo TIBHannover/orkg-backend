@@ -83,8 +83,15 @@ class ClassServiceUnitTests {
 
     @Test
     fun `given a class is created, when the label is invalid, then an exception is thrown`() {
-        assertThrows<org.orkg.graph.domain.InvalidLabel> {
+        assertThrows<InvalidLabel> {
             service.create(CreateClassUseCase.CreateCommand(label = " \t "))
+        }
+    }
+
+    @Test
+    fun `given a class is created, when uri is not absolute, then an exception is thrown`() {
+        assertThrows<URINotAbsolute> {
+            service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", uri = ParsedIRI("invalid")))
         }
     }
 

@@ -19,11 +19,13 @@ import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Profile
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component
 @ComponentScan("org.orkg.configuration")
 @Profile("development", "docker")
+@Order(1)
 class InitialDataSetup(
     private val classRepository: ClassRepository,
     private val predicateRepository: PredicateRepository,

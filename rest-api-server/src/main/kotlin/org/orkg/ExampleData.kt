@@ -6,7 +6,6 @@ import java.io.InputStream
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ClassUseCases
-import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
@@ -14,10 +13,12 @@ import org.orkg.graph.input.StatementUseCases
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component
 @Profile("development", "docker")
+@Order(2)
 class ExampleData(
     private val resourceService: ResourceUseCases,
     private val predicateService: CreatePredicateUseCase,
@@ -119,14 +120,8 @@ class ExampleData(
         val subfieldPredicate = predicateService.create("has subfield")
 
         //
-        // Class
-        //
-        classService.create(CreateClassUseCase.CreateCommand(id = Classes.paper, label = "Paper", uri = null))
-
-        //
         // Resource
         //
-        resourceService.create("paper")
         val researchField = resourceService.create("Research field")
 
         // Adding resources from the json file

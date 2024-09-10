@@ -86,7 +86,7 @@ class VisualizationController(
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
         val location = uriComponentsBuilder
-            .path("api/visualizations/{id}")
+            .path("/api/visualizations/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()

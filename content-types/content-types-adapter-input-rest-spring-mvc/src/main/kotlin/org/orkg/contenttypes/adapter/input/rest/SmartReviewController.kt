@@ -106,7 +106,7 @@ class SmartReviewController(
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
         val location = uriComponentsBuilder
-            .path("api/smart-reviews/{id}")
+            .path("/api/smart-reviews/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -124,7 +124,7 @@ class SmartReviewController(
         val userId = currentUser.contributorId()
         service.createSection(request.toCreateCommand(userId, id, index))
         val location = uriComponentsBuilder
-            .path("api/smart-reviews/{id}")
+            .path("/api/smart-reviews/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -141,7 +141,7 @@ class SmartReviewController(
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
         val location = uriComponentsBuilder
-            .path("api/smart-reviews/{id}")
+            .path("/api/smart-reviews/{id}")
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
@@ -159,7 +159,7 @@ class SmartReviewController(
         val userId = currentUser.contributorId()
         service.updateSection(request.toUpdateCommand(sectionId, userId, smartReviewId))
         val location = uriComponentsBuilder
-            .path("api/smart-reviews/{id}")
+            .path("/api/smart-reviews/{id}")
             .buildAndExpand(smartReviewId)
             .toUri()
         return noContent().location(location).build()
@@ -176,7 +176,7 @@ class SmartReviewController(
         val userId = currentUser.contributorId()
         service.deleteSection(DeleteSmartReviewSectionUseCase.DeleteCommand(smartReviewId, sectionId, userId))
         val location = uriComponentsBuilder
-            .path("api/smart-reviews/{id}")
+            .path("/api/smart-reviews/{id}")
             .buildAndExpand(smartReviewId)
             .toUri()
         return noContent().location(location).build()
@@ -193,7 +193,7 @@ class SmartReviewController(
         val contributorId = currentUser.contributorId()
         val smartReviewId = service.publish(request.toPublishCommand(id, contributorId))
         val location = uriComponentsBuilder
-            .path("api/smart-reviews/{id}")
+            .path("/api/smart-reviews/{id}")
             .buildAndExpand(smartReviewId)
             .toUri()
         return noContent().location(location).build()

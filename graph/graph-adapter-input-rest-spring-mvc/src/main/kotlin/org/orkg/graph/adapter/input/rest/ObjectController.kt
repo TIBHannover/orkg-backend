@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/objects/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/objects", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ObjectController(
     private val resourceService: ResourceUseCases,
     private val objectService: CreateObjectUseCase,
@@ -36,7 +36,7 @@ class ObjectController(
 ) : ResourceRepresentationAdapter {
 
     @PreAuthorizeUser
-    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder,
@@ -45,7 +45,7 @@ class ObjectController(
     ): ResponseEntity<ResourceRepresentation> {
         val id = objectService.createObject(obj, null, currentUser.contributorId().value)
         val location = uriComponentsBuilder
-            .path("api/objects/")
+            .path("/api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).body(resourceService.findById(id).mapToResourceRepresentation(capabilities).get())
@@ -65,7 +65,7 @@ class ObjectController(
             .orElseThrow { ResourceNotFound.withId(id) }
         objectService.createObject(obj, id, currentUser.contributorId().value)
         val location = uriComponentsBuilder
-            .path("api/objects/")
+            .path("/api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).body(resourceService.findById(id).mapToResourceRepresentation(capabilities).get())

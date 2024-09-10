@@ -96,7 +96,7 @@ class TemplateInstanceController(
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(userId, templateId, id))
         val location = uriComponentsBuilder
-            .path("api/templates/{templateId}/instances/{id}")
+            .path("/api/templates/{templateId}/instances/{id}")
             .buildAndExpand(templateId, id)
             .toUri()
         return noContent().location(location).build()

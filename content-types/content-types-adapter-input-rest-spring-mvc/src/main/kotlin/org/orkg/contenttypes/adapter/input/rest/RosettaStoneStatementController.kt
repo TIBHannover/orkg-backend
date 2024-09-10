@@ -98,7 +98,7 @@ class RosettaStoneStatementController(
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
         val location = uriComponentsBuilder
-            .path("api/rosetta-stone/statements/{id}")
+            .path("/api/rosetta-stone/statements/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -115,7 +115,7 @@ class RosettaStoneStatementController(
         val userId = currentUser.contributorId()
         val newId = service.update(request.toUpdateCommand(id, userId))
         val location = uriComponentsBuilder
-            .path("api/rosetta-stone/statements/{id}")
+            .path("/api/rosetta-stone/statements/{id}")
             .buildAndExpand(newId)
             .toUri()
         return created(location).build()

@@ -61,7 +61,7 @@ class BulkStatementController(
         }
 
     @PreAuthorizeUser
-    @DeleteMapping("/")
+    @DeleteMapping
     fun delete(
         @RequestParam("ids") statementsIds: Set<StatementId>
     ): ResponseEntity<Unit> {
@@ -70,7 +70,7 @@ class BulkStatementController(
     }
 
     @PreAuthorizeUser
-    @PutMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PutMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun edit(
         @RequestParam("ids") statementsIds: List<StatementId>,
         @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest,

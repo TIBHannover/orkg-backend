@@ -200,7 +200,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
                 .andExpect(jsonPath("$.message").value("""Class with URI "http://example.org/non-existent" not found."""))
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.timestamp").exists())
-                .andExpect(jsonPath("$.path").value("/api/classes/"))
+                .andExpect(jsonPath("$.path").value("/api/classes"))
         }
     }
 
@@ -224,7 +224,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             )
         } returns pageOf()
 
-        post("/api/classes/")
+        post("/api/classes")
             .content(request)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -400,7 +400,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
     }
 
     private fun performGetByURI(uri: String) =
-        get("/api/classes/?uri=$uri")
+        get("/api/classes?uri=$uri")
             .contentType(MediaType.APPLICATION_JSON)
             .characterEncoding("UTF-8")
 

@@ -61,7 +61,7 @@ class ListController(
         @AuthenticationPrincipal currentUser: UserDetails?,
     ): ResponseEntity<ListRepresentation> {
         val id = service.create(request.toCreateCommand(currentUser.contributorId()))
-        val location = uriComponentsBuilder.path("api/lists/{id}")
+        val location = uriComponentsBuilder.path("/api/lists/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).body(findById(id))

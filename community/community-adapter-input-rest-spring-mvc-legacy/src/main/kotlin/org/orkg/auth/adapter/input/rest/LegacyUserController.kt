@@ -51,7 +51,7 @@ class LegacyUserController(
     }
 
     @PreAuthorizeCurator
-    @DeleteMapping("{id}/observatory")
+    @DeleteMapping("/{id}/observatory")
     fun deleteUserObservatory(@PathVariable id: ContributorId) {
         observatoryAuthUseCases.deleteUserObservatory(id.value)
     }

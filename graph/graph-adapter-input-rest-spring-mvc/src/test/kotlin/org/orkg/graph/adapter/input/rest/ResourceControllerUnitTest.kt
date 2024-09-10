@@ -213,13 +213,13 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         )
         every { resourceService.create(any<CreateCommand>()) } throws exception
 
-        mockMvc.performPost("/api/resources/", command)
+        mockMvc.performPost("/api/resources", command)
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
             .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
             .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/resources/"))
+            .andExpect(jsonPath("$.path").value("/api/resources"))
     }
 
     @Test

@@ -27,7 +27,7 @@ val publishableClasses: Set<ThingId> = setOf(
 )
 
 @RestController
-@RequestMapping("/api/dois/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/dois", produces = [MediaType.APPLICATION_JSON_VALUE])
 @Deprecated("To be removed")
 class DOIController(
     private val doiService: DoiService,
@@ -35,7 +35,7 @@ class DOIController(
     private val resourceRepository: ResourceRepository,
     private val literalService: LiteralUseCases
 ) {
-    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun addDOI(@RequestBody @Valid request: CreateDOIRequest): DoiResponse {
         val resource = resourceRepository.findById(request.resourceId)
             .orElseThrow { ResourceNotFound.withId(request.resourceId) }

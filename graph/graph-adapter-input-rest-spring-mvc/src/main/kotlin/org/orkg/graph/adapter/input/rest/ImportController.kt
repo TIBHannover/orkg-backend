@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("api/import", consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/import", consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
 class ImportController(
     private val service: ImportUseCases,
 ) {
@@ -42,7 +42,7 @@ class ImportController(
                 shortForm = request.shortForm
             )
         }
-        val location = uriComponentsBuilder.path("api/resources/{id}")
+        val location = uriComponentsBuilder.path("/api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -67,7 +67,7 @@ class ImportController(
                 shortForm = request.shortForm
             )
         }
-        val location = uriComponentsBuilder.path("api/predicates/{id}")
+        val location = uriComponentsBuilder.path("/api/predicates/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -92,7 +92,7 @@ class ImportController(
                 shortForm = request.shortForm
             )
         }
-        val location = uriComponentsBuilder.path("api/classes/{id}")
+        val location = uriComponentsBuilder.path("/api/classes/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()

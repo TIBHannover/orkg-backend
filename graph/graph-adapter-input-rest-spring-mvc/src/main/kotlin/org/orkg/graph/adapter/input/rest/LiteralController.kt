@@ -62,7 +62,7 @@ class LiteralController(
         ).mapToLiteralRepresentation()
 
     @PreAuthorizeUser
-    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody @Valid literal: LiteralCreateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
@@ -76,7 +76,7 @@ class LiteralController(
             )
         )
         val location = uriComponentsBuilder
-            .path("api/literals/{id}")
+            .path("/api/literals/{id}")
             .buildAndExpand(id)
             .toUri()
 

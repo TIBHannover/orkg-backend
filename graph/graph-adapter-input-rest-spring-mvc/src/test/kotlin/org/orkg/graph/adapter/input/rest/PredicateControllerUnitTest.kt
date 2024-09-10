@@ -162,7 +162,7 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
             )
         } returns pageOf()
 
-        post("/api/predicates/", request)
+        post("/api/predicates", request)
             .contentType(APPLICATION_JSON)
             .perform()
             .andExpect(status().isCreated)

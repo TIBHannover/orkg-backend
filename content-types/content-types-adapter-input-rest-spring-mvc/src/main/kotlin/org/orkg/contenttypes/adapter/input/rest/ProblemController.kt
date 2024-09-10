@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/problems/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/problems", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ProblemController(
     private val service: RetrieveResearchProblemUseCase, // FIXME
     private val resourceService: ResourceUseCases,
@@ -57,7 +57,7 @@ class ProblemController(
         service.findFieldsPerProblem(problemId)
             .mapToFieldWithFreqRepresentation(capabilities)
 
-    @GetMapping("/{problemId}/")
+    @GetMapping("/{problemId}")
     fun getFieldPerProblemAndClasses(
         @PathVariable problemId: ThingId,
         @RequestParam(value = "classes") classes: List<String>,

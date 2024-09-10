@@ -54,7 +54,7 @@ class ObservatoryFilterController(
         authorizeUser(contributorId, observatoryId)
         val id = service.create(request.toCreateCommand(observatoryId, contributorId))
         val location = uriComponentsBuilder
-            .path("api/observatories/{observatoryId}/filters/{id}")
+            .path("/api/observatories/{observatoryId}/filters/{id}")
             .buildAndExpand(observatoryId, id)
             .toUri()
         return created(location).build()

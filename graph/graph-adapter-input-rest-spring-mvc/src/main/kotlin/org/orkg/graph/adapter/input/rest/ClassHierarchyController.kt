@@ -70,7 +70,7 @@ class ClassHierarchyController(
     ): ResponseEntity<Any> {
         createRelations(request.parentId, setOf(id), false, currentUser.contributorId())
         val location = uriComponentsBuilder
-            .path("api/classes/{id}/parent")
+            .path("/api/classes/{id}/parent")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -99,7 +99,7 @@ class ClassHierarchyController(
     ): ResponseEntity<Any> {
         createRelations(id, request.childIds, true, currentUser.contributorId())
         val location = uriComponentsBuilder
-            .path("api/classes/{id}/children")
+            .path("/api/classes/{id}/children")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -115,7 +115,7 @@ class ClassHierarchyController(
     ): ResponseEntity<Any> {
         createRelations(id, request.childIds, false, currentUser.contributorId())
         val location = uriComponentsBuilder
-            .path("api/classes/{id}/children")
+            .path("/api/classes/{id}/children")
             .buildAndExpand(id)
             .toUri()
         return ok().location(location).build()

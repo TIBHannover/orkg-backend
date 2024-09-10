@@ -128,7 +128,7 @@ class LiteratureListController(
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
         val location = uriComponentsBuilder
-            .path("api/literature-lists/{id}")
+            .path("/api/literature-lists/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -145,7 +145,7 @@ class LiteratureListController(
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
         val location = uriComponentsBuilder
-            .path("api/literature-lists/{id}")
+            .path("/api/literature-lists/{id}")
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
@@ -163,7 +163,7 @@ class LiteratureListController(
         val userId = currentUser.contributorId()
         service.createSection(request.toCreateCommand(userId, id, index))
         val location = uriComponentsBuilder
-            .path("api/literature-lists/{id}")
+            .path("/api/literature-lists/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -181,7 +181,7 @@ class LiteratureListController(
         val userId = currentUser.contributorId()
         service.updateSection(request.toUpdateCommand(sectionId, userId, literatureListId))
         val location = uriComponentsBuilder
-            .path("api/literature-lists/{id}")
+            .path("/api/literature-lists/{id}")
             .buildAndExpand(literatureListId)
             .toUri()
         return noContent().location(location).build()
@@ -198,7 +198,7 @@ class LiteratureListController(
         val userId = currentUser.contributorId()
         service.deleteSection(DeleteLiteratureListSectionUseCase.DeleteCommand(literatureListId, sectionId, userId))
         val location = uriComponentsBuilder
-            .path("api/literature-lists/{id}")
+            .path("/api/literature-lists/{id}")
             .buildAndExpand(literatureListId)
             .toUri()
         return noContent().location(location).build()
@@ -215,7 +215,7 @@ class LiteratureListController(
         val contributorId = currentUser.contributorId()
         val literatureListVersionId = service.publish(request.toPublishCommand(id, contributorId))
         val location = uriComponentsBuilder
-            .path("api/literature-lists/{id}")
+            .path("/api/literature-lists/{id}")
             .buildAndExpand(literatureListVersionId)
             .toUri()
         return noContent().location(location).build()

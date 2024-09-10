@@ -53,7 +53,7 @@ class ObservatoryController(
     ): ResponseEntity<ObservatoryRepresentation> {
         val id = service.create(request.toCreateCommand())
         val location = uriComponentsBuilder
-            .path("api/observatories/{id}")
+            .path("/api/observatories/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).body(service.findById(id).mapToObservatoryRepresentation().get())
@@ -74,7 +74,7 @@ class ObservatoryController(
         }
     }
 
-    @GetMapping("/")
+    @GetMapping
     fun findAll(
         @RequestParam(value = "q", required = false) name: String?,
         @RequestParam(value = "research_field", required = false) researchField: ThingId?,
@@ -96,7 +96,7 @@ class ObservatoryController(
     ): Page<ResearchFieldRepresentation> =
         service.findAllResearchFields(pageable).mapToResearchFieldRepresentation()
 
-    @GetMapping("{id}/users")
+    @GetMapping("/{id}/users")
     fun findAllUsersByObservatoryId(
         @PathVariable id: ObservatoryId,
         pageable: Pageable
@@ -111,20 +111,20 @@ class ObservatoryController(
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         service.update(request.toUpdateCommand(id))
-        val location = uriComponentsBuilder.path("api/observatories/{id}")
+        val location = uriComponentsBuilder.path("/api/observatories/{id}")
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
     }
 
-    @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping("/{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun updateObservatoryName(@PathVariable id: ObservatoryId, @RequestBody @Valid name: UpdateRequest): ObservatoryRepresentation {
         service.changeName(id, name.value)
         return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
-    @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping("/{id}/description", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun updateObservatoryDescription(
         @PathVariable id: ObservatoryId,
@@ -134,7 +134,7 @@ class ObservatoryController(
         return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
-    @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping("/{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun updateObservatoryResearchField(
         @PathVariable id: ObservatoryId,
@@ -144,7 +144,7 @@ class ObservatoryController(
         return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
-    @RequestMapping("add/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping("/add/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun addObservatoryOrganization(
         @PathVariable id: ObservatoryId,
@@ -154,7 +154,7 @@ class ObservatoryController(
         return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
-    @RequestMapping("delete/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping("/delete/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun deleteObservatoryOrganization(
         @PathVariable id: ObservatoryId,

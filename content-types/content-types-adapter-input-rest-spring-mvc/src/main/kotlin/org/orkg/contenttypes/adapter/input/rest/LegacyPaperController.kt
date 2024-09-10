@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/papers/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/papers", produces = [MediaType.APPLICATION_JSON_VALUE])
 class LegacyPaperController(
     private val service: LegacyPaperUseCases,
     private val resourceService: ResourceUseCases,
@@ -40,7 +40,7 @@ class LegacyPaperController(
     override val flags: FeatureFlagService,
 ) : PaperResourceWithPathRepresentationAdapter, ResourceRepresentationAdapter {
 
-    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun add(
         @RequestBody paper: LegacyCreatePaperUseCase.LegacyCreatePaperRequest,
@@ -51,14 +51,14 @@ class LegacyPaperController(
     ): ResponseEntity<ResourceRepresentation> {
         val id = service.addPaperContent(paper, mergeIfExists, currentUser.contributorId().value)
         val location = uriComponentsBuilder
-            .path("api/resources/")
+            .path("/api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location)
             .body(resourceService.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
-    @GetMapping("/")
+    @GetMapping
     fun findPaperResourcesRelatedTo(
         @RequestParam("linkedTo", required = true) id: ThingId,
         pageable: Pageable,

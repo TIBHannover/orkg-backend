@@ -94,7 +94,7 @@ class ResourceController(
         ).mapToResourceRepresentation(capabilities)
 
     @PreAuthorizeUser
-    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody request: CreateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
@@ -114,7 +114,7 @@ class ResourceController(
             )
         )
         val location = uriComponentsBuilder
-            .path("api/resources/{id}")
+            .path("/api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).body(service.findById(id).mapToResourceRepresentation(capabilities).get())
@@ -143,7 +143,7 @@ class ResourceController(
         return ok(service.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
-    @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping("/{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun updateWithObservatory(
         @PathVariable id: ThingId,
@@ -163,11 +163,11 @@ class ResourceController(
         return ok(service.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
-    @GetMapping("{id}/contributors")
+    @GetMapping("/{id}/contributors")
     fun findContributorsById(@PathVariable id: ThingId, pageable: Pageable): Page<ContributorId> =
         service.findAllContributorsByResourceId(id, pageable)
 
-    @GetMapping("{id}/timeline")
+    @GetMapping("/{id}/timeline")
     fun findTimelineById(@PathVariable id: ThingId, pageable: Pageable): Page<ResourceContributor> =
         service.findTimelineByResourceId(id, pageable)
 

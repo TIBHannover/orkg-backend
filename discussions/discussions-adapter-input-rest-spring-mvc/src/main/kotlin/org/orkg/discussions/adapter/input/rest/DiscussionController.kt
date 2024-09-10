@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/discussions/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/discussions", produces = [MediaType.APPLICATION_JSON_VALUE])
 class DiscussionController(
     private val service: DiscussionUseCases,
     private val userService: ContributorRepository,
@@ -55,7 +55,7 @@ class DiscussionController(
             )
         )
         val location = uriComponentsBuilder
-            .path("api/discussions/topic/{topic}/{comment}")
+            .path("/api/discussions/topic/{topic}/{comment}")
             .buildAndExpand(topic, comment)
             .toUri()
         return created(location).body(

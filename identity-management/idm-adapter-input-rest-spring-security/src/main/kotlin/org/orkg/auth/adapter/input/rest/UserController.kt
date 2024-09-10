@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userService: AuthUseCase,
 ) {
-    @GetMapping("/")
+    @GetMapping
     fun lookupUserDetails(principal: Principal?): ResponseEntity<UserDetails> {
         if (principal?.name == null)
             return ResponseEntity(UNAUTHORIZED)
@@ -36,7 +36,7 @@ class UserController(
         return ok(UserDetails(user))
     }
 
-    @PutMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PutMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun updateUserDetails(@RequestBody @Valid updatedDetails: UserDetailsUpdateRequest, principal: Principal?): ResponseEntity<UserDetails> {
         if (principal?.name == null)
             return ResponseEntity(UNAUTHORIZED)

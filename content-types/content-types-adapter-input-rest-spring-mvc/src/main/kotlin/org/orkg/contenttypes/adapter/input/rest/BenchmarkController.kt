@@ -36,7 +36,7 @@ class BenchmarkController(
             .summariesForResearchField(id, pageable)
             .orElseThrow { ResearchFieldNotFound(id) }
 
-    @GetMapping("/api/benchmarks/summary/")
+    @GetMapping("/api/benchmarks/summary")
     fun getBenchmarkSummaries(pageable: Pageable): Page<BenchmarkSummary> =
         retrieveBenchmarks
             .summary(pageable)

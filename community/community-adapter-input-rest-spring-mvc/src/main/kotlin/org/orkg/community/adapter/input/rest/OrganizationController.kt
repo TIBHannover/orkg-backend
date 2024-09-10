@@ -55,7 +55,7 @@ import org.springframework.web.util.UriComponentsBuilder
 private val encodedImagePattern = Regex("""^data:(.*);base64,([A-Za-z0-9+/]+=*)$""").toPattern()
 
 @RestController
-@RequestMapping("/api/organizations/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/organizations", produces = [MediaType.APPLICATION_JSON_VALUE])
 class OrganizationController(
     private val service: OrganizationUseCases,
     private val observatoryService: ObservatoryUseCases,
@@ -64,7 +64,7 @@ class OrganizationController(
     private val organizationRepository: OrganizationRepository,
 ) : ObservatoryRepresentationAdapter {
 
-    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun addOrganization(
         @RequestBody @Valid organization: CreateOrganizationRequest,
@@ -87,13 +87,13 @@ class OrganizationController(
             imageId
         )
         val location = uriComponentsBuilder
-            .path("api/organizations/{id}")
+            .path("/api/organizations/{id}")
             .buildAndExpand(id)
             .toUri()
         return ResponseEntity.created(location).body(service.findById(id).get())
     }
 
-    @GetMapping("/")
+    @GetMapping
     fun findOrganizations(): List<Organization> = service.listOrganizations()
 
     @GetMapping("/{id}")
@@ -107,13 +107,13 @@ class OrganizationController(
             .orElseThrow { OrganizationNotFound(id) }
     }
 
-    @GetMapping("{id}/observatories")
+    @GetMapping("/{id}/observatories")
     fun findObservatoriesByOrganization(@PathVariable id: OrganizationId): List<ObservatoryRepresentation> =
         observatoryService.findAllByOrganizationId(id, PageRequest.of(0, Int.MAX_VALUE))
             .mapToObservatoryRepresentation()
             .content
 
-    @GetMapping("{id}/users")
+    @GetMapping("/{id}/users")
     fun findUsersByOrganizationId(@PathVariable id: OrganizationId): Iterable<Contributor> =
         organizationRepository.allMembers(id, PageRequest.of(0, Int.MAX_VALUE)).content
 
@@ -151,7 +151,7 @@ class OrganizationController(
         return noContent().build()
     }
 
-    @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping("/{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun updateOrganizationName(
         @PathVariable id: OrganizationId,
@@ -163,7 +163,7 @@ class OrganizationController(
         return ok().body(response)
     }
 
-    @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping("/{id}/url", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun updateOrganizationUrl(
         @PathVariable id: OrganizationId,
@@ -175,7 +175,7 @@ class OrganizationController(
         return ok().body(response)
     }
 
-    @RequestMapping("{id}/type", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping("/{id}/type", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun updateOrganizationType(
         @PathVariable id: OrganizationId,
@@ -187,7 +187,7 @@ class OrganizationController(
         return ok().body(response)
     }
 
-    @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping("/{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorizeCurator
     fun updateOrganizationLogo(
         @PathVariable id: OrganizationId,
@@ -199,13 +199,13 @@ class OrganizationController(
         val image = EncodedImage(submittedLogo.value).decodeBase64()
         service.updateLogo(id, image, currentUser.contributorId())
         val location = uriComponentsBuilder
-            .path("api/organizations/{id}/logo")
+            .path("/api/organizations/{id}/logo")
             .buildAndExpand(id)
             .toUri()
         return ResponseEntity.created(location).body(organization)
     }
 
-    @GetMapping("{id}/logo")
+    @GetMapping("/{id}/logo")
     fun findOrganizationLogo(
         @PathVariable id: OrganizationId,
         response: HttpServletResponse

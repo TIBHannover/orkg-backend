@@ -105,7 +105,7 @@ class ComparisonController(
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
         val location = uriComponentsBuilder
-            .path("api/comparisons/{id}")
+            .path("/api/comparisons/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -122,7 +122,7 @@ class ComparisonController(
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
         val location = uriComponentsBuilder
-            .path("api/comparisons/{id}")
+            .path("/api/comparisons/{id}")
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
@@ -156,7 +156,7 @@ class ComparisonController(
         val userId = currentUser.contributorId()
         val id = service.createComparisonRelatedResource(request.toCreateCommand(comparisonId, userId))
         val location = uriComponentsBuilder
-            .path("api/comparisons/{comparisonId}/related-resources/{id}")
+            .path("/api/comparisons/{comparisonId}/related-resources/{id}")
             .buildAndExpand(comparisonId, id)
             .toUri()
         return created(location).build()
@@ -174,7 +174,7 @@ class ComparisonController(
         val userId = currentUser.contributorId()
         service.updateComparisonRelatedResource(request.toUpdateCommand(comparisonId, comparisonRelatedResourceId, userId))
         val location = uriComponentsBuilder
-            .path("api/comparisons/{comparisonId}/related-resources/{id}")
+            .path("/api/comparisons/{comparisonId}/related-resources/{id}")
             .buildAndExpand(comparisonId, comparisonRelatedResourceId)
             .toUri()
         return noContent().location(location).build()
@@ -191,7 +191,7 @@ class ComparisonController(
         val userId = currentUser.contributorId()
         service.deleteComparisonRelatedResource(comparisonId, comparisonRelatedResourceId, userId)
         val location = uriComponentsBuilder
-            .path("api/comparisons/{id}")
+            .path("/api/comparisons/{id}")
             .buildAndExpand(comparisonId)
             .toUri()
         return noContent().location(location).build()
@@ -225,7 +225,7 @@ class ComparisonController(
         val userId = currentUser.contributorId()
         val id = service.createComparisonRelatedFigure(request.toCreateCommand(comparisonId, userId))
         val location = uriComponentsBuilder
-            .path("api/comparisons/{comparisonId}/related-figures/{id}")
+            .path("/api/comparisons/{comparisonId}/related-figures/{id}")
             .buildAndExpand(comparisonId, id)
             .toUri()
         return created(location).build()
@@ -243,7 +243,7 @@ class ComparisonController(
         val userId = currentUser.contributorId()
         service.updateComparisonRelatedFigure(request.toUpdateCommand(comparisonId, comparisonRelatedFigureId, userId))
         val location = uriComponentsBuilder
-            .path("api/comparisons/{comparisonId}/related-figures/{id}")
+            .path("/api/comparisons/{comparisonId}/related-figures/{id}")
             .buildAndExpand(comparisonId, comparisonRelatedFigureId)
             .toUri()
         return noContent().location(location).build()
@@ -260,7 +260,7 @@ class ComparisonController(
         val userId = currentUser.contributorId()
         service.deleteComparisonRelatedFigure(comparisonId, comparisonRelatedFigureId, userId)
         val location = uriComponentsBuilder
-            .path("api/comparisons/{id}")
+            .path("/api/comparisons/{id}")
             .buildAndExpand(comparisonId)
             .toUri()
         return noContent().location(location).build()
@@ -277,7 +277,7 @@ class ComparisonController(
         val contributorId = currentUser.contributorId()
         service.publish(request.toPublishCommand(id, contributorId))
         val location = uriComponentsBuilder
-            .path("api/comparisons/{id}")
+            .path("/api/comparisons/{id}")
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()

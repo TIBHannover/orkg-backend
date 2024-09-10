@@ -78,7 +78,7 @@ class RosettaStoneTemplateController(
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
         val location = uriComponentsBuilder
-            .path("api/rosetta-stone/templates/{id}")
+            .path("/api/rosetta-stone/templates/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -95,7 +95,7 @@ class RosettaStoneTemplateController(
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
         val location = uriComponentsBuilder
-            .path("api/rosetta-stone/templates/{id}")
+            .path("/api/rosetta-stone/templates/{id}")
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()

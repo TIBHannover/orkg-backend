@@ -85,7 +85,7 @@ class StatementController(
             .orElseThrow { StatementNotFound(statementId) }
 
     @PreAuthorizeUser
-    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody statement: CreateStatement,
         uriComponentsBuilder: UriComponentsBuilder,
@@ -99,7 +99,7 @@ class StatementController(
             statement.objectId
         )
         val location = uriComponentsBuilder
-            .path("api/statements/{id}")
+            .path("/api/statements/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location)

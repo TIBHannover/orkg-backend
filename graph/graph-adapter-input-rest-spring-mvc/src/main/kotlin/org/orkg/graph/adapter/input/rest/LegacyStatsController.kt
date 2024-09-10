@@ -26,13 +26,13 @@ import org.springframework.web.bind.annotation.RestController
  * of ORKG
  */
 @RestController
-@RequestMapping("/api/stats/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/stats", produces = [MediaType.APPLICATION_JSON_VALUE])
 class LegacyStatsController(private val service: RetrieveLegacyStatisticsUseCase) {
     /**
      * Fetch the top statistics of ORKG
      * like paper count, resources count, etc
      */
-    @GetMapping("/")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     fun get(
         @RequestParam("extra", required = false) extra: List<String>?

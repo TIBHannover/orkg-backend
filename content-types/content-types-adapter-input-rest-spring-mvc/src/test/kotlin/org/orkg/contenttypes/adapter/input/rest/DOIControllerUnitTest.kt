@@ -84,7 +84,7 @@ internal class DOIControllerUnitTest : RestDocsTest("dois") {
           "url": "http://localhost:3000/comparison/R696006/"
         }""".trimIndent()
 
-        post("/api/dois/", request)
+        post("/api/dois", request)
             .accept(APPLICATION_JSON)
             .contentType(APPLICATION_JSON)
             .perform()

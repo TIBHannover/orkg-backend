@@ -116,7 +116,7 @@ class PaperController(
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
         val location = uriComponentsBuilder
-            .path("api/papers/{id}")
+            .path("/api/papers/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -133,7 +133,7 @@ class PaperController(
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
         val location = uriComponentsBuilder
-            .path("api/papers/{id}")
+            .path("/api/papers/{id}")
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
@@ -150,7 +150,7 @@ class PaperController(
         val userId = currentUser.contributorId()
         val id = service.createContribution(request.toCreateCommand(userId, paperId))
         val location = uriComponentsBuilder
-            .path("api/contributions/{id}")
+            .path("/api/contributions/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -167,7 +167,7 @@ class PaperController(
         val contributorId = currentUser.contributorId()
         val paperVersionId = service.publish(request.toPublishCommand(id, contributorId))
         val location = uriComponentsBuilder
-            .path("api/resources/{id}")
+            .path("/api/resources/{id}")
             .buildAndExpand(paperVersionId)
             .toUri()
         return noContent().location(location).build()

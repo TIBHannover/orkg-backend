@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/observatories/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/observatories", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ObservatoryResourceController(
     private val resourceService: ResourceUseCases,
     private val objectMapper: ObjectMapper,
@@ -32,7 +32,7 @@ class ObservatoryResourceController(
     override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter {
 
-    @GetMapping("{id}/papers")
+    @GetMapping("/{id}/papers")
     fun findAllPapersByObservatoryId(
         @PathVariable id: ObservatoryId,
         @RequestParam("filter_config", required = false) filterConfig: String?,
@@ -47,7 +47,7 @@ class ObservatoryResourceController(
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
 
-    @GetMapping("{id}/problems")
+    @GetMapping("/{id}/problems")
     fun findAllProblemsByObservatoryId(
         @PathVariable id: ObservatoryId,
         pageable: Pageable,
@@ -56,7 +56,7 @@ class ObservatoryResourceController(
         resourceService.findAllProblemsByObservatoryId(id, pageable)
             .mapToResourceRepresentation(capabilities)
 
-    @GetMapping("{id}/class")
+    @GetMapping("/{id}/class")
     fun findAllResourcesByClassInAndVisibilityAndObservatoryId(
         @PathVariable id: ObservatoryId,
         @RequestParam(value = "classes") classes: Set<ThingId>,

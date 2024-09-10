@@ -101,7 +101,7 @@ class TemplateController(
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
         val location = uriComponentsBuilder
-            .path("api/templates/{id}")
+            .path("/api/templates/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -118,7 +118,7 @@ class TemplateController(
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
         val location = uriComponentsBuilder
-            .path("api/templates/{id}")
+            .path("/api/templates/{id}")
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
@@ -135,7 +135,7 @@ class TemplateController(
         val userId = currentUser.contributorId()
         service.createTemplateProperty(request.toCreateCommand(userId, id))
         val location = uriComponentsBuilder
-            .path("api/templates/{id}")
+            .path("/api/templates/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).build()
@@ -153,7 +153,7 @@ class TemplateController(
         val userId = currentUser.contributorId()
         service.updateTemplateProperty(request.toUpdateCommand(propertyId, userId, templateId))
         val location = uriComponentsBuilder
-            .path("api/templates/{id}")
+            .path("/api/templates/{id}")
             .buildAndExpand(templateId)
             .toUri()
         return noContent().location(location).build()

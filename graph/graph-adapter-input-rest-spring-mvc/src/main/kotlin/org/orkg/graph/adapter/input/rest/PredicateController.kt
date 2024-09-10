@@ -62,7 +62,7 @@ class PredicateController(
         ).mapToPredicateRepresentation()
 
     @PreAuthorizeUser
-    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody predicate: CreatePredicateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
@@ -76,7 +76,7 @@ class PredicateController(
             )
         )
         val location = uriComponentsBuilder
-            .path("api/predicates/{id}")
+            .path("/api/predicates/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).body(service.findById(id).mapToPredicateRepresentation().get())

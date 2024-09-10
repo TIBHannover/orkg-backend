@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/organizations/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/organizations", produces = [MediaType.APPLICATION_JSON_VALUE])
 class OrganizationResourceController(
     private val resourceService: ResourceUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter {
-    @GetMapping("{id}/problems")
+    @GetMapping("/{id}/problems")
     fun findProblemsByOrganizationId(
         @PathVariable id: OrganizationId,
         pageable: Pageable,

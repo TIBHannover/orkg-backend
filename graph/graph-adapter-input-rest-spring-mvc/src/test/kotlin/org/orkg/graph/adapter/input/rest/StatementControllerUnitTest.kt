@@ -253,7 +253,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        RestDocumentationRequestBuilders.post("/api/statements/")
+        RestDocumentationRequestBuilders.post("/api/statements")
             .content(request)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -308,7 +308,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpect(jsonPath("$.message").value("""Subject "$subject" not found."""))
             .andExpect(jsonPath("$.error").value("Bad Request"))
             .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/statements/"))
+            .andExpect(jsonPath("$.path").value("/api/statements"))
 
         verify(exactly = 1) {
             statementService.create(
@@ -345,7 +345,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpect(jsonPath("$.message").value("""Predicate "$predicate" not found."""))
             .andExpect(jsonPath("$.error").value("Bad Request"))
             .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/statements/"))
+            .andExpect(jsonPath("$.path").value("/api/statements"))
 
         verify(exactly = 1) {
             statementService.create(
@@ -378,7 +378,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpect(jsonPath("$.message").value("""Object "$`object`" not found."""))
             .andExpect(jsonPath("$.error").value("Bad Request"))
             .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/statements/"))
+            .andExpect(jsonPath("$.path").value("/api/statements"))
 
         verify(exactly = 1) {
             statementService.create(
@@ -510,7 +510,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     }
 
     private fun performPost(body: Map<String, String>) =
-        post("/api/statements/")
+        post("/api/statements")
             .contentType(MediaType.APPLICATION_JSON)
             .characterEncoding("UTF-8")
             .content(objectMapper.writeValueAsString(body))

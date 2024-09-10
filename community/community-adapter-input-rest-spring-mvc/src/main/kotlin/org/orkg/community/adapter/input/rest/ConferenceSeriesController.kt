@@ -26,11 +26,11 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/conference-series/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/conference-series", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ConferenceSeriesController(
     private val service: ConferenceSeriesUseCases
 ) {
-    @RequestMapping("/", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping(method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun addConferenceSeries(
         @RequestBody @Valid conference: ConferenceSeriesRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -53,13 +53,13 @@ class ConferenceSeriesController(
             )
         )
         val location = uriComponentsBuilder
-           .path("api/conference-series/{id}")
+           .path("/api/conference-series/{id}")
            .buildAndExpand(response.id)
            .toUri()
         return ResponseEntity.created(location).body(service.findById(response.id).get())
     }
 
-    @GetMapping("/")
+    @GetMapping
     fun listConferenceSeries(pageable: Pageable): Page<ConferenceSeries> =
         service.listConferenceSeries(pageable)
 
@@ -77,7 +77,7 @@ class ConferenceSeriesController(
         return response
     }
 
-    @GetMapping("{id}/series")
+    @GetMapping("/{id}/series")
     fun findSeriesByConference(@PathVariable id: OrganizationId, pageable: Pageable): Page<ConferenceSeries> {
         return service.findSeriesByConference(id, pageable)
     }

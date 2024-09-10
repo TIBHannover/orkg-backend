@@ -48,11 +48,11 @@ class ClassController(
     fun findById(@PathVariable id: ThingId): ClassRepresentation =
         service.findById(id).mapToClassRepresentation().orElseThrow { ClassNotFound.withThingId(id) }
 
-    @GetMapping("/", params = ["uri"])
+    @GetMapping(params = ["uri"])
     fun findByURI(@RequestParam uri: ParsedIRI): ClassRepresentation =
         service.findByURI(uri).mapToClassRepresentation().orElseThrow { ClassNotFound.withURI(uri) }
 
-    @GetMapping("/", params = ["ids"])
+    @GetMapping(params = ["ids"])
     fun findByIds(@RequestParam ids: List<ThingId>, pageable: Pageable): Page<ClassRepresentation> =
         service.findAllById(ids, pageable).mapToClassRepresentation()
 
@@ -74,7 +74,7 @@ class ClassController(
         ).mapToClassRepresentation()
 
     @PreAuthorizeUser
-    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(
         @RequestBody request: CreateClassRequest,
@@ -90,7 +90,7 @@ class ClassController(
             )
         )
         val location = uriComponentsBuilder
-            .path("api/classes/{id}")
+            .path("/api/classes/{id}")
             .buildAndExpand(id)
             .toUri()
         return created(location).body(service.findById(id).mapToClassRepresentation().get())

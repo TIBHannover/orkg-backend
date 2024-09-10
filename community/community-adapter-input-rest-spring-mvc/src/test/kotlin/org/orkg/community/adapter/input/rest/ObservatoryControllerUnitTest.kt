@@ -76,7 +76,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { resourceUseCases.findById(any()) } returns Optional.empty()
 
-        mockMvc.perform(get("/api/observatories/${observatory.id}/"))
+        mockMvc.perform(get("/api/observatories/${observatory.id}"))
             .andExpect(status().isOk)
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
@@ -88,10 +88,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
 
         every { observatoryUseCases.findById(id) } returns Optional.empty()
 
-        mockMvc.perform(get("/api/observatories/$id/"))
+        mockMvc.perform(get("/api/observatories/$id"))
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/$id/"))
+            .andExpect(jsonPath("$.path").value("/api/observatories/$id"))
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
     }
 
@@ -112,10 +112,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             sustainableDevelopmentGoals = setOf(ThingId("SDG1"))
         )
 
-        mockMvc.performPost("/api/observatories/", body)
+        mockMvc.performPost("/api/observatories", body)
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/"))
+            .andExpect(jsonPath("$.path").value("/api/observatories"))
             .andExpect(jsonPath("$.message").value(OrganizationNotFound(organizationId).message))
     }
 
@@ -138,10 +138,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         val wrongId = "IncorrectId"
         every { observatoryUseCases.findByDisplayId(wrongId) } returns Optional.empty()
 
-        mockMvc.perform(get("/api/observatories/$wrongId/"))
+        mockMvc.perform(get("/api/observatories/$wrongId"))
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/api/observatories/IncorrectId/"))
+            .andExpect(jsonPath("$.path").value("/api/observatories/IncorrectId"))
             .andExpect(jsonPath("$.message").value(ObservatoryURLNotFound(wrongId).message))
     }
 
@@ -156,7 +156,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         every { observatoryUseCases.findAll(any()) } returns page
         every { resourceUseCases.findById(any()) } returns Optional.empty()
 
-        mockMvc.perform(get("/api/observatories/"))
+        mockMvc.perform(get("/api/observatories"))
             .andExpect(status().isOk)
 
         verify(exactly = 1) { observatoryUseCases.findAll(any()) }
@@ -171,7 +171,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         every { observatoryUseCases.findAllByNameContains("Label", any()) } returns page
         every { resourceUseCases.findById(any()) } returns Optional.empty()
 
-        mockMvc.perform(get("/api/observatories/?q=Label"))
+        mockMvc.perform(get("/api/observatories?q=Label"))
             .andExpect(status().isOk)
 
         verify(exactly = 1) { observatoryUseCases.findAllByNameContains("Label", any()) }
@@ -179,10 +179,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
 
     @Test
     fun `Fetching all observatories with too many parameters, status must be 400 BAD REQUEST`() {
-        mockMvc.perform(get("/api/observatories/?q=Label&research_field=R1234"))
+        mockMvc.perform(get("/api/observatories?q=Label&research_field=R1234"))
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.path").value("/api/observatories/"))
+            .andExpect(jsonPath("$.path").value("/api/observatories"))
             .andExpect(jsonPath("$.message").value(TooManyParameters.atMostOneOf("q", "research_field").message))
     }
 
@@ -197,7 +197,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         every { observatoryUseCases.findAllByResearchField(observatory1.researchField!!, any()) } returns page
         every { resourceUseCases.findById(any()) } returns Optional.empty()
 
-        mockMvc.perform(get("/api/observatories/?research_field=${observatory1.researchField}"))
+        mockMvc.perform(get("/api/observatories?research_field=${observatory1.researchField}"))
             .andExpect(status().isOk)
 
         verify(exactly = 1) { observatoryUseCases.findAllByResearchField(observatory1.researchField!!, any()) }

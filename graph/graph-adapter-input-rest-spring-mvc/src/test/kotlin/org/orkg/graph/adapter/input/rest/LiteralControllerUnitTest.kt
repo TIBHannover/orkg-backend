@@ -330,7 +330,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     }
 
     private fun creationOf(literal: LiteralCreateRequest) =
-        MockMvcRequestBuilders.post("/api/literals/")
+        MockMvcRequestBuilders.post("/api/literals")
             .contentType(APPLICATION_JSON)
             .characterEncoding("UTF-8")
             .content(objectMapper.writeValueAsString(literal))

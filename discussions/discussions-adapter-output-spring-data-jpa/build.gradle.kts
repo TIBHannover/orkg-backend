@@ -3,15 +3,6 @@ plugins {
     id("org.orkg.gradle.kotlin-library-with-container-tests")
 }
 
-val liquibase: Configuration by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-}
-
-val implementation: Configuration by configurations.getting {
-    extendsFrom(liquibase)
-}
-
 dependencies {
     api("jakarta.persistence:jakarta.persistence-api")
     api("org.springframework.boot:spring-boot-autoconfigure")
@@ -25,14 +16,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("jakarta.validation:jakarta.validation-api")
+    runtimeOnly(project(":migrations:liquibase"))
 
     containerTestApi("org.springframework.boot:spring-boot-test-autoconfigure")
     containerTestApi("org.springframework:spring-test")
     containerTestApi(project(":discussions:discussions-ports-output"))
     containerTestApi(testFixtures(project(":discussions:discussions-ports-output")))
     containerTestApi(testFixtures(project(":testing:spring")))
-
-    liquibase(project(mapOf("path" to ":migrations:liquibase", "configuration" to "liquibase")))
 }
 
 testing {
@@ -47,7 +37,7 @@ testing {
                 }
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.springframework:spring-beans")
-                implementation(project(":migrations:liquibase"))
+                runtimeOnly(project(":migrations:liquibase"))
                 runtimeOnly("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
                 runtimeOnly(libs.liquibase)
                 runtimeOnly(libs.postgres.driver)

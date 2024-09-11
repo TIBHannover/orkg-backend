@@ -7,11 +7,6 @@ plugins {
     id("org.orkg.gradle.kotlin-library-with-container-tests")
 }
 
-val neo4jMigrations: Configuration by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-}
-
 dependencies {
     api(project(":common"))
     api(project(":graph:graph-core-model"))
@@ -31,8 +26,6 @@ dependencies {
     implementation(project(":common:neo4j-dsl"))
 
     testFixturesApi(project(":common"))
-
-    neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
 
     containerTestApi("io.kotest:kotest-framework-api")
     containerTestApi(project(":graph:graph-ports-output"))
@@ -57,7 +50,6 @@ testing {
                 implementation(project(":common"))
                 implementation(project(":graph:graph-core-model"))
                 implementation(project(":graph:graph-core-services"))
-                runtimeOnly(project(":migrations:neo4j-migrations"))
                 implementation(testFixtures(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":graph:graph-ports-output")))
@@ -75,6 +67,7 @@ testing {
                 implementation(libs.spring.boot.starter.neo4j.migrations)
                 runtimeOnly(libs.kotest.extensions.spring)
                 runtimeOnly(libs.kotest.runner)
+                runtimeOnly(project(":migrations:neo4j-migrations"))
             }
         }
     }

@@ -35,7 +35,7 @@ testing {
                     exclude(module = "mockito-core")
                 }
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-                implementation(project(":migrations:liquibase"))
+                runtimeOnly(project(":migrations:liquibase"))
                 runtimeOnly(libs.kotest.extensions.spring)
                 runtimeOnly(libs.liquibase)
                 runtimeOnly(libs.postgres.driver)

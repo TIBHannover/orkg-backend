@@ -18,21 +18,6 @@ plugins {
     id("com.diffplug.spotless")
 }
 
-val liquibase: Configuration by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-}
-
-val neo4jMigrations: Configuration by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-}
-
-val runtimeClasspath by configurations.getting {
-    extendsFrom(liquibase)
-    extendsFrom(neo4jMigrations)
-}
-
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
@@ -61,8 +46,6 @@ testing {
             testType.set(TestSuiteType.INTEGRATION_TEST)
             dependencies {
                 implementation(project())
-                implementation(project(":migrations:liquibase"))
-                implementation(project(":migrations:neo4j-migrations"))
                 implementation(project(":graph:graph-core-services"))
                 implementation(project(":graph:graph-ports-output"))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
@@ -201,8 +184,8 @@ dependencies {
     // runtimeOnly(project(mapOf("path" to ":documentation", "configuration" to "staticFiles")))
 
     // Migrations
-    liquibase(project(mapOf("path" to ":migrations:liquibase", "configuration" to "liquibase")))
-    neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
+    runtimeOnly(project(":migrations:liquibase"))
+    runtimeOnly(project(":migrations:neo4j-migrations"))
 
     // Direct transitive dependencies
     implementation("org.apache.tomcat.embed:tomcat-embed-core")

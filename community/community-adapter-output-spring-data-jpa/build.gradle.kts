@@ -51,7 +51,7 @@ testing {
                     exclude(module = "mockito-core")
                 }
                 implementation("org.springframework:spring-beans")
-                implementation(project(":migrations:liquibase"))
+                runtimeOnly(project(":migrations:liquibase"))
                 runtimeOnly("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove or make version-less after upgrade to 2.7
                 runtimeOnly(libs.liquibase)
                 runtimeOnly(libs.postgres.driver)

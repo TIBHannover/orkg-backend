@@ -47,9 +47,10 @@ class RosettaStoneTemplateTargetClassCreatorUnitTest {
         )
         val classId = ThingId("C123")
         val exampleUsageId = ThingId("L123")
+        val descriptionId = ThingId("L456")
 
         every { classService.create(any()) } returns classId
-        every { literalService.create(any()) } returns exampleUsageId
+        every { literalService.create(any()) } returns exampleUsageId andThen descriptionId
         every {
             statementService.add(
                 userId = command.contributorId,
@@ -95,6 +96,22 @@ class RosettaStoneTemplateTargetClassCreatorUnitTest {
                 subject = classId,
                 predicate = Predicates.exampleOfUsage,
                 `object` = exampleUsageId
+            )
+        }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "${command.description}\n\nThis is a Rosetta Statement class. Every Rosetta Stone Statement class has a template associated that should be used when adding a statement of this type to the ORKG."
+                )
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = classId,
+                predicate = Predicates.description,
+                `object` = descriptionId
             )
         }
     }

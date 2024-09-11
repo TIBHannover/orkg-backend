@@ -43,5 +43,17 @@ class RosettaStoneTemplateTargetClassCreator(
                 predicate = Predicates.exampleOfUsage,
                 `object` = exampleUsageId
             )
+            val descriptionId = literalService.create(
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "${command.description}\n\nThis is a Rosetta Statement class. Every Rosetta Stone Statement class has a template associated that should be used when adding a statement of this type to the ORKG."
+                )
+            )
+            statementUseCases.add(
+                userId = command.contributorId,
+                subject = classId,
+                predicate = Predicates.description,
+                `object` = descriptionId
+            )
         }
 }

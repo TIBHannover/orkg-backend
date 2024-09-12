@@ -9,6 +9,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
@@ -17,7 +18,7 @@ import org.orkg.contenttypes.domain.actions.DescriptionValidator
 import org.orkg.contenttypes.domain.actions.LabelCollectionValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
-import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.OrganizationOrConferenceValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
@@ -98,6 +99,7 @@ class ComparisonService(
     private val listRepository: ListRepository,
     private val publishingService: PublishingService,
     private val comparisonRepository: ComparisonRepository,
+    private val conferenceSeriesRepository: ConferenceSeriesRepository,
     @Value("\${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/"
 ) : ComparisonUseCases, RetrieveComparisonContributionsUseCase {
@@ -182,7 +184,7 @@ class ComparisonService(
             ComparisonContributionValidator(resourceRepository) { it.contributions },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
-            OrganizationValidator(organizationRepository, { it.organizations }),
+            OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }),
             ComparisonAuthorCreateValidator(resourceRepository, statementRepository),
             ComparisonResourceCreator(resourceService),
@@ -314,7 +316,7 @@ class ComparisonService(
             ComparisonContributionValidator(resourceRepository) { it.contributions },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
-            OrganizationValidator(organizationRepository, { it.organizations }),
+            OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }),
             ComparisonAuthorUpdateValidator(resourceRepository, statementRepository),
             ComparisonResourceUpdater(resourceService),

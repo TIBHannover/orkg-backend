@@ -123,7 +123,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("related_resources[].id").description("The ID of the related resource."),
                         fieldWithPath("related_resources[].label").description("The label of the related resource."),
                         fieldWithPath("references[]").description("The list of references of the comparison."),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the comparison belongs to."),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the comparison belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to."),
                         fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
                         timestampFieldWithPath("created_at", "the comparison resource was created"),
@@ -906,7 +906,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the comparison will be assigned to. (optional)").optional(),
                         fieldWithPath("contributions[]").description("The ids of the contributions the comparison compares. (optional)"),
                         fieldWithPath("references[]").description("The references to external sources that the comparison refers to. (optional)"),
-                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the comparison belongs to. (optional)"),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the comparison belongs to. (optional)"),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to. (optional)"),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison should be displayed as anonymous. (optional)"),
                         fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""")

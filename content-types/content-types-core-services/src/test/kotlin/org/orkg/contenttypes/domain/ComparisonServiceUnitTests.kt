@@ -22,6 +22,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.input.CreateComparisonUseCase
@@ -65,6 +66,7 @@ class ComparisonServiceUnitTests {
     private val listRepository: ListRepository = mockk()
     private val publishingService: PublishingService = mockk()
     private val comparisonRepository: ComparisonRepository = mockk()
+    private val conferenceSeriesRepository: ConferenceSeriesRepository = mockk()
 
     private val service = ComparisonService(
         repository = contributionComparisonRepository,
@@ -79,6 +81,7 @@ class ComparisonServiceUnitTests {
         listRepository = listRepository,
         publishingService = publishingService,
         comparisonRepository = comparisonRepository,
+        conferenceSeriesRepository = conferenceSeriesRepository,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
     )
 
@@ -101,7 +104,8 @@ class ComparisonServiceUnitTests {
             listService,
             listRepository,
             publishingService,
-            comparisonRepository
+            comparisonRepository,
+            conferenceSeriesRepository
         )
     }
 

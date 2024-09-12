@@ -1,17 +1,22 @@
 package org.orkg.community.testing.fixtures
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.domain.ConferenceSeries
+import org.orkg.community.domain.ConferenceSeriesId
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.Observatory
+import org.orkg.community.domain.Metadata
 import org.orkg.community.domain.ObservatoryFilter
 import org.orkg.community.domain.ObservatoryFilterId
 import org.orkg.community.domain.Organization
 import org.orkg.community.domain.OrganizationType
+import org.orkg.community.domain.PeerReviewType
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicatePath
 import org.orkg.graph.domain.Predicates
@@ -70,3 +75,15 @@ fun createObservatoryFilter(
     exact: Boolean = false,
     featured: Boolean = false
 ): ObservatoryFilter = ObservatoryFilter(id, observatoryId, label, createdBy, createdAt, path, range, exact, featured)
+
+fun createConferenceSeries(
+    id: ConferenceSeriesId = ConferenceSeriesId("138acf53-0e81-46e1-b828-18ec6a8bb863"),
+    organizationId: OrganizationId = OrganizationId("d02073bc-30fd-481e-9167-f3fc3595d590"),
+    name: String = "some conference name",
+    homepage: String = "https://example.org",
+    displayId: String = "some display id",
+    metadata: Metadata = Metadata(
+        startDate = LocalDate.parse("2023-10-17"),
+        reviewType = PeerReviewType.SINGLE_BLIND
+    )
+) = ConferenceSeries(id, organizationId, name, homepage, displayId, metadata)

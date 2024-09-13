@@ -53,7 +53,9 @@ operation::comparisons-update[snippets='request-fields,curl-request,http-respons
 == Publishing comparisons
 
 A `POST` request publishes an existing comparison with the given parameters.
-It assigns a DOI to the comparison and adds additional publication information, such as month and year published.
+It automatically adds additional publication information, such as month and year published.
+All comparison cell contents will be archived in a separate database.
+Optionally, a DOI can be assigned to the comparison resource.
 The response will be `204 No Content` when successful.
 
 operation::comparisons-publish[snippets='request-fields,curl-request,http-response']

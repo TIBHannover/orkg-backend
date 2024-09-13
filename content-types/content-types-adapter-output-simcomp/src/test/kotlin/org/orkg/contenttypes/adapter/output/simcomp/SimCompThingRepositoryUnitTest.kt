@@ -82,7 +82,7 @@ class SimCompThingRepositoryUnitTest {
             it.updatedAt shouldBe LocalDateTime.parse("2022-02-22T06:02:14.292395")
             it.thingType shouldBe ThingType.LIST
             it.thingKey shouldBe ThingId("R166718")
-            it.config shouldBe emptyMap()
+            objectMapper.treeToValue(it.config, Map::class.java) shouldBe emptyMap<String, Any>()
             val data = it.toPublishedContentType(objectMapper)
             data.rootId shouldBe ThingId("R465")
             data.subgraph shouldBe listOf(

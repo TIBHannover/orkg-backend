@@ -29,11 +29,14 @@ import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
+import org.orkg.contenttypes.domain.ComparisonType
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedFigure
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedResource
@@ -464,10 +467,16 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val subject = "comparison subject"
         val description = "comparison description"
         val authors = listOf(Author("Author 1"))
+        val config = createComparisonConfig()
+        val data = createComparisonData()
+        val assignDOI = true
         val request = mapOf(
             "subject" to subject,
             "description" to description,
-            "authors" to authors
+            "authors" to authors,
+            "config" to config,
+            "data" to data,
+            "assign_doi" to assignDOI
         )
 
         every { comparisonService.publish(any()) } just runs
@@ -487,6 +496,38 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     requestFields(
                         fieldWithPath("subject").description("The subject of the comparison."),
                         fieldWithPath("description").description("The description of the comparison."),
+                        fieldWithPath("config").description("The configuration of the comparison."),
+                        fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
+                        fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
+                        fieldWithPath("config.transpose").description("Whether the comparison table is transposed."),
+                        fieldWithPath("config.type").description("The type of method used to create the comparison. Either of ${ComparisonType.entries.joinToString { "\"$it\"" }}"),
+                        // The short_codes field exists for compatibility reasons, but should not end up in the documentation, as it allows for arbitrary inputs.
+                        fieldWithPath("config.short_codes").description("The list of short form ids for the comparison.").optional().ignored(),
+                        fieldWithPath("data").description("The data contained in the comparison."),
+                        fieldWithPath("data.contributions").description("The list of contributions that are being compared in the comparison."),
+                        fieldWithPath("data.contributions[].id").description("The id of the contribution."),
+                        fieldWithPath("data.contributions[].label").description("The label of the contribution."),
+                        fieldWithPath("data.contributions[].paper_id").description("The id of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].paper_label").description("The label of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].paper_year").description("The publication year of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].active").description("Whether the contribution (column or row if transposed) should be displayed."),
+                        fieldWithPath("data.predicates").description("The list of predicates used in the comparison."),
+                        fieldWithPath("data.predicates[].id").description("When the comparison type is \"MERGE\", this is the predicate id. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
+                        fieldWithPath("data.predicates[].label").description("When the comparison type is \"MERGE\", this is the label of the predicate. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
+                        fieldWithPath("data.predicates[].n_contributions").description("The count of contributions that contain a statements for the predicate."),
+                        fieldWithPath("data.predicates[].active").description("Whether the predicate (row or column if transposed) should be displayed."),
+                        fieldWithPath("data.predicates[].similar_predicates").description("The list of similar predicate labels."),
+                        fieldWithPath("data.data").description("The values of the comparison."),
+                        fieldWithPath("data.data.*").description("A map of predicate ids to the values for each contribution."),
+                        fieldWithPath("data.data.*[]").description("All values for the predicate in the comparison. This corresponds to a row (or column if transposed) of the comparison."),
+                        fieldWithPath("data.data.*[][]").description("All values for the predicate and a single contribution. Every value corresponds to a single cell of the comparison."),
+                        fieldWithPath("data.data.*[][].id").description("The id of the orkg entity behind the value."),
+                        fieldWithPath("data.data.*[][].label").description("The label of the orkg entity behind the value. This corresponds to the cell value."),
+                        fieldWithPath("data.data.*[][].classes").description("The classes of the orkg entity, if it is a resource, empty otherwise."),
+                        fieldWithPath("data.data.*[][].path").description("The predicate path (ids) of the value within the contribution."),
+                        fieldWithPath("data.data.*[][].path_labels").description("The corresponding predicate labels of the predicate path."),
+                        fieldWithPath("data.data.*[][]._class").description("The type of the orkg entity behind the value. Either of \"class\", \"resource\", \"predicate\" or \"literal\"."),
+                        fieldWithPath("assign_doi").description("Whether to assign a new DOI for the comparison when publishing."),
                     ).and(authorListFields("comparison"))
                 )
             )
@@ -500,6 +541,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     it.description shouldBe description
                     it.subject shouldBe subject
                     it.authors shouldBe authors
+                    it.config shouldBe config
+                    it.data shouldBe data
+                    it.assignDOI shouldBe assignDOI
                 }
             )
         }
@@ -512,10 +556,16 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val subject = "comparison subject"
         val description = "comparison description"
         val authors = listOf(Author("Author 1"))
+        val config = createComparisonConfig()
+        val data = createComparisonData()
+        val assignDOI = true
         val request = mapOf(
             "subject" to subject,
             "description" to description,
-            "authors" to authors
+            "authors" to authors,
+            "config" to config,
+            "data" to data,
+            "assign_doi" to assignDOI
         )
         val exception = ComparisonNotFound(id)
 
@@ -539,6 +589,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     it.description shouldBe description
                     it.subject shouldBe subject
                     it.authors shouldBe authors
+                    it.config shouldBe config
+                    it.data shouldBe data
+                    it.assignDOI shouldBe assignDOI
                 }
             )
         }
@@ -551,10 +604,16 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val subject = "comparison subject"
         val description = "comparison description"
         val authors = listOf(Author("Author 1"))
+        val config = createComparisonConfig()
+        val data = createComparisonData()
+        val assignDOI = true
         val request = mapOf(
             "subject" to subject,
             "description" to description,
-            "authors" to authors
+            "authors" to authors,
+            "config" to config,
+            "data" to data,
+            "assign_doi" to assignDOI
         )
         val exception = ServiceUnavailable.create("DOI", 500, "Internal error")
 
@@ -578,6 +637,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     it.description shouldBe description
                     it.subject shouldBe subject
                     it.authors shouldBe authors
+                    it.config shouldBe config
+                    it.data shouldBe data
+                    it.assignDOI shouldBe assignDOI
                 }
             )
         }

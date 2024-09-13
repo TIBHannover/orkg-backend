@@ -8,11 +8,18 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Comparison
+import org.orkg.contenttypes.domain.ComparisonConfig
+import org.orkg.contenttypes.domain.ComparisonData
+import org.orkg.contenttypes.domain.ComparisonHeaderCell
+import org.orkg.contenttypes.domain.ComparisonIndexCell
 import org.orkg.contenttypes.domain.ComparisonRelatedFigure
 import org.orkg.contenttypes.domain.ComparisonRelatedResource
+import org.orkg.contenttypes.domain.ComparisonType
+import org.orkg.contenttypes.domain.ConfiguredComparisonTargetCell
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PublicationInfo
+import org.orkg.contenttypes.domain.PublishedComparison
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
 
@@ -156,3 +163,64 @@ fun createDummyComparisonRelatedFigure() = ComparisonRelatedFigure(
     createdAt = OffsetDateTime.parse("2023-10-12T16:05:05.959539600+02:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
 )
+
+fun createPublishedComparison(): PublishedComparison =
+    PublishedComparison(
+        id = ThingId("R5476"),
+        config = createComparisonConfig(),
+        data = createComparisonData()
+    )
+
+fun createComparisonConfig(): ComparisonConfig =
+    ComparisonConfig(
+        predicates = listOf(),
+        contributions = listOf("R456789", "R987654"),
+        transpose = false,
+        type = ComparisonType.MERGE,
+        shortCodes = emptyList()
+    )
+
+fun createComparisonData(): ComparisonData =
+    ComparisonData(
+        listOf(
+            ComparisonHeaderCell(
+                id = "R456789",
+                label = "Contribution 1",
+                paperId = "R456",
+                paperLabel = "Paper 1",
+                paperYear = 2024,
+                active = true
+            ),
+            ComparisonHeaderCell(
+                id = "R987654",
+                label = "Contribution 1",
+                paperId = "R789",
+                paperLabel = "Paper 2",
+                paperYear = 2022,
+                active = true
+            )
+        ),
+        listOf(
+            ComparisonIndexCell(
+                id = "P32",
+                label = "research problem",
+                contributionAmount = 2,
+                active = true,
+                similarPredicates = listOf("P15")
+            )
+        ),
+        mapOf(
+            "P32" to listOf(
+                listOf(
+                    ConfiguredComparisonTargetCell(
+                        id = "R192326",
+                        label = "Covid-19 Pandemic Ontology Development",
+                        classes = listOf(ThingId("Problem")),
+                        path = listOf(ThingId("R187004"), ThingId("P32")),
+                        pathLabels = listOf("Contribution 1", "research problem"),
+                        `class` = "resource"
+                    )
+                )
+            )
+        )
+    )

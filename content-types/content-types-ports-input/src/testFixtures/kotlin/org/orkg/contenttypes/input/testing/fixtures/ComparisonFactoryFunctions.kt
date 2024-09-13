@@ -1,12 +1,16 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
+import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
 import org.orkg.contenttypes.input.CreateComparisonUseCase
+import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.graph.domain.ExtractionMethod
 
@@ -81,4 +85,30 @@ fun dummyUpdateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     isAnonymized = false,
     extractionMethod = ExtractionMethod.UNKNOWN
+)
+
+fun dummyPublishComparisonCommand() = PublishComparisonUseCase.PublishCommand(
+    id = ThingId("R16453"),
+    contributorId = ContributorId(UUID.randomUUID()),
+    subject = "Research Field 1",
+    description = "comparison description",
+    authors = listOf(
+        Author(
+            id = null,
+            name = "Author 1",
+            identifiers = emptyMap(),
+            homepage = null
+        ),
+        Author(
+            id = ThingId("R132564"),
+            name = "Author 2",
+            identifiers = mapOf(
+                "orcid" to listOf("0000-1111-2222-3333")
+            ),
+            homepage = ParsedIRI("https://example.org")
+        )
+    ),
+    config = createComparisonConfig(),
+    data = createComparisonData(),
+    assignDOI = true
 )

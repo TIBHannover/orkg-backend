@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain
 
 import dev.forkhandles.values.ofOrNull
-import java.net.URI
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
@@ -12,6 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.domain.actions.DescriptionValidator
@@ -19,6 +20,8 @@ import org.orkg.contenttypes.domain.actions.LabelCollectionValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationOrConferenceValidator
+import org.orkg.contenttypes.domain.actions.PublishComparisonCommand
+import org.orkg.contenttypes.domain.actions.PublishComparisonState
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
@@ -36,6 +39,8 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonExistenceValid
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonModifiableValidator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonPublicationInfoUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonPublishableValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureDeleter
@@ -48,16 +53,19 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceCreato
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionArchiver
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionDoiPublisher
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedFigureCommand
 import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedResourceCommand
-import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.RetrieveComparisonContributionsUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedFigureCommand
 import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedResourceCommand
+import org.orkg.contenttypes.output.ComparisonPublishedRepository
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
+import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidLabel
@@ -97,9 +105,11 @@ class ComparisonService(
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
     private val listRepository: ListRepository,
-    private val publishingService: PublishingService,
-    private val comparisonRepository: ComparisonRepository,
+    private val doiService: DoiService,
     private val conferenceSeriesRepository: ConferenceSeriesRepository,
+    private val comparisonRepository: ComparisonRepository,
+    private val comparisonPublishedRepository: ComparisonPublishedRepository,
+    private val clock: Clock = Clock.systemDefaultZone(),
     @Value("\${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/"
 ) : ComparisonUseCases, RetrieveComparisonContributionsUseCase {
@@ -367,24 +377,14 @@ class ComparisonService(
             .execute(comparisonId, comparisonRelatedFigureId, contributorId)
     }
 
-    override fun publish(command: PublishComparisonUseCase.PublishCommand) {
-        val comparison = resourceRepository.findById(command.id)
-            .filter { Classes.comparison in it.classes }
-            .orElseThrow { ComparisonNotFound(command.id) }
-        publishingService.publish(
-            PublishingService.PublishCommand(
-                id = comparison.id,
-                title = comparison.label,
-                contributorId = command.contributorId,
-                subject = command.subject,
-                description = command.description,
-                url = URI.create("$comparisonPublishBaseUri/").resolve(comparison.id.value),
-                creators = command.authors,
-                resourceType = Classes.comparison,
-                relatedIdentifiers = comparisonRepository.findAllDOIsRelatedToComparison(comparison.id).toList(),
-                snapshotCreator = { comparison.id }
-            )
+    override fun publish(command: PublishComparisonCommand) {
+        val steps = listOf<Action<PublishComparisonCommand, PublishComparisonState>>(
+            ComparisonPublishableValidator(resourceService, comparisonPublishedRepository),
+            ComparisonPublicationInfoUpdater(literalService, statementService, clock),
+            ComparisonVersionArchiver(comparisonPublishedRepository),
+            ComparisonVersionDoiPublisher(statementService, literalService, comparisonRepository, doiService, comparisonPublishBaseUri)
         )
+        steps.execute(command, PublishComparisonState())
     }
 
     private fun Resource.toComparisonRelatedResource(): ComparisonRelatedResource {

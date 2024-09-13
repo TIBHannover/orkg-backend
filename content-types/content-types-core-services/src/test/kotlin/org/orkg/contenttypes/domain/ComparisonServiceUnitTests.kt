@@ -11,10 +11,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.net.URI
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,9 +25,10 @@ import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.input.CreateComparisonUseCase
-import org.orkg.contenttypes.input.PublishComparisonUseCase
+import org.orkg.contenttypes.output.ComparisonPublishedRepository
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
+import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidLabel
@@ -64,9 +64,11 @@ class ComparisonServiceUnitTests {
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val listRepository: ListRepository = mockk()
-    private val publishingService: PublishingService = mockk()
-    private val comparisonRepository: ComparisonRepository = mockk()
+    private val doiService: DoiService = mockk()
     private val conferenceSeriesRepository: ConferenceSeriesRepository = mockk()
+    private val comparisonRepository: ComparisonRepository = mockk()
+    private val comparisonPublishedRepository: ComparisonPublishedRepository = mockk()
+    private val clock: Clock = fixedClock
 
     private val service = ComparisonService(
         repository = contributionComparisonRepository,
@@ -79,9 +81,11 @@ class ComparisonServiceUnitTests {
         literalService = literalService,
         listService = listService,
         listRepository = listRepository,
-        publishingService = publishingService,
-        comparisonRepository = comparisonRepository,
+        doiService = doiService,
         conferenceSeriesRepository = conferenceSeriesRepository,
+        comparisonRepository = comparisonRepository,
+        comparisonPublishedRepository = comparisonPublishedRepository,
+        clock = clock,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
     )
 
@@ -103,9 +107,10 @@ class ComparisonServiceUnitTests {
             literalService,
             listService,
             listRepository,
-            publishingService,
+            doiService,
+            conferenceSeriesRepository,
             comparisonRepository,
-            conferenceSeriesRepository
+            comparisonPublishedRepository
         )
     }
 
@@ -346,109 +351,6 @@ class ComparisonServiceUnitTests {
             )
         }
         verify(exactly = 1) { comparisonRepository.findVersionHistory(expected.id) }
-    }
-
-    @Test
-    fun `Given a comparison, when publishing, it returns success`() {
-        val comparison = createResource(
-            classes = setOf(Classes.comparison),
-            organizationId = OrganizationId(UUID.randomUUID()),
-            observatoryId = ObservatoryId(UUID.randomUUID())
-        )
-        val relatedDoi = "10.1472/58369"
-        val contributorId = ContributorId(UUID.randomUUID())
-        val subject = "Research Field 1"
-        val description = "comparison description"
-        val authors = listOf(
-            Author(
-                id = null,
-                name = "Author 1",
-                identifiers = emptyMap(),
-                homepage = null
-            ),
-            Author(
-                id = ThingId("R132564"),
-                name = "Author 2",
-                identifiers = mapOf(
-                    "orcid" to listOf("0000-1111-2222-3333")
-                ),
-                homepage = ParsedIRI("https://example.org")
-            )
-        )
-        val paperVersionId = comparison.id // TODO: replace with snapshot id
-
-        every { resourceRepository.findById(comparison.id) } returns Optional.of(comparison)
-        every { comparisonRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf(relatedDoi)
-        every { publishingService.publish(any()) } returns paperVersionId
-
-        service.publish(
-            PublishComparisonUseCase.PublishCommand(
-                id = comparison.id,
-                contributorId = contributorId,
-                subject = subject,
-                description = description,
-                authors = authors
-            )
-        )
-
-        verify(exactly = 1) { resourceRepository.findById(comparison.id) }
-        verify(exactly = 1) { comparisonRepository.findAllDOIsRelatedToComparison(comparison.id) }
-        verify(exactly = 1) {
-            publishingService.publish(
-                withArg {
-                    it.id shouldBe comparison.id
-                    it.title shouldBe comparison.label
-                    it.contributorId shouldBe contributorId
-                    it.subject shouldBe "Research Field 1"
-                    it.description shouldBe "comparison description"
-                    it.url shouldBe URI.create("https://orkg.org/comparison/${comparison.id}")
-                    it.creators shouldBe authors
-                    it.resourceType shouldBe Classes.comparison
-                    it.relatedIdentifiers shouldBe listOf(relatedDoi)
-                    it.snapshotCreator shouldNotBe null
-                }
-            )
-        }
-    }
-
-    @Test
-    fun `Given a comparison, when publishing but service reports missing paper, it throws an exception`() {
-        val id = ThingId("Missing")
-        val contributorId = ContributorId(UUID.randomUUID())
-        val subject = "Research Field 1"
-        val description = "comparison description"
-        val authors = listOf(
-            Author(
-                id = null,
-                name = "Author 1",
-                identifiers = emptyMap(),
-                homepage = null
-            ),
-            Author(
-                id = ThingId("R132564"),
-                name = "Author 2",
-                identifiers = mapOf(
-                    "orcid" to listOf("0000-1111-2222-3333")
-                ),
-                homepage = ParsedIRI("https://example.org")
-            )
-        )
-
-        every { resourceRepository.findById(id) } returns Optional.empty()
-
-        shouldThrow<ComparisonNotFound> {
-            service.publish(
-                PublishComparisonUseCase.PublishCommand(
-                    id = id,
-                    contributorId = contributorId,
-                    subject = subject,
-                    description = description,
-                    authors = authors
-                )
-            )
-        }
-
-        verify(exactly = 1) { resourceRepository.findById(id) }
     }
 
     @Test

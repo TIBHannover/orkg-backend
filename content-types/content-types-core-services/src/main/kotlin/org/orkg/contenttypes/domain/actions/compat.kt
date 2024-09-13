@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.domain.actions
 
 import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction
+import org.orkg.contenttypes.domain.actions.comparisons.PublishComparisonAction
 import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction
 import org.orkg.contenttypes.domain.actions.contributions.ContributionAction
 import org.orkg.contenttypes.domain.actions.literaturelists.CreateLiteratureListAction
@@ -42,6 +43,7 @@ import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
+import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.PublishLiteratureListUseCase
 import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.input.PublishSmartReviewUseCase
@@ -88,6 +90,7 @@ internal typealias DeleteLiteratureListSectionCommand = DeleteLiteratureListSect
 internal typealias DeleteSmartReviewSectionCommand = DeleteSmartReviewSectionUseCase.DeleteCommand
 
 internal typealias PublishPaperCommand = PublishPaperUseCase.PublishCommand
+internal typealias PublishComparisonCommand = PublishComparisonUseCase.PublishCommand
 internal typealias PublishLiteratureListCommand = PublishLiteratureListUseCase.PublishCommand
 internal typealias PublishSmartReviewCommand = PublishSmartReviewUseCase.PublishCommand
 
@@ -109,6 +112,7 @@ internal typealias UpdateRosettaStoneStatementState = UpdateRosettaStoneStatemen
 
 internal typealias CreateComparisonState = CreateComparisonAction.State
 internal typealias UpdateComparisonState = UpdateComparisonAction.State
+internal typealias PublishComparisonState = PublishComparisonAction.State
 
 internal typealias ContributionState = ContributionAction.State
 internal typealias VisualizationState = VisualizationAction.State

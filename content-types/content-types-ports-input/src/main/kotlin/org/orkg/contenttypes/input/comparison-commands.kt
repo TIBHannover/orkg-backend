@@ -5,6 +5,8 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
+import org.orkg.contenttypes.domain.ComparisonConfig
+import org.orkg.contenttypes.domain.ComparisonData
 import org.orkg.graph.domain.ExtractionMethod
 
 interface CreateComparisonUseCase {
@@ -107,6 +109,9 @@ interface PublishComparisonUseCase {
         val contributorId: ContributorId,
         val subject: String,
         val description: String,
-        val authors: List<Author>
+        val authors: List<Author>,
+        val config: ComparisonConfig,
+        val data: ComparisonData,
+        val assignDOI: Boolean
     )
 }

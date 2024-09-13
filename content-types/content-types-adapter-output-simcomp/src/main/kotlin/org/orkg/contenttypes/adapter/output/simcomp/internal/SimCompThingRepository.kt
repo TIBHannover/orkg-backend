@@ -43,7 +43,7 @@ class SimCompThingRepository(
         return Optional.ofNullable(result)
     }
 
-    fun save(id: ThingId, type: ThingType, data: Any, config: Map<String, Any> = emptyMap()) {
+    fun save(id: ThingId, type: ThingType, data: Any, config: Any = emptyMap<String, Any>()) {
         val body = ThingAddRequest(
             thingType = type,
             thingKey = id,

@@ -71,6 +71,9 @@ class RosettaStoneTemplateNotModifiable(id: ThingId) :
 class RosettaStoneTemplatePropertyNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Rosetta stone template property "$id" is not modifiable.""")
 
+class ComparisonAlreadyPublished(id: ThingId) :
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Comparison "$id" is already published.""")
+
 class LiteratureListAlreadyPublished(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Literature list "$id" is already published.""")
 

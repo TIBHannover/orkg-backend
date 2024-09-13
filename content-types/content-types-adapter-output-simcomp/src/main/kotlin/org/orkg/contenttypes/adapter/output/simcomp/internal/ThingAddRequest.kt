@@ -8,6 +8,6 @@ data class ThingAddRequest(
     val thingType: ThingType,
     @JsonProperty("thing_key")
     val thingKey: ThingId,
-    val config: Map<String, Any>,
+    val config: Any,
     val data: Any
 )

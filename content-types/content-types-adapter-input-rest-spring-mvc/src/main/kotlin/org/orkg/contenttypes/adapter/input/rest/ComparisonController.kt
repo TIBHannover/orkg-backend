@@ -15,6 +15,8 @@ import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRelatedFigureRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRelatedResourceRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRepresentationAdapter
+import org.orkg.contenttypes.domain.ComparisonConfig
+import org.orkg.contenttypes.domain.ComparisonData
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
@@ -436,7 +438,11 @@ class ComparisonController(
         val description: String,
         @field:Valid
         @field:Size(min = 1)
-        val authors: List<AuthorDTO>
+        val authors: List<AuthorDTO>,
+        val config: ComparisonConfig,
+        val data: ComparisonData,
+        @JsonProperty("assign_doi")
+        val assignDOI: Boolean
     ) {
         fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishComparisonUseCase.PublishCommand =
             PublishComparisonUseCase.PublishCommand(
@@ -444,7 +450,10 @@ class ComparisonController(
                 contributorId = contributorId,
                 subject = subject,
                 description = description,
-                authors = authors.map { it.toAuthor() }
+                authors = authors.map { it.toAuthor() },
+                config = config,
+                data = data,
+                assignDOI = assignDOI
             )
     }
 }

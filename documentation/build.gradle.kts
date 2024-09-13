@@ -1,3 +1,4 @@
+import com.epages.restdocs.apispec.gradle.OpenApi3Task
 import groovy.lang.Closure
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import io.swagger.v3.oas.models.servers.Server
@@ -157,6 +158,14 @@ openapi3 {
     title = "Open Research Knowledge Graph (ORKG) REST API"
     version = "${project.version}"
     setServer(serverClosure { url = "http://localhost:8080" })
+}
+
+tasks {
+    // For some unknown reason, it is not possible to configure the task directly.
+    // TODO: Try again with new version of the restdocs-api-spec Gradle plugin.
+    withType(OpenApi3Task::class).configureEach {
+        dependsOn(asciidoctor)
+    }
 }
 
 @Suppress("UNCHECKED_CAST")

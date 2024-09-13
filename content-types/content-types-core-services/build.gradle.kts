@@ -1,5 +1,5 @@
 plugins {
-    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
+    id("org.orkg.gradle.kotlin-library")
     id("org.orkg.gradle.spring-library")
 }
 
@@ -21,11 +21,6 @@ dependencies {
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
     implementation(libs.forkhandles.values4k)
-
-    testFixturesImplementation(project(":common"))
-    testFixturesImplementation(project(":content-types:content-types-core-model"))
-    testFixturesImplementation(project(":graph:graph-core-model"))
-    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-util")
 }
 
 testing {

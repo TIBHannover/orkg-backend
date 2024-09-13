@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Target classes of Rosetta Stone Statement Templates are now being assigned the same description as the Rosetta Stone Statement Template.
+  (See: [!1064](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1064))
+
+### Changed
+- All 'not modifiable' error responses now return status code 403.
+  (See: [!1056](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1056))
+- Class URIs are now required to be absolute.
+  (Closes: [#220](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/220))
+- Trailing slashes are now optional for all endpoints.
+  (See: [!1058](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1058))
+- It is now possible to assign a conference series as the organization of a comparison.
+  (See: [!1063](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1063))
+- The endpoint for publishing comparisons has been reworked.
+  (See: [!1034](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1034))
 
 ## [0.66.0] - 2024-09-04
 ### Added

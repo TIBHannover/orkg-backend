@@ -57,8 +57,8 @@ class ContentTypeService(
             Classes.comparison in classes -> comparisonService.run { toComparison() }
             Classes.visualization in classes -> visualizationService.run { toVisualization() }
             Classes.nodeShape in classes -> templateService.run { toTemplate() }
-            Classes.literatureList in classes -> literatureListService.run { toLiteratureList() }
-            Classes.smartReview in classes -> smartReviewService.run { toSmartReview() }
+            Classes.literatureList in classes || Classes.literatureListPublished in classes -> literatureListService.run { toLiteratureList() }
+            Classes.smartReview in classes || Classes.smartReviewPublished in classes -> smartReviewService.run { toSmartReview() }
             else -> throw IllegalArgumentException("""Cannot map resource "$id" to any content type.""")
         }
 }

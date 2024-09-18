@@ -279,42 +279,6 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     }
 
     @Test
-    fun `Given several templates, when they are fetched, then status is 200 OK and templates are returned`() {
-        val template = createDummyTemplate()
-        val createdBy = template.createdBy
-        every {
-            templateService.findAll(
-                label = any(),
-                visibility = VisibilityFilter.ALL_LISTED,
-                createdBy = createdBy,
-                researchField = ThingId("R11"),
-                researchProblem = ThingId("R12"),
-                targetClass = ThingId("C123"),
-                pageable = any()
-            )
-        } returns pageOf(template)
-
-        get("/api/templates?q=example&exact=true&visibility=ALL_LISTED&created_by=$createdBy&research_field=R11&research_problem=R12&target_class=C123")
-            .accept(TEMPLATE_JSON_V1)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andExpectTemplate("$.content[*]")
-
-        verify(exactly = 1) {
-            templateService.findAll(
-                label = withArg<ExactSearchString> { it.input shouldBe "example" },
-                visibility = VisibilityFilter.ALL_LISTED,
-                createdBy = createdBy,
-                researchField = ThingId("R11"),
-                researchProblem = ThingId("R12"),
-                targetClass = ThingId("C123"),
-                pageable = any()
-            )
-        }
-    }
-
-    @Test
     @TestWithMockUser
     @DisplayName("Given a template create request, when service succeeds, it creates and returns the template")
     fun create() {

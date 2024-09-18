@@ -150,7 +150,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
             .andDo(
                 documentationHandler.document(
                     requestParameters(
-                        parameterWithName("classes").description("Filter for the content type classes. Either of ${ContentTypeClass.entries.joinToString(",") { "\"$it\"" }} (optional)"),
+                        parameterWithName("classes").description("Filter for the content type classes. Available classes are ${ContentTypeClass.entries.joinToString(",") { "\"$it\"" }} (optional)"),
                         parameterWithName("visibility").description("Filter for visibility. Either of ${VisibilityFilter.entries.joinToString(",") { "\"$it\"" }}. (optional)"),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created this content type. (optional)"),
                         parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned content type can have. (optional)"),

@@ -6,12 +6,12 @@ import java.util.*
 import java.util.regex.Pattern
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.Unauthorized
 import org.orkg.community.output.ContributorRepository
 import org.orkg.discussions.input.CreateDiscussionCommentUseCase
 import org.orkg.discussions.input.DiscussionUseCases
 import org.orkg.discussions.output.DiscussionCommentRepository
 import org.orkg.graph.domain.Literal
+import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.UserNotFound
 import org.orkg.graph.output.ThingRepository
 import org.springframework.data.domain.Page
@@ -57,7 +57,7 @@ class DiscussionService(
             .orElseThrow { UserNotFound(contributorId.value) }
         repository.findById(id).ifPresent { comment ->
             if (!comment.isOwnedBy(contributor.id) && !contributor.isCurator) {
-                throw Unauthorized()
+                throw NeitherOwnerNorCurator(contributorId)
             }
             repository.deleteById(id)
         }

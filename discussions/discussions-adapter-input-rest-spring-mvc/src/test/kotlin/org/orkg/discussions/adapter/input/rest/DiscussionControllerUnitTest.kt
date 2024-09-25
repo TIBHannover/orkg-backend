@@ -25,9 +25,9 @@ import org.orkg.discussions.domain.DiscussionComment
 import org.orkg.discussions.domain.DiscussionCommentId
 import org.orkg.discussions.domain.InvalidContent
 import org.orkg.discussions.domain.TopicNotFound
-import org.orkg.common.exceptions.Unauthorized
 import org.orkg.discussions.input.CreateDiscussionCommentUseCase
 import org.orkg.discussions.input.DiscussionUseCases
+import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.UserNotFound
 import org.orkg.testing.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
@@ -335,17 +335,17 @@ internal class DiscussionControllerUnitTest {
     }
 
     @Test
-    fun `Given a comment is being deleted, when service reports unauthorized, then status is 401 UNAUTHORIZED`() {
+    fun `Given a comment is being deleted, when service reports forbidden, then status is 403 FORBIDDEN`() {
         val topic = ThingId("C1234")
         val id = DiscussionCommentId(UUID.randomUUID())
         val mockPrincipal = mockk<Principal>()
         val userId = UUID.randomUUID()
 
         every { mockPrincipal.name } returns userId.toString()
-        every { discussionService.delete(ContributorId(userId), topic, id) } throws Unauthorized()
+        every { discussionService.delete(ContributorId(userId), topic, id) } throws NeitherOwnerNorCurator(ContributorId(userId))
 
         mockMvc.perform(delete("/api/discussions/topic/$topic/$id").principal(mockPrincipal))
-            .andExpect(status().isUnauthorized)
+            .andExpect(status().isForbidden)
     }
 
     private fun MockMvc.post(uriTemplate: String, principal: Principal, body: Map<String, String>) = perform(

@@ -15,11 +15,11 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.exceptions.Unauthorized
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.discussions.input.CreateDiscussionCommentUseCase
 import org.orkg.discussions.output.DiscussionCommentRepository
+import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.UserNotFound
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
@@ -482,7 +482,7 @@ class DiscussionServiceTest {
         every { repository.findById(comment.id) } returns Optional.of(comment)
         every { repository.deleteById(comment.id) } returns Unit
 
-        shouldThrow<Unauthorized> {
+        shouldThrow<NeitherOwnerNorCurator> {
             service.delete(contributorId, topic, comment.id)
         }
 

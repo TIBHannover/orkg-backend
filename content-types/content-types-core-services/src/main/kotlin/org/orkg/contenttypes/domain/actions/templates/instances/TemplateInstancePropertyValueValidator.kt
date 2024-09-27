@@ -12,6 +12,7 @@ import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.domain.actions.toThingDefinition
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
@@ -20,8 +21,20 @@ class TemplateInstancePropertyValueValidator(
     override val thingRepository: ThingRepository,
     private val classRepository: ClassRepository,
     private val statementRepository: StatementRepository,
-    private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator = AbstractTemplatePropertyValueValidator()
+    private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator
 ) : UpdateTemplateInstanceAction, ThingIdValidator {
+    constructor(
+        thingRepository: ThingRepository,
+        classRepository: ClassRepository,
+        statementRepository: StatementRepository,
+        classHierarchyRepository: ClassHierarchyRepository
+    ) : this(
+        thingRepository,
+        classRepository,
+        statementRepository,
+        AbstractTemplatePropertyValueValidator(classHierarchyRepository)
+    )
+
     override fun invoke(
         command: UpdateTemplateInstanceCommand,
         state: UpdateTemplateInstanceState

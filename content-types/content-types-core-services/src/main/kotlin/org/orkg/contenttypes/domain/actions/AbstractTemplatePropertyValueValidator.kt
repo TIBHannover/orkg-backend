@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.actions
 
+import org.orkg.common.ThingId
 import org.orkg.common.toRealNumber
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
@@ -28,10 +29,13 @@ import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.contenttypes.input.ThingDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.output.ClassHierarchyRepository
 
 private const val ORKG_CLASS_NS = "http://orkg.org/orkg/class/"
 
-class AbstractTemplatePropertyValueValidator {
+class AbstractTemplatePropertyValueValidator(
+    private val classHierarchyRepository: ClassHierarchyRepository
+) {
     internal fun validateCardinality(property: TemplateProperty, propertyInstances: List<String>) {
         if (property.minCount != null && property.minCount!! > 0 && propertyInstances.size < property.minCount!!) {
             throw MissingPropertyValues(property.id, property.path.id, property.minCount!!, propertyInstances.size)
@@ -57,7 +61,7 @@ class AbstractTemplatePropertyValueValidator {
                     throw ObjectIsNotAList(property.id, property.path.id, id)
                 } else if (`object` is LiteralDefinition) {
                     throw ObjectMustNotBeALiteral(property.id, property.path.id, id)
-                } else if (`object` is ResourceDefinition && property.`class`.id != Classes.resources && property.`class`.id !in `object`.classes) {
+                } else if (`object` is ResourceDefinition && property.`class`.id != Classes.resources && !`object`.isInstanceOf(property.`class`.id)) {
                     throw ResourceIsNotAnInstanceOfTargetClass(property.id, property.path.id, id, property.`class`.id)
                 }
             }
@@ -111,5 +115,9 @@ class AbstractTemplatePropertyValueValidator {
                 }
             }
         }
+    }
+
+    private fun ResourceDefinition.isInstanceOf(targetClass: ThingId): Boolean {
+        return targetClass in classes || classes.any { `class` -> classHierarchyRepository.existsChild(targetClass, `class`) }
     }
 }

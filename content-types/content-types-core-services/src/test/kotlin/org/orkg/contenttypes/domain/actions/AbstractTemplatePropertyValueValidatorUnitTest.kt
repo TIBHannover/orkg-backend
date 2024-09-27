@@ -3,7 +3,14 @@ package org.orkg.contenttypes.domain.actions
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.orkg.common.RealNumber
@@ -34,6 +41,7 @@ import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -42,7 +50,20 @@ import org.orkg.graph.testing.fixtures.createResource
 private const val ORKG_CLASS_NS = "http://orkg.org/orkg/class/"
 
 class AbstractTemplatePropertyValueValidatorUnitTest {
-    private val abstractTemplatePropertyValueValidator = AbstractTemplatePropertyValueValidator()
+    private val classHierarchyRepository: ClassHierarchyRepository = mockk()
+
+    private val abstractTemplatePropertyValueValidator =
+        AbstractTemplatePropertyValueValidator(classHierarchyRepository)
+
+    @BeforeEach
+    fun resetState() {
+        clearAllMocks()
+    }
+
+    @AfterEach
+    fun verifyMocks() {
+        confirmVerified(classHierarchyRepository)
+    }
 
     /*
      * Test cardinality validation
@@ -169,6 +190,18 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     }
 
     @Test
+    fun `Given a resource template property, when object value is an instance of target class, it returns success`() {
+        val property = createDummyResourceTemplateProperty().copy(
+            minCount = 0,
+            `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
+        )
+        val id = "R123"
+        val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("C123"))).toThingDefinition()
+
+        abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
+    }
+
+    @Test
     fun `Given a resource template property, when object value is not an instance of target class, it throws an exception`() {
         val property = createDummyResourceTemplateProperty().copy(
             minCount = 0,
@@ -182,6 +215,42 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
         }.asClue {
             it.message shouldBe """Object "R123" for template property "R27" with predicate "P27" is not an instance of target class "C123"."""
         }
+    }
+
+    @Test
+    fun `Given a resource template property, when object value is not an instance of the target class but an instance of a subclass of target class, it returns success`() {
+        val property = createDummyResourceTemplateProperty().copy(
+            minCount = 0,
+            `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
+        )
+        val id = "R123"
+        val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("Subclass"))).toThingDefinition()
+
+        every { classHierarchyRepository.existsChild(ThingId("C123"), ThingId("Subclass")) } returns true
+
+        abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
+
+        verify(exactly = 1) { classHierarchyRepository.existsChild(ThingId("C123"), ThingId("Subclass")) }
+    }
+
+    @Test
+    fun `Given a resource template property, when object value is not an instance of the target class and not an instance of a subclass of target class, it throws an exception`() {
+        val property = createDummyResourceTemplateProperty().copy(
+            minCount = 0,
+            `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
+        )
+        val id = "R123"
+        val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("Subclass"))).toThingDefinition()
+
+        every { classHierarchyRepository.existsChild(ThingId("C123"), ThingId("Subclass")) } returns false
+
+        shouldThrow<ResourceIsNotAnInstanceOfTargetClass> {
+            abstractTemplatePropertyValueValidator.validateObject(property, id, `object`)
+        }.asClue {
+            it.message shouldBe """Object "R123" for template property "R27" with predicate "P27" is not an instance of target class "C123"."""
+        }
+
+        verify(exactly = 1) { classHierarchyRepository.existsChild(ThingId("C123"), ThingId("Subclass")) }
     }
 
     @Test

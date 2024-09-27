@@ -45,6 +45,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -70,6 +71,7 @@ class RosettaStoneStatementService(
     private val statementRepository: StatementRepository,
     private val listService: ListUseCases,
     private val contributorRepository: ContributorRepository,
+    private val classHierarchyRepository: ClassHierarchyRepository,
     private val clock: Clock = Clock.systemDefaultZone()
 ) : RosettaStoneStatementUseCases {
     override fun findByIdOrVersionId(id: ThingId): Optional<RosettaStoneStatement> =
@@ -108,7 +110,7 @@ class RosettaStoneStatementService(
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
             RosettaStoneStatementThingDefinitionCreateValidator(thingRepository, classRepository),
-            RosettaStoneStatementPropertyValueCreateValidator(thingRepository, statementRepository, this),
+            RosettaStoneStatementPropertyValueCreateValidator(thingRepository, statementRepository, classHierarchyRepository, this),
             RosettaStoneStatementThingDefinitionCreateCreator(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService),
             RosettaStoneStatementCreator(repository, thingRepository, clock)
         )
@@ -124,7 +126,7 @@ class RosettaStoneStatementService(
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.organizations }),
             RosettaStoneStatementThingDefinitionUpdateValidator(thingRepository, classRepository),
-            RosettaStoneStatementPropertyValueUpdateValidator(thingRepository, statementRepository, this),
+            RosettaStoneStatementPropertyValueUpdateValidator(thingRepository, statementRepository, classHierarchyRepository, this),
             RosettaStoneStatementThingDefinitionUpdateCreator(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService),
             RosettaStoneStatementUpdater(repository, thingRepository, clock)
         )

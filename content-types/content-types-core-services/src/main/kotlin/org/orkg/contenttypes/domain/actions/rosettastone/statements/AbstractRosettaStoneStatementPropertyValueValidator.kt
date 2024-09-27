@@ -32,6 +32,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 
@@ -39,8 +40,20 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
     override val thingRepository: ThingRepository,
     private val statementRepository: StatementRepository,
     private val rosettaStoneStatementService: RosettaStoneStatementUseCases,
-    private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator = AbstractTemplatePropertyValueValidator()
+    private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator
 ) : ThingIdValidator {
+    constructor(
+        thingRepository: ThingRepository,
+        statementRepository: StatementRepository,
+        rosettaStoneStatementService: RosettaStoneStatementUseCases,
+        classHierarchyRepository: ClassHierarchyRepository
+    ) : this(
+        thingRepository,
+        statementRepository,
+        rosettaStoneStatementService,
+        AbstractTemplatePropertyValueValidator(classHierarchyRepository)
+    )
+
     fun validate(
         templateProperties: List<TemplateProperty>,
         thingDefinitions: Map<String, ThingDefinition>,

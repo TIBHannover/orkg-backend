@@ -28,6 +28,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -48,7 +49,8 @@ class TemplateInstanceService(
     private val predicateService: PredicateUseCases,
     private val listService: ListUseCases,
     private val statementRepository: StatementRepository,
-    private val classRepository: ClassRepository
+    private val classRepository: ClassRepository,
+    private val classHierarchyRepository: ClassHierarchyRepository
 ) : TemplateInstanceUseCases {
 
     override fun findById(templateId: ThingId, id: ThingId): Optional<TemplateInstance> {
@@ -94,7 +96,7 @@ class TemplateInstanceService(
             TemplateInstanceTemplateValidator(templateService),
             TemplateInstanceSubjectValidator(resourceRepository, this),
             TemplateInstanceThingDefinitionValidator(thingRepository, classRepository),
-            TemplateInstancePropertyValueValidator(thingRepository, classRepository, statementRepository),
+            TemplateInstancePropertyValueValidator(thingRepository, classRepository, statementRepository, classHierarchyRepository),
             TemplateInstanceSubjectUpdater(resourceRepository),
             TemplateInstancePropertyValueUpdater(classService, resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )

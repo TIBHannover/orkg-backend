@@ -25,6 +25,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -46,6 +47,7 @@ class TemplateInstanceServiceUnitTests {
     private val listService: ListUseCases = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val classRepository: ClassRepository = mockk()
+    private val classHierarchyRepository: ClassHierarchyRepository = mockk()
 
     private val service = TemplateInstanceService(
         resourceRepository = resourceRepository,
@@ -57,8 +59,9 @@ class TemplateInstanceServiceUnitTests {
         literalService = literalService,
         predicateService = predicateService,
         listService = listService,
+        statementRepository = statementRepository,
         classRepository = classRepository,
-        statementRepository = statementRepository
+        classHierarchyRepository = classHierarchyRepository
     )
 
     @BeforeEach
@@ -78,7 +81,9 @@ class TemplateInstanceServiceUnitTests {
             literalService,
             predicateService,
             listService,
-            statementRepository
+            statementRepository,
+            classRepository,
+            classHierarchyRepository
         )
     }
 

@@ -30,6 +30,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -53,6 +54,7 @@ class RosettaStoneStatementServiceUnitTests {
     private val statementRepository: StatementRepository = mockk()
     private val listService: ListUseCases = mockk()
     private val contributorRepository: ContributorRepository = mockk()
+    private val classHierarchyRepository: ClassHierarchyRepository = mockk()
 
     private val service = RosettaStoneStatementService(
         repository,
@@ -70,6 +72,7 @@ class RosettaStoneStatementServiceUnitTests {
         statementRepository,
         listService,
         contributorRepository,
+        classHierarchyRepository,
         fixedClock
     )
 
@@ -95,7 +98,8 @@ class RosettaStoneStatementServiceUnitTests {
             predicateService,
             statementRepository,
             contributorRepository,
-            listService
+            listService,
+            classHierarchyRepository
         )
     }
 

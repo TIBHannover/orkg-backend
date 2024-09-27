@@ -21,6 +21,8 @@ interface SmartReviewRepository {
         createdAtEnd: OffsetDateTime? = null,
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
+        researchField: ThingId? = null,
+        includeSubfields: Boolean = false,
         published: Boolean? = null,
         sustainableDevelopmentGoal: ThingId? = null
     ): Page<Resource>

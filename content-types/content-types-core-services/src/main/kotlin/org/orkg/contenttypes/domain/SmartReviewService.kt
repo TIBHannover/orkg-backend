@@ -122,6 +122,8 @@ class SmartReviewService(
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
         published: Boolean?,
         sustainableDevelopmentGoal: ThingId?
     ): Page<SmartReview> =
@@ -134,6 +136,8 @@ class SmartReviewService(
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
             organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
             published = published,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toSmartReview() }

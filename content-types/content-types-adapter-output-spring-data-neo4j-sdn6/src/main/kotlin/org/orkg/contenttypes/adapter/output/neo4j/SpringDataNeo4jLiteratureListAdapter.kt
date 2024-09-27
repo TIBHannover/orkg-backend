@@ -23,12 +23,14 @@ import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.contenttypes.output.LiteratureListRepository
 import org.orkg.graph.adapter.output.neo4j.ResourceMapper
+import org.orkg.graph.adapter.output.neo4j.node
 import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
 import org.orkg.graph.adapter.output.neo4j.query
 import org.orkg.graph.adapter.output.neo4j.toCondition
 import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.Predicates
@@ -57,12 +59,26 @@ class SpringDataNeo4jLiteratureListAdapter(
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
         published: Boolean?,
         sustainableDevelopmentGoal: ThingId?
     ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
         .withCommonQuery {
             val patterns: (Node) -> Collection<RelationshipPattern> = { node ->
                 listOfNotNull(
+                    researchField?.let {
+                        val researchFieldNode = node(Classes.researchField)
+                            .withProperties("id", anonParameter(it.value))
+                        if (includeSubfields) {
+                            node.relationshipTo(node(Classes.researchField), RELATED)
+                                .relationshipFrom(researchFieldNode, RELATED)
+                                .properties("predicate_id", literalOf<String>(Predicates.hasSubfield.value))
+                                .min(0)
+                        } else {
+                            node.relationshipTo(researchFieldNode, RELATED)
+                        }
+                    },
                     sustainableDevelopmentGoal?.let {
                         node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
                             .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))

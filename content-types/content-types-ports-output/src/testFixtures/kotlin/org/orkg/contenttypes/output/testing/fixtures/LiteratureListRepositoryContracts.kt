@@ -490,6 +490,165 @@ fun <
                     }
                 }
             }
+            context("by research field") {
+                context("excluding subfields") {
+                    val graph = createTestGraph().save()
+                    val researchField = fabricator.random<Resource>().copy(
+                        classes = setOf(Classes.researchField)
+                    )
+                    val hasResearchField = createPredicate(Predicates.hasResearchField)
+                    val assignedToField = graph.resources.filterIndexed { index, _ -> index % 2 == 0 }
+                    val assignedToOther = graph.resources.filterIndexed { index, _ -> index % 2 == 1 }
+
+                    assignedToField.forEach {
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasResearchField,
+                                `object` = researchField
+                            )
+                        )
+                    }
+
+                    assignedToOther.forEach {
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasResearchField,
+                                `object` = fabricator.random<Resource>().copy(
+                                    classes = setOf(Classes.researchField)
+                                )
+                            )
+                        )
+                    }
+
+                    val expected = assignedToField - graph.ignored
+                    val result = repository.findAll(
+                        pageable = PageRequest.of(0, 10),
+                        researchField = researchField.id
+                    )
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expected.size
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 10
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expected.size
+                    }
+                    it("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
+                        }
+                    }
+                }
+                context("including subfields") {
+                    val graph = createTestGraph().save()
+                    val researchField = fabricator.random<Resource>().copy(
+                        classes = setOf(Classes.researchField)
+                    )
+                    val hasSubject = createPredicate(Predicates.hasSubject)
+                    val directlyAssignedToField = graph.resources.filterIndexed { index, _ -> index % 4 == 0 }
+                    val directlyAssignedToOther = graph.resources.filterIndexed { index, _ -> index % 4 == 1 }
+                    val indirectlyAssignedToField = graph.resources.filterIndexed { index, _ -> index % 4 == 2 }
+                    val indirectlyAssignedToOther = graph.resources.filterIndexed { index, _ -> index % 4 == 3 }
+
+                    directlyAssignedToField.forEach {
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasSubject,
+                                `object` = researchField
+                            )
+                        )
+                    }
+
+                    directlyAssignedToOther.forEach {
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasSubject,
+                                `object` = fabricator.random<Resource>().copy(
+                                    classes = setOf(Classes.researchField)
+                                )
+                            )
+                        )
+                    }
+
+                    val hasSubfield = createPredicate(Predicates.hasSubfield)
+
+                    indirectlyAssignedToField.forEach {
+                        val subField = fabricator.random<Resource>().copy(
+                            classes = setOf(Classes.researchField)
+                        )
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasSubject,
+                                `object` = subField
+                            )
+                        )
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = researchField,
+                                predicate = hasSubfield,
+                                `object` = subField
+                            )
+                        )
+                    }
+
+                    indirectlyAssignedToOther.forEach {
+                        val subField = fabricator.random<Resource>().copy(
+                            classes = setOf(Classes.researchField)
+                        )
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasSubject,
+                                `object` = subField
+                            )
+                        )
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = fabricator.random<Resource>().copy(
+                                    classes = setOf(Classes.researchField)
+                                ),
+                                predicate = hasSubfield,
+                                `object` = subField
+                            )
+                        )
+                    }
+
+                    val expected = (directlyAssignedToField + indirectlyAssignedToField) - graph.ignored
+                    val result = repository.findAll(
+                        pageable = PageRequest.of(0, 10),
+                        researchField = researchField.id,
+                        includeSubfields = true
+                    )
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expected.size
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 10
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expected.size
+                    }
+                    it("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
+                        }
+                    }
+                }
+            }
             context("by sdg") {
                 val sdg = ThingId("SDG_1")
                 val graph = createTestGraph().save()
@@ -534,12 +693,22 @@ fun <
             context("using all parameters") {
                 val graph = createTestGraph().save()
                 val expected = graph.resources.first()
+                val researchField = fabricator.random<Resource>().copy(
+                    classes = setOf(Classes.researchField)
+                )
 
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
                         subject = expected,
                         predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
                         `object` = createResource(ThingId("SDG_1"), classes = setOf(Classes.sustainableDevelopmentGoal))
+                    )
+                )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = expected,
+                        predicate = createPredicate(Predicates.hasResearchField),
+                        `object` = researchField
                     )
                 )
 
@@ -552,6 +721,8 @@ fun <
                     createdAtEnd = expected.createdAt,
                     observatoryId = expected.observatoryId,
                     organizationId = expected.organizationId,
+                    researchField = researchField.id,
+                    includeSubfields = true,
                     published = false,
                     sustainableDevelopmentGoal = ThingId("SDG_1")
                 )

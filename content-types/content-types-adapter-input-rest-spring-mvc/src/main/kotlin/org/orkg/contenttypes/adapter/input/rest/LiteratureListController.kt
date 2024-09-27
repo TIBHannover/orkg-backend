@@ -90,6 +90,8 @@ class LiteratureListController(
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
+        @RequestParam("research_field", required = false) researchField: ThingId?,
+        @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
         @RequestParam("published", required = false) published: Boolean?,
         @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
         pageable: Pageable
@@ -103,6 +105,8 @@ class LiteratureListController(
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
             organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
             published = published,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).mapToLiteratureListRepresentation()

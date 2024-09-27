@@ -108,6 +108,8 @@ class LiteratureListService(
         createdAtEnd: OffsetDateTime?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
         published: Boolean?,
         sustainableDevelopmentGoal: ThingId?
     ): Page<LiteratureList> =
@@ -120,6 +122,8 @@ class LiteratureListService(
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
             organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
             published = published,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toLiteratureList() }

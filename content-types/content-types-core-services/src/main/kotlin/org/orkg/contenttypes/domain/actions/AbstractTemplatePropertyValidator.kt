@@ -54,7 +54,7 @@ class AbstractTemplatePropertyValidator(
                     throw InvalidRegexPattern(pattern, e)
                 }
             }
-        } else if (property is NumberLiteralTemplatePropertyDefinition<*>) {
+        } else if (property is NumberLiteralTemplatePropertyDefinition) {
             val xsd = Literals.XSD.fromClass(property.datatype)
             if (xsd?.isNumber != true) {
                 throw InvalidDatatype(property.datatype, *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray())

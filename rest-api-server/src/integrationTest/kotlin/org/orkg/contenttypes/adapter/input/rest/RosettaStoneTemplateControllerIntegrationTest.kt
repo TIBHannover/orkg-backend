@@ -15,6 +15,7 @@ import org.orkg.auth.output.UserRepository
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -243,7 +244,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
-            it.properties[3].shouldBeInstanceOf<NumberLiteralTemplatePropertyRepresentation<*>>().asClue { property ->
+            it.properties[3].shouldBeInstanceOf<NumberLiteralTemplatePropertyRepresentation>().asClue { property ->
                 property.id shouldNotBe null
                 property.label shouldBe "number literal property label"
                 property.placeholder shouldBe "number literal property placeholder"
@@ -251,8 +252,8 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.order shouldBe 3
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
-                property.minInclusive shouldBe -1
-                property.maxInclusive shouldBe 10
+                property.minInclusive shouldBe RealNumber(-1)
+                property.maxInclusive shouldBe RealNumber(10)
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
                 property.datatype shouldBe ClassReferenceRepresentation(ThingId("Integer"), "Integer", ParsedIRI(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
@@ -350,7 +351,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
-            it.properties[3].shouldBeInstanceOf<NumberLiteralTemplateProperty<*>>().asClue { property ->
+            it.properties[3].shouldBeInstanceOf<NumberLiteralTemplateProperty>().asClue { property ->
                 property.id shouldNotBe null
                 property.label shouldBe "updated number literal property label"
                 property.placeholder shouldBe "updated number literal property placeholder"
@@ -358,8 +359,8 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
                 property.order shouldBe 3
                 property.minCount shouldBe 2
                 property.maxCount shouldBe 3
-                property.minInclusive shouldBe 0
-                property.maxInclusive shouldBe 11
+                property.minInclusive shouldBe RealNumber(0)
+                property.maxInclusive shouldBe RealNumber(11)
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "label")
                 property.datatype shouldBe ClassReference(ThingId("Integer"), "Integer", ParsedIRI(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null

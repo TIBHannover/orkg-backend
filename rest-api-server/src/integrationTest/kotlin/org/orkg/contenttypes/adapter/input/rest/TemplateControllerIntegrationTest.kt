@@ -15,6 +15,7 @@ import org.orkg.auth.output.UserRepository
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -238,7 +239,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
-            it.properties[2].shouldBeInstanceOf<NumberLiteralTemplatePropertyRepresentation<*>>().asClue { property ->
+            it.properties[2].shouldBeInstanceOf<NumberLiteralTemplatePropertyRepresentation>().asClue { property ->
                 property.id shouldNotBe null
                 property.label shouldBe "number literal property label"
                 property.placeholder shouldBe "number literal property placeholder"
@@ -246,8 +247,8 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.order shouldBe 2
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
-                property.minInclusive shouldBe -1
-                property.maxInclusive shouldBe 10
+                property.minInclusive shouldBe RealNumber(-1)
+                property.maxInclusive shouldBe RealNumber(10)
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
                 property.datatype shouldBe ClassReferenceRepresentation(ThingId("Integer"), "Integer", ParsedIRI(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
@@ -363,7 +364,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
-            it.properties[4].shouldBeInstanceOf<NumberLiteralTemplateProperty<*>>().asClue { property ->
+            it.properties[4].shouldBeInstanceOf<NumberLiteralTemplateProperty>().asClue { property ->
                 property.id shouldNotBe null
                 property.label shouldBe "updated number literal property label"
                 property.placeholder shouldBe "updated number literal property placeholder"
@@ -371,8 +372,8 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
                 property.order shouldBe 4
                 property.minCount shouldBe 1
                 property.maxCount shouldBe 2
-                property.minInclusive shouldBe -5.0
-                property.maxInclusive shouldBe 15.5
+                property.minInclusive shouldBe RealNumber(-5)
+                property.maxInclusive shouldBe RealNumber(15.5)
                 property.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
                 property.datatype shouldBe ClassReference(ThingId("Decimal"), "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
                 property.createdAt shouldNotBe null
@@ -521,7 +522,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
         val template = templateService.findById(templateId)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
-        template.properties.last().shouldBeInstanceOf<NumberLiteralTemplateProperty<*>>().asClue {
+        template.properties.last().shouldBeInstanceOf<NumberLiteralTemplateProperty>().asClue {
             it.id shouldNotBe null
             it.label shouldBe "number literal property label"
             it.placeholder shouldBe "number literal property placeholder"
@@ -529,8 +530,8 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.order shouldBe template.properties.size - 1
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
-            it.minInclusive shouldBe -1
-            it.maxInclusive shouldBe 10
+            it.minInclusive shouldBe RealNumber(-1)
+            it.maxInclusive shouldBe RealNumber(10)
             it.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
             it.datatype shouldBe ClassReference(ThingId("Integer"), "Integer", ParsedIRI(Literals.XSD.INT.uri))
             it.createdAt shouldNotBe null
@@ -550,7 +551,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
         val updatedTemplate = templateService.findById(templateId)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
-        updatedTemplate.properties.first().shouldBeInstanceOf<NumberLiteralTemplateProperty<*>>().asClue {
+        updatedTemplate.properties.first().shouldBeInstanceOf<NumberLiteralTemplateProperty>().asClue {
             it.id shouldBe propertyId
             it.label shouldBe "updated number literal property label"
             it.placeholder shouldBe "updated number literal property placeholder"
@@ -558,8 +559,8 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             it.order shouldBe 0
             it.minCount shouldBe 1
             it.maxCount shouldBe 2
-            it.minInclusive shouldBe -5.0
-            it.maxInclusive shouldBe 15.5
+            it.minInclusive shouldBe RealNumber(-5)
+            it.maxInclusive shouldBe RealNumber(15.5)
             it.path shouldBe ObjectIdAndLabel(ThingId("P24"), "label")
             it.datatype shouldBe ClassReference(ThingId("Decimal"), "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
             it.createdAt shouldNotBe null

@@ -4,6 +4,7 @@ import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.NumberLiteralTemplateProperty
 import org.orkg.contenttypes.domain.OtherLiteralTemplateProperty
@@ -110,8 +111,8 @@ fun dummyCreateNumberLiteralTemplatePropertyCommand() = CreateTemplatePropertyUs
     description = "number literal property description",
     minCount = 1,
     maxCount = 2,
-    minInclusive = -1,
-    maxInclusive = 10,
+    minInclusive = RealNumber(-1),
+    maxInclusive = RealNumber(10),
     path = Predicates.field,
     datatype = Classes.integer,
 )
@@ -175,8 +176,8 @@ fun dummyUpdateNumberLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUs
     description = "updated literal property description",
     minCount = 0,
     maxCount = 1,
-    minInclusive = 2,
-    maxInclusive = 5,
+    minInclusive = RealNumber(2),
+    maxInclusive = RealNumber(5),
     path = Predicates.description,
     datatype = Classes.decimal,
 )
@@ -218,7 +219,7 @@ fun TemplateProperty.toTemplatePropertyDefinition(): TemplatePropertyDefinition 
     when (this) {
         is UntypedTemplateProperty -> toUntypedTemplatePropertyDefinition()
         is StringLiteralTemplateProperty -> toStringLiteralTemplatePropertyDefinition()
-        is NumberLiteralTemplateProperty<*> -> toNumberLiteralTemplatePropertyDefinition()
+        is NumberLiteralTemplateProperty -> toNumberLiteralTemplatePropertyDefinition()
         is OtherLiteralTemplateProperty -> toOtherLiteralTemplatePropertyDefinition()
         is ResourceTemplateProperty -> toResourceTemplatePropertyDefinition()
     }
@@ -229,7 +230,7 @@ fun UntypedTemplateProperty.toUntypedTemplatePropertyDefinition(): UntypedProper
 fun StringLiteralTemplateProperty.toStringLiteralTemplatePropertyDefinition(): StringLiteralPropertyDefinition =
     StringLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, pattern, path.id, datatype.id)
 
-fun <T : Number> NumberLiteralTemplateProperty<T>.toNumberLiteralTemplatePropertyDefinition(): NumberLiteralPropertyDefinition<T> =
+fun NumberLiteralTemplateProperty.toNumberLiteralTemplatePropertyDefinition(): NumberLiteralPropertyDefinition =
     NumberLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path.id, datatype.id)
 
 fun OtherLiteralTemplateProperty.toOtherLiteralTemplatePropertyDefinition(): OtherLiteralPropertyDefinition =

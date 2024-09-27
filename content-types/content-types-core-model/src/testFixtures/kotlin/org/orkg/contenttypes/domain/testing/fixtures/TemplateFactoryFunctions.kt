@@ -5,6 +5,7 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.NumberLiteralTemplateProperty
@@ -95,8 +96,8 @@ fun createDummyNumberLiteralTemplateProperty() = NumberLiteralTemplateProperty(
     order = 2,
     minCount = 1,
     maxCount = 2,
-    minInclusive = -1,
-    maxInclusive = 10,
+    minInclusive = RealNumber(-1),
+    maxInclusive = RealNumber(10),
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.hasHeadingLevel, "number literal property path label"),
@@ -111,15 +112,15 @@ fun createDummyFloatLiteralTemplateProperty() = NumberLiteralTemplateProperty(
     order = 2,
     minCount = 1,
     maxCount = 2,
-    minInclusive = -1.0F,
-    maxInclusive = 10.0F,
+    minInclusive = RealNumber(-1.0F),
+    maxInclusive = RealNumber(10.0F),
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.hasHeadingLevel, "float literal property path label"),
     datatype = ClassReference(Classes.float, "float literal property class label", ParsedIRI(Literals.XSD.FLOAT.uri))
 )
 
-fun createDummyDecimalLiteralTemplateProperty(): NumberLiteralTemplateProperty<Double> = NumberLiteralTemplateProperty(
+fun createDummyDecimalLiteralTemplateProperty(): NumberLiteralTemplateProperty = NumberLiteralTemplateProperty(
     id = ThingId("R25"),
     label = "decimal property label",
     placeholder = "decimal literal placeholder",
@@ -127,8 +128,8 @@ fun createDummyDecimalLiteralTemplateProperty(): NumberLiteralTemplateProperty<D
     order = 2,
     minCount = 1,
     maxCount = 2,
-    minInclusive = -1.0,
-    maxInclusive = 10.0,
+    minInclusive = RealNumber(-1.0),
+    maxInclusive = RealNumber(10.0),
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.hasHeadingLevel, "decimal literal property path label"),

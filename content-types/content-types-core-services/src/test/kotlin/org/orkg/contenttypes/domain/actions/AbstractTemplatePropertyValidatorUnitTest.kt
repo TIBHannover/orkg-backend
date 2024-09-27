@@ -12,6 +12,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.RealNumber
 import org.orkg.contenttypes.domain.InvalidBounds
 import org.orkg.contenttypes.domain.InvalidCardinality
 import org.orkg.contenttypes.domain.InvalidDatatype
@@ -275,7 +276,7 @@ class AbstractTemplatePropertyValidatorUnitTest {
 
     @Test
     fun `Given a number template property definition, when min bound is higher than max bound, it throws an exception`() {
-        val property = dummyCreateNumberLiteralTemplatePropertyCommand().copy(minInclusive = 5, maxInclusive = 2)
+        val property = dummyCreateNumberLiteralTemplatePropertyCommand().copy(minInclusive = RealNumber(5), maxInclusive = RealNumber(2))
         val exception = InvalidBounds(5, 2)
 
         assertThrows<InvalidBounds> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message

@@ -28,6 +28,7 @@ import org.neo4j.driver.types.TypeSystem
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.StringReader
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.graph.domain.Class
@@ -42,7 +43,6 @@ import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
-import org.orkg.graph.domain.StringReader
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.output.PredicateRepository

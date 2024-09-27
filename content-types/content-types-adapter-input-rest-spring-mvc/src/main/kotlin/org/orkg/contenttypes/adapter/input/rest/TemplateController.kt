@@ -244,7 +244,7 @@ class TemplateController(
         templateId: ThingId
     ): CreateTemplatePropertyUseCase.CreateCommand =
         when (this) {
-            is NumberLiteralPropertyRequest<*> -> toCreateCommand(contributorId, templateId)
+            is NumberLiteralPropertyRequest -> toCreateCommand(contributorId, templateId)
             is OtherLiteralPropertyRequest -> toCreateCommand(contributorId, templateId)
             is ResourcePropertyRequest -> toCreateCommand(contributorId, templateId)
             is StringLiteralPropertyRequest -> toCreateCommand(contributorId, templateId)
@@ -257,7 +257,7 @@ class TemplateController(
         templateId: ThingId
     ): UpdateTemplatePropertyUseCase.UpdateCommand =
         when (this) {
-            is NumberLiteralPropertyRequest<*> -> toUpdateCommand(templatePropertyId, contributorId, templateId)
+            is NumberLiteralPropertyRequest -> toUpdateCommand(templatePropertyId, contributorId, templateId)
             is OtherLiteralPropertyRequest -> toUpdateCommand(templatePropertyId, contributorId, templateId)
             is ResourcePropertyRequest -> toUpdateCommand(templatePropertyId, contributorId, templateId)
             is StringLiteralPropertyRequest -> toUpdateCommand(templatePropertyId, contributorId, templateId)
@@ -298,7 +298,7 @@ class TemplateController(
             templatePropertyId, contributorId, templateId, label, placeholder, description, minCount, maxCount, pattern, path, datatype
         )
 
-    private fun <T : Number> NumberLiteralPropertyRequest<T>.toCreateCommand(
+    private fun NumberLiteralPropertyRequest.toCreateCommand(
         contributorId: ContributorId,
         templateId: ThingId
     ): CreateTemplatePropertyUseCase.CreateCommand =
@@ -306,7 +306,7 @@ class TemplateController(
             contributorId, templateId, label, placeholder, description, minCount, maxCount, minInclusive, maxInclusive, path, datatype
         )
 
-    private fun <T : Number> NumberLiteralPropertyRequest<T>.toUpdateCommand(
+    private fun NumberLiteralPropertyRequest.toUpdateCommand(
         templatePropertyId: ThingId,
         contributorId: ContributorId,
         templateId: ThingId

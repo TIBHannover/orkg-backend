@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import org.orkg.common.StringReader
 import kotlin.collections.List
 import org.orkg.graph.domain.DynamicLabel.Component.Companion.formatValue
 

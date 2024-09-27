@@ -109,9 +109,9 @@ class AbstractTemplatePropertyUpdater(
             }
         }
 
-        if (newProperty is NumberLiteralTemplatePropertyDefinition<*>) {
-            val oldMinInclusive = if (oldProperty is NumberLiteralTemplateProperty<*>) oldProperty.minInclusive else null
-            if (newProperty.minInclusive != oldMinInclusive || oldProperty is NumberLiteralTemplateProperty<*> && oldProperty.datatype.id != newProperty.datatype) {
+        if (newProperty is NumberLiteralTemplatePropertyDefinition) {
+            val oldMinInclusive = if (oldProperty is NumberLiteralTemplateProperty) oldProperty.minInclusive else null
+            if (newProperty.minInclusive != oldMinInclusive || oldProperty is NumberLiteralTemplateProperty && oldProperty.datatype.id != newProperty.datatype) {
                 singleStatementPropertyUpdater.updateOptionalProperty(
                     statements = statements,
                     contributorId = contributorId,
@@ -122,8 +122,8 @@ class AbstractTemplatePropertyUpdater(
                         ?: Literals.XSD.DECIMAL.prefixedUri
                 )
             }
-            val oldMaxInclusive = if (oldProperty is NumberLiteralTemplateProperty<*>) oldProperty.maxInclusive else null
-            if (newProperty.maxInclusive != oldMaxInclusive || oldProperty is NumberLiteralTemplateProperty<*> && oldProperty.datatype.id != newProperty.datatype) {
+            val oldMaxInclusive = if (oldProperty is NumberLiteralTemplateProperty) oldProperty.maxInclusive else null
+            if (newProperty.maxInclusive != oldMaxInclusive || oldProperty is NumberLiteralTemplateProperty && oldProperty.datatype.id != newProperty.datatype) {
                 singleStatementPropertyUpdater.updateOptionalProperty(
                     statements = statements,
                     contributorId = contributorId,
@@ -134,7 +134,7 @@ class AbstractTemplatePropertyUpdater(
                         ?: Literals.XSD.DECIMAL.prefixedUri
                 )
             }
-        } else if (oldProperty is NumberLiteralTemplateProperty<*>) {
+        } else if (oldProperty is NumberLiteralTemplateProperty) {
             val toRemove = statements.filter { it.predicate.id == Predicates.shMinInclusive || it.predicate.id == Predicates.shMaxInclusive }
             if (toRemove.isNotEmpty()) {
                 statementService.delete(toRemove.map { it.id }.toSet())

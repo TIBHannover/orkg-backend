@@ -1,4 +1,4 @@
-package org.orkg.graph.domain
+package org.orkg.common
 
 data class StringReader(val string: String) {
     var cursor: Int = 0

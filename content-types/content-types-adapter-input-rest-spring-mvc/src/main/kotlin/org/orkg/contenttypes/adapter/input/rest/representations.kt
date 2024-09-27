@@ -17,6 +17,7 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Certainty
@@ -334,7 +335,7 @@ data class StringLiteralTemplatePropertyRepresentation(
     override val datatype: ClassReferenceRepresentation,
 ) : LiteralTemplatePropertyRepresentation
 
-data class NumberLiteralTemplatePropertyRepresentation<T : Number>(
+data class NumberLiteralTemplatePropertyRepresentation(
     override val id: ThingId,
     override val label: String,
     override val placeholder: String?,
@@ -343,9 +344,9 @@ data class NumberLiteralTemplatePropertyRepresentation<T : Number>(
     override val minCount: Int?,
     override val maxCount: Int?,
     @JsonProperty("min_inclusive")
-    val minInclusive: T?,
+    val minInclusive: RealNumber?,
     @JsonProperty("max_inclusive")
-    val maxInclusive: T?,
+    val maxInclusive: RealNumber?,
     override val path: ObjectIdAndLabel,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,

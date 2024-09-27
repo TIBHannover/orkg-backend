@@ -4,12 +4,15 @@ import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
+import org.orkg.common.toRealNumberOrNull
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
@@ -136,7 +139,7 @@ sealed interface TemplateProperty {
                             createdAt = resource.createdAt,
                             datatype = datatype
                         )
-                        Classes.integer -> NumberLiteralTemplateProperty(
+                        in Literals.XSD.entries.filter { it.isNumber }.map { it.`class` } -> NumberLiteralTemplateProperty(
                             id = resource.id,
                             label = resource.label,
                             placeholder = placeholder,
@@ -145,43 +148,9 @@ sealed interface TemplateProperty {
                             minCount = minCount,
                             maxCount = maxCount,
                             minInclusive = statements.wherePredicate(Predicates.shMinInclusive)
-                                .singleOrNull()?.`object`?.label?.toIntOrNull(),
+                                .singleOrNull()?.`object`?.label?.toRealNumberOrNull(),
                             maxInclusive = statements.wherePredicate(Predicates.shMaxInclusive)
-                                .singleOrNull()?.`object`?.label?.toIntOrNull(),
-                            path = path,
-                            createdBy = resource.createdBy,
-                            createdAt = resource.createdAt,
-                            datatype = datatype
-                        )
-                        Classes.decimal -> NumberLiteralTemplateProperty(
-                            id = resource.id,
-                            label = resource.label,
-                            placeholder = placeholder,
-                            description = description,
-                            order = order,
-                            minCount = minCount,
-                            maxCount = maxCount,
-                            minInclusive = statements.wherePredicate(Predicates.shMinInclusive)
-                                .singleOrNull()?.`object`?.label?.toDoubleOrNull(),
-                            maxInclusive = statements.wherePredicate(Predicates.shMaxInclusive)
-                                .singleOrNull()?.`object`?.label?.toDoubleOrNull(),
-                            path = path,
-                            createdBy = resource.createdBy,
-                            createdAt = resource.createdAt,
-                            datatype = datatype
-                        )
-                        Classes.float -> NumberLiteralTemplateProperty(
-                            id = resource.id,
-                            label = resource.label,
-                            placeholder = placeholder,
-                            description = description,
-                            order = order,
-                            minCount = minCount,
-                            maxCount = maxCount,
-                            minInclusive = statements.wherePredicate(Predicates.shMinInclusive)
-                                .singleOrNull()?.`object`?.label?.toFloatOrNull(),
-                            maxInclusive = statements.wherePredicate(Predicates.shMaxInclusive)
-                                .singleOrNull()?.`object`?.label?.toFloatOrNull(),
+                                .singleOrNull()?.`object`?.label?.toRealNumberOrNull(),
                             path = path,
                             createdBy = resource.createdBy,
                             createdAt = resource.createdAt,
@@ -249,7 +218,7 @@ sealed interface LiteralTemplateProperty : TemplateProperty {
     val datatype: ClassReference
 }
 
-data class NumberLiteralTemplateProperty<out T : Number>(
+data class NumberLiteralTemplateProperty(
     override val id: ThingId,
     override val label: String,
     override val placeholder: String?,
@@ -257,8 +226,8 @@ data class NumberLiteralTemplateProperty<out T : Number>(
     override val order: Long,
     override val minCount: Int?,
     override val maxCount: Int?,
-    val minInclusive: T?,
-    val maxInclusive: T?,
+    val minInclusive: RealNumber?,
+    val maxInclusive: RealNumber?,
     override val path: ObjectIdAndLabel,
     override val createdBy: ContributorId,
     override val createdAt: OffsetDateTime,

@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
+import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.input.rest.NumberLiteralPropertyRequest
 import org.orkg.contenttypes.adapter.input.rest.OtherLiteralPropertyRequest
@@ -38,8 +39,8 @@ fun numberLiteralTemplatePropertyRequest() =
         description = "number literal property description",
         minCount = 1,
         maxCount = 2,
-        minInclusive = 5,
-        maxInclusive = 10,
+        minInclusive = RealNumber(5),
+        maxInclusive = RealNumber(10),
         path = Predicates.field,
         datatype = Classes.integer,
     )

@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.InvalidLiteral
@@ -245,8 +246,8 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     fun `Given a number literal template property, when object label is within bounds, it returns success`() {
         val property = createDummyNumberLiteralTemplateProperty().copy(
             minCount = 0,
-            minInclusive = 0,
-            maxInclusive = 10,
+            minInclusive = RealNumber(0),
+            maxInclusive = RealNumber(10),
             datatype = ClassReference(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
         )
         val id = "#temp1"
@@ -262,7 +263,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     fun `Given a number literal template property, when object label is lower than minInclusive, it throws an exception`() {
         val property = createDummyNumberLiteralTemplateProperty().copy(
             minCount = 0,
-            minInclusive = 10,
+            minInclusive = RealNumber(10),
             datatype = ClassReference(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
         )
         val id = "#temp1"
@@ -282,7 +283,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     fun `Given a number literal template property, when object label is higher than maxInclusive, it throws an exception`() {
         val property = createDummyNumberLiteralTemplateProperty().copy(
             minCount = 0,
-            maxInclusive = 5
+            maxInclusive = RealNumber(5)
         )
         val id = "#temp1"
         val `object` = LiteralDefinition(
@@ -301,8 +302,8 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     fun `Given a decimal literal template property, when object label is within bounds, it returns success`() {
         val property = createDummyDecimalLiteralTemplateProperty().copy(
             minCount = 0,
-            minInclusive = 0.0,
-            maxInclusive = 10.0,
+            minInclusive = RealNumber(0.0),
+            maxInclusive = RealNumber(10.0),
             datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
@@ -318,7 +319,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     fun `Given a decimal literal template property, when object label is lower than minInclusive, it throws an exception`() {
         val property = createDummyDecimalLiteralTemplateProperty().copy(
             minCount = 0,
-            minInclusive = 10.0,
+            minInclusive = RealNumber(10.0),
             datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
@@ -338,7 +339,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     fun `Given a decimal literal template property, when object label is higher than maxInclusive, it throws an exception`() {
         val property = createDummyDecimalLiteralTemplateProperty().copy(
             minCount = 0,
-            maxInclusive = 5.0,
+            maxInclusive = RealNumber(5.0),
             datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
         )
         val id = "#temp1"
@@ -358,8 +359,8 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     fun `Given a float literal template property, when object label is within bounds, it returns success`() {
         val property = createDummyFloatLiteralTemplateProperty().copy(
             minCount = 0,
-            minInclusive = 0.0F,
-            maxInclusive = 10.0F,
+            minInclusive = RealNumber(0.0F),
+            maxInclusive = RealNumber(10.0F),
             datatype = ClassReference(Classes.float, "Float", ParsedIRI(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"
@@ -375,7 +376,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     fun `Given a float literal template property, when object label is lower than minInclusive, it throws an exception`() {
         val property = createDummyFloatLiteralTemplateProperty().copy(
             minCount = 0,
-            minInclusive = 10.0F,
+            minInclusive = RealNumber(10.0F),
             datatype = ClassReference(Classes.float, "Float", ParsedIRI(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"
@@ -395,7 +396,7 @@ class AbstractTemplatePropertyValueValidatorUnitTest {
     fun `Given a float literal template property, when object label is higher than maxInclusive, it throws an exception`() {
         val property = createDummyFloatLiteralTemplateProperty().copy(
             minCount = 0,
-            maxInclusive = 5.0F,
+            maxInclusive = RealNumber(5.0F),
             datatype = ClassReference(Classes.float, "Float", ParsedIRI(Literals.XSD.FLOAT.uri))
         )
         val id = "#temp1"

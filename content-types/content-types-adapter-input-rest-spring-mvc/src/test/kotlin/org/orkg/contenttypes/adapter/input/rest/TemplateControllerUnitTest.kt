@@ -634,7 +634,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a number literal template property create request, when service succeeds, it creates the template property")
-    fun createNumberLiteralProperty() = createProperty<CreateNumberLiteralPropertyCommand<*>>(
+    fun createNumberLiteralProperty() = createProperty<CreateNumberLiteralPropertyCommand>(
         numberLiteralTemplatePropertyRequest(),
         listOf(
             fieldWithPath("min_inclusive").description("The minimum value (inclusive) that the number can have (optional).").optional(),
@@ -875,7 +875,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a number literal template property update request, when service succeeds, it updates the template property")
-    fun updateNumberLiteralProperty() = updateProperty<UpdateNumberLiteralPropertyCommand<*>>(
+    fun updateNumberLiteralProperty() = updateProperty<UpdateNumberLiteralPropertyCommand>(
         numberLiteralTemplatePropertyRequest(),
         listOf(
             fieldWithPath("min_inclusive").description("The minimum value (inclusive) that the number can have."),

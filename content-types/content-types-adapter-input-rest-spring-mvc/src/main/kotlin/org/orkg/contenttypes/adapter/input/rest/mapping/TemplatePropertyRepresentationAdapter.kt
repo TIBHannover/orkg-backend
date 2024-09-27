@@ -31,7 +31,7 @@ interface TemplatePropertyRepresentationAdapter : ThingReferenceRepresentationAd
             is StringLiteralTemplateProperty -> StringLiteralTemplatePropertyRepresentation(
                 id, label, placeholder, description, order, minCount, maxCount, pattern, path, createdAt, createdBy, datatype.toClassReferenceRepresentation()
             )
-            is NumberLiteralTemplateProperty<*> -> NumberLiteralTemplatePropertyRepresentation(
+            is NumberLiteralTemplateProperty -> NumberLiteralTemplatePropertyRepresentation(
                 id, label, placeholder, description, order, minCount, maxCount, minInclusive, maxInclusive, path, createdAt, createdBy, datatype.toClassReferenceRepresentation()
             )
             is OtherLiteralTemplateProperty -> OtherLiteralTemplatePropertyRepresentation(

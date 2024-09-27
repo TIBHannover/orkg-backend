@@ -376,10 +376,10 @@ class TemplatePropertyUpdaterUnitTest {
         datatype = datatype.id
     )
 
-    private fun <T : Number> NumberLiteralTemplateProperty<T>.toUpdateNumberLiteralTemplatePropertyCommand(
+    private fun NumberLiteralTemplateProperty.toUpdateNumberLiteralTemplatePropertyCommand(
         contributorId: ContributorId,
         templateId: ThingId
-    ): UpdateNumberLiteralPropertyCommand<T> = UpdateNumberLiteralPropertyCommand(
+    ): UpdateNumberLiteralPropertyCommand = UpdateNumberLiteralPropertyCommand(
         templatePropertyId = id,
         contributorId = contributorId,
         templateId = templateId,

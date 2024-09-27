@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
+import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -143,8 +144,8 @@ class TemplateServiceUnitTests {
         val numberLiteralPropertyOrder = 3
         val numberLiteralPropertyMinCount = 1
         val numberLiteralPropertyMaxCount = 2
-        val numberLiteralPropertyMinInclusive = 5.0
-        val numberLiteralPropertyMaxInclusive = 10.0
+        val numberLiteralPropertyMinInclusive = RealNumber(5.0)
+        val numberLiteralPropertyMaxInclusive = RealNumber(10.0)
         val numberLiteralPropertyPath = createPredicate(ThingId("R30"), label = "number literal property path label")
         val numberLiteralPropertyDatatype = createClass(Classes.decimal, label = "number literal property class label")
 

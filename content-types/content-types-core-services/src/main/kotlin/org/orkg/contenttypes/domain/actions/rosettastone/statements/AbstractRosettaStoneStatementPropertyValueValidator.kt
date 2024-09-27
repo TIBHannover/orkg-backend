@@ -112,14 +112,14 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                 ?: ObjectPositionValueTooLow(
                     positionPlaceholder = property.placeholder ?: property.label,
                     label = `object`.label,
-                    minInclusive = (property as NumberLiteralTemplateProperty<*>).minInclusive!!
+                    minInclusive = (property as NumberLiteralTemplateProperty).minInclusive!!
                 )
         } catch (e: NumberTooHigh) {
             throw e.takeIf { property.path.id == Predicates.hasSubjectPosition }
                 ?: ObjectPositionValueTooHigh(
                     positionPlaceholder = property.placeholder ?: property.label,
                     label = `object`.label,
-                    maxInclusive = (property as NumberLiteralTemplateProperty<*>).maxInclusive!!
+                    maxInclusive = (property as NumberLiteralTemplateProperty).maxInclusive!!
                 )
         }
     }

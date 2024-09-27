@@ -7,6 +7,7 @@ import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.RealNumber
 import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyNumberLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyOtherLiteralTemplateProperty
@@ -22,7 +23,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTemplatePropertyUpdaterUnitTest() {
+class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest : AbstractTemplatePropertyUpdaterUnitTest() {
     @Test
     fun `Given an updated number literal template property, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
@@ -37,7 +38,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createDummyNumberLiteralTemplateProperty()
         val newProperty = oldProperty.toNumberLiteralTemplatePropertyDefinition().copy(
-            minInclusive = 1
+            minInclusive = RealNumber(1)
         )
         val statements = listOf(
             createStatement(
@@ -84,7 +85,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
             description = oldProperty.description,
             minCount = oldProperty.minCount,
             maxCount = oldProperty.maxCount,
-            minInclusive = 5,
+            minInclusive = RealNumber(5),
             maxInclusive = null,
             path = oldProperty.path.id,
             datatype = Classes.decimal
@@ -157,7 +158,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createDummyNumberLiteralTemplateProperty()
         val newProperty = oldProperty.toNumberLiteralTemplatePropertyDefinition().copy(
-            maxInclusive = 1
+            maxInclusive = RealNumber(1)
         )
         val statements = listOf(
             createStatement(
@@ -204,7 +205,7 @@ class AbstractTemplatePropertyUpdaterNumberLiteralPropertyUnitTest : AbstractTem
             description = oldProperty.description,
             maxCount = oldProperty.maxCount,
             minCount = oldProperty.minCount,
-            maxInclusive = 5,
+            maxInclusive = RealNumber(5),
             minInclusive = null,
             path = oldProperty.path.id,
             datatype = Classes.decimal

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.PositiveOrZero
 import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.ClassDefinition
 import org.orkg.contenttypes.input.ListDefinition
@@ -125,7 +126,7 @@ data class StringLiteralPropertyRequest(
         StringLiteralPropertyDefinition(label, placeholder, description, minCount, maxCount, pattern, path, datatype)
 }
 
-data class NumberLiteralPropertyRequest<T : Number>(
+data class NumberLiteralPropertyRequest(
     override val label: String,
     override val placeholder: String?,
     override val description: String?,
@@ -136,9 +137,9 @@ data class NumberLiteralPropertyRequest<T : Number>(
     @JsonProperty("max_count")
     override val maxCount: Int?,
     @JsonProperty("min_inclusive")
-    val minInclusive: T?,
+    val minInclusive: RealNumber?,
     @JsonProperty("max_inclusive")
-    val maxInclusive: T?,
+    val maxInclusive: RealNumber?,
     override val path: ThingId,
     val datatype: ThingId
 ) : TemplatePropertyRequest {

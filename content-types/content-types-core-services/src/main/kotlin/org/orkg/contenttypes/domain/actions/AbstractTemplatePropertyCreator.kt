@@ -102,7 +102,7 @@ class AbstractTemplatePropertyCreator(
                     )
                 )
             }
-        } else if (property is NumberLiteralTemplatePropertyDefinition<*>) {
+        } else if (property is NumberLiteralTemplatePropertyDefinition) {
             property.minInclusive?.let { minInclusive ->
                 statementService.add(
                     userId = contributorId,

@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain.actions
 
+import org.orkg.common.toRealNumber
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.LiteralTemplateProperty
@@ -90,26 +91,22 @@ class AbstractTemplatePropertyValueValidator {
                     throw LabelDoesNotMatchPattern(property.id, objectId, property.path.id, label, pattern)
                 }
             }
-        } else if (property is NumberLiteralTemplateProperty<*>) {
+        } else if (property is NumberLiteralTemplateProperty) {
             property.minInclusive?.let { minInclusive ->
-                val invalid = when (property.datatype.id) {
-                    Classes.decimal, Classes.double -> label.toDouble() < minInclusive.toDouble()
-                    Classes.integer -> label.toInt() < minInclusive.toInt()
-                    Classes.float -> label.toFloat() < minInclusive.toFloat()
-                    else -> throw IllegalStateException("""Encountered number literal template property "${property.id}" with invalid datatype "${property.datatype}". This is a bug!""")
+                val xsd = Literals.XSD.fromClass(property.datatype.id)
+                if (xsd?.isNumber != true) {
+                    throw IllegalStateException("""Encountered number literal template property "${property.id}" with invalid datatype "${property.datatype}". This is a bug!""")
                 }
-                if (invalid) {
+                if (label.toRealNumber() < minInclusive) {
                     throw NumberTooLow(property.id, objectId, property.path.id, label, minInclusive)
                 }
             }
             property.maxInclusive?.let { maxInclusive ->
-                val invalid = when (property.datatype.id) {
-                    Classes.decimal, Classes.double -> maxInclusive.toDouble() < label.toDouble()
-                    Classes.integer -> maxInclusive.toInt() < label.toInt()
-                    Classes.float -> maxInclusive.toFloat() < label.toFloat()
-                    else -> throw IllegalStateException("""Encountered number literal template property "${property.id}" with invalid datatype "${property.datatype}". This is a bug!""")
+                val xsd = Literals.XSD.fromClass(property.datatype.id)
+                if (xsd?.isNumber != true) {
+                    throw IllegalStateException("""Encountered number literal template property "${property.id}" with invalid datatype "${property.datatype}". This is a bug!""")
                 }
-                if (invalid) {
+                if (maxInclusive < label.toRealNumber()) {
                     throw NumberTooHigh(property.id, objectId, property.path.id, label, maxInclusive)
                 }
             }

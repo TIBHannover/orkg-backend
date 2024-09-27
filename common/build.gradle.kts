@@ -34,6 +34,7 @@ testing {
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.junit.jupiter:junit-jupiter-params")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")

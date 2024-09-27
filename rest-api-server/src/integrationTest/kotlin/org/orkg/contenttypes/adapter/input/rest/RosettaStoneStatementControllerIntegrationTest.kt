@@ -15,6 +15,7 @@ import org.orkg.auth.output.UserRepository
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -572,8 +573,8 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
                     description = "number literal property description",
                     minCount = 1,
                     maxCount = 2,
-                    minInclusive = -1,
-                    maxInclusive = 10,
+                    minInclusive = RealNumber(-1),
+                    maxInclusive = RealNumber(10),
                     path = Predicates.hasObjectPosition,
                     datatype = Classes.integer
                 ),

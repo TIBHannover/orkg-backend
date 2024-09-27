@@ -532,7 +532,7 @@ class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
         val templateId = ThingId("R456")
         val subjects = listOf("R123")
         val objects = listOf(listOf("L123", "L789", "L147", "L369"))
-        val exception = with(templateProperties.last() as NumberLiteralTemplateProperty<*>) {
+        val exception = with(templateProperties.last() as NumberLiteralTemplateProperty) {
             NumberTooLow(id, literal.id.value, path.id, literal.label, minInclusive!!)
         }
 
@@ -571,7 +571,7 @@ class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
         val templateId = ThingId("R456")
         val subjects = listOf("R123")
         val objects = listOf(listOf("L123", "L789", "L147", "L369"))
-        val exception = with(templateProperties.last() as NumberLiteralTemplateProperty<*>) {
+        val exception = with(templateProperties.last() as NumberLiteralTemplateProperty) {
             NumberTooHigh(id, literal.id.value, path.id, literal.label, maxInclusive!!)
         }
 

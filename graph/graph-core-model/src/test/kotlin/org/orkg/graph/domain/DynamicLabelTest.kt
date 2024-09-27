@@ -91,7 +91,7 @@ class DynamicLabelTest {
     @Test
     fun `Given a dynamic label template, when parsing a simple string that contains an invalid section, it only parses a single text component`() {
         val dynamicLabel = DynamicLabel("""[prefix {} postfix]""")
-        dynamicLabel.components shouldBe listOf(TextComponent("""[prefix {} postfix]"""))
+        dynamicLabel.components shouldBe listOf(TextComponent("""prefix {} postfix"""))
     }
 
     @Test
@@ -210,8 +210,7 @@ class DynamicLabelTest {
     fun `Given a dynamic label template, when parsing a string that contains an unfinished section without a preposition and without a position, it just parses it as text`() {
         val dynamicLabel = DynamicLabel("""[{unfinished}""")
         dynamicLabel.components shouldBe listOf(
-            TextComponent("["),
-            PlaceholderComponent("unfinished")
+            TextComponent("[{unfinished}")
         )
     }
 
@@ -219,8 +218,7 @@ class DynamicLabelTest {
     fun `Given a dynamic label template, when parsing a string that contains an unfinished section with a preposition but without a postposition, it just parses it as text`() {
         val dynamicLabel = DynamicLabel("""[preposition{unfinished}""")
         dynamicLabel.components shouldBe listOf(
-            TextComponent("""[preposition"""),
-            PlaceholderComponent("unfinished")
+            TextComponent("""[preposition{unfinished}""")
         )
     }
 
@@ -228,26 +226,40 @@ class DynamicLabelTest {
     fun `Given a dynamic label template, when parsing a string that contains an unfinished section with a preposition and a postposition, it just parses it as text`() {
         val dynamicLabel = DynamicLabel("""[preposition{unfinished}postposition""")
         dynamicLabel.components shouldBe listOf(
-            TextComponent("""[preposition"""),
-            PlaceholderComponent("unfinished"),
-            TextComponent("postposition"),
+            TextComponent("""[preposition{unfinished}postposition""")
         )
     }
 
     @Test
     fun `Given a dynamic label template, when parsing a string that contains a section without a key, it just parses it as text`() {
         val dynamicLabel = DynamicLabel("""[text]""")
-        dynamicLabel.components shouldBe listOf(TextComponent("""[text]"""))
+        dynamicLabel.components shouldBe listOf(TextComponent("""text"""))
     }
 
     @Test
     fun `Given a dynamic label template, when parsing a string that contains a section with an empty key, it just parses it as text`() {
         val dynamicLabel = DynamicLabel("""[{}]""")
+        dynamicLabel.components shouldBe listOf(TextComponent("""{}"""))
+    }
+
+    @Test
+    fun `Given a dynamic label template, when parsing a string that contains an escaped section with an empty key, it just parses it as text`() {
+        val dynamicLabel = DynamicLabel("""\[{}]""")
         dynamicLabel.components shouldBe listOf(TextComponent("""[{}]"""))
     }
 
     @Test
-    fun `Given a dynamic label template, when redering, it arranges whitespaces correctly`() {
+    fun `Given a dynamic label template, when parsing a string that contains a text section with surrounding square brackets, it gets parsed correctly`() {
+        val dynamicLabel = DynamicLabel("""[sdsd {0} sdsd][tesd][ {1} ]""")
+        dynamicLabel.components shouldBe listOf(
+            SectionComponent("0", "sdsd", "sdsd"),
+            TextComponent("""tesd"""),
+            SectionComponent("1", "", ""),
+        )
+    }
+
+    @Test
+    fun `Given a dynamic label template, when rendering, it arranges whitespaces correctly`() {
         val dynamicLabel = DynamicLabel(PERSON_TRAVELS_BY_TRANSPORTATION_METHOD_FROM_LOCATION_TO_LOCATION_ON_DATETIME)
         val valueMap = mapOf(
             "0" to listOf("Person"),
@@ -260,7 +272,7 @@ class DynamicLabelTest {
     }
 
     @Test
-    fun `Given a dynamic label template, when redering, it does not format missing sections`() {
+    fun `Given a dynamic label template, when rendering, it does not format missing sections`() {
         val dynamicLabel = DynamicLabel(PERSON_TRAVELS_BY_TRANSPORTATION_METHOD_FROM_LOCATION_TO_LOCATION_ON_DATETIME)
         val valueMap = mapOf(
             "0" to listOf("Person"),
@@ -271,7 +283,7 @@ class DynamicLabelTest {
     }
 
     @Test
-    fun `Given a dynamic label template, when redering, it formats placeholders correctly`() {
+    fun `Given a dynamic label template, when rendering, it formats placeholders correctly`() {
         val dynamicLabel = DynamicLabel("""{0} {1}""")
         val valueMap = mapOf(
             "0" to listOf("Person")
@@ -280,7 +292,7 @@ class DynamicLabelTest {
     }
 
     @Test
-    fun `Given a dynamic label template, when redering, it formats multiple values correctly`() {
+    fun `Given a dynamic label template, when rendering, it formats multiple values correctly`() {
         val dynamicLabel = DynamicLabel("""{0} travel [by {1}] [to {2}] on {3}""")
         val valueMap = mapOf(
             "0" to listOf("Person 1", "Person 2", "Person 3"),

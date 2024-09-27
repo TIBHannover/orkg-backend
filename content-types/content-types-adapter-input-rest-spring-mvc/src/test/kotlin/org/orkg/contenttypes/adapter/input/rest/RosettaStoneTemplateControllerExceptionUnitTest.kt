@@ -180,7 +180,7 @@ internal class RosettaStoneTemplateControllerExceptionUnitTest {
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.error", `is`("Bad Request")))
             .andExpect(jsonPath("$.path").value("/rosetta-stone-template-label-must-start-with-previous-version"))
-            .andExpect(jsonPath("$.message").value("""The updated formmated label must start with the previous label."""))
+            .andExpect(jsonPath("$.message").value("""The updated formatted label must start with the previous label."""))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 

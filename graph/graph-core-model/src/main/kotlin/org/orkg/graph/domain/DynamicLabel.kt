@@ -25,7 +25,7 @@ data class DynamicLabel(
                 if (component is TextComponent) {
                     val last = components.lastOrNull()
                     if (last is TextComponent) {
-                        components.set(components.lastIndex, last.append(component))
+                        components[components.lastIndex] = last.append(component)
                     } else {
                         components.add(component)
                     }
@@ -56,12 +56,34 @@ data class DynamicLabel(
         }
 
         private fun StringReader.readTextComponent(): TextComponent? {
+            if (peek() == '[') {
+                val boxedText = readBoxedText()
+                if (boxedText != null) {
+                    return TextComponent(boxedText)
+                }
+            }
             val skipFirst = peek() == '[' || peek() == '{'
             val text = readStringUntil('[', '{', skipFirst = skipFirst)
             if (text.isEmpty()) {
                 return null
             }
             return TextComponent(text)
+        }
+
+        private fun StringReader.readBoxedText(): String? {
+            if (!canRead() || peek() != '[') {
+                return null
+            }
+
+            skip()
+            val text = readStringUntil(']')
+
+            if (canRead() && peek() == ']') {
+                skip()
+                return text.takeIf { it.isNotEmpty() }
+            }
+
+            return "[$text"
         }
 
         private fun StringReader.readPlaceholderComponent(): PlaceholderComponent? {
@@ -87,7 +109,7 @@ data class DynamicLabel(
 
             val cursorIn = cursor
             skip()
-            val preposition = readStringUntil('{').trim()
+            val preposition = readStringUntil('{', ']').trim()
 
             if (!canRead() || read() != '{') {
                 cursor = cursorIn
@@ -151,7 +173,7 @@ data class DynamicLabel(
     }
 
     data class TextComponent(val text: String) : Component {
-        override fun render(valueMap: Map<String, List<String>>): String? {
+        override fun render(valueMap: Map<String, List<String>>): String {
             return text
         }
 
@@ -162,7 +184,7 @@ data class DynamicLabel(
     data class PlaceholderComponent(
         val key: String
     ) : Component {
-        override fun render(valueMap: Map<String, List<String>>): String? {
+        override fun render(valueMap: Map<String, List<String>>): String {
             return valueMap[key]?.let(::formatValue) ?: "{$key}"
         }
     }

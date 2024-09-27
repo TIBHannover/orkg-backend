@@ -322,32 +322,32 @@ class MissingFormattedLabelPlaceholder : SimpleMessageException {
     )
 }
 
-class RosettaStoneTemplateLabelMustStartWithPreviousVersion() : SimpleMessageException(
+class RosettaStoneTemplateLabelMustStartWithPreviousVersion : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
-    message = """The updated formmated label must start with the previous label."""
+    message = """The updated formatted label must start with the previous label."""
 )
 
-class TooManyNewRosettaStoneTemplateLabelSections() : SimpleMessageException(
+class TooManyNewRosettaStoneTemplateLabelSections : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
     message = """Too many new formatted label sections. Must be exactly one optional section per new template property."""
 )
 
-class RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties() : SimpleMessageException(
+class RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
     message = """The formatted label can only be updated in combination with the addition of new template properties."""
 )
 
-class NewRosettaStoneTemplateLabelSectionsMustBeOptional() : SimpleMessageException(
+class NewRosettaStoneTemplateLabelSectionsMustBeOptional : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
     message = """New sections of the formatted label must be optional."""
 )
 
-class RosettaStoneTemplateLabelMustBeUpdated() : SimpleMessageException(
+class RosettaStoneTemplateLabelMustBeUpdated : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
     message = """The formatted label must be updated when updating template properties."""
 )
 
-class NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage() : SimpleMessageException(
+class NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage : SimpleMessageException(
     status = HttpStatus.BAD_REQUEST,
     message = """New example usage must start with the previous example usage."""
 )

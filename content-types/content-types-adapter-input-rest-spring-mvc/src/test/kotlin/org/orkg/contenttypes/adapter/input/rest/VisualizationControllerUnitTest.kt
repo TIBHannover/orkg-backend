@@ -1,19 +1,23 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.verify
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers
-import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.common.exceptions.TooManyParameters
+import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.AmbiguousAuthor
@@ -24,19 +28,20 @@ import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.VisualizationNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyVisualization
 import org.orkg.contenttypes.input.VisualizationUseCases
+import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectVisualization
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.fixedClock
+import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
@@ -119,10 +124,52 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
     @Test
     @DisplayName("Given several visualizations, when they are fetched, then status is 200 OK and visualizations are returned")
     fun getPaged() {
-        val visualizations = listOf(createDummyVisualization())
-        every { visualizationService.findAll(any()) } returns PageImpl(visualizations, PageRequest.of(0, 5), 1)
+        every {
+            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        } returns pageOf(createDummyVisualization())
 
         documentedGetRequestTo("/api/visualizations")
+            .accept(VISUALIZATION_JSON_V2)
+            .contentType(VISUALIZATION_JSON_V2)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectVisualization("$.content[*]")
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) {
+            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        }
+    }
+
+    @Test
+    @DisplayName("Given several visualizations, when filtering by several parameters, then status is 200 OK and visualizations are returned")
+    fun getPagedWithParameters() {
+        val visualization = createDummyVisualization()
+        every { visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(visualization)
+
+        val label = "label"
+        val exact = true
+        val visibility = VisibilityFilter.ALL_LISTED
+        val createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
+        val createdAtStart = OffsetDateTime.now(fixedClock).minusHours(1)
+        val createdAtEnd = OffsetDateTime.now(fixedClock).plusHours(1)
+        val observatoryId = ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+        val researchFieldId = ThingId("R456")
+        val includeSubfields = true
+
+        documentedGetRequestTo("/api/visualizations")
+            .param("title", label)
+            .param("exact", exact.toString())
+            .param("visibility", visibility.name)
+            .param("created_by", createdBy.value.toString())
+            .param("created_at_start", createdAtStart.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("created_at_end", createdAtEnd.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("observatory_id", observatoryId.value.toString())
+            .param("organization_id", organizationId.value.toString())
+            .param("research_field", researchFieldId.value)
+            .param("include_subfields", includeSubfields.toString())
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
@@ -132,113 +179,56 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
             .andDo(
                 documentationHandler.document(
                     requestParameters(
-                        parameterWithName("title").description("Optional filter for the title of the visualization. Uses exact matching.").optional(),
-                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),
-                        parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the visualization.").optional(),
-                        parameterWithName("research_field").description("Optional filter for research field id.").optional(),
-                        parameterWithName("include_subfields").description("Optional flag for whether subfields are included in the search or not.").optional(),
+                        parameterWithName("title").description("A search term that must be contained in the title of the visualization. (optional)."),
+                        parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
+                        parameterWithName("visibility").description("""Filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED". (optional)"""),
+                        parameterWithName("created_by").description("Filter for the UUID of the user or service who created the visualization. (optional)"),
+                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned visualization can have. (optional)"),
+                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned visualization can have. (optional)"),
+                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the visualization belongs to. (optional)"),
+                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the visualization belongs to. (optional)"),
+                        parameterWithName("research_field").description("Filter for research field id. The research field of a visualization is determined by the research field of a linking comparison. (optional)"),
+                        parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
                     )
                 )
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { visualizationService.findAll(any()) }
-    }
-
-    @Test
-    fun `Given several visualizations, when they are fetched by title, then status is 200 OK and visualizations are returned`() {
-        val visualizations = listOf(createDummyVisualization())
-        val title = visualizations.first().title
-        every { visualizationService.findAllByTitle(title, any()) } returns PageImpl(visualizations, PageRequest.of(0, 5), 1)
-
-        get("/api/visualizations?title=$title")
-            .accept(VISUALIZATION_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andExpectVisualization("$.content[*]")
-
-        verify(exactly = 1) { visualizationService.findAllByTitle(title, any()) }
-    }
-
-    @Test
-    fun `Given several visualizations, when they are fetched by visibility, then status is 200 OK and visualizations are returned`() {
-        val visualizations = listOf(createDummyVisualization())
-        val visibility = VisibilityFilter.ALL_LISTED
-        every { visualizationService.findAllByVisibility(visibility, any()) } returns PageImpl(visualizations, PageRequest.of(0, 5), 1)
-
-        get("/api/visualizations?visibility=$visibility")
-            .accept(VISUALIZATION_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpectPage()
-            .andExpectVisualization("$.content[*]")
-
-        verify(exactly = 1) { visualizationService.findAllByVisibility(visibility, any()) }
-    }
-
-    @Test
-    fun `Given several visualizations, when they are fetched by contributor id, then status is 200 OK and visualizations are returned`() {
-        val visualizations = listOf(createDummyVisualization())
-        val contributorId = visualizations.first().createdBy
-        every { visualizationService.findAllByContributor(contributorId, any()) } returns PageImpl(visualizations, PageRequest.of(0, 5), 1)
-
-        get("/api/visualizations?created_by=$contributorId")
-            .accept(VISUALIZATION_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
-
-        verify(exactly = 1) { visualizationService.findAllByContributor(contributorId, any()) }
-    }
-
-    @Test
-    fun `Given several visualizations, when they are fetched but multiple query parameters are given, then status is 400 BAD REQUEST`() {
-        val visualizations = listOf(createDummyVisualization())
-        val title = visualizations.first().title
-        val contributorId = visualizations.first().createdBy
-        val exception = TooManyParameters.atMostOneOf("title", "visibility", "created_by")
-
-        get("/api/visualizations?title=$title&created_by=$contributorId")
-            .accept(VISUALIZATION_JSON_V2)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/visualizations"))
-            .andExpect(jsonPath("$.message").value(exception.message))
-    }
-
-    @Test
-    fun `Given several visualizations, when they are fetched by visibility and research field id, then status is 200 OK and visualizations are returned`() {
-        val visualizations = listOf(createDummyVisualization())
-        val researchFieldId = ThingId("Science")
-        every {
-            visualizationService.findAllByResearchFieldAndVisibility(
-                researchFieldId = researchFieldId,
-                visibility = VisibilityFilter.ALL_LISTED,
-                includeSubfields = true,
-                pageable = any()
+        verify(exactly = 1) {
+            visualizationService.findAll(
+                pageable = any(),
+                label = withArg {
+                    it.shouldBeInstanceOf<ExactSearchString>().input shouldBe label
+                },
+                visibility = visibility,
+                createdBy = createdBy,
+                createdAtStart = createdAtStart,
+                createdAtEnd = createdAtEnd,
+                observatoryId = observatoryId,
+                organizationId = organizationId,
+                researchField = researchFieldId,
+                includeSubfields = includeSubfields
             )
-        } returns PageImpl(visualizations, PageRequest.of(0, 5), 1)
+        }
+    }
 
-        get("/api/visualizations?research_field=$researchFieldId&visibility=ALL_LISTED&include_subfields=true")
-            .accept(VISUALIZATION_JSON_V2)
-            .contentType(VISUALIZATION_JSON_V2)
-            .perform()
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
+    @Test
+    fun `Given several visualizations, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
+        val exception = UnknownSortingProperty("unknown")
+        every {
+            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+        } throws exception
+
+        mockMvc.perform(get("/api/visualizations?sort=unknown"))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/visualizations"))
 
         verify(exactly = 1) {
-            visualizationService.findAllByResearchFieldAndVisibility(
-                researchFieldId = researchFieldId,
-                visibility = VisibilityFilter.ALL_LISTED,
-                includeSubfields = true,
-                pageable = any()
-            )
+            visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 

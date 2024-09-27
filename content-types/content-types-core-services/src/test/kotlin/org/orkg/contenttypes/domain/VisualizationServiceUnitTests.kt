@@ -18,6 +18,7 @@ import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.contenttypes.output.VisualizationRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -45,6 +46,7 @@ class VisualizationServiceUnitTests {
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val researchFieldService: RetrieveResearchFieldUseCase = mockk()
+    private val visualizationRepository: VisualizationRepository = mockk()
 
     private val service = VisualizationService(
         resourceRepository = resourceRepository,
@@ -55,7 +57,8 @@ class VisualizationServiceUnitTests {
         statementService = statementService,
         literalService = literalService,
         listService = listService,
-        researchFieldService = researchFieldService
+        researchFieldService = researchFieldService,
+        visualizationRepository = visualizationRepository
     )
 
     @BeforeEach
@@ -74,7 +77,8 @@ class VisualizationServiceUnitTests {
             statementService,
             literalService,
             listService,
-            researchFieldService
+            researchFieldService,
+            visualizationRepository
         )
     }
 

@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.OffsetDateTime
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
@@ -10,15 +11,17 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.contributorId
-import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.VisualizationRepresentationAdapter
 import org.orkg.contenttypes.domain.VisualizationNotFound
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
 import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -51,30 +54,30 @@ class VisualizationController(
 
     @GetMapping(produces = [VISUALIZATION_JSON_V2])
     fun findAll(
-        @RequestParam("title", required = false) title: String?,
+        @RequestParam("title", required = false) string: String?,
+        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
-        pageable: Pageable
-    ): Page<VisualizationRepresentation> {
-        if (setOf(title, visibility, createdBy).size > 2)
-            throw TooManyParameters.atMostOneOf("title", "visibility", "created_by")
-        return when {
-            title != null -> service.findAllByTitle(title, pageable)
-            visibility != null -> service.findAllByVisibility(visibility, pageable)
-            createdBy != null -> service.findAllByContributor(createdBy, pageable)
-            else -> service.findAll(pageable)
-        }.mapToVisualizationRepresentation()
-    }
-
-    @GetMapping(params = ["visibility", "research_field"], produces = [VISUALIZATION_JSON_V2])
-    fun findAll(
-        @RequestParam("visibility") visibility: VisibilityFilter,
-        @RequestParam("research_field") researchField: ThingId,
+        @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
+        @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
+        @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
+        @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
+        @RequestParam("research_field", required = false) researchField: ThingId?,
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
         pageable: Pageable
     ): Page<VisualizationRepresentation> =
-        service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
-            .mapToVisualizationRepresentation()
+        service.findAll(
+            label = string?.let { SearchString.of(string, exactMatch = exactMatch) },
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            pageable = pageable
+        ).mapToVisualizationRepresentation()
 
     @PreAuthorizeUser
     @PostMapping(consumes = [VISUALIZATION_JSON_V2], produces = [VISUALIZATION_JSON_V2])

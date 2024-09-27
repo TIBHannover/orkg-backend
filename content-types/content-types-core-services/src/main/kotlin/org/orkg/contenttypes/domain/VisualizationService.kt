@@ -1,7 +1,10 @@
 package org.orkg.contenttypes.domain
 
+import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -17,6 +20,7 @@ import org.orkg.contenttypes.domain.actions.visualizations.VisualizationDescript
 import org.orkg.contenttypes.domain.actions.visualizations.VisualizationResourceCreator
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.input.VisualizationUseCases
+import org.orkg.contenttypes.output.VisualizationRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -46,39 +50,38 @@ class VisualizationService(
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
-    private val researchFieldService: RetrieveResearchFieldUseCase
+    private val researchFieldService: RetrieveResearchFieldUseCase,
+    private val visualizationRepository: VisualizationRepository
 ) : VisualizationUseCases {
     override fun findById(id: ThingId): Optional<Visualization> =
         resourceRepository.findById(id)
             .filter { it is Resource && Classes.visualization in it.classes }
             .map { it.toVisualization() }
 
-    override fun findAll(pageable: Pageable): Page<Visualization> =
-        resourceRepository.findAll(includeClasses = setOf(Classes.visualization), pageable = pageable)
-            .pmap { it.toVisualization() }
-
-    override fun findAllByTitle(title: String, pageable: Pageable): Page<Visualization> =
-        resourceRepository.findAll(
-            includeClasses = setOf(Classes.visualization),
-            label = SearchString.of(title, exactMatch = true),
-            pageable = pageable
-        ).pmap { it.toVisualization() }
-
-    override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<Visualization> =
-        resourceRepository.findAll(
-            includeClasses = setOf(Classes.visualization),
-            visibility = visibility,
-            pageable = pageable
-        ).pmap { it.toVisualization() }
-
-    override fun findAllByResearchFieldAndVisibility(
-        researchFieldId: ThingId,
-        visibility: VisibilityFilter,
+    override fun findAll(
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
         includeSubfields: Boolean,
         pageable: Pageable
     ): Page<Visualization> =
-        researchFieldService.findAllVisualizationsByResearchField(researchFieldId, visibility, includeSubfields, pageable)
-            .pmap { it.toVisualization() }
+        visualizationRepository.findAll(
+            label = label,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            pageable = pageable
+        ).map { it.toVisualization() }
 
     override fun create(command: CreateVisualizationCommand): ThingId {
         val steps = listOf(
@@ -92,13 +95,6 @@ class VisualizationService(
         )
         return steps.execute(command, VisualizationState()).visualizationId!!
     }
-
-    override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<Visualization> =
-        resourceRepository.findAll(
-            includeClasses = setOf(Classes.visualization),
-            createdBy = contributorId,
-            pageable = pageable
-        ).pmap { it.toVisualization() }
 
     internal fun Resource.toVisualization(): Visualization {
         val statements = statementRepository.fetchAsBundle(

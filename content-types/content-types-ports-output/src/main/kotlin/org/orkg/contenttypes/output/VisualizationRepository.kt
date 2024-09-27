@@ -1,19 +1,17 @@
-package org.orkg.contenttypes.input
+package org.orkg.contenttypes.output
 
 import java.time.OffsetDateTime
-import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.Visualization
+import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface RetrieveVisualizationUseCase {
-    fun findById(id: ThingId): Optional<Visualization>
+interface VisualizationRepository {
     fun findAll(
         label: SearchString? = null,
         visibility: VisibilityFilter? = null,
@@ -25,5 +23,5 @@ interface RetrieveVisualizationUseCase {
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
         pageable: Pageable
-    ): Page<Visualization>
+    ): Page<Resource>
 }

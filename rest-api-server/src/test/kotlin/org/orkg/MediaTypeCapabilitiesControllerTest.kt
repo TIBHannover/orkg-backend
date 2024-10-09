@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import javax.annotation.PostConstruct
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.MediaTypeCapabilitiesControllerTest.NonProducingFakeController
@@ -143,9 +142,8 @@ internal class MediaTypeCapabilitiesControllerTest {
     }
 
     @TestComponent
-    internal class TestConfiguration(private val mediaTypeCapabilityRegistry: MediaTypeCapabilityRegistry) {
-        @PostConstruct
-        fun registerMediaTypeCapability() {
+    internal class TestConfiguration(mediaTypeCapabilityRegistry: MediaTypeCapabilityRegistry) {
+        init {
             mediaTypeCapabilityRegistry.register("application/test+json", FORMATTED_LABEL_CAPABILITY)
             mediaTypeCapabilityRegistry.register("application/test+json", INCOMING_STATEMENTS_COUNT_CAPABILITY)
         }

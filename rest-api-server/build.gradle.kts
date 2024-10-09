@@ -38,7 +38,6 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-test")
                 implementation(project(":common:serialization"))
-                implementation("org.apache.tomcat:tomcat-annotations-api")
                 implementation("org.springframework.boot:spring-boot-test")
             }
         }

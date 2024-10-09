@@ -19,10 +19,13 @@ testing {
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
                 implementation(libs.spring.mockk)
                 implementation(project(":common:serialization"))
+                implementation(project(":community:community-core-model"))
+                implementation(project(":graph:graph-core-model"))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
             }
@@ -35,15 +38,13 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-core")
     api("jakarta.validation:jakarta.validation-api")
     api("org.springframework.data:spring-data-commons")
+    api("org.springframework.security:spring-security-core")
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
     api(libs.jackson.databind)
     api(project(":common"))
-    api(project(":community:community-ports-output"))
     api(project(":discussions:discussions-core-model"))
     api(project(":discussions:discussions-ports-input"))
-    implementation(project(":community:community-core-model"))
-    implementation(project(":graph:graph-core-model"))
 
     testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }

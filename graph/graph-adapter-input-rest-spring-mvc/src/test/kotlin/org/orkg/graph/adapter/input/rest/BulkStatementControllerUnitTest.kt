@@ -27,6 +27,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
@@ -181,6 +182,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
     }
 
     @Test
+    @TestWithMockUser
     fun editResourceStatements() {
         val r1 = ThingId("R1")
         val r2 = ThingId("R2")
@@ -259,6 +261,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
     }
 
     @Test
+    @TestWithMockUser
     fun delete() {
         val s1 = StatementId("S1")
         val s2 = StatementId("S2")

@@ -17,6 +17,8 @@ dependencies {
     testFixturesApi("org.springframework.security:spring-security-config")
     testFixturesApi("org.springframework.security:spring-security-core")
     testFixturesApi("org.springframework.security:spring-security-test")
+    testFixturesApi("org.springframework.security:spring-security-web")
+    testFixturesApi("org.springframework.security.oauth:spring-security-oauth2:${libs.versions.spring.security.oauth.get()}")
     testFixturesApi("org.springframework:spring-beans")
     testFixturesApi("org.springframework:spring-context")
     testFixturesApi("org.springframework:spring-test")

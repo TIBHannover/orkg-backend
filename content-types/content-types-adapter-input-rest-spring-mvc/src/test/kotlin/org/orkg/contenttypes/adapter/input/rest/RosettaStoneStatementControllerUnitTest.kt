@@ -30,6 +30,7 @@ import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneStatement
+import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
@@ -385,7 +386,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
     }
 
     @Test
-    @TestWithMockUser
+    @TestWithMockCurator
     @DisplayName("Given a rosetta stone statement, when deleting and service succeeds, then status is 204 NO CONTENT")
     fun delete() {
         val id = ThingId("R123")
@@ -404,7 +405,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { statementService.delete(id, ContributorId(MockUserId.USER)) }
+        verify(exactly = 1) { statementService.delete(id, ContributorId(MockUserId.CURATOR)) }
     }
 
     private fun createRosettaStoneStatementRequest() =

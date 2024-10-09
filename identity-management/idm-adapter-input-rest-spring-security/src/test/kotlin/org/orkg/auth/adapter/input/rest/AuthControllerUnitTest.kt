@@ -16,19 +16,24 @@ import org.orkg.auth.domain.User
 import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup
 import org.springframework.web.context.WebApplicationContext
 
+@Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [AuthController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [AuthController::class])
 class AuthControllerUnitTest {
@@ -54,6 +59,7 @@ class AuthControllerUnitTest {
     @BeforeEach
     fun setup() {
         mockMvc = webAppContextSetup(context)
+            .apply<DefaultMockMvcBuilder>(springSecurity())
             .build()
     }
 

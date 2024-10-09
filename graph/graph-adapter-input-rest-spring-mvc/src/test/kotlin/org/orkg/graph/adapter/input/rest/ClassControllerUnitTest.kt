@@ -267,6 +267,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
     }
 
     @Test
+    @TestWithMockUser
     @DisplayName("Given the class is replaced, when service succeeds, then status is 200 OK and class is returned")
     fun replace() {
         val id = ThingId("EXISTS")
@@ -328,6 +329,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
     }
 
     @Test
+    @TestWithMockUser
     @DisplayName("Given the a class label and URI is patched, when service succeeds, then status is 200 OK")
     fun update() {
         val id = ThingId("EXISTS")
@@ -359,6 +361,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
     }
 
     @Test
+    @TestWithMockUser
     fun `Given the class label is patched, when service succeeds, then status is 200 OK`() {
         val id = ThingId("EXISTS")
         val body = mapOf("label" to "some label")
@@ -380,6 +383,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
     }
 
     @Test
+    @TestWithMockUser
     fun `Given the class URI is patched, when service succeeds, then status is 200 OK`() {
         val id = ThingId("EXISTS")
         val body = mapOf("uri" to "https://example.org/some/new#URI")

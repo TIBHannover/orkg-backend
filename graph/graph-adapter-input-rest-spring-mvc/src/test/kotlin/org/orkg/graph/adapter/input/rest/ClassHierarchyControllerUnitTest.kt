@@ -27,12 +27,16 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.MockUserId
+import org.orkg.testing.annotations.TestWithMockCurator
+import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.pageOf
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType
-import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -40,11 +44,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-private const val CONTRIBUTOR_ID = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4"
-
+@Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [ClassHierarchyController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ClassHierarchyController::class])
 @DisplayName("Given a Class controller")
@@ -72,7 +76,9 @@ internal class ClassHierarchyControllerUnitTest {
 
     @BeforeEach
     fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+            .apply<DefaultMockMvcBuilder>(springSecurity())
+            .build()
     }
 
     @Test
@@ -202,31 +208,31 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a parent class id and a child class id, when a relation is created, then status is 201 CREATED`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
         val request = mapOf("child_ids" to setOf(childId))
 
-        every { classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), true) } returns Unit
+        every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) } returns Unit
 
         mockMvc
             .perform(performPost("/api/classes/$parentId/children", request))
             .andExpect(status().isCreated)
             .andExpect(header().string("location", endsWith("/api/classes/$parentId/children")))
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), true) }
+        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) }
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a parent class id and a child class id, when service reports input class does not exist, then status is 404 NOT FOUND`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
         val request = mapOf("child_ids" to setOf(childId))
 
         every {
-            classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), true)
+            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true)
         } throws ClassNotFound.withThingId(childId)
 
         mockMvc
@@ -235,13 +241,13 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a parent class id and a child class id, when service reports input classes are the same, then status is 400 BDA REQUEST`() {
         val classId = ThingId("parent")
         val request = mapOf("child_ids" to setOf(classId))
 
         every {
-            classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), classId, setOf(classId), true)
+            classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), true)
         } throws InvalidSubclassRelation(classId, classId)
 
         mockMvc
@@ -250,7 +256,7 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a parent class id and a child class id, when service reports child class already has a parent class, then status is 400 BAD REQUEST`() {
         val parentId = ThingId("parent")
         val otherParentId = ThingId("other")
@@ -258,7 +264,7 @@ internal class ClassHierarchyControllerUnitTest {
         val request = mapOf("child_ids" to setOf(childId))
 
         every {
-            classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), true)
+            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true)
         } throws ParentClassAlreadyExists(childId, otherParentId)
 
         mockMvc
@@ -267,13 +273,13 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a parent class id and a child class id, when a relation is created for a patch request, then status is 200 OK`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
         val request = mapOf("child_ids" to setOf(childId))
 
-        every { classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false) } returns Unit
+        every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) } returns Unit
 
         mockMvc
             .perform(performPatch("/api/classes/$parentId/children", request))
@@ -282,7 +288,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         verify(exactly = 1) {
             classHierarchyService.create(
-                ContributorId(CONTRIBUTOR_ID),
+                ContributorId(MockUserId.CURATOR),
                 parentId,
                 setOf(childId),
                 false
@@ -291,14 +297,14 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a parent class id and a child class id, when service reports input class does not exist for a patch request, then status is 404 NOT FOUND`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
         val request = mapOf("child_ids" to setOf(childId))
 
         every {
-            classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false)
+            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
         } throws ClassNotFound.withThingId(childId)
 
         mockMvc
@@ -307,13 +313,13 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a parent class id and a child class id, when service reports input classes are the same for a patch request, then status is 400 BDA REQUEST`() {
         val classId = ThingId("parent")
         val request = mapOf("child_ids" to setOf(classId))
 
         every {
-            classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), classId, setOf(classId), false)
+            classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false)
         } throws InvalidSubclassRelation(classId, classId)
 
         mockMvc
@@ -322,7 +328,7 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a parent class id and a child class id, when service reports child class already has a parent class for a patch request, then status is 400 BAD REQUEST`() {
         val parentId = ThingId("parent")
         val otherParentId = ThingId("other")
@@ -330,7 +336,7 @@ internal class ClassHierarchyControllerUnitTest {
         val request = mapOf("child_ids" to setOf(childId))
 
         every {
-            classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false)
+            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
         } throws ParentClassAlreadyExists(childId, otherParentId)
 
         mockMvc
@@ -339,6 +345,7 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Given a child class id, when deleting its subclass relation, then status is 200 OK`() {
         val childId = ThingId("child")
 
@@ -353,6 +360,7 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Given a child class id, when service reports input class does not exist while deleting its subclass relation, then status is 404 NOT FOUND`() {
         val childId = ThingId("child")
 
@@ -366,31 +374,31 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a child class id and a parent class id, when a relation is created, then status is 200 OK`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
         val request = mapOf("parent_id" to parentId)
 
-        every { classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false) } returns Unit
+        every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) } returns Unit
 
         mockMvc
             .perform(performPost("/api/classes/$childId/parent", request))
             .andExpect(status().isCreated)
             .andExpect(header().string("location", endsWith("/api/classes/$childId/parent")))
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false) }
+        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a child class id and a parent class id, when service reports input class does not exist, then status is 404 NOT FOUND`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
         val request = mapOf("parent_id" to parentId)
 
         every {
-            classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false)
+            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
         } throws ClassNotFound.withThingId(childId)
 
         mockMvc
@@ -399,13 +407,13 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a child class id and a parent class id, when service reports input classes are the same, then status is 400 BDA REQUEST`() {
         val classId = ThingId("parent")
         val request = mapOf("parent_id" to classId)
 
         every {
-            classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), classId, setOf(classId), false)
+            classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false)
         } throws InvalidSubclassRelation(classId, classId)
 
         mockMvc
@@ -414,7 +422,7 @@ internal class ClassHierarchyControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = CONTRIBUTOR_ID)
+    @TestWithMockCurator
     fun `Given a child class id and a parent class id, when service reports child class already has a parent class, then status is 400 BAD REQUEST`() {
         val parentId = ThingId("parent")
         val otherParentId = ThingId("other")
@@ -422,7 +430,7 @@ internal class ClassHierarchyControllerUnitTest {
         val request = mapOf("parent_id" to parentId)
 
         every {
-            classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false)
+            classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
         } throws ParentClassAlreadyExists(childId, otherParentId)
 
         mockMvc

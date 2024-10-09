@@ -3,8 +3,10 @@ package org.orkg.testing.spring.restdocs
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
+import org.orkg.testing.ResourceServerTestConfiguration
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.RestDocumentationContextProvider
@@ -24,6 +26,7 @@ import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.restdocs.request.RequestParametersSnippet
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
@@ -40,6 +43,7 @@ import org.springframework.web.context.WebApplicationContext
  */
 @Neo4jContainerIntegrationTest
 @ExtendWith(RestDocumentationExtension::class)
+@Import(ResourceServerTestConfiguration::class)
 @TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
 @Deprecated("To be replaced with RestDocsTest")
 abstract class RestDocumentationBaseTest {
@@ -57,6 +61,7 @@ abstract class RestDocumentationBaseTest {
         restDocumentation: RestDocumentationContextProvider
     ) {
         mockMvc = webAppContextSetup(webApplicationContext)
+            .apply<DefaultMockMvcBuilder>(springSecurity())
             .apply<DefaultMockMvcBuilder>(
                 documentationConfiguration(restDocumentation)
                     .operationPreprocessors()

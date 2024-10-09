@@ -5,8 +5,6 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 version = "0.67.1"
 
-val springSecurityOAuthVersion = "2.5.2"
-
 plugins {
     id("org.orkg.gradle.spring-boot-application")
     id("jacoco-report-aggregation")
@@ -39,6 +37,7 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation(project(":common:serialization"))
                 implementation("org.springframework.boot:spring-boot-test")
+                implementation("org.springframework.security:spring-security-test")
             }
         }
         val integrationTest by registering(JvmTestSuite::class) {
@@ -216,7 +215,7 @@ dependencies {
         exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
     }
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
+    implementation("org.springframework.security.oauth:spring-security-oauth2:${libs.versions.spring.security.oauth.get()}")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-cache")

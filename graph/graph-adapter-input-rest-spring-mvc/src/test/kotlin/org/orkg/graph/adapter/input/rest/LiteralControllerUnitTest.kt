@@ -215,6 +215,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     }
 
     @Test
+    @TestWithMockUser
     fun whenPUT_AndLabelIsEmpty_ThenSucceed() {
         val literal = createUpdateRequestWithEmptyLabel()
         val double = createDummyLiteral() // needed so "expected" has the same timestamp
@@ -248,6 +249,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     }
 
     @Test
+    @TestWithMockUser
     fun whenPUT_AndDatatypeIsBlank_ThenFailValidation() {
         val literal = createUpdateRequestWithBlankDatatype()
         every { literalService.findById(any()) } returns Optional.of(createDummyLiteral())
@@ -281,6 +283,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     }
 
     @Test
+    @TestWithMockUser
     fun whenPUT_AndLabelIsTooLong_ThenFailValidation() {
         val literal = LiteralUpdateRequest(
             id = null,

@@ -96,6 +96,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Creating the observatory without existing organization, status must be 404`() {
         val organizationId = OrganizationId(UUID.randomUUID())
 
@@ -204,6 +205,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Given the observatory name is replaced, when service succeeds, then status is 200 OK and observatory is returned`() {
         val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
@@ -244,6 +246,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Updating the name of non existing observatory, then status must be 404`() {
         val id = ObservatoryId(UUID.randomUUID())
         val updatedName = "name"
@@ -265,6 +268,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Given the observatory description is replaced, when service succeeds, then status is 200 OK and observatory is returned`() {
         val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
@@ -284,6 +288,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Given the observatory organization is replaced, when service succeeds, then status is 200 OK and observatory is returned`() {
         val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
@@ -303,6 +308,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Updating the organization of non existing observatory, then status must be 404`() {
         val id = ObservatoryId(UUID.randomUUID())
         val updatedOrganizationId = OrganizationId(UUID.randomUUID())
@@ -324,6 +330,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Updating the observatory with no existing organization, then status must be 404`() {
         val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
@@ -350,6 +357,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Updating the description of non existing observatory, then status must be 404`() {
         val id = ObservatoryId(UUID.randomUUID())
         val updatedDescription = "description"
@@ -393,6 +401,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Given the observatory research field is replaced, when service succeeds, then status is 200 OK and observatory is returned`() {
         val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
@@ -430,6 +439,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Updating the research field of non existing observatory, status is 404`() {
         val id = ObservatoryId(UUID.randomUUID())
         val researchFieldId = ThingId("R1234")
@@ -451,6 +461,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Given the observatory id, delete the linked organization, when service succeeds, then status is 200 OK`() {
         val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
@@ -470,6 +481,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Given the observatory id, delete the linked organization without the existence of observatory, then status is 404`() {
         val id = ObservatoryId(UUID.randomUUID())
         val organizationId = OrganizationId(UUID.randomUUID())
@@ -491,6 +503,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     }
 
     @Test
+    @TestWithMockCurator
     fun `Given the observatory id, delete the non existing organization, then status is 404`() {
         val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)

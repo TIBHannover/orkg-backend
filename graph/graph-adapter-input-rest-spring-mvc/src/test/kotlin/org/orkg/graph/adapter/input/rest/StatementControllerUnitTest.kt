@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -65,7 +64,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.security.test.context.support.WithAnonymousUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -391,6 +389,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     }
 
     @Test
+    @TestWithMockUser
     @DisplayName("Given a statement is updated, when service succeeds, then status is 200 OK and statement is returned")
     fun update() {
         val id = StatementId("S1")
@@ -471,11 +470,9 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     }
 
     @Nested
-    @Disabled("Spring Security Test does currently not work in unit tests")
     @DisplayName("Given a user is not logged in")
     inner class UserNotLoggedIn {
         @Test
-        @WithAnonymousUser
         fun `when trying to delete a statement by id, then status is 403 FORBIDDEN`() {
             val id = StatementId("S1")
 

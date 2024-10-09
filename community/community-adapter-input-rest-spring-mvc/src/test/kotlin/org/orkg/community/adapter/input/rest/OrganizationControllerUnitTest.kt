@@ -33,9 +33,9 @@ import org.orkg.mediastorage.testing.fixtures.loadImage
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
 import org.orkg.testing.FixedClockConfig
-import org.orkg.testing.MockUserDetailsService
-import org.orkg.testing.SecurityTestConfiguration
+import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
@@ -43,6 +43,7 @@ import org.springframework.http.HttpMethod.PATCH
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder
@@ -51,12 +52,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multi
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
+@Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [OrganizationController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [OrganizationController::class])
-@Import(SecurityTestConfiguration::class, MockUserDetailsService::class)
 @DisplayName("Given an Organization controller")
 internal class OrganizationControllerUnitTest {
 
@@ -88,7 +90,9 @@ internal class OrganizationControllerUnitTest {
 
     @BeforeEach
     fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+            .apply<DefaultMockMvcBuilder>(springSecurity())
+            .build()
     }
 
     @Test
@@ -138,7 +142,7 @@ internal class OrganizationControllerUnitTest {
         val image = Image(
             id = logoId,
             data = ImageData("irrelevant".toByteArray()),
-            mimeType = MimeType(),
+            mimeType = MimeType("image/png"),
             createdBy = contributor,
             createdAt = OffsetDateTime.now(clock)
         )
@@ -155,7 +159,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @TestWithMockUser
+    @TestWithMockCurator
     fun `Given an organization is updated, when service reports organization not found, then status is 404 NOT FOUND`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -176,7 +180,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @TestWithMockUser
+    @TestWithMockCurator
     fun `Given an organization is updated, when service reports invalid mime type for the logo, then status is 400 BAD REQUEST`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -201,7 +205,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @TestWithMockUser
+    @TestWithMockCurator
     fun `Given an organization is updated, when service reports invalid image data for the logo, then status is 400 BAD REQUEST`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -226,7 +230,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @TestWithMockUser
+    @TestWithMockCurator
     fun `Given an organization is updated, when service succeeds, then status is 204 NO CONTENT`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -286,7 +290,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @TestWithMockUser
+    @TestWithMockCurator
     fun `Given an organization is updated, when payload contains json and logo, then status is 204 NO CONTENT`() {
         val id = OrganizationId(UUID.randomUUID())
         val image = loadRawImage(testImage)
@@ -311,7 +315,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @TestWithMockUser
+    @TestWithMockCurator
     fun `Given an organization is updated, when payload contains logo only, then status is 204 NO CONTENT`() {
         val id = OrganizationId(UUID.randomUUID())
         val image = loadRawImage(testImage)
@@ -330,7 +334,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @TestWithMockUser
+    @TestWithMockCurator
     fun `Given an organization is updated, when payload contains json only, then status is 204 NO CONTENT`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -353,7 +357,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @TestWithMockUser
+    @TestWithMockCurator
     fun `Given an organization is updated, when payload is empty, then status is 204 NO CONTENT`() {
         val id = OrganizationId(UUID.randomUUID())
 

@@ -5,6 +5,7 @@ import javax.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.common.exceptions.Forbidden
 import org.orkg.community.adapter.input.rest.mapping.ObservatoryFilterRepresentationAdapter
@@ -43,6 +44,7 @@ class ObservatoryFilterController(
     private val service: ObservatoryFilterUseCases,
     private val contributorService: RetrieveContributorUseCase
 ) : ObservatoryFilterRepresentationAdapter {
+    @RequireLogin
     @PostMapping("/{id}/filters", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun create(
         @PathVariable(name = "id") observatoryId: ObservatoryId,
@@ -60,6 +62,7 @@ class ObservatoryFilterController(
         return created(location).build()
     }
 
+    @RequireLogin
     @PatchMapping("/{observatoryId}/filters/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable(name = "observatoryId") observatoryId: ObservatoryId,
@@ -98,6 +101,7 @@ class ObservatoryFilterController(
             .mapToObservatoryFilterRepresentation()
     }
 
+    @RequireLogin
     @DeleteMapping("/{observatoryId}/filters/{id}")
     fun deleteById(
         @PathVariable(name = "observatoryId") observatoryId: ObservatoryId,

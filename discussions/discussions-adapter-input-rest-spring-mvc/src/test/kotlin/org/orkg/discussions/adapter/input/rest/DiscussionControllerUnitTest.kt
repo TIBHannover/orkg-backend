@@ -3,9 +3,7 @@ package org.orkg.discussions.adapter.input.rest
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.verify
-import java.security.Principal
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
@@ -18,7 +16,6 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.discussions.adapter.input.rest.json.DiscussionsJacksonModule
 import org.orkg.discussions.domain.DiscussionComment
@@ -30,22 +27,31 @@ import org.orkg.discussions.input.DiscussionUseCases
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.UserNotFound
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.MockUserId
+import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
+@Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [DiscussionController::class, ExceptionHandler::class, CommonJacksonModule::class, DiscussionsJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [DiscussionController::class])
 @DisplayName("Given a Discussion controller")
@@ -62,22 +68,21 @@ internal class DiscussionControllerUnitTest {
     @MockkBean
     private lateinit var discussionService: DiscussionUseCases
 
-    @MockkBean
-    private lateinit var contributorRepository: ContributorRepository
-
     @Autowired
     private lateinit var clock: Clock
 
     @BeforeEach
     fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+            .apply<DefaultMockMvcBuilder>(springSecurity())
+            .build()
     }
 
     @Test
+    @TestWithMockUser
     fun `Given a comment is created, when service succeeds, then status is 200 OK and comment is returned`() {
         val topic = ThingId("C1234")
-        val mockPrincipal = mockk<Principal>()
-        val contributor = createContributor()
+        val contributor = createContributor(id = ContributorId(MockUserId.USER))
         val comment = DiscussionComment(
             id = DiscussionCommentId(UUID.randomUUID()),
             topic = topic,
@@ -91,8 +96,6 @@ internal class DiscussionControllerUnitTest {
             createdBy = comment.createdBy
         )
 
-        every { mockPrincipal.name } returns contributor.id.toString()
-        every { contributorRepository.findById(contributor.id) } returns Optional.of(contributor)
         every { discussionService.create(createCommand) } returns comment.id
         every { discussionService.findByTopicAndCommentId(topic, comment.id) } returns Optional.of(comment)
 
@@ -100,7 +103,10 @@ internal class DiscussionControllerUnitTest {
             "message" to comment.message
         )
 
-        mockMvc.post("/api/discussions/topic/$topic", mockPrincipal, request)
+        post("/api/discussions/topic/$topic")
+            .content(objectMapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", "http://localhost/api/discussions/topic/$topic/${comment.id}"))
             .andExpect(jsonPath("$.id").value(comment.id.value.toString()))
@@ -112,61 +118,37 @@ internal class DiscussionControllerUnitTest {
     }
 
     @Test
-    fun `Given a comment is created, when user is unauthorized, then status is 401 UNAUTHORIZED`() {
+    fun `Given a comment is created, when user is not logged in, then status is 403 FORBIDDEN`() {
         val topic = ThingId("C1234")
-        val mockPrincipal = mockk<Principal>()
-
-        every { mockPrincipal.name } returns null
 
         val request = mapOf(
             "message" to "irrelevant"
         )
 
-        mockMvc.post("/api/discussions/topic/$topic", mockPrincipal, request)
-            .andExpect(status().isUnauthorized)
+        post("/api/discussions/topic/$topic")
+            .content(objectMapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isForbidden)
 
         verify(exactly = 0) { discussionService.create(any()) }
     }
 
     @Test
-    fun `Given a comment is created, when user is not found, then status is 400 BAD REQUEST`() {
-        val topic = ThingId("C1234")
-        val mockPrincipal = mockk<Principal>()
-        val contributorId = ContributorId(UUID.randomUUID())
-
-        every { mockPrincipal.name } returns contributorId.toString()
-        every { contributorRepository.findById(contributorId) } returns Optional.empty()
-
-        val request = mapOf(
-            "message" to "irrelevant"
-        )
-
-        mockMvc.post("/api/discussions/topic/$topic", mockPrincipal, request)
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.error").value("Bad Request"))
-            .andExpect(jsonPath("$.message").value("""User "$contributorId" not found."""))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/discussions/topic/$topic"))
-
-        verify(exactly = 0) { discussionService.create(any()) }
-    }
-
-    @Test
+    @TestWithMockUser
     fun `Given a comment is created, when service reports topic not found, then status is 404 NOT FOUND`() {
         val topic = ThingId("C1234")
-        val mockPrincipal = mockk<Principal>()
-        val contributor = createContributor()
 
-        every { mockPrincipal.name } returns contributor.id.toString()
-        every { contributorRepository.findById(contributor.id) } returns Optional.of(contributor)
         every { discussionService.create(any()) } throws TopicNotFound(topic)
 
         val request = mapOf(
             "message" to "irrelevant"
         )
 
-        mockMvc.post("/api/discussions/topic/$topic", mockPrincipal, request)
+        post("/api/discussions/topic/$topic")
+            .content(objectMapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.error").value("Not Found"))
@@ -176,19 +158,19 @@ internal class DiscussionControllerUnitTest {
     }
 
     @Test
-    fun `Given a comment is created, when service reports invalid message contents, then status is 402 FORBIDDEN`() {
+    @TestWithMockUser
+    fun `Given a comment is created, when service reports invalid message contents, then status is 403 FORBIDDEN`() {
         val topic = ThingId("C1234")
-        val mockPrincipal = mockk<Principal>()
-        val contributor = createContributor()
-        every { mockPrincipal.name } returns contributor.id.toString()
-        every { contributorRepository.findById(contributor.id) } returns Optional.of(contributor)
-        every { discussionService.create(any()) } throws InvalidContent()
-
         val request = mapOf(
             "message" to "irrelevant"
         )
 
-        mockMvc.post("/api/discussions/topic/$topic", mockPrincipal, request)
+        every { discussionService.create(any()) } throws InvalidContent()
+
+        post("/api/discussions/topic/$topic")
+            .content(objectMapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .perform()
             .andExpect(status().isForbidden)
             .andExpect(jsonPath("$.status").value(403))
             .andExpect(jsonPath("$.error").value("Forbidden"))
@@ -295,64 +277,50 @@ internal class DiscussionControllerUnitTest {
     }
 
     @Test
+    @TestWithMockUser
     fun `Given a comment is being deleted, when service reports success, then status is 204 NO CONTENT`() {
         val topic = ThingId("C1234")
         val id = DiscussionCommentId(UUID.randomUUID())
-        val mockPrincipal = mockk<Principal>()
-        val userId = UUID.randomUUID()
 
-        every { mockPrincipal.name } returns userId.toString()
-        every { discussionService.delete(ContributorId(userId), topic, id) } returns Unit
+        every { discussionService.delete(ContributorId(MockUserId.USER), topic, id) } returns Unit
 
-        mockMvc.perform(delete("/api/discussions/topic/$topic/$id").principal(mockPrincipal))
+        mockMvc.perform(delete("/api/discussions/topic/$topic/$id"))
             .andExpect(status().isNoContent)
     }
 
     @Test
-    fun `Given a comment is being deleted, when user is not authorized, then status is 401 UNAUTHORIZED`() {
+    fun `Given a comment is being deleted, when user is not logged in, then status is 403 FORBIDDEN`() {
         val topic = ThingId("C1234")
         val id = DiscussionCommentId(UUID.randomUUID())
-        val mockPrincipal = mockk<Principal>()
 
-        every { mockPrincipal.name } returns null
-
-        mockMvc.perform(delete("/api/discussions/topic/$topic/$id").principal(mockPrincipal))
-            .andExpect(status().isUnauthorized)
+        mockMvc.perform(delete("/api/discussions/topic/$topic/$id"))
+            .andExpect(status().isForbidden)
     }
 
     @Test
+    @TestWithMockUser
     fun `Given a comment is being deleted, when service reports user not found, then status is 400 BAD REQUEST`() {
         val topic = ThingId("C1234")
         val id = DiscussionCommentId(UUID.randomUUID())
-        val mockPrincipal = mockk<Principal>()
-        val userId = UUID.randomUUID()
 
-        every { mockPrincipal.name } returns userId.toString()
-        every { discussionService.delete(ContributorId(userId), topic, id) } throws UserNotFound(userId)
+        every { discussionService.delete(ContributorId(MockUserId.USER), topic, id) } throws UserNotFound(MockUserId.USER)
 
-        mockMvc.perform(delete("/api/discussions/topic/$topic/$id").principal(mockPrincipal))
+        mockMvc.perform(delete("/api/discussions/topic/$topic/$id"))
             .andExpect(status().isBadRequest)
     }
 
     @Test
+    @TestWithMockUser
     fun `Given a comment is being deleted, when service reports forbidden, then status is 403 FORBIDDEN`() {
         val topic = ThingId("C1234")
         val id = DiscussionCommentId(UUID.randomUUID())
-        val mockPrincipal = mockk<Principal>()
-        val userId = UUID.randomUUID()
+        val contributorId = ContributorId(MockUserId.USER)
 
-        every { mockPrincipal.name } returns userId.toString()
-        every { discussionService.delete(ContributorId(userId), topic, id) } throws NeitherOwnerNorCurator(ContributorId(userId))
+        every { discussionService.delete(contributorId, topic, id) } throws NeitherOwnerNorCurator(contributorId)
 
-        mockMvc.perform(delete("/api/discussions/topic/$topic/$id").principal(mockPrincipal))
+        mockMvc.perform(delete("/api/discussions/topic/$topic/$id"))
             .andExpect(status().isForbidden)
     }
 
-    private fun MockMvc.post(uriTemplate: String, principal: Principal, body: Map<String, String>) = perform(
-        post(uriTemplate)
-            .principal(principal)
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding("UTF-8")
-            .content(objectMapper.writeValueAsString(body))
-    )
+    private fun MockHttpServletRequestBuilder.perform(): ResultActions = mockMvc.perform(this)
 }

@@ -41,8 +41,10 @@ val reservedClassIds = setOf(
 )
 
 object Predicates {
+    val addresses = ThingId("P0")
     val comparesContribution = ThingId("compareContribution")
     val description = ThingId("description")
+    val employs = ThingId("P2")
     val exampleOfUsage = ThingId("exampleOfUsage")
     val field = ThingId("P24")
     val hasAuthor = ThingId("P27")
@@ -108,6 +110,7 @@ object Predicates {
     val templateOfPredicate = ThingId("TemplateOfPredicate")
     val templateOfResearchField = ThingId("TemplateOfResearchField")
     val templateOfResearchProblem = ThingId("TemplateOfResearchProblem")
+    val yields = ThingId("P1")
     val yearPublished = ThingId("P29")
 }
 

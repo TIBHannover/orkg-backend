@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.orkg.graph.domain.ClassService
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.PredicateService
 import org.orkg.graph.domain.ResourceService
 import org.orkg.graph.domain.StatementService
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
@@ -26,9 +25,6 @@ class ExampleDataTest {
     private lateinit var resourceService: ResourceService
 
     @Autowired
-    private lateinit var predicateService: PredicateService
-
-    @Autowired
     private lateinit var statementService: StatementService
 
     @Autowired
@@ -37,19 +33,17 @@ class ExampleDataTest {
     @BeforeEach
     fun setup() {
         cleanup()
-        ExampleData(resourceService, predicateService, statementService, classService).run(null)
+        ExampleData(resourceService, statementService, classService).run(null)
     }
 
     @AfterEach
     fun cleanup() {
         val tempPageable = PageRequest.of(0, 10)
 
-        predicateService.removeAll()
         resourceService.removeAll()
         statementService.removeAll()
         classService.removeAll()
 
-        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)

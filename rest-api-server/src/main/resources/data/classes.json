@@ -1,0 +1,400 @@
+[
+    {
+        "id": "Paper",
+        "label": "Paper"
+    },
+    {
+        "id": "Problem",
+        "label": "Problem"
+    },
+    {
+        "id": "Contribution",
+        "label": "Contribution"
+    },
+    {
+        "id": "QBDataset",
+        "label": "qb:Dataset",
+        "uri": "http://purl.org/linked-data/cube#DataSet"
+    },
+    {
+        "id": "Author",
+        "label": "Author"
+    },
+    {
+        "id": "VENUE",
+        "label": "Venue"
+    },
+    {
+        "id": "FeaturedPaper",
+        "label": "Featured Paper"
+    },
+    {
+        "id": "FeaturedComparisonCategory",
+        "label": "Featured Comparison Category"
+    },
+    {
+        "id": "FeaturedComparison",
+        "label": "Featured Comparison"
+    },
+    {
+        "id": "NodeShape",
+        "label": "Node shape"
+    },
+    {
+        "id": "ResearchField",
+        "label": "Research Field"
+    },
+    {
+        "id": "Comparison",
+        "label": "Comparison"
+    },
+    {
+        "id": "Date",
+        "label": "Date",
+        "uri": "http://www.w3.org/2001/XMLSchema#date"
+    },
+    {
+        "id": "String",
+        "label": "String",
+        "uri": "http://www.w3.org/2001/XMLSchema#string"
+    },
+    {
+        "id": "Number",
+        "label": "Number"
+    },
+    {
+        "id": "PaperDeleted",
+        "label": "PaperDeleted"
+    },
+    {
+        "id": "ContributionDeleted",
+        "label": "ContributionDeleted"
+    },
+    {
+        "id": "ComparisonRelatedFigure",
+        "label": "Comparison Related Figure"
+    },
+    {
+        "id": "ComparisonRelatedResource",
+        "label": "Comparison Related Resource"
+    },
+    {
+        "id": "Predicates",
+        "label": "Predicate"
+    },
+    {
+        "id": "DCLocation",
+        "label": "dc:Location",
+        "uri": "http://purl.org/dc/terms/Location"
+    },
+    {
+        "id": "Predicates",
+        "label": "Predicate"
+    },
+    {
+        "id": "VISUALIZATION_DEFINITION",
+        "label": "ORKG Visualization Description Class"
+    },
+    {
+        "id": "Sentence",
+        "label": "Sentence"
+    },
+    {
+        "id": "Acknowledgements",
+        "label": "Acknowledgements"
+    },
+    {
+        "id": "Background",
+        "label": "Background"
+    },
+    {
+        "id": "Caption",
+        "label": "Caption"
+    },
+    {
+        "id": "Conclusion",
+        "label": "Conclusion"
+    },
+    {
+        "id": "Contribution",
+        "label": "Contribution"
+    },
+    {
+        "id": "Data",
+        "label": "Data"
+    },
+    {
+        "id": "DatasetDescription",
+        "label": "DatasetDescription"
+    },
+    {
+        "id": "Discussion",
+        "label": "Discussion"
+    },
+    {
+        "id": "Epilogue",
+        "label": "Epilogue"
+    },
+    {
+        "id": "Evaluation",
+        "label": "Evaluation"
+    },
+    {
+        "id": "ExternalResourceDescription",
+        "label": "ExternalResourceDescription"
+    },
+    {
+        "id": "FutureWork",
+        "label": "FutureWork"
+    },
+    {
+        "id": "Introduction",
+        "label": "Introduction"
+    },
+    {
+        "id": "Legend",
+        "label": "Legend"
+    },
+    {
+        "id": "Materials",
+        "label": "Materials"
+    },
+    {
+        "id": "Methods",
+        "label": "Methods"
+    },
+    {
+        "id": "Model",
+        "label": "Model"
+    },
+    {
+        "id": "Motivation",
+        "label": "Motivation"
+    },
+    {
+        "id": "Postscript",
+        "label": "Postscript"
+    },
+    {
+        "id": "ProblemStatement",
+        "label": "ProblemStatement"
+    },
+    {
+        "id": "Prologue",
+        "label": "Prologue"
+    },
+    {
+        "id": "RelatedWork",
+        "label": "RelatedWork"
+    },
+    {
+        "id": "Results",
+        "label": "Results"
+    },
+    {
+        "id": "Scenario",
+        "label": "Scenario"
+    },
+    {
+        "id": "SupplementaryInformationDescription",
+        "label": "SupplementaryInformationDescription"
+    },
+    {
+        "id": "PropertyShape",
+        "label": "Property shape"
+    },
+    {
+        "id": "List",
+        "label": "List"
+    },
+    {
+        "id": "SustainableDevelopmentGoal",
+        "label": "Sustainable Development Goal"
+    },
+    {
+        "id": "RosettaNodeShape",
+        "label": "Rosetta Stone Node Shape"
+    },
+    {
+        "id": "RosettaStoneStatement",
+        "label": "Rosetta Stone Statement"
+    },
+    {
+        "id": "LatestVersion",
+        "label": "Latest version"
+    },
+    {
+        "id": "Version",
+        "label": "version"
+    },
+    {
+        "id": "Integer",
+        "label": "Integer",
+        "uri": "http://www.w3.org/2001/XMLSchema#integer"
+    },
+    {
+        "id": "Decimal",
+        "label": "Decimal",
+        "uri": "http://www.w3.org/2001/XMLSchema#decimal"
+    },
+    {
+        "id": "Boolean",
+        "label": "Boolean",
+        "uri": "http://www.w3.org/2001/XMLSchema#boolean"
+    },
+    {
+        "id": "Float",
+        "label": "Float",
+        "uri": "http://www.w3.org/2001/XMLSchema#float"
+    },
+    {
+        "id": "Double",
+        "label": "Double",
+        "uri": "http://www.w3.org/2001/XMLSchema#double"
+    },
+    {
+        "id": "URI",
+        "label": "URI",
+        "uri": "http://www.w3.org/2001/XMLSchema#anyURI"
+    },
+    {
+        "id": "Duration",
+        "label": "Duration",
+        "uri": "http://www.w3.org/2001/XMLSchema#duration"
+    },
+    {
+        "id": "DateTime",
+        "label": "DateTime",
+        "uri": "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    {
+        "id": "Time",
+        "label": "Time",
+        "uri": "http://www.w3.org/2001/XMLSchema#time"
+    },
+    {
+        "id": "GregorianYearMonth",
+        "label": "Gregorian Year Month",
+        "uri": "http://www.w3.org/2001/XMLSchema#gYearMonth"
+    },
+    {
+        "id": "GregorianYear",
+        "label": "Gregorian Year",
+        "uri": "http://www.w3.org/2001/XMLSchema#gYear"
+    },
+    {
+        "id": "GregorianMonthDay",
+        "label": "Gregorian Month Day",
+        "uri": "http://www.w3.org/2001/XMLSchema#gMonthDay"
+    },
+    {
+        "id": "GregorianDay",
+        "label": "Gregorian Day",
+        "uri": "http://www.w3.org/2001/XMLSchema#gDay"
+    },
+    {
+        "id": "GregorianMonth",
+        "label": "Gregorian Month",
+        "uri": "http://www.w3.org/2001/XMLSchema#gMonth"
+    },
+    {
+        "id": "HexBinary",
+        "label": "Hexadecimal Binary",
+        "uri": "http://www.w3.org/2001/XMLSchema#hexBinary"
+    },
+    {
+        "id": "Base64Binary",
+        "label": "Base64 Binary",
+        "uri": "http://www.w3.org/2001/XMLSchema#base64Binary"
+    },
+    {
+        "id": "NormalizedString",
+        "label": "Normalized String",
+        "uri": "http://www.w3.org/2001/XMLSchema#normalizedString"
+    },
+    {
+        "id": "Token",
+        "label": "Token",
+        "uri": "http://www.w3.org/2001/XMLSchema#token"
+    },
+    {
+        "id": "LanguageTag",
+        "label": "Language",
+        "uri": "http://www.w3.org/2001/XMLSchema#languagae"
+    },
+    {
+        "id": "Int",
+        "label": "Int (32-bit)",
+        "uri": "http://www.w3.org/2001/XMLSchema#int"
+    },
+    {
+        "id": "NonPositiveInteger",
+        "label": "Non-Positive Integer",
+        "uri": "http://www.w3.org/2001/XMLSchema#nonPositiveInteger"
+    },
+    {
+        "id": "NegativeInteger",
+        "label": "Negative Integer",
+        "uri": "http://www.w3.org/2001/XMLSchema#negativeInteger"
+    },
+    {
+        "id": "Long",
+        "label": "Long",
+        "uri": "http://www.w3.org/2001/XMLSchema#long"
+    },
+    {
+        "id": "Short",
+        "label": "Short",
+        "uri": "http://www.w3.org/2001/XMLSchema#short"
+    },
+    {
+        "id": "Byte",
+        "label": "Byte",
+        "uri": "http://www.w3.org/2001/XMLSchema#byte"
+    },
+    {
+        "id": "NonNegativeInteger",
+        "label": "Non-Negative Integer",
+        "uri": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+    },
+    {
+        "id": "UnsignedLong",
+        "label": "Unsigned Long",
+        "uri": "http://www.w3.org/2001/XMLSchema#unsignedLong"
+    },
+    {
+        "id": "UnsignedInt",
+        "label": "Unsigned Int",
+        "uri": "http://www.w3.org/2001/XMLSchema#unsignedInt"
+    },
+    {
+        "id": "UnsignedShort",
+        "label": "Unsigned Short",
+        "uri": "http://www.w3.org/2001/XMLSchema#unsignedShort"
+    },
+    {
+        "id": "UnsignedByte",
+        "label": "Unsigned Byte",
+        "uri": "http://www.w3.org/2001/XMLSchema#unsignedByte"
+    },
+    {
+        "id": "PositiveInteger",
+        "label": "Positive Integer",
+        "uri": "http://www.w3.org/2001/XMLSchema#positiveInteger"
+    },
+    {
+        "id": "YearMonthDuration",
+        "label": "Year Month Duration",
+        "uri": "http://www.w3.org/2001/XMLSchema#yearMonthDuration"
+    },
+    {
+        "id": "DayTimeDuration",
+        "label": "Day Time Duration",
+        "uri": "http://www.w3.org/2001/XMLSchema#dayTimeDuration"
+    },
+    {
+        "id": "DateTimeStamp",
+        "label": "Date Time Stamp",
+        "uri": "http://www.w3.org/2001/XMLSchema#dateTimeStamp"
+    }
+]

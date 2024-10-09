@@ -1,10 +1,10 @@
 package org.orkg
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
-import javax.validation.constraints.NotBlank
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ComponentScan("org.orkg.configuration")
-@Profile("development", "docker")
+@Profile("development", "docker", "production")
 @Order(1)
 class InitialDataSetup(
     private val classRepository: ClassRepository,
@@ -36,9 +36,8 @@ class InitialDataSetup(
 
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
-    @Value("\${orkg.init.setup.entities-file}")
-    @NotBlank
-    private var entitiesFile: String? = null
+    @Value("\${orkg.init.setup.directory}")
+    private var directory: String? = null
 
     /**
      * Creating new classes and predicates only
@@ -47,83 +46,62 @@ class InitialDataSetup(
     override fun run(args: ApplicationArguments?) {
         logger.info("Begin setting up initial data...")
 
-        val mainCommand: CreateMainCommand = objectMapper.readValue(
-            this::class.java.classLoader.getResource(entitiesFile)!!.openStream(),
-            CreateMainCommand::class.java
-        )
-
-        createClasses(mainCommand.classes)
-        createPredicates(mainCommand.predicates)
-        createResources(mainCommand.resources)
+        createClasses(readFile<List<RequiredClassDefinition>>("$directory/classes.json"))
+        createPredicates(readFile<List<RequiredPredicateDefinition>>("$directory/predicates.json"))
+        createResources(readFile<List<RequiredResourceDefinition>>("$directory/resources.json"))
 
         logger.info("End of initial data setup...")
     }
 
-    /**
-     * Create Classes
-     */
-    private fun createClasses(classList: List<CreateClassCommand>) {
-        classList.forEach { command ->
-            val classByURI = command.uri?.let { classRepository.findByUri(it.toString()) } ?: Optional.empty()
-            val classById = classRepository.findById(command.id)
+    private fun createClasses(classes: List<RequiredClassDefinition>) {
+        classes.forEach { (id, label, uri) ->
+            val classByURI = uri?.let { classRepository.findByUri(it.toString()) } ?: Optional.empty()
+            val classById = classRepository.findById(id)
 
-            if (classById.isPresent && classByURI.isPresent && classById.get().id != classByURI.get().id)
-                throw Exception("ID mismatch for class ID: ${classById.get().id}")
+            if (classById.isPresent && classByURI.isPresent && classById.get().id != classByURI.get().id) {
+                logger.warn("""Class with URI "$uri" is already assigned to class with id "${classById.get().id}".""")
+                return@forEach
+            }
 
             if (classById.isEmpty) {
-                classRepository.save(
-                    Class(
-                        id = command.id,
-                        label = command.label,
-                        uri = command.uri,
-                        createdAt = OffsetDateTime.now(clock)
-                    )
-                )
+                classRepository.save(Class(id, label, uri, OffsetDateTime.now(clock)))
             }
         }
     }
 
-    /**
-     * Create Predicates
-     */
-    private fun createPredicates(predicateList: List<CreatePredicatesCommand>) {
-        predicateList.forEach { (id, label) ->
+    private fun createPredicates(predicates: List<RequiredPredicateDefinition>) {
+        predicates.forEach { (id, label) ->
             if (predicateRepository.findById(id).isEmpty) {
-                predicateRepository.save(
-                    Predicate(
-                        id = id,
-                        label = label,
-                        createdAt = OffsetDateTime.now(clock)
-                    )
-                )
+                predicateRepository.save(Predicate(id, label, OffsetDateTime.now(clock)))
             }
         }
     }
 
-    /**
-     * Create Resources
-     */
-    private fun createResources(resourceList: List<CreateResourcesCommand>) {
-        resourceList.forEach { (id, label, classes) ->
+    private fun createResources(resources: List<RequiredResourceDefinition>) {
+        resources.forEach { (id, label, classes) ->
             if (resourceRepository.findById(id).isEmpty) {
-                resourceRepository.save(
-                    Resource(
-                        id = id,
-                        label = label,
-                        classes = classes,
-                        createdAt = OffsetDateTime.now(clock)
-                    )
-                )
+                resourceRepository.save(Resource(id, label, OffsetDateTime.now(clock), classes))
             }
         }
     }
 
-    data class CreateClassCommand(val id: ThingId, val label: String, val uri: ParsedIRI?)
-    data class CreatePredicatesCommand(val id: ThingId, val label: String)
-    data class CreateResourcesCommand(val id: ThingId, val label: String, val classes: Set<ThingId>)
-    data class CreateMainCommand(
-        val classes: List<CreateClassCommand>,
-        val predicates: List<CreatePredicatesCommand>,
-        val resources: List<CreateResourcesCommand>
+    private inline fun <reified T> readFile(file: String): T =
+        objectMapper.readValue<T>(this::class.java.classLoader.getResource(file)!!)
+
+    data class RequiredClassDefinition(
+        val id: ThingId,
+        val label: String,
+        val uri: ParsedIRI?
+    )
+
+    data class RequiredPredicateDefinition(
+        val id: ThingId,
+        val label: String
+    )
+
+    data class RequiredResourceDefinition(
+        val id: ThingId,
+        val label: String,
+        val classes: Set<ThingId>
     )
 }

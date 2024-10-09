@@ -1,0 +1,87 @@
+[
+    {
+        "label": "No Poverty",
+        "id": "SDG_1",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Zero Hunger",
+        "id": "SDG_2",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Good Health and Well-being",
+        "id": "SDG_3",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Quality Education",
+        "id": "SDG_4",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Gender Equality",
+        "id": "SDG_5",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Clean Water and Sanitation",
+        "id": "SDG_6",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Affordable and Clean Energy",
+        "id": "SDG_7",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Decent Work and Economic Growth",
+        "id": "SDG_8",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Industry, Innovation and Infrastructure",
+        "id": "SDG_9",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Reduced Inequality",
+        "id": "SDG_10",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Sustainable Cities and Communities",
+        "id": "SDG_11",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Responsible Consumption and Production",
+        "id": "SDG_12",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Climate Action",
+        "id": "SDG_13",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Life Below Water",
+        "id": "SDG_14",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Life on Land",
+        "id": "SDG_15",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Peace, Justice and Strong Institutions",
+        "id": "SDG_16",
+        "classes": ["SustainableDevelopmentGoal"]
+    },
+    {
+        "label": "Partnerships to achieve the Goal",
+        "id": "SDG_17",
+        "classes": ["SustainableDevelopmentGoal"]
+    }
+]

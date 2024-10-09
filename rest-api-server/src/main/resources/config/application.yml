@@ -37,7 +37,7 @@ orkg:
       log-file: 'paper-ranking.log'
   init:
     setup:
-      entities-file: "data/required_entities.json"
+      directory: 'data'
   datacite:
     username: ""
     password: ""

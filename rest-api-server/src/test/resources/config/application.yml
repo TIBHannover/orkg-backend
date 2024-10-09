@@ -7,7 +7,7 @@ orkg:
       dir: '/tmp/orkg/images'
   init:
     setup:
-      entities-file: "data/required_entities.json"
+      directory: 'data'
   ranking:
     papers:
       log-file: 'paper-ranking.log'

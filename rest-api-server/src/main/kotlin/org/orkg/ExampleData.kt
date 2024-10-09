@@ -5,8 +5,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.InputStream
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
-import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component
 @Order(2)
 class ExampleData(
     private val resourceService: ResourceUseCases,
-    private val predicateService: CreatePredicateUseCase,
     private val statementService: StatementUseCases,
     private val classService: ClassUseCases,
 ) : ApplicationRunner {
@@ -55,69 +54,16 @@ class ExampleData(
             resourceService.create("Case studies")
 
         //
-        // Predicates
-        //
-        val addresses = predicateService.create("addresses")
-        val yields = predicateService.create("yields")
-        val employs = predicateService.create("employs")
-
-        //
         // Statements
         //
-        statementService.create(wilesProof, addresses, tanimaConj)
-        statementService.create(wilesProof, addresses, fermatsLastTheorem)
-        statementService.create(wilesProof, yields, modularityTheorem)
+        statementService.create(wilesProof, Predicates.addresses, tanimaConj)
+        statementService.create(wilesProof, Predicates.addresses, fermatsLastTheorem)
+        statementService.create(wilesProof, Predicates.yields, modularityTheorem)
 
-        statementService.create(grubersDesign, employs, caseStudies)
-        statementService.create(grubersDesign, addresses, designOfOntologies)
-        statementService.create(grubersDesign, addresses, knowledgeEngineering)
-        statementService.create(grubersDesign, yields, ontoDesignCriteria)
-
-        // Predicates (for DILS)
-        predicateService.create("is a")
-        predicateService.create("refers to")
-        predicateService.create("uses")
-        predicateService.create("author")
-        predicateService.create("affiliation")
-        predicateService.create("email")
-        predicateService.create("ORCID")
-        predicateService.create("DOI")
-        predicateService.create("problem")
-        predicateService.create("solution")
-        predicateService.create("use case")
-        predicateService.create("description")
-        predicateService.create("implementation")
-        predicateService.create("has")
-        predicateService.create("has part")
-        predicateService.create("part of")
-        predicateService.create("input")
-        predicateService.create("output")
-        predicateService.create("programming language")
-        predicateService.create("environment")
-        predicateService.create("defines")
-        predicateService.create("field")
-        predicateService.create("web site")
-
-        //
-        // UI startup script (Allard's)
-        //
-
-        //
-        // Predicates
-        //
-        predicateService.create("has doi")
-        predicateService.create("has author")
-        predicateService.create("has publication month")
-        predicateService.create("has publication year")
-        predicateService.create("has research field")
-        predicateService.create("has contribution")
-        predicateService.create("has research problem")
-        predicateService.create("subClassOf")
-        // Demo Predicate Data
-        predicateService.create("approach")
-        predicateService.create("evaluation")
-        predicateService.create("implementation")
-        val subfieldPredicate = predicateService.create("has subfield")
+        statementService.create(grubersDesign, Predicates.employs, caseStudies)
+        statementService.create(grubersDesign, Predicates.addresses, designOfOntologies)
+        statementService.create(grubersDesign, Predicates.addresses, knowledgeEngineering)
+        statementService.create(grubersDesign, Predicates.yields, ontoDesignCriteria)
 
         //
         // Resource
@@ -134,28 +80,25 @@ class ExampleData(
                 classes = setOf(Classes.researchField),
             )
             val newField = resourceService.create(newFieldCommand)
-            statementService.create(researchField, subfieldPredicate, newField)
+            statementService.create(researchField, Predicates.hasSubfield, newField)
             for (subfield in field.subfields) {
                 val newSubFieldCommand = CreateResourceUseCase.CreateCommand(
                     label = subfield.name,
                     classes = setOf(Classes.researchField),
                 )
                 val newSubfield = resourceService.create(newSubFieldCommand)
-                statementService.create(newField, subfieldPredicate, newSubfield)
+                statementService.create(newField, Predicates.hasSubfield, newSubfield)
                 for (subSubfield in subfield.subfields) {
                     val newSubSubFieldCommand = CreateResourceUseCase.CreateCommand(
                         label = subSubfield.name,
                         classes = setOf(Classes.researchField),
                     )
                     val newSubSubfield = resourceService.create(newSubSubFieldCommand)
-                    statementService.create(newSubfield, subfieldPredicate, newSubSubfield)
+                    statementService.create(newSubfield, Predicates.hasSubfield, newSubSubfield)
                 }
             }
         }
     }
-
-    private fun CreatePredicateUseCase.create(label: String): ThingId =
-        create(CreatePredicateUseCase.CreateCommand(label = label))
 
     private fun CreateResourceUseCase.create(label: String): ThingId =
         create(CreateResourceUseCase.CreateCommand(label = label))

@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- The endpoint `/api/visualizations` now supports filtering by `exact`, `created_at_start`, `created_at_end`, `observatory_id` and `organization_id`.
+  (See: [!1070](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1070))
+- The endpoint `/api/literature-lists` now supports filtering by `research_field` and `include_subfields`.
+  (See: [!1071](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1071))
+- The endpoint `/api/smart-reviews` now supports filtering by `research_field` and `include_subfields`.
+  (See: [!1072](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1072))
+- The `modifiable` field is now exposed for rosetta stone templates.
+  (See: [!1080](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1080))
+
+### Changed
+- The endpoint `/api/visualizations` now supports arbitrary filter combinations.
+  (See: [!1070](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1070))
+- Deleting discussion comments now returns status 403 instead of status 401 when actioning user is neither the owner nor the creator of the comment.
+  (See: [!1077](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1077))
+- Subclass instances for template instance values are now considered valid.
+  (See: [!1075](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1075))
+
+### Fixed
+- Fixed size limit for min and max values of number literal properties.
+  (See: [!1055](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1055))
+- Formatted labels are now parsed correctly when updating rosetta stone templates.
+  (See: [!1074](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1074))
+- Fixed formatted labels for resources.
+  (See: [!1079](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1079))
 
 ## [0.67.1] - 2024-09-18
 ### Fixed

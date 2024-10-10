@@ -3,7 +3,7 @@
 Observatory filters are persistent filter configurations (presets) for observatories.
 
 [[observatory-filters-fetch]]
-== Fetching an Observatory Filter
+== Fetching Observatory Filters
 
 A `GET` request provides information about an observatory filter, which always belongs to a specific <<observatories,observatory>>.
 

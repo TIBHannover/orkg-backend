@@ -7,10 +7,10 @@ The provided endpoints aggregate these concepts into a template property represe
 NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
 
 [[template-properties-untyped-properties]]
-== Untyped template properties
+== Untyped Template Properties
 
 [[template-properties-create-untyped-property]]
-=== Creating an untyped template property
+=== Creating Untyped Template Properties
 
 A `POST` request creates a new template property without any type constraints.
 The response will be `201 Created` when successful.
@@ -19,7 +19,7 @@ The updated template (object) can be retrieved by following the URI in the `Loca
 operation::templates-create-untyped-property[snippets='request-fields,curl-request,http-response']
 
 [[template-properties-edit-untyped-property]]
-=== Editing an untyped template property
+=== Updating Untyped Template Properties
 
 A `PUT` request updates an existing template property of any type with all the given parameters and converts it to an untyped template property if necessary.
 If the previous template property had a type constraint, it will be removed in the process.
@@ -31,10 +31,10 @@ NOTE: All fields at the top level in the request can be omitted or `null`, excep
 operation::templates-update-untyped-property[snippets='request-fields,curl-request,http-response']
 
 [[template-properties-other-literal-properties]]
-== Literal template properties
+== Literal Template Properties
 
 [[template-properties-create-other-literal-property]]
-=== Creating a literal template property
+=== Creating Literal Template Properties
 
 A `POST` request creates a new literal template property for the given datatype, without any additional constraints.
 The response will be `201 Created` when successful.
@@ -43,7 +43,7 @@ The updated template (object) can be retrieved by following the URI in the `Loca
 operation::templates-create-other-literal-property[snippets='request-fields,curl-request,http-response']
 
 [[template-properties-edit-other-literal-property]]
-=== Editing a literal template property
+=== Updating Literal Template Properties
 
 A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a literal template property if necessary.
 The response will be `204 No Content` when successful.
@@ -54,10 +54,10 @@ NOTE: All fields at the top level in the request can be omitted or `null`, excep
 operation::templates-update-other-literal-property[snippets='request-fields,curl-request,http-response']
 
 [[template-properties-string-literal-properties]]
-== String literal template properties
+== String Literal Template Properties
 
 [[template-properties-create-string-literal-property]]
-=== Creating a string literal template property
+=== Creating String Literal Template Properties
 
 A `POST` request creates a new string template property, with an optional `pattern` constraint.
 The response will be `201 Created` when successful.
@@ -66,7 +66,7 @@ The updated template (object) can be retrieved by following the URI in the `Loca
 operation::templates-create-string-literal-property[snippets='request-fields,curl-request,http-response']
 
 [[template-properties-edit-string-literal-property]]
-=== Editing a string literal template property
+=== Updating String Literal Template Properties
 
 A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a string literal template property if necessary.
 The response will be `204 No Content` when successful.
@@ -77,10 +77,10 @@ NOTE: All fields at the top level in the request can be omitted or `null`, excep
 operation::templates-update-string-literal-property[snippets='request-fields,curl-request,http-response']
 
 [[template-properties-number-literal-properties]]
-== Number literal template properties
+== Number Literal Template Properties
 
 [[template-properties-create-number-literal-property]]
-=== Creating a number literal template property
+=== Creating Number Literal Template Properties
 
 A `POST` request creates a new number template property, with optional boundary constraints.
 The response will be `201 Created` when successful.
@@ -89,7 +89,7 @@ The updated template (object) can be retrieved by following the URI in the `Loca
 operation::templates-create-number-literal-property[snippets='request-fields,curl-request,http-response']
 
 [[template-properties-edit-number-literal-property]]
-=== Editing a number literal template property
+=== Updating Number Literal Template Properties
 
 A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a number literal template property if necessary.
 The response will be `204 No Content` when successful.
@@ -100,10 +100,10 @@ NOTE: All fields at the top level in the request can be omitted or `null`, excep
 operation::templates-update-untyped-property[snippets='request-fields,curl-request,http-response']
 
 [[template-properties-resource-properties]]
-== Resource template properties
+== Resource Template Properties
 
 [[template-properties-create-resource-property]]
-=== Creating a resource template property
+=== Creating Resource Template Properties
 
 A `POST` request creates a new resource template property for the given datatype, without any additional constraints.
 The response will be `201 Created` when successful.
@@ -112,7 +112,7 @@ The updated template (object) can be retrieved by following the URI in the `Loca
 operation::templates-create-resource-property[snippets='request-fields,curl-request,http-response']
 
 [[template-properties-edit-resource-property]]
-=== Editing a resource template property
+=== Updating Resource Template Properties
 
 A `PUT` request updates an existing template property of any type with all the given parameters and converts it to a resource template property if necessary.
 The response will be `204 No Content` when successful.

@@ -10,7 +10,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 == Comparison Sections
 
 [[smart-review-sections-create-comparison-section]]
-=== Creating a comparison section
+=== Creating Comparison Sections
 
 A `POST` request creates a new comparison section and adds it to the specified smart review.
 The response will be `201 Created` when successful.
@@ -19,7 +19,7 @@ The updated smart review (object) can be retrieved by following the URI in the `
 operation::smart-reviews-create-comparison-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[smart-review-sections-edit-comparison-section]]
-=== Editing a comparison section
+=== Updating Comparison Sections
 
 A `PUT` request updates an existing comparison section with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -31,7 +31,7 @@ operation::smart-reviews-update-comparison-section[snippets='request-fields,curl
 == Visualization Sections
 
 [[smart-review-sections-create-visualization-section]]
-=== Creating a visualization section
+=== Creating Visualization Sections
 
 A `POST` request creates a new visualization section and adds it to the specified smart review.
 The response will be `201 Created` when successful.
@@ -40,7 +40,7 @@ The updated smart review (object) can be retrieved by following the URI in the `
 operation::smart-reviews-create-visualization-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[smart-review-sections-edit-visualization-section]]
-=== Editing a visualization section
+=== Updating Visualization Sections
 
 A `PUT` request updates an existing visualization section with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -52,7 +52,7 @@ operation::smart-reviews-update-visualization-section[snippets='request-fields,c
 == Resource Sections
 
 [[smart-review-sections-create-resource-section]]
-=== Creating a resource section
+=== Creating Resource Sections
 
 A `POST` request creates a new resource section and adds it to the specified smart review.
 The response will be `201 Created` when successful.
@@ -61,7 +61,7 @@ The updated smart review (object) can be retrieved by following the URI in the `
 operation::smart-reviews-create-resource-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[smart-review-sections-edit-resource-section]]
-=== Editing a resource section
+=== Updating Resource Sections
 
 A `PUT` request updates an existing resource section with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -73,7 +73,7 @@ operation::smart-reviews-update-resource-section[snippets='request-fields,curl-r
 == Predicate Sections
 
 [[smart-review-sections-create-predicate-section]]
-=== Creating a predicate section
+=== Creating Predicate Sections
 
 A `POST` request creates a new predicate section and adds it to the specified smart review.
 The response will be `201 Created` when successful.
@@ -82,7 +82,7 @@ The updated smart review (object) can be retrieved by following the URI in the `
 operation::smart-reviews-create-predicate-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[smart-review-sections-edit-predicate-section]]
-=== Editing a predicate section
+=== Updating Predicate Sections
 
 A `PUT` request updates an existing predicate section with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -94,7 +94,7 @@ operation::smart-reviews-update-predicate-section[snippets='request-fields,curl-
 == Ontology Sections
 
 [[smart-review-sections-create-ontology-section]]
-=== Creating an ontology section
+=== Creating Ontology Sections
 
 A `POST` request creates a new ontology section and adds it to the specified smart review.
 The response will be `201 Created` when successful.
@@ -103,7 +103,7 @@ The updated smart review (object) can be retrieved by following the URI in the `
 operation::smart-reviews-create-ontology-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[smart-review-sections-edit-ontology-section]]
-=== Editing a ontology section
+=== Updating Ontology Sections
 
 A `PUT` request updates an existing ontology section with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -115,7 +115,7 @@ operation::smart-reviews-update-ontology-section[snippets='request-fields,curl-r
 == Text Sections
 
 [[smart-review-sections-create-text-section]]
-=== Creating a text section
+=== Creating Text Sections
 
 A `POST` request creates a new text section and adds it to the specified smart review.
 The response will be `201 Created` when successful.
@@ -124,7 +124,7 @@ The updated smart review (object) can be retrieved by following the URI in the `
 operation::smart-reviews-create-text-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[smart-review-sections-edit-text-section]]
-=== Editing a text section
+=== Updating Text Sections
 
 A `PUT` request updates an existing text section with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -133,7 +133,7 @@ The updated smart review (object) can be retrieved by following the URI in the `
 operation::smart-reviews-update-text-section[snippets='request-fields,curl-request,http-response']
 
 [[smart-review-sections-delete]]
-== Deleting a smart review section
+== Deleting Smart Review Section
 
 A `DELETE` request deletes a smart review section by ID.
 The response will be `204 No Content` when successful.

@@ -4,7 +4,7 @@ Organizations represent institutes or groups.
 These can handle further smaller groups named <<observatories>>.
 
 [[organizations-fetch]]
-== Fetching an organization
+== Fetching Organizations
 
 A `GET` request provides information about a resource.
 

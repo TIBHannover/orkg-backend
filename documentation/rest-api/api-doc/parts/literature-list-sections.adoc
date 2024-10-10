@@ -10,7 +10,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 == Text Sections
 
 [[literature-list-sections-create-text-section]]
-=== Creating a text section
+=== Creating Text Sections
 
 A `POST` request creates a new text section and adds it to the specified literature list.
 The response will be `201 Created` when successful.
@@ -19,7 +19,7 @@ The updated literature list (object) can be retrieved by following the URI in th
 operation::literature-lists-create-text-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[literature-list-sections-edit-text-section]]
-=== Editing a text section
+=== Updating Text Sections
 
 A `PUT` request updates an existing text section with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -31,7 +31,7 @@ operation::literature-lists-update-text-section[snippets='request-fields,curl-re
 == List Sections
 
 [[literature-list-sections-create-list-section]]
-=== Creating a list section
+=== Creating List Sections
 
 A `POST` request creates a new list section and adds it to the specified literature list.
 The response will be `201 Created` when successful.
@@ -40,7 +40,7 @@ The updated literature list (object) can be retrieved by following the URI in th
 operation::literature-lists-create-list-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[literature-list-sections-edit-list-section]]
-=== Editing a list section
+=== Updating List Sections
 
 A `PUT` request updates an existing list section with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -49,7 +49,7 @@ The updated literature list (object) can be retrieved by following the URI in th
 operation::literature-lists-update-list-section[snippets='request-fields,curl-request,http-response']
 
 [[literature-list-sections-delete]]
-== Deleting a literature list section
+== Deleting Literature List Sections
 
 A `DELETE` request deletes a literature list section by ID.
 The response will be `204 No Content` when successful.

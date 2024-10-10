@@ -3,28 +3,28 @@
 Bulk operations on statements. Helps performing multiple calls together.
 
 [[bulk-statements-fetch-by-subject]]
-== Fetch by Subjects
+== Fetching Statements by Subjects (Bulk)
 
 A `GET` request to get statements of multiple resources in the subject position.
 
 operation::bulk-statements-lookup-by-subjects[snippets='request-parameters,curl-request,http-response,response-fields']
 
 [[bulk-statements-fetch-by-object]]
-== Fetch by Objects
+== Fetching Statements by Objects (Bulk)
 
 A `GET` request to get statements of multiple resources/literals in the object position.
 
 operation::bulk-statements-lookup-by-objects[snippets='request-parameters,curl-request,http-response,response-fields']
 
 [[bulk-statements-edit]]
-== Edit Statements
+== Updating Statements (Bulk)
 
 A `PUT` request to edit multiple statements, with the same update body
 
 operation::bulk-statements-edit-resource-statements[snippets='request-parameters,curl-request,http-response,response-fields']
 
 [[bulk-statements-delete]]
-== Delete Statements
+== Deleting Statements (Bulk)
 
 A `DELETE` request to delete multiple statements simultaneously
 

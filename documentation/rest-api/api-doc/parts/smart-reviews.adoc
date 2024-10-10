@@ -7,14 +7,14 @@ The provided endpoints aggregate these concepts into a smart review representati
 NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
 
 [[smart-reviews-fetch]]
-== Fetching a smart review
+== Fetching Smart Reviews
 
 A `GET` request provides information about a smart review.
 
 operation::smart-reviews-get-single[snippets='curl-request,http-response,response-fields']
 
 [[smart-reviews-list]]
-== Listing smart reviews
+== Listing Smart Reviews
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<smart-reviews-fetch,smart reviews>>.
 If no paging request parameters are provided, the default values will be used.
@@ -26,7 +26,7 @@ The following list of request parameters are supported:
 operation::smart-reviews-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 [[smart-reviews-create]]
-== Creating smart reviews
+== Creating Smart Reviews
 
 A `POST` request creates a new smart review with all the given parameters.
 The response will be `201 Created` when successful.
@@ -35,7 +35,7 @@ The smart review (object) can be retrieved by following the URI in the `Location
 operation::smart-reviews-create[snippets='request-fields,curl-request,http-response']
 
 [[smart-reviews-edit]]
-== Editing a smart review
+== Updating Smart Reviews
 
 A `PUT` request updates an existing smart review with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -48,7 +48,7 @@ WARNING: Author names will not be updated if a resource id is specified for a gi
 operation::smart-reviews-update[snippets='request-fields,curl-request,http-response']
 
 [[smart-reviews-publish]]
-== Publishing smart reviews
+== Publishing Smart Reviews
 
 A `POST` request publishes an existing smart review with the given parameters.
 In the process, a new smart review published resource is created and linked to the original smart review resource.

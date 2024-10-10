@@ -7,14 +7,14 @@ The provided endpoints aggregate these concepts into a visualization representat
 NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
 
 [[visualizations-fetch]]
-== Fetching a visualization
+== Fetching Visualizations
 
 A `GET` request provides information about a visualization.
 
 operation::visualizations-get-single[snippets='curl-request,http-response,response-fields']
 
 [[visualizations-list]]
-== Listing visualizations
+== Listing Visualizations
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<visualizations-fetch,visualizations>>.
 If no paging request parameters are provided, the default values will be used.
@@ -26,7 +26,7 @@ The following list of request parameters are supported:
 operation::visualizations-get-paged-with-parameters[snippets='request-parameters']
 
 [[visualizations-create]]
-== Creating visualizations
+== Creating Visualizations
 
 A `POST` request creates a new visualization with all the given parameters.
 The response will be `201 Created` when successful.

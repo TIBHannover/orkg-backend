@@ -7,14 +7,14 @@ The provided endpoints aggregate these concepts into a rosetta stone template re
 NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
 
 [[rosetta-stone-templates-fetch]]
-== Fetching a rosetta stone template
+== Fetching Rosetta Stone Templates
 
 A `GET` request provides information about a template.
 
 operation::rosetta-stone-templates-get-single[snippets='curl-request,http-response,response-fields']
 
 [[rosetta-stone-templates-list]]
-== Listing rosetta stone templates
+== Listing Rosetta Stone Templates
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<rosetta-stone-templates-fetch,rosetta stone templates>>.
 If no paging request parameters are provided, the default values will be used.
@@ -26,7 +26,7 @@ The following list of request parameters are supported:
 operation::rosetta-stone-templates-get-paged-with-parameters[snippets='request-parameters']
 
 [[rosetta-stone-templates-create]]
-== Creating rosetta stone templates
+== Creating Rosetta Stone Templates
 
 A `POST` request creates a new rosetta stone template with all the given parameters.
 The response will be `201 Created` when successful.
@@ -39,7 +39,7 @@ NOTE: The first property of a rosetta stone template defines the subject positio
 operation::rosetta-stone-templates-create[snippets='request-fields,curl-request,http-response']
 
 [[rosetta-stone-templates-edit]]
-== Editing a rosetta stone template
+== Updating Rosetta Stone Templates
 
 A `PUT` request updates an existing rosetta stone template with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -51,7 +51,7 @@ NOTE: Only rosetta stone templates that have not been used to create a rosetta s
 operation::rosetta-stone-templates-update[snippets='request-fields,curl-request,http-response']
 
 [[rosetta-stone-templates-delete]]
-== Deleting a rosetta stone template
+== Deleting Rosetta Stone Templates
 
 A `DELETE` request deletes a rosetta stone template.
 The response will be `204 No Content` when successful.

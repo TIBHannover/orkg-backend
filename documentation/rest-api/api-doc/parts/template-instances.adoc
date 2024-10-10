@@ -5,14 +5,14 @@ Template instances are an abstraction for a subgraph of <<Statements,statements>
 NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
 
 [[template-instances-fetch]]
-== Fetching a template instance
+== Fetching Template Instances
 
 A `GET` request provides information about a template instance.
 
 operation::template-instances-get-single[snippets='curl-request,http-response,response-fields']
 
 [[template-instances-list]]
-== Listing template instances
+== Listing Template Instances
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<template-instances-fetch,template instances>>.
 If no paging request parameters are provided, the default values will be used.
@@ -24,7 +24,7 @@ The following list of request parameters are supported:
 operation::template-instances-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 [[template-instances-edit]]
-== Editing a template instance
+== Updating Template Instances
 
 A `PUT` request updates an existing template instance with all the given parameters.
 The response will be `204 No Content` when successful.

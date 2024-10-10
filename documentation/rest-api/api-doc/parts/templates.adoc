@@ -7,14 +7,14 @@ The provided endpoints aggregate these concepts into a template representation.
 NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
 
 [[templates-fetch]]
-== Fetching a template
+== Fetching Templates
 
 A `GET` request provides information about a template.
 
 operation::templates-get-single[snippets='curl-request,http-response,response-fields']
 
 [[templates-list]]
-== Listing templates
+== Listing Templates
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<templates-fetch,templates>>.
 If no paging request parameters are provided, the default values will be used.
@@ -26,7 +26,7 @@ The following list of request parameters are supported:
 operation::templates-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 [[templates-create]]
-== Creating templates
+== Creating Templates
 
 A `POST` request creates a new template with all the given parameters.
 The response will be `201 Created` when successful.
@@ -35,7 +35,7 @@ The template (object) can be retrieved by following the URI in the `Location` he
 operation::templates-create[snippets='request-fields,curl-request,http-response']
 
 [[templates-edit]]
-== Editing a template
+== Updating Templates
 
 A `PUT` request updates an existing template with all the given parameters.
 The response will be `204 No Content` when successful.

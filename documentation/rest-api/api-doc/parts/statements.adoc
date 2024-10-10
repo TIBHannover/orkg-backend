@@ -18,14 +18,14 @@ Statements can also be referenced by their IDs.
 This allows storing and retrieving provenance information about them.
 
 [[statements-fetch]]
-== Fetching a statement
+== Fetching Statements
 
 A `GET` request provides information about a statement.
 
 operation::statements-get-single[snippets='curl-request,http-response,response-fields']
 
 [[statements-list]]
-== Listing statements
+== Listing Statements
 
 A `GET` request lists all the statements:
 
@@ -38,7 +38,7 @@ The following list of request parameters are supported:
 operation::statements-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 [[statements-create]]
-== Creating statements
+== Creating Statements
 A `POST` request creates a new statement.
 The response will be `201 Created` when successful.
 The statement can be retrieved by following the URI in the `Location` header field.
@@ -48,7 +48,7 @@ NOTE: The response body contains the created statement for convenience. This mig
 operation::statements-create[snippets='request-fields,curl-request,http-response']
 
 [[statements-edit]]
-== Editing a statement
+== Updating Statements
 
 A `PUT` request updates an existing statement with the given parameters.
 The response will be `200 OK` when successful.
@@ -57,7 +57,7 @@ The updated statement is returned in the body for convenience.
 operation::statements-update[snippets='request-fields,curl-request,http-response']
 
 [[statements-delete]]
-== Deleting a statement
+== Deleting Statement
 Delete a statement by providing the ID of the statement via a `DELETE` call:
 
 The response will be `204 No Content` when successful.
@@ -65,7 +65,7 @@ The response will be `204 No Content` when successful.
 operation::statements-delete-by-id_is-no-content[snippets='curl-request,http-response']
 
 [[statements-fetch-as-bundle]]
-== Fetching statements for a thing as a bundle
+== Fetching Statements as Bundles
 
 A `GET` request that fetches the entire subgraph of a certain entity and returns all the statements as a bundle.
 

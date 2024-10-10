@@ -5,9 +5,9 @@ Observatories represent groups which are managed by <<organizations>>.
 One Observatory can be managed by many organizations.
 
 [[observatories-fetch]]
-== Fetching an observatory
+== Fetching Observatories
 
-A `GET` request provides information about a resource.
+A `GET` request provides information about an observatory.
 
 operation::observatory-controller-integration-test-fetch[snippets='curl-request,http-response,response-fields']
 
@@ -19,7 +19,7 @@ A `GET` request lists all organizations:
 operation::observatory-controller-integration-test-index[snippets='curl-request']
 
 [[observatories-create]]
-== Creating observatories
+== Creating Observatories
 
 A `POST` request creates a new observatory with the given parameters.
 The response will be `201 Created` when successful.
@@ -30,7 +30,7 @@ NOTE: The response body contains the created observatory for convenience. This m
 operation::observatories-create[snippets='request-fields,curl-request,http-response']
 
 [[observatories-edit]]
-== Editing an observatory
+== Updating Observatories
 
 A `PATCH` request updates an existing observatory with the given parameters.
 Only fields provided in the response, and therefore non-null, will be updated.
@@ -42,7 +42,7 @@ NOTE: This endpoint can only be accessed by curators.
 operation::observatories-update[snippets='request-fields,curl-request,http-response']
 
 [[observatories-list-papers]]
-== Listing papers of an observatory
+== Listing Papers of Observatories
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of paper <<resources-fetch,resources>>.
 

@@ -4,14 +4,14 @@ Classes represent concepts in the knowledge graph.
 They can be attached to <<Resources,resources>> to indicate that the resource belongs to the respective class.
 
 [[classes-fetch]]
-== Fetching a class
+== Fetching Classes
 
 A `GET` request provides information about a class.
 
 operation::class-controller-integration-test-fetch[snippets='curl-request,http-response,response-fields']
 
 [[classes-list]]
-== Listing classes
+== Listing Classes
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<classes-fetch,classes>>.
 If no paging request parameters are provided, the default values will be used.
@@ -23,7 +23,7 @@ The following list of request parameters are supported:
 operation::classes-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 [[classes-create]]
-== Creating classes
+== Creating Classes
 
 A `POST` request creates a new class with a given label.
 An optional URI can be given to link to the class in an external ontology (RDF).
@@ -35,10 +35,12 @@ NOTE: The created class is returned in the body for convenience. This might be s
 operation::classes-create[snippets='request-fields,curl-request,http-response']
 
 [[classes-edit]]
-== Editing a class
+== Updating Classes
+
+The Open Research Knowledge Graph REST API provides two endpoints for updating classes.
 
 [[classes-update]]
-=== Updating a class
+=== Updating Classes (PATCH)
 
 A `PATCH` request updates a class with a new given label and URI.
 Only fields provided in the response, and therefore non-null, will be updated.
@@ -47,7 +49,7 @@ The response will be `200 OK` when successful.
 operation::classes-update[snippets='request-fields,curl-request,http-response']
 
 [[classes-replace]]
-=== Replacing a class
+=== Updating Classes (PUT)
 
 A `PUT` request updates a class with a new given label and URI.
 All fields will be updated in the process.
@@ -57,12 +59,12 @@ The updated class is returned in the body for convenience.
 operation::classes-replace[snippets='request-fields,curl-request']
 
 [[classes-import]]
-== Importing a class
+== Importing Classes
 
 The {orkg} REST API provides two endpoints for importing classes from external ontologies.
 
 [[classes-import-by-uri]]
-=== Importing a class by URI
+=== Importing Classes by URI
 
 A `POST` request imports a class from an external ontology by a given URI.
 The response will be `201 Created` when successful, even when the class was already imported.
@@ -70,7 +72,7 @@ The response will be `201 Created` when successful, even when the class was alre
 operation::import-import-class-by-uri[snippets='request-fields,curl-request,http-response']
 
 [[classes-import-by-short-form]]
-=== Importing a class by short form
+=== Importing Classes by Short Form
 
 A `POST` request imports a class from an external ontology by a given short form id.
 The response will be `201 Created` when successful, even when the class was already imported.

@@ -7,14 +7,14 @@ The provided endpoints aggregate these concepts into a literature list represent
 NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
 
 [[literature-lists-fetch]]
-== Fetching a literature list
+== Fetching Literature Lists
 
 A `GET` request provides information about a literature list.
 
 operation::literature-lists-get-single[snippets='curl-request,http-response,response-fields']
 
 [[literature-lists-list]]
-== Listing literature lists
+== Listing Literature Lists
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<literature-lists-fetch,literature lists>>.
 If no paging request parameters are provided, the default values will be used.
@@ -26,7 +26,7 @@ The following list of request parameters are supported:
 operation::literature-lists-get-paged-with-parameters[snippets='request-parameters,curl-request']
 
 [[literature-lists-create]]
-== Creating literature lists
+== Creating Literature Lists
 
 A `POST` request creates a new literature list with all the given parameters.
 The response will be `201 Created` when successful.
@@ -35,7 +35,7 @@ The literature list (object) can be retrieved by following the URI in the `Locat
 operation::literature-lists-create[snippets='request-fields,curl-request,http-response']
 
 [[literature-lists-edit]]
-== Editing a literature list
+== Updating Literature Lists
 
 A `PUT` request updates an existing literature list with all the given parameters.
 The response will be `204 No Content` when successful.
@@ -48,7 +48,7 @@ WARNING: Author names will not be updated if a resource id is specified for a gi
 operation::literature-lists-update[snippets='request-fields,curl-request,http-response']
 
 [[literature-lists-publish]]
-== Publishing literature lists
+== Publishing Literature Lists
 
 A `POST` request publishes an existing literature list with the given parameters.
 In the process, a new literature list published resource is created and linked to the original literature list resource.
@@ -58,7 +58,7 @@ The response will be `204 No Content` when successful.
 operation::literature-lists-publish[snippets='request-fields,curl-request,http-response']
 
 [[literature-lists-published-contents]]
-== Fetching published literature list contents
+== Fetching Published Literature List Contents
 
 A `GET` request returns contents of an already published literature list, at the state of publishing.
 

@@ -4,7 +4,7 @@ Literals represent nodes in the knowledge graph.
 They can appear in the object position in <<Statements,statements>>.
 
 [[literals-fetch]]
-== Fetching a literal
+== Fetching Literals
 
 A `GET` request provides information about a <<literal-represenation,literal>>.
 
@@ -34,7 +34,7 @@ NOTE: The created literal is returned in the body for convenience. This might be
 operation::literal-controller-integration-test-add[snippets='request-fields,curl-request,http-response']
 
 [[literals-edit]]
-== Editing a literal
+== Updating Literals
 
 A `PUT` request updates a literal with a new value through the label property.
 The response will be `200 OK` when successful.

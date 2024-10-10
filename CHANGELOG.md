@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.68.0] - 2024-10-10
 ### Added
 - The endpoint `/api/visualizations` now supports filtering by `exact`, `created_at_start`, `created_at_end`, `observatory_id` and `organization_id`.
   (See: [!1070](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1070))
@@ -1221,7 +1223,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.67.1...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.68.0...master
+[0.68.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.68.0
 [0.67.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.67.1
 [0.67.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.67.0
 [0.66.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.66.0

@@ -3,7 +3,7 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
-version = "0.67.1"
+version = "0.68.0"
 
 plugins {
     id("org.orkg.gradle.spring-boot-application")

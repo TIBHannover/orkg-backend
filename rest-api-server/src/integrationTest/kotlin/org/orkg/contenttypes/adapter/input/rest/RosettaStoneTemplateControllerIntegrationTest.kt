@@ -291,6 +291,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
             it.visibility shouldBe Visibility.DEFAULT
             it.unlistedBy shouldBe null
+            it.modifiable shouldBe true
         }
 
         put("/api/rosetta-stone/templates/{id}", id)
@@ -398,6 +399,7 @@ class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest(
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
             it.visibility shouldBe Visibility.DEFAULT
             it.unlistedBy shouldBe null
+            it.modifiable shouldBe true
         }
     }
 

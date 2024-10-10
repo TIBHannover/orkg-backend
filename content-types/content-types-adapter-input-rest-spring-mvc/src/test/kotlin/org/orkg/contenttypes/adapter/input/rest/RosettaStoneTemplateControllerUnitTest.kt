@@ -104,7 +104,8 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this rosetta stone template."),
                         fieldWithPath("visibility").description("""Visibility of the rosetta stone template. Can be one of "default", "featured", "unlisted" or "deleted"."""),
-                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this rosetta stone template.").optional()
+                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this rosetta stone template.").optional(),
+                        fieldWithPath("modifiable").description("Whether the rosetta stone template can be modified.")
                     )
                 )
             )

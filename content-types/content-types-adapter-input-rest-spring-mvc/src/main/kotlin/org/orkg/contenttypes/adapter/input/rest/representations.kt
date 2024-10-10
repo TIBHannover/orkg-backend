@@ -401,7 +401,8 @@ data class RosettaStoneTemplateRepresentation(
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
-    val unlistedBy: ContributorId?
+    val unlistedBy: ContributorId?,
+    val modifiable: Boolean
 )
 
 data class TemplateInstanceRepresentation(

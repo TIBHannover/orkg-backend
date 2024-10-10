@@ -27,6 +27,7 @@ interface RosettaStoneTemplateRepresentationAdapter : TemplatePropertyRepresenta
             organizations = organizations,
             observatories = observatories,
             visibility = visibility,
-            unlistedBy = unlistedBy
+            unlistedBy = unlistedBy,
+            modifiable = modifiable
         )
 }

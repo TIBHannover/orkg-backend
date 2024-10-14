@@ -74,7 +74,7 @@ class OLSRepositoryAdapterUnitTest {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
                     UriComponentsBuilder.fromHttpUrl(olsHostUrl)
                         .path("/ontologies/$ontologyId/terms")
-                        .queryParam("iri", userInput.toString(), Charsets.UTF_8)
+                        .queryParam("iri", userInput.toString())
                         .build()
                         .toUri()
                 } else {
@@ -115,7 +115,7 @@ class OLSRepositoryAdapterUnitTest {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
                     UriComponentsBuilder.fromHttpUrl(olsHostUrl)
                         .path("/ontologies/$ontologyId/terms")
-                        .queryParam("iri", userInput.toString(), Charsets.UTF_8)
+                        .queryParam("iri", userInput.toString())
                         .build()
                         .toUri()
                 } else {
@@ -157,7 +157,7 @@ class OLSRepositoryAdapterUnitTest {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
                     UriComponentsBuilder.fromHttpUrl(olsHostUrl)
                         .path("/ontologies/$ontologyId/terms")
-                        .queryParam("iri", userInput.toString(), Charsets.UTF_8)
+                        .queryParam("iri", userInput.toString())
                         .build()
                         .toUri()
                 } else {

@@ -39,7 +39,7 @@ class OLSServiceAdapter(
         return fetch(
             UriComponentsBuilder.fromHttpUrl(host)
                 .path("/ontologies/$ontologyId/terms") // in ols, classes are called terms
-                .queryParam("iri", uri.toString(), Charsets.UTF_8)
+                .queryParam("iri", uri.toString())
                 .build()
                 .toUri()
         )

@@ -142,6 +142,7 @@ dependencies {
 
     runtimeOnly(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
+    runtimeOnly(project(":graph:graph-adapter-output-web"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-services"))
     implementation(project(":graph:graph-ports-input"))

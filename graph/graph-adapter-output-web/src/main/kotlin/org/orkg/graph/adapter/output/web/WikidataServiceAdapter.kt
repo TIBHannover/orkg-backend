@@ -22,7 +22,7 @@ class WikidataServiceAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
     @Value("\${orkg.external-services.wikidata.host}")
-    private val host: String = "https://www.wikidata.org"
+    private val host: String
 ) : ExternalResourceService, ExternalClassService, ExternalPredicateService {
     private val itemIdPattern = Pattern.compile("(Q[0-9]+)")
     private val propertyIdPattern = Pattern.compile("(P[0-9]+)")

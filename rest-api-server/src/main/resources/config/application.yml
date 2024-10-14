@@ -51,6 +51,14 @@ orkg:
       smart-review: "http://localhost/review/"
   simcomp:
     host: "https://orkg.org/simcomp"
+  external-services:
+    geonames:
+      host: "https://secure.geonames.org"
+      username: "demo"
+    ols:
+      host: "https://service.tib.eu/ts4tib/api"
+    wikidata:
+      host: "https://www.wikidata.org"
 management:
   endpoints:
     enabled-by-default: false

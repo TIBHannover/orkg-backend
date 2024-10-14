@@ -19,7 +19,7 @@ class OLSServiceAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
     @Value("\${orkg.external-services.ols.host}")
-    private val host: String = "https://service.tib.eu/ts4tib/api"
+    private val host: String
 ) : ExternalClassService {
     private val pattern = Pattern.compile("[a-zA-Z0-9_]+")
 

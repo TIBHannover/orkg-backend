@@ -7,13 +7,10 @@ import io.kotest.matchers.shouldNotBe
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import org.orkg.auth.output.UserRepository
-import org.orkg.auth.testing.fixtures.createUser
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Observatory
-import org.orkg.community.domain.Organization
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.springframework.data.domain.PageRequest
@@ -21,7 +18,6 @@ import org.springframework.data.domain.PageRequest
 interface ObservatoryRepositoryContractTests {
     val repository: ObservatoryRepository
     val organizationRepository: OrganizationRepository
-    val userRepository: UserRepository
 
     @Test
     fun `successfully restores all properties after saving`() {
@@ -223,14 +219,7 @@ interface ObservatoryRepositoryContractTests {
     private fun Observatory.createOrganizations() {
         organizationIds.forEach {
             val organization = createOrganization(id = it, displayId = it.value.toString())
-            organization.createUser()
             organizationRepository.save(organization)
-        }
-    }
-
-    private fun Organization.createUser() {
-        if (userRepository.findById(createdBy!!.value).isEmpty) {
-            userRepository.save(createUser(createdBy!!.value))
         }
     }
 

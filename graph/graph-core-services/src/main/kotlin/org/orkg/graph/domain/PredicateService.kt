@@ -6,6 +6,7 @@ import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.PredicateUseCases
@@ -74,8 +75,8 @@ class PredicateService(
             throw PredicateInUse(predicate.id)
 
         if (!predicate.isOwnedBy(contributorId)) {
-            val contributor =
-                contributorRepository.findById(contributorId).orElseThrow { ContributorNotFound(contributorId) }
+            val contributor = contributorRepository.findById(contributorId)
+                .orElseThrow { ContributorNotFound(contributorId) }
             if (!contributor.isCurator) throw NeitherOwnerNorCurator(contributorId)
         }
 

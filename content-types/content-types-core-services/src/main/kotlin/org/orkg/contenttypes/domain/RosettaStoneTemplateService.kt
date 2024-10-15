@@ -4,6 +4,7 @@ import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -17,17 +18,17 @@ import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.actions.execute
-import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDescriptionUpdater
-import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateExampleUsageUpdater
-import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelUpdater
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateClosedCreator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDescriptionCreator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDescriptionUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateDescriptionUpdater
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateExampleUsageUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateExampleUsageUpdater
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateExistenceValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelCreateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelCreator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelUpdateValidator
+import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateFormattedLabelUpdater
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateLabelUpdateValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplateModifiableValidator
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.RosettaStoneTemplatePropertiesCreateValidator
@@ -42,7 +43,6 @@ import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.ContributorNotFound
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource

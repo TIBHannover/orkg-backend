@@ -7,6 +7,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -35,7 +36,6 @@ import org.orkg.contenttypes.domain.actions.rosettastone.statements.RosettaStone
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
-import org.orkg.graph.domain.ContributorNotFound
 import org.orkg.graph.domain.NotACurator
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter

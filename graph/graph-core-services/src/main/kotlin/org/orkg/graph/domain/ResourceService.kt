@@ -9,6 +9,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
@@ -163,8 +164,8 @@ class ResourceService(
             throw ResourceInUse(resource.id)
 
         if (!resource.isOwnedBy(contributorId)) {
-            val contributor =
-                contributorRepository.findById(contributorId).orElseThrow { ContributorNotFound(contributorId) }
+            val contributor = contributorRepository.findById(contributorId)
+                .orElseThrow { ContributorNotFound(contributorId) }
             if (!contributor.isCurator) throw NeitherOwnerNorCurator(contributorId)
         }
 

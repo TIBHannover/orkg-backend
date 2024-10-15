@@ -21,6 +21,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
+import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -30,7 +31,6 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemp
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.ContributorNotFound
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.NeitherOwnerNorCurator

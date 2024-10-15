@@ -1,5 +1,6 @@
 package org.orkg.community.domain
 
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.exceptions.SimpleMessageException
@@ -10,6 +11,9 @@ class ObservatoryNotFound(id: ObservatoryId) :
 
 class ObservatoryURLNotFound(id: String) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Observatory "$id" not found.""")
+
+class ContributorNotFound(id: ContributorId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Contributor "$id" not found.""")
 
 class UserIsAlreadyMemberOfObservatory(id: ObservatoryId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """User is already a member of observatory "$id".""")

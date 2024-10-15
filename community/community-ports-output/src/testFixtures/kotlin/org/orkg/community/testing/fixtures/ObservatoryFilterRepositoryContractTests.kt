@@ -1,30 +1,34 @@
 package org.orkg.community.testing.fixtures
 
-import org.orkg.community.output.ObservatoryFilterRepository
 import io.kotest.assertions.asClue
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import java.time.LocalDateTime
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import org.orkg.auth.output.UserRepository
-import org.orkg.auth.testing.fixtures.createUser
 import org.orkg.common.OrganizationId
 import org.orkg.community.domain.ObservatoryFilter
 import org.orkg.community.domain.ObservatoryFilterId
+import org.orkg.community.output.ObservatoryFilterRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.eventbus.EventBus
+import org.orkg.eventbus.events.UserRegistered
+import org.orkg.testing.MockUserId
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 
 interface ObservatoryFilterRepositoryContractTests {
     val repository: ObservatoryFilterRepository
     val observatoryRepository: ObservatoryRepository
     val organizationRepository: OrganizationRepository
-    val userRepository: UserRepository
+    val eventBus: EventBus
 
     @Test
     fun `successfully restores all properties after saving`() {
+        postUserRegisteredEventToEventBus()
         val expected = createObservatoryFilter(
             exact = true,
             featured = true
@@ -65,6 +69,7 @@ interface ObservatoryFilterRepositoryContractTests {
 
     @Test
     fun `given several observatory filters, when searched by observatory id, it returns the correct result`() {
+        postUserRegisteredEventToEventBus()
         val filter1 = createObservatoryFilter()
         val filter2 = createObservatoryFilter()
 
@@ -78,11 +83,6 @@ interface ObservatoryFilterRepositoryContractTests {
     }
 
     private fun saveObservatoryFilter(observatoryFilter: ObservatoryFilter) {
-        // Ensure user exists in the database
-        val createdBy = observatoryFilter.createdBy.value
-        if (userRepository.findById(createdBy).isEmpty) {
-            userRepository.save(createUser(createdBy))
-        }
         // Ensure organization exists in the database
         val organizationId = OrganizationId(UUID.randomUUID())
         val organization = createOrganization(
@@ -107,5 +107,20 @@ interface ObservatoryFilterRepositoryContractTests {
     @AfterEach
     fun cleanUp() {
         cleanUpAfterEach()
+    }
+
+    fun postUserRegisteredEventToEventBus() {
+        eventBus.post(
+            UserRegistered(
+                id = MockUserId.USER,
+                displayName = "Test User",
+                enabled = true,
+                email = "test@example.com",
+                roles = emptySet(),
+                createdAt = LocalDateTime.now(fixedClock),
+                observatoryId = null,
+                organizationId = null,
+            )
+        )
     }
 }

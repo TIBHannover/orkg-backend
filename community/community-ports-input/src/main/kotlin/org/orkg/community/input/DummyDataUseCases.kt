@@ -1,7 +1,13 @@
 package org.orkg.community.input
 
-import java.util.*
+import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 
 interface DummyDataUseCases {
-    fun updateOrganizationAndObservatory(userId: UUID, organizationId: UUID?, observatoryId: UUID?)
+    fun updateOrganizationAndObservatory(
+        contributorId: ContributorId,
+        organizationId: OrganizationId,
+        observatoryId: ObservatoryId
+    )
 }

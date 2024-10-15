@@ -10,12 +10,11 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.annotations.PreAuthorizeCurator
-import org.orkg.community.adapter.output.jpa.internal.toContributor
+import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.UserIsAlreadyMemberOfObservatory
 import org.orkg.community.domain.UserIsAlreadyMemberOfOrganization
 import org.orkg.community.input.ObservatoryAuthUseCases
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -35,28 +34,42 @@ class LegacyUserController(
 ) {
     @PreAuthorizeCurator
     @PutMapping("/observatory", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun updateUserObservatory(@RequestBody @Valid userObservatory: UserObservatoryRequest): ResponseEntity<Any> {
-        val user = userService.findByEmail(userObservatory.userEmail).orElseThrow { UserNotFound(userObservatory.userEmail) }
-        if (user.observatoryId == userObservatory.observatoryId.value) {
-            throw UserIsAlreadyMemberOfObservatory(userObservatory.observatoryId)
+    fun updateUserObservatoryLegacy(@RequestBody @Valid request: UserObservatoryRequest): Contributor =
+        when (request) {
+            is LegacyUserObservatoryRequest -> {
+                val user = userService.findByEmail(request.userEmail)
+                    .orElseThrow { UserNotFound(request.userEmail) }
+                if (user.observatoryId == request.observatoryId.value) {
+                    throw UserIsAlreadyMemberOfObservatory(request.observatoryId)
+                }
+                if (user.organizationId == request.organizationId.value) {
+                    throw UserIsAlreadyMemberOfOrganization(request.organizationId)
+                }
+                observatoryAuthUseCases.addUserObservatory(
+                    observatoryId = request.observatoryId,
+                    organizationId = request.organizationId,
+                    contributorId = ContributorId(user.id)
+                )
+            }
+            is NewUserObservatoryRequest -> {
+                observatoryAuthUseCases.addUserObservatory(
+                    observatoryId = request.observatoryId,
+                    organizationId = request.organizationId,
+                    contributorId = request.contributorId
+                )
+            }
         }
-        if (user.organizationId == userObservatory.organizationId.value) {
-            throw UserIsAlreadyMemberOfOrganization(userObservatory.organizationId)
-        }
-        return ResponseEntity.ok(
-            observatoryAuthUseCases
-                .addUserObservatory(userObservatory.observatoryId.value, userObservatory.organizationId.value, user)
-                .toContributor()
-        )
-    }
 
     @PreAuthorizeCurator
     @DeleteMapping("/{id}/observatory")
     fun deleteUserObservatory(@PathVariable id: ContributorId) {
-        observatoryAuthUseCases.deleteUserObservatory(id.value)
+        observatoryAuthUseCases.deleteUserObservatory(id)
     }
 
-    data class UserObservatoryRequest(
+    sealed interface UserObservatoryRequest
+
+    @Deprecated("To be removed")
+    data class LegacyUserObservatoryRequest(
         @field:Email
         @field:NotBlank
         @JsonProperty("user_email")
@@ -65,5 +78,14 @@ class LegacyUserController(
         val observatoryId: ObservatoryId,
         @JsonProperty("organization_id")
         val organizationId: OrganizationId
-    )
+    ) : UserObservatoryRequest
+
+    data class NewUserObservatoryRequest(
+        @JsonProperty("contributor_id")
+        val contributorId: ContributorId,
+        @JsonProperty("observatory_id")
+        val observatoryId: ObservatoryId,
+        @JsonProperty("organization_id")
+        val organizationId: OrganizationId
+    ) : UserObservatoryRequest
 }

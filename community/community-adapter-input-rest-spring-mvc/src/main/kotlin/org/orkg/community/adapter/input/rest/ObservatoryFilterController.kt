@@ -9,6 +9,7 @@ import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.common.exceptions.Forbidden
 import org.orkg.community.adapter.input.rest.mapping.ObservatoryFilterRepresentationAdapter
+import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.domain.ObservatoryFilterId
 import org.orkg.community.domain.ObservatoryFilterNotFound
 import org.orkg.community.domain.ObservatoryNotFound
@@ -17,7 +18,6 @@ import org.orkg.community.input.ObservatoryFilterUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.community.input.UpdateObservatoryFilterUseCase
-import org.orkg.graph.domain.ContributorNotFound
 import org.orkg.graph.domain.PredicatePath
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

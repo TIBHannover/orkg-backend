@@ -9,5 +9,7 @@ interface ContributorRepository {
 
     fun findAllByIds(ids: List<ContributorId>): List<Contributor>
 
+    fun save(contributor: Contributor)
+
     fun countActiveUsers(): Long
 }

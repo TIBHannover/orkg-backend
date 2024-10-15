@@ -1,13 +1,12 @@
 package org.orkg.community.adapter.output.jpa
 
 import java.util.*
-import org.orkg.auth.adapter.output.jpa.internal.JpaUserRepository
-import org.orkg.auth.adapter.output.jpa.internal.UserEntity
-import org.orkg.auth.domain.User
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.adapter.output.jpa.internal.ContributorEntity
 import org.orkg.community.adapter.output.jpa.internal.ObservatoryEntity
+import org.orkg.community.adapter.output.jpa.internal.PostgresContributorRepository
 import org.orkg.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.adapter.output.jpa.internal.toContributor
@@ -25,11 +24,15 @@ import org.springframework.transaction.annotation.Transactional
 class SpringJpaPostgresObservatoryAdapter(
     private val postgresRepository: PostgresObservatoryRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
-    private val userRepository: JpaUserRepository
+    private val postgresContributorRepository: PostgresContributorRepository,
 ) : ObservatoryRepository {
     override fun save(observatory: Observatory) {
         postgresRepository.save(
-            postgresRepository.toObservatoryEntity(observatory, postgresOrganizationRepository, userRepository)
+            postgresRepository.toObservatoryEntity(
+                observatory,
+                postgresOrganizationRepository,
+                postgresContributorRepository,
+            )
         )
     }
 
@@ -59,9 +62,8 @@ class SpringJpaPostgresObservatoryAdapter(
 
     override fun deleteAll() = postgresRepository.deleteAll()
 
-    // TODO: refactor
     override fun allMembers(id: ObservatoryId, pageable: Pageable): Page<Contributor> =
-        userRepository.findAllByObservatoryId(id.value, pageable).map(UserEntity::toUser).map(User::toContributor)
+        postgresContributorRepository.findAllByObservatoryId(id.value, pageable).map(ContributorEntity::toContributor)
 
     override fun count(): Long = postgresRepository.count()
 

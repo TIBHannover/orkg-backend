@@ -1,11 +1,10 @@
 package org.orkg.community.adapter.output.jpa
 
 import java.util.*
-import org.orkg.auth.adapter.output.jpa.internal.JpaUserRepository
-import org.orkg.auth.adapter.output.jpa.internal.UserEntity
-import org.orkg.auth.domain.User
 import org.orkg.common.OrganizationId
+import org.orkg.community.adapter.output.jpa.internal.ContributorEntity
 import org.orkg.community.adapter.output.jpa.internal.OrganizationEntity
+import org.orkg.community.adapter.output.jpa.internal.PostgresContributorRepository
 import org.orkg.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.adapter.output.jpa.internal.toContributor
@@ -21,7 +20,7 @@ import org.springframework.stereotype.Component
 class SpringJpaPostgresOrganizationAdapter(
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
     private val postgresObservatoryRepository: PostgresObservatoryRepository,
-    private val userRepository: JpaUserRepository,
+    private val postgresContributorRepository: PostgresContributorRepository,
 ) : OrganizationRepository {
     override fun save(organization: Organization) {
         postgresOrganizationRepository.save(
@@ -32,7 +31,7 @@ class SpringJpaPostgresOrganizationAdapter(
     override fun deleteAll() = postgresOrganizationRepository.deleteAll()
 
     override fun allMembers(id: OrganizationId, pageable: Pageable): Page<Contributor> =
-        userRepository.findByOrganizationId(id.value, pageable).map(UserEntity::toUser).map(User::toContributor)
+        postgresContributorRepository.findAllByOrganizationId(id.value, pageable).map(ContributorEntity::toContributor)
 
     override fun findById(id: OrganizationId): Optional<Organization> =
         postgresOrganizationRepository.findById(id.value).map(OrganizationEntity::toOrganization)

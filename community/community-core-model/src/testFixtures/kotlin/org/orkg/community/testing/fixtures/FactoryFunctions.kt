@@ -22,6 +22,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicatePath
 import org.orkg.graph.domain.Predicates
 import org.orkg.mediastorage.domain.ImageId
+import org.orkg.testing.MockUserId
 
 fun createContributor(
     id: ContributorId = ContributorId("824e21b5-5df6-44c7-b2db-5929598f7398"),
@@ -69,7 +70,7 @@ fun createObservatoryFilter(
     id: ObservatoryFilterId = ObservatoryFilterId("c6b41f1e-ee46-48ea-8d47-57ce85760831"),
     observatoryId: ObservatoryId = ObservatoryId("b0c02a5a-e40f-41bb-af93-aebcfb0a58b5"),
     label: String = "Observatory filter",
-    createdBy: ContributorId = ContributorId("ee06bdf3-d6f3-41d1-8af2-64c583d9057e"),
+    createdBy: ContributorId = ContributorId(MockUserId.USER),
     createdAt: LocalDateTime = LocalDateTime.parse("2023-10-17T10:42:48.324973"),
     path: PredicatePath = listOf(Predicates.hasResearchProblem),
     range: ThingId = Classes.resources,

@@ -1,10 +1,10 @@
 package org.orkg.community.adapter.output.jpa
 
-import org.orkg.auth.adapter.output.jpa.internal.JpaUserRepository
 import org.orkg.community.adapter.output.jpa.internal.ConferenceSeriesEntity
 import org.orkg.community.adapter.output.jpa.internal.ObservatoryEntity
 import org.orkg.community.adapter.output.jpa.internal.OrganizationEntity
 import org.orkg.community.adapter.output.jpa.internal.PostgresConferenceSeriesRepository
+import org.orkg.community.adapter.output.jpa.internal.PostgresContributorRepository
 import org.orkg.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.domain.ConferenceSeries
@@ -17,7 +17,7 @@ import org.orkg.graph.domain.UserNotFound
 internal fun PostgresObservatoryRepository.toObservatoryEntity(
     observatory: Observatory,
     organizationRepository: PostgresOrganizationRepository,
-    userRepository: JpaUserRepository,
+    contributorRepository: PostgresContributorRepository,
 ): ObservatoryEntity =
     findById(observatory.id.value).orElse(ObservatoryEntity()).apply {
         id = observatory.id.value
@@ -25,7 +25,7 @@ internal fun PostgresObservatoryRepository.toObservatoryEntity(
         description = observatory.description
         researchField = observatory.researchField?.value
         users = observatory.members.map {
-            userRepository.findById(it.value)
+            contributorRepository.findById(it.value)
                 .orElseThrow { UserNotFound(it.value) }
         }.toMutableSet()
         displayId = observatory.displayId

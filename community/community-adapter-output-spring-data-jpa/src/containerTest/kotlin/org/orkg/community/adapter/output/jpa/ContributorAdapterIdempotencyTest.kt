@@ -3,8 +3,6 @@ package org.orkg.community.adapter.output.jpa
 import java.time.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.orkg.auth.adapter.output.jpa.configuration.AuthJpaConfiguration
-import org.orkg.auth.domain.Role
 import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaConfiguration
 import org.orkg.eventbus.ReallySimpleEventBus
 import org.orkg.eventbus.events.UserRegistered
@@ -21,7 +19,6 @@ import org.springframework.test.context.TestConstructor
 @ContextConfiguration(
     classes = [
         CommunityJpaConfiguration::class,
-        AuthJpaConfiguration::class, // FIXME: this should be removed when decoupled
         ContributorFromUserAdapter::class,
         ReallySimpleEventBus::class,
     ],
@@ -40,7 +37,7 @@ class ContributorAdapterIdempotencyTest {
             displayName = "Some User",
             enabled = true,
             email = "user@example.org",
-            roles = setOf(Role.ADMIN.name),
+            roles = setOf("ROLE_ADMIN"),
             createdAt = LocalDateTime.now(fixedClock),
             observatoryId = null,
             organizationId = null,

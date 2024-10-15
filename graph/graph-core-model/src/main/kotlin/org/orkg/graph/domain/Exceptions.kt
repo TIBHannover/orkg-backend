@@ -68,9 +68,6 @@ class ExternalClassNotFound : SimpleMessageException {
 
 class ListNotFound(id: ThingId) : SimpleMessageException(HttpStatus.NOT_FOUND, """List "$id" not found.""")
 
-class ContributorNotFound(id: ContributorId) :
-    SimpleMessageException(HttpStatus.NOT_FOUND, """Contributor "$id" not found.""")
-
 class ResearchFieldNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Research field "$id" not found.""")
 

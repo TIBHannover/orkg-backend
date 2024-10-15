@@ -1,10 +1,16 @@
 package org.orkg.community.input
 
-import java.util.*
-import org.orkg.auth.domain.User
+import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
+import org.orkg.community.domain.Contributor
 
 interface ObservatoryAuthUseCases {
     // TODO: More obscure use cases, that we should change or decouple:
-    fun addUserObservatory(observatoryId: UUID, organizationId: UUID, contributor: User): User
-    fun deleteUserObservatory(contributor: UUID)
+    fun addUserObservatory(
+        observatoryId: ObservatoryId,
+        organizationId: OrganizationId,
+        contributorId: ContributorId
+    ): Contributor
+    fun deleteUserObservatory(contributorId: ContributorId)
 }

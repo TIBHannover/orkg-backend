@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -21,7 +22,6 @@ import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
-import org.orkg.graph.domain.ContributorNotFound
 import org.orkg.graph.domain.NotACurator
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases

@@ -1,7 +1,5 @@
 package org.orkg.community.adapter.output.jpa.internal
 
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import java.util.*
 import javax.persistence.CascadeType
 import javax.persistence.CollectionTable
@@ -16,16 +14,11 @@ import javax.persistence.ManyToMany
 import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.validation.constraints.NotBlank
-import org.orkg.auth.adapter.output.jpa.internal.UserEntity
-import org.orkg.auth.domain.Role
-import org.orkg.auth.domain.User
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.Observatory
-import org.orkg.community.domain.internal.MD5Hash
 
 @Entity
 @Table(name = "observatories")
@@ -43,7 +36,7 @@ class ObservatoryEntity() {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "observatory_id")
-    var users: MutableSet<UserEntity>? = null
+    var users: MutableSet<ContributorEntity>? = null
 
     @Column(name = "display_id")
     var displayId: String? = null
@@ -75,17 +68,4 @@ fun ObservatoryEntity.toObservatory() =
         organizationIds = organizations.orEmpty().map { OrganizationId(it.id!!) }.toSet(),
         displayId = displayId!!,
         sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty().map(::ThingId).toSet()
-    )
-
-// TODO: should be internal, but is used by input adapter (legacy controller)
-fun User.toContributor() =
-    Contributor(
-        id = ContributorId(this.id),
-        name = this.displayName,
-        emailMD5 = MD5Hash.fromEmail(this.email),
-        joinedAt = OffsetDateTime.of(this.createdAt, ZoneOffset.UTC),
-        organizationId = this.organizationId?.let(::OrganizationId) ?: OrganizationId.UNKNOWN,
-        observatoryId = this.observatoryId?.let(::ObservatoryId) ?: ObservatoryId.UNKNOWN,
-        isCurator = (roles intersect setOf(Role.CURATOR, Role.ADMIN)).isNotEmpty(), // FIXME: might need changing when split
-        isAdmin = Role.ADMIN in this.roles,
     )

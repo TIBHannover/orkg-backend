@@ -31,6 +31,21 @@ class ContributorFromUserAdapter(
         postgresContributorRepository.findById(it.value).map(ContributorEntity::toContributor).orElse(null)
     }
 
+    override fun save(contributor: Contributor) {
+        postgresContributorRepository.save(
+            ContributorEntity(
+                id = contributor.id.value,
+                displayName = contributor.name,
+                joinedAt = contributor.joinedAt.toLocalDateTime(),
+                organizationId = contributor.organizationId.value,
+                observatoryId = contributor.observatoryId.value,
+                emailMD5 = contributor.emailMD5.value,
+                curator = contributor.isCurator,
+                admin = contributor.isAdmin
+            )
+        )
+    }
+
     override fun countActiveUsers(): Long = postgresContributorRepository.count()
 
     override fun notify(event: Event) {

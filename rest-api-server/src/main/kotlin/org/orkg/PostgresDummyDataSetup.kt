@@ -184,11 +184,15 @@ class PostgresDummyDataSetup(
                 }
             }
         }
-        userAffiliation.entries.forEach {
-            if (userService.findById(it.key).isEmpty) {
-                registerFakeUser(it.key)
+        userAffiliation.entries.forEach { (key, value) ->
+            if (userService.findById(key).isEmpty) {
+                registerFakeUser(key)
             }
-            dummyDataUseCases.updateOrganizationAndObservatory(it.key, it.value.first?.value, it.value.second?.value)
+            dummyDataUseCases.updateOrganizationAndObservatory(
+                contributorId = ContributorId(key),
+                organizationId = value.first ?: OrganizationId.UNKNOWN,
+                observatoryId = value.second ?: ObservatoryId.UNKNOWN
+            )
         }
     }
 

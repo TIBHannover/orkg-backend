@@ -3,5 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":identity-management:idm-core-model"))
+    api(project(":common"))
+    api(project(":community:community-core-model"))
 }

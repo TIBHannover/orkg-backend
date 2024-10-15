@@ -6,6 +6,10 @@ import java.util.*
 import org.orkg.auth.input.AuthUseCase
 import org.orkg.auth.output.RoleRepository
 import org.orkg.auth.output.UserRepository
+import org.orkg.common.md5
+import org.orkg.eventbus.EventBus
+import org.orkg.eventbus.events.DisplayNameUpdated
+import org.orkg.eventbus.events.UserRegistered
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,6 +21,7 @@ class UserService(
     private val passwordEncoder: PasswordEncoder,
     private val roleRepository: RoleRepository,
     private val clock: Clock,
+    private val eventBus: EventBus,
 ) : AuthUseCase {
     override fun findByEmail(email: String): Optional<User> {
         return repository.findByEmailIgnoreCase(email)
@@ -39,6 +44,18 @@ class UserService(
             organizationId = null,
         )
         repository.save(newUser)
+        eventBus.post(
+            UserRegistered(
+                id = newUser.id.toString(),
+                displayName = newUser.displayName,
+                enabled = newUser.enabled,
+                email = newUser.email.md5,
+                roles = newUser.roles.map(Role::name).toSet(),
+                createdAt = newUser.createdAt,
+                observatoryId = newUser.observatoryId?.toString(),
+                organizationId = newUser.organizationId?.toString(),
+            )
+        )
         return id
     }
 
@@ -57,5 +74,6 @@ class UserService(
         var user = repository.findById(userId).orElseThrow { UserNotFound(userId) }
         user = user.copy(displayName = newName)
         repository.save(user)
+        eventBus.post(DisplayNameUpdated(user.id, newName))
     }
 }

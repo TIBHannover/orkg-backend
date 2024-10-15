@@ -6,9 +6,11 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":common"))
     api(project(":identity-management:idm-ports-input"))
     api(project(":identity-management:idm-ports-output"))
     api(project(":identity-management:idm-core-model"))
+    api(project(":eventbus"))
 
     api("org.springframework.security:spring-security-crypto") // for PasswordEncoder
     api("org.springframework.security:spring-security-core")

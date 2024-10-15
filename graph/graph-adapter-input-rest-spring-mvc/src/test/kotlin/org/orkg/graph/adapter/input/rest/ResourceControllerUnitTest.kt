@@ -21,8 +21,8 @@ import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.community.domain.Contributor
 import org.orkg.community.input.RetrieveContributorUseCase
+import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
@@ -205,11 +205,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         val exception = InvalidClassCollection(command.classes)
 
         every { contributorService.findById(any()) } returns Optional.of(
-            Contributor(
-                id = ContributorId(MockUserId.USER),
-                name = "irrelevant",
-                joinedAt = OffsetDateTime.now(clock)
-            )
+            createContributor(id = ContributorId(MockUserId.USER))
         )
         every { resourceService.create(any<CreateCommand>()) } throws exception
 

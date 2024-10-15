@@ -3,16 +3,16 @@ package org.orkg.community.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import java.time.Clock
-import java.time.OffsetDateTime
 import java.util.*
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.community.domain.Contributor
 import org.orkg.community.input.RetrieveContributorUseCase
+import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.MockUserId
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -62,7 +62,7 @@ class ContributorControllerTest {
 
     @Test
     fun `When ID is not found Then return 404 Not Found`() {
-        val id = ContributorId(UUID.randomUUID())
+        val id = MockUserId.USER.let(::ContributorId)
         every { retrieveContributor.findById(id) } returns Optional.empty()
 
         mockMvc
@@ -72,14 +72,8 @@ class ContributorControllerTest {
 
     @Test
     fun `When ID is found Then return contributor`() {
-        val id = ContributorId(UUID.randomUUID())
-        every { retrieveContributor.findById(id) } returns Optional.of(
-            Contributor(
-                id,
-                "Some Name",
-                OffsetDateTime.now(clock)
-            )
-        )
+        val id = MockUserId.USER.let(::ContributorId)
+        every { retrieveContributor.findById(id) } returns Optional.of(createContributor(id = id))
 
         mockMvc
             .perform(contributorRequest(id))

@@ -25,6 +25,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.Observatory
+import org.orkg.community.domain.internal.MD5Hash
 
 @Entity
 @Table(name = "observatories")
@@ -81,7 +82,7 @@ fun User.toContributor() =
     Contributor(
         id = ContributorId(this.id),
         name = this.displayName,
-        email = this.email,
+        emailMD5 = MD5Hash.fromEmail(this.email),
         joinedAt = OffsetDateTime.of(this.createdAt, ZoneOffset.UTC),
         organizationId = this.organizationId?.let(::OrganizationId) ?: OrganizationId.UNKNOWN,
         observatoryId = this.observatoryId?.let(::ObservatoryId) ?: ObservatoryId.UNKNOWN,

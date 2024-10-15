@@ -7,6 +7,7 @@ import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaConfigura
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.ObservatoryRepositoryContractTests
+import org.orkg.eventbus.ReallySimpleEventBus
 import org.orkg.testing.PostgresContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -19,7 +20,8 @@ import org.springframework.test.context.TestConstructor
     classes = [
         SpringJpaPostgresObservatoryAdapter::class,
         CommunityJpaConfiguration::class,
-        AuthJpaConfiguration::class
+        AuthJpaConfiguration::class,
+        ReallySimpleEventBus::class,
     ],
     initializers = [PostgresContainerInitializer::class]
 )

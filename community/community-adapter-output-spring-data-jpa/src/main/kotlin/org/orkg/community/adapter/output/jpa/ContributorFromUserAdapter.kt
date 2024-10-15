@@ -1,23 +1,47 @@
 package org.orkg.community.adapter.output.jpa
 
 import java.util.*
-import org.orkg.auth.domain.User
-import org.orkg.auth.output.UserRepository
 import org.orkg.common.ContributorId
+import org.orkg.community.adapter.output.jpa.internal.ContributorEntity
+import org.orkg.community.adapter.output.jpa.internal.PostgresContributorRepository
 import org.orkg.community.adapter.output.jpa.internal.toContributor
 import org.orkg.community.domain.Contributor
 import org.orkg.community.output.ContributorRepository
+import org.orkg.eventbus.Event
+import org.orkg.eventbus.EventBus
+import org.orkg.eventbus.Listener
+import org.orkg.eventbus.events.DisplayNameUpdated
+import org.orkg.eventbus.events.UserRegistered
+import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Component
 
 @Component
 class ContributorFromUserAdapter(
-    private val userRepository: UserRepository,
-) : ContributorRepository {
+    private val eventBus: EventBus,
+    private val postgresContributorRepository: PostgresContributorRepository,
+) : ContributorRepository, Listener, InitializingBean {
+    override fun afterPropertiesSet() {
+        eventBus.register(this)
+    }
+
     override fun findById(id: ContributorId): Optional<Contributor> =
-        userRepository.findById(id.value).map(User::toContributor)
+        postgresContributorRepository.findById(id.value).map(ContributorEntity::toContributor)
 
-    override fun findAllByIds(ids: List<ContributorId>): List<Contributor> =
-        ids.mapNotNull { userRepository.findById(it.value).map(User::toContributor).orElse(null) }
+    override fun findAllByIds(ids: List<ContributorId>): List<Contributor> = ids.mapNotNull {
+        postgresContributorRepository.findById(it.value).map(ContributorEntity::toContributor).orElse(null)
+    }
 
-    override fun countActiveUsers(): Long = userRepository.count()
+    override fun countActiveUsers(): Long = postgresContributorRepository.count()
+
+    override fun notify(event: Event) {
+        when (event) {
+            is UserRegistered -> postgresContributorRepository.save(ContributorEntity.from(event))
+            is DisplayNameUpdated -> postgresContributorRepository.findById(event.id).ifPresent { entity ->
+                entity.displayName = event.displayName
+                postgresContributorRepository.save(entity)
+            }
+            else -> { /* silently ignore unknown events */
+            }
+        }
+    }
 }

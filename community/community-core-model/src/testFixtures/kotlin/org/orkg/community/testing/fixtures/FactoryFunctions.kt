@@ -10,13 +10,14 @@ import org.orkg.common.ThingId
 import org.orkg.community.domain.ConferenceSeries
 import org.orkg.community.domain.ConferenceSeriesId
 import org.orkg.community.domain.Contributor
-import org.orkg.community.domain.Observatory
 import org.orkg.community.domain.Metadata
+import org.orkg.community.domain.Observatory
 import org.orkg.community.domain.ObservatoryFilter
 import org.orkg.community.domain.ObservatoryFilterId
 import org.orkg.community.domain.Organization
 import org.orkg.community.domain.OrganizationType
 import org.orkg.community.domain.PeerReviewType
+import org.orkg.community.domain.internal.MD5Hash
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicatePath
 import org.orkg.graph.domain.Predicates
@@ -25,7 +26,7 @@ import org.orkg.mediastorage.domain.ImageId
 fun createContributor(
     id: ContributorId = ContributorId("824e21b5-5df6-44c7-b2db-5929598f7398"),
     name: String = "Some Name",
-    email: String? = null,
+    email: String = "user@example.org",
     observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     organizationId: OrganizationId = OrganizationId.UNKNOWN,
     joinedAt: OffsetDateTime = OffsetDateTime.parse("2023-10-06T10:37:17.055493+01:00"),
@@ -37,7 +38,7 @@ fun createContributor(
     joinedAt = joinedAt,
     observatoryId = observatoryId,
     organizationId = organizationId,
-    email = email,
+    emailMD5 = MD5Hash.fromEmail(email),
     isCurator = isCurator,
     isAdmin = isAdmin,
 )

@@ -7,6 +7,7 @@ import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.community.domain.internal.MD5Hash
 
 /**
  * Class representing a user that contributes to the graph.
@@ -25,34 +26,34 @@ data class Contributor(
     /**
      * The name the users wants to be displayed.
      */
-    @JsonProperty("display_name")
+    @get:JsonProperty("display_name")
     val name: String,
 
     /**
-     * The date and time the user joined the project, i.e. the time the corresponding account was created.
+     * The date and time the user joined the project, i.e., the time the corresponding account was created.
      */
-    @JsonProperty("joined_at")
+    @get:JsonProperty("joined_at")
     val joinedAt: OffsetDateTime,
 
     /**
      * The ID of the organization the user belongs to.
      */
-    @JsonProperty("organization_id")
+    @get:JsonProperty("organization_id")
     val organizationId: OrganizationId = OrganizationId.UNKNOWN,
 
     /**
      * The ID of the observatory the user belongs to.
      */
-    @JsonProperty("observatory_id")
+    @get:JsonProperty("observatory_id")
     val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
 
     /**
-     * The email address of the contributor.
+     * The MD5-hashed email address of the contributor.
      *
      * Used to generate the Gravatar image URL.
      */
     @JsonIgnore
-    private val email: String? = null,
+    val emailMD5: MD5Hash,
 
     /**
      * Determines if the contributor is a curator.
@@ -67,29 +68,28 @@ data class Contributor(
     val isAdmin: Boolean = false,
 ) {
     /**
-     * The Gravatar ID of the user, e.g. the hashed email address.
+     * The Gravatar ID of the user, e.g., the hashed email address.
      */
     @Suppress("unused")
     @get:JsonProperty("gravatar_id")
-    val gravatarId: String
-        get() = GravatarId(email).toString()
+    val gravatarId: String = emailMD5.value
 
     /**
      * The URL to an image that represents the user (aka. an avatar).
      *
-     * This currently returns a URL to the Gravatar service, using a "mystery person" icon if the email was not set.
+     * This currently returns a URL to the Gravatar service.
      */
     @Suppress("unused")
     @get:JsonProperty("avatar_url")
-    val avatarURL: String
-        get() = GravatarId(email).imageURL()
+    val avatarURL: String = "https://www.gravatar.com/avatar/${emailMD5.value}"
 
     companion object {
         val UNKNOWN: Contributor =
             Contributor(
                 id = ContributorId.UNKNOWN,
                 name = "Unknown User",
-                joinedAt = OffsetDateTime.MIN
+                joinedAt = OffsetDateTime.MIN,
+                emailMD5 = MD5Hash.ZERO,
             )
     }
 }

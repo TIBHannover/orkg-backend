@@ -16,9 +16,10 @@ dependencies {
     api(project(":common"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-output"))
+    api(project(":eventbus"))
     api(project(":identity-management:idm-adapter-output-spring-data-jpa")) // TODO: break dependency
     api(project(":identity-management:idm-core-model"))
-    api(project(":identity-management:idm-ports-output")) // transitive
+    api("org.springframework:spring-beans")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("jakarta.validation:jakarta.validation-api")
     implementation(project(":graph:graph-core-model"))
@@ -28,6 +29,7 @@ dependencies {
     containerTestApi("org.springframework.boot:spring-boot-test-autoconfigure")
     containerTestApi("org.springframework:spring-test")
     containerTestApi(project(":community:community-ports-output"))
+    containerTestApi(project(":eventbus"))
     containerTestApi(project(":identity-management:idm-adapter-output-spring-data-jpa"))
     containerTestApi(project(":identity-management:idm-ports-output"))
     containerTestApi(testFixtures(project(":community:community-ports-output")))
@@ -51,6 +53,8 @@ testing {
                     exclude(module = "mockito-core")
                 }
                 implementation("org.springframework:spring-beans")
+                implementation(libs.assertj.core)
+                implementation(project(":identity-management:idm-core-model"))
                 runtimeOnly(project(":migrations:liquibase"))
                 runtimeOnly("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove or make version-less after upgrade to 2.7
                 runtimeOnly(libs.liquibase)

@@ -1,9 +1,11 @@
 package org.orkg.common
 
 import java.io.IOException
+import java.math.BigInteger
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.security.MessageDigest
 import java.time.Duration
 import java.time.MonthDay
 import java.time.YearMonth
@@ -29,6 +31,7 @@ fun String.toSnakeCase(): String =
                     it.append("_")
                     it.append(c.lowercase())
                 }
+
                 else -> {
                     it.append(c)
                 }
@@ -317,3 +320,13 @@ fun String.isValidBoolean(): Boolean =
         "true", "1", "false", "0" -> true
         else -> false
     }
+
+/**
+ * Calculate the MD5 of a string.
+ *
+ * @return The MD5 in hexadecimal, zero-prefixed to 32 characters.
+ */
+val String.md5: String
+    get() = BigInteger(1, MessageDigest.getInstance("MD5").digest(this.toByteArray()))
+        .toString(16)
+        .padStart(32, '0')

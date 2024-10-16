@@ -1,6 +1,8 @@
 package org.orkg.auth.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import javax.validation.Valid
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -66,6 +68,11 @@ class LegacyUserController(
         observatoryAuthUseCases.deleteUserObservatory(id)
     }
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
+    @JsonSubTypes(value = [
+        JsonSubTypes.Type(LegacyUserObservatoryRequest::class),
+        JsonSubTypes.Type(NewUserObservatoryRequest::class)
+    ])
     sealed interface UserObservatoryRequest
 
     @Deprecated("To be removed")

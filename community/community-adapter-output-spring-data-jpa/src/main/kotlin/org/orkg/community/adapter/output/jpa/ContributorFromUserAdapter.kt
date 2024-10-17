@@ -2,6 +2,8 @@ package org.orkg.community.adapter.output.jpa
 
 import java.util.*
 import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.community.adapter.output.jpa.internal.ContributorEntity
 import org.orkg.community.adapter.output.jpa.internal.PostgresContributorRepository
 import org.orkg.community.adapter.output.jpa.internal.toContributor
@@ -37,8 +39,8 @@ class ContributorFromUserAdapter(
                 id = contributor.id.value,
                 displayName = contributor.name,
                 joinedAt = contributor.joinedAt.toLocalDateTime(),
-                organizationId = contributor.organizationId.value,
-                observatoryId = contributor.observatoryId.value,
+                organizationId = contributor.organizationId.takeUnless { it == OrganizationId.UNKNOWN }?.value,
+                observatoryId = contributor.observatoryId.takeUnless { it == ObservatoryId.UNKNOWN }?.value,
                 emailMD5 = contributor.emailMD5.value,
                 curator = contributor.isCurator,
                 admin = contributor.isAdmin

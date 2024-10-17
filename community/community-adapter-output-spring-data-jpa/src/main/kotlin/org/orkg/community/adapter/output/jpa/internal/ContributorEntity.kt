@@ -14,6 +14,8 @@ import org.orkg.common.md5
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.internal.MD5Hash
 import org.orkg.eventbus.events.UserRegistered
+import org.orkg.eventbus.events.UserRegistered.Role.ADMIN
+import org.orkg.eventbus.events.UserRegistered.Role.CURATOR
 
 @Entity
 @Table(name = "contributors")
@@ -41,8 +43,8 @@ class ContributorEntity(
             organizationId = event.organizationId?.let { UUID.fromString(event.organizationId) },
             observatoryId = event.observatoryId?.let { UUID.fromString(event.observatoryId) },
             emailMD5 = event.email.trim().lowercase().md5,
-            curator = "CURATOR" in event.roles,
-            admin = "ADMIN" in event.roles,
+            curator = CURATOR in event.roles,
+            admin = ADMIN in event.roles,
         )
     }
 }

@@ -37,7 +37,7 @@ class ContributorAdapterIdempotencyTest {
             displayName = "Some User",
             enabled = true,
             email = "user@example.org",
-            roles = setOf("ROLE_ADMIN"),
+            roles = setOf(UserRegistered.Role.ADMIN),
             createdAt = LocalDateTime.now(fixedClock),
             observatoryId = null,
             organizationId = null,

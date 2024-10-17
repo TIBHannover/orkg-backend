@@ -134,6 +134,8 @@ dependencies {
     runtimeOnly(project(":data-export:data-export-core"))
     runtimeOnly(project(":data-export:data-export-ports-input"))
 
+    implementation(project(":eventbus"))
+
     runtimeOnly(project(":discussions:discussions-adapter-input-rest-spring-mvc"))
     runtimeOnly(project(":discussions:discussions-core-services"))
     runtimeOnly(project(":discussions:discussions-adapter-output-spring-data-jpa"))
@@ -150,6 +152,8 @@ dependencies {
     implementation(project(":graph:graph-ports-output"))
 
     implementation(project(":identity-management:idm-ports-input")) // for PostgresDummyDataSetup
+    implementation(project(":identity-management:idm-ports-output")) // for Role
+    implementation(project(":identity-management:idm-core-model")) // for Role
     runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))
     runtimeOnly(project(":identity-management:idm-core-services"))
     runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))

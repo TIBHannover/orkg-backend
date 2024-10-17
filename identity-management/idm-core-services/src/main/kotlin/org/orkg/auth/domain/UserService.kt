@@ -50,7 +50,7 @@ class UserService(
                 displayName = newUser.displayName,
                 enabled = newUser.enabled,
                 email = newUser.email.md5,
-                roles = newUser.roles.map(Role::name).toSet(),
+                roles = newUser.roles.map { UserRegistered.Role.from(it.name.removePrefix("ROLE_")) }.toSet(),
                 createdAt = newUser.createdAt,
                 observatoryId = newUser.observatoryId?.toString(),
                 organizationId = newUser.organizationId?.toString(),

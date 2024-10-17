@@ -11,8 +11,20 @@ data class UserRegistered(
     val displayName: String,
     val enabled: Boolean,
     val email: String,
-    val roles: Set<String>,
+    val roles: Set<Role>,
     val createdAt: LocalDateTime,
     val observatoryId: String?,
     val organizationId: String?,
-) : Event
+) : Event {
+    enum class Role {
+        @Deprecated("This value should not be used. It will be removed in a future release.")
+        USER, // TODO: Exists to keep the code simpler. Can be removed after Keycloak migration.
+        CURATOR,
+        ADMIN;
+
+        companion object {
+            fun from(s: String): Role = entries.find { it.name == s }
+                ?: throw IllegalArgumentException("Unable to map role $s. Should be one of ${entries.sorted()}.")
+        }
+    }
+}

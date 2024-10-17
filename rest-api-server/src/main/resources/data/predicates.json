@@ -394,5 +394,69 @@
     {
         "id": "P74029",
         "label": "ISSN"
+    },
+    {
+        "id": "HasEntity",
+        "label": "has entity"
+    },
+    {
+        "id": "HasEntry",
+        "label": "Has entry"
+    },
+    {
+        "id": "googleScholarID",
+        "label": "Google Scholar ID"
+    },
+    {
+        "id": "HasHeadingLevel",
+        "label": "Has heading level"
+    },
+    {
+        "id": "HasLink",
+        "label": "has link"
+    },
+    {
+        "id": "linkedInID",
+        "label": "LinkedIn ID"
+    },
+    {
+        "id": "HasPaper",
+        "label": "has paper"
+    },
+    {
+        "id": "HasReference",
+        "label": "has reference"
+    },
+    {
+        "id": "researchGateID",
+        "label": "ResearchGate ID"
+    },
+    {
+        "id": "HasSection",
+        "label": "has section"
+    },
+    {
+        "id": "hasVisualization",
+        "label": "Has visualization"
+    },
+    {
+        "id": "P58083",
+        "label": "Web of science ResearcherID"
+    },
+    {
+        "id": "P76020",
+        "label": "Wikidata ID"
+    },
+    {
+        "id": "IsAnonymized",
+        "label": "is anonymized"
+    },
+    {
+        "id": "placeholder",
+        "label": "placeholder"
+    },
+    {
+        "id": "ShowProperty",
+        "label": "show property"
     }
 ]

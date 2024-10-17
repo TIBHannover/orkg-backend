@@ -396,5 +396,89 @@
         "id": "DateTimeStamp",
         "label": "Date Time Stamp",
         "uri": "http://www.w3.org/2001/XMLSchema#dateTimeStamp"
+    },
+    {
+        "id": "Classes",
+        "label": "Class"
+    },
+    {
+        "id": "ComparisonSection",
+        "label": "Comparison Section"
+    },
+    {
+        "id": "ContributionSmartReview",
+        "label": "Contribution Smart Review"
+    },
+    {
+        "id": "Dataset",
+        "label": "Dataset"
+    },
+    {
+        "id": "ComparisonDeleted",
+        "label": "ComparisonDeleted"
+    },
+    {
+        "id": "ListSection",
+        "label": "List Section"
+    },
+    {
+        "id": "LiteratureList",
+        "label": "Literature List"
+    },
+    {
+        "id": "LiteratureListPublished",
+        "label": "Literature List Published"
+    },
+    {
+        "id": "OntologySection",
+        "label": "Ontology Section"
+    },
+    {
+        "id": "PaperVersion",
+        "label": "Paper Version"
+    },
+    {
+        "id": "PropertySection",
+        "label": "Property Section"
+    },
+    {
+        "id": "ResourceSection",
+        "label": "ResourceSection"
+    },
+    {
+        "id": "Resources",
+        "label": "Resource"
+    },
+    {
+        "id": "Section",
+        "label": "Section"
+    },
+    {
+        "id": "SmartReview",
+        "label": "Smart Review"
+    },
+    {
+        "id": "SmartReviewPublished",
+        "label": "Smart Review Published"
+    },
+    {
+        "id": "Software",
+        "label": "Software"
+    },
+    {
+        "id": "TextSection",
+        "label": "Text Section"
+    },
+    {
+        "id": "Venue",
+        "label": "Venue"
+    },
+    {
+        "id": "Visualization",
+        "label": "Visualization"
+    },
+    {
+        "id": "VisualizationSection",
+        "label": "Visualization Section"
     }
 ]

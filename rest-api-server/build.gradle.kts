@@ -32,6 +32,7 @@ testing {
                     // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
                     // exclude(module = "mockito-core")
                 }
+                implementation("org.jetbrains.kotlin:kotlin-reflect")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-test")

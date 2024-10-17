@@ -37,7 +37,8 @@ val reservedClassIds = setOf(
     Classes.predicate,
     Classes.resource,
     Classes.list,
-    Classes.rosettaStoneStatement
+    Classes.rosettaStoneStatement,
+    Classes.thing
 )
 
 object Predicates {

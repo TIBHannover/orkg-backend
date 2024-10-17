@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Test
 import org.orkg.InitialDataSetup.RequiredClassDefinition
 import org.orkg.InitialDataSetup.RequiredPredicateDefinition
+import org.orkg.InitialDataSetup.RequiredResearchFieldDefinition
 import org.orkg.InitialDataSetup.RequiredResourceDefinition
 import org.orkg.common.json.CommonJacksonModule
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,6 +29,7 @@ class InitialDataJsonTest {
             readFile<List<RequiredPredicateDefinition>>("$directory/predicates.json")
             readFile<List<RequiredClassDefinition>>("$directory/classes.json")
             readFile<List<RequiredResourceDefinition>>("$directory/resources.json")
+            readFile<RequiredResearchFieldDefinition>("$directory/research_fields.json")
         }
     }
 

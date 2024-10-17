@@ -1,0 +1,3076 @@
+{
+    "id": "R11",
+    "label": "Science",
+    "subfields": [
+        {
+            "id": "R12",
+            "label": "Life Sciences",
+            "subfields": [
+                {
+                    "id": "R13",
+                    "label": "Biochemistry, Biophysics, and Structural Biology",
+                    "subfields": [
+                        {
+                            "id": "R14",
+                            "label": "Biochemistry"
+                        },
+                        {
+                            "id": "R15",
+                            "label": "Biogeochemistry"
+                        },
+                        {
+                            "id": "R16",
+                            "label": "Biophysics"
+                        },
+                        {
+                            "id": "R17",
+                            "label": "Molecular Biology",
+                            "subfields": [
+                                {
+                                    "id": "R114144",
+                                    "label": "Biomolecules"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R18",
+                            "label": "Structural Biology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R19",
+                    "label": "Cell and Developmental Biology",
+                    "subfields": [
+                        {
+                            "id": "R20",
+                            "label": "Anatomy"
+                        },
+                        {
+                            "id": "R21",
+                            "label": "Cell Biology",
+                            "subfields": [
+                                {
+                                    "id": "R114145",
+                                    "label": "Cell Behavior"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R22",
+                            "label": "Developmental Biology"
+                        },
+                        {
+                            "id": "R23",
+                            "label": "Cancer Biology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R24",
+                    "label": "Ecology and Evolutionary Biology",
+                    "subfields": [
+                        {
+                            "id": "R25",
+                            "label": "Behavior and Ethology"
+                        },
+                        {
+                            "id": "R26",
+                            "label": "Biogeochemistry"
+                        },
+                        {
+                            "id": "R27",
+                            "label": "Botany"
+                        },
+                        {
+                            "id": "R28",
+                            "label": "Evolution"
+                        },
+                        {
+                            "id": "R29",
+                            "label": "Population Biology"
+                        },
+                        {
+                            "id": "R30",
+                            "label": "Terrestrial and Aquatic Ecology"
+                        },
+                        {
+                            "id": "R593766",
+                            "label": "Invasion biology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R31",
+                    "label": "Public Health",
+                    "subfields": [
+                        {
+                            "id": "R32",
+                            "label": "Environmental Health"
+                        },
+                        {
+                            "id": "R33",
+                            "label": "Epidemiology"
+                        },
+                        {
+                            "id": "R34",
+                            "label": "Biostatistics"
+                        }
+                    ]
+                },
+                {
+                    "id": "R35",
+                    "label": "Genetics and Genomics",
+                    "subfields": [
+                        {
+                            "id": "R36",
+                            "label": "Computational Biology"
+                        },
+                        {
+                            "id": "R37",
+                            "label": "Genetics"
+                        },
+                        {
+                            "id": "R38",
+                            "label": "Genomics"
+                        },
+                        {
+                            "id": "R39",
+                            "label": "Molecular genetics"
+                        }
+                    ]
+                },
+                {
+                    "id": "R40",
+                    "label": "Immunology and Infectious Disease",
+                    "subfields": [
+                        {
+                            "id": "R41",
+                            "label": "Immunity"
+                        },
+                        {
+                            "id": "R42",
+                            "label": "Immunology of Infectious Disease"
+                        },
+                        {
+                            "id": "R43",
+                            "label": "Immunopathology"
+                        },
+                        {
+                            "id": "R44",
+                            "label": "Immunoprophylaxis and Therapy"
+                        },
+                        {
+                            "id": "R45",
+                            "label": "Pathology"
+                        },
+                        {
+                            "id": "R46",
+                            "label": "Parasitology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R47",
+                    "label": "Biology/Integrated Biology/ Integrated Biomedical Sciences",
+                    "subfields": [
+                        {
+                            "id": "R48",
+                            "label": "Biomechanics"
+                        },
+                        {
+                            "id": "R49",
+                            "label": "Exercise Physiology"
+                        },
+                        {
+                            "id": "R50",
+                            "label": "Motor Control"
+                        },
+                        {
+                            "id": "R51",
+                            "label": "Psychology of Movement"
+                        },
+                        {
+                            "id": "R114146",
+                            "label": "Other Quantitative Biology"
+                        },
+                        {
+                            "id": "R114147",
+                            "label": "Quantitative Methods)"
+                        }
+                    ]
+                },
+                {
+                    "id": "R52",
+                    "label": "Microbiology",
+                    "subfields": [
+                        {
+                            "id": "R53",
+                            "label": "Bacteriology"
+                        },
+                        {
+                            "id": "R54",
+                            "label": "Environmental Microbiology and Microbial Ecology"
+                        },
+                        {
+                            "id": "R55",
+                            "label": "Microbial Physiology"
+                        },
+                        {
+                            "id": "R56",
+                            "label": "Pathogenic Microbiology"
+                        },
+                        {
+                            "id": "R57",
+                            "label": "Virology"
+                        },
+                        {
+                            "id": "R136129",
+                            "label": "Metabolism, Biochemistry and Genetics of Microorganisms"
+                        },
+                        {
+                            "id": "R136130",
+                            "label": "Microbial Ecology and Applied Microbiology"
+                        },
+                        {
+                            "id": "R136131",
+                            "label": "Medical Microbiology and Mycology, Hygiene, Molecular Infection Biology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R58",
+                    "label": "Neuroscience and Neurobiology",
+                    "subfields": [
+                        {
+                            "id": "R59",
+                            "label": "Behavioral Neurobiology"
+                        },
+                        {
+                            "id": "R60",
+                            "label": "Cognitive Neuroscience",
+                            "subfields": [
+                                {
+                                    "id": "R111778",
+                                    "label": "Communication Neuroscience"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R61",
+                            "label": "Computational Neuroscience"
+                        },
+                        {
+                            "id": "R62",
+                            "label": "Developmental Neuroscience"
+                        },
+                        {
+                            "id": "R63",
+                            "label": "Molecular and Cellular Neuroscience"
+                        },
+                        {
+                            "id": "R64",
+                            "label": "Systems Neuroscience"
+                        },
+                        {
+                            "id": "R136163",
+                            "label": "Developmental Neurobiology"
+                        },
+                        {
+                            "id": "R136164",
+                            "label": "Experimental and Theoretical Network Neuroscience"
+                        },
+                        {
+                            "id": "R136166",
+                            "label": "Experimental Models for the Understanding of Nervous System Diseases"
+                        },
+                        {
+                            "id": "R136167",
+                            "label": "Clinical Neurology; Neurosurgery and Neuroradiology"
+                        },
+                        {
+                            "id": "R136168",
+                            "label": "Biological Psychiatry"
+                        },
+                        {
+                            "id": "R136169",
+                            "label": "Clinical Psychiatry, Psychotherapy, Child and Adolescent Psychiatry"
+                        },
+                        {
+                            "id": "R136170",
+                            "label": "Ophthalmology"
+                        },
+                        {
+                            "id": "R136171",
+                            "label": "Molecular and Cellular Neurology and Neuropathology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R65",
+                    "label": "Nursing Pharmacology, Toxicology and Environmental Health",
+                    "subfields": [
+                        {
+                            "id": "R66",
+                            "label": "Environmental Health"
+                        },
+                        {
+                            "id": "R67",
+                            "label": "Medicinal Chemistry and Pharmaceutics"
+                        },
+                        {
+                            "id": "R68",
+                            "label": "Pharmacology"
+                        },
+                        {
+                            "id": "R69",
+                            "label": "Toxicology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R70",
+                    "label": "Physiology",
+                    "subfields": [
+                        {
+                            "id": "R71",
+                            "label": "Cellular and Molecular Physiology"
+                        },
+                        {
+                            "id": "R72",
+                            "label": "Comparative and Evolutionary Physiology"
+                        },
+                        {
+                            "id": "R73",
+                            "label": "Endocrinology"
+                        },
+                        {
+                            "id": "R74",
+                            "label": "Exercise Physiology"
+                        },
+                        {
+                            "id": "R75",
+                            "label": "Systems and Integrative Physiology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R76",
+                    "label": "Animal Sciences",
+                    "subfields": [
+                        {
+                            "id": "R77",
+                            "label": "Animal Sciences"
+                        },
+                        {
+                            "id": "R78",
+                            "label": "Aquaculture and Fisheries"
+                        },
+                        {
+                            "id": "R79",
+                            "label": "Dairy Science"
+                        },
+                        {
+                            "id": "R80",
+                            "label": "Poultry (or Avian) Science"
+                        },
+                        {
+                            "id": "R81",
+                            "label": "Zoology",
+                            "subfields": [
+                                {
+                                    "id": "R136124",
+                                    "label": "Systematics and Morphology (Zoology)"
+                                },
+                                {
+                                    "id": "R136125",
+                                    "label": "Evolution, Anthropology"
+                                },
+                                {
+                                    "id": "R136126",
+                                    "label": "Animal Physiology and Biochemistry"
+                                },
+                                {
+                                    "id": "R136127",
+                                    "label": "Ecology and Biodiversity of Animals and Ecosystems, Organismic Interactions"
+                                },
+                                {
+                                    "id": "R136128",
+                                    "label": "Sensory and Behavioural Biology"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "R82",
+                    "label": "Entomology Food Science",
+                    "subfields": [
+                        {
+                            "id": "R83",
+                            "label": "Food Processing"
+                        },
+                        {
+                            "id": "R84",
+                            "label": "Food Microbiology"
+                        },
+                        {
+                            "id": "R85",
+                            "label": "Food Chemistry"
+                        },
+                        {
+                            "id": "R86",
+                            "label": "Food Biotechnology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R87",
+                    "label": "Forestry and Forest Sciences",
+                    "subfields": [
+                        {
+                            "id": "R88",
+                            "label": "Forest Biology"
+                        },
+                        {
+                            "id": "R89",
+                            "label": "Forest Management"
+                        },
+                        {
+                            "id": "R90",
+                            "label": "Wood Science and Pulp/Paper Technology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R91",
+                    "label": "Nutrition",
+                    "subfields": [
+                        {
+                            "id": "R92",
+                            "label": "Comparative Nutrition"
+                        },
+                        {
+                            "id": "R93",
+                            "label": "Human and Clinical Nutrition"
+                        },
+                        {
+                            "id": "R94",
+                            "label": "International and Community Nutrition"
+                        },
+                        {
+                            "id": "R95",
+                            "label": "Molecular, Genetic, and Biochemical Nutrition"
+                        },
+                        {
+                            "id": "R96",
+                            "label": "Nutritional Epidemiology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R97",
+                    "label": "Plant Sciences",
+                    "subfields": [
+                        {
+                            "id": "R98",
+                            "label": "Agronomy and Crop Sciences"
+                        },
+                        {
+                            "id": "R99",
+                            "label": "Botany"
+                        },
+                        {
+                            "id": "R100",
+                            "label": "Horticulture"
+                        },
+                        {
+                            "id": "R101",
+                            "label": "Plant Biology"
+                        },
+                        {
+                            "id": "R102",
+                            "label": "Plant Pathology"
+                        },
+                        {
+                            "id": "R103",
+                            "label": "Plant Breeding and Genetics"
+                        },
+                        {
+                            "id": "R136059",
+                            "label": "Evolution and Systematics of Plants and Fungi"
+                        },
+                        {
+                            "id": "R136060",
+                            "label": "Plant Physiology"
+                        },
+                        {
+                            "id": "R136061",
+                            "label": "Plant Biochemistry and Biophysics"
+                        },
+                        {
+                            "id": "R136141",
+                            "label": "Plant Cell and Developmental Biology"
+                        },
+                        {
+                            "id": "R136142",
+                            "label": "Plant Genetics"
+                        },
+                        {
+                            "id": "R136191",
+                            "label": "Ecology and Biodiversity of Plants and Ecosystems"
+                        },
+                        {
+                            "id": "R136192",
+                            "label": "Organismic Interactions, Chemical Ecology and Microbiomes of Plant Systems"
+                        }
+                    ]
+                },
+                {
+                    "id": "R104",
+                    "label": "Bioinformatics"
+                },
+                {
+                    "id": "R105",
+                    "label": "Biotechnology"
+                },
+                {
+                    "id": "R106",
+                    "label": "Systems Biology"
+                },
+                {
+                    "id": "R136133",
+                    "label": "Medicine",
+                    "subfields": [
+                        {
+                            "id": "R136134",
+                            "label": "Epidemiology and Medical Biometry/Statistics"
+                        },
+                        {
+                            "id": "R136135",
+                            "label": "Public Health, Health Services Research, Social Medicine"
+                        },
+                        {
+                            "id": "R136136",
+                            "label": "Human Genetics"
+                        },
+                        {
+                            "id": "R136137",
+                            "label": "Nutritional Sciences"
+                        },
+                        {
+                            "id": "R136138",
+                            "label": "Medical Informatics and Medical Bioinformatics"
+                        },
+                        {
+                            "id": "R136139",
+                            "label": "Radiology, Nuclear Medicine, Radiotherapy, Radiobiology"
+                        },
+                        {
+                            "id": "R136140",
+                            "label": "Medical Physics, Biomedical Technology"
+                        },
+                        {
+                            "id": "R136143",
+                            "label": "Pharmacy"
+                        },
+                        {
+                            "id": "R136144",
+                            "label": "Anaesthesiology"
+                        },
+                        {
+                            "id": "R136145",
+                            "label": "Cardiology, Angiology"
+                        },
+                        {
+                            "id": "R136146",
+                            "label": "Pneumology, Thoracic Surgery"
+                        },
+                        {
+                            "id": "R136147",
+                            "label": "Hematology, Oncology"
+                        },
+                        {
+                            "id": "R136148",
+                            "label": "Gastroenterology"
+                        },
+                        {
+                            "id": "R136149",
+                            "label": "Nephrology"
+                        },
+                        {
+                            "id": "R136150",
+                            "label": "Rheumatology"
+                        },
+                        {
+                            "id": "R136151",
+                            "label": "Dermatology"
+                        },
+                        {
+                            "id": "R136152",
+                            "label": "Pediatric and Adolescent Medicine"
+                        },
+                        {
+                            "id": "R136153",
+                            "label": "Gynaecology and Obstetrics"
+                        },
+                        {
+                            "id": "R136154",
+                            "label": "Clinical Immunology and Allergology"
+                        },
+                        {
+                            "id": "R136155",
+                            "label": "Reproductive Medicine, Urology"
+                        },
+                        {
+                            "id": "R136156",
+                            "label": "Biogerontology and Geriatric Medicine"
+                        },
+                        {
+                            "id": "R136157",
+                            "label": "General and Visceral Surgery"
+                        },
+                        {
+                            "id": "R136158",
+                            "label": "Cardiac and Vascular Sugery"
+                        },
+                        {
+                            "id": "R136159",
+                            "label": "Orthopaedics, Traumatology, Reconstructive Surgery"
+                        },
+                        {
+                            "id": "R136160",
+                            "label": "Dentistry, Oral Surgery"
+                        },
+                        {
+                            "id": "R136161",
+                            "label": "Otolaryngology"
+                        },
+                        {
+                            "id": "R136162",
+                            "label": "Clinical Infectiology and Tropical Medicine"
+                        }
+                    ]
+                },
+                {
+                    "id": "R136172",
+                    "label": "Agriculture, Forestry and Veterinary Medicine",
+                    "subfields": [
+                        {
+                            "id": "R136173",
+                            "label": "Ecology of Land Use"
+                        },
+                        {
+                            "id": "R136174",
+                            "label": "Veterinary Medical Sciene"
+                        },
+                        {
+                            "id": "R136175",
+                            "label": "Animal Breeding, Animal Nutrition, Animal Husbandry"
+                        },
+                        {
+                            "id": "R136177",
+                            "label": "Plant Cultivation, Plant Nutrition, Agricultural Technology"
+                        },
+                        {
+                            "id": "R136178",
+                            "label": "Agricultural Economics, Agricultural Policy, Agricultural Sociology"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "R107",
+            "label": "Physical Sciences & Mathematics",
+            "subfields": [
+                {
+                    "id": "R108",
+                    "label": "Applied Mathematics",
+                    "subfields": [
+                        {
+                            "id": "R109",
+                            "label": "Control Theory"
+                        },
+                        {
+                            "id": "R110",
+                            "label": "Dynamic Systems"
+                        },
+                        {
+                            "id": "R111",
+                            "label": "Non-linear Dynamics"
+                        },
+                        {
+                            "id": "R112",
+                            "label": "Numerical Analysis and Computation"
+                        },
+                        {
+                            "id": "R113",
+                            "label": "Partial Differential Equations"
+                        },
+                        {
+                            "id": "R114",
+                            "label": "Ordinary Differential Equations and Applied Dynamics"
+                        }
+                    ]
+                },
+                {
+                    "id": "R115",
+                    "label": "Astrophysics and Astronomy",
+                    "subfields": [
+                        {
+                            "id": "R116",
+                            "label": "Physical Processes"
+                        },
+                        {
+                            "id": "R117",
+                            "label": "Instrumentation"
+                        },
+                        {
+                            "id": "R118",
+                            "label": "The Sun and the Solar System"
+                        },
+                        {
+                            "id": "R119",
+                            "label": "Stars, Interstellar Medium and the Galaxy"
+                        },
+                        {
+                            "id": "R120",
+                            "label": "External Galaxies"
+                        },
+                        {
+                            "id": "R121",
+                            "label": "Cosmology"
+                        },
+                        {
+                            "id": "R138056",
+                            "label": "Planetary Sciences"
+                        }
+                    ]
+                },
+                {
+                    "id": "R122",
+                    "label": "Chemistry",
+                    "subfields": [
+                        {
+                            "id": "R123",
+                            "label": "Analytical Chemistry"
+                        },
+                        {
+                            "id": "R124",
+                            "label": "Biochemistry"
+                        },
+                        {
+                            "id": "R125",
+                            "label": "Environmental Chemistry"
+                        },
+                        {
+                            "id": "R126",
+                            "label": "Materials Chemistry"
+                        },
+                        {
+                            "id": "R127",
+                            "label": "Medicinal-Pharmaceutical Chemistry"
+                        },
+                        {
+                            "id": "R128",
+                            "label": "Inorganic Chemistry"
+                        },
+                        {
+                            "id": "R129",
+                            "label": "Organic Chemistry"
+                        },
+                        {
+                            "id": "R130",
+                            "label": "Physical Chemistry",
+                            "subfields": [
+                                {
+                                    "id": "R137714",
+                                    "label": "Physical Chemistry of Molecules, Liquids and Interfaces, Biophysical Chemistry"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R131",
+                            "label": "Polymer Chemistry"
+                        },
+                        {
+                            "id": "R137540",
+                            "label": "Theoretical Chemistry",
+                            "subfields": [
+                                {
+                                    "id": "R137544",
+                                    "label": "Theoretical Chemistry: Electron Structure, Dynamics, Simulation"
+                                },
+                                {
+                                    "id": "R137545",
+                                    "label": "Theoretical Chemistry: Molecules, Materials, Surfaces"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R137541",
+                            "label": "Solid State and Surface Chemistry, Material Synthesis"
+                        },
+                        {
+                            "id": "R137651",
+                            "label": "Process Engineering, Technical Chemistry",
+                            "subfields": [
+                                {
+                                    "id": "R137652",
+                                    "label": "Technical Chemistry"
+                                },
+                                {
+                                    "id": "R137653",
+                                    "label": "Chemical and Thermal Process Engineering"
+                                },
+                                {
+                                    "id": "R137654",
+                                    "label": "Mechanical Process Engineering"
+                                },
+                                {
+                                    "id": "R137655",
+                                    "label": "Biological Process Engineering"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R137711",
+                            "label": "Molecular Chemistry",
+                            "subfields": [
+                                {
+                                    "id": "R137712",
+                                    "label": "Inorganic Molecular Chemistry - Synthesis and Characterisation"
+                                },
+                                {
+                                    "id": "R137713",
+                                    "label": "Organic Molecular Chemistry - Synthesis and Characterisation"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R137715",
+                            "label": "Biological Chemistry and Food Chemistry",
+                            "subfields": [
+                                {
+                                    "id": "R85",
+                                    "label": "Food Chemistry"
+                                },
+                                {
+                                    "id": "R137716",
+                                    "label": "Biological and Biomimetic Chemistry"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "R132",
+                    "label": "Computer Sciences",
+                    "subfields": [
+                        {
+                            "id": "R133",
+                            "label": "Artificial Intelligence",
+                            "subfields": [
+                                {
+                                    "id": "R78413",
+                                    "label": "Learner-Interface Interaction"
+                                },
+                                {
+                                    "id": "R112125",
+                                    "label": "Machine Learning"
+                                },
+                                {
+                                    "id": "R112127",
+                                    "label": "Multiagent Systems"
+                                },
+                                {
+                                    "id": "R112129",
+                                    "label": "Neural and Evolutionary Computing"
+                                },
+                                {
+                                    "id": "R112132",
+                                    "label": "Audio and Speech Processing"
+                                },
+                                {
+                                    "id": "R112133",
+                                    "label": "Image and Video Processing"
+                                },
+                                {
+                                    "id": "R145261",
+                                    "label": "Natural Language Processing"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R134",
+                            "label": "Computer and Systems Architecture"
+                        },
+                        {
+                            "id": "R135",
+                            "label": "Databases/Information Systems",
+                            "subfields": [
+                                {
+                                    "id": "R112120",
+                                    "label": "Digital Libraries"
+                                },
+                                {
+                                    "id": "R141823",
+                                    "label": "Semantic Web"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R136",
+                            "label": "Graphics"
+                        },
+                        {
+                            "id": "R137",
+                            "label": "Numerical Analysis/Scientific Computing"
+                        },
+                        {
+                            "id": "R138",
+                            "label": "Programming Languages/Compilers"
+                        },
+                        {
+                            "id": "R139",
+                            "label": "OS/Networks",
+                            "subfields": [
+                                {
+                                    "id": "R112130",
+                                    "label": "Networking and Internet Architecture"
+                                },
+                                {
+                                    "id": "R112131",
+                                    "label": "Operating Systems"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R140",
+                            "label": "Software Engineering",
+                            "subfields": [
+                                {
+                                    "id": "R215741",
+                                    "label": "Requirements Engineering"
+                                },
+                                {
+                                    "id": "R659055",
+                                    "label": "Software Architecture and Design"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R141",
+                            "label": "Theory/Algorithms",
+                            "subfields": [
+                                {
+                                    "id": "R112096",
+                                    "label": "Computational Complexity"
+                                },
+                                {
+                                    "id": "R112097",
+                                    "label": "Computational Geometry"
+                                },
+                                {
+                                    "id": "R112124",
+                                    "label": "Information Theory"
+                                },
+                                {
+                                    "id": "R112126",
+                                    "label": "Logic in Computer Science"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R112117",
+                            "label": "Cryptography and Security"
+                        },
+                        {
+                            "id": "R112118",
+                            "label": "Computer Vision and Pattern Recognition"
+                        },
+                        {
+                            "id": "R112119",
+                            "label": "Computers and Society"
+                        },
+                        {
+                            "id": "R112121",
+                            "label": "Computer Science General Literature"
+                        },
+                        {
+                            "id": "R112122",
+                            "label": "Computer Science and Game Theory"
+                        },
+                        {
+                            "id": "R112123",
+                            "label": "Human Computer Interfaces"
+                        },
+                        {
+                            "id": "R137676",
+                            "label": "Theoretical Computer Science"
+                        },
+                        {
+                            "id": "R137677",
+                            "label": "Software Engineering and Programming Languages"
+                        },
+                        {
+                            "id": "R137678",
+                            "label": "Security and Dependability"
+                        },
+                        {
+                            "id": "R137679",
+                            "label": "Operating, Communication, Database and Distributed Systems"
+                        },
+                        {
+                            "id": "R137680",
+                            "label": "Interactive and Intelligent Systems, Image and Language Processing, Computer Graphics and Visualisation"
+                        },
+                        {
+                            "id": "R137681",
+                            "label": "Information Systems, Process and Knowledge Management"
+                        },
+                        {
+                            "id": "R137682",
+                            "label": "Computer Architecture and Embedded Systems"
+                        },
+                        {
+                            "id": "R137683",
+                            "label": "Massively Parallel and Data-Intensive Systems"
+                        }
+                    ]
+                },
+                {
+                    "id": "R142",
+                    "label": "Earth Sciences",
+                    "subfields": [
+                        {
+                            "id": "R143",
+                            "label": "Biogeochemistry"
+                        },
+                        {
+                            "id": "R144",
+                            "label": "Cosmochemistry"
+                        },
+                        {
+                            "id": "R145",
+                            "label": "Environmental Sciences"
+                        },
+                        {
+                            "id": "R146",
+                            "label": "Geology"
+                        },
+                        {
+                            "id": "R147",
+                            "label": "Geochemistry"
+                        },
+                        {
+                            "id": "R148",
+                            "label": "Geophysics and Seismology",
+                            "subfields": [
+                                {
+                                    "id": "R114016",
+                                    "label": "Geophysics"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R149",
+                            "label": "Glaciology"
+                        },
+                        {
+                            "id": "R150",
+                            "label": "Mineral Physics"
+                        },
+                        {
+                            "id": "R151",
+                            "label": "Paleobiology"
+                        },
+                        {
+                            "id": "R152",
+                            "label": "Paleontology"
+                        },
+                        {
+                            "id": "R153",
+                            "label": "Soil Science"
+                        },
+                        {
+                            "id": "R154",
+                            "label": "Tectonics and Structure"
+                        },
+                        {
+                            "id": "R155",
+                            "label": "Vulcanology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R156",
+                    "label": "Mathematics",
+                    "subfields": [
+                        {
+                            "id": "R157",
+                            "label": "Algebra",
+                            "subfields": [
+                                {
+                                    "id": "R112134",
+                                    "label": "Commutative Algebra"
+                                },
+                                {
+                                    "id": "R112142",
+                                    "label": "Quantum Algebra"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R158",
+                            "label": "Algebraic Geometry"
+                        },
+                        {
+                            "id": "R159",
+                            "label": "Analysis"
+                        },
+                        {
+                            "id": "R160",
+                            "label": "Discrete Mathematics and Combinatorics"
+                        },
+                        {
+                            "id": "R161",
+                            "label": "Dynamics/Dynamical Systems"
+                        },
+                        {
+                            "id": "R162",
+                            "label": "Geometry and Topology",
+                            "subfields": [
+                                {
+                                    "id": "R112135",
+                                    "label": "Algebraic Topology"
+                                },
+                                {
+                                    "id": "R112138",
+                                    "label": "Differential Geometry"
+                                },
+                                {
+                                    "id": "R112139",
+                                    "label": "General Topology"
+                                },
+                                {
+                                    "id": "R112141",
+                                    "label": "Metric Geometry"
+                                },
+                                {
+                                    "id": "R112143",
+                                    "label": "Symplectic Geometry"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R163",
+                            "label": "Harmonic Analysis and Representation"
+                        },
+                        {
+                            "id": "R164",
+                            "label": "Logic and Foundations"
+                        },
+                        {
+                            "id": "R165",
+                            "label": "Number Theory"
+                        },
+                        {
+                            "id": "R166",
+                            "label": "Set Theory"
+                        },
+                        {
+                            "id": "R112128",
+                            "label": "Mathematical Software"
+                        },
+                        {
+                            "id": "R112136",
+                            "label": "Category Theory"
+                        },
+                        {
+                            "id": "R112137",
+                            "label": "Complex Variables"
+                        },
+                        {
+                            "id": "R112140",
+                            "label": "Mathematics History and Overview"
+                        }
+                    ]
+                },
+                {
+                    "id": "R167",
+                    "label": "Oceanography and Atmospheric Sciences and Meteorology",
+                    "subfields": [
+                        {
+                            "id": "R168",
+                            "label": "Atmospheric Sciences"
+                        },
+                        {
+                            "id": "R169",
+                            "label": "Climate"
+                        },
+                        {
+                            "id": "R170",
+                            "label": "Fresh Water Studies"
+                        },
+                        {
+                            "id": "R171",
+                            "label": "Meteorology"
+                        },
+                        {
+                            "id": "R172",
+                            "label": "Oceanography"
+                        }
+                    ]
+                },
+                {
+                    "id": "R173",
+                    "label": "Physics",
+                    "subfields": [
+                        {
+                            "id": "R175",
+                            "label": "Atomic, Molecular and Optical Physics",
+                            "subfields": [
+                                {
+                                    "id": "R114009",
+                                    "label": "Atomic and Molecular Clusters"
+                                },
+                                {
+                                    "id": "R114010",
+                                    "label": "Atomic Physics"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R176",
+                            "label": "Biological and Chemical Physics"
+                        },
+                        {
+                            "id": "R177",
+                            "label": "Condensed Matter Physics",
+                            "subfields": [
+                                {
+                                    "id": "R112144",
+                                    "label": "Disordered Systems and Neural Networks"
+                                },
+                                {
+                                    "id": "R112145",
+                                    "label": "Mesoscale and Nanoscale Physics"
+                                },
+                                {
+                                    "id": "R112147",
+                                    "label": "Soft Condensed Matter"
+                                },
+                                {
+                                    "id": "R137551",
+                                    "label": "Experimental Condensed Matter Physics"
+                                },
+                                {
+                                    "id": "R137552",
+                                    "label": "Theoretical Condensed Matter Physics"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R178",
+                            "label": "Cosmology, Relativity, and Gravity"
+                        },
+                        {
+                            "id": "R179",
+                            "label": "Elementary Particles and Fields and String Theory"
+                        },
+                        {
+                            "id": "R180",
+                            "label": "Engineering Physics"
+                        },
+                        {
+                            "id": "R181",
+                            "label": "Fluid Dynamics"
+                        },
+                        {
+                            "id": "R182",
+                            "label": "Non-linear Dynamics"
+                        },
+                        {
+                            "id": "R183",
+                            "label": "Nuclear"
+                        },
+                        {
+                            "id": "R184",
+                            "label": "Optics"
+                        },
+                        {
+                            "id": "R185",
+                            "label": "Plasma and Beam Physics"
+                        },
+                        {
+                            "id": "R186",
+                            "label": "Quantum Physics",
+                            "subfields": [
+                                {
+                                    "id": "R112146",
+                                    "label": "Quantum Gases"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R113277",
+                            "label": "Nonlinear Sciences",
+                            "subfields": [
+                                {
+                                    "id": "R114000",
+                                    "label": "Adaptation and Self-Organizing Systems"
+                                },
+                                {
+                                    "id": "R114001",
+                                    "label": "Chaotic Dynamics"
+                                },
+                                {
+                                    "id": "R114002",
+                                    "label": "Cellular Automata and Lattice Gases"
+                                },
+                                {
+                                    "id": "R114003",
+                                    "label": "Pattern Formation and Solitons"
+                                },
+                                {
+                                    "id": "R114004",
+                                    "label": "Exactly Solvable and Integrable Systems"
+                                },
+                                {
+                                    "id": "R114005",
+                                    "label": "Nuclear Experiment"
+                                },
+                                {
+                                    "id": "R114006",
+                                    "label": "Nuclear Theory"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R114005",
+                            "label": "Nuclear Experiment"
+                        },
+                        {
+                            "id": "R114007",
+                            "label": "Accelerator Physics"
+                        },
+                        {
+                            "id": "R114008",
+                            "label": "Applied Physics"
+                        },
+                        {
+                            "id": "R114011",
+                            "label": "Classical Physics"
+                        },
+                        {
+                            "id": "R114012",
+                            "label": "Computational Physics"
+                        },
+                        {
+                            "id": "R114013",
+                            "label": "Data Analysis, Statistics and Probability"
+                        },
+                        {
+                            "id": "R114014",
+                            "label": "Physics Education"
+                        },
+                        {
+                            "id": "R114015",
+                            "label": "General Physics"
+                        },
+                        {
+                            "id": "R114137",
+                            "label": "History and Philosophy of Physics"
+                        },
+                        {
+                            "id": "R114138",
+                            "label": "Medical Physics"
+                        },
+                        {
+                            "id": "R114139",
+                            "label": "Popular Physics"
+                        },
+                        {
+                            "id": "R114141",
+                            "label": "Space Physics"
+                        },
+                        {
+                            "id": "R137539",
+                            "label": "Geophysics and Geodesy",
+                            "subfields": [
+                                {
+                                    "id": "R114016",
+                                    "label": "Geophysics"
+                                },
+                                {
+                                    "id": "R137640",
+                                    "label": "Geodesy, Photogrammetry, Remote Sensing, Geoinformatics, Cartography"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "R187",
+                    "label": "Statistics and Probability",
+                    "subfields": [
+                        {
+                            "id": "R188",
+                            "label": "Applied Statistics"
+                        },
+                        {
+                            "id": "R189",
+                            "label": "Biostatistics"
+                        },
+                        {
+                            "id": "R190",
+                            "label": "Biometry"
+                        },
+                        {
+                            "id": "R191",
+                            "label": "Probability"
+                        },
+                        {
+                            "id": "R192",
+                            "label": "Statistical Methodology"
+                        },
+                        {
+                            "id": "R193",
+                            "label": "Statistical Theory"
+                        },
+                        {
+                            "id": "R114013",
+                            "label": "Data Analysis, Statistics and Probability"
+                        },
+                        {
+                            "id": "R114151",
+                            "label": "Other Statistics"
+                        }
+                    ]
+                },
+                {
+                    "id": "R137635",
+                    "label": "Optics, Quantum Optics and Physics of Atoms, Molecules and Plasmas"
+                },
+                {
+                    "id": "R137637",
+                    "label": "Particles, Nuclei and Fields",
+                    "subfields": [
+                        {
+                            "id": "R137638",
+                            "label": "Nuclear and Elementary Particle Physics, Quantum Mechanics, Relativity, Fields"
+                        }
+                    ]
+                },
+                {
+                    "id": "R137639",
+                    "label": "Statistical Physics, Soft Matter, Biological Physics, Nonlinear Dynamics"
+                },
+                {
+                    "id": "R137641",
+                    "label": "Water Research",
+                    "subfields": [
+                        {
+                            "id": "R137642",
+                            "label": "Hydrogeology, Hydrology, Limnology, Urban Water Management, Water Chemistry, Integrated Water Resources Management"
+                        }
+                    ]
+                },
+                {
+                    "id": "R137643",
+                    "label": "Chemical Solid State and Surface Research",
+                    "subfields": [
+                        {
+                            "id": "R137541",
+                            "label": "Solid State and Surface Chemistry, Material Synthesis"
+                        },
+                        {
+                            "id": "R137717",
+                            "label": "Physical Chemistry of Solids and Surfaces, Material Characterisation"
+                        }
+                    ]
+                },
+                {
+                    "id": "R137644",
+                    "label": "Polymer Research",
+                    "subfields": [
+                        {
+                            "id": "R137542",
+                            "label": "Preparatory and Physical Chemistry of Polymers"
+                        },
+                        {
+                            "id": "R137543",
+                            "label": "Experimental and Theoretical Physics of Polymers"
+                        },
+                        {
+                            "id": "R137645",
+                            "label": "Polymer Materials"
+                        }
+                    ]
+                },
+                {
+                    "id": "R137718",
+                    "label": "Mineralogy, Petrology and Geochemistry"
+                }
+            ]
+        },
+        {
+            "id": "R194",
+            "label": "Engineering",
+            "subfields": [
+                {
+                    "id": "R195",
+                    "label": "Aerospace Engineering",
+                    "subfields": [
+                        {
+                            "id": "R196",
+                            "label": "Aeronautical Vehicles"
+                        },
+                        {
+                            "id": "R197",
+                            "label": "Space Vehicles"
+                        },
+                        {
+                            "id": "R198",
+                            "label": "Systems Engineering and Multidisciplinary Design Optimization"
+                        },
+                        {
+                            "id": "R199",
+                            "label": "Aerodynamics and Fluid Mechanics"
+                        },
+                        {
+                            "id": "R200",
+                            "label": "Astrodynamics"
+                        },
+                        {
+                            "id": "R201",
+                            "label": "Structures and Materials"
+                        },
+                        {
+                            "id": "R202",
+                            "label": "Propulsion and Power"
+                        },
+                        {
+                            "id": "R203",
+                            "label": "Navigation, Guidance, Control and Dynamics"
+                        },
+                        {
+                            "id": "R204",
+                            "label": "Multi-Vehicle Systems and Air Traffic Control"
+                        }
+                    ]
+                },
+                {
+                    "id": "R205",
+                    "label": "Biomedical Engineering and Bioengineering",
+                    "subfields": [
+                        {
+                            "id": "R206",
+                            "label": "Biological Engineering"
+                        },
+                        {
+                            "id": "R207",
+                            "label": "Bioelectrical and neuroengineering"
+                        },
+                        {
+                            "id": "R208",
+                            "label": "Bioimaging and biomedical optics"
+                        },
+                        {
+                            "id": "R209",
+                            "label": "Biomaterials"
+                        },
+                        {
+                            "id": "R210",
+                            "label": "Biomechanics and biotransport"
+                        },
+                        {
+                            "id": "R211",
+                            "label": "Biomedical devices and instrumentation"
+                        },
+                        {
+                            "id": "R212",
+                            "label": "Molecular, cellular, and tissue engineering",
+                            "subfields": [
+                                {
+                                    "id": "R114148",
+                                    "label": "Subcellular Processes"
+                                },
+                                {
+                                    "id": "R114149",
+                                    "label": "Tissues and Organs"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R213",
+                            "label": "Systems and integrative engineering"
+                        }
+                    ]
+                },
+                {
+                    "id": "R214",
+                    "label": "Chemical Engineering",
+                    "subfields": [
+                        {
+                            "id": "R215",
+                            "label": "Biochemical and Biomolecular Engineering"
+                        },
+                        {
+                            "id": "R216",
+                            "label": "Catalysis and Reaction Engineering"
+                        },
+                        {
+                            "id": "R217",
+                            "label": "Complex Fluids"
+                        },
+                        {
+                            "id": "R218",
+                            "label": "Membrane Science"
+                        },
+                        {
+                            "id": "R219",
+                            "label": "Petroleum Engineering"
+                        },
+                        {
+                            "id": "R220",
+                            "label": "Polymer Science"
+                        },
+                        {
+                            "id": "R221",
+                            "label": "Process Control and Systems"
+                        },
+                        {
+                            "id": "R222",
+                            "label": "Thermodynamics",
+                            "subfields": [
+                                {
+                                    "id": "R137549",
+                                    "label": "Fluid Mechanics, Technical Thermodynamics and Thermal Energy Engineering",
+                                    "subfields": [
+                                        {
+                                            "id": "R137550",
+                                            "label": "Energy Process Engineering"
+                                        },
+                                        {
+                                            "id": "R137659",
+                                            "label": "Technical Thermodynamics"
+                                        },
+                                        {
+                                            "id": "R137660",
+                                            "label": "Fluid Mechanics"
+                                        },
+                                        {
+                                            "id": "R137661",
+                                            "label": "Hydraulic and Turbo Engines and Piston Engines"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R223",
+                            "label": "Transport Phenomena"
+                        }
+                    ]
+                },
+                {
+                    "id": "R224",
+                    "label": "Civil and Environmental Engineering",
+                    "subfields": [
+                        {
+                            "id": "R225",
+                            "label": "Civil Engineering"
+                        },
+                        {
+                            "id": "R226",
+                            "label": "Construction Engineering/management"
+                        },
+                        {
+                            "id": "R227",
+                            "label": "Environmental Engineering"
+                        },
+                        {
+                            "id": "R228",
+                            "label": "Geotechnical Engineering"
+                        },
+                        {
+                            "id": "R229",
+                            "label": "Structural Engineering"
+                        },
+                        {
+                            "id": "R137684",
+                            "label": "Architecture, Building and Construction History, Construction Research, Sustainable Building Technology"
+                        },
+                        {
+                            "id": "R137685",
+                            "label": "Urbanism, Spatial Planning, Transportation and Infrastructure Planning, Landscape Planning"
+                        },
+                        {
+                            "id": "R137686",
+                            "label": "Construction Material Sciences, Chemistry, Building Physics"
+                        },
+                        {
+                            "id": "R137687",
+                            "label": "Structural Engineering, Building Informatics and Construction Operation"
+                        },
+                        {
+                            "id": "R137688",
+                            "label": "Applied Mechanics, Statics and Dynamics"
+                        },
+                        {
+                            "id": "R137689",
+                            "label": "Geotechnics, Hydraulic Engineering"
+                        }
+                    ]
+                },
+                {
+                    "id": "R230",
+                    "label": "Computer Engineering",
+                    "subfields": [
+                        {
+                            "id": "R231",
+                            "label": "Computer and Systems Architecture"
+                        },
+                        {
+                            "id": "R232",
+                            "label": "Digital Circuits"
+                        },
+                        {
+                            "id": "R233",
+                            "label": "Data Storage Systems"
+                        },
+                        {
+                            "id": "R234",
+                            "label": "Digital Communications and Networking"
+                        },
+                        {
+                            "id": "R235",
+                            "label": "Hardware Systems"
+                        },
+                        {
+                            "id": "R236",
+                            "label": "Robotics"
+                        }
+                    ]
+                },
+                {
+                    "id": "R237",
+                    "label": "Electrical and Computer Engineering",
+                    "subfields": [
+                        {
+                            "id": "R238",
+                            "label": "Biomedical"
+                        },
+                        {
+                            "id": "R239",
+                            "label": "Computer Engineering"
+                        },
+                        {
+                            "id": "R240",
+                            "label": "Controls and Control Theory"
+                        },
+                        {
+                            "id": "R241",
+                            "label": "Electrical and Electronics"
+                        },
+                        {
+                            "id": "R242",
+                            "label": "Electromagnetics and photonics"
+                        },
+                        {
+                            "id": "R243",
+                            "label": "Electronic Devices and Semiconductor Manufacturing"
+                        },
+                        {
+                            "id": "R244",
+                            "label": "Nanotechnology fabrication"
+                        },
+                        {
+                            "id": "R245",
+                            "label": "Power and Energy"
+                        },
+                        {
+                            "id": "R246",
+                            "label": "Signal Processing"
+                        },
+                        {
+                            "id": "R247",
+                            "label": "Systems and Communications"
+                        },
+                        {
+                            "id": "R248",
+                            "label": "VLSI and circuits: Embedded/Hardware Systems"
+                        }
+                    ]
+                },
+                {
+                    "id": "R249",
+                    "label": "Engineering Science and Materials (not elsewhere classified)",
+                    "subfields": [
+                        {
+                            "id": "R250",
+                            "label": "Engineering Mechanics"
+                        },
+                        {
+                            "id": "R252",
+                            "label": "Non-linear Dynamics"
+                        },
+                        {
+                            "id": "R253",
+                            "label": "Mechanics of Materials"
+                        }
+                    ]
+                },
+                {
+                    "id": "R254",
+                    "label": "Materials Science and Engineering",
+                    "subfields": [
+                        {
+                            "id": "R209",
+                            "label": "Biomaterials"
+                        },
+                        {
+                            "id": "R255",
+                            "label": "Biology and Biomimetic Materials"
+                        },
+                        {
+                            "id": "R256",
+                            "label": "Ceramic Materials"
+                        },
+                        {
+                            "id": "R257",
+                            "label": "Metallurgy"
+                        },
+                        {
+                            "id": "R258",
+                            "label": "Polymer and Organic Materials"
+                        },
+                        {
+                            "id": "R259",
+                            "label": "Semiconductor and Optical Materials"
+                        },
+                        {
+                            "id": "R260",
+                            "label": "Structural Materials"
+                        },
+                        {
+                            "id": "R137553",
+                            "label": "Thermodynamics and Kinetics as well as Properties of Phases and Microstructure of Materials"
+                        },
+                        {
+                            "id": "R137668",
+                            "label": "Synthesis and Properties of Functional Materials"
+                        },
+                        {
+                            "id": "R137669",
+                            "label": "Computer-Aided Design of Materials and Simulation of Materials Behaviour from  Atomic to Microscopic Scale"
+                        }
+                    ]
+                },
+                {
+                    "id": "R261",
+                    "label": "Mechanical Engineering",
+                    "subfields": [
+                        {
+                            "id": "R262",
+                            "label": "Acoustics, Dynamics, and Controls"
+                        },
+                        {
+                            "id": "R263",
+                            "label": "Applied Mechanics"
+                        },
+                        {
+                            "id": "R264",
+                            "label": "Biomechanical Engineering"
+                        },
+                        {
+                            "id": "R265",
+                            "label": "Computer-Aided Engineering and Design"
+                        },
+                        {
+                            "id": "R266",
+                            "label": "Electro-Mechanical Systems"
+                        },
+                        {
+                            "id": "R267",
+                            "label": "Energy Systems"
+                        },
+                        {
+                            "id": "R268",
+                            "label": "Heat Transfer, Combustion"
+                        },
+                        {
+                            "id": "R269",
+                            "label": "Manufacturing"
+                        },
+                        {
+                            "id": "R270",
+                            "label": "Ocean Engineering"
+                        },
+                        {
+                            "id": "R271",
+                            "label": "Tribology"
+                        },
+                        {
+                            "id": "R137650",
+                            "label": "Lightweight Construction, Textile Technology"
+                        },
+                        {
+                            "id": "R137656",
+                            "label": "Mechanics and Constructive Mechanical Engineering"
+                        },
+                        {
+                            "id": "R137657",
+                            "label": "Engineering Design, Machine Elements, Product Development"
+                        },
+                        {
+                            "id": "R137658",
+                            "label": "Mechanics"
+                        }
+                    ]
+                },
+                {
+                    "id": "R272",
+                    "label": "Operations Research, Systems Engineering and Industrial Engineering",
+                    "subfields": [
+                        {
+                            "id": "R273",
+                            "label": "Ergonomics"
+                        },
+                        {
+                            "id": "R274",
+                            "label": "Industrial Engineering"
+                        },
+                        {
+                            "id": "R275",
+                            "label": "Operational Research"
+                        },
+                        {
+                            "id": "R276",
+                            "label": "Systems Engineering",
+                            "subfields": [
+                                {
+                                    "id": "R137554",
+                                    "label": "Human Factors, Ergonomics, Human-Machine Systems"
+                                },
+                                {
+                                    "id": "R137555",
+                                    "label": "Biomedical Systems Technology"
+                                },
+                                {
+                                    "id": "R137670",
+                                    "label": "Automation, Control Systems, Robotics, Mechatronics, Cyber Physical Systems"
+                                },
+                                {
+                                    "id": "R137671",
+                                    "label": "Measurement Systems"
+                                },
+                                {
+                                    "id": "R137672",
+                                    "label": "Microsystems"
+                                },
+                                {
+                                    "id": "R137673",
+                                    "label": "Traffic and Transport Systems, Intelligent and Automated Traffic"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "R277",
+                    "label": "Computational Engineering"
+                },
+                {
+                    "id": "R278",
+                    "label": "Information Science"
+                },
+                {
+                    "id": "R279",
+                    "label": "Nanoscience and Nanotechnology"
+                },
+                {
+                    "id": "R280",
+                    "label": "Nuclear Engineering"
+                },
+                {
+                    "id": "R137546",
+                    "label": "Plastics Engineering"
+                },
+                {
+                    "id": "R137550",
+                    "label": "Energy Process Engineering"
+                },
+                {
+                    "id": "R137556",
+                    "label": "Electrical Engineering and Information Technology",
+                    "subfields": [
+                        {
+                            "id": "R137557",
+                            "label": "Communications, High-Frequency and Network Technology, Theoretical Electrical Engineering"
+                        },
+                        {
+                            "id": "R137674",
+                            "label": "Electronic Semiconductors, Components, Circuits, Systems"
+                        },
+                        {
+                            "id": "R137675",
+                            "label": "Electrical Energy Generation, Distribution, Application"
+                        }
+                    ]
+                },
+                {
+                    "id": "R137646",
+                    "label": "Production Technology",
+                    "subfields": [
+                        {
+                            "id": "R137546",
+                            "label": "Plastics Engineering"
+                        },
+                        {
+                            "id": "R137547",
+                            "label": "Primary Shaping and Reshaping Technology, Additive Manufacturing"
+                        },
+                        {
+                            "id": "R137548",
+                            "label": "Metal-Cutting and Abrasive Manufacturing Engineering"
+                        },
+                        {
+                            "id": "R137647",
+                            "label": "Joining and Separation Technology"
+                        },
+                        {
+                            "id": "R137648",
+                            "label": "Production Systems, Operations Management, Quality Management and Factory  Planning"
+                        },
+                        {
+                            "id": "R137649",
+                            "label": "Production Automation"
+                        }
+                    ]
+                },
+                {
+                    "id": "R137662",
+                    "label": "Materials Engineering",
+                    "subfields": [
+                        {
+                            "id": "R137663",
+                            "label": "Materials in Sintering Processes and Generative Manufacturing Processes"
+                        },
+                        {
+                            "id": "R137664",
+                            "label": "Metallurgical, Thermal and Thermomechanical Treatment of Materials"
+                        },
+                        {
+                            "id": "R137665",
+                            "label": "Coating and Surface Technology"
+                        },
+                        {
+                            "id": "R137666",
+                            "label": "Mechanical Properties of Metallic Materials and their Microstructural Origins"
+                        },
+                        {
+                            "id": "R137667",
+                            "label": "Glass, Ceramics and Derived Composites"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "R281",
+            "label": "Social and Behavioral Sciences",
+            "subfields": [
+                {
+                    "id": "R282",
+                    "label": "Agricultural and Resource Economics"
+                },
+                {
+                    "id": "R283",
+                    "label": "Social and Cultural Anthropology and Ethnology",
+                    "subfields": [
+                        {
+                            "id": "R284",
+                            "label": "Archaeological"
+                        },
+                        {
+                            "id": "R285",
+                            "label": "Biological and Physical"
+                        },
+                        {
+                            "id": "R286",
+                            "label": "Linguistic Anthrolpology"
+                        },
+                        {
+                            "id": "R287",
+                            "label": "Social and Cultural"
+                        },
+                        {
+                            "id": "R136090",
+                            "label": "Asian Studies"
+                        },
+                        {
+                            "id": "R136091",
+                            "label": "African Studies"
+                        },
+                        {
+                            "id": "R136092",
+                            "label": "American Studies"
+                        },
+                        {
+                            "id": "R136093",
+                            "label": "Oceania Studies"
+                        },
+                        {
+                            "id": "R136181",
+                            "label": "Islamic Studies, Arabian Studies, Semitic Studies"
+                        },
+                        {
+                            "id": "R136182",
+                            "label": "Religious Studies and Jewish Studies"
+                        }
+                    ]
+                },
+                {
+                    "id": "R288",
+                    "label": "Communication Sciences",
+                    "subfields": [
+                        {
+                            "id": "R289",
+                            "label": "Broadcast/Video Studies"
+                        },
+                        {
+                            "id": "R290",
+                            "label": "Communication Technology and New Media"
+                        },
+                        {
+                            "id": "R291",
+                            "label": "Critical and Cultural Studies"
+                        },
+                        {
+                            "id": "R292",
+                            "label": "Gender, Race, Sexuality, and Ethnicity in Communication"
+                        },
+                        {
+                            "id": "R293",
+                            "label": "Health Communication"
+                        },
+                        {
+                            "id": "R294",
+                            "label": "International and Intercultural Communication"
+                        },
+                        {
+                            "id": "R295",
+                            "label": "Interpersonal/Small Group Communication"
+                        },
+                        {
+                            "id": "R296",
+                            "label": "Journalism Studies"
+                        },
+                        {
+                            "id": "R297",
+                            "label": "Mass Communication"
+                        },
+                        {
+                            "id": "R298",
+                            "label": "Organizational Communication"
+                        },
+                        {
+                            "id": "R299",
+                            "label": "Public Relations/Advertising"
+                        },
+                        {
+                            "id": "R300",
+                            "label": "Social Influence and Political Communication"
+                        },
+                        {
+                            "id": "R301",
+                            "label": "Speech and Rhetorical Studies"
+                        },
+                        {
+                            "id": "R111778",
+                            "label": "Communication Neuroscience"
+                        }
+                    ]
+                },
+                {
+                    "id": "R302",
+                    "label": "Economics",
+                    "subfields": [
+                        {
+                            "id": "R303",
+                            "label": "Behavioral Economics"
+                        },
+                        {
+                            "id": "R304",
+                            "label": "Econometrics"
+                        },
+                        {
+                            "id": "R305",
+                            "label": "Economic History"
+                        },
+                        {
+                            "id": "R306",
+                            "label": "Economic Theory"
+                        },
+                        {
+                            "id": "R307",
+                            "label": "Growth and Development"
+                        },
+                        {
+                            "id": "R308",
+                            "label": "Industrial Organization"
+                        },
+                        {
+                            "id": "R309",
+                            "label": "International Economics"
+                        },
+                        {
+                            "id": "R310",
+                            "label": "Labor Economics"
+                        },
+                        {
+                            "id": "R311",
+                            "label": "Macroeconomics"
+                        },
+                        {
+                            "id": "R312",
+                            "label": "Public Economics"
+                        },
+                        {
+                            "id": "R114150",
+                            "label": "Quantitative Finance"
+                        },
+                        {
+                            "id": "R136111",
+                            "label": "Economic Policy, Applied Economics"
+                        },
+                        {
+                            "id": "R136190",
+                            "label": "Business Administration"
+                        }
+                    ]
+                },
+                {
+                    "id": "R313",
+                    "label": "Geography",
+                    "subfields": [
+                        {
+                            "id": "R314",
+                            "label": "Physical and Environmental Geography"
+                        },
+                        {
+                            "id": "R315",
+                            "label": "Human Geography"
+                        },
+                        {
+                            "id": "R316",
+                            "label": "Nature and Society Relations"
+                        },
+                        {
+                            "id": "R317",
+                            "label": "Geographic Information Sciences"
+                        }
+                    ]
+                },
+                {
+                    "id": "R318",
+                    "label": "Linguistics",
+                    "subfields": [
+                        {
+                            "id": "R319",
+                            "label": "Anthropological Linguistics/Sociolinguistics"
+                        },
+                        {
+                            "id": "R320",
+                            "label": "Applied Linguistics"
+                        },
+                        {
+                            "id": "R321",
+                            "label": "Comparative and Historical Linguistics"
+                        },
+                        {
+                            "id": "R322",
+                            "label": "Computational Linguistics"
+                        },
+                        {
+                            "id": "R323",
+                            "label": "Discourse/Text Linguistics"
+                        },
+                        {
+                            "id": "R324",
+                            "label": "First/Second Language Acquisition"
+                        },
+                        {
+                            "id": "R325",
+                            "label": "Typological Linguistics and Linguistic Diversity"
+                        },
+                        {
+                            "id": "R326",
+                            "label": "Language Description/Documentation"
+                        },
+                        {
+                            "id": "R327",
+                            "label": "Morphology"
+                        },
+                        {
+                            "id": "R328",
+                            "label": "Phonetics/Phonology"
+                        },
+                        {
+                            "id": "R329",
+                            "label": "Psycholinguistics/Neurolinguistics"
+                        },
+                        {
+                            "id": "R330",
+                            "label": "Semantics/Pragmatics"
+                        },
+                        {
+                            "id": "R331",
+                            "label": "Syntax"
+                        },
+                        {
+                            "id": "R136066",
+                            "label": "Individual Linguistics"
+                        }
+                    ]
+                },
+                {
+                    "id": "R332",
+                    "label": "Political Science",
+                    "subfields": [
+                        {
+                            "id": "R333",
+                            "label": "American Politics"
+                        },
+                        {
+                            "id": "R334",
+                            "label": "Comparative Politics"
+                        },
+                        {
+                            "id": "R335",
+                            "label": "International Relations"
+                        },
+                        {
+                            "id": "R336",
+                            "label": "Models and Methods"
+                        },
+                        {
+                            "id": "R337",
+                            "label": "Political Theory"
+                        }
+                    ]
+                },
+                {
+                    "id": "R338",
+                    "label": "Public Affairs, Public Policy and Public Administration",
+                    "subfields": [
+                        {
+                            "id": "R339",
+                            "label": "Public Administration"
+                        },
+                        {
+                            "id": "R340",
+                            "label": "Public Affairs"
+                        },
+                        {
+                            "id": "R341",
+                            "label": "Public Policy"
+                        },
+                        {
+                            "id": "R342",
+                            "label": "Urban Studies"
+                        }
+                    ]
+                },
+                {
+                    "id": "R343",
+                    "label": "Psychology",
+                    "subfields": [
+                        {
+                            "id": "R344",
+                            "label": "Biological Psychology"
+                        },
+                        {
+                            "id": "R345",
+                            "label": "Differential, Clinical and Medical Psychology, Methodology"
+                        },
+                        {
+                            "id": "R346",
+                            "label": "Cognition and Perception"
+                        },
+                        {
+                            "id": "R347",
+                            "label": "Cognitive Psychology"
+                        },
+                        {
+                            "id": "R348",
+                            "label": "Community Psychology"
+                        },
+                        {
+                            "id": "R349",
+                            "label": "Developmental Psychology"
+                        },
+                        {
+                            "id": "R350",
+                            "label": "Health Psychology"
+                        },
+                        {
+                            "id": "R351",
+                            "label": "Industrial and Organizational Psychology"
+                        },
+                        {
+                            "id": "R352",
+                            "label": "Personality and Social Contexts"
+                        },
+                        {
+                            "id": "R353",
+                            "label": "Social Psychology"
+                        },
+                        {
+                            "id": "R136185",
+                            "label": "General, Cognitive and Mathematical Psychology"
+                        },
+                        {
+                            "id": "R136186",
+                            "label": "Developmental and Educational Psychology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R354",
+                    "label": "Sociology",
+                    "subfields": [
+                        {
+                            "id": "R355",
+                            "label": "Demography, Population, and Ecology"
+                        },
+                        {
+                            "id": "R356",
+                            "label": "Family, Life Course, and Society"
+                        },
+                        {
+                            "id": "R357",
+                            "label": "Gender and Sexuality"
+                        },
+                        {
+                            "id": "R358",
+                            "label": "Inequality and Stratification"
+                        },
+                        {
+                            "id": "R359",
+                            "label": "Medicine and Health"
+                        },
+                        {
+                            "id": "R360",
+                            "label": "Methodologies : Quantitative, Qualitative, Comparative, and Historical"
+                        },
+                        {
+                            "id": "R361",
+                            "label": "Place and Environment"
+                        },
+                        {
+                            "id": "R362",
+                            "label": "Politics and Social Change"
+                        },
+                        {
+                            "id": "R363",
+                            "label": "Race and Ethnicity"
+                        },
+                        {
+                            "id": "R364",
+                            "label": "Regional Sociology"
+                        },
+                        {
+                            "id": "R365",
+                            "label": "Rural sociology"
+                        },
+                        {
+                            "id": "R366",
+                            "label": "Social Control, Law, Crime, and Deviance"
+                        },
+                        {
+                            "id": "R367",
+                            "label": "Social Psychology and Interaction"
+                        },
+                        {
+                            "id": "R368",
+                            "label": "Sociology of Culture"
+                        },
+                        {
+                            "id": "R369",
+                            "label": "Theory, Knowledge and Science"
+                        },
+                        {
+                            "id": "R370",
+                            "label": "Work, Economy and Organizations"
+                        },
+                        {
+                            "id": "R114140",
+                            "label": "Physics and Society"
+                        }
+                    ]
+                },
+                {
+                    "id": "R373",
+                    "label": "Science and Technology Studies"
+                },
+                {
+                    "id": "R374",
+                    "label": "Urban Studies and Planning"
+                },
+                {
+                    "id": "R136115",
+                    "label": "Jurisprudence",
+                    "subfields": [
+                        {
+                            "id": "R136116",
+                            "label": "Principles of Law and Jurisprudence"
+                        },
+                        {
+                            "id": "R136117",
+                            "label": "Private Law"
+                        },
+                        {
+                            "id": "R136118",
+                            "label": "Public Law"
+                        },
+                        {
+                            "id": "R136119",
+                            "label": "Criminal Law"
+                        },
+                        {
+                            "id": "R136120",
+                            "label": "Criminology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R136187",
+                    "label": "Social Sciences",
+                    "subfields": [
+                        {
+                            "id": "R136188",
+                            "label": "Sociological Theory"
+                        },
+                        {
+                            "id": "R136189",
+                            "label": "Empirical Social Research"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "R375",
+            "label": "Arts and Humanities",
+            "subfields": [
+                {
+                    "id": "R376",
+                    "label": "American Studies",
+                    "subfields": [
+                        {
+                            "id": "R377",
+                            "label": "American Film Studies"
+                        },
+                        {
+                            "id": "R378",
+                            "label": "American Material Culture"
+                        },
+                        {
+                            "id": "R379",
+                            "label": "American Popular Culture"
+                        },
+                        {
+                            "id": "R380",
+                            "label": "Ethnic Studies"
+                        }
+                    ]
+                },
+                {
+                    "id": "R381",
+                    "label": "Classics",
+                    "subfields": [
+                        {
+                            "id": "R382",
+                            "label": "Ancient History (Greek and Roman through Late Antiquity)"
+                        },
+                        {
+                            "id": "R383",
+                            "label": "Ancient Philosophy"
+                        },
+                        {
+                            "id": "R384",
+                            "label": "Byzantine and Modern Greek"
+                        },
+                        {
+                            "id": "R385",
+                            "label": "Classical Archaeology and Art History"
+                        },
+                        {
+                            "id": "R386",
+                            "label": "Classical Literature and Philology"
+                        },
+                        {
+                            "id": "R387",
+                            "label": "Indo-European Linguistics and Philology"
+                        }
+                    ]
+                },
+                {
+                    "id": "R388",
+                    "label": "Comparative Literature"
+                },
+                {
+                    "id": "R389",
+                    "label": "English Language and Literature",
+                    "subfields": [
+                        {
+                            "id": "R390",
+                            "label": "Literature in English, British Isles"
+                        },
+                        {
+                            "id": "R391",
+                            "label": "Literature in English, Anglophone (other than British Isles and North America)"
+                        },
+                        {
+                            "id": "R392",
+                            "label": "Literature in English, North America (other than ethnic and minority)"
+                        },
+                        {
+                            "id": "R393",
+                            "label": "Literature in English, North America, ethnic and minority"
+                        },
+                        {
+                            "id": "R394",
+                            "label": "Feminist, Gender and Sexuality Studies"
+                        },
+                        {
+                            "id": "R395",
+                            "label": "Rhetoric and Composition"
+                        }
+                    ]
+                },
+                {
+                    "id": "R402",
+                    "label": "Language, Societies, and Cultures",
+                    "subfields": [
+                        {
+                            "id": "R403",
+                            "label": "African Languages and Societies"
+                        },
+                        {
+                            "id": "R404",
+                            "label": "East Asian Languages and Societies"
+                        },
+                        {
+                            "id": "R405",
+                            "label": "European Languages and Societies (not elsewhere classified)"
+                        },
+                        {
+                            "id": "R406",
+                            "label": "Latin American Languages and Societies (not elsewhere classified"
+                        },
+                        {
+                            "id": "R407",
+                            "label": "Near Eastern Languages and Societies"
+                        },
+                        {
+                            "id": "R408",
+                            "label": "Slavic Languages and Societies"
+                        },
+                        {
+                            "id": "R409",
+                            "label": "South and Southeast Asian Languages and Societies"
+                        },
+                        {
+                            "id": "R136179",
+                            "label": "Egyptology and Ancient Near Eastern Studies"
+                        }
+                    ]
+                },
+                {
+                    "id": "R410",
+                    "label": "History",
+                    "subfields": [
+                        {
+                            "id": "R411",
+                            "label": "African"
+                        },
+                        {
+                            "id": "R412",
+                            "label": "Asian"
+                        },
+                        {
+                            "id": "R413",
+                            "label": "European"
+                        },
+                        {
+                            "id": "R414",
+                            "label": "Islamic World/Near East"
+                        },
+                        {
+                            "id": "R415",
+                            "label": "Latin American"
+                        },
+                        {
+                            "id": "R416",
+                            "label": "United States"
+                        },
+                        {
+                            "id": "R417",
+                            "label": "Cultural History"
+                        },
+                        {
+                            "id": "R418",
+                            "label": "Diplomatic History"
+                        },
+                        {
+                            "id": "R419",
+                            "label": "Gender"
+                        },
+                        {
+                            "id": "R420",
+                            "label": "History of Religion"
+                        },
+                        {
+                            "id": "R421",
+                            "label": "History of Science, Technology, and Medicine"
+                        },
+                        {
+                            "id": "R422",
+                            "label": "Intellectual History"
+                        },
+                        {
+                            "id": "R423",
+                            "label": "Legal"
+                        },
+                        {
+                            "id": "R424",
+                            "label": "Medieval History"
+                        },
+                        {
+                            "id": "R425",
+                            "label": "Military History"
+                        },
+                        {
+                            "id": "R426",
+                            "label": "Political History"
+                        },
+                        {
+                            "id": "R427",
+                            "label": "Social History"
+                        },
+                        {
+                            "id": "R428",
+                            "label": "Women’s History"
+                        },
+                        {
+                            "id": "R136064",
+                            "label": "Early Modern History"
+                        },
+                        {
+                            "id": "R136065",
+                            "label": "Modern and Current History"
+                        }
+                    ]
+                },
+                {
+                    "id": "R429",
+                    "label": "History of Art, Architecture and Archaeology",
+                    "subfields": [
+                        {
+                            "id": "R430",
+                            "label": "American Art and Architecture"
+                        },
+                        {
+                            "id": "R431",
+                            "label": "Ancient, Medieval, Renaissance and Baroque Art and Architecture"
+                        },
+                        {
+                            "id": "R432",
+                            "label": "Asian Art and Architecture"
+                        },
+                        {
+                            "id": "R433",
+                            "label": "Contemporary Art"
+                        },
+                        {
+                            "id": "R434",
+                            "label": "Modern Art and Architecture"
+                        },
+                        {
+                            "id": "R435",
+                            "label": "Theory and Criticism"
+                        }
+                    ]
+                },
+                {
+                    "id": "R436",
+                    "label": "Musicology",
+                    "subfields": [
+                        {
+                            "id": "R437",
+                            "label": "Composition"
+                        },
+                        {
+                            "id": "R438",
+                            "label": "Ethnomusicology"
+                        },
+                        {
+                            "id": "R439",
+                            "label": "Musicology"
+                        },
+                        {
+                            "id": "R440",
+                            "label": "Music Theory"
+                        },
+                        {
+                            "id": "R136062",
+                            "label": "Theatre and Media Studies"
+                        },
+                        {
+                            "id": "R136063",
+                            "label": "Art History"
+                        }
+                    ]
+                },
+                {
+                    "id": "R441",
+                    "label": "Philosophy",
+                    "subfields": [
+                        {
+                            "id": "R442",
+                            "label": "Continental Philosophy"
+                        },
+                        {
+                            "id": "R443",
+                            "label": "Epistemology"
+                        },
+                        {
+                            "id": "R444",
+                            "label": "Esthetics"
+                        },
+                        {
+                            "id": "R445",
+                            "label": "Ethics and Political Philosophy"
+                        },
+                        {
+                            "id": "R446",
+                            "label": "Feminist Philosophy"
+                        },
+                        {
+                            "id": "R447",
+                            "label": "History of Philosophy"
+                        },
+                        {
+                            "id": "R448",
+                            "label": "Logic and foundations of mathematics"
+                        },
+                        {
+                            "id": "R449",
+                            "label": "Metaphysics"
+                        },
+                        {
+                            "id": "R450",
+                            "label": "Philosophy of Language"
+                        },
+                        {
+                            "id": "R451",
+                            "label": "Philosophy of Mind"
+                        },
+                        {
+                            "id": "R452",
+                            "label": "Philosophy of Science"
+                        },
+                        {
+                            "id": "R136094",
+                            "label": "Theoretical Philosophy"
+                        },
+                        {
+                            "id": "R136095",
+                            "label": "Practical Philosophy"
+                        }
+                    ]
+                },
+                {
+                    "id": "R453",
+                    "label": "Religion",
+                    "subfields": [
+                        {
+                            "id": "R454",
+                            "label": "Biblical Studies"
+                        },
+                        {
+                            "id": "R455",
+                            "label": "Comparative Methodologies and Theories"
+                        },
+                        {
+                            "id": "R456",
+                            "label": "Ethics"
+                        },
+                        {
+                            "id": "R457",
+                            "label": "History of Religions of Western Origin"
+                        },
+                        {
+                            "id": "R458",
+                            "label": "History of Religions of Eastern Origins"
+                        },
+                        {
+                            "id": "R459",
+                            "label": "Religious Thought/Theology/Philosophy of Religion",
+                            "subfields": [
+                                {
+                                    "id": "R136183",
+                                    "label": "Protestant Theology"
+                                },
+                                {
+                                    "id": "R136184",
+                                    "label": "Roman Catholic Theology"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "R465",
+                    "label": "Theatre and Performance Studies",
+                    "subfields": [
+                        {
+                            "id": "R466",
+                            "label": "Theatre History"
+                        },
+                        {
+                            "id": "R467",
+                            "label": "Dramatic Literature, Criticism and Theory"
+                        },
+                        {
+                            "id": "R468",
+                            "label": "Performance Studies"
+                        },
+                        {
+                            "id": "R469",
+                            "label": "Playwriting"
+                        }
+                    ]
+                },
+                {
+                    "id": "R470",
+                    "label": "Feminist, Gender, and Sexuality Studies"
+                },
+                {
+                    "id": "R471",
+                    "label": "Film Studies"
+                },
+                {
+                    "id": "R472",
+                    "label": "Race, Ethnicity and post-Colonial Studies"
+                },
+                {
+                    "id": "R473",
+                    "label": "Rhetoric and Composition"
+                },
+                {
+                    "id": "R136096",
+                    "label": "Educational Research",
+                    "subfields": [
+                        {
+                            "id": "R136097",
+                            "label": "General Education and History of Education"
+                        },
+                        {
+                            "id": "R136112",
+                            "label": "General and Domain-Specific Teaching and Learning"
+                        },
+                        {
+                            "id": "R136113",
+                            "label": "Education Systems and Educational Institutions"
+                        },
+                        {
+                            "id": "R136114",
+                            "label": "Educational Research on Socialization, Welfare and Professionalism Research"
+                        }
+                    ]
+                },
+                {
+                    "id": "R136180",
+                    "label": "Literary Studies",
+                    "subfields": [
+                        {
+                            "id": "R396",
+                            "label": "French and Francophone Language and Literature",
+                            "subfields": [
+                                {
+                                    "id": "R397",
+                                    "label": "French Linguistics"
+                                },
+                                {
+                                    "id": "R398",
+                                    "label": "French and Francophone Literature"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R399",
+                            "label": "German Language and Literature",
+                            "subfields": [
+                                {
+                                    "id": "R400",
+                                    "label": "German Linguistics"
+                                },
+                                {
+                                    "id": "R401",
+                                    "label": "German Literature",
+                                    "subfields": [
+                                        {
+                                            "id": "R136080",
+                                            "label": "Medieval German Literature"
+                                        },
+                                        {
+                                            "id": "R136081",
+                                            "label": "Modern German Literature"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R460",
+                            "label": "Spanish and Portuguese Language and Literature",
+                            "subfields": [
+                                {
+                                    "id": "R461",
+                                    "label": "Latin American Literature"
+                                },
+                                {
+                                    "id": "R462",
+                                    "label": "Portuguese Literature"
+                                },
+                                {
+                                    "id": "R463",
+                                    "label": "Spanish Linguistics"
+                                },
+                                {
+                                    "id": "R464",
+                                    "label": "Spanish Literature"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "R136088",
+                            "label": "European Literature"
+                        },
+                        {
+                            "id": "R136089",
+                            "label": "American Literature"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

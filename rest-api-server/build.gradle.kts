@@ -73,11 +73,11 @@ testing {
                 implementation("jakarta.persistence:jakarta.persistence-api")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.hibernate:hibernate-core:5.4.32.Final")
-                implementation("org.springframework.boot:spring-boot")
                 implementation("org.springframework.data:spring-data-commons")
                 implementation("org.springframework:spring-core")
                 implementation("org.springframework:spring-web")
                 implementation(libs.assertj.core)
+                runtimeOnly("org.springframework.boot:spring-boot")
             }
             targets {
                 all {

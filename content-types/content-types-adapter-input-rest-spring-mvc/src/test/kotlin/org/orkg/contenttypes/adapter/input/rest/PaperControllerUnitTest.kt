@@ -134,10 +134,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("research_fields").description("The list of research fields the paper is assigned to."),
                         fieldWithPath("research_fields[].id").description("The id of the research field."),
                         fieldWithPath("research_fields[].label").description("The label of the research field."),
-                        fieldWithPath("identifiers").description("The unique identifiers of the paper."),
-                        fieldWithPath("identifiers.doi").description("The list of DOIs of the paper. (optional)").optional(),
-                        fieldWithPath("identifiers.isbn").type("Array").description("The list of ISBNs of the paper. (optional)").optional(),
-                        fieldWithPath("identifiers.issn").type("Array").description("The list of ISSNs of the paper. (optional)").optional(),
                         fieldWithPath("contributions").description("The list of contributions of the paper."),
                         fieldWithPath("contributions[].id").description("The ID of the contribution."),
                         fieldWithPath("contributions[].label").description("The label of the contribution."),
@@ -160,6 +156,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                     ).and(authorListFields("paper"))
                         .and(publicationInfoFields("paper"))
                         .and(sustainableDevelopmentGoalsFields("paper"))
+                        .and(paperIdentifierFields())
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -503,8 +500,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                     requestFields(
                         fieldWithPath("title").description("The title of the paper."),
                         fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to. Must be exactly one research field."),
-                        fieldWithPath("identifiers").description("The unique identifiers of the paper. (optional)"),
-                        fieldWithPath("identifiers.doi").description("The DOI of the paper. (optional)").optional(),
                         fieldWithPath("publication_info").description("The publication info of the paper. (optional)").optional(),
                         fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
                         fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
@@ -534,6 +529,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. Can be at most one observatory id."),
                         fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC".""")
                     ).and(authorListFields("paper"))
+                        .and(paperIdentifierFields())
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -839,8 +835,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                     requestFields(
                         fieldWithPath("title").description("The title of the paper. (optional)"),
                         fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to. (optional)"),
-                        fieldWithPath("identifiers").description("The unique identifiers of the paper. (optional)"),
-                        fieldWithPath("identifiers.doi").description("The DOI of the paper. (optional)").optional(),
                         fieldWithPath("publication_info").description("The publication info of the paper. (optional)").optional(),
                         fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
                         fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
@@ -851,6 +845,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. (optional)").optional()
                     ).and(authorListFields("paper"))
+                        .and(paperIdentifierFields())
                 )
             )
             .andDo(generateDefaultDocSnippets())

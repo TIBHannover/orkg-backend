@@ -458,5 +458,9 @@
     {
         "id": "ShowProperty",
         "label": "show property"
+    },
+    {
+        "id": "P151073",
+        "label": "OpenAlex ID"
     }
 ]

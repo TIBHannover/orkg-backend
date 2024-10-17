@@ -7,10 +7,11 @@ This section lists the supported identifiers for content-type endpoints.
 
 [options="header"]
 |===
-| Name  | Key  | Predicate ID
-| DOI   | doi  | P26
-| ISBN  | isbn | P37140
-| ISSN  | issn | P74029
+| Name         | Key       | Predicate ID
+| DOI          | doi       | P26
+| ISBN         | isbn      | P37140
+| ISSN         | issn      | P74029
+| Open Alex ID | open_alex | P151073
 |===
 
 [[author-identifiers]]
@@ -19,6 +20,7 @@ This section lists the supported identifiers for content-type endpoints.
 [options="header"]
 |=================================================================
 | Name                          | Key            | Predicate ID
+| Open Alex ID                  | open_alex      | P151073
 | ORCID                         | orcid          | HAS_ORCID
 | Google Scholar author ID      | google_scholar | googleScholarID
 | Research Gate profile ID      | research_gate  | researchGateID

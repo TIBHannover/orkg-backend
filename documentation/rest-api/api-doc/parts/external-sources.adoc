@@ -9,6 +9,7 @@ The following external sources are supported by {orkg}:
 |==========================
 | External Source | Ontology ID | Base URI
 | GeoNames | geonames | https://sws.geonames.org/
+| Ontology Lookup Service | See the website of https://www.ebi.ac.uk/ols4/ontologies[OLS] for a list of supported ontologies. | -
 | Wikidata | wikidata | https://www.wikidata.org/entity/
 |==========================
 

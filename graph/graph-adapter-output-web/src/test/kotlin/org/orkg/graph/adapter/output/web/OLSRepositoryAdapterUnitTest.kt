@@ -50,7 +50,7 @@ class OLSRepositoryAdapterUnitTest {
     @ParameterizedTest
     @MethodSource("validInputs")
     fun <T> `Given an ontology id and user input, when ols returns success, it returns the external object`(
-        entityId: String,
+        entityType: String,
         userInput: T,
         ontologyId: String,
         methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?,
@@ -73,12 +73,12 @@ class OLSRepositoryAdapterUnitTest {
                 it.uri() shouldBe if (userInput is ParsedIRI) {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
                     UriComponentsBuilder.fromHttpUrl(olsHostUrl)
-                        .path("/ontologies/$ontologyId/terms")
+                        .path("/ontologies/$ontologyId/$entityType")
                         .queryParam("iri", userInput.toString())
                         .build()
                         .toUri()
                 } else {
-                    URI.create("$olsHostUrl/ontologies/$ontologyId/terms?short_form=$userInput")
+                    URI.create("$olsHostUrl/ontologies/$ontologyId/$entityType?short_form=$userInput")
                 }
                 it.headers().map() shouldContainAll mapOf(
                     "Accept" to listOf("application/json")
@@ -94,7 +94,7 @@ class OLSRepositoryAdapterUnitTest {
     @ParameterizedTest
     @MethodSource("validInputs")
     fun <T> `Given an ontology id and user input, when ols returns status not found, it returns null`(
-        entityId: String,
+        entityType: String,
         userInput: T,
         ontologyId: String,
         methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?,
@@ -114,12 +114,12 @@ class OLSRepositoryAdapterUnitTest {
                 it.uri() shouldBe if (userInput is ParsedIRI) {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
                     UriComponentsBuilder.fromHttpUrl(olsHostUrl)
-                        .path("/ontologies/$ontologyId/terms")
+                        .path("/ontologies/$ontologyId/$entityType")
                         .queryParam("iri", userInput.toString())
                         .build()
                         .toUri()
                 } else {
-                    URI.create("$olsHostUrl/ontologies/$ontologyId/terms?short_form=$userInput")
+                    URI.create("$olsHostUrl/ontologies/$ontologyId/$entityType?short_form=$userInput")
                 }
                 it.headers().map() shouldContainAll mapOf(
                     "Accept" to listOf("application/json")
@@ -134,7 +134,7 @@ class OLSRepositoryAdapterUnitTest {
     @ParameterizedTest
     @MethodSource("validInputs")
     fun <T> `Given an ontology id and user input, when ols service is not available, it throws an exception`(
-        entityId: String,
+        entityType: String,
         userInput: T,
         ontologyId: String,
         methodInvoker: (OLSServiceAdapter, String, T) -> ExternalThing?
@@ -156,12 +156,12 @@ class OLSRepositoryAdapterUnitTest {
                 it.uri() shouldBe if (userInput is ParsedIRI) {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
                     UriComponentsBuilder.fromHttpUrl(olsHostUrl)
-                        .path("/ontologies/$ontologyId/terms")
+                        .path("/ontologies/$ontologyId/$entityType")
                         .queryParam("iri", userInput.toString())
                         .build()
                         .toUri()
                 } else {
-                    URI.create("$olsHostUrl/ontologies/$ontologyId/terms?short_form=$userInput")
+                    URI.create("$olsHostUrl/ontologies/$ontologyId/$entityType?short_form=$userInput")
                 }
                 it.headers().map() shouldContainAll mapOf(
                     "Accept" to listOf("application/json")
@@ -189,11 +189,35 @@ class OLSRepositoryAdapterUnitTest {
         @JvmStatic
         fun validInputs(): Stream<Arguments> = Stream.of(
             Arguments.of(
-                "Collection",
+                "individuals",
+                "AbsenceObservation",
+                "abcd",
+                OLSServiceAdapter::findResourceByShortForm,
+                olsIndividualSuccessResponseJson,
+                ExternalThing(
+                    uri = ParsedIRI("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
+                    label = "AbsenceObservation",
+                    description = "A record describing an output of an observation process with indication of the absence of an observation"
+                )
+            ),
+            Arguments.of(
+                "individuals",
+                ParsedIRI("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
+                "abcd",
+                OLSServiceAdapter::findResourceByURI,
+                olsIndividualSuccessResponseJson,
+                ExternalThing(
+                    uri = ParsedIRI("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
+                    label = "AbsenceObservation",
+                    description = "A record describing an output of an observation process with indication of the absence of an observation"
+                )
+            ),
+            Arguments.of(
+                "terms",
                 "Collection",
                 "skos",
                 OLSServiceAdapter::findClassByShortForm,
-                olsSuccessResponseJson,
+                olsTermSuccessResponseJson,
                 ExternalThing(
                     uri = ParsedIRI("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
@@ -201,11 +225,11 @@ class OLSRepositoryAdapterUnitTest {
                 )
             ),
             Arguments.of(
-                "Collection",
+                "terms",
                 ParsedIRI("https://sws.geonames.org/2950159"),
                 "skos",
                 OLSServiceAdapter::findClassByURI,
-                olsSuccessResponseJson,
+                olsTermSuccessResponseJson,
                 ExternalThing(
                     uri = ParsedIRI("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
@@ -216,13 +240,95 @@ class OLSRepositoryAdapterUnitTest {
 
         @JvmStatic
         fun invalidInputs(): Stream<Arguments> = Stream.of(
+            Arguments.of("abc", "!invalid", OLSServiceAdapter::findResourceByShortForm),
             Arguments.of("abc", "!invalid", OLSServiceAdapter::findClassByShortForm),
+            Arguments.of(ParsedIRI("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findResourceByURI),
             Arguments.of(ParsedIRI("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findClassByURI),
         )
     }
 }
 
-private const val olsSuccessResponseJson = """{
+private const val olsIndividualSuccessResponseJson = """{
+  "_embedded" : {
+    "individuals" : [ {
+      "iri" : "http://rs.tdwg.org/abcd/terms/AbsenceObservation",
+      "label" : "AbsenceObservation",
+      "description" : [ "A record describing an output of an observation process with indication of the absence of an observation" ],
+      "annotation" : {
+        "comment" : [ "A record describing an output of an observation process with indication of the absence of an observation" ],
+        "isDefinedBy" : [ "http://rs.tdwg.org/abcd/terms/" ],
+        "issued" : [ "2019-01-31" ],
+        "modified" : [ "2019-01-31" ],
+        "status" : [ "recommended" ]
+      },
+      "type" : [ {
+        "iri" : "http://rs.tdwg.org/abcd/terms/RecordBasis",
+        "label" : "Record Basis",
+        "description" : [ "A standard designator for the nature of the object of the record." ],
+        "annotation" : {
+          "comment" : [ "A standard designator for the nature of the object of the record." ],
+          "exactMatch" : [ "http://rs.tdwg.org/dwc/terms/basisOfRecord" ],
+          "isDefinedBy" : [ "http://rs.tdwg.org/abcd/terms/" ],
+          "issued" : [ "2019-01-31" ],
+          "modified" : [ "2019-01-31" ],
+          "status" : [ "recommended" ],
+          "termGroup" : [ "http://rs.tdwg.org/abcd/terms/Unit" ]
+        },
+        "synonyms" : null,
+        "ontology_name" : "abcd",
+        "ontology_prefix" : "ABCD",
+        "ontology_iri" : "http://rs.tdwg.org/abcd/terms/",
+        "is_obsolete" : false,
+        "term_replaced_by" : null,
+        "is_defining_ontology" : false,
+        "has_children" : false,
+        "is_root" : true,
+        "short_form" : "RecordBasis",
+        "obo_id" : null,
+        "in_subset" : null,
+        "obo_definition_citation" : null,
+        "obo_xref" : null,
+        "obo_synonym" : null,
+        "is_preferred_root" : false
+      } ],
+      "synonyms" : null,
+      "ontology_name" : "abcd",
+      "ontology_prefix" : "ABCD",
+      "ontology_iri" : "http://rs.tdwg.org/abcd/terms/",
+      "is_obsolete" : false,
+      "is_defining_ontology" : false,
+      "short_form" : "AbsenceObservation",
+      "obo_id" : null,
+      "_links" : {
+        "self" : {
+          "href" : "https://service.tib.eu:443/ts4tib/api/ontologies/abcd/individuals/http%253A%252F%252Frs.tdwg.org%252Fabcd%252Fterms%252FAbsenceObservation"
+        },
+        "types" : {
+          "href" : "https://service.tib.eu:443/ts4tib/api/ontologies/abcd/individuals/http%253A%252F%252Frs.tdwg.org%252Fabcd%252Fterms%252FAbsenceObservation/types"
+        },
+        "alltypes" : {
+          "href" : "https://service.tib.eu:443/ts4tib/api/ontologies/abcd/individuals/http%253A%252F%252Frs.tdwg.org%252Fabcd%252Fterms%252FAbsenceObservation/alltypes"
+        },
+        "jstree" : {
+          "href" : "https://service.tib.eu:443/ts4tib/api/ontologies/abcd/individuals/http%253A%252F%252Frs.tdwg.org%252Fabcd%252Fterms%252FAbsenceObservation/jstree"
+        }
+      }
+    } ]
+  },
+  "_links" : {
+    "self" : {
+      "href" : "https://service.tib.eu/ts4tib/api/ontologies/abcd/individuals?iri=http://rs.tdwg.org/abcd/terms/AbsenceObservation"
+    }
+  },
+  "page" : {
+    "size" : 0,
+    "totalElements" : 1,
+    "totalPages" : 1,
+    "number" : 0
+  }
+}"""
+
+private const val olsTermSuccessResponseJson = """{
   "_embedded": {
     "terms": [
       {

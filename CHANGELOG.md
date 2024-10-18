@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added support for importing resources via OLS.
+  (See: [!1087](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1087))
+- Added support for importing predicates via OLS.
+  (See: [!1088](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1088))
+
+### Fixed
+- Fixed administrator accounts not being able to execute actions that only require a curator role.
 
 ## [0.69.0] - 2024-10-17
 ### Added

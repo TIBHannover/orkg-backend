@@ -235,6 +235,30 @@ class OLSRepositoryAdapterUnitTest {
                     label = "Collection",
                     description = "A meaningful collection of concepts."
                 )
+            ),
+            Arguments.of(
+                "properties",
+                "hasCountry",
+                "abcd",
+                OLSServiceAdapter::findPredicateByShortForm,
+                olsPropertySuccessResponseJson,
+                ExternalThing(
+                    uri = ParsedIRI("http://rs.tdwg.org/abcd/terms/hasCountry"),
+                    label = "has Country",
+                    description = "Property to connect an instance of a class to a Country."
+                )
+            ),
+            Arguments.of(
+                "properties",
+                ParsedIRI("http://rs.tdwg.org/abcd/terms/hasCountry"),
+                "abcd",
+                OLSServiceAdapter::findPredicateByURI,
+                olsPropertySuccessResponseJson,
+                ExternalThing(
+                    uri = ParsedIRI("http://rs.tdwg.org/abcd/terms/hasCountry"),
+                    label = "has Country",
+                    description = "Property to connect an instance of a class to a Country."
+                )
             )
         )
 
@@ -242,8 +266,10 @@ class OLSRepositoryAdapterUnitTest {
         fun invalidInputs(): Stream<Arguments> = Stream.of(
             Arguments.of("abc", "!invalid", OLSServiceAdapter::findResourceByShortForm),
             Arguments.of("abc", "!invalid", OLSServiceAdapter::findClassByShortForm),
+            Arguments.of("abc", "!invalid", OLSServiceAdapter::findPredicateByShortForm),
             Arguments.of(ParsedIRI("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findResourceByURI),
             Arguments.of(ParsedIRI("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findClassByURI),
+            Arguments.of(ParsedIRI("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findPredicateByURI),
         )
     }
 }
@@ -394,5 +420,49 @@ private const val olsTermSuccessResponseJson = """{
     "totalElements": 1,
     "totalPages": 1,
     "number": 0
+  }
+}"""
+
+private const val olsPropertySuccessResponseJson = """{
+  "_embedded" : {
+    "properties" : [ {
+      "annotation" : {
+        "comment" : [ "Property to connect an instance of a class to a Country." ],
+        "isDefinedBy" : [ "http://rs.tdwg.org/abcd/terms/" ],
+        "issued" : [ "2019-01-31" ],
+        "modified" : [ "2019-01-31" ],
+        "status" : [ "recommended" ]
+      },
+      "synonyms" : null,
+      "iri" : "http://rs.tdwg.org/abcd/terms/hasCountry",
+      "label" : "has Country",
+      "synonym" : null,
+      "description" : [ "Property to connect an instance of a class to a Country." ],
+      "ontology_name" : "abcd",
+      "ontology_prefix" : "ABCD",
+      "ontology_iri" : "http://rs.tdwg.org/abcd/terms/",
+      "is_obsolete" : false,
+      "is_defining_ontology" : false,
+      "has_children" : false,
+      "is_root" : true,
+      "short_form" : "hasCountry",
+      "obo_id" : null,
+      "_links" : {
+        "self" : {
+          "href" : "https://service.tib.eu:443/ts4tib/api/ontologies/abcd/properties/http%253A%252F%252Frs.tdwg.org%252Fabcd%252Fterms%252FhasCountry"
+        }
+      }
+    } ]
+  },
+  "_links" : {
+    "self" : {
+      "href" : "https://service.tib.eu/ts4tib/api/ontologies/abcd/properties?iri=http://rs.tdwg.org/abcd/terms/hasCountry"
+    }
+  },
+  "page" : {
+    "size" : 0,
+    "totalElements" : 1,
+    "totalPages" : 1,
+    "number" : 0
   }
 }"""

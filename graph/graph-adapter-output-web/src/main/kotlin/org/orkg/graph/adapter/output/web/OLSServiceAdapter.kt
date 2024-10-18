@@ -9,6 +9,7 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.send
 import org.orkg.graph.domain.ExternalThing
 import org.orkg.graph.output.ExternalClassService
+import org.orkg.graph.output.ExternalPredicateService
 import org.orkg.graph.output.ExternalResourceService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
@@ -21,52 +22,46 @@ class OLSServiceAdapter(
     private val httpClient: HttpClient,
     @Value("\${orkg.external-services.ols.host}")
     private val host: String
-) : ExternalResourceService, ExternalClassService {
+) : ExternalResourceService, ExternalClassService, ExternalPredicateService {
     private val pattern = Pattern.compile("[a-zA-Z0-9_]+")
 
-    override fun findClassByShortForm(ontologyId: String, shortForm: String): ExternalThing? {
-        if (!supportsOntology(ontologyId)) return null
-        return fetch(
-            type = "terms", // in ols, classes are called terms
-            uri = UriComponentsBuilder.fromHttpUrl(host)
-                .path("/ontologies/$ontologyId/terms")
-                .queryParam("short_form", shortForm)
-                .build()
-                .toUri()
-        )
-    }
+    override fun findClassByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
+        fetchByShortForm(ontologyId, "terms", shortForm)
 
-    override fun findClassByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? {
+    override fun findClassByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
+        fetchByURI(ontologyId, "terms", uri)
+
+    override fun findResourceByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
+        fetchByShortForm(ontologyId, "individuals", shortForm)
+
+    override fun findResourceByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
+        fetchByURI(ontologyId, "individuals", uri)
+
+    override fun findPredicateByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
+        fetchByShortForm(ontologyId, "properties", shortForm)
+
+    override fun findPredicateByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
+        fetchByURI(ontologyId, "properties", uri)
+
+    private fun fetchByURI(ontologyId: String, type: String, uri: ParsedIRI): ExternalThing? {
         if (!supportsOntology(ontologyId)) return null
         return fetch(
-            type = "terms", // in ols, classes are called terms
+            type = type,
             uri = UriComponentsBuilder.fromHttpUrl(host)
-                .path("/ontologies/$ontologyId/terms")
+                .path("/ontologies/$ontologyId/$type")
                 .queryParam("iri", uri.toString())
                 .build()
                 .toUri()
         )
     }
 
-    override fun findResourceByShortForm(ontologyId: String, shortForm: String): ExternalThing? {
+    private fun fetchByShortForm(ontologyId: String, type: String, shortForm: String): ExternalThing? {
         if (!supportsOntology(ontologyId)) return null
         return fetch(
-            type = "individuals", // in ols, resource are called individuals
+            type = type,
             uri = UriComponentsBuilder.fromHttpUrl(host)
-                .path("/ontologies/$ontologyId/individuals")
+                .path("/ontologies/$ontologyId/$type")
                 .queryParam("short_form", shortForm)
-                .build()
-                .toUri()
-        )
-    }
-
-    override fun findResourceByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? {
-        if (!supportsOntology(ontologyId)) return null
-        return fetch(
-            type = "individuals", // in ols, resource are called individuals
-            uri = UriComponentsBuilder.fromHttpUrl(host)
-                .path("/ontologies/$ontologyId/individuals")
-                .queryParam("iri", uri.toString())
                 .build()
                 .toUri()
         )

@@ -19,6 +19,7 @@ The following external sources are supported by {orkg}:
 [options="header"]
 |==========================
 | External Source | Ontology ID | Base URI
+| Ontology Lookup Service | See the website of https://www.ebi.ac.uk/ols4/ontologies[OLS] for a list of supported ontologies. | -
 | Wikidata | wikidata | https://www.wikidata.org/entity/
 |==========================
 

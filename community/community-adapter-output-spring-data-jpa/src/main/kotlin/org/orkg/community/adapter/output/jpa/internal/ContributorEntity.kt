@@ -43,7 +43,7 @@ class ContributorEntity(
             organizationId = event.organizationId?.let { UUID.fromString(event.organizationId) },
             observatoryId = event.observatoryId?.let { UUID.fromString(event.observatoryId) },
             emailMD5 = event.email.trim().lowercase().md5,
-            curator = CURATOR in event.roles,
+            curator = CURATOR in event.roles || ADMIN in event.roles,
             admin = ADMIN in event.roles,
         )
     }

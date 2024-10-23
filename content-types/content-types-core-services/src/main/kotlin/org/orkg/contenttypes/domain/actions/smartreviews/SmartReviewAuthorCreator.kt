@@ -20,6 +20,6 @@ class SmartReviewAuthorCreator(
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State =
         state.apply {
-            authorCreator.create(command.contributorId, authors, smartReviewId!!)
+            authorCreator.create(command.contributorId, state.authors, smartReviewId!!)
         }
 }

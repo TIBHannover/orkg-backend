@@ -1,12 +1,15 @@
 package org.orkg
 
+import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.OrganizationType
+import org.orkg.community.domain.internal.MD5Hash
+import org.orkg.community.input.ContributorUseCases
+import org.orkg.community.input.CreateContributorUseCase
 import org.orkg.community.input.CreateObservatoryUseCase
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -19,6 +22,8 @@ import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.mediastorage.domain.ImageId
+import org.orkg.testing.MockUserId
+import org.orkg.testing.fixedClock
 
 // Classes
 
@@ -91,13 +96,19 @@ fun CreateLiteralUseCase.createLiteral(
     modifiable: Boolean = true
 ): ThingId = create(CreateLiteralUseCase.CreateCommand(id, contributorId, label, datatype, modifiable))
 
-// Users
-
-fun AuthUseCase.createUser(
-    anEmail: String = "user@example.org",
-    aPassword: String = "123456",
-    aDisplayName: String = "Example User"
-) = this.registerUser(anEmail, aPassword, aDisplayName)
+// Contributors
+fun ContributorUseCases.createContributor(
+    id: ContributorId = ContributorId(MockUserId.USER),
+    name: String = "Example User",
+    joinedAt: OffsetDateTime = OffsetDateTime.now(fixedClock),
+    organizationId: OrganizationId = OrganizationId.UNKNOWN,
+    observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
+    emailMD5: MD5Hash = MD5Hash.fromEmail("user@example.org"),
+    isCurator: Boolean = false,
+    isAdmin: Boolean = false,
+): ContributorId = create(
+    CreateContributorUseCase.CreateCommand(id, name, joinedAt, organizationId, observatoryId, emailMD5, isCurator, isAdmin)
+)
 
 // Organizations
 

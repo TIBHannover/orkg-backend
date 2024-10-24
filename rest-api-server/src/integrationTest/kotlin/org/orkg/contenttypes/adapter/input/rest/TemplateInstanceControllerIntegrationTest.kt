@@ -5,13 +5,12 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
-import org.orkg.auth.output.UserRepository
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.input.CreateTemplateUseCase
@@ -19,12 +18,12 @@ import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
 import org.orkg.contenttypes.input.TemplateRelationsDefinition
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.createClasses
+import org.orkg.createContributor
 import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createPredicate
 import org.orkg.createResource
-import org.orkg.createUser
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
@@ -52,6 +51,9 @@ import org.springframework.transaction.annotation.Transactional
 class TemplateInstanceControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
+    private lateinit var contributorService: ContributorUseCases
+
+    @Autowired
     private lateinit var predicateService: PredicateUseCases
 
     @Autowired
@@ -70,16 +72,10 @@ class TemplateInstanceControllerIntegrationTest : RestDocumentationBaseTest() {
     private lateinit var templateService: TemplateUseCases
 
     @Autowired
-    private lateinit var userService: AuthUseCase
-
-    @Autowired
     private lateinit var organizationService: OrganizationUseCases
 
     @Autowired
     private lateinit var observatoryService: ObservatoryUseCases
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
 
     @BeforeEach
     fun setup() {
@@ -130,11 +126,11 @@ class TemplateInstanceControllerIntegrationTest : RestDocumentationBaseTest() {
 
         classService.createClasses("String", "Test")
 
-        val userId = userService.createUser()
+        val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
             id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
-            createdBy = ContributorId(userId)
+            createdBy = contributorId
         )
 
         observatoryService.createObservatory(
@@ -196,7 +192,7 @@ class TemplateInstanceControllerIntegrationTest : RestDocumentationBaseTest() {
         classService.removeAll()
         observatoryService.removeAll()
         organizationService.removeAll()
-        userRepository.deleteAll()
+        contributorService.deleteAll()
     }
 
     @Test

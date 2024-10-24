@@ -10,12 +10,11 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
-import org.orkg.auth.output.UserRepository
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.domain.Author
@@ -33,12 +32,12 @@ import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.createClasses
+import org.orkg.createContributor
 import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createPredicate
 import org.orkg.createResource
-import org.orkg.createUser
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
@@ -70,6 +69,9 @@ import org.springframework.transaction.annotation.Transactional
 class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
+    private lateinit var contributorService: ContributorUseCases
+
+    @Autowired
     private lateinit var predicateService: PredicateUseCases
 
     @Autowired
@@ -85,9 +87,6 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
     private lateinit var literalService: LiteralUseCases
 
     @Autowired
-    private lateinit var userService: AuthUseCase
-
-    @Autowired
     private lateinit var organizationService: OrganizationUseCases
 
     @Autowired
@@ -95,9 +94,6 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var smartReviewService: SmartReviewUseCases
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
 
     @BeforeEach
     fun setup() {
@@ -198,10 +194,10 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             `object` = literalService.createLiteral(label = "0000-1111-2222-3333")
         )
 
-        val userId = userService.createUser()
+        val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
-            createdBy = ContributorId(userId),
+            createdBy = contributorId,
             id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
         )
 
@@ -219,7 +215,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
         classService.removeAll()
         observatoryService.removeAll()
         organizationService.removeAll()
-        userRepository.deleteAll()
+        contributorService.deleteAll()
     }
 
     @Test

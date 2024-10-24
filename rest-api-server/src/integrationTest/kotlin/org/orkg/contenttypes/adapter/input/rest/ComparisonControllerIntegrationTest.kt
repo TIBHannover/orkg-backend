@@ -11,12 +11,11 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
-import org.orkg.auth.output.UserRepository
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.domain.Author
@@ -24,12 +23,12 @@ import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.createClasses
+import org.orkg.createContributor
 import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createPredicate
 import org.orkg.createResource
-import org.orkg.createUser
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
@@ -60,6 +59,9 @@ import org.springframework.transaction.annotation.Transactional
 class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
+    private lateinit var contributorService: ContributorUseCases
+
+    @Autowired
     private lateinit var predicateService: PredicateUseCases
 
     @Autowired
@@ -75,9 +77,6 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
     private lateinit var literalService: LiteralUseCases
 
     @Autowired
-    private lateinit var userService: AuthUseCase
-
-    @Autowired
     private lateinit var organizationService: OrganizationUseCases
 
     @Autowired
@@ -85,9 +84,6 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var comparisonService: ComparisonUseCases
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
 
     @BeforeEach
     fun setup() {
@@ -176,14 +172,14 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
             `object` = literalService.createLiteral(label = "0000-1111-2222-3333")
         )
 
-        val userId = userService.createUser()
+        val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
-            createdBy = ContributorId(userId),
+            createdBy = contributorId,
             id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
         )
         organizationService.createOrganization(
-            createdBy = ContributorId(userId),
+            createdBy = contributorId,
             id = OrganizationId("dc9a860c-1a1b-4977-bd6a-9dc21de46df6"),
             organizationName = "Different Organization" // required to satisfy unique constraint
         )
@@ -209,7 +205,7 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
         classService.removeAll()
         observatoryService.removeAll()
         organizationService.removeAll()
-        userRepository.deleteAll()
+        contributorService.deleteAll()
     }
 
     @Test

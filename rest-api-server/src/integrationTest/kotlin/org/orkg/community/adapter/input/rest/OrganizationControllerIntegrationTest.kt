@@ -5,17 +5,15 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
-import org.orkg.auth.output.UserRepository
-import org.orkg.common.ContributorId
 import org.orkg.community.domain.OrganizationType
+import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.createClasses
+import org.orkg.createContributor
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createResource
-import org.orkg.createUser
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.MockUserDetailsService
@@ -36,10 +34,7 @@ import org.springframework.transaction.annotation.Transactional
 class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var userService: AuthUseCase
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
+    private lateinit var contributorService: ContributorUseCases
 
     @Autowired
     private lateinit var service: OrganizationUseCases
@@ -69,13 +64,13 @@ class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
         observatoryService.removeAll()
         resourceService.removeAll()
         classService.removeAll()
-        userRepository.deleteAll()
+        contributorService.deleteAll()
     }
 
     @Test
     fun index() {
-        val userId = userService.createUser()
-        service.createOrganization(createdBy = ContributorId(userId))
+        val contributorId = contributorService.createContributor()
+        service.createOrganization(createdBy = contributorId)
 
         mockMvc
             .perform(getRequestTo("/api/organizations/"))
@@ -90,8 +85,8 @@ class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val userId = userService.createUser()
-        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val contributorId = contributorService.createContributor()
+        val organizationId = service.createOrganization(createdBy = contributorId)
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$organizationId"))
@@ -106,8 +101,8 @@ class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpObservatoriesByOrganization() {
-        val userId = userService.createUser()
-        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val contributorId = contributorService.createContributor()
+        val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )

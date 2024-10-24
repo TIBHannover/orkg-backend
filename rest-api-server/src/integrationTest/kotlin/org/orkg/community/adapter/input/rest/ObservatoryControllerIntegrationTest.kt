@@ -6,16 +6,14 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
-import org.orkg.auth.output.UserRepository
-import org.orkg.common.ContributorId
+import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.createClasses
+import org.orkg.createContributor
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createResource
-import org.orkg.createUser
 import org.orkg.graph.adapter.input.rest.ResourceControllerIntegrationTest.RestDoc.pageOfDetailedResourcesResponseFields
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
@@ -39,10 +37,7 @@ import orkg.orkg.community.testing.fixtures.observatoryResponseFields
 class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var userService: AuthUseCase
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
+    private lateinit var contributorService: ContributorUseCases
 
     @Autowired
     private lateinit var service: OrganizationUseCases
@@ -72,13 +67,13 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
         resourceService.removeAll()
         service.removeAll()
         classService.removeAll()
-        userRepository.deleteAll()
+        contributorService.deleteAll()
     }
 
     @Test
     fun index() {
-        val userId = userService.createUser()
-        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val contributorId = contributorService.createContributor()
+        val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
@@ -100,8 +95,8 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val userId = userService.createUser()
-        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val contributorId = contributorService.createContributor()
+        val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
@@ -123,8 +118,8 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpPapersByObservatoryId() {
-        val userId = userService.createUser()
-        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val contributorId = contributorService.createContributor()
+        val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
@@ -152,8 +147,8 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpProblemsByObservatoryId() {
-        val userId = userService.createUser()
-        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val contributorId = contributorService.createContributor()
+        val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
@@ -181,8 +176,8 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpByObservatoryIdAndClassAndNotFeatured() {
-        val userId = userService.createUser()
-        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val contributorId = contributorService.createContributor()
+        val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )
@@ -205,8 +200,8 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpByObservatoryIdAndClassAndFeatured() {
-        val userId = userService.createUser()
-        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val contributorId = contributorService.createContributor()
+        val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
             classes = setOf("ResearchField")
         )

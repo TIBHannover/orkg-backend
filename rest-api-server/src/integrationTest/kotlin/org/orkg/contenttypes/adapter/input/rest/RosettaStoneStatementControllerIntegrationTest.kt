@@ -10,13 +10,12 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
-import org.orkg.auth.output.UserRepository
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
+import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
@@ -32,12 +31,12 @@ import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
 import org.orkg.contenttypes.input.UntypedPropertyDefinition
 import org.orkg.createClass
 import org.orkg.createClasses
+import org.orkg.createContributor
 import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createPredicate
 import org.orkg.createResource
-import org.orkg.createUser
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
@@ -73,6 +72,9 @@ import org.springframework.transaction.annotation.Transactional
 class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
+    private lateinit var contributorService: ContributorUseCases
+
+    @Autowired
     private lateinit var predicateService: PredicateUseCases
 
     @Autowired
@@ -80,9 +82,6 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
 
     @Autowired
     private lateinit var classService: ClassUseCases
-
-    @Autowired
-    private lateinit var userService: AuthUseCase
 
     @Autowired
     private lateinit var literalService: LiteralUseCases
@@ -98,9 +97,6 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
 
     @Autowired
     private lateinit var rosettaStoneStatementService: RosettaStoneStatementUseCases
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
 
     @BeforeEach
     fun setup() {
@@ -171,10 +167,10 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
         literalService.createLiteral(id = ThingId("L456"), label = "5", datatype = Literals.XSD.INT.prefixedUri)
         literalService.createLiteral(id = ThingId("L789"), label = "custom type", datatype = "http://orkg.org/orkg/class/C25")
 
-        val userId = userService.createUser()
+        val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
-            createdBy = ContributorId(userId),
+            createdBy = contributorId,
             id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
         )
 
@@ -192,7 +188,7 @@ class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest
         classService.removeAll()
         observatoryService.removeAll()
         organizationService.removeAll()
-        userRepository.deleteAll()
+        contributorService.deleteAll()
     }
 
     @Test

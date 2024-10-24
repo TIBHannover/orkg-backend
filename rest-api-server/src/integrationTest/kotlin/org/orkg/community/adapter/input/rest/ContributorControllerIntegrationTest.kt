@@ -3,9 +3,8 @@ package org.orkg.community.adapter.input.rest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.domain.User
-import org.orkg.auth.input.AuthUseCase
-import org.orkg.auth.output.UserRepository
+import org.orkg.community.output.ContributorRepository
+import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
@@ -16,13 +15,10 @@ import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Contributor Controller")
 @Transactional
-internal class ContributorControllerTest : RestDocumentationBaseTest() {
+internal class ContributorControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var service: AuthUseCase
-
-    @Autowired
-    private lateinit var repository: UserRepository
+    private lateinit var repository: ContributorRepository
 
     @AfterEach
     fun cleanup() {
@@ -32,14 +28,11 @@ internal class ContributorControllerTest : RestDocumentationBaseTest() {
     @Test
     @DisplayName("When contributor is found Then returns contributor information")
     fun getById() {
-        service.registerUser("some.user@example.org", "IRRELEVANT", "Some User")
-        val id = service
-            .findByEmail("some.user@example.org")
-            .map(User::id)
-            .orElseThrow { IllegalStateException("Test setup broken! Should find the user created!") }
+        val contributor = createContributor()
+        repository.save(contributor)
 
         mockMvc
-            .perform(getRequestTo("/api/contributors/$id"))
+            .perform(getRequestTo("/api/contributors/${contributor.id}"))
             .andExpect(status().isOk)
             .andDo(
                 document(

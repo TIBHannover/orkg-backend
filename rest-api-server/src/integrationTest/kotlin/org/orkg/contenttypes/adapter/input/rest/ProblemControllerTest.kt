@@ -4,9 +4,9 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
-import org.orkg.common.ContributorId
+import org.orkg.community.input.ContributorUseCases
 import org.orkg.createClasses
+import org.orkg.createContributor
 import org.orkg.createList
 import org.orkg.createLiteral
 import org.orkg.createPredicate
@@ -40,6 +40,9 @@ import org.springframework.transaction.annotation.Transactional
 class ProblemControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
+    private lateinit var contributorService: ContributorUseCases
+
+    @Autowired
     private lateinit var resourceService: ResourceUseCases
 
     @Autowired
@@ -57,9 +60,6 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var listService: ListUseCases
 
-    @Autowired
-    private lateinit var userService: AuthUseCase
-
     @BeforeEach
     fun setup() {
         predicateService.removeAll()
@@ -76,31 +76,23 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
     @Test
     fun getUsersPerProblem() {
         val predicate = Predicates.hasResearchProblem
-
         val problem = resourceService.createResource(
             classes = setOf("Problem"),
             label = "save the world"
         )
-
-        val userEmail = "test@testemail.com"
-        if (!userService.findByEmail(userEmail).isPresent)
-            userService.registerUser(userEmail, "testTest123", "test_user")
-        val uuid = userService.findByEmail(userEmail).get().id
-        val contributor = ContributorId(uuid)
-
+        val contributorId = contributorService.createContributor()
         val contribution = resourceService.createResource(
             classes = setOf("Contribution"),
             label = "Be healthy",
-            userId = contributor,
+            userId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL
         )
 
-        statementService.create(contributor, contribution, predicate, problem)
+        statementService.create(contributorId, contribution, predicate, problem)
 
         mockMvc
             .perform(getRequestTo("/api/problems/$problem/users?size=4"))
             .andExpect(status().isOk)
-            .andDo { println(it.response.contentAsString) }
             .andDo(
                 document(
                     snippet,

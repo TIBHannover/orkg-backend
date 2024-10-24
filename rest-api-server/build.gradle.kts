@@ -50,10 +50,10 @@ testing {
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
                 implementation(project(":content-types:content-types-ports-output"))
                 implementation(project(":identity-management:idm-ports-output"))
-                implementation(project(":identity-management:idm-core-model"))
                 implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter
                 implementation(project(":community:community-ports-output")) // for CuratorRepository
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
+                implementation(testFixtures(project(":community:community-core-model")))
                 implementation(project(":feature-flags:feature-flags-ports"))
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -255,7 +255,6 @@ dependencies {
     "integrationTestApi"(project(":content-types:content-types-ports-input"))
     "integrationTestApi"(project(":graph:graph-core-model"))
     "integrationTestApi"(project(":graph:graph-ports-input"))
-    "integrationTestApi"(project(":identity-management:idm-ports-input"))
     "integrationTestApi"(project(":media-storage:media-storage-core-model"))
     "integrationTestApi"(testFixtures(project(":testing:spring")))
     "integrationTestApi"("com.fasterxml.jackson.core:jackson-annotations")
@@ -271,6 +270,7 @@ dependencies {
     "integrationTestApi"("org.springframework:spring-test")
     "integrationTestApi"("org.springframework:spring-tx")
     "integrationTestApi"(libs.jackson.databind)
+    "integrationTestImplementation"(project(":identity-management:idm-ports-input"))
     "integrationTestImplementation"(project(":content-types:content-types-core-model"))
     "kaptIntegrationTest"("org.springframework.boot:spring-boot-configuration-processor")
 }

@@ -11,9 +11,9 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.time.OffsetDateTime
 import java.util.*
 import net.datafaker.Faker
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -25,10 +25,12 @@ import org.orkg.community.domain.Metadata
 import org.orkg.community.domain.Observatory
 import org.orkg.community.domain.Organization
 import org.orkg.community.domain.PeerReviewType
+import org.orkg.community.domain.internal.MD5Hash
 import org.orkg.community.input.ConferenceSeriesUseCases
 import org.orkg.community.input.DummyDataUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.graph.input.ResourceUseCases
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,7 +44,6 @@ import org.springframework.stereotype.Component
 @Component
 @Profile("datagen")
 class PostgresDummyDataSetup(
-    private val userService: AuthUseCase,
     private val observatoryService: ObservatoryUseCases,
     private val observatoryRepository: ObservatoryRepository,
     private val organizationService: OrganizationUseCases,
@@ -50,6 +51,7 @@ class PostgresDummyDataSetup(
     private val resourceService: ResourceUseCases,
     private val objectMapper: ObjectMapper,
     private val dummyDataUseCases: DummyDataUseCases,
+    private val contributorRepository: ContributorRepository,
 ) : ApplicationRunner {
 
     class ObservatoryDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Observatory?>(vc) {
@@ -91,21 +93,28 @@ class PostgresDummyDataSetup(
     }
 
     private fun findUserIds() =
-        resourceService.findAllContributorIds(PageRequest.of(0, Int.MAX_VALUE))
-            .map(ContributorId::value)
-            .content
+        resourceService.findAllContributorIds(PageRequest.of(0, Int.MAX_VALUE)).content
 
-    private fun generateUsers(users: List<UUID>) {
+    private fun generateUsers(users: List<ContributorId>) {
         users.forEach {
-            if (userService.findById(it).isEmpty) {
+            if (contributorRepository.findById(it).isEmpty) {
                 registerFakeUser(it)
             }
         }
 
         // Add Example User with a special UUID
-        if (userService.findByEmail("user@example.org").isEmpty) {
-            val uuid = UUID.fromString("00000000-1111-2222-3333-444444444444")
-            userService.registerUser("user@example.org", "secret", "Example User", uuid)
+        val exampleUserId = ContributorId("00000000-1111-2222-3333-444444444444")
+        if (contributorRepository.findById(exampleUserId).isEmpty) {
+            contributorRepository.save(
+                Contributor(
+                    id = exampleUserId,
+                    name = "Example User",
+                    joinedAt = OffsetDateTime.now(),
+                    emailMD5 = MD5Hash.fromEmail("user@example.org"),
+                    isAdmin = true,
+                    isCurator = true
+                )
+            )
         }
     }
 
@@ -169,27 +178,27 @@ class PostgresDummyDataSetup(
     }
 
     private fun updateUserAffiliation(organizations: List<Organization>, observatories: List<Observatory>) {
-        val userAffiliation = mutableMapOf<UUID, Pair<OrganizationId?, ObservatoryId?>>()
+        val userAffiliation = mutableMapOf<ContributorId, Pair<OrganizationId?, ObservatoryId?>>()
         organizations.associateWith { fetchOrganizationContributors(it.id!!) }.forEach {
             for (contributor in it.value) {
-                userAffiliation.compute(contributor.id.value) { _, value ->
+                userAffiliation.compute(contributor.id) { _, value ->
                     it.key.id to value?.second
                 }
             }
         }
         observatories.associateWith { fetchObservatoryContributors(it.id) }.forEach {
             for (contributor in it.value) {
-                userAffiliation.compute(contributor.id.value) { _, value ->
+                userAffiliation.compute(contributor.id) { _, value ->
                     value?.first to it.key.id
                 }
             }
         }
         userAffiliation.entries.forEach { (key, value) ->
-            if (userService.findById(key).isEmpty) {
+            if (contributorRepository.findById(key).isEmpty) {
                 registerFakeUser(key)
             }
             dummyDataUseCases.updateOrganizationAndObservatory(
-                contributorId = ContributorId(key),
+                contributorId = key,
                 organizationId = value.first ?: OrganizationId.UNKNOWN,
                 observatoryId = value.second ?: ObservatoryId.UNKNOWN
             )
@@ -213,14 +222,23 @@ class PostgresDummyDataSetup(
         }
     }
 
-    private fun registerFakeUser(uuid: UUID) {
+    private fun registerFakeUser(uuid: ContributorId) {
         val faker = Faker(Random(uuid.hashCode().toLong()))
         val name = faker.name().fullName()
         val email = name.lowercase()
             .replace(Regex("""[^a-zA-Z0-9]"""), ".") // replace illegal chars with dots
             .replace(Regex("""\.+"""), ".") // replace multiple repeating dots with one
             .replace(Regex("""\.$"""), "") // remove trailing dots
-        userService.registerUser("""$email@example.org""", """$uuid""", name, uuid)
+        contributorRepository.save(
+            Contributor(
+                id = uuid,
+                name = name,
+                joinedAt = OffsetDateTime.now(),
+                organizationId = OrganizationId.UNKNOWN,
+                observatoryId = ObservatoryId.UNKNOWN,
+                emailMD5 = MD5Hash.fromEmail(email)
+            )
+        )
     }
 
     private fun fetchOrganizationContributors(id: OrganizationId): List<Contributor> {

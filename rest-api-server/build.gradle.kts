@@ -151,7 +151,7 @@ dependencies {
     implementation(project(":graph:graph-ports-input"))
     implementation(project(":graph:graph-ports-output"))
 
-    implementation(project(":identity-management:idm-ports-input")) // for PostgresDummyDataSetup
+    runtimeOnly(project(":identity-management:idm-ports-input"))
     implementation(project(":identity-management:idm-ports-output")) // for Role
     implementation(project(":identity-management:idm-core-model")) // for Role
     runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))

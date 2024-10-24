@@ -3,12 +3,12 @@ package org.orkg.profiling.adapter.output.facade
 import java.time.OffsetDateTime
 import kotlin.random.Random
 import kotlin.reflect.KType
-import org.orkg.auth.output.UserRepository
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.contenttypes.domain.ContentTypeClass
 import org.orkg.graph.domain.BundleConfiguration
@@ -320,9 +320,9 @@ class StatementIdValueGenerator(
 @Component
 @Profile("profileRepositories")
 class ContributorIdValueGenerator(
-    private val userRepository: UserRepository
+    private val contributorRepository: ContributorRepository
 ) : ValueGenerator<ContributorId> {
-    private val count: Int by lazy { userRepository.count().toInt() }
+    private val count: Int by lazy { contributorRepository.countActiveUsers().toInt() }
 
     override operator fun invoke(
         random: Random,
@@ -330,7 +330,7 @@ class ContributorIdValueGenerator(
         type: KType,
         randomInstances: (Random, String, KType) -> List<Any>
     ): List<ContributorId> =
-        listOf(ContributorId(userRepository.findAll(PageRequest.of(random.nextInt(count), 1)).first().id))
+        listOf(contributorRepository.findAll(PageRequest.of(random.nextInt(count), 1)).first().id)
 }
 
 @Component

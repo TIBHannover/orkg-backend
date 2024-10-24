@@ -4,10 +4,12 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.community.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
+import org.orkg.community.domain.ContributorAlreadyExists
 import org.orkg.community.domain.ObservatoryAlreadyExists
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.testing.FixedClockConfig
@@ -109,6 +111,21 @@ internal class ExceptionControllerUnitTest {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun contributorAlreadyExists() {
+        val id = ContributorId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")
+
+        get("/contributor-already-exists")
+            .param("id", id.value.toString())
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/contributor-already-exists"))
+            .andExpect(jsonPath("$.message").value("""Contributor "$id" already exists."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -130,6 +147,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/organization-not-found")
         fun organizationNotFound(@RequestParam id: OrganizationId) {
             throw OrganizationNotFound(id)
+        }
+
+        @GetMapping("/contributor-already-exists")
+        fun contributorAlreadyExists(@RequestParam id: ContributorId) {
+            throw ContributorAlreadyExists(id)
         }
     }
 

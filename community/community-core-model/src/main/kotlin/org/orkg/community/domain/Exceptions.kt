@@ -18,6 +18,9 @@ class ContributorNotFound(id: ContributorId) :
 class UserIsAlreadyMemberOfObservatory(id: ObservatoryId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """User is already a member of observatory "$id".""")
 
+class ContributorAlreadyExists(id: ContributorId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Contributor "$id" already exists.""")
+
 class OrganizationNotFound : SimpleMessageException {
     constructor(id: String) : super(HttpStatus.NOT_FOUND, """Organization "$id" not found.""")
     constructor(id: OrganizationId) : this(id.toString())

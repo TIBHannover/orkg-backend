@@ -15,6 +15,8 @@ import org.orkg.eventbus.Listener
 import org.orkg.eventbus.events.DisplayNameUpdated
 import org.orkg.eventbus.events.UserRegistered
 import org.springframework.beans.factory.InitializingBean
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
@@ -25,6 +27,9 @@ class ContributorFromUserAdapter(
     override fun afterPropertiesSet() {
         eventBus.register(this)
     }
+
+    override fun findAll(pageable: Pageable): Page<Contributor> =
+        postgresContributorRepository.findAll(pageable).map(ContributorEntity::toContributor)
 
     override fun findById(id: ContributorId): Optional<Contributor> =
         postgresContributorRepository.findById(id.value).map(ContributorEntity::toContributor)
@@ -49,6 +54,14 @@ class ContributorFromUserAdapter(
     }
 
     override fun countActiveUsers(): Long = postgresContributorRepository.count()
+
+    override fun deleteById(contributorId: ContributorId) {
+        postgresContributorRepository.deleteById(contributorId.value)
+    }
+
+    override fun deleteAll() {
+        postgresContributorRepository.deleteAll()
+    }
 
     override fun notify(event: Event) {
         when (event) {

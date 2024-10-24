@@ -5,3 +5,5 @@ interface ObservatoryUseCases : RetrieveObservatoryUseCase, CreateObservatoryUse
 
 interface ObservatoryFilterUseCases : RetrieveObservatoryFilterUseCase, CreateObservatoryFilterUseCase,
     UpdateObservatoryFilterUseCase, DeleteObservatoryFilterUseCase
+
+interface ContributorUseCases : RetrieveContributorUseCase, CreateContributorUseCase, DeleteContributorUseCase

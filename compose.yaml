@@ -90,11 +90,19 @@ services:
       - mail
 
   # Mail server. Can be used in Keycloak to test mail flows.
-  mailhog:
-    image: mailhog/mailhog
+  mailserver:
+    image: axllent/mailpit:v1.21
+    restart: unless-stopped
     ports:
       # - 127.0.0.1:1025:1025  # SMTP
       - 127.0.0.1:8025:8025  # User interface
+    environment:
+      # MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    volumes:
+      - mailpit-data:/data
     networks:
       - mail
 
@@ -124,3 +132,4 @@ networks:
 volumes:
   neo4j-data:
   postgres-data:
+  mailpit-data:

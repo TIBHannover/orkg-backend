@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fixed potential author duplication when creating smart reviews
+- Fixed entity representations saved to SimComp
+  (See: [!1096](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1096))
+- Fixed `verified` filtering parameter for paper content-type endpoint
+  (See: [!1095](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1095))
 
 ## [0.70.0] - 2024-10-18
 ### Added

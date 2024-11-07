@@ -139,7 +139,10 @@ class SpringDataNeo4jPaperAdapter(
                     filter.targets.map { node.property("visibility").eq(literalOf<String>(it.name)) }
                         .reduceOrNull(Condition::or) ?: Conditions.noCondition()
                 },
-                verified.toCondition { node.property("verified").eq(anonParameter(it)) },
+                verified.toCondition {
+                    if (it) node.property("verified").eq(literalOf<Boolean>(true))
+                    else node.property("verified").eq(literalOf<Boolean>(false)).or(node.property("verified").isNull)
+                },
                 createdBy.toCondition { node.property("created_by").eq(anonParameter(it.value.toString())) },
                 createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },

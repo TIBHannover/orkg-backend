@@ -321,31 +321,66 @@ fun <
         context("by verified") {
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toPapers().mapIndexed { index, it ->
-                it.copy(verified = index < expectedCount)
+                it.copy(
+                    verified = when {
+                        index < expectedCount -> true
+                        index % 2 == 0 -> false
+                        else -> null
+                    }
+                )
             }
-            resources.forEach(resourceRepository::save)
+            context("when true") {
+                resources.forEach(resourceRepository::save)
 
-            val expected = resources.take(expectedCount)
-            val result = repository.findAll(
-                pageable = PageRequest.of(0, 5),
-                verified = true
-            )
+                val expected = resources.take(expectedCount)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    verified = true
+                )
 
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
             }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            it("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
+            context("when false") {
+                resources.forEach(resourceRepository::save)
+
+                val expected = resources.drop(expectedCount).sortedBy { it.createdAt }.take(5)
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    verified = false
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 5
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 2
+                    result.totalElements shouldBe resources.size - expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
                 }
             }
         }

@@ -1,0 +1,12 @@
+### Get a literature list with a given ID
+GET {{server_url}}/api/literature-lists
+Accept: application/vnd.orkg.literature-list.v1+json
+
+### Publish a literature list with a given ID
+POST {{server_url}}/api/literature-lists/R158027/publish
+Content-Type: application/vnd.orkg.literature-list.v1+json
+Authorization: Bearer {{access_token}}
+
+{
+    "changelog": "changelog"
+}

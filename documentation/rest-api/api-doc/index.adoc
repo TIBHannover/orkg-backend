@@ -1,6 +1,7 @@
 = ORKG REST API Documentation
 :doctype: book
 :toc:
+:toclevels: 5
 :icons: font
 :docinfo: shared,private
 

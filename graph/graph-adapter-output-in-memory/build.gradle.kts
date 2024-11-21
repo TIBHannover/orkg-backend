@@ -11,7 +11,7 @@ dependencies {
     api(project(":common"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-output"))
-    implementation("org.eclipse.rdf4j:rdf4j-util")
+    implementation("org.eclipse.rdf4j:rdf4j-common-io")
 }
 
 testing {

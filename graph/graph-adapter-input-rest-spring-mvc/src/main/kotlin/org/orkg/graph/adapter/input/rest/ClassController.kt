@@ -5,7 +5,7 @@ import javax.validation.Valid
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.domain.ClassNotFound
@@ -23,8 +23,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -73,13 +72,13 @@ class ClassController(
             createdAtEnd = createdAtEnd,
         ).mapToClassRepresentation()
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(
         @RequestBody request: CreateClassRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<ClassRepresentation> {
         val id = service.create(
             CreateClassUseCase.CreateCommand(
@@ -96,7 +95,7 @@ class ClassController(
         return created(location).body(service.findById(id).mapToClassRepresentation().get())
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun replace(
         @PathVariable id: ThingId,
@@ -106,7 +105,7 @@ class ClassController(
         return service.findById(id).mapToClassRepresentation().get()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,

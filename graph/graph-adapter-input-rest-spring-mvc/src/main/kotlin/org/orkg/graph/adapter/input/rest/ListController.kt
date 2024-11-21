@@ -3,7 +3,7 @@ package org.orkg.graph.adapter.input.rest
 import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ListRepresentationAdapter
@@ -20,8 +20,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -53,12 +52,12 @@ class ListController(
         service.findAllElementsById(id, pageable)
             .mapToThingRepresentation(capabilities)
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody request: CreateListRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<ListRepresentation> {
         val id = service.create(request.toCreateCommand(currentUser.contributorId()))
         val location = uriComponentsBuilder.path("/api/lists/{id}")
@@ -67,12 +66,12 @@ class ListController(
         return created(location).body(findById(id))
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateRequest,
-        @AuthenticationPrincipal currentUser: UserDetails?
+        currentUser: Authentication?
     ): ResponseEntity<Any> {
         service.update(request.toUpdateCommand(id, currentUser.contributorId()))
         return noContent().build()

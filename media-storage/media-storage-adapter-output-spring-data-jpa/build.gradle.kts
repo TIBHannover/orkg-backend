@@ -10,9 +10,9 @@ dependencies {
     api("org.springframework:spring-context")
     api(project(":media-storage:media-storage-core-model"))
     api(project(":media-storage:media-storage-ports-output"))
-    implementation("jakarta.activation:jakarta.activation-api")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("jakarta.validation:jakarta.validation-api")
+    implementation("org.springframework:spring-core")
+    implementation("javax.validation:validation-api")
     implementation(project(":common"))
 
     containerTestApi("org.junit.jupiter:junit-jupiter-api")

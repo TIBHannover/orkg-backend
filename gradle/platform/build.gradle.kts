@@ -20,25 +20,27 @@ dependencies {
     //        related to rebuilds.
     //        The force may not be needed; it serves as a safe-guard against accidental upgrades, and can be removed
     //        when the version is updated to the same version as the Gradle plugin.
-    api(platform("org.springframework.boot:spring-boot-dependencies:2.4.13!!"))
+    api(platform("org.springframework.boot:spring-boot-dependencies:2.7.18!!"))
     api(enforcedPlatform("org.junit:junit-bom:5.8.2")) // TODO: can be removed after upgrade to Spring Boot 2.7
     api(enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.6.4")) // Required for Kotest. TODO: can be removed after upgrade to Spring Boot 2.7
     // Use the virtual platform defined in the alignment rule to manage Jackson versions
     api(enforcedPlatform("com.fasterxml.jackson:jackson-bom:2.15.3"))
     api(platform("io.kotest:kotest-bom:5.4.0"))
-    api(platform("org.eclipse.rdf4j:rdf4j-bom:3.7.7"))
+    api(platform("org.eclipse.rdf4j:rdf4j-bom:4.3.13"))
 
     // Force certain version upgrades
-    api("org.springframework.data:spring-data-commons:2.7.16!!")
-    api("org.springframework:spring-test:5.3.22!!")
-    api("org.springframework.data:spring-data-neo4j:6.3.16!!")
+    // api("org.springframework.data:spring-data-commons:2.7.18!!")
+    // api("org.springframework:spring-test:5.3.22!!")
+    // api("org.springframework.data:spring-data-neo4j:6.3.16!!")
     api("org.apache.lucene:lucene-queryparser:9.5.0")
     api("com.epages:restdocs-api-spec:0.16.4")
-    api("org.springframework.boot:spring-boot-autoconfigure:2.7.8!!") // mis-alignment in tests; required for Neo4j Migrations
+    // api("org.springframework.boot:spring-boot-autoconfigure:2.7.8!!") // mis-alignment in tests; required for Neo4j Migrations
     // Related to the Jakarta madness:
+    api("javax.activation:javax.activation-api:1.2.0!!")
+    api("javax.validation:validation-api:2.0.1.Final!!")
     api("jakarta.activation:jakarta.activation-api:2.1.3!!")
-    api("jakarta.annotation:jakarta.annotation-api:2.1.0!!")
-    api("jakarta.validation:jakarta.validation-api:2.0.2!!")
+    api("jakarta.annotation:jakarta.annotation-api:2.1.1!!")
+    api("jakarta.validation:jakarta.validation-api:3.0.2!!")
     api("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1!!")
     api("org.glassfish.jaxb:jaxb-runtime:2.3.9!!")
     api("org.glassfish.jaxb:txw2:2.3.9!!")

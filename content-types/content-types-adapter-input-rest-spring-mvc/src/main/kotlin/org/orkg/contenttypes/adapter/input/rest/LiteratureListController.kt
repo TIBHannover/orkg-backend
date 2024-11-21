@@ -15,10 +15,9 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
-import org.orkg.contenttypes.adapter.input.rest.PaperController.PublishRequest
 import org.orkg.contenttypes.adapter.input.rest.mapping.LiteratureListRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
 import org.orkg.contenttypes.domain.LiteratureListNotFound
@@ -49,8 +48,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -122,12 +120,12 @@ class LiteratureListController(
             .fold({ it.toPaperRepresentation() }, { Optional.of(it).mapToResourceRepresentation(capabilities).get() })
             .let(::ok)
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(consumes = [LITERATURE_LIST_JSON_V1])
     fun create(
         @RequestBody @Valid request: CreateLiteratureListRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
@@ -138,13 +136,13 @@ class LiteratureListController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{id}", consumes = [LITERATURE_LIST_JSON_V1])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: UpdateLiteratureListRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
@@ -155,14 +153,14 @@ class LiteratureListController(
         return noContent().location(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(value = ["/{id}/sections", "/{id}/sections/{index}"], consumes = [LITERATURE_LIST_SECTION_JSON_V1], produces = [LITERATURE_LIST_SECTION_JSON_V1])
     fun createSection(
         @PathVariable id: ThingId,
         @PathVariable(required = false) @PositiveOrZero index: Int?,
         @RequestBody @Valid request: LiteratureListSectionRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.createSection(request.toCreateCommand(userId, id, index))
@@ -173,14 +171,14 @@ class LiteratureListController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{literatureListId}/sections/{sectionId}", consumes = [LITERATURE_LIST_SECTION_JSON_V1], produces = [LITERATURE_LIST_SECTION_JSON_V1])
     fun updateSection(
         @PathVariable literatureListId: ThingId,
         @PathVariable sectionId: ThingId,
         @RequestBody @Valid request: LiteratureListSectionRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.updateSection(request.toUpdateCommand(sectionId, userId, literatureListId))
@@ -191,13 +189,13 @@ class LiteratureListController(
         return noContent().location(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @DeleteMapping("/{literatureListId}/sections/{sectionId}", produces = [LITERATURE_LIST_SECTION_JSON_V1])
     fun deleteSection(
         @PathVariable literatureListId: ThingId,
         @PathVariable sectionId: ThingId,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.deleteSection(DeleteLiteratureListSectionUseCase.DeleteCommand(literatureListId, sectionId, userId))
@@ -208,13 +206,13 @@ class LiteratureListController(
         return noContent().location(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping("/{id}/publish", consumes = [LITERATURE_LIST_JSON_V1])
     fun publish(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: PublishRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
         val literatureListVersionId = service.publish(request.toPublishCommand(id, contributorId))

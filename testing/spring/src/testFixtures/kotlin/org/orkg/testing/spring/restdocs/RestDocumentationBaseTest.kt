@@ -3,8 +3,8 @@ package org.orkg.testing.spring.restdocs
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
-import org.orkg.testing.ResourceServerTestConfiguration
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
@@ -41,9 +41,9 @@ import org.springframework.web.context.WebApplicationContext
  * It initializes MockMVc with a stand-alone set-up for testing a controller
  * in isolation. Additionally, spring-restdoc will be pre-configured.
  */
+@Import(SecurityTestConfiguration::class)
 @Neo4jContainerIntegrationTest
 @ExtendWith(RestDocumentationExtension::class)
-@Import(ResourceServerTestConfiguration::class)
 @TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
 @Deprecated("To be replaced with RestDocsTest")
 abstract class RestDocumentationBaseTest {

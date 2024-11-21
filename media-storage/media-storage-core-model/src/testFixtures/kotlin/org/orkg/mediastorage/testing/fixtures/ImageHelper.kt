@@ -1,6 +1,6 @@
 package org.orkg.mediastorage.testing.fixtures
 
-import jakarta.activation.MimeType
+import org.springframework.util.MimeType
 import java.io.BufferedReader
 import java.net.URI
 import java.nio.file.Files
@@ -32,7 +32,7 @@ fun loadImage(
 
 fun loadRawImage(uri: URI): UpdateOrganizationUseCases.RawImage {
     uri.inputStream.use {
-        val mimeType = Files.probeContentType(Path(uri.path)).let(::MimeType)
+        val mimeType = Files.probeContentType(Path(uri.path)).let { path -> MimeType.valueOf(path) }
         val data = ImageData(it.readBytes())
         return UpdateOrganizationUseCases.RawImage(data, mimeType)
     }

@@ -15,7 +15,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("jakarta.validation:jakarta.validation-api")
+    implementation("javax.validation:validation-api")
     runtimeOnly(project(":migrations:liquibase"))
 
     containerTestApi("org.springframework.boot:spring-boot-test-autoconfigure")

@@ -11,7 +11,7 @@ dependencies {
     testFixturesApi("io.kotest:kotest-framework-api")
     testFixturesApi(project(":graph:graph-ports-output"))
     testFixturesImplementation("io.kotest:kotest-assertions-shared")
-    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-util")
+    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
     testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     testFixturesImplementation("org.springframework.data:spring-data-commons")
     testFixturesImplementation(libs.forkhandles.fabrikate4k)

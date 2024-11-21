@@ -3,8 +3,9 @@ GET {{server_url}}/api/predicates/
 Accept: application/json
 
 ### Create a new predicate with a given ID
-POST {{server_url}}/api/predicates/
+POST {{server_url}}/api/predicates
 Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 {
     "id": "my_id",

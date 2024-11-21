@@ -13,7 +13,7 @@ class ImageService(
     private val clock: Clock = Clock.systemDefaultZone(),
 ) : ImageUseCases {
     override fun create(command: CreateImageUseCase.CreateCommand): ImageId {
-        if (command.mimeType.primaryType != "image") {
+        if (command.mimeType.type != "image") {
             throw InvalidMimeType(command.mimeType)
         }
         val uuid = repository.nextIdentity()

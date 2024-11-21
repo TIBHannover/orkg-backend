@@ -21,7 +21,7 @@ dependencies {
     api("org.springframework:spring-core")
     api("org.springframework:spring-tx")
 
-    implementation("org.eclipse.rdf4j:rdf4j-util")
+    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation(project(":common:neo4j-dsl"))
 
@@ -56,7 +56,7 @@ testing {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
                 implementation("io.kotest:kotest-assertions-shared")
-                implementation("org.eclipse.rdf4j:rdf4j-util")
+                implementation("org.eclipse.rdf4j:rdf4j-common-io")
                 implementation("org.neo4j:neo4j-cypher-dsl")
                 implementation("org.springframework.boot:spring-boot-autoconfigure")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")

@@ -49,8 +49,7 @@ testing {
                 implementation(project(":graph:graph-ports-output"))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
                 implementation(project(":content-types:content-types-ports-output"))
-                implementation(project(":identity-management:idm-ports-output"))
-                implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter
+                implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for UserEntity
                 implementation(project(":community:community-ports-output")) // for CuratorRepository
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":community:community-core-model")))
@@ -71,6 +70,7 @@ testing {
                 }
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.forkhandles.values4k)
+                implementation("io.rest-assured:rest-assured:5.4.0")
                 implementation("jakarta.persistence:jakarta.persistence-api")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.hibernate:hibernate-core:5.4.32.Final")
@@ -78,7 +78,12 @@ testing {
                 implementation("org.springframework:spring-core")
                 implementation("org.springframework:spring-web")
                 implementation(libs.assertj.core)
+                implementation(libs.testcontainers.keycloak)
+                implementation("io.rest-assured:json-path:5.4.0")
+                implementation(libs.keycloak.core)
+                runtimeOnly(libs.keycloak.client.common)
                 runtimeOnly("org.springframework.boot:spring-boot")
+                runtimeOnly(project(":keycloak"))
             }
             targets {
                 all {
@@ -113,6 +118,7 @@ dependencies {
     implementation(project(":common"))
     runtimeOnly(project(":common:serialization"))
 
+    runtimeOnly(project(":community:community-adapter-input-keycloak"))
     runtimeOnly(project(":community:community-adapter-input-rest-spring-mvc"))
     runtimeOnly(project(":community:community-adapter-input-rest-spring-mvc-legacy"))
     implementation(project(":community:community-ports-input"))
@@ -134,7 +140,7 @@ dependencies {
     runtimeOnly(project(":data-export:data-export-core"))
     runtimeOnly(project(":data-export:data-export-ports-input"))
 
-    implementation(project(":eventbus"))
+    runtimeOnly(project(":eventbus"))
 
     runtimeOnly(project(":discussions:discussions-adapter-input-rest-spring-mvc"))
     runtimeOnly(project(":discussions:discussions-core-services"))
@@ -151,11 +157,9 @@ dependencies {
     implementation(project(":graph:graph-ports-input"))
     implementation(project(":graph:graph-ports-output"))
 
-    runtimeOnly(project(":identity-management:idm-ports-input"))
-    implementation(project(":identity-management:idm-ports-output")) // for Role
-    implementation(project(":identity-management:idm-core-model")) // for Role
-    runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))
-    runtimeOnly(project(":identity-management:idm-core-services"))
+    implementation(project(":identity-management:idm-ports-output")) // for KeycloakUserMigrationRunner
+    runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security-legacy"))
+    implementation(project(":identity-management:idm-core-model"))
     runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
 
     runtimeOnly(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
@@ -193,15 +197,16 @@ dependencies {
 
     // Direct transitive dependencies
     implementation("org.apache.tomcat.embed:tomcat-embed-core")
-    implementation("org.eclipse.rdf4j:rdf4j-util")
+    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.neo4j.driver:neo4j-java-driver")
     implementation("org.slf4j:slf4j-api")
-    implementation("org.springframework.boot:spring-boot-actuator-autoconfigure")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation("org.springframework.boot:spring-boot")
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework.security:spring-security-config")
     implementation("org.springframework.security:spring-security-core")
+    implementation("org.springframework.security:spring-security-oauth2-jose")
+    implementation("org.springframework.security:spring-security-oauth2-resource-server")
     implementation("org.springframework.security:spring-security-web")
     implementation("org.springframework:spring-beans")
     implementation("org.springframework:spring-context-support")
@@ -210,6 +215,7 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation(libs.jackson.core)
     implementation(libs.jackson.databind)
+    implementation(libs.keycloak.core)
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -221,10 +227,12 @@ dependencies {
         exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
     }
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.security.oauth:spring-security-oauth2:${libs.versions.spring.security.oauth.get()}")
+    // implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-cache")
+    // implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.data:spring-data-neo4j")
     implementation(libs.spring.boot.starter.neo4j.migrations)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -258,11 +266,10 @@ dependencies {
     "integrationTestApi"(project(":media-storage:media-storage-core-model"))
     "integrationTestApi"(testFixtures(project(":testing:spring")))
     "integrationTestApi"("com.fasterxml.jackson.core:jackson-annotations")
-    "integrationTestApi"("org.eclipse.rdf4j:rdf4j-util")
+    "integrationTestApi"("org.eclipse.rdf4j:rdf4j-common-io")
     "integrationTestApi"("org.junit.jupiter:junit-jupiter-api")
     "integrationTestApi"("org.junit.jupiter:junit-jupiter-params")
     "integrationTestApi"("org.springframework.boot:spring-boot-autoconfigure")
-    "integrationTestApi"("org.springframework.boot:spring-boot-test-autoconfigure")
     "integrationTestApi"("org.springframework.boot:spring-boot-test")
     "integrationTestApi"("org.springframework.restdocs:spring-restdocs-core")
     "integrationTestApi"("org.springframework:spring-beans")
@@ -270,8 +277,8 @@ dependencies {
     "integrationTestApi"("org.springframework:spring-test")
     "integrationTestApi"("org.springframework:spring-tx")
     "integrationTestApi"(libs.jackson.databind)
-    "integrationTestImplementation"(project(":identity-management:idm-ports-input"))
     "integrationTestImplementation"(project(":content-types:content-types-core-model"))
+    "integrationTestImplementation"("org.springframework.boot:spring-boot-test-autoconfigure")
     "kaptIntegrationTest"("org.springframework.boot:spring-boot-configuration-processor")
 }
 

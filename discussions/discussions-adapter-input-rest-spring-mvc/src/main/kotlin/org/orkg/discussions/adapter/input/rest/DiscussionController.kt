@@ -17,8 +17,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -39,7 +38,7 @@ class DiscussionController(
         @PathVariable topic: ThingId,
         @RequestBody @Valid request: CreateCommentRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?
     ): ResponseEntity<DiscussionCommentRepresentation> {
         val userId = currentUser.contributorId()
         val comment = service.create(
@@ -79,7 +78,7 @@ class DiscussionController(
     fun deleteDiscussionComment(
         @PathVariable topic: ThingId,
         @PathVariable comment: DiscussionCommentId,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.delete(userId, topic, comment)

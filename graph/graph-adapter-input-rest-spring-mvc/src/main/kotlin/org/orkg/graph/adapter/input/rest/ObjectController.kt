@@ -2,7 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
@@ -14,9 +14,8 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.*
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.http.ResponseEntity.created
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -35,12 +34,12 @@ class ObjectController(
     override val flags: FeatureFlagService,
 ) : ResourceRepresentationAdapter {
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
         capabilities: MediaTypeCapabilities
     ): ResponseEntity<ResourceRepresentation> {
         val id = objectService.createObject(obj, null, currentUser.contributorId().value)
@@ -51,13 +50,13 @@ class ObjectController(
         return created(location).body(resourceService.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @PathVariable id: ThingId,
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
         capabilities: MediaTypeCapabilities
     ): ResponseEntity<ResourceRepresentation> {
         resourceService

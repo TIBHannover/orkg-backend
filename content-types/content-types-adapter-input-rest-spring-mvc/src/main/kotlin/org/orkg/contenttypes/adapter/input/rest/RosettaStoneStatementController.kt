@@ -8,8 +8,8 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeCurator
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireCuratorRole
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.adapter.input.rest.mapping.RosettaStoneStatementRepresentationAdapter
 import org.orkg.contenttypes.domain.Certainty
@@ -26,8 +26,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -88,12 +87,12 @@ class RosettaStoneStatementController(
             organizationId = organizationId
         ).mapToRosettaStoneStatementRepresentation()
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(consumes = [ROSETTA_STONE_STATEMENT_JSON_V1])
     fun create(
         @RequestBody @Valid request: CreateRosettaStoneStatementRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
@@ -104,13 +103,13 @@ class RosettaStoneStatementController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping("/{id}", consumes = [ROSETTA_STONE_STATEMENT_JSON_V1])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: UpdateRosettaStoneStatementRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val newId = service.update(request.toUpdateCommand(id, userId))
@@ -121,22 +120,22 @@ class RosettaStoneStatementController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @DeleteMapping("/{id}")
     fun softDelete(
         @PathVariable id: ThingId,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.softDelete(id, userId)
         return noContent().build()
     }
 
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     @DeleteMapping("/{id}/versions")
     fun delete(
         @PathVariable id: ThingId,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.delete(id, userId)

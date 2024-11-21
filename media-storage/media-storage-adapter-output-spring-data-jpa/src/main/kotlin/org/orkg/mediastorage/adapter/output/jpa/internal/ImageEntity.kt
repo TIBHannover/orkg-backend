@@ -1,6 +1,6 @@
 package org.orkg.mediastorage.adapter.output.jpa.internal
 
-import jakarta.activation.MimeType
+import org.springframework.util.MimeType
 import java.time.OffsetDateTime
 import java.util.*
 import javax.persistence.Column
@@ -37,7 +37,7 @@ class ImageEntity {
     fun toImage() = Image(
         id = ImageId(id!!),
         data = ImageData(data!!),
-        mimeType = MimeType(mimeType!!),
+        mimeType = MimeType.valueOf(mimeType!!),
         createdBy = if (createdBy != null) ContributorId(createdBy!!) else null,
         createdAt = createdAt!!
     )

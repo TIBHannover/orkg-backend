@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.graph.input.MarkAsVerifiedUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -18,14 +18,14 @@ class PaperVerificationCommandController(
     private val service: MarkAsVerifiedUseCase
 ) {
     @PutMapping("/{id}/metadata/verified")
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun markVerified(@PathVariable id: ThingId) {
         service.markAsVerified(id)
     }
 
     @DeleteMapping("/{id}/metadata/verified")
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun unmarkVerified(@PathVariable id: ThingId) {
         service.markAsUnverified(id)

@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.graph.input.ImportUseCases
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,12 +22,12 @@ import org.springframework.web.util.UriComponentsBuilder
 class ImportController(
     private val service: ImportUseCases,
 ) {
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping("/resources")
     fun importResource(
         @RequestBody request: ImportRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<ListRepresentation> {
         val id = when (request) {
             is ImportByURIRequest -> service.importResourceByURI(
@@ -48,12 +47,12 @@ class ImportController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping("/predicates")
     fun importPredicate(
         @RequestBody request: ImportRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<ListRepresentation> {
         val id = when (request) {
             is ImportByURIRequest -> service.importPredicateByURI(
@@ -73,12 +72,12 @@ class ImportController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping("/classes")
     fun importClass(
         @RequestBody request: ImportRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<ListRepresentation> {
         val id = when (request) {
             is ImportByURIRequest -> service.importClassByURI(

@@ -1,0 +1,7 @@
+This file contains JSON files to be imported by Keycloak on startup.
+They are created from the adminstration interface, using the export functionality.
+
+To improve diffs when changes are made, the JSON objects should be sorted by their keys.
+This can be achieved e.g. by running them through `jq`:
+
+    jq --sort-keys . exported.json > old_export.json

@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.graph.input.ResourceUseCases
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -18,14 +18,14 @@ class PaperFeaturedCommandController(
     private val service: ResourceUseCases
 ) {
     @PutMapping("/{id}/metadata/featured")
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun markFeatured(@PathVariable id: ThingId) {
         service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun unmarkFeatured(@PathVariable id: ThingId) {
         service.markAsNonFeatured(id)
     }

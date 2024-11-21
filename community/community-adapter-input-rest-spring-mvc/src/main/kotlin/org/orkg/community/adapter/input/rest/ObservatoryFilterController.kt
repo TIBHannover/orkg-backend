@@ -25,8 +25,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -49,7 +48,7 @@ class ObservatoryFilterController(
     fun create(
         @PathVariable(name = "id") observatoryId: ObservatoryId,
         @RequestBody @Valid request: CreateObservatoryFilterRequest,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        currentUser: Authentication,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<ObservatoryFilterRepresentation> {
         val contributorId = currentUser.contributorId()
@@ -68,7 +67,7 @@ class ObservatoryFilterController(
         @PathVariable(name = "observatoryId") observatoryId: ObservatoryId,
         @PathVariable(name = "id") id: ObservatoryFilterId,
         @RequestBody @Valid request: UpdateObservatoryFilterRequest,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        currentUser: Authentication,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         observatoryService.findById(observatoryId)
@@ -106,7 +105,7 @@ class ObservatoryFilterController(
     fun deleteById(
         @PathVariable(name = "observatoryId") observatoryId: ObservatoryId,
         @PathVariable(name = "id") id: ObservatoryFilterId,
-        @AuthenticationPrincipal currentUser: UserDetails,
+        currentUser: Authentication,
     ): ResponseEntity<Any> {
         authorizeUser(currentUser.contributorId(), observatoryId)
         observatoryService.findById(observatoryId)

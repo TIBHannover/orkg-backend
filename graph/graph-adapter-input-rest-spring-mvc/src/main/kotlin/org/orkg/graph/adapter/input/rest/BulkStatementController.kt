@@ -3,7 +3,7 @@ package org.orkg.graph.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.contenttypes.domain.pmap
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
@@ -60,7 +60,7 @@ class BulkStatementController(
             )
         }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @DeleteMapping
     fun delete(
         @RequestParam("ids") statementsIds: Set<StatementId>
@@ -69,7 +69,7 @@ class BulkStatementController(
         return noContent().build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun edit(
         @RequestParam("ids") statementsIds: List<StatementId>,

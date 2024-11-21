@@ -11,6 +11,7 @@ class MockUserDetailsService : UserDetailsService {
     override fun loadUserByUsername(username: String?): UserDetails {
         return when (username) {
             "user" -> activeUserWithId(MockUserId.USER)
+            "curator" -> activeCuratorWithId(MockUserId.CURATOR)
             "admin" -> activeAdminWithId(MockUserId.ADMIN)
             else -> throw UsernameNotFoundException("No test user defined with name \"$username\". Feel free to add it.")
         }
@@ -18,6 +19,9 @@ class MockUserDetailsService : UserDetailsService {
 
     private fun activeUserWithId(userId: String): UserDetails =
         createUserWithId(userId, "ROLE_USER")
+
+    private fun activeCuratorWithId(userId: String): UserDetails =
+        createUserWithId(userId, "ROLE_CURATOR")
 
     private fun activeAdminWithId(userId: String): UserDetails =
         createUserWithId(userId, "ROLE_ADMIN")

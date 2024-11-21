@@ -9,7 +9,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContributionRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
@@ -32,8 +32,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -106,12 +105,12 @@ class PaperController(
             mentionings = mentionings
         ).mapToPaperRepresentation()
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(consumes = [PAPER_JSON_V2])
     fun create(
         @RequestBody @Valid request: CreatePaperRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<PaperRepresentation> {
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
@@ -122,13 +121,13 @@ class PaperController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{id}", consumes = [PAPER_JSON_V2])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: UpdatePaperRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<PaperRepresentation> {
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
@@ -139,13 +138,13 @@ class PaperController(
         return noContent().location(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping("/{id}/contributions", produces = [CONTRIBUTION_JSON_V2], consumes = [CONTRIBUTION_JSON_V2])
     fun createContribution(
         @PathVariable("id") paperId: ThingId,
         @RequestBody @Valid request: CreateContributionRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<ContributionRepresentation> {
         val userId = currentUser.contributorId()
         val id = service.createContribution(request.toCreateCommand(userId, paperId))
@@ -156,13 +155,13 @@ class PaperController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping("/{id}/publish", produces = [MediaType.APPLICATION_JSON_VALUE], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun publish(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: PublishRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
         val paperVersionId = service.publish(request.toPublishCommand(id, contributorId))

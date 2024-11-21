@@ -2,7 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.input.RetrieveAuthorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
@@ -15,8 +15,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -36,26 +35,26 @@ class LegacyComparisonController(
 ) : AuthorRepresentationAdapter {
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun markFeatured(@PathVariable id: ThingId) {
         resourceService.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun unmarkFeatured(@PathVariable id: ThingId) {
         resourceService.markAsNonFeatured(id)
     }
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorizeCurator
-    fun markUnlisted(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails?) {
+    @RequireCuratorRole
+    fun markUnlisted(@PathVariable id: ThingId, currentUser: Authentication?) {
         resourceService.markAsUnlisted(id, currentUser.contributorId())
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun unmarkUnlisted(@PathVariable id: ThingId) {
         resourceService.markAsListed(id)
     }

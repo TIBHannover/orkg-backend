@@ -7,8 +7,7 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeCurator
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.community.input.RetrieveContributorUseCase
@@ -34,8 +33,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -93,12 +91,12 @@ class ResourceController(
             organizationId = organizationId
         ).mapToResourceRepresentation(capabilities)
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody request: CreateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
         capabilities: MediaTypeCapabilities
     ): ResponseEntity<ResourceRepresentation> {
         val contributor = contributorService.findById(currentUser.contributorId())
@@ -120,7 +118,7 @@ class ResourceController(
         return created(location).body(service.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
@@ -144,7 +142,7 @@ class ResourceController(
     }
 
     @RequestMapping("/{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun updateWithObservatory(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateResourceObservatoryRequest,
@@ -173,33 +171,33 @@ class ResourceController(
 
     @DeleteMapping("/{id}")
     @RequireLogin
-    fun delete(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails?): ResponseEntity<Unit> {
+    fun delete(@PathVariable id: ThingId, currentUser: Authentication?): ResponseEntity<Unit> {
         service.delete(id, currentUser.contributorId())
         return ResponseEntity.noContent().build()
     }
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun markFeatured(@PathVariable id: ThingId) {
         service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun unmarkFeatured(@PathVariable id: ThingId) {
         service.markAsNonFeatured(id)
     }
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorizeCurator
-    fun markUnlisted(@PathVariable id: ThingId, @AuthenticationPrincipal currentUser: UserDetails?) {
+    @RequireCuratorRole
+    fun markUnlisted(@PathVariable id: ThingId, currentUser: Authentication?) {
         service.markAsUnlisted(id, currentUser.contributorId())
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun unmarkUnlisted(@PathVariable id: ThingId) {
         service.markAsListed(id)
     }

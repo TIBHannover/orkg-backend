@@ -17,6 +17,7 @@ include(
     "migrations:liquibase",
     "migrations:neo4j-migrations"
 )
+include("keycloak")
 include("testing:kotest")
 include("testing:spring")
 include(
@@ -50,16 +51,15 @@ include(
     "community:community-ports-input",
     "community:community-ports-input-legacy",
     "community:community-ports-output",
+    "community:community-adapter-input-keycloak",
     "community:community-adapter-input-rest-spring-mvc",
     "community:community-adapter-input-rest-spring-mvc-legacy",
     "community:community-adapter-output-spring-data-jpa",
 )
 include(
-    "identity-management:idm-core-services",
     "identity-management:idm-core-model",
-    "identity-management:idm-ports-input",
     "identity-management:idm-ports-output",
-    "identity-management:idm-adapter-input-rest-spring-security",
+    "identity-management:idm-adapter-input-rest-spring-security-legacy",
     "identity-management:idm-adapter-output-spring-data-jpa",
 )
 include(

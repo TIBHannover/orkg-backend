@@ -2,28 +2,20 @@
 forkhandles = "2.0.0.0"
 junit5 = "5.8.2"
 kotest = "5.4.0"
-kotlinx-coroutines = "1.6.4"
 liquibase = "4.20.0"
 restdocs-api-spec = "0.16.4" # Latest supported version for Spring Boot 2.x
-spotless = "6.2.1"
-spring-boot = "2.4.13"
-spring-dependency-management = "1.0.11.RELEASE"
-testcontainers = "1.17.3"
-spring-security-oauth = "2.5.2.RELEASE"
+testcontainers = "1.19.8"
+testcontainers-keycloak = "3.5.1"
+keycloak = "26.0.5"
+keycloak-admin-api = "26.0.2"
 
 [libraries]
 # BOMs
-bytebuddy-bom = { module = "net.bytebuddy:byte-buddy-parent", version = "1.12.21" }
-forkhandles-bom = { module = "dev.forkhandles:forkhandles-bom", version.ref = "forkhandles" }
 junit5-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
-kotlinx-coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom", version.ref = "kotlinx-coroutines" }
-spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
 # Libraries
-annotations-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
 assertj-core = { module = "org.assertj:assertj-core", version = "" }
 contractual = { module = "com.redfin:contractual", version = "3.0.0" }
 forkhandles-fabrikate4k = { module = "dev.forkhandles:fabrikate4k", version.ref = "forkhandles" }
-forkhandles-result4k = { module = "dev.forkhandles:result4k", version.ref = "forkhandles" }
 forkhandles-values4k = { module = "dev.forkhandles:values4k", version.ref = "forkhandles" }
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version = "" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "" }
@@ -45,6 +37,10 @@ testcontainers-core = { module = "org.testcontainers:testcontainers", version.re
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers-neo4j = { module = "org.testcontainers:neo4j", version.ref = "testcontainers" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainers-keycloak = { module = "com.github.dasniko:testcontainers-keycloak", version.ref = "testcontainers-keycloak" }
+keycloak-core = { module = "org.keycloak:keycloak-core", version.ref = "keycloak" }
+keycloak-admin-api = { module = "org.keycloak:keycloak-admin-client", version.ref = "keycloak-admin-api" }
+keycloak-client-common = { module = "org.keycloak:keycloak-client-common-synced", version.ref = "keycloak-admin-api" }
 
 [bundles]
 kotest = ["kotest-runner", "kotest-assertions-core", "kotest-property", "kotest-extensions-spring", "kotest-extensions-testcontainers", "kotest-framework-datatest"]
@@ -52,5 +48,3 @@ testcontainers = ["testcontainers-core", "testcontainers-junit5", "testcontainer
 
 [plugins]
 restdocs-openapi = { id = "com.epages.restdocs-api-spec", version.ref = "restdocs-api-spec" }
-spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

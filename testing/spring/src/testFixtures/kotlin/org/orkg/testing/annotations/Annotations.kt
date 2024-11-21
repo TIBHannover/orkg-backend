@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 
 /**
@@ -42,29 +41,13 @@ annotation class Neo4jContainerIntegrationTest
 annotation class TestContainersJpaTest
 
 @Retention(RUNTIME)
-@WithMockUser(
-    username = MockUserId.UNKNOWN,
-    authorities = ["ROLE_ANONYMOUS"]
-)
-annotation class TestWithUnknownUser
-
-@Retention(RUNTIME)
-@WithMockUser(
-    username = MockUserId.USER,
-    authorities = ["ROLE_USER"]
-)
+@WithMockAuthentication(authorities = [], name = MockUserId.USER)
 annotation class TestWithMockUser
 
 @Retention(RUNTIME)
-@WithMockUser(
-    username = MockUserId.CURATOR,
-    authorities = ["ROLE_ADMIN"]
-)
+@WithMockAuthentication(authorities = ["ROLE_CURATOR"], name = MockUserId.CURATOR)
 annotation class TestWithMockCurator
 
 @Retention(RUNTIME)
-@WithMockUser(
-    username = MockUserId.ADMIN,
-    authorities = ["ROLE_ADMIN"]
-)
+@WithMockAuthentication(authorities = ["ROLE_ADMIN"], name = MockUserId.ADMIN)
 annotation class TestWithMockAdmin

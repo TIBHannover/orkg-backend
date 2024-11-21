@@ -9,13 +9,13 @@ plugins {
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-core")
-    api("org.eclipse.rdf4j:rdf4j-util")
+    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-core")
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
     api(libs.jackson.databind)
-    api("jakarta.validation:jakarta.validation-api")
+    api("javax.validation:validation-api")
     api(project(":common"))
     api(project(":community:community-ports-input"))
     api(project(":content-types:content-types-core-model"))
@@ -23,6 +23,7 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     implementation(project(":community:community-core-model"))
+    implementation("org.springframework.boot:spring-boot-starter-web")
 
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
 }
@@ -42,6 +43,8 @@ testing {
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework.boot:spring-boot-starter-security")
+                implementation("org.springframework.boot:spring-boot-starter-test")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")

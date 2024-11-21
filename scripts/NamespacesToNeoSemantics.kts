@@ -2,9 +2,9 @@
 
 import java.io.File
 import java.io.FileInputStream
-import javax.xml.stream.XMLInputFactory
-import javax.xml.stream.XMLStreamConstants
-import javax.xml.stream.XMLStreamReader
+import jakarta.xml.stream.XMLInputFactory
+import jakarta.xml.stream.XMLStreamConstants
+import jakarta.xml.stream.XMLStreamReader
 import kotlin.system.exitProcess
 
 if (args.isEmpty()) {

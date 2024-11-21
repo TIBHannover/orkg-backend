@@ -6,8 +6,8 @@ dependencies {
     api(project(":common"))
 
     api("com.fasterxml.jackson.core:jackson-core")
-    api("jakarta.validation:jakarta.validation-api")
-    api("org.eclipse.rdf4j:rdf4j-util")
+    api("javax.validation:validation-api")
+    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.boot:spring-boot-autoconfigure")
     api("org.springframework:spring-context")
     api(libs.jackson.databind)

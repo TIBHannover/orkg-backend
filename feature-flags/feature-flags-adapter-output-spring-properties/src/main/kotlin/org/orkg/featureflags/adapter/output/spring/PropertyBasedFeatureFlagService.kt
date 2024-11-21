@@ -18,8 +18,8 @@ class PropertyBasedFeatureFlagService(
     override fun isCacheWarmupEnabled(): Boolean = config.cacheWarmup
 }
 
-@ConfigurationProperties(prefix = "orkg.features")
 @ConstructorBinding
+@ConfigurationProperties(prefix = "orkg.features")
 /**
  * Enable/Disable specific ORKG features.
  */

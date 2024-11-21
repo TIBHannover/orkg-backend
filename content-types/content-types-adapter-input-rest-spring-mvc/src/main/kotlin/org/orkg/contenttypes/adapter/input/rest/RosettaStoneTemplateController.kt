@@ -8,7 +8,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.RosettaStoneTemplateRepresentationAdapter
@@ -24,8 +24,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -68,12 +67,12 @@ class RosettaStoneTemplateController(
             pageable = pageable
         ).mapToRosettaStoneTemplateRepresentation()
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(consumes = [ROSETTA_STONE_TEMPLATE_JSON_V1])
     fun create(
         @RequestBody @Valid request: CreateRosettaStoneTemplateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
@@ -84,13 +83,13 @@ class RosettaStoneTemplateController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{id}", consumes = [ROSETTA_STONE_TEMPLATE_JSON_V1])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: UpdateRosettaStoneTemplateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
@@ -101,11 +100,11 @@ class RosettaStoneTemplateController(
         return noContent().location(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @DeleteMapping("/{id}")
     fun delete(
         @PathVariable id: ThingId,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.delete(id, userId)

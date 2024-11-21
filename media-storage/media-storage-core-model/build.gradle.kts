@@ -4,11 +4,11 @@ plugins {
 
 dependencies {
     api(project(":common"))
+    api("org.springframework:spring-core")
     implementation("org.springframework:spring-web")
 
     testFixturesApi(project(":common"))
     testFixturesApi(project(":community:community-ports-input"))
-    testFixturesImplementation("jakarta.activation:jakarta.activation-api")
     testFixturesImplementation("org.springframework:spring-core")
     testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
 }

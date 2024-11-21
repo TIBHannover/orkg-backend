@@ -7,6 +7,7 @@ plugins {
 }
 
 dependencies {
+    testFixturesApi(libs.testcontainers.keycloak)
     testFixturesApi("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
     testFixturesApi("jakarta.persistence:jakarta.persistence-api")
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
@@ -18,11 +19,13 @@ dependencies {
     testFixturesApi("org.springframework.security:spring-security-core")
     testFixturesApi("org.springframework.security:spring-security-test")
     testFixturesApi("org.springframework.security:spring-security-web")
-    testFixturesApi("org.springframework.security.oauth:spring-security-oauth2:${libs.versions.spring.security.oauth.get()}")
+    testFixturesApi("org.springframework.security:spring-security-web")
     testFixturesApi("org.springframework:spring-beans")
     testFixturesApi("org.springframework:spring-context")
+    testFixturesApi("org.springframework:spring-core")
     testFixturesApi("org.springframework:spring-test")
     testFixturesApi("org.springframework:spring-web")
+    testFixturesApi("org.springframework.data:spring-data-commons")
     testFixturesApi(libs.jackson.databind)
     testFixturesApi(libs.spring.boot.starter.neo4j.migrations)
     testFixturesApi(libs.spring.restdocs)
@@ -30,6 +33,7 @@ dependencies {
     testFixturesApi(libs.testcontainers.neo4j)
     testFixturesApi(libs.testcontainers.postgresql)
     testFixturesImplementation("org.hamcrest:hamcrest:2.2")
+    testFixturesImplementation("org.springframework.security:spring-security-crypto")
     testFixturesImplementation(libs.assertj.core)
     testFixturesImplementation(libs.restdocs.openapi) // FIXME: no idea why this works, but GAV does not
     testFixturesImplementation(libs.testcontainers.core)

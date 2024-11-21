@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api("org.eclipse.rdf4j:rdf4j-util")
+    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
     api(libs.jackson.databind)

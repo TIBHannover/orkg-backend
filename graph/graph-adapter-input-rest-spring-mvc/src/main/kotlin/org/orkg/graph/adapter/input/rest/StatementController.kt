@@ -5,7 +5,7 @@ import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.BundleRepresentationAdapter
@@ -25,8 +25,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -84,12 +83,12 @@ class StatementController(
             .mapToStatementRepresentation(capabilities)
             .orElseThrow { StatementNotFound(statementId) }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun add(
         @RequestBody statement: CreateStatement,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
         capabilities: MediaTypeCapabilities
     ): ResponseEntity<StatementRepresentation> {
         val id = statementService.create(
@@ -106,7 +105,7 @@ class StatementController(
             .body(statementService.findById(id).mapToStatementRepresentation(capabilities).get())
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: StatementId,
@@ -124,7 +123,7 @@ class StatementController(
         return statementService.findById(id).mapToStatementRepresentation(capabilities).get()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @DeleteMapping("/{id}")
     fun delete(
         @PathVariable id: StatementId

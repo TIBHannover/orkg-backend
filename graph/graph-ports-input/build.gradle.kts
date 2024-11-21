@@ -6,6 +6,6 @@ dependencies {
     api(project(":common"))
     api(project(":graph:graph-core-model"))
 
-    api("org.eclipse.rdf4j:rdf4j-util")
+    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
 }

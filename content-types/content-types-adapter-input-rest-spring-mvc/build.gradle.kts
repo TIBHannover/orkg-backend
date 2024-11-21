@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api("org.eclipse.rdf4j:rdf4j-util")
+    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-core")
     api("org.springframework.data:spring-data-commons")
@@ -16,7 +16,7 @@ dependencies {
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
     api(libs.jackson.databind)
-    api("jakarta.validation:jakarta.validation-api")
+    api("javax.validation:validation-api")
     api(project(":common"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input"))

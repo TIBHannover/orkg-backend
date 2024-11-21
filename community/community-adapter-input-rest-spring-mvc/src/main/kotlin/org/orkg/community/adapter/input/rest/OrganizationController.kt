@@ -1,19 +1,17 @@
 package org.orkg.community.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import jakarta.activation.MimeType
-import jakarta.activation.MimeTypeParseException
+import jakarta.validation.Valid
 import java.io.ByteArrayInputStream
 import java.util.*
 import javax.servlet.http.HttpServletResponse
-import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import org.apache.tomcat.util.http.fileupload.IOUtils
 import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId
-import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.contributorId
 import org.orkg.community.adapter.input.rest.mapping.ObservatoryRepresentationAdapter
 import org.orkg.community.domain.Contributor
@@ -38,8 +36,8 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
+import org.springframework.util.MimeType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -65,7 +63,7 @@ class OrganizationController(
 ) : ObservatoryRepresentationAdapter {
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun addOrganization(
         @RequestBody @Valid organization: CreateOrganizationRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -121,12 +119,12 @@ class OrganizationController(
     fun findOrganizationsConferences(): Iterable<Organization> = service.listConferences()
 
     @PatchMapping("{id}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun updateOrganization(
         @PathVariable id: OrganizationId,
         @RequestPart("properties", required = false) @Valid request: UpdateOrganizationRequest?,
         @RequestPart("logo", required = false) logo: MultipartFile?,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
         service.update(
@@ -138,8 +136,8 @@ class OrganizationController(
             logo = logo?.let {
                 val bytes = logo.bytes
                 val mimeType = try {
-                    MimeType(logo.contentType)
-                } catch (e: MimeTypeParseException) {
+                    MimeType.valueOf(logo.contentType)
+                } catch (e: Exception) {
                     throw InvalidMimeType(logo.contentType, e)
                 }
                 UpdateOrganizationUseCases.RawImage(
@@ -152,7 +150,7 @@ class OrganizationController(
     }
 
     @RequestMapping("/{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun updateOrganizationName(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid name: UpdateRequest,
@@ -164,7 +162,7 @@ class OrganizationController(
     }
 
     @RequestMapping("/{id}/url", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun updateOrganizationUrl(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid url: UpdateRequest
@@ -176,7 +174,7 @@ class OrganizationController(
     }
 
     @RequestMapping("/{id}/type", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun updateOrganizationType(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid type: UpdateRequest
@@ -188,12 +186,12 @@ class OrganizationController(
     }
 
     @RequestMapping("/{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun updateOrganizationLogo(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid submittedLogo: UpdateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val organization = service.findById(id).orElseThrow { OrganizationNotFound(id) }
         val image = EncodedImage(submittedLogo.value).decodeBase64()
@@ -265,8 +263,8 @@ value class EncodedImage(val value: String) {
         }
         val mimeType = matcher.group(1).let {
             try {
-                MimeType(it)
-            } catch (e: MimeTypeParseException) {
+                MimeType.valueOf(it)
+            } catch (e: Exception) {
                 throw InvalidMimeType(it, e)
             }
         }

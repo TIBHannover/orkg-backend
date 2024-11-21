@@ -8,6 +8,7 @@ plugins {
 dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-context")
+    api("org.springframework:spring-tx")
     api(project(":common"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input"))
@@ -17,6 +18,7 @@ dependencies {
     api(project(":media-storage:media-storage-ports-input"))
     implementation(project(":content-types:content-types-core-model"))
     implementation(project(":graph:graph-core-model")) // for ResearchFields
+    implementation("org.springframework:spring-core")
 }
 
 testing {
@@ -29,7 +31,7 @@ testing {
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
-                implementation("org.eclipse.rdf4j:rdf4j-util")
+                implementation("org.eclipse.rdf4j:rdf4j-common-io")
                 implementation("org.junit.jupiter:junit-jupiter-api")
             }
         }

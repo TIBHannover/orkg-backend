@@ -3,129 +3,85 @@ package org.orkg.configuration
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.convert.converter.Converter
+import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.AuthenticationProvider
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer.withDefaults
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.config.web.servlet.invoke
 import org.springframework.security.core.AuthenticationException
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.factory.PasswordEncoderFactories
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer
-import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.jwt.JwtClaimNames
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter
 import org.springframework.security.web.AuthenticationEntryPoint
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.firewall.HttpStatusRequestRejectedHandler
 import org.springframework.security.web.firewall.RequestRejectedHandler
-import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.stereotype.Component
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import org.springframework.web.filter.CorsFilter
-
-@Configuration
-class AuthorizationServerConfiguration(
-    private val authenticationManager: AuthenticationManager,
-    private val userDetailsService: UserDetailsService
-) : AuthorizationServerConfigurerAdapter() {
-
-    private val sixteenHours = 16 * 60 * 60
-
-    override fun configure(clients: ClientDetailsServiceConfigurer) {
-        clients.inMemory()
-            .withClient("orkg-client")
-            .secret("{noop}secret")
-            .authorizedGrantTypes("password")
-            .scopes("read")
-            .accessTokenValiditySeconds(sixteenHours)
-    }
-
-    override fun configure(endpoints: AuthorizationServerEndpointsConfigurer) {
-        endpoints
-            .tokenStore(tokenStore())
-            .authenticationManager(authenticationManager)
-            .userDetailsService(userDetailsService)
-    }
-
-    @Bean
-    fun tokenStore() = InMemoryTokenStore()
-}
-
-@Configuration
-class SecurityConfig {
-    @Bean
-    fun authProvider(userDetailsService: UserDetailsService, passwordEncoder: PasswordEncoder): AuthenticationProvider =
-        DaoAuthenticationProvider().apply {
-            setUserDetailsService(userDetailsService)
-            setPasswordEncoder(passwordEncoder)
-        }
-
-    @Bean
-    fun configureGlobal(provider: AuthenticationProvider): SecurityConfigurerAdapter<AuthenticationManager, AuthenticationManagerBuilder> =
-        object : SecurityConfigurerAdapter<AuthenticationManager, AuthenticationManagerBuilder>() {
-            override fun configure(builder: AuthenticationManagerBuilder) {
-                builder.authenticationProvider(provider)
-            }
-        }
-
-    @Bean
-    fun passwordEncoder(): PasswordEncoder =
-        PasswordEncoderFactories.createDelegatingPasswordEncoder()
-}
-
-@Configuration
-@EnableResourceServer
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-class ResourceServerConfiguration : ResourceServerConfigurerAdapter() {
-
-    // global security concerns
-
-    // http security concerns
-    override fun configure(http: HttpSecurity) {
-        http
-            .authorizeRequests()
-            .antMatchers("/auth/register").permitAll()
-            .anyRequest().permitAll() // TODO: require authentication once tested
-            .and()
-            .cors(withDefaults())
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .csrf().disable()
-    }
-}
 
 /**
  * Class to provide an [AuthenticationManager] so OAuth2 can use the `password` grant type.
  */
-@Configuration(proxyBeanMethods = false)
-class AuthenticationManagerProvider : WebSecurityConfigurerAdapter() {
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+class SecurityConfiguration(
+    private val jwtAuthenticationConverterImpl: JwtAuthenticationConverter
+) {
     @Bean
-    override fun authenticationManagerBean(): AuthenticationManager {
-        return super.authenticationManagerBean()
-    }
-
-    override fun configure(http: HttpSecurity) {
-        http.requestMatcher(EndpointRequest.toAnyEndpoint()).authorizeRequests { it.anyRequest().permitAll() }
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http {
+            authorizeHttpRequests {
+                authorize(anyRequest, permitAll)
+            }
+            cors {
+                withDefaults<HttpSecurity>()
+            }
+            sessionManagement {
+                sessionCreationPolicy = SessionCreationPolicy.STATELESS
+            }
+            csrf {
+                disable()
+            }
+            oauth2ResourceServer {
+                jwt {
+                    jwtAuthenticationConverter = jwtAuthenticationConverterImpl
+                }
+            }
+        }
+        return http.build()
     }
 }
 
+@Component
+class JwtAuthenticationConverter : Converter<Jwt, AbstractAuthenticationToken> {
+    private val jwtGrantedAuthoritiesConverter = JwtGrantedAuthoritiesConverter()
+
+    override fun convert(jwt: Jwt): AbstractAuthenticationToken {
+        val authorities = jwtGrantedAuthoritiesConverter.convert(jwt)!!.flatMap { extractRoles(jwt) }
+        val name = jwt.getClaim<String>(JwtClaimNames.SUB) // user id
+        return JwtAuthenticationToken(jwt, authorities, name)
+    }
+
+    fun extractRoles(jwt: Jwt): Collection<GrantedAuthority> {
+        val resourceAccess = jwt.getClaim<Map<String, Any?>>("realm_access")
+        val roles = resourceAccess["roles"] as? List<*> ?: emptyList<Any?>()
+        return roles.map { SimpleGrantedAuthority("ROLE_${it.toString().uppercase()}") }
+    }
+}
+
+// TODO: can most likely be removed
 /**
  * An authentication entry point that will not redirect to login, but return `401 Unauthorized` instead.
  */
@@ -177,27 +133,6 @@ class CorsConfig {
                 }
             registerCorsConfiguration("/**", configuration)
         }
-    }
-}
-
-/**
- * Work-around for the (broken?) AuthenticationServer.
- *
- * We keep the security configuration of the authorization server by configuring it via the super-class.
- * In addition we add a new [CorsFilter] after the [HeaderWriterFilter];
- * that is the same position as in other filter chains.
- * To ensure that the [CorsFilter] is configured correctly, we autowire our (custom) [CorsConfigurationSource].
- *
- * Due to autowiring magic/weirdness, the [EnableAuthorizationServer] annotation needs to be removed from the configuration.
- */
-@Configuration
-class AuthorizationServerWorkaround(
-    private val corsConfigurationSource: CorsConfigurationSource
-) : AuthorizationServerSecurityConfiguration() {
-
-    override fun configure(http: HttpSecurity) {
-        super.configure(http)
-        http.addFilterAfter(CorsFilter(corsConfigurationSource), HeaderWriterFilter::class.java)
     }
 }
 

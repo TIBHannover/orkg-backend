@@ -1,8 +1,7 @@
 package org.orkg.common
 
-import java.util.*
 import org.orkg.common.exceptions.Unauthorized
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 
-fun UserDetails?.contributorId(): ContributorId =
-    this?.username?.let { ContributorId(UUID.fromString(it)) } ?: throw Unauthorized()
+fun Authentication?.contributorId(): ContributorId =
+    this?.name?.let(::ContributorId) ?: throw Unauthorized()

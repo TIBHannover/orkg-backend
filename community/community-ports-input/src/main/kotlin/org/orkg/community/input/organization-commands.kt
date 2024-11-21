@@ -4,7 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId
 import org.orkg.community.domain.OrganizationType
 import org.orkg.mediastorage.domain.ImageData
-import jakarta.activation.MimeType
+import org.springframework.util.MimeType
 
 interface UpdateOrganizationUseCases {
     fun update(contributorId: ContributorId, command: UpdateOrganizationRequest)

@@ -19,8 +19,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -46,7 +45,7 @@ class LegacyPaperController(
         @RequestBody paper: LegacyCreatePaperUseCase.LegacyCreatePaperRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         @RequestParam("mergeIfExists", required = false, defaultValue = "false") mergeIfExists: Boolean,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
         capabilities: MediaTypeCapabilities
     ): ResponseEntity<ResourceRepresentation> {
         val id = service.addPaperContent(paper, mergeIfExists, currentUser.contributorId().value)

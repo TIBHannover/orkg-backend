@@ -3,7 +3,7 @@ package org.orkg.graph.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.ChildClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ClassHierarchyEntryRepresentationAdapter
@@ -17,8 +17,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -51,7 +50,7 @@ class ClassHierarchyController(
         .orElseGet { noContent().build() }
 
     @DeleteMapping("/{id}/parent")
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun deleteParentRelation(
         @PathVariable id: ThingId,
         uriComponentsBuilder: UriComponentsBuilder
@@ -61,12 +60,12 @@ class ClassHierarchyController(
     }
 
     @PostMapping("/{id}/parent", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun postParentRelation(
         @PathVariable id: ThingId,
         @RequestBody request: CreateParentRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         createRelations(request.parentId, setOf(id), false, currentUser.contributorId())
         val location = uriComponentsBuilder
@@ -90,12 +89,12 @@ class ClassHierarchyController(
     ): Page<ClassRepresentation> = service.findAllRoots(pageable).mapToClassRepresentation()
 
     @PostMapping("/{id}/children", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun postChildrenRelation(
         @PathVariable id: ThingId,
         @RequestBody request: CreateChildrenRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         createRelations(id, request.childIds, true, currentUser.contributorId())
         val location = uriComponentsBuilder
@@ -106,12 +105,12 @@ class ClassHierarchyController(
     }
 
     @PatchMapping("/{id}/children", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun patchChildrenRelation(
         @PathVariable id: ThingId,
         @RequestBody request: CreateChildrenRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         createRelations(id, request.childIds, false, currentUser.contributorId())
         val location = uriComponentsBuilder

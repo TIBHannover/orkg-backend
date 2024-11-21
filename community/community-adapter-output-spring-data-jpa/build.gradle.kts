@@ -19,7 +19,7 @@ dependencies {
     api(project(":eventbus"))
     api("org.springframework:spring-beans")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("jakarta.validation:jakarta.validation-api")
+    implementation("javax.validation:validation-api")
     implementation(project(":graph:graph-core-model"))
     implementation(project(":media-storage:media-storage-core-model"))
 

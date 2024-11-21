@@ -8,7 +8,7 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.adapter.input.rest.mapping.TemplateInstanceRepresentationAdapter
 import org.orkg.contenttypes.input.LiteralDefinition
@@ -26,8 +26,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -84,14 +83,14 @@ class TemplateInstanceController(
             organizationId = organizationId
         ).mapToTemplateInstanceRepresentation(capabilities)
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{id}", consumes = [TEMPLATE_INSTANCE_JSON_V1], produces = [TEMPLATE_INSTANCE_JSON_V1])
     fun updateTemplateInstance(
         @PathVariable id: ThingId,
         @PathVariable templateId: ThingId,
         @RequestBody @Valid request: UpdateTemplateInstanceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(userId, templateId, id))

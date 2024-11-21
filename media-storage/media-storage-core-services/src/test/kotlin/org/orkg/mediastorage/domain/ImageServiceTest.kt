@@ -4,7 +4,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import jakarta.activation.MimeType
+import org.springframework.util.MimeType
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -50,7 +50,7 @@ class ImageServiceTest {
 
     @Test
     fun `given an image is created, when the mime type is invalid, then an exception is thrown`() {
-        val image = UpdateOrganizationUseCases.RawImage(ImageData(ByteArray(0)), MimeType("application/json"))
+        val image = UpdateOrganizationUseCases.RawImage(ImageData(ByteArray(0)), MimeType.valueOf("application/json"))
         val contributor = ContributorId(UUID.randomUUID())
 
         shouldThrow<InvalidMimeType> {

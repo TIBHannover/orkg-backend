@@ -9,7 +9,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRelatedFigureRepresentationAdapter
@@ -35,8 +35,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -97,12 +96,12 @@ class ComparisonController(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).mapToComparisonRepresentation()
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun create(
         @RequestBody @Valid request: CreateComparisonRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
@@ -113,13 +112,13 @@ class ComparisonController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{id}", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: UpdateComparisonRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
@@ -147,13 +146,13 @@ class ComparisonController(
         service.findAllRelatedResources(id, pageable)
             .mapToComparisonRelatedResourceRepresentation()
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping("/{comparisonId}/related-resources", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun create(
         @PathVariable("comparisonId") comparisonId: ThingId,
         @RequestBody @Valid request: CreateComparisonRelatedResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.createComparisonRelatedResource(request.toCreateCommand(comparisonId, userId))
@@ -164,14 +163,14 @@ class ComparisonController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{comparisonId}/related-resources/{comparisonRelatedResourceId}", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun updateRelatedResource(
         @PathVariable("comparisonId") comparisonId: ThingId,
         @PathVariable("comparisonRelatedResourceId") comparisonRelatedResourceId: ThingId,
         @RequestBody @Valid request: UpdateComparisonRelatedResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.updateComparisonRelatedResource(request.toUpdateCommand(comparisonId, comparisonRelatedResourceId, userId))
@@ -182,13 +181,13 @@ class ComparisonController(
         return noContent().location(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @DeleteMapping("/{comparisonId}/related-resources/{comparisonRelatedResourceId}", produces = [COMPARISON_JSON_V2])
     fun deleteRelatedResource(
         @PathVariable("comparisonId") comparisonId: ThingId,
         @PathVariable("comparisonRelatedResourceId") comparisonRelatedResourceId: ThingId,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.deleteComparisonRelatedResource(comparisonId, comparisonRelatedResourceId, userId)
@@ -216,13 +215,13 @@ class ComparisonController(
         service.findAllRelatedFigures(id, pageable)
             .mapToComparisonRelatedFigureRepresentation()
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping("/{comparisonId}/related-figures", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun create(
         @PathVariable("comparisonId") comparisonId: ThingId,
         @RequestBody @Valid request: CreateComparisonRelatedFigureRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.createComparisonRelatedFigure(request.toCreateCommand(comparisonId, userId))
@@ -233,14 +232,14 @@ class ComparisonController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{comparisonId}/related-figures/{comparisonRelatedFigureId}", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun updateRelatedFigure(
         @PathVariable("comparisonId") comparisonId: ThingId,
         @PathVariable("comparisonRelatedFigureId") comparisonRelatedFigureId: ThingId,
         @RequestBody @Valid request: UpdateComparisonRelatedFigureRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.updateComparisonRelatedFigure(request.toUpdateCommand(comparisonId, comparisonRelatedFigureId, userId))
@@ -251,13 +250,13 @@ class ComparisonController(
         return noContent().location(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @DeleteMapping("/{comparisonId}/related-figures/{comparisonRelatedFigureId}", produces = [COMPARISON_JSON_V2])
     fun deleteRelatedFigure(
         @PathVariable("comparisonId") comparisonId: ThingId,
         @PathVariable("comparisonRelatedFigureId") comparisonRelatedFigureId: ThingId,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.deleteComparisonRelatedFigure(comparisonId, comparisonRelatedFigureId, userId)
@@ -268,13 +267,13 @@ class ComparisonController(
         return noContent().location(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping("/{id}/publish", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun publish(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: PublishRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
         service.publish(request.toPublishCommand(id, contributorId))

@@ -7,6 +7,11 @@ spring:
     frontend-uri: 'http://localhost:3000'
   jmx:
     enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8888/realms/orkg
 coffee-boots:
   cache:
     basic-spec: maximumSize=5000,expireAfterAccess=10m,recordStats
@@ -27,6 +32,9 @@ orkg:
       # use "-" to disable
       schedule: "-"
       file-name: predicate-ids_to_label.json
+    users:
+      file-dir: "."
+      target-realm: "orkg"
   ranking:
     papers:
       # cron schedule for paper-ranking
@@ -59,6 +67,18 @@ orkg:
       host: "https://service.tib.eu/ts4tib/api"
     wikidata:
       host: "https://www.wikidata.org"
+  keycloak:
+    host: "http://localhost:8888"
+    realm: "orkg"
+    client-id: "admin-cli"
+    client-secret: "**********"
+    event-poll-schedule: "*/1 * * * * *"
+    event-poll-chunk-size: 50
+  oauth:
+    legacy-client-id: "orkg-client"
+    legacy-client-secret: "secret"
+    token-endpoint: "http://localhost:8888/realms/orkg/protocol/openid-connect/token"
+    registration-endpoint: "http://localhost:8888/realms/orkg/clients-registrations/openid-connect"
 management:
   endpoints:
     enabled-by-default: false

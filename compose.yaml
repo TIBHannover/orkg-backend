@@ -3,6 +3,10 @@ services:
   api:
     image: registry.gitlab.com/tibhannover/orkg/orkg-backend
     environment:
+      ORKG_KEYCLOAK_HOST: "http://keycloak:8080"
+      ORKG_OAUTH_TOKEN_ENDPOINT: "http://keycloak:8080/realms/orkg/protocol/openid-connect/token"
+      ORKG_OAUTH_REGISTRATION_ENDPOINT: "http://keycloak:8080/realms/orkg/clients-registrations/openid-connect"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: "http://keycloak:8080/realms/orkg"
       SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres/postgres'
       SPRING_NEO4J_URI: 'bolt://neo4j:7687'
       SPRING_PROFILES_ACTIVE: development
@@ -78,24 +82,64 @@ services:
       - 'postgres-data:/var/lib/postgresql/data/pgdata'
 
   keycloak:
-    image: quay.io/keycloak/keycloak:13.0.1
+    image: registry.gitlab.com/tibhannover/orkg/keycloak-docker-image:26
+    command:
+      - start
+      - --optimized
+      - --import-realm
     ports:
       - 127.0.0.1:8888:8080  # Port re-mapped to prevent conflict with API
     environment:
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-      DB_VENDOR: H2
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      # KC_HOSTNAME: http://localhost:8888
+      KC_HOSTNAME_STRICT: false
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres:5432/postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_HTTP_ENABLED: true
+      TZ: Europe/Berlin
+    volumes:
+      - ./keycloak/src/main/resources/import:/opt/keycloak/data/import:ro
+    depends_on:
+      keycloak-postgres:
+        condition:
+          service_healthy
     networks:
       - auth
       - mail
+
+  keycloak-postgres:
+    image: postgres:17
+    expose:
+      - '5433'
+    ports:
+      - '127.0.0.1:5433:5432'
+      #- '::1:5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+      TZ: Europe/Berlin
+    volumes:
+      - 'keycloak-data:/var/lib/postgresql/data/pgdata'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    networks:
+      - auth
 
   # Mail server. Can be used in Keycloak to test mail flows.
   mailserver:
     image: axllent/mailpit:v1.21
     restart: unless-stopped
     ports:
-      # - 127.0.0.1:1025:1025  # SMTP
-      - 127.0.0.1:8025:8025  # User interface
+      - 1025:1025  # SMTP
+      - 8025:8025  # User interface
     environment:
       # MP_MAX_MESSAGES: 5000
       MP_DATABASE: /data/mailpit.db
@@ -132,4 +176,5 @@ networks:
 volumes:
   neo4j-data:
   postgres-data:
+  keycloak-data:
   mailpit-data:

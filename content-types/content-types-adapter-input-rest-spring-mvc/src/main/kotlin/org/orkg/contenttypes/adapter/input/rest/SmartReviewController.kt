@@ -12,7 +12,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeUser
+import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.SmartReviewRepresentationAdapter
@@ -41,8 +41,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -100,12 +99,12 @@ class SmartReviewController(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).mapToSmartReviewRepresentation()
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(consumes = [SMART_REVIEW_JSON_V1])
     fun create(
         @RequestBody @Valid request: CreateSmartReviewRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         val id = service.create(request.toCreateCommand(userId))
@@ -116,14 +115,14 @@ class SmartReviewController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping(value = ["/{id}/sections", "/{id}/sections/{index}"], consumes = [SMART_REVIEW_SECTION_JSON_V1], produces = [SMART_REVIEW_SECTION_JSON_V1])
     fun createSection(
         @PathVariable id: ThingId,
         @PathVariable(required = false) @PositiveOrZero index: Int?,
         @RequestBody @Valid request: SmartReviewSectionRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.createSection(request.toCreateCommand(userId, id, index))
@@ -134,13 +133,13 @@ class SmartReviewController(
         return created(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{id}", consumes = [SMART_REVIEW_JSON_V1])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: UpdateSmartReviewRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.update(request.toUpdateCommand(id, userId))
@@ -151,14 +150,14 @@ class SmartReviewController(
         return noContent().location(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PutMapping("/{smartReviewId}/sections/{sectionId}", consumes = [SMART_REVIEW_SECTION_JSON_V1], produces = [SMART_REVIEW_SECTION_JSON_V1])
     fun updateSection(
         @PathVariable smartReviewId: ThingId,
         @PathVariable sectionId: ThingId,
         @RequestBody @Valid request: SmartReviewSectionRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.updateSection(request.toUpdateCommand(sectionId, userId, smartReviewId))
@@ -169,13 +168,13 @@ class SmartReviewController(
         return noContent().location(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @DeleteMapping("/{smartReviewId}/sections/{sectionId}", produces = [SMART_REVIEW_SECTION_JSON_V1])
     fun deleteSection(
         @PathVariable smartReviewId: ThingId,
         @PathVariable sectionId: ThingId,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
         service.deleteSection(DeleteSmartReviewSectionUseCase.DeleteCommand(smartReviewId, sectionId, userId))
@@ -186,13 +185,13 @@ class SmartReviewController(
         return noContent().location(location).build()
     }
 
-    @PreAuthorizeUser
+    @RequireLogin
     @PostMapping("/{id}/publish", produces = [SMART_REVIEW_JSON_V1])
     fun publish(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: PublishRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @AuthenticationPrincipal currentUser: UserDetails?,
+        currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
         val smartReviewId = service.publish(request.toPublishCommand(id, contributorId))

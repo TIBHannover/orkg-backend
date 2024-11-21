@@ -18,10 +18,8 @@ dependencies {
     api("org.springframework.boot:spring-boot-autoconfigure")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-jpa")
-    api("org.springframework.security:spring-security-core")
-    api("org.springframework:spring-tx")
     api(project(":identity-management:idm-core-model"))
-    implementation("jakarta.validation:jakarta.validation-api")
+    implementation("javax.validation:validation-api")
 }
 
 testing {

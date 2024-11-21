@@ -12,4 +12,5 @@ dependencies {
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(project(":media-storage:media-storage-core-model"))
     testFixturesImplementation(testFixtures(project(":media-storage:media-storage-core-model")))
+    testFixturesImplementation("org.springframework:spring-core")
 }

@@ -63,7 +63,7 @@ class Forbidden :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Forbidden.""")
 
 class Unauthorized :
-    SimpleMessageException(HttpStatus.UNAUTHORIZED, """Unauthorized.""")
+    LoggedMessageException(HttpStatus.UNAUTHORIZED, """Unauthorized.""")
 
 class ServiceUnavailable private constructor(
     val internalMessage: String,

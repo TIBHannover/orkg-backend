@@ -10,7 +10,7 @@ import javax.validation.constraints.Size
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.community.adapter.input.rest.mapping.ObservatoryRepresentationAdapter
 import org.orkg.community.domain.Contributor
@@ -46,7 +46,7 @@ class ObservatoryController(
     private val observatoryRepository: ObservatoryRepository,
 ) : ObservatoryRepresentationAdapter {
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun create(
         @RequestBody @Valid request: CreateObservatoryRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -103,7 +103,7 @@ class ObservatoryController(
     ): Page<Contributor> =
         observatoryRepository.allMembers(id, pageable)
 
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     @PatchMapping("/{id}")
     fun update(
         @PathVariable id: ObservatoryId,
@@ -118,14 +118,14 @@ class ObservatoryController(
     }
 
     @RequestMapping("/{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun updateObservatoryName(@PathVariable id: ObservatoryId, @RequestBody @Valid name: UpdateRequest): ObservatoryRepresentation {
         service.changeName(id, name.value)
         return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
     @RequestMapping("/{id}/description", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun updateObservatoryDescription(
         @PathVariable id: ObservatoryId,
         @RequestBody @Valid description: UpdateRequest
@@ -135,7 +135,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("/{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun updateObservatoryResearchField(
         @PathVariable id: ObservatoryId,
         @RequestBody @Valid request: UpdateRequest
@@ -145,7 +145,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("/add/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun addObservatoryOrganization(
         @PathVariable id: ObservatoryId,
         @RequestBody organizationRequest: UpdateOrganizationRequest
@@ -155,7 +155,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("/delete/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorizeCurator
+    @RequireCuratorRole
     fun deleteObservatoryOrganization(
         @PathVariable id: ObservatoryId,
         @RequestBody organizationRequest: UpdateOrganizationRequest

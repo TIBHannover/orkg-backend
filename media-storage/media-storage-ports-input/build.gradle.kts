@@ -5,4 +5,5 @@ plugins {
 dependencies {
     api(project(":common"))
     api(project(":media-storage:media-storage-core-model"))
+    api("org.springframework:spring-core")
 }

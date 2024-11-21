@@ -8,6 +8,7 @@ dependencies {
     api(project(":media-storage:media-storage-ports-input"))
     api(project(":media-storage:media-storage-ports-output"))
     implementation(project(":common"))
+    implementation("org.springframework:spring-core")
 }
 
 testing {

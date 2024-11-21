@@ -13,7 +13,7 @@ dependencies {
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
 
-    api("org.eclipse.rdf4j:rdf4j-util")
+    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-context")
     api("org.springframework:spring-tx")

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import jakarta.activation.MimeType
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
@@ -54,6 +53,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.util.MimeType
 import org.springframework.web.context.WebApplicationContext
 
 @Import(SecurityTestConfiguration::class)
@@ -142,7 +142,7 @@ internal class OrganizationControllerUnitTest {
         val image = Image(
             id = logoId,
             data = ImageData("irrelevant".toByteArray()),
-            mimeType = MimeType("image/png"),
+            mimeType = MimeType.valueOf("image/png"),
             createdBy = contributor,
             createdAt = OffsetDateTime.now(clock)
         )

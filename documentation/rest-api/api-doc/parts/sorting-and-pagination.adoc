@@ -6,7 +6,7 @@ The attributes of paged responses are described in the section about <<page-repr
 Endpoints supporting paging all take the following (optional) request parameters:
 
 [cols="1,3"]
-include::{snippets}/paged-page/request-parameters.adoc[]
+include::{snippets}/paged-page/query-parameters.adoc[]
 
 An example of a response of a paged list looks like this:
 

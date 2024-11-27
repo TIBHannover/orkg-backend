@@ -23,7 +23,7 @@ operation::rosetta-stone-statements-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::rosetta-stone-statements-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::rosetta-stone-statements-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[rosetta-stone-statements-list-versions]]
 == Listing Rosetta Stone Statement Versions

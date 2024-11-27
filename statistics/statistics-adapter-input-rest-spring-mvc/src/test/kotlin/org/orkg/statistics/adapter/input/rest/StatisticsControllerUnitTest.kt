@@ -37,7 +37,7 @@ internal class StatisticsControllerUnitTest : RestDocsTest("statistics") {
 
         every { service.findAllGroups() } returns groups
 
-        documentedGetRequestTo("/api/statistics/")
+        documentedGetRequestTo("/api/statistics")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .perform()

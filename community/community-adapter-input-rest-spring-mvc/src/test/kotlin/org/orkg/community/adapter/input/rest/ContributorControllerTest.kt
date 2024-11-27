@@ -83,7 +83,7 @@ class ContributorControllerTest {
     }
 
     private fun contributorRequest(id: ContributorId) =
-        MockMvcRequestBuilders.get("/api/contributors/$id")
+        MockMvcRequestBuilders.get("/api/contributors/{id}", id)
             .contentType(MediaType.APPLICATION_JSON)
             .characterEncoding("UTF-8")
 

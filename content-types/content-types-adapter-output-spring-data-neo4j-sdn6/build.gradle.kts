@@ -15,9 +15,7 @@ testing {
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     exclude(module = "mockito-core")
                 }
-                implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
-                    exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
-                }
+                implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
                 implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
                 implementation("io.kotest:kotest-framework-api")
                 implementation("org.springframework.boot:spring-boot-autoconfigure")
@@ -35,7 +33,7 @@ testing {
                 implementation(project())
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
-                runtimeOnly("org.springframework.data:spring-data-neo4j:6.3.16")
+                runtimeOnly("org.springframework.data:spring-data-neo4j")
                 runtimeOnly(libs.kotest.extensions.spring)
             }
         }

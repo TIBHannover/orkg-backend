@@ -17,7 +17,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -45,7 +45,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createClass(label = "programming language")
 
         mockMvc
-            .perform(getRequestTo("/api/classes/"))
+            .perform(getRequestTo("/api/classes"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -60,7 +60,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         val id = service.createClass(label = "research contribution")
 
         mockMvc
-            .perform(getRequestTo("/api/classes/$id"))
+            .perform(getRequestTo("/api/classes/{id}", id))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -75,12 +75,12 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         // Arrange
         val id = "dummy"
         val label = "dummy label"
-        val uri = ParsedIRI("http://example.org/exists")
+        val uri = ParsedIRI("https://example.org/exists")
         service.createClass(id = id, label = label, uri = uri)
 
         // Act and Assert
         mockMvc
-            .perform(getRequestTo("/api/classes/?uri=http://example.org/exists"))
+            .perform(getRequestTo("/api/classes").param("uri", uri.toString()))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(id))
             .andExpect(jsonPath("$.label").value(label))
@@ -99,7 +99,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         val id2 = service.createClass(label = "class2")
 
         mockMvc
-            .perform(getRequestTo("/api/classes/?ids=$id1,$id2"))
+            .perform(getRequestTo("/api/classes").param("ids", "$id1", "$id2"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -116,12 +116,12 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createClass(label = "research topic")
 
         mockMvc
-            .perform(getRequestTo("/api/classes/?q=research"))
+            .perform(getRequestTo("/api/classes").param("q", "research"))
             .andExpect(status().isOk)
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
                     classListDetailedResponseFields()
@@ -136,12 +136,12 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createClass(label = "research topic")
 
         mockMvc
-            .perform(getRequestTo("/api/classes/?q=PL)"))
+            .perform(getRequestTo("/api/classes").param("q", "PL)"))
             .andExpect(status().isOk)
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
                     classListDetailedResponseFields()

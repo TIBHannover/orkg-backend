@@ -49,7 +49,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -129,7 +129,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
         val exception = RosettaStoneStatementNotFound(id)
         every { statementService.findByIdOrVersionId(id) } returns Optional.empty()
 
-        get("/api/rosetta-stone/statements/$id")
+        get("/api/rosetta-stone/statements/{id}", id)
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .perform()
             .andExpect(status().isNotFound)
@@ -192,7 +192,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
             .andExpectRosettaStoneStatement("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("context").description("Filter for the id of the context that the rosetta stone statement was created with. (optional)"),
                         parameterWithName("template_id").description("Filter for the template id that was used to instantiate the rosetta stone statement. (optional)"),
                         parameterWithName("class_id").description("Filter for the class id of the rosetta stone statement. (optional)"),
@@ -246,7 +246,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
         val exception = RosettaStoneStatementNotFound(id)
         every { statementService.findByIdOrVersionId(id) } returns Optional.empty()
 
-        get("/api/rosetta-stone/statements/$id/versions")
+        get("/api/rosetta-stone/statements/{id}/versions", id)
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .perform()
             .andExpect(status().isNotFound)

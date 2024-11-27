@@ -21,7 +21,7 @@ operation::template-instances-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::template-instances-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::template-instances-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[template-instances-edit]]
 == Updating Template Instances

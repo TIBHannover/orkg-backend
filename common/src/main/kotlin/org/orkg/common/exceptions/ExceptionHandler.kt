@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import java.time.Clock
 import java.time.OffsetDateTime
-import javax.servlet.http.HttpServletRequest
 import org.neo4j.driver.exceptions.Neo4jException
 import org.orkg.common.toSnakeCase
 import org.springframework.http.HttpHeaders
@@ -14,6 +13,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
@@ -34,7 +34,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     override fun handleMethodArgumentNotValid(
         ex: MethodArgumentNotValidException,
         headers: HttpHeaders,
-        status: HttpStatus,
+        status: HttpStatusCode,
         request: WebRequest
     ) = buildBadRequestResponse(ex, request.requestURI) {
         ex.bindingResult.fieldErrors.map {
@@ -45,7 +45,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     override fun handleHttpMediaTypeNotAcceptable(
         ex: HttpMediaTypeNotAcceptableException,
         headers: HttpHeaders,
-        status: HttpStatus,
+        status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any> {
         val payload = MessageErrorResponse(
@@ -63,7 +63,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     override fun handleHttpMediaTypeNotSupported(
         ex: HttpMediaTypeNotSupportedException,
         headers: HttpHeaders,
-        status: HttpStatus,
+        status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any> {
         val payload = MessageErrorResponse(
@@ -81,9 +81,9 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     override fun handleHttpMessageNotReadable(
         ex: HttpMessageNotReadableException,
         headers: HttpHeaders,
-        status: HttpStatus,
+        status: HttpStatusCode,
         request: WebRequest
-    ): ResponseEntity<Any> =
+    ): ResponseEntity<Any>? =
         when (val cause = ex.cause) {
             is UnrecognizedPropertyException -> {
                 val payload = MessageErrorResponse(
@@ -122,10 +122,10 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
         ex: Exception,
         body: Any?,
         headers: HttpHeaders,
-        status: HttpStatus,
+        status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any> {
-        if (status == INTERNAL_SERVER_ERROR) {
+        if (status.value() == INTERNAL_SERVER_ERROR.value()) {
             logException(ex, request)
         }
         val payload = ErrorResponse(
@@ -281,7 +281,7 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
             append(request.headerMap)
 
             if (request is ServletWebRequest) {
-                val servletRequest: HttpServletRequest = request.request
+                val servletRequest = request.request
                 insert(0, " ")
                 insert(0, servletRequest.method)
                 val nativeRequest = WebUtils.getNativeRequest(servletRequest, ContentCachingRequestWrapper::class.java)
@@ -339,6 +339,9 @@ val WebRequest.requestURI: String
 
 private val WebRequest.headerMap: Map<String, String?>
     get() = headerNames.asSequence().associateWith { getHeader(it) }
+
+private inline val HttpStatusCode.reasonPhrase: String
+    get() = HttpStatus.valueOf(value()).reasonPhrase
 
 private fun <K, V> Map<K, Array<V>>.toParameterString() = when {
     entries.isNotEmpty() -> entries.joinToString(separator = "&", prefix = "?") { "${it.key}=${it.value.joinToString(separator = ",")}" }

@@ -22,7 +22,7 @@ operation::predicates-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::predicates-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::predicates-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[predicates-create]]
 == Creating Predicates

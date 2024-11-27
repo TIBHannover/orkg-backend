@@ -5,6 +5,7 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.orkg.common.ThingId
 import org.orkg.createClasses
 import org.orkg.createLiteral
 import org.orkg.createPredicate
@@ -87,7 +88,7 @@ class ContributionComparisonControllerIntegrationTest : RestDocumentationBaseTes
         val ids = listOf(cont1, cont2)
 
         mockMvc
-            .perform(getRequestTo("/api/contribution-comparisons/contributions/?ids=${ids.joinToString(separator = ",")}"))
+            .perform(getRequestTo("/api/contribution-comparisons/contributions").param("ids", *ids.map(ThingId::value).toTypedArray()))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(ids.size)))
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
@@ -114,7 +115,7 @@ class ContributionComparisonControllerIntegrationTest : RestDocumentationBaseTes
         val ids = listOf(cont1)
 
         mockMvc
-            .perform(getRequestTo("/api/contribution-comparisons/contributions/?ids=${ids.joinToString(separator = ",")}"))
+            .perform(getRequestTo("/api/contribution-comparisons/contributions").param("ids", *ids.map(ThingId::value).toTypedArray()))
             .andExpect(status().isBadRequest)
     }
 

@@ -3,16 +3,16 @@ package org.orkg.contenttypes.adapter.output.neo4j
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import org.neo4j.cypherdsl.core.Condition
-import org.neo4j.cypherdsl.core.Conditions
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.call
+import org.neo4j.cypherdsl.core.Cypher.exists
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
+import org.neo4j.cypherdsl.core.Cypher.noCondition
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.unionAll
 import org.neo4j.cypherdsl.core.Node
-import org.neo4j.cypherdsl.core.Predicates.exists
 import org.neo4j.cypherdsl.core.RelationshipPattern
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
@@ -88,7 +88,7 @@ class SpringDataNeo4jContentTypeAdapter(
                     .where(
                         visibility.toCondition { filter ->
                             filter.targets.map { node.property("visibility").eq(literalOf<String>(it.name)) }
-                                .reduceOrNull(Condition::or) ?: Conditions.noCondition()
+                                .reduceOrNull(Condition::or) ?: noCondition()
                         },
                         createdBy.toCondition { node.property("created_by").eq(anonParameter(it.value.toString())) },
                         createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))) },

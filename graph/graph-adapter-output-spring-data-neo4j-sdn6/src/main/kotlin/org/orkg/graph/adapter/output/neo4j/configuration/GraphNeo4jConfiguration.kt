@@ -2,7 +2,6 @@ package org.orkg.graph.adapter.output.neo4j.configuration
 
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
-import org.neo4j.driver.Driver
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -13,8 +12,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.neo4j.core.DatabaseSelectionProvider
-import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.convert.Neo4jConversions
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
 
@@ -38,11 +35,4 @@ class GraphNeo4jConfiguration {
             )
         )
     )
-
-    @Bean
-    fun neo4jClient(
-        driver: Driver,
-        databaseSelectionProvider: DatabaseSelectionProvider
-    ): Neo4jClient =
-        Neo4jClient.create(driver, databaseSelectionProvider)
 }

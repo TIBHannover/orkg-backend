@@ -27,7 +27,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithP
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -81,7 +81,7 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
         val exception = ContributionNotFound(id)
         every { contributionService.findById(id) } returns Optional.empty()
 
-        get("/api/contributions/$id")
+        mockMvc.perform(get("/api/contributions/{id}", id).accept("application/vnd.orkg.contribution.v2+json"))
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(jsonPath("$.path").value("/api/contributions/$id"))
@@ -107,9 +107,4 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
 
         verify(exactly = 1) { contributionService.findAll(any()) }
     }
-
-    private fun get(string: String) = mockMvc.perform(
-        MockMvcRequestBuilders.get(string)
-            .accept("application/vnd.orkg.contribution.v2+json")
-    )
 }

@@ -32,18 +32,10 @@ dependencies {
     testFixturesApi(libs.testcontainers.junit5)
     testFixturesApi(libs.testcontainers.neo4j)
     testFixturesApi(libs.testcontainers.postgresql)
-    testFixturesImplementation("org.hamcrest:hamcrest:2.2")
+    testFixturesApi(project(":common"))
+    testFixturesImplementation("org.hamcrest:hamcrest")
     testFixturesImplementation("org.springframework.security:spring-security-crypto")
     testFixturesImplementation(libs.assertj.core)
-    testFixturesImplementation(libs.restdocs.openapi) // FIXME: no idea why this works, but GAV does not
+    testFixturesImplementation("com.epages:restdocs-api-spec-mockmvc")
     testFixturesImplementation(libs.testcontainers.core)
-}
-
-dependencyAnalysis {
-    issues {
-        onUnusedDependencies {
-            // We do not use the "main" source set, so the (automatically added) stdlib is always unused.
-            exclude("org.jetbrains.kotlin:kotlin-stdlib")
-        }
-    }
 }

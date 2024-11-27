@@ -10,7 +10,7 @@ The widget can obtain information via a `GET` request to `/api/widgets/` by prov
 All request parameters are mutually exclusive.
 Providing none or more than one will respond with status code 400 (Bad Request).
 
-operation::widget-success[snippets=request-parameters]
+operation::widget-success[snippets=query-parameters]
 
 operation::widget-success[snippets=curl-request]
 

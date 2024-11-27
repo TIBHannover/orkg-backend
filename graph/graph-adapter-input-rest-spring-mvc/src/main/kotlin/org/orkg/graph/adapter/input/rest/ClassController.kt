@@ -1,7 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
 import java.time.OffsetDateTime
-import javax.validation.Valid
+import jakarta.validation.Valid
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId

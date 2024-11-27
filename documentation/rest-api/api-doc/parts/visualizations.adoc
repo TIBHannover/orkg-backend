@@ -23,7 +23,7 @@ operation::visualizations-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::visualizations-get-paged-with-parameters[snippets='request-parameters']
+operation::visualizations-get-paged-with-parameters[snippets='query-parameters']
 
 [[visualizations-create]]
 == Creating Visualizations

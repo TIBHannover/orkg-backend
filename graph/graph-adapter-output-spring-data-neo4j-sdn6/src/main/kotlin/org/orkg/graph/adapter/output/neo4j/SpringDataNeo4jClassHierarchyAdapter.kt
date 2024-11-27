@@ -3,17 +3,17 @@ package org.orkg.graph.adapter.output.neo4j
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.neo4j.cypherdsl.core.Cypher.anyNode
+import org.neo4j.cypherdsl.core.Cypher.collect
+import org.neo4j.cypherdsl.core.Cypher.count
+import org.neo4j.cypherdsl.core.Cypher.countDistinct
+import org.neo4j.cypherdsl.core.Cypher.elementId
+import org.neo4j.cypherdsl.core.Cypher.exists
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.unwind
-import org.neo4j.cypherdsl.core.Functions.collect
-import org.neo4j.cypherdsl.core.Functions.count
-import org.neo4j.cypherdsl.core.Functions.countDistinct
-import org.neo4j.cypherdsl.core.Functions.id
-import org.neo4j.cypherdsl.core.Predicates.exists
 import org.orkg.common.ThingId
 import org.orkg.common.neo4jdsl.CypherQueryBuilder
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
@@ -84,7 +84,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
                             "created_by", row.property("created_by"),
                             "created_at", row.property("created_at")
                         )
-                    ).returning(id(r))
+                    ).returning(elementId(r))
             }
             .withParameters(
                 "rows" to classRelations.map {

@@ -7,8 +7,8 @@ import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.name
-import org.neo4j.cypherdsl.core.Functions.size
-import org.neo4j.cypherdsl.core.Functions.toLower
+import org.neo4j.cypherdsl.core.Cypher.size
+import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.neo4jdsl.CypherQueryBuilder

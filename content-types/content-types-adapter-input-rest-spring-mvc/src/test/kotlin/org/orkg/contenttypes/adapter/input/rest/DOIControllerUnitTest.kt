@@ -25,6 +25,7 @@ import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -84,7 +85,8 @@ internal class DOIControllerUnitTest : RestDocsTest("dois") {
           "url": "http://localhost:3000/comparison/R696006/"
         }""".trimIndent()
 
-        post("/api/dois", request)
+        post("/api/dois")
+            .content(request)
             .accept(APPLICATION_JSON)
             .contentType(APPLICATION_JSON)
             .perform()

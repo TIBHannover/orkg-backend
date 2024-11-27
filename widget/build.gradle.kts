@@ -11,8 +11,6 @@ dependencies {
     api(project(":common"))
     api(project(":graph:graph-ports-input"))
     implementation(project(":graph:graph-core-model"))
-
-    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }
 
 testing {

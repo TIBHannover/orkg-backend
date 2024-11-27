@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.PositiveOrZero
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.PositiveOrZero
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId

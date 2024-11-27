@@ -113,7 +113,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
             "object_id" to r2
         )
 
-        mockMvc.perform(postRequestWithBody("/api/statements/", body))
+        mockMvc.perform(postRequestWithBody("/api/statements", body))
             .andExpect(status().isCreated)
     }
 
@@ -130,7 +130,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
             "object_id" to l
         )
 
-        mockMvc.perform(postRequestWithBody("/api/statements/", body))
+        mockMvc.perform(postRequestWithBody("/api/statements", body))
             .andExpect(status().isCreated)
     }
 

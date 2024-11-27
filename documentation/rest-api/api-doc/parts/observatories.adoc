@@ -48,7 +48,7 @@ A `GET` request returns a <<sorting-and-pagination,paged>> list of paper <<resou
 
 TIP: This call features filter configs, check the chapter <<filter-config>> for more information on filter configs.
 
-operation::observatory-resources-get-paged-with-filter-config[snippets='curl-request,request-parameters']
+operation::observatory-resources-get-paged-with-filter-config[snippets='curl-request,query-parameters']
 
 NOTE: Sorting is supported for the following fields: `id`, `created_by`, `created_at`.
 It is also possible to sort by the matched value of each search filter.

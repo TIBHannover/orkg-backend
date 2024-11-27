@@ -82,9 +82,10 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -168,7 +169,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = TemplateNotFound(id)
         every { templateService.findById(id) } returns Optional.empty()
 
-        get("/api/templates/$id")
+        get("/api/templates/{id}", id)
             .accept(TEMPLATE_JSON_V1)
             .perform()
             .andExpect(status().isNotFound)
@@ -240,7 +241,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             .andExpectTemplate("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("q").description("A search term that must be contained in the label of the template. (optional)."),
                         parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("visibility").description("""Filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED". (optional)"""),
@@ -325,7 +326,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = ClassNotFound.withThingId(ThingId("invalid"))
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -343,7 +345,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = TemplateAlreadyExistsForClass(ThingId("R123"), ThingId("R456"))
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -361,7 +364,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = ResearchFieldNotFound(ThingId("R22"))
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -379,7 +383,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = ResearchProblemNotFound(ThingId("R22"))
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -397,7 +402,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = PredicateNotFound(ThingId("R22"))
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -415,7 +421,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = InvalidMinCount(-1)
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -433,7 +440,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = InvalidMaxCount(-1)
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -451,7 +459,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = InvalidCardinality(5, 1)
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -469,7 +478,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = InvalidRegexPattern("\\", Exception("Invalid regex pattern"))
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -487,7 +497,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = PredicateNotFound("P123")
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -505,7 +516,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = OrganizationNotFound(OrganizationId(UUID.randomUUID()))
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -523,7 +535,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = ObservatoryNotFound(ObservatoryId(UUID.randomUUID()))
         every { templateService.create(any()) } throws exception
 
-        post("/api/templates", createTemplateRequest())
+        post("/api/templates")
+            .content(objectMapper.writeValueAsString(createTemplateRequest()))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -584,7 +597,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val id = ThingId("R123")
         every { templateService.createTemplateProperty(any()) } returns id
 
-        documentedPostRequestTo("/api/templates/{templateId}/properties", templateId)
+        documentedPostRequestTo("/api/templates/{id}/properties", templateId)
             .content(request)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -673,7 +686,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = ClassNotFound.withThingId(ThingId("invalid"))
         every { templateService.createTemplateProperty(any()) } throws exception
 
-        post("/api/templates/$templateId/properties", request)
+        post("/api/templates/{id}/properties", templateId)
+            .content(objectMapper.writeValueAsString(request))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -695,7 +709,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = InvalidMinCount(-1)
         every { templateService.createTemplateProperty(any()) } throws exception
 
-        post("/api/templates/$templateId/properties", request)
+        post("/api/templates/{id}/properties", templateId)
+            .content(objectMapper.writeValueAsString(request))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -717,7 +732,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = InvalidMaxCount(-1)
         every { templateService.createTemplateProperty(any()) } throws exception
 
-        post("/api/templates/$templateId/properties", request)
+        post("/api/templates/{id}/properties", templateId)
+            .content(objectMapper.writeValueAsString(request))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -739,7 +755,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = InvalidCardinality(5, 1)
         every { templateService.createTemplateProperty(any()) } throws exception
 
-        post("/api/templates/$templateId/properties", request)
+        post("/api/templates/{id}/properties", templateId)
+            .content(objectMapper.writeValueAsString(request))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -761,7 +778,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = InvalidRegexPattern("\\", PatternSyntaxException("Invalid regex pattern", "\\", 1))
         every { templateService.createTemplateProperty(any()) } throws exception
 
-        post("/api/templates/$templateId/properties", request)
+        post("/api/templates/{id}/properties", templateId)
+            .content(objectMapper.writeValueAsString(request))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -783,7 +801,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = PredicateNotFound("P123")
         every { templateService.createTemplateProperty(any()) } throws exception
 
-        post("/api/templates/$templateId/properties", request)
+        post("/api/templates/{id}/properties", templateId)
+            .content(objectMapper.writeValueAsString(request))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -805,7 +824,8 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         val exception = TemplateClosed(ThingId("P123"))
         every { templateService.createTemplateProperty(any()) } throws exception
 
-        post("/api/templates/$templateId/properties", request)
+        post("/api/templates/{id}/properties", templateId)
+            .content(objectMapper.writeValueAsString(request))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()

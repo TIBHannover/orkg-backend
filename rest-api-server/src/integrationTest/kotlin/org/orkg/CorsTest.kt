@@ -119,7 +119,7 @@ class CorsTest {
         override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> =
             Stream.of(
                 // API endpoints
-                Arguments.of("/api/resources/", "POST"),
+                Arguments.of("/api/resources", "POST"),
                 // AuthorizationServer endpoints
                 Arguments.of("/oauth/token", "POST"),
                 Arguments.of("/oauth/token_key", "POST"),

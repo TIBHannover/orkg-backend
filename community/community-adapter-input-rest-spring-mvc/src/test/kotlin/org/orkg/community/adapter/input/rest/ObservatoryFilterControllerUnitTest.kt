@@ -128,7 +128,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
 
         every { observatoryUseCases.findById(observatory.id) } returns Optional.empty()
 
-        get("/api/observatories/${observatory.id}/filters/$id")
+        get("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -147,7 +147,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { observatoryFilterUseCases.findById(id) } returns Optional.empty()
 
-        get("/api/observatories/${observatory.id}/filters/$id")
+        get("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -229,7 +229,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
 
         every { contributorService.findById(any()) } returns Optional.of(user)
 
-        delete("/api/observatories/${observatory.id}/filters/$id")
+        delete("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
             .perform()
             .andExpect(status().isForbidden)
 
@@ -250,7 +250,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
         every { observatoryUseCases.findById(observatory.id) } returns Optional.empty()
 
-        delete("/api/observatories/${observatory.id}/filters/$id")
+        delete("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -507,7 +507,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
         every { observatoryFilterUseCases.update(any()) } throws exception
 
-        patch("/api/observatories/${observatory.id}/filters/$id")
+        patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
             .content(objectMapper.writeValueAsString(command))
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
@@ -543,7 +543,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
         every { observatoryFilterUseCases.update(any()) } throws exception
 
-        patch("/api/observatories/${observatory.id}/filters/$id")
+        patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
             .content(objectMapper.writeValueAsString(command))
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
@@ -579,7 +579,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
         every { observatoryFilterUseCases.update(any()) } throws exception
 
-        patch("/api/observatories/${observatory.id}/filters/$id")
+        patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
             .content(objectMapper.writeValueAsString(command))
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
@@ -614,7 +614,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { contributorService.findById(any()) } returns Optional.of(user)
 
-        patch("/api/observatories/${observatory.id}/filters/$id")
+        patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
             .content(objectMapper.writeValueAsString(command))
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
@@ -643,7 +643,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
 
         every { observatoryUseCases.findById(observatoryId) } returns Optional.empty()
 
-        patch("/api/observatories/$observatoryId/filters/$id")
+        patch("/api/observatories/{observatoryId}/filters/{id}", observatoryId, id)
             .content(objectMapper.writeValueAsString(command))
             .contentType(MediaType.APPLICATION_JSON)
             .perform()

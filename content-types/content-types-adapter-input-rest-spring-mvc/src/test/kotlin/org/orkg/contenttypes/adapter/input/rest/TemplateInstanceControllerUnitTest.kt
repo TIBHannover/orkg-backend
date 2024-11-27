@@ -51,7 +51,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -132,7 +132,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
 
         every { service.findById(templateId, id) } returns Optional.empty()
 
-        get("/api/templates/$templateId/instances/$id")
+        get("/api/templates/{templateId}/instances/{id}", templateId, id)
             .accept(TEMPLATE_INSTANCE_JSON_V1)
             .perform()
             .andExpect(status().isNotFound)
@@ -200,7 +200,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             .andExpectTemplateInstance("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
                         parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("visibility").description("""Filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED". (optional)"""),

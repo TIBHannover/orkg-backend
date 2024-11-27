@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.core.MethodParameter
 import org.springframework.core.annotation.AnnotatedElementUtils
+import org.springframework.data.web.config.EnableSpringDataWebSupport
+import org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.DIRECT
 import org.springframework.http.MediaType
 import org.springframework.web.accept.ContentNegotiationManager
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,6 +16,10 @@ import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+
+@Configuration
+@EnableSpringDataWebSupport(pageSerializationMode = DIRECT)
+class PagedSerializationConfiguration
 
 @Configuration
 @Import(MediaTypeCapabilityRegistry::class)

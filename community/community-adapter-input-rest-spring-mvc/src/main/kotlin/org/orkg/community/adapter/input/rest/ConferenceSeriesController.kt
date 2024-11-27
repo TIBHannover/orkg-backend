@@ -3,7 +3,7 @@ package org.orkg.community.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 import java.util.*
-import javax.validation.Valid
+import jakarta.validation.Valid
 import org.orkg.common.OrganizationId
 import org.orkg.community.domain.BadPeerReviewType
 import org.orkg.community.domain.ConferenceAlreadyExists

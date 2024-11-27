@@ -20,7 +20,7 @@ operation::literals-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::literals-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::literals-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[literals-create]]
 == Creating Literals

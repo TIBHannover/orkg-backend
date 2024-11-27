@@ -13,7 +13,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -25,13 +25,16 @@ import org.springframework.web.bind.annotation.RestController
 internal class PageTest : RestDocsTest("paged") {
     @Test
     fun page() {
-        mockMvc.perform(documentedGetRequestTo("/page?page={page}&size={size}&sort={sort}", 0, 10, "label,desc"))
+        mockMvc
+            .perform(
+                documentedGetRequestTo("/page").param("page", "0").param("size", "10").param("sort", "label", "desc")
+            )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andDo(MockMvcResultHandlers.print())
             .andExpectPage()
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("page").description("The page number requested, 0-indexed.").optional(),
                         parameterWithName("size")
                             .description("The number of elements per page. May be lowered if it exceeds the limit.")

@@ -83,7 +83,7 @@ class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
         )
 
         mockMvc
-            .perform(getRequestTo("/api/observatories/"))
+            .perform(getRequestTo("/api/observatories"))
             .andExpect(status().isOk)
             .andDo(
                 document(

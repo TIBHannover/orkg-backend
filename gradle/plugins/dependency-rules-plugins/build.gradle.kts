@@ -6,5 +6,5 @@ dependencies {
     implementation(platform(project(":plugins-platform")))
 
     implementation("dev.jacomet.gradle.plugins:logging-capabilities")
-    implementation("org.gradlex:java-ecosystem-capabilities")
+    implementation("org.gradlex:jvm-dependency-conflict-resolution")
 }

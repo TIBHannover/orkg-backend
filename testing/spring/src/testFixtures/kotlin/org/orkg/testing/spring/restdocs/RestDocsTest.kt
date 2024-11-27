@@ -4,6 +4,7 @@ import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
+import org.orkg.common.configuration.PagedSerializationConfiguration
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -23,12 +24,11 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.ResultHandler
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@Import(SecurityTestConfiguration::class)
+@Import(SecurityTestConfiguration::class, PagedSerializationConfiguration::class)
 @ExtendWith(RestDocumentationExtension::class)
 @TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
 abstract class RestDocsTest(val prefix: String) {
@@ -75,9 +75,6 @@ abstract class RestDocsTest(val prefix: String) {
 
     protected fun MockHttpServletRequestBuilder.content(body: Any): MockHttpServletRequestBuilder =
         content(body.toContent())
-
-    protected fun post(string: String, body: Any): MockHttpServletRequestBuilder =
-        MockMvcRequestBuilders.post(string).content(body.toContent())
 
     private fun Any.toContent(): String = if (this is String) this else objectMapper.writeValueAsString(this)
 

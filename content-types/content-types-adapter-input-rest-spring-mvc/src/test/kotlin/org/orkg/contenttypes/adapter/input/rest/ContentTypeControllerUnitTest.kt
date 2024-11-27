@@ -43,7 +43,7 @@ import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -149,7 +149,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
             .andExpectSmartReview("$.content[5]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("classes").description("Filter for the content type classes. Available classes are ${ContentTypeClass.entries.joinToString(",") { "\"$it\"" }} (optional)"),
                         parameterWithName("visibility").description("Filter for visibility. Either of ${VisibilityFilter.entries.joinToString(",") { "\"$it\"" }}. (optional)"),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created this content type. (optional)"),

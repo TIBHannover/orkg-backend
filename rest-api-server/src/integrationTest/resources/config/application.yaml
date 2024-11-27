@@ -10,7 +10,6 @@ spring:
     password: postgres
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
     show-sql: true

@@ -1,7 +1,7 @@
 package org.orkg.testing
 
+import jakarta.persistence.EntityManager
 import java.math.BigInteger
-import javax.persistence.EntityManager
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

@@ -54,10 +54,8 @@ import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -136,7 +134,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         )
         every { resourceService.findAllContributorsByResourceId(id, any()) } returns contributors
 
-        mockMvc.perform(get("/api/resources/$id/contributors"))
+        mockMvc.perform(get("/api/resources/{id}/contributors", id))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -148,7 +146,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         val id = ThingId("R123")
         every { resourceService.findAllContributorsByResourceId(id, any()) } throws ResourceNotFound.withId(id)
 
-        mockMvc.perform(get("/api/resources/$id/contributors"))
+        mockMvc.perform(get("/api/resources/{id}/contributors", id))
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.message").value("""Resource "$id" not found."""))
@@ -173,7 +171,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         )
         every { resourceService.findTimelineByResourceId(id, any()) } returns timeline
 
-        mockMvc.perform(get("/api/resources/$id/timeline"))
+        mockMvc.perform(get("/api/resources/{id}/timeline", id))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -185,7 +183,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         val id = ThingId("R123")
         every { resourceService.findTimelineByResourceId(id, any()) } throws ResourceNotFound.withId(id)
 
-        mockMvc.perform(get("/api/resources/$id/timeline"))
+        mockMvc.perform(get("/api/resources/{id}/timeline", id))
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.message").value("""Resource "$id" not found."""))
@@ -209,7 +207,12 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         )
         every { resourceService.create(any<CreateCommand>()) } throws exception
 
-        mockMvc.performPost("/api/resources", command)
+        mockMvc.perform(
+            post("/api/resources")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(objectMapper.writeValueAsString(command))
+        )
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -231,7 +234,12 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
         every { resourceService.findById(any()) } returns Optional.of(resource)
         every { resourceService.update(command) } throws exception
 
-        mockMvc.performPut("/api/resources/${resource.id}", command)
+        mockMvc.perform(
+            put("/api/resources/{id}", resource.id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(objectMapper.writeValueAsString(command))
+        )
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -295,7 +303,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpectResource("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
                         parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("visibility").description("""Filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED". (optional)"""),
@@ -345,18 +353,4 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/resources"))
     }
-
-    private fun MockMvc.performPost(urlTemplate: String, request: Any): ResultActions = perform(
-        post(urlTemplate)
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding("UTF-8")
-            .content(objectMapper.writeValueAsString(request))
-    )
-
-    private fun MockMvc.performPut(urlTemplate: String, request: Any): ResultActions = perform(
-        put(urlTemplate)
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding("UTF-8")
-            .content(objectMapper.writeValueAsString(request))
-    )
 }

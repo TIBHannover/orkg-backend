@@ -39,7 +39,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -93,7 +93,7 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
             .andDo(
                 documentationHandler.document(
                     pathParameters(parameterWithName("id").description("The ID of the research field.")),
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("classes").description("A list of classes to filter against. The classes must support research fields. Must be one of $supportedClasses."),
                         *legacyVisibilityFilterRequestParameters(),
                         visibilityFilterRequestParameter(),

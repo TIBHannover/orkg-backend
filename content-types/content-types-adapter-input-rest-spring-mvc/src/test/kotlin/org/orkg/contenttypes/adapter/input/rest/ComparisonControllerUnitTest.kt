@@ -70,7 +70,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -157,7 +157,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = ComparisonNotFound(id)
         every { comparisonService.findById(id) } returns Optional.empty()
 
-        get("/api/comparisons/$id")
+        get("/api/comparisons/{id}", id)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isNotFound)
@@ -230,7 +230,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpectComparison("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("title").description("A search term that must be contained in the title of the comparison. (optional)"),
                         parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("doi").description("Filter for the DOI of the comparison. (optional)"),
@@ -337,7 +337,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             comparisonService.findRelatedResourceById(comparisonId, comparisonRelatedResourceId)
         } returns Optional.empty()
 
-        get("/api/comparisons/$comparisonId/related-resources/$comparisonRelatedResourceId")
+        get("/api/comparisons/{comparisonId}/related-resources/{comparisonRelatedResourceId}", comparisonId, comparisonRelatedResourceId)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isNotFound)
@@ -422,7 +422,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             comparisonService.findRelatedFigureById(comparisonId, comparisonRelatedFigureId)
         } returns Optional.empty()
 
-        get("/api/comparisons/$comparisonId/related-figures/$comparisonRelatedFigureId")
+        get("/api/comparisons/{comparisonId}/related-figures/{comparisonRelatedFigureId}", comparisonId, comparisonRelatedFigureId)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isNotFound)
@@ -689,7 +689,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = RequiresAtLeastTwoContributions()
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons", createComparisonRequest())
+        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -707,7 +707,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = ContributionNotFound(ThingId("R123"))
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons", createComparisonRequest())
+        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -725,7 +725,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = OnlyOneResearchFieldAllowed()
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons", createComparisonRequest())
+        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -743,7 +743,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = ResearchFieldNotFound(ThingId("R123"))
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons", createComparisonRequest())
+        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -761,7 +761,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = OnlyOneOrganizationAllowed()
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons", createComparisonRequest())
+        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -779,7 +779,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = OnlyOneObservatoryAllowed()
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons", createComparisonRequest())
+        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -797,7 +797,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = AuthorNotFound(ThingId("R123"))
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons", createComparisonRequest())
+        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -821,7 +821,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         )
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons", createComparisonRequest())
+        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -876,7 +876,11 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = ComparisonNotFound(comparisonId)
         every { comparisonService.createComparisonRelatedResource(any()) } throws exception
 
-        post("/api/comparisons/$comparisonId/related-resources", createComparisonRelatedResourceRequest())
+        post("/api/comparisons/$comparisonId/related-resources").content(
+            objectMapper.writeValueAsString(
+                createComparisonRelatedResourceRequest()
+            )
+        )
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -930,7 +934,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = ComparisonNotFound(comparisonId)
         every { comparisonService.createComparisonRelatedFigure(any()) } throws exception
 
-        post("/api/comparisons/$comparisonId/related-figures", createComparisonRelatedFigureRequest())
+        post("/api/comparisons/$comparisonId/related-figures")
+            .content(objectMapper.writeValueAsString(createComparisonRelatedFigureRequest()))
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()

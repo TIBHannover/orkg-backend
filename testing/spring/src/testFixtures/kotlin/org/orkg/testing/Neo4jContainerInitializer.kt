@@ -4,7 +4,6 @@ import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
 import org.testcontainers.containers.Neo4jContainer
-import org.testcontainers.containers.Neo4jLabsPlugin
 import org.testcontainers.utility.DockerImageName
 
 /**
@@ -16,7 +15,7 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
     companion object {
         val neo4jContainer: Neo4jContainer<*> = Neo4jContainer(DockerImageName.parse("neo4j:4.4-community"))
             .withoutAuthentication()
-            .withLabsPlugins(Neo4jLabsPlugin.APOC) // adds significant startup overhead
+            .withPlugins("apoc")
     }
 
     override fun initialize(applicationContext: ConfigurableApplicationContext) {

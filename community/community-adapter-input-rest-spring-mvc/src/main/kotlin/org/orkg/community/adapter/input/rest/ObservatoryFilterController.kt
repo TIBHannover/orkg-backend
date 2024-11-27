@@ -1,7 +1,7 @@
 package org.orkg.community.adapter.input.rest
 
-import javax.validation.Valid
-import javax.validation.constraints.Size
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId

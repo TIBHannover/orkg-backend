@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.OffsetDateTime
 import java.util.*
-import javax.validation.Valid
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Positive
-import javax.validation.constraints.PositiveOrZero
-import javax.validation.constraints.Size
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Positive
+import jakarta.validation.constraints.PositiveOrZero
+import jakarta.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId

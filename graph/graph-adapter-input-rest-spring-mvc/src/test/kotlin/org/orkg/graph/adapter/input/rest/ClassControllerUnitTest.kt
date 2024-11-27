@@ -49,7 +49,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
@@ -114,7 +114,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             .andExpectClass("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
                         parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created the class. (optional)"),
@@ -144,7 +144,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
         val exception = UnknownSortingProperty("unknown")
         every { classService.findAll(any()) } throws exception
 
-        mockMvc.perform(get("/api/classes?sort=unknown"))
+        mockMvc.perform(get("/api/classes").param("sort", "unknown"))
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -404,7 +404,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
     }
 
     private fun performGetByURI(uri: String) =
-        get("/api/classes?uri=$uri")
+        get("/api/classes").param("uri", uri)
             .contentType(MediaType.APPLICATION_JSON)
             .characterEncoding("UTF-8")
 

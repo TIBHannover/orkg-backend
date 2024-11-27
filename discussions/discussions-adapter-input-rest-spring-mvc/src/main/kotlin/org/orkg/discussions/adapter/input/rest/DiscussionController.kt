@@ -1,8 +1,8 @@
 package org.orkg.discussions.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import javax.validation.Valid
-import javax.validation.constraints.NotBlank
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId

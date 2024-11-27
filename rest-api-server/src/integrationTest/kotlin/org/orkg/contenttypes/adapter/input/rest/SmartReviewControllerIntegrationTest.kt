@@ -466,7 +466,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val smartReviewSectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
             .content(updateComparisonSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -509,7 +509,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val smartReviewSectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
             .content(updateVisualizationSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -552,7 +552,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val smartReviewSectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
             .content(updateResourceSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -595,7 +595,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val smartReviewSectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
             .content(updatePredicateSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -642,7 +642,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val smartReviewSectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
             .content(updateOntologySectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -690,7 +690,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val smartReviewSectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/$smartReviewId/sections/$smartReviewSectionId")
+        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
             .content(updateTextSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)

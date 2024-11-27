@@ -80,7 +80,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -170,7 +170,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = PaperNotFound(id)
         every { paperService.findById(id) } returns Optional.empty()
 
-        get("/api/papers/$id")
+        get("/api/papers/{id}", id)
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -250,7 +250,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andExpectPaper("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("title").description("A search term that must be contained in the title of the paper. (optional)"),
                         parameterWithName("exact").description("Whether title matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("doi").description("Filter for the DOI of the paper. (optional)"),
@@ -338,7 +338,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = PaperNotFound(id)
         every { paperService.findAllContributorsByPaperId(id, any()) } throws exception
 
-        get("/api/papers/$id/contributors")
+        get("/api/papers/{id}/contributors", id)
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
@@ -543,7 +543,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = OnlyOneResearchFieldAllowed()
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -561,7 +562,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = OnlyOneOrganizationAllowed()
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -579,7 +581,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = OnlyOneObservatoryAllowed()
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -597,7 +600,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = ThingNotDefined("R123")
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -615,7 +619,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = AuthorNotFound(ThingId("R123"))
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -633,7 +638,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = DuplicateTempIds(mapOf("#temp1" to 2))
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -651,7 +657,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = InvalidTempId("invalid")
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -669,7 +676,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = PaperAlreadyExists.withTitle("paper title")
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -687,7 +695,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = PaperAlreadyExists.withIdentifier("paper title")
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -711,7 +720,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         )
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -729,7 +739,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = ThingIsNotAClass(ThingId("R123"))
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -747,7 +758,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = ThingIsNotAPredicate("R123")
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -765,7 +777,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = InvalidStatementSubject("R123")
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -783,7 +796,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = ThingNotFound("R123")
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -801,7 +815,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = EmptyContribution(0)
         every { paperService.create(any()) } throws exception
 
-        post("/api/papers", createPaperRequest())
+        post("/api/papers")
+            .content(objectMapper.writeValueAsString(createPaperRequest()))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -1073,7 +1088,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = InvalidTempId("invalid")
         every { paperService.createContribution(any()) } throws exception
 
-        post("/api/papers/$paperId/contributions", createContributionRequest())
+        post("/api/papers/{id}/contributions", paperId)
+            .content(objectMapper.writeValueAsString(createContributionRequest()))
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1092,7 +1108,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = DuplicateTempIds(mapOf("#temp1" to 2))
         every { paperService.createContribution(any()) } throws exception
 
-        post("/api/papers/$paperId/contributions", createContributionRequest())
+        post("/api/papers/{id}/contributions", paperId)
+            .content(objectMapper.writeValueAsString(createContributionRequest()))
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1111,7 +1128,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = PaperNotFound(ThingId("R123"))
         every { paperService.createContribution(any()) } throws exception
 
-        post("/api/papers/$paperId/contributions", createContributionRequest())
+        post("/api/papers/{id}/contributions", paperId)
+            .content(objectMapper.writeValueAsString(createContributionRequest()))
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1130,7 +1148,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = ThingNotDefined("R123")
         every { paperService.createContribution(any()) } throws exception
 
-        post("/api/papers/$paperId/contributions", createContributionRequest())
+        post("/api/papers/{id}/contributions", paperId)
+            .content(objectMapper.writeValueAsString(createContributionRequest()))
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1149,7 +1168,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = ThingNotFound("R123")
         every { paperService.createContribution(any()) } throws exception
 
-        post("/api/papers/$paperId/contributions", createContributionRequest())
+        post("/api/papers/{id}/contributions", paperId)
+            .content(objectMapper.writeValueAsString(createContributionRequest()))
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1168,7 +1188,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = ThingIsNotAClass(ThingId("R123"))
         every { paperService.createContribution(any()) } throws exception
 
-        post("/api/papers/$paperId/contributions", createContributionRequest())
+        post("/api/papers/{id}/contributions", paperId)
+            .content(objectMapper.writeValueAsString(createContributionRequest()))
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1187,7 +1208,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = ThingIsNotAPredicate("R123")
         every { paperService.createContribution(any()) } throws exception
 
-        post("/api/papers/$paperId/contributions", createContributionRequest())
+        post("/api/papers/{id}/contributions", paperId)
+            .content(objectMapper.writeValueAsString(createContributionRequest()))
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1206,7 +1228,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = InvalidStatementSubject("R123")
         every { paperService.createContribution(any()) } throws exception
 
-        post("/api/papers/$paperId/contributions", createContributionRequest())
+        post("/api/papers/{id}/contributions", paperId)
+            .content(objectMapper.writeValueAsString(createContributionRequest()))
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1225,7 +1248,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = EmptyContribution()
         every { paperService.createContribution(any()) } throws exception
 
-        post("/api/papers/$paperId/contributions", createContributionRequest())
+        post("/api/papers/{id}/contributions", paperId)
+            .content(objectMapper.writeValueAsString(createContributionRequest()))
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()

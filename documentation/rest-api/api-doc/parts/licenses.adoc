@@ -4,4 +4,4 @@ License information of external code repositories can be obtained through the or
 
 NOTE: The endpoint currently only supports GitHub repository URIs.
 
-operation::licenses-get-license[snippets='request-parameters,curl-request,http-response,response-fields']
+operation::licenses-get-license[snippets='query-parameters,curl-request,http-response,response-fields']

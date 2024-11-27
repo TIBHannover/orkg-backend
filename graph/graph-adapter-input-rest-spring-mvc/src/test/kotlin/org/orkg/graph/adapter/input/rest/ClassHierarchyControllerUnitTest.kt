@@ -40,6 +40,7 @@ import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfig
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -90,7 +91,7 @@ internal class ClassHierarchyControllerUnitTest {
         every { classHierarchyService.findChildren(parentId, any()) } returns PageImpl(listOf(response))
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        get("/api/classes/$parentId/children")
+        mockMvc.perform(get("/api/classes/{id}/children", parentId))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].class.id").value(response.`class`.id.value))
             .andExpect(jsonPath("$.content[0].child_count").value(response.childCount))
@@ -105,7 +106,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every { classHierarchyService.findChildren(parentId, any()) } throws ClassNotFound.withThingId(parentId)
 
-        get("/api/classes/$parentId/children")
+        mockMvc.perform(get("/api/classes/{id}/children", parentId))
             .andExpect(status().isNotFound)
     }
 
@@ -124,7 +125,7 @@ internal class ClassHierarchyControllerUnitTest {
             )
         } returns pageOf()
 
-        get("/api/classes/$childId/parent")
+        mockMvc.perform(get("/api/classes/{id}/parent", childId))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(parentId.value))
 
@@ -144,7 +145,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every { classHierarchyService.findParent(childId) } throws ClassNotFound.withThingId(childId)
 
-        get("/api/classes/$childId/parent")
+        mockMvc.perform(get("/api/classes/{id}/parent", childId))
             .andExpect(status().isNotFound)
     }
 
@@ -154,7 +155,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every { classHierarchyService.findParent(childId) } returns Optional.empty()
 
-        get("/api/classes/$childId/parent")
+        mockMvc.perform(get("/api/classes/{id}/parent", childId))
             .andExpect(status().isNoContent)
     }
 
@@ -173,7 +174,7 @@ internal class ClassHierarchyControllerUnitTest {
             )
         } returns pageOf()
 
-        get("/api/classes/$childId/root")
+        mockMvc.perform(get("/api/classes/{id}/root", childId))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(rootId.value))
 
@@ -193,7 +194,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every { classHierarchyService.findRoot(childId) } throws ClassNotFound.withThingId(childId)
 
-        get("/api/classes/$childId/root")
+        mockMvc.perform(get("/api/classes/{id}/root", childId))
             .andExpect(status().isNotFound)
     }
 
@@ -203,7 +204,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every { classHierarchyService.findRoot(childId) } returns Optional.empty()
 
-        get("/api/classes/$childId/root")
+        mockMvc.perform(get("/api/classes/{id}/root", childId))
             .andExpect(status().isNoContent)
     }
 
@@ -217,7 +218,12 @@ internal class ClassHierarchyControllerUnitTest {
         every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) } returns Unit
 
         mockMvc
-            .perform(performPost("/api/classes/$parentId/children", request))
+            .perform(
+                MockMvcRequestBuilders.post("/api/classes/{id}/children", parentId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isCreated)
             .andExpect(header().string("location", endsWith("/api/classes/$parentId/children")))
 
@@ -236,7 +242,12 @@ internal class ClassHierarchyControllerUnitTest {
         } throws ClassNotFound.withThingId(childId)
 
         mockMvc
-            .perform(performPost("/api/classes/$parentId/children", request))
+            .perform(
+                MockMvcRequestBuilders.post("/api/classes/{id}/children", parentId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isNotFound)
     }
 
@@ -251,7 +262,12 @@ internal class ClassHierarchyControllerUnitTest {
         } throws InvalidSubclassRelation(classId, classId)
 
         mockMvc
-            .perform(performPost("/api/classes/$classId/children", request))
+            .perform(
+                MockMvcRequestBuilders.post("/api/classes/{id}/children", classId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isBadRequest)
     }
 
@@ -268,7 +284,12 @@ internal class ClassHierarchyControllerUnitTest {
         } throws ParentClassAlreadyExists(childId, otherParentId)
 
         mockMvc
-            .perform(performPost("/api/classes/$parentId/children", request))
+            .perform(
+                MockMvcRequestBuilders.post("/api/classes/{id}/children", parentId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isBadRequest)
     }
 
@@ -282,7 +303,12 @@ internal class ClassHierarchyControllerUnitTest {
         every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) } returns Unit
 
         mockMvc
-            .perform(performPatch("/api/classes/$parentId/children", request))
+            .perform(
+                MockMvcRequestBuilders.patch("/api/classes/{id}/children", parentId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isOk)
             .andExpect(header().string("location", endsWith("/api/classes/$parentId/children")))
 
@@ -308,7 +334,12 @@ internal class ClassHierarchyControllerUnitTest {
         } throws ClassNotFound.withThingId(childId)
 
         mockMvc
-            .perform(performPatch("/api/classes/$parentId/children", request))
+            .perform(
+                MockMvcRequestBuilders.patch("/api/classes/{id}/children", parentId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isNotFound)
     }
 
@@ -323,7 +354,12 @@ internal class ClassHierarchyControllerUnitTest {
         } throws InvalidSubclassRelation(classId, classId)
 
         mockMvc
-            .perform(performPatch("/api/classes/$classId/children", request))
+            .perform(
+                MockMvcRequestBuilders.patch("/api/classes/{id}/children", classId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isBadRequest)
     }
 
@@ -340,7 +376,12 @@ internal class ClassHierarchyControllerUnitTest {
         } throws ParentClassAlreadyExists(childId, otherParentId)
 
         mockMvc
-            .perform(performPatch("/api/classes/$parentId/children", request))
+            .perform(
+                MockMvcRequestBuilders.patch("/api/classes/{id}/children", parentId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isBadRequest)
     }
 
@@ -352,7 +393,7 @@ internal class ClassHierarchyControllerUnitTest {
         every { classHierarchyService.delete(childId) } returns Unit
 
         mockMvc
-            .perform(MockMvcRequestBuilders.delete("/api/classes/$childId/parent"))
+            .perform(MockMvcRequestBuilders.delete("/api/classes/{id}/parent", childId))
             .andExpect(status().isNoContent)
             .andExpect(content().string(""))
 
@@ -367,7 +408,7 @@ internal class ClassHierarchyControllerUnitTest {
         every { classHierarchyService.delete(childId) } throws ClassNotFound.withThingId(childId)
 
         mockMvc
-            .perform(MockMvcRequestBuilders.delete("/api/classes/$childId/parent"))
+            .perform(MockMvcRequestBuilders.delete("/api/classes/{id}/parent", childId))
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { classHierarchyService.delete(childId) }
@@ -383,7 +424,12 @@ internal class ClassHierarchyControllerUnitTest {
         every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) } returns Unit
 
         mockMvc
-            .perform(performPost("/api/classes/$childId/parent", request))
+            .perform(
+                MockMvcRequestBuilders.post("/api/classes/{id}/parent", childId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isCreated)
             .andExpect(header().string("location", endsWith("/api/classes/$childId/parent")))
 
@@ -402,7 +448,12 @@ internal class ClassHierarchyControllerUnitTest {
         } throws ClassNotFound.withThingId(childId)
 
         mockMvc
-            .perform(performPost("/api/classes/$childId/parent", request))
+            .perform(
+                MockMvcRequestBuilders.post("/api/classes/{id}/parent", childId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isNotFound)
     }
 
@@ -417,7 +468,12 @@ internal class ClassHierarchyControllerUnitTest {
         } throws InvalidSubclassRelation(classId, classId)
 
         mockMvc
-            .perform(performPost("/api/classes/$classId/parent", request))
+            .perform(
+                MockMvcRequestBuilders.post("/api/classes/{id}/parent", classId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isBadRequest)
     }
 
@@ -434,7 +490,12 @@ internal class ClassHierarchyControllerUnitTest {
         } throws ParentClassAlreadyExists(childId, otherParentId)
 
         mockMvc
-            .perform(performPost("/api/classes/$childId/parent", request))
+            .perform(
+                MockMvcRequestBuilders.post("/api/classes/{id}/parent", childId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .content(objectMapper.writeValueAsString(request))
+            )
             .andExpect(status().isBadRequest)
     }
 
@@ -444,7 +505,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every { classHierarchyService.countClassInstances(id) } returns 5
 
-        get("/api/classes/$id/count")
+        mockMvc.perform(get("/api/classes/{id}/count", id))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.count").value(5))
     }
@@ -455,7 +516,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every { classHierarchyService.countClassInstances(id) } throws ClassNotFound.withThingId(id)
 
-        get("/api/classes/$id/count")
+        mockMvc.perform(get("/api/classes/{id}/count", id))
             .andExpect(status().isNotFound)
     }
 
@@ -472,7 +533,7 @@ internal class ClassHierarchyControllerUnitTest {
         )
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        get("/api/classes/$childId/hierarchy")
+        mockMvc.perform(get("/api/classes/{id}/hierarchy", childId))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].class.id").value(childId.value))
             .andExpect(jsonPath("$.content[0].parent_id").value(parentId.value))
@@ -487,21 +548,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every { classHierarchyService.findClassHierarchy(childId, any()) } throws ClassNotFound.withThingId(childId)
 
-        get("/api/classes/$childId/hierarchy")
+        mockMvc.perform(get("/api/classes/{id}/hierarchy", childId))
             .andExpect(status().isNotFound)
     }
-
-    private fun performPost(uri: String, body: Map<out Any, Any>) =
-        MockMvcRequestBuilders.post(uri)
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding("UTF-8")
-            .content(objectMapper.writeValueAsString(body))
-
-    private fun performPatch(uri: String, body: Map<out Any, Any>) =
-        MockMvcRequestBuilders.patch(uri)
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding("UTF-8")
-            .content(objectMapper.writeValueAsString(body))
-
-    private fun get(uri: String) = mockMvc.perform(MockMvcRequestBuilders.get(uri))
 }

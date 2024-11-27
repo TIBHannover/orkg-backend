@@ -49,6 +49,4 @@ dependencies {
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-n3")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-rdfxml")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-trig")
-
-    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }

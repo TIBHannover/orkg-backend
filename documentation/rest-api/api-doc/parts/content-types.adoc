@@ -16,4 +16,4 @@ operation::content-types-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::content-types-get-paged-with-parameters[snippets='request-parameters']
+operation::content-types-get-paged-with-parameters[snippets='query-parameters']

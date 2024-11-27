@@ -33,7 +33,7 @@ import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -98,7 +98,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.FEATURED, any())
         } returns PageImpl(listOf(paperResource))
 
-        get("/api/observatories/$id/papers?visibility=FEATURED")
+        get("/api/observatories/{id}/papers", id).param("visibility", "FEATURED")
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -187,7 +187,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
             .andExpectResource("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("filter_config").description("The filter config to use. (optional)"),
                         parameterWithName("visibility").description("Visibility of this resource. Can be one of \"listed\", \"featured\", \"unlisted\" or \"deleted\". (optional)")
                     )
@@ -228,7 +228,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
             resourceService.findAllProblemsByObservatoryId(id, any())
         } returns PageImpl(listOf(problemResource))
 
-        get("/api/observatories/$id/problems")
+        get("/api/observatories/{id}/problems", id)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()

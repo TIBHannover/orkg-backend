@@ -21,7 +21,7 @@ operation::resources-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::resources-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::resources-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[resources-create]]
 == Creating Resources

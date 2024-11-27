@@ -201,7 +201,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         mockMvc
-            .perform(getRequestTo("/api/benchmarks/summary/research-field/$fieldWithDataset?sort=problem.id,ASC"))
+            .perform(getRequestTo("/api/benchmarks/summary/research-field/$fieldWithDataset").param("sort", "problem.id", "ASC"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             // The resulting summaries are "duplicates", but listed for each research problem:
@@ -259,7 +259,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         mockMvc
-            .perform(getRequestTo("/api/benchmarks/summary/"))
+            .perform(getRequestTo("/api/benchmarks/summary"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.content[*].research_problem.id", containsInAnyOrder(problem1.value, problem2.value)))
@@ -328,7 +328,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(dummyBenchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         mockMvc
-            .perform(getRequestTo("/api/benchmarks/summary/"))
+            .perform(getRequestTo("/api/benchmarks/summary"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.content[*].research_problem.id", containsInAnyOrder(problem1.value, problem2.value)))

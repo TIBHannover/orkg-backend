@@ -10,12 +10,12 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.listRepositoryContract
 import org.orkg.testing.Neo4jContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Import
 import org.springframework.test.context.ContextConfiguration
 
+@EnableAutoConfiguration
 @DataNeo4jTest
 @EnableCaching
 @ContextConfiguration(

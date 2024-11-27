@@ -2,8 +2,8 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URI
-import javax.validation.Valid
-import javax.validation.constraints.Size
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Size
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.UnpublishableThing

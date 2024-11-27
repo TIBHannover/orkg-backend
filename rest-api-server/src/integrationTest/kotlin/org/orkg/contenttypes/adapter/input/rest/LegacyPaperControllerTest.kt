@@ -36,7 +36,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -118,12 +118,12 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers/", paper))
+            .perform(postRequestWithBody("/api/papers", paper))
             .andExpect(status().isCreated)
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("mergeIfExists")
                             .description("Boolean (default = false) to merge newly added contribution in the paper if it already exists")
                             .optional()
@@ -199,13 +199,13 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers/?mergeIfExists=True", paperWithEmptyDOI))
+            .perform(postRequestWithBody("/api/papers", paperWithEmptyDOI).param("mergeIfExists", "true"))
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id", not(originalId)))
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("mergeIfExists")
                             .description("Boolean (default = false) to merge newly added contribution in the paper if it already exists")
                             .optional()
@@ -246,13 +246,13 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers/?mergeIfExists=True", paperWithSameTitle))
+            .perform(postRequestWithBody("/api/papers", paperWithSameTitle).param("mergeIfExists", "true"))
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").value(originalId))
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("mergeIfExists")
                             .description("Boolean (default = false) to merge newly added contribution in the paper if it already exists")
                             .optional()
@@ -293,13 +293,13 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers/?mergeIfExists=True", paperWithSameDOI))
+            .perform(postRequestWithBody("/api/papers", paperWithSameDOI).param("mergeIfExists", "true"))
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").value(originalId))
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("mergeIfExists")
                             .description("Boolean (default = false) to merge newly added contribution in the paper if it already exists")
                             .optional()
@@ -340,13 +340,13 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers/?mergeIfExists=True", paperWithSameTitleAndDOI))
+            .perform(postRequestWithBody("/api/papers", paperWithSameTitleAndDOI).param("mergeIfExists", "true"))
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").value(originalId))
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("mergeIfExists")
                             .description("Boolean (default = false) to merge newly added contribution in the paper if it already exists")
                             .optional()
@@ -371,7 +371,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers/?mergeIfExists=false", paperWithNoResearchField))
+            .perform(postRequestWithBody("/api/papers", paperWithNoResearchField).param("mergeIfExists", "false"))
             .andExpect(status().isBadRequest)
     }
 
@@ -392,10 +392,10 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
 
         // Create the paper twice. It should create two papers.
         mockMvc
-            .perform(postRequestWithBody("/api/papers/?mergeIfExists=false", paper))
+            .perform(postRequestWithBody("/api/papers", paper).param("mergeIfExists", "false"))
             .andExpect(status().isCreated)
         mockMvc
-            .perform(postRequestWithBody("/api/papers/?mergeIfExists=false", paper))
+            .perform(postRequestWithBody("/api/papers", paper).param("mergeIfExists", "false"))
             .andExpect(status().isCreated)
     }
 
@@ -417,7 +417,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
         statementService.create(unrelatedPaper, predicate1, unrelatedResource)
 
         mockMvc
-            .perform(getRequestTo("/api/papers/?linkedTo=$id&size=50"))
+            .perform(getRequestTo("/api/papers").param("linkedTo", "$id").param("size", "50"))
             .andExpect(status().isOk)
             .andDo(
                 document(

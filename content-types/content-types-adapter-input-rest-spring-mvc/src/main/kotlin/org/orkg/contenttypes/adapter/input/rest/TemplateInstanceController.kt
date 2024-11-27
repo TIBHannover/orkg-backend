@@ -2,7 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.OffsetDateTime
-import javax.validation.Valid
+import jakarta.validation.Valid
 import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId

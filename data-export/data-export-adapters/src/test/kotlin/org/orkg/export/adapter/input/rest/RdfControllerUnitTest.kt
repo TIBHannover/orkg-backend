@@ -32,7 +32,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -103,7 +103,7 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
             .andExpect(jsonPath("$.content[0].label", `is`("Resource 1234")))
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("q").description("The search string for the label."),
                         parameterWithName("exact").description("Determine if exact search should be performed. (Default: `false`)"),
                         parameterWithName("type").description("The type of entity to be retrieved. Can be one of `property`, `class`, or `item`."),

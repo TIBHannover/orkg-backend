@@ -1,10 +1,10 @@
 package org.orkg.statistics.adapter.output.neo4j
 
 import org.neo4j.cypherdsl.core.Cypher.anyNode
+import org.neo4j.cypherdsl.core.Cypher.count
+import org.neo4j.cypherdsl.core.Cypher.exists
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Functions.count
-import org.neo4j.cypherdsl.core.Predicates.*
 import org.orkg.common.neo4jdsl.CypherQueryBuilder
 import org.orkg.common.neo4jdsl.QueryCache.Uncached
 import org.orkg.common.neo4jdsl.SingleQueryBuilder.fetchAs

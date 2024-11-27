@@ -23,7 +23,7 @@ operation::templates-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::templates-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::templates-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[templates-create]]
 == Creating Templates

@@ -417,7 +417,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val propertyId = template.properties.first().id
 
-        put("/api/templates/$templateId/properties/$propertyId")
+        put("/api/templates/{templateId}/properties/{propertyId}", templateId, propertyId)
             .content(updateUntypedTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -475,7 +475,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val propertyId = template.properties.first().id
 
-        put("/api/templates/$templateId/properties/$propertyId")
+        put("/api/templates/{templateId}/properties/{propertyId}", templateId, propertyId)
             .content(updateStringLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -536,7 +536,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val propertyId = template.properties.first().id
 
-        put("/api/templates/$templateId/properties/$propertyId")
+        put("/api/templates/{templateId}/properties/{propertyId}", templateId, propertyId)
             .content(updateNumberLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -596,7 +596,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val propertyId = template.properties.first().id
 
-        put("/api/templates/$templateId/properties/$propertyId")
+        put("/api/templates/{templateId}/properties/{propertyId}", templateId, propertyId)
             .content(updateOtherLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -654,7 +654,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val propertyId = template.properties.first().id
 
-        put("/api/templates/$templateId/properties/$propertyId")
+        put("/api/templates/{templateId}/properties/{propertyId}", templateId, propertyId)
             .content(updateResourceTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)

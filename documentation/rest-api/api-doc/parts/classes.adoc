@@ -20,7 +20,7 @@ operation::classes-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::classes-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::classes-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[classes-create]]
 == Creating Classes

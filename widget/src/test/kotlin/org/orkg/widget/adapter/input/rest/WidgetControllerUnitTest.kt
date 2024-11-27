@@ -69,7 +69,7 @@ class WidgetControllerUnitTest : RestDocsTest("widget") {
                                 All request parameters are mutually exclusive.
                                 """.trimIndent()
                             )
-                            .requestParameters(
+                            .queryParameters(
                                 parameterWithName("doi").optional()
                                     .description("The DOI of the resource to search."),
                                 parameterWithName("title").optional()
@@ -97,7 +97,10 @@ class WidgetControllerUnitTest : RestDocsTest("widget") {
             "title"
         )
 
-        mockMvc.perform(documentedGetRequestTo("/api/widgets/?doi={doi}&title={title}", EXAMPLE_DOI, "some title"))
+        mockMvc.perform(documentedGetRequestTo("/api/widgets")
+            .param("doi", EXAMPLE_DOI)
+            .param("title", "some title")
+        )
             .andExpect(status().isBadRequest)
             .andExpect(
                 jsonPath(

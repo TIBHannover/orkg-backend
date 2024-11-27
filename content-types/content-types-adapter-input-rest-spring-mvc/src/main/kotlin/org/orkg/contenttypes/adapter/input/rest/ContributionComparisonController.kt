@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 class ContributionComparisonController(
     private val retrieveContributionComparisons: RetrieveComparisonContributionsUseCase,
 ) {
-    @GetMapping("/api/contribution-comparisons/contributions/")
+    @GetMapping("/api/contribution-comparisons/contributions")
     fun getContributionsDetails(
         @RequestParam("ids") contributionIds: List<ThingId>,
         pageable: Pageable

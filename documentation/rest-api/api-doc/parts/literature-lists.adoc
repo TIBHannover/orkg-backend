@@ -23,7 +23,7 @@ operation::literature-lists-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::literature-lists-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::literature-lists-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[literature-lists-create]]
 == Creating Literature Lists

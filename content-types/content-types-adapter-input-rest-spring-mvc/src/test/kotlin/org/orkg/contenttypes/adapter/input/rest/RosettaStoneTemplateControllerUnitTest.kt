@@ -49,7 +49,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -120,7 +120,7 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
         val exception = RosettaStoneTemplateNotFound(id)
         every { templateService.findById(id) } returns Optional.empty()
 
-        get("/api/rosetta-stone/templates/$id")
+        get("/api/rosetta-stone/templates/{id}", id)
             .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .perform()
             .andExpect(status().isNotFound)
@@ -179,7 +179,7 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
             .andExpectRosettaStoneTemplate("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("q").description("Optional filter for the rosetta stone template label.").optional(),
                         parameterWithName("exact").description("Optional flag for whether label matching should be exact. (default: false)").optional(),
                         parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),

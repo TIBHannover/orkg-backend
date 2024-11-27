@@ -7,14 +7,15 @@ import org.apache.lucene.queryparser.classic.QueryParser
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.jetbrains.annotations.Contract
 import org.neo4j.cypherdsl.core.Condition
-import org.neo4j.cypherdsl.core.Conditions
 import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
+import org.neo4j.cypherdsl.core.Cypher.noCondition
 import org.neo4j.cypherdsl.core.Cypher.node
+import org.neo4j.cypherdsl.core.Cypher.toLower
+import org.neo4j.cypherdsl.core.ExposesWith
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.FunctionInvocation
-import org.neo4j.cypherdsl.core.Functions
 import org.neo4j.cypherdsl.core.PatternElement
 import org.neo4j.cypherdsl.core.ResultStatement
 import org.neo4j.cypherdsl.core.SortItem
@@ -212,10 +213,10 @@ fun comparisonNode() = node("Comparison", "Resource")
 fun problemNode() = node("Problem", "Resource")
 fun contributionNode() = node("Contribution", "Resource")
 
-fun StatementBuilder.ExposesWith.withSortableFields(node: String) =
+fun ExposesWith.withSortableFields(node: String) =
     withSortableFields(name(node))
 
-fun StatementBuilder.ExposesWith.withSortableFields(node: Expression) =
+fun ExposesWith.withSortableFields(node: SymbolicName) =
     with(
         node,
         node.property("label").`as`("label"),
@@ -244,7 +245,7 @@ fun Sort.toSortItems(
         }
         var expression: Expression = propertyMappings?.get(sort.property) ?: name(sort.property)
         if (sort.isIgnoreCase) {
-            expression = Functions.toLower(expression)
+            expression = toLower(expression)
         }
         when (sort.direction) {
             Sort.Direction.DESC -> expression.descending()
@@ -253,20 +254,20 @@ fun Sort.toSortItems(
     }.toList()
 
 inline fun <T> T?.toCondition(mapper: (T) -> Condition): Condition =
-    this?.let(mapper) ?: Conditions.noCondition()
+    this?.let(mapper) ?: noCondition()
 
 inline fun <T : Collection<*>> T.toCondition(mapper: (T) -> Condition): Condition =
-    if (isEmpty()) Conditions.noCondition() else mapper(this)
+    if (isEmpty()) noCondition() else mapper(this)
 
 fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
     vararg conditions: Condition
 ): StatementBuilder.OrderableOngoingReadingAndWithWithWhere =
-    where(conditions.reduceOrNull(Condition::and) ?: Conditions.noCondition())
+    where(conditions.reduceOrNull(Condition::and) ?: noCondition())
 
 fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
     conditions: kotlin.collections.List<Condition>
 ): StatementBuilder.OrderableOngoingReadingAndWithWithWhere =
-    where(conditions.reduceOrNull(Condition::and) ?: Conditions.noCondition())
+    where(conditions.reduceOrNull(Condition::and) ?: noCondition())
 
 fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere?.call(
     function: String,

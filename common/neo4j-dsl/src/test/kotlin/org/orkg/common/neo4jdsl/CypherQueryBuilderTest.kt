@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.neo4j.cypherdsl.core.Cypher.anyNode
+import org.neo4j.cypherdsl.core.Cypher.count
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
-import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Statement
 import org.neo4j.driver.summary.ResultSummary
 import org.springframework.data.domain.PageRequest

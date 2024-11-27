@@ -1,7 +1,7 @@
 package org.orkg.community.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import javax.validation.Valid
+import jakarta.validation.Valid
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId

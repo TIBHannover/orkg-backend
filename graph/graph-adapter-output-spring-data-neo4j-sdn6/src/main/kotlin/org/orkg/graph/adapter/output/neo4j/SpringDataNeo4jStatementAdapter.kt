@@ -4,27 +4,28 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.neo4j.cypherdsl.core.Condition
-import org.neo4j.cypherdsl.core.Conditions
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.asExpression
 import org.neo4j.cypherdsl.core.Cypher.call
+import org.neo4j.cypherdsl.core.Cypher.collect
+import org.neo4j.cypherdsl.core.Cypher.count
+import org.neo4j.cypherdsl.core.Cypher.countDistinct
+import org.neo4j.cypherdsl.core.Expression
+import org.neo4j.cypherdsl.core.Node
+import org.neo4j.cypherdsl.core.Cypher.exists
 import org.neo4j.cypherdsl.core.Cypher.listOf
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
+import org.neo4j.cypherdsl.core.Cypher.noCondition
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Cypher.valueAt
-import org.neo4j.cypherdsl.core.Expression
-import org.neo4j.cypherdsl.core.Functions.collect
-import org.neo4j.cypherdsl.core.Functions.count
-import org.neo4j.cypherdsl.core.Functions.countDistinct
-import org.neo4j.cypherdsl.core.Node
-import org.neo4j.cypherdsl.core.Predicates.exists
+import org.neo4j.cypherdsl.core.ExposesWith
 import org.neo4j.cypherdsl.core.Relationship
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.orkg.common.ContributorId
@@ -281,7 +282,7 @@ class SpringDataNeo4jStatementAdapter(
                         node("Thing").relationshipTo(`object`, RELATED)
                             .named(r)
                     )
-                    .with(id.asExpression(), count(r).`as`(count))
+                    .with(id, count(r).`as`(count))
                     .returning(id, count)
             }
             .withParameters("ids" to ids.map { it.value })
@@ -574,7 +575,7 @@ class SpringDataNeo4jStatementAdapter(
                     .withProperties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
             ).where(
                 toUpper(l.property("label")).eq(toUpper(parameter("doi")))
-                    .and(classes.map { p.hasLabels(it.value) }.reduceOrNull(Condition::or) ?: Conditions.noCondition())
+                    .and(classes.map { p.hasLabels(it.value) }.reduceOrNull(Condition::or) ?: noCondition())
             ).returning(p)
                 .orderBy(p.property("created_at").descending())
                 .limit(1)
@@ -713,7 +714,7 @@ class SpringDataNeo4jStatementAdapter(
                     .yield(relationships)
                     .with(relationships, n)
                     .unwind(relationships).`as`(rel)
-                    .withDistinct(collect(rel).add(collect(endNode(rel))).add(collect(n)).`as`(nodes), n.asExpression())
+                    .withDistinct(collect(rel).add(collect(endNode(rel))).add(collect(n)).`as`(nodes), n)
                     .unwind(nodes).`as`(node)
                     .with(node, n)
                     .where(
@@ -725,7 +726,7 @@ class SpringDataNeo4jStatementAdapter(
                         node.property("created_by").`as`(createdBy),
                         call("custom.parseIsoOffsetDateTime")
                             .withArgs(node.property("created_at"), literalOf<String>("ms"))
-                            .asFunction().`as`(ms).asExpression()
+                            .asFunction().`as`(ms)
                     )
                     .withDistinct(edit)
             }
@@ -924,14 +925,14 @@ class SpringDataNeo4jStatementAdapter(
         cacheManager?.getCache(THING_ID_TO_THING_CACHE)?.evictIfPresent(id)
     }
 
-    private fun StatementBuilder.ExposesWith.returningWithSortableFields(
+    private fun ExposesWith.returningWithSortableFields(
         relation: String,
         subject: String,
         `object`: String
     ): StatementBuilder.OngoingReadingAndReturn =
         returningWithSortableFields(name(relation), name(subject), name(`object`))
 
-    private fun StatementBuilder.ExposesWith.returningWithSortableFields(
+    private fun ExposesWith.returningWithSortableFields(
         relation: Expression,
         subject: Expression,
         `object`: Expression

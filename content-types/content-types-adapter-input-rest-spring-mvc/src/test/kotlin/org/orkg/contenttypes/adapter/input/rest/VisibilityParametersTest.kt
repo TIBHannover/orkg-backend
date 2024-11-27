@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,7 +29,7 @@ internal class VisibilityParametersTest : RestDocsTest("visibility") {
             .andExpect(status().isNoContent)
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         *legacyVisibilityFilterRequestParameters(),
                         // Intentionally ignore the "visibility" parameter, so it does not appear in the snippet
                         parameterWithName("visibility").optional().ignored(),
@@ -44,7 +44,7 @@ internal class VisibilityParametersTest : RestDocsTest("visibility") {
             .param("visibility", "ALL_LISTED")
             .perform()
             .andExpect(status().isNoContent)
-            .andDo(documentationHandler.document(requestParameters(visibilityFilterRequestParameter())))
+            .andDo(documentationHandler.document(queryParameters(visibilityFilterRequestParameter())))
     }
 
     @RestController

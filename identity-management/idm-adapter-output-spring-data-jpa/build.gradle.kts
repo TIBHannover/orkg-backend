@@ -19,7 +19,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-jpa")
     api(project(":identity-management:idm-core-model"))
-    implementation("javax.validation:validation-api")
+    implementation("jakarta.validation:jakarta.validation-api")
 }
 
 testing {

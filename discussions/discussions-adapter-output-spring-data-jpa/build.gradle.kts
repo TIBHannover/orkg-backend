@@ -15,7 +15,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("javax.validation:validation-api")
+    implementation("jakarta.validation:jakarta.validation-api")
     runtimeOnly(project(":migrations:liquibase"))
 
     containerTestApi("org.springframework.boot:spring-boot-test-autoconfigure")
@@ -38,7 +38,6 @@ testing {
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.springframework:spring-beans")
                 runtimeOnly(project(":migrations:liquibase"))
-                runtimeOnly("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
                 runtimeOnly(libs.liquibase)
                 runtimeOnly(libs.postgres.driver)
             }

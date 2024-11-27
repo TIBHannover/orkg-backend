@@ -30,7 +30,7 @@ operation::papers-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::papers-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::papers-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[papers-create]]
 == Creating Papers

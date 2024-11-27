@@ -35,7 +35,7 @@ operation::statements-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::statements-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::statements-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[statements-create]]
 == Creating Statements

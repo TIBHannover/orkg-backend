@@ -3,11 +3,11 @@ package org.orkg.common.neo4jdsl
 import java.util.*
 import java.util.function.BiFunction
 import kotlin.reflect.KClass
+import org.neo4j.cypherdsl.core.Cypher.count
+import org.neo4j.cypherdsl.core.Cypher.countDistinct
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.ExposesReturning
-import org.neo4j.cypherdsl.core.Functions.count
-import org.neo4j.cypherdsl.core.Functions.countDistinct
 import org.neo4j.cypherdsl.core.ResultStatement
 import org.neo4j.cypherdsl.core.Statement
 import org.neo4j.cypherdsl.core.StatementBuilder.BuildableStatement
@@ -297,7 +297,7 @@ class PagedQueryBuilderImpl {
                     .build()
             }
             val content = neo4jClient.query(if (appendSort) contentQuery.cypher.sortedWith(pageable.sort) else contentQuery.cypher)
-                .bindAll(parameters + ("skip" to pageable.offset) + ("limit" to pageable.pageSize) + contentQuery.parameters)
+                .bindAll(parameters + ("skip" to pageable.offset) + ("limit" to pageable.pageSize) + contentQuery.catalog.parameters)
                 .fetchAs(targetClass.java)
                 .let { if (mappingFunction != null) it.mappedBy(mappingFunction) else it }
                 .all()
@@ -307,7 +307,7 @@ class PagedQueryBuilderImpl {
                     .build()
             }
             val count = neo4jClient.query(countQuery.cypher)
-                .bindAll(parameters + countQuery.parameters)
+                .bindAll(parameters + countQuery.catalog.parameters)
                 .fetchAs(Long::class.java)
                 .one()
                 .orElse(0)

@@ -32,6 +32,4 @@ dependencies {
     api(project(":licenses:licenses-ports-input"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(project(":licenses:licenses-core-model"))
-
-    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }

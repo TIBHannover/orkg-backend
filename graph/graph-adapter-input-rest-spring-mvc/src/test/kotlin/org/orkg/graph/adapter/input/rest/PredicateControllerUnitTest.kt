@@ -44,9 +44,10 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -96,7 +97,7 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
             )
         } returns pageOf()
 
-        documentedPostRequestTo("/api/predicates/")
+        documentedPostRequestTo("/api/predicates")
             .content(request)
             .contentType(APPLICATION_JSON)
             .perform()
@@ -162,7 +163,8 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
             )
         } returns pageOf()
 
-        post("/api/predicates", request)
+        post("/api/predicates")
+            .content(objectMapper.writeValueAsString(request))
             .contentType(APPLICATION_JSON)
             .perform()
             .andExpect(status().isCreated)
@@ -230,7 +232,7 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
             .andExpectPredicate("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
                         parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created the predicate. (optional)"),

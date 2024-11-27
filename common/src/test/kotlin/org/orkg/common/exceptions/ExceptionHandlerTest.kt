@@ -52,7 +52,8 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
 
     @Test
     fun jsonMissingFieldException() {
-        post("/errors/json", """{"field": "abc", "nested": {}}""")
+        post("/errors/json")
+            .content("""{"field": "abc", "nested": {}}""")
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isBadRequest)
@@ -65,7 +66,8 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
 
     @Test
     fun jsonUnknownFieldException() {
-        post("/errors/json", """{"field": "abc", "nested": {"unknown": 1, "field": "def", "list": []}}""")
+        post("/errors/json")
+            .content("""{"field": "abc", "nested": {"unknown": 1, "field": "def", "list": []}}""")
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isBadRequest)
@@ -78,7 +80,8 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
 
     @Test
     fun jsonTypeMismatchException() {
-        post("/errors/json", """{"field": "abc", "nested": {"field": [], "list": []}}""")
+        post("/errors/json")
+            .content("""{"field": "abc", "nested": {"field": [], "list": []}}""")
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isBadRequest)
@@ -91,7 +94,8 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
 
     @Test
     fun jsonTypeMismatchArrayException() {
-        post("/errors/json", """{"field": "abc", "array": [{"unknown": 1}] "nested": {"field": "def", "list": []}}""")
+        post("/errors/json")
+            .content("""{"field": "abc", "array": [{"unknown": 1}] "nested": {"field": "def", "list": []}}""")
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isBadRequest)
@@ -104,7 +108,8 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
 
     @Test
     fun jsonNullValueInCollectionException() {
-        post("/errors/json", """{"field": "abc", "nested": {"field": "def", "list": [null]}}""")
+        post("/errors/json")
+            .content("""{"field": "abc", "nested": {"field": "def", "list": [null]}}""")
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isBadRequest)
@@ -117,7 +122,8 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
 
     @Test
     fun jsonNullValueException() {
-        post("/errors/json", """{"field": null, "nested": {"field": "def", "list": []}}""")
+        post("/errors/json")
+            .content("""{"field": null, "nested": {"field": "def", "list": []}}""")
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isBadRequest)
@@ -130,7 +136,8 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
 
     @Test
     fun jsonMalformedException() {
-        post("/errors/json", """{"field": "abc" "nested": {"field": "def", "list": []}}""")
+        post("/errors/json")
+            .content("""{"field": "abc" "nested": {"field": "def", "list": []}}""")
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isBadRequest)

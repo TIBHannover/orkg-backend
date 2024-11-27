@@ -78,7 +78,7 @@ class StatisticsControllerTest : RestDocumentationBaseTest() {
         literalService.createLiteral(label = "Out of this world")
         literalService.createLiteral(label = "We are crazy")
 
-        mockMvc.perform(getRequestTo("/api/stats/")).andExpect(status().isOk).andDo(
+        mockMvc.perform(getRequestTo("/api/stats")).andExpect(status().isOk).andDo(
             document(
                 snippet, statsResponseFields()
             )

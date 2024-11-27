@@ -49,7 +49,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -176,7 +176,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpectLiteral("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
                         parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("created_by").description("Filter for the UUID of the user or service who created this literal. (optional)"),
@@ -339,7 +339,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .content(objectMapper.writeValueAsString(literal))
 
     private fun updateOf(literal: LiteralUpdateRequest, id: String) =
-        MockMvcRequestBuilders.put("/api/literals/$id")
+        MockMvcRequestBuilders.put("/api/literals/{id}", id)
             .contentType(APPLICATION_JSON)
             .characterEncoding("UTF-8")
             .content(objectMapper.writeValueAsString(literal))

@@ -46,6 +46,4 @@ dependencies {
     implementation("org.springframework.security:spring-security-core")
     implementation("org.springframework.security:spring-security-oauth2-core")
     implementation("org.springframework.security:spring-security-oauth2-jose")
-
-    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }

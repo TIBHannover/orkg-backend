@@ -186,7 +186,7 @@ internal class DiscussionControllerUnitTest {
 
         every { discussionService.findByTopicAndCommentId(topic, id) } throws TopicNotFound(topic)
 
-        mockMvc.perform(get("/api/discussions/topic/$topic/$id"))
+        mockMvc.perform(get("/api/discussions/topic/{topic}/{id}", topic, id))
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.error").value("Not Found"))
@@ -202,7 +202,7 @@ internal class DiscussionControllerUnitTest {
 
         every { discussionService.findByTopicAndCommentId(topic, id) } returns Optional.empty()
 
-        mockMvc.perform(get("/api/discussions/topic/$topic/$id"))
+        mockMvc.perform(get("/api/discussions/topic/{topic}/{id}", topic, id))
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.error").value("Not Found"))
@@ -225,7 +225,7 @@ internal class DiscussionControllerUnitTest {
 
         every { discussionService.findByTopicAndCommentId(topic, id) } returns Optional.of(comment)
 
-        mockMvc.perform(get("/api/discussions/topic/$topic/$id"))
+        mockMvc.perform(get("/api/discussions/topic/{topic}/{id}", topic, id))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(comment.id.value.toString()))
             .andExpect(jsonPath("$.message").value(comment.message))
@@ -239,7 +239,7 @@ internal class DiscussionControllerUnitTest {
 
         every { discussionService.findAllByTopic(topic, any()) } throws TopicNotFound(topic)
 
-        mockMvc.perform(get("/api/discussions/topic/$topic"))
+        mockMvc.perform(get("/api/discussions/topic/{topic}", topic))
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.error").value("Not Found"))
@@ -267,7 +267,7 @@ internal class DiscussionControllerUnitTest {
 
         every { discussionService.findAllByTopic(topic, any()) } returns page
 
-        mockMvc.perform(get("/api/discussions/topic/$topic"))
+        mockMvc.perform(get("/api/discussions/topic/{topic}", topic))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(1)))
             .andExpect(jsonPath("$.content[0].id").value(comment.id.value.toString()))
@@ -284,7 +284,7 @@ internal class DiscussionControllerUnitTest {
 
         every { discussionService.delete(ContributorId(MockUserId.USER), topic, id) } returns Unit
 
-        mockMvc.perform(delete("/api/discussions/topic/$topic/$id"))
+        mockMvc.perform(delete("/api/discussions/topic/{topic}/{id}", topic, id))
             .andExpect(status().isNoContent)
     }
 
@@ -293,7 +293,7 @@ internal class DiscussionControllerUnitTest {
         val topic = ThingId("C1234")
         val id = DiscussionCommentId(UUID.randomUUID())
 
-        mockMvc.perform(delete("/api/discussions/topic/$topic/$id"))
+        mockMvc.perform(delete("/api/discussions/topic/{topic}/{id}", topic, id))
             .andExpect(status().isForbidden)
     }
 
@@ -305,7 +305,7 @@ internal class DiscussionControllerUnitTest {
 
         every { discussionService.delete(ContributorId(MockUserId.USER), topic, id) } throws UserNotFound(MockUserId.USER)
 
-        mockMvc.perform(delete("/api/discussions/topic/$topic/$id"))
+        mockMvc.perform(delete("/api/discussions/topic/{topic}/{id}", topic, id))
             .andExpect(status().isBadRequest)
     }
 
@@ -318,7 +318,7 @@ internal class DiscussionControllerUnitTest {
 
         every { discussionService.delete(contributorId, topic, id) } throws NeitherOwnerNorCurator(contributorId)
 
-        mockMvc.perform(delete("/api/discussions/topic/$topic/$id"))
+        mockMvc.perform(delete("/api/discussions/topic/{topic}/{id}", topic, id))
             .andExpect(status().isForbidden)
     }
 

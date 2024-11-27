@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.Valid
 import java.io.ByteArrayInputStream
 import java.util.*
-import javax.servlet.http.HttpServletResponse
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Pattern
-import javax.validation.constraints.Size
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 import org.apache.tomcat.util.http.fileupload.IOUtils
 import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId

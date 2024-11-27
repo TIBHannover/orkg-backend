@@ -19,7 +19,7 @@ dependencies {
     api(project(":eventbus"))
     api("org.springframework:spring-beans")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("javax.validation:validation-api")
+    implementation("jakarta.validation:jakarta.validation-api")
     implementation(project(":graph:graph-core-model"))
     implementation(project(":media-storage:media-storage-core-model"))
 
@@ -51,7 +51,6 @@ testing {
                 implementation("org.springframework:spring-beans")
                 implementation(libs.assertj.core)
                 runtimeOnly(project(":migrations:liquibase"))
-                runtimeOnly("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove or make version-less after upgrade to 2.7
                 runtimeOnly(libs.liquibase)
                 runtimeOnly(libs.postgres.driver)
             }

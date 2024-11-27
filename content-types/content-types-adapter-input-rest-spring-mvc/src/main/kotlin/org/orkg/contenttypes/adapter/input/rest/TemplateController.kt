@@ -2,9 +2,9 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.OffsetDateTime
-import javax.validation.Valid
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Size
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId

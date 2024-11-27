@@ -12,7 +12,7 @@ dependencies {
     api(project(":media-storage:media-storage-ports-output"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework:spring-core")
-    implementation("javax.validation:validation-api")
+    implementation("jakarta.validation:jakarta.validation-api")
     implementation(project(":common"))
 
     containerTestApi("org.junit.jupiter:junit-jupiter-api")
@@ -39,7 +39,6 @@ testing {
                 runtimeOnly(libs.kotest.extensions.spring)
                 runtimeOnly(libs.liquibase)
                 runtimeOnly(libs.postgres.driver)
-                runtimeOnly("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
             }
         }
     }

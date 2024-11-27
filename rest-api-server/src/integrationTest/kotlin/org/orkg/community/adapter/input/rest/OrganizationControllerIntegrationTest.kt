@@ -73,7 +73,7 @@ class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createOrganization(createdBy = contributorId)
 
         mockMvc
-            .perform(getRequestTo("/api/organizations/"))
+            .perform(getRequestTo("/api/organizations"))
             .andExpect(status().isOk)
             .andDo(
                 document(

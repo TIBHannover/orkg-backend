@@ -36,7 +36,7 @@ testing {
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("com.fasterxml.jackson.core:jackson-core")
-    api("javax.validation:validation-api")
+    api("jakarta.validation:jakarta.validation-api")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-core")
     api("org.springframework:spring-context")
@@ -45,6 +45,4 @@ dependencies {
     api(project(":common"))
     api(project(":discussions:discussions-core-model"))
     api(project(":discussions:discussions-ports-input"))
-
-    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }

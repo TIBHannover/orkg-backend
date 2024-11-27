@@ -65,21 +65,18 @@ testing {
                 implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.postgresql:postgresql")
-                implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
-                    exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
-                }
+                implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.forkhandles.values4k)
-                implementation("io.rest-assured:rest-assured:5.4.0")
+                implementation("io.rest-assured:rest-assured")
                 implementation("jakarta.persistence:jakarta.persistence-api")
                 implementation("org.hamcrest:hamcrest")
-                implementation("org.hibernate:hibernate-core:5.4.32.Final")
                 implementation("org.springframework.data:spring-data-commons")
                 implementation("org.springframework:spring-core")
                 implementation("org.springframework:spring-web")
                 implementation(libs.assertj.core)
                 implementation(libs.testcontainers.keycloak)
-                implementation("io.rest-assured:json-path:5.4.0")
+                implementation("io.rest-assured:json-path")
                 implementation(libs.keycloak.core)
                 runtimeOnly(libs.keycloak.client.common)
                 runtimeOnly("org.springframework.boot:spring-boot")
@@ -107,9 +104,6 @@ tasks.named<Jar>("jar") {
 }
 
 dependencies {
-    testApi(enforcedPlatform(libs.junit5.bom))
-    "integrationTestApi"(enforcedPlatform(libs.junit5.bom))
-
     kapt(platform("org.orkg:platform"))
 
     implementation(kotlin("stdlib")) // "downgrade" from api()
@@ -221,17 +215,12 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7 or make version-less ???
     runtimeOnly(libs.liquibase)
-    implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
-        exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
-    }
+    implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    // implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-cache")
-    // implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.data:spring-data-neo4j")
     implementation(libs.spring.boot.starter.neo4j.migrations)
@@ -246,7 +235,7 @@ dependencies {
     implementation("net.datafaker:datafaker:1.7.0")
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    runtimeOnly("org.jolokia:jolokia-core")
+    // runtimeOnly("org.jolokia:jolokia-core")
     runtimeOnly("io.micrometer:micrometer-registry-jmx")
     //
     // Testing

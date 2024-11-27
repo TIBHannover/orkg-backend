@@ -13,7 +13,7 @@ dependencies {
     api(project(":graph:graph-ports-output"))
 
     api("org.neo4j.driver:neo4j-java-driver")
-    api("org.neo4j:neo4j-cypher-dsl:2022.8.5")
+    api("org.neo4j:neo4j-cypher-dsl")
     api("org.springframework.boot:spring-boot-autoconfigure")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-neo4j")

@@ -412,7 +412,7 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val literatureListSectionId = literatureList.sections.last().id
 
-        put("/api/literature-lists/$literatureListId/sections/$literatureListSectionId")
+        put("/api/literature-lists/{literatureListId}/sections/{literatureListSectionId}", literatureListId, literatureListSectionId)
             .content(updateTextSectionJson)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
@@ -468,7 +468,7 @@ class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
 
         val literatureListSectionId = literatureList.sections.last().id
 
-        put("/api/literature-lists/$literatureListId/sections/$literatureListSectionId")
+        put("/api/literature-lists/{literatureListId}/sections/{literatureListSectionId}", literatureListId, literatureListSectionId)
             .content(updateListSectionJson)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)

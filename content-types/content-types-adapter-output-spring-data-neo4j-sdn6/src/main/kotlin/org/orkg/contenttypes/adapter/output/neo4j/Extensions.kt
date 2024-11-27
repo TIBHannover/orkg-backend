@@ -12,9 +12,9 @@ import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.unionAll
 import org.neo4j.cypherdsl.core.Cypher.valueAt
-import org.neo4j.cypherdsl.core.Functions.collect
+import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Node
-import org.neo4j.cypherdsl.core.Predicates.exists
+import org.neo4j.cypherdsl.core.Cypher.exists
 import org.neo4j.cypherdsl.core.RelationshipPattern
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
@@ -155,7 +155,7 @@ private fun matchPublishedLiteratureLists(
         llp.relationshipFrom(node("LiteratureList").named(lll), RELATED)
             .withProperties("predicate_id", literalOf<String>(Predicates.hasPublishedVersion.value))
     ).with(
-        lll.asExpression(),
+        lll,
         valueAt(call("apoc.coll.sortNodes").withArgs(collect(llp), literalOf<String>("created_at")).asFunction(), 0).`as`(symbolicName)
     ).let {
         val patterns = patternGenerator(anyNode().named(symbolicName))
@@ -199,7 +199,7 @@ private fun matchPublishedSmartReviews(
         srp.relationshipFrom(node("SmartReview").named(srl), RELATED)
             .withProperties("predicate_id", literalOf<String>(Predicates.hasPublishedVersion.value))
     ).with(
-        srl.asExpression(),
+        srl,
         valueAt(call("apoc.coll.sortNodes").withArgs(collect(srp), literalOf<String>("created_at")).asFunction(), 0).`as`(symbolicName)
     ).let {
         val patterns = patternGenerator(anyNode().named(symbolicName))

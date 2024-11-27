@@ -1,31 +1,24 @@
+import org.gradlex.jvm.dependency.conflict.detection.rules.CapabilityDefinition
 import org.orkg.gradle.metadatarules.versionalignment.JacksonBomAlignmentRule
 import org.orkg.gradle.metadatarules.versionalignment.MockKVirtualPlatformAlignmentRule
+import org.orkg.gradle.metadatarules.versionalignment.RestdocsApiSpecVirtualPlatformAlignmentRule
 
 plugins {
     id("dev.jacomet.logging-capabilities")
-    id("org.gradlex.java-ecosystem-capabilities")
+    id("org.gradlex.jvm-dependency-conflict-resolution")
 }
 
 // Configure logging capabilities plugin to default to Logback
 loggingCapabilities.enforceLogback()
 
+jvmDependencyConflicts {
+    conflictResolution {
+        select(CapabilityDefinition.JAKARTA_SERVLET_API, "org.apache.tomcat.embed:tomcat-embed-core")
+    }
+}
+
 dependencies.components {
     all<JacksonBomAlignmentRule>()
     all<MockKVirtualPlatformAlignmentRule>()
-}
-
-configurations.all {
-    resolutionStrategy.capabilitiesResolution {
-        // TODO: Re-evaluate after upgrade of Spring Boot. May not be needed anymore.
-        withCapability("javax.activation:activation") {
-            select("com.sun.activation:jakarta.activation:1.2.2")
-        }
-    }
-    resolutionStrategy.eachDependency {
-        // TODO: Re-evaluate after upgrade of Spring Boot. May not be needed anymore.
-        if (requested.group == "org.slf4j") {
-            useVersion("1.7.36")
-            because("we have different versions in the classpath, but this one is used in Spring Boot <= 3.0")
-        }
-    }
+    all<RestdocsApiSpecVirtualPlatformAlignmentRule>()
 }

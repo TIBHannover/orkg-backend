@@ -29,7 +29,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Problem Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class ProblemControllerTest : RestDocumentationBaseTest() {
+class ProblemControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases
@@ -91,12 +91,12 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
         statementService.create(contributorId, contribution, predicate, problem)
 
         mockMvc
-            .perform(getRequestTo("/api/problems/$problem/users?size=4"))
+            .perform(getRequestTo("/api/problems/$problem/users").param("size", "4"))
             .andExpect(status().isOk)
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
                         parameterWithName("size").description("Number of items to fetch per page (default: 10)").optional()
                     ),
@@ -151,7 +151,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
         statementService.create(cont5, Predicates.hasResearchProblem, problem2)
 
         mockMvc
-            .perform(getRequestTo("/api/problems/$problem1/authors/?page=0&size=1"))
+            .perform(getRequestTo("/api/problems/$problem1/authors").param("page", "0").param("size", "1"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.totalElements").value(2))

@@ -3,15 +3,15 @@ package org.orkg.contenttypes.adapter.output.neo4j
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import org.neo4j.cypherdsl.core.Condition
-import org.neo4j.cypherdsl.core.Conditions
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Functions.collect
-import org.neo4j.cypherdsl.core.Functions.size
-import org.neo4j.cypherdsl.core.Functions.toLower
+import org.neo4j.cypherdsl.core.Cypher.collect
+import org.neo4j.cypherdsl.core.Cypher.noCondition
+import org.neo4j.cypherdsl.core.Cypher.size
+import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -137,7 +137,7 @@ class SpringDataNeo4jPaperAdapter(
             match.where(
                 visibility.toCondition { filter ->
                     filter.targets.map { node.property("visibility").eq(literalOf<String>(it.name)) }
-                        .reduceOrNull(Condition::or) ?: Conditions.noCondition()
+                        .reduceOrNull(Condition::or) ?: noCondition()
                 },
                 verified.toCondition {
                     if (it) node.property("verified").eq(literalOf<Boolean>(true))
@@ -149,7 +149,7 @@ class SpringDataNeo4jPaperAdapter(
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
                 organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
                 doiPrefix.toCondition { doiLiteral.property("label").startsWith(anonParameter(it.dropLastWhile { it == '/' } + '/')) },
-                if (label != null && patterns.isNotEmpty()) node.asExpression().`in`(nodes) else Conditions.noCondition()
+                if (label != null && patterns.isNotEmpty()) node.asExpression().`in`(nodes) else noCondition()
             )
         }
         .withQuery { commonQuery ->

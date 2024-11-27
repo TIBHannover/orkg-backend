@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    api("org.springframework.data:spring-data-commons:2.7.16")
+    api("org.springframework.data:spring-data-commons")
     api(project(":graph:graph-core-model"))
 }

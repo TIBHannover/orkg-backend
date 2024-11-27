@@ -37,7 +37,7 @@ import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -117,7 +117,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         every { listService.findById(id) } returns Optional.empty()
 
-        get("/api/lists/$id")
+        get("/api/lists/{id}", id)
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -261,7 +261,11 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         every { listService.update(any()) } throws exception
 
-        patch("/api/lists/$id", request)
+        patch("/api/lists/{id}", id)
+            .contentType(APPLICATION_JSON)
+            .characterEncoding(Charsets.UTF_8.name())
+            .content(objectMapper.writeValueAsString(request))
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.errors.length()").value(1))
@@ -286,7 +290,11 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         every { listService.update(any()) } throws exception
 
-        patch("/api/lists/$id", request)
+        patch("/api/lists/{id}", id)
+            .contentType(APPLICATION_JSON)
+            .characterEncoding(Charsets.UTF_8.name())
+            .content(objectMapper.writeValueAsString(request))
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.errors.length()").value(1))
@@ -345,7 +353,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         every { listService.findAllElementsById(id, any()) } throws exception
 
-        get("/api/lists/$id/elements")
+        get("/api/lists/{id}/elements", id)
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -356,18 +364,12 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
         verify(exactly = 1) { listService.findAllElementsById(id, any()) }
     }
 
-    private fun get(urlTemplate: String): ResultActions = mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate))
+    private fun get(urlTemplate: String, vararg params: Any): ResultActions =
+        mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate, *params))
 
     private fun post(urlTemplate: String, body: Map<String, Any>): ResultActions = mockMvc.perform(
         post(urlTemplate)
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding(Charsets.UTF_8.name())
-            .content(objectMapper.writeValueAsString(body))
-    )
-
-    private fun patch(urlTemplate: String, body: Map<String, Any>): ResultActions = mockMvc.perform(
-        patch(urlTemplate)
-            .contentType(MediaType.APPLICATION_JSON)
+            .contentType(APPLICATION_JSON)
             .characterEncoding(Charsets.UTF_8.name())
             .content(objectMapper.writeValueAsString(body))
     )

@@ -5,15 +5,15 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.neo4j.cypherdsl.core.Condition
-import org.neo4j.cypherdsl.core.Conditions
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.listOf
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Functions.collect
-import org.neo4j.cypherdsl.core.Functions.count
+import org.neo4j.cypherdsl.core.Cypher.collect
+import org.neo4j.cypherdsl.core.Cypher.count
+import org.neo4j.cypherdsl.core.Cypher.noCondition
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -136,7 +136,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     templateId.toCondition { template.property("id").eq(anonParameter(it.value)) },
                     visibility.toCondition { filter ->
                         filter.targets.map { latest.property("visibility").eq(literalOf<String>(it.name)) }
-                            .reduceOrNull(Condition::or) ?: Conditions.noCondition()
+                            .reduceOrNull(Condition::or) ?: noCondition()
                     },
                     createdBy.toCondition { latest.property("created_by").eq(anonParameter(it.value.toString())) },
                     createdAtStart.toCondition { latest.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
@@ -202,7 +202,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     templateId.toCondition { template.property("id").eq(anonParameter(it.value)) },
                     visibility.toCondition { filter ->
                         filter.targets.map { latest.property("visibility").eq(literalOf<String>(it.name)) }
-                            .reduceOrNull(Condition::or) ?: Conditions.noCondition()
+                            .reduceOrNull(Condition::or) ?: noCondition()
                     },
                     createdBy.toCondition { latest.property("created_by").eq(anonParameter(it.value.toString())) },
                     createdAtStart.toCondition { latest.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },

@@ -13,7 +13,7 @@ NOTE: In the following sections, the response fields of the page object are omit
 A `GET` request for a given research field returns a <<sorting-and-pagination,paged>> list of content type <<resources,resources>> that belong to the given research field.
 The endpoint supports <<visibility-filtering-legacy>>.
 
-operation::research-fields-get-paged[snippets='path-parameters,request-parameters,curl-request']
+operation::research-fields-get-paged[snippets='path-parameters,query-parameters,curl-request']
 
 [[research-fields-fetch-with-subfields]]
 === Listing Content-Types of Research Fields and their Subfields
@@ -138,4 +138,4 @@ include::{snippets}/research-fields-research-field-hierarchy-entry/response-fiel
 
 A `GET` request lists statistics about a research field. Optionally accounts for subfields.
 
-operation::stats-research-fields[snippets='request-parameters,curl-request,http-response,response-fields']
+operation::stats-research-fields[snippets='query-parameters,curl-request,http-response,response-fields']

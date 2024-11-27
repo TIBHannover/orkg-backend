@@ -27,7 +27,7 @@ testing {
 }
 
 dependencies {
-    api("org.springframework.data:spring-data-commons:2.7.16")
+    api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-web")
     api(project(":curation:curation-ports-input"))
     api(project(":graph:graph-adapter-input-rest-spring-mvc"))
@@ -35,5 +35,4 @@ dependencies {
     api(project(":graph:graph-ports-input"))
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }

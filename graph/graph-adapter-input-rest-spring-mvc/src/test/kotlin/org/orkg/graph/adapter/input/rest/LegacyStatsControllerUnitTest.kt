@@ -25,7 +25,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -65,7 +65,7 @@ class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
             statisticsService.findObservatoryStatsById(id)
         } returns response
 
-        mockMvc.perform(get("/api/stats/observatories/$id"))
+        mockMvc.perform(get("/api/stats/observatories/{id}", id))
             .andExpect(status().isOk)
 
         verify(exactly = 1) { statisticsService.findObservatoryStatsById(id) }
@@ -95,7 +95,7 @@ class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
                     pathParameters(
                         parameterWithName("id").description("The identifier of the research field.")
                     ),
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("includeSubfields").description("Whether or not to include subfields when calculating the statistics. Optional.")
                     ),
                     responseFields(

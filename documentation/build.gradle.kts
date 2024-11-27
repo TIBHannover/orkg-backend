@@ -5,7 +5,6 @@ import io.swagger.v3.oas.models.servers.Server
 
 plugins {
     id("org.orkg.gradle.asciidoctor")
-    alias(libs.plugins.restdocs.openapi)
 }
 
 fun withSnippets(path: String): Map<String, String> = mapOf("path" to path, "configuration" to "restdocs")
@@ -63,7 +62,7 @@ val asciidoctorCopyAssets by tasks.registering(Copy::class) {
 }
 
 val asciidoctor by tasks.existing(AsciidoctorTask::class) {
-    sourceDir("rest-api")
+    setSourceDir(file("rest-api"))
 
     // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
     // Other outputs are filtered, because they do not affect the output of this task.
@@ -80,13 +79,11 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
     asciidoctorj {
         modules {
             diagram.use()
-            diagram.version("2.2.10")
         }
         fatalWarnings(missingIncludes())
 
         // Work-around for JRE 16+, because Java's internal APIs are no longer available due to JPMS.
         // This should be fixed in the Asciidoctor plugin, but never was.
-        inProcess = org.asciidoctor.gradle.base.process.ProcessMode.JAVA_EXEC
         forkOptions {
             jvmArgs(
                 "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
@@ -111,7 +108,7 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
             "icons" to "font",
             "linkattrs" to "true",
             "encoding" to "utf-8",
-            "snippets" to aggregatedSnippetsDir,
+            "snippets" to aggregatedSnippetsDir.get(),
             "docinfo" to "shared,private"
         )
     )

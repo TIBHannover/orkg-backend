@@ -63,7 +63,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -182,7 +182,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpectStatement("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("subject_classes").description("A comma-separated set of classes that the subject of the statement must have. The ids `Resource`, `Class` and `Predicate` can be used to filter for a general type of subject. (optional)"),
                         parameterWithName("subject_id").description("Filter for the subject id. (optional)"),
                         parameterWithName("subject_label").description("Filter for the label of the subject. The label has to match exactly. (optional)"),
@@ -222,7 +222,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
         val exception = UnknownSortingProperty("unknown")
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } throws exception
 
-        mockMvc.perform(get("/api/statements?sort=unknown"))
+        mockMvc.perform(get("/api/statements").param("sort", "unknown"))
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -493,7 +493,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             statementService.fetchAsBundle(thingId, any(), false, Sort.unsorted())
         } throws exception
 
-        mockMvc.perform(get("/api/statements/$thingId/bundle?includeFirst=false"))
+        mockMvc.perform(get("/api/statements/{thingId}/bundle", thingId).param("includeFirst", "false"))
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.message").value(exception.message))

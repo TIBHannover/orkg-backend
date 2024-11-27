@@ -19,3 +19,7 @@ val containerTest by testing.suites.registering(JvmTestSuite::class) {
 tasks.named("check") {
     dependsOn(containerTest)
 }
+
+dependencies {
+    "containerTestApi"(platform("org.orkg:platform"))
+}

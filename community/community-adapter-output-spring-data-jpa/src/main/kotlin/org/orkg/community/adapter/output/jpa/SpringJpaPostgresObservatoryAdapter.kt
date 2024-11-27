@@ -17,10 +17,8 @@ import org.orkg.community.output.ObservatoryRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @Component
-@Transactional
 class SpringJpaPostgresObservatoryAdapter(
     private val postgresRepository: PostgresObservatoryRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository,

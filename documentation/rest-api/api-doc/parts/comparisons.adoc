@@ -25,7 +25,7 @@ operation::comparisons-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::comparisons-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::comparisons-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[comparisons-create]]
 == Creating Comparisons

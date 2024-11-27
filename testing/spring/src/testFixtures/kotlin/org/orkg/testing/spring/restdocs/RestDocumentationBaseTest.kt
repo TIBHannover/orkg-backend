@@ -7,7 +7,6 @@ import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
-import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
@@ -23,9 +22,9 @@ import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPri
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.ParameterDescriptor
+import org.springframework.restdocs.request.QueryParametersSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.restdocs.request.RequestParametersSnippet
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
@@ -80,15 +79,10 @@ abstract class RestDocumentationBaseTest {
             .build()
     }
 
-    protected fun getRequestTo(urlTemplate: String): MockHttpServletRequestBuilder =
-        get(urlTemplate)
+    protected fun getRequestTo(urlTemplate: String, vararg params: Any): MockHttpServletRequestBuilder =
+        get(urlTemplate, *params)
             .accept(APPLICATION_JSON)
             .contentType(APPLICATION_JSON)
-            .characterEncoding("utf-8")
-
-    protected fun getFileRequestTo(urlTemplate: String): MockHttpServletRequestBuilder =
-        get(urlTemplate)
-            .accept(MediaType.parseMediaType("application/n-triples"))
             .characterEncoding("utf-8")
 
     protected fun postRequestWithBody(url: String, body: Map<String, Any?>): MockHttpServletRequestBuilder =
@@ -98,28 +92,15 @@ abstract class RestDocumentationBaseTest {
             .characterEncoding("utf-8")
             .content(objectMapper.writeValueAsString(body))
 
-    protected fun putRequestWithBody(url: String, body: Map<String, Any?>): MockHttpServletRequestBuilder =
-        RestDocumentationRequestBuilders.put(url)
+    protected fun putRequestWithBody(url: String, body: Map<String, Any?>, vararg params: Any): MockHttpServletRequestBuilder =
+        RestDocumentationRequestBuilders.put(url, *params)
             .accept(APPLICATION_JSON)
             .contentType(APPLICATION_JSON)
             .characterEncoding("utf-8")
             .content(objectMapper.writeValueAsString(body))
 
-    protected fun putRequest(url: String): MockHttpServletRequestBuilder =
-        RestDocumentationRequestBuilders.put(url)
-            .accept(APPLICATION_JSON)
-            .contentType(APPLICATION_JSON)
-            .characterEncoding("utf-8")
-
-    protected fun patchRequestWithBody(url: String, body: Map<String, Any?>): MockHttpServletRequestBuilder =
-        RestDocumentationRequestBuilders.patch(url)
-            .accept(APPLICATION_JSON)
-            .contentType(APPLICATION_JSON)
-            .characterEncoding("utf-8")
-            .content(objectMapper.writeValueAsString(body))
-
-    protected fun deleteRequest(url: String): MockHttpServletRequestBuilder =
-        RestDocumentationRequestBuilders.delete(url)
+    protected fun deleteRequest(url: String, vararg params: Any): MockHttpServletRequestBuilder =
+        RestDocumentationRequestBuilders.delete(url, *params)
             .accept(APPLICATION_JSON)
             .contentType(APPLICATION_JSON)
             .characterEncoding("utf-8")
@@ -129,26 +110,24 @@ abstract class RestDocumentationBaseTest {
             headerWithName("Location").description("Location to the created statement")
         )
 
-    protected fun pageableRequestParameters(vararg descriptors: ParameterDescriptor):
-        RequestParametersSnippet =
-            requestParameters(
-                mutableListOf(
-                    parameterWithName("page").description(
-                        "Page number of items to fetch (default: 1)"
-                    )
-                        .optional(),
-                    parameterWithName("size").description(
-                        "Number of items to fetch per page (default: 10)"
-                    )
-                        .optional(),
-                    parameterWithName("sort").description(
-                        "Key to sort by (default: not provided)"
-                    )
-                        .optional()
-                ).apply {
-                    addAll(descriptors)
-                }
-            )
+    protected fun pageableRequestParameters(
+        vararg descriptors: ParameterDescriptor
+    ): QueryParametersSnippet =
+        queryParameters(
+            mutableListOf(
+                parameterWithName("page")
+                    .description("Page number of items to fetch (default: 1)")
+                    .optional(),
+                parameterWithName("size")
+                    .description("Number of items to fetch per page (default: 10)")
+                    .optional(),
+                parameterWithName("sort")
+                    .description("Key to sort by (default: not provided)")
+                    .optional()
+            ).apply {
+                addAll(descriptors)
+            }
+        )
 
     companion object {
         fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(

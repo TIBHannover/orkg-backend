@@ -23,7 +23,7 @@ operation::smart-reviews-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:
 
-operation::smart-reviews-get-paged-with-parameters[snippets='request-parameters,curl-request']
+operation::smart-reviews-get-paged-with-parameters[snippets='query-parameters,curl-request']
 
 [[smart-reviews-create]]
 == Creating Smart Reviews

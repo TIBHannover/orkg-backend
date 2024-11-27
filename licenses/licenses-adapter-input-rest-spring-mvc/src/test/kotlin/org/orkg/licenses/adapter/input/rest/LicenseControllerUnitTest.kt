@@ -20,7 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -50,7 +50,7 @@ internal class LicenseControllerUnitTest : RestDocsTest("licenses") {
             .andExpect(jsonPath("$.license", `is`("CC-BY-4.0")))
             .andDo(
                 documentationHandler.document(
-                    requestParameters(parameterWithName("uri").description("The uri of the repository to retrieve the license from.")),
+                    queryParameters(parameterWithName("uri").description("The uri of the repository to retrieve the license from.")),
                     responseFields(
                         fieldWithPath("license").description("The spdx identifier of the license."),
                     )

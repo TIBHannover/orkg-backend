@@ -44,7 +44,7 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createLiteral(label = "programming language")
 
         mockMvc
-            .perform(getRequestTo("/api/literals/"))
+            .perform(getRequestTo("/api/literals"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -65,7 +65,7 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createLiteral(label = "research topic")
 
         mockMvc
-            .perform(getRequestTo("/api/literals/?q=research"))
+            .perform(getRequestTo("/api/literals").param("q", "research"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -88,7 +88,7 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createLiteral(label = "research topic")
 
         mockMvc
-            .perform(getRequestTo("/api/literals/?q=PL)"))
+            .perform(getRequestTo("/api/literals").param("q", "PL)"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -109,7 +109,7 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
         val id = service.createLiteral(label = "research contribution")
 
         mockMvc
-            .perform(getRequestTo("/api/literals/$id"))
+            .perform(getRequestTo("/api/literals/{id}", id))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -125,7 +125,7 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
         val input = mapOf("label" to "foo", "datatype" to "xs:foo")
 
         mockMvc
-            .perform(postRequestWithBody("/api/literals/", input))
+            .perform(postRequestWithBody("/api/literals", input))
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.label").value(input["label"] as String))
             .andExpect(jsonPath("$.datatype").value(input["datatype"] as String))
@@ -150,7 +150,7 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
         val update = mapOf("label" to "bar", "datatype" to "dt:new")
 
         mockMvc
-            .perform(putRequestWithBody("/api/literals/$resource", update))
+            .perform(putRequestWithBody("/api/literals/{id}", update, resource))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(update["label"] as String))
             .andExpect(jsonPath("$.datatype").value(update["datatype"] as String))

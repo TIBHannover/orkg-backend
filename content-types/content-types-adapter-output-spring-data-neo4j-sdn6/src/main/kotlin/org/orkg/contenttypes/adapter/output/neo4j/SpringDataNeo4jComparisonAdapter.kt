@@ -3,18 +3,19 @@ package org.orkg.contenttypes.adapter.output.neo4j
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import org.neo4j.cypherdsl.core.Condition
-import org.neo4j.cypherdsl.core.Conditions
 import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Functions
-import org.neo4j.cypherdsl.core.Functions.collect
-import org.neo4j.cypherdsl.core.Functions.size
-import org.neo4j.cypherdsl.core.Functions.toLower
-import org.neo4j.cypherdsl.core.Predicates.exists
+import org.neo4j.cypherdsl.core.Cypher.size
+import org.neo4j.cypherdsl.core.Cypher.toLower
+import org.neo4j.cypherdsl.core.Cypher.exists
+import org.neo4j.cypherdsl.core.Cypher.noCondition
+import org.neo4j.cypherdsl.core.Cypher.parameter
+import org.neo4j.cypherdsl.core.Cypher.trim
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -122,16 +123,16 @@ class SpringDataNeo4jComparisonAdapter(
             match.where(
                 visibility.toCondition { filter ->
                     filter.targets.map { node.property("visibility").eq(literalOf<String>(it.name)) }
-                        .reduceOrNull(Condition::or) ?: Conditions.noCondition()
+                        .reduceOrNull(Condition::or) ?: noCondition()
                 },
                 createdBy.toCondition { node.property("created_by").eq(anonParameter(it.value.toString())) },
                 createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
                 organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
-                if (label != null && patterns.isNotEmpty()) node.asExpression().`in`(nodes) else Conditions.noCondition(),
+                if (label != null && patterns.isNotEmpty()) node.asExpression().`in`(nodes) else noCondition(),
                 if (doi != null || label != null || createdBy != null) {
-                    Conditions.noCondition()
+                    noCondition()
                 } else {
                     exists(
                         node("Comparison").relationshipTo(node, RELATED)
@@ -182,14 +183,14 @@ class SpringDataNeo4jComparisonAdapter(
         .withQuery {
             val doi = name("doi")
             val relations = comparisonNode()
-                .withProperties("id", Cypher.parameter("id"))
+                .withProperties("id", parameter("id"))
                 .relationshipTo(contributionNode(), RELATED)
                 .withProperties("predicate_id", literalOf<String>(Predicates.comparesContribution.value))
                 .relationshipFrom(paperNode(), RELATED)
                 .properties("predicate_id", literalOf<String>(Predicates.hasContribution.value))
                 .relationshipTo(node("Literal").named(doi), RELATED)
                 .properties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
-            match(relations).returningDistinct(Functions.trim(doi.property("label")))
+            match(relations).returningDistinct(trim(doi.property("label")))
         }
         .withParameters("id" to id.value)
         .fetchAs<String>()

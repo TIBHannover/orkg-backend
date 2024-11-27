@@ -50,9 +50,10 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -110,7 +111,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
         val exception = VisualizationNotFound(id)
         every { visualizationService.findById(id) } returns Optional.empty()
 
-        get("/api/visualizations/$id")
+        get("/api/visualizations/{id}", id)
             .accept(VISUALIZATION_JSON_V2)
             .perform()
             .andExpect(status().isNotFound)
@@ -178,7 +179,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
             .andExpectVisualization("$.content[*]")
             .andDo(
                 documentationHandler.document(
-                    requestParameters(
+                    queryParameters(
                         parameterWithName("title").description("A search term that must be contained in the title of the visualization. (optional)."),
                         parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
                         parameterWithName("visibility").description("""Filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED". (optional)"""),
@@ -271,7 +272,8 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
         val exception = OnlyOneOrganizationAllowed()
         every { visualizationService.create(any()) } throws exception
 
-        post("/api/visualizations", createVisualizationRequest())
+        post("/api/visualizations")
+            .content(objectMapper.writeValueAsString(createVisualizationRequest()))
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
@@ -289,7 +291,8 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
         val exception = OnlyOneObservatoryAllowed()
         every { visualizationService.create(any()) } throws exception
 
-        post("/api/visualizations", createVisualizationRequest())
+        post("/api/visualizations")
+            .content(objectMapper.writeValueAsString(createVisualizationRequest()))
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
@@ -307,7 +310,8 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
         val exception = AuthorNotFound(ThingId("R123"))
         every { visualizationService.create(any()) } throws exception
 
-        post("/api/visualizations", createVisualizationRequest())
+        post("/api/visualizations")
+            .content(objectMapper.writeValueAsString(createVisualizationRequest()))
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
@@ -331,7 +335,8 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
         )
         every { visualizationService.create(any()) } throws exception
 
-        post("/api/visualizations", createVisualizationRequest())
+        post("/api/visualizations")
+            .content(objectMapper.writeValueAsString(createVisualizationRequest()))
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()

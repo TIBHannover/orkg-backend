@@ -15,7 +15,7 @@ dependencies {
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
     api(libs.jackson.databind)
-    api("javax.validation:validation-api")
+    api("jakarta.validation:jakarta.validation-api")
     api(project(":common"))
     api(project(":community:community-ports-input"))
     api(project(":content-types:content-types-core-model"))

@@ -102,6 +102,8 @@ val asciidoctor by tasks.existing(AsciidoctorTask::class) {
 
     attributes(
         mapOf(
+            "author" to "The Open Research Knowledge Graph (ORKG) project",
+            "revnumber" to project(":rest-api-server").version,
             "source-highlighter" to "rouge",
             "coderay-linenums-mode" to "table",
             "toc" to "left",

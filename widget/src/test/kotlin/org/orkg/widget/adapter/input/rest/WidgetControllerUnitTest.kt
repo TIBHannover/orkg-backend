@@ -21,7 +21,9 @@ import org.orkg.widget.input.ResolveDOIUseCase
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -47,7 +49,21 @@ class WidgetControllerUnitTest : RestDocsTest("widget") {
             `class` = "Paper",
         )
 
-        mockMvc.perform(documentedGetRequestTo("/api/widgets?doi={doi}", EXAMPLE_DOI))
+        // FIXME: Deduplicate parameter and field specification
+        val queryParameters = arrayOf(
+            parameterWithName("doi").description("The DOI of the resource to search.").optional(),
+            parameterWithName("title").description("The title of the resource to search.").optional(),
+        )
+        val responseFields = arrayOf(
+            // The order here determines the order in the generated table. More relevant items should be up.
+            fieldWithPath("id").description("The identifier of the resource."),
+            fieldWithPath("doi").description("The DOI of the resource. May be `null` if the resource does not have a DOI."),
+            fieldWithPath("title").description("The title of the resource."),
+            fieldWithPath("class").description("The class of the resource. Always one of ${Asciidoc.formatPublishableClasses()}."),
+            fieldWithPath("num_statements").description("The number of statements connected to the resource if the class is `Paper`, or 0 in all other cases."),
+        )
+
+        mockMvc.perform(documentedGetRequestTo("/api/widgets").param("doi", EXAMPLE_DOI))
             .andExpect(status().isOk)
             // Explicitly test all properties of the representation. This works as a serialization test.
             .andExpect(jsonPath("$.id", `is`("R1234")))
@@ -69,22 +85,12 @@ class WidgetControllerUnitTest : RestDocsTest("widget") {
                                 All request parameters are mutually exclusive.
                                 """.trimIndent()
                             )
-                            .queryParameters(
-                                parameterWithName("doi").optional()
-                                    .description("The DOI of the resource to search."),
-                                parameterWithName("title").optional()
-                                    .description("The title of the resource to search."),
-                            )
-                            .responseFields(
-                                // The order here determines the order in the generated table. More relevant items should be up.
-                                fieldWithPath("id").description("The identifier of the resource."),
-                                fieldWithPath("doi").description("The DOI of the resource. May be `null` if the resource does not have a DOI."),
-                                fieldWithPath("title").description("The title of the resource."),
-                                fieldWithPath("class").description("The class of the resource. Always one of ${Asciidoc.formatPublishableClasses()}."),
-                                fieldWithPath("num_statements").description("The number of statements connected to the resource if the class is `Paper`, or 0 in all other cases."),
-                            )
+                            .queryParameters(*queryParameters)
+                            .responseFields(*responseFields)
                             .build()
-                    )
+                    ),
+                    queryParameters(*queryParameters),
+                    responseFields(*responseFields)
                 )
             )
     }

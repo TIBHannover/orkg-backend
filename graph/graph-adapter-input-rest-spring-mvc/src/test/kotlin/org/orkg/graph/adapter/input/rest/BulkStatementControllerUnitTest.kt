@@ -11,7 +11,6 @@ import java.util.*
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
@@ -263,7 +262,6 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
 
     @Test
     @TestWithMockUser
-    @Disabled("""Fails with "Query parameters with the following names were not found in the request: [ids]" but should work.""") // FIXME
     fun delete() {
         val s1 = StatementId("S1")
         val s2 = StatementId("S2")
@@ -271,7 +269,11 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { statementService.delete(setOf(s1, s2)) } just runs
 
         mockMvc
-            .perform(documentedDeleteRequestTo("/api/statements").param("ids", "$s1", "$s2"))
+            .perform(
+                // TODO: For unknown reasons, delete requests do not work with param builders.
+                // Tested on spring rest docs 3.0.3.
+                documentedDeleteRequestTo("/api/statements?ids=$s1,$s2")
+            )
             .andExpect(status().isNoContent)
             .andDo(
                 documentationHandler.document(

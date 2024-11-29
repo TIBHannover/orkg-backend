@@ -9,6 +9,7 @@
     --orkg-block-border-color: #dee2e6;
     --orkg-toc-background-color: rgb(215, 218, 227);
 	--toc-width: 23.5rem;
+    --asciidoctor-details-background: #F8F9FB;
 }
 
 html.dark-theme {
@@ -23,6 +24,7 @@ html.dark-theme {
     --orkg-content-background-color: #1D2024;
     --orkg-block-border-color: #3C3F46;
     --orkg-toc-background-color: #1D2024;
+    --asciidoctor-details-background: #303237;
 }
 
 #banner {
@@ -101,4 +103,13 @@ a:hover {
 
 body.fixed-toc #toc {
     height: calc(100% - 3.4rem);
+}
+
+.doc #header .details {
+    padding: .5rem 1rem;
+}
+
+.details {
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.125) !important;
 }

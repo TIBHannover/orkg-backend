@@ -70,8 +70,6 @@ import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
-import org.orkg.graph.domain.Literal
-import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
@@ -416,10 +414,10 @@ class ComparisonService(
         )
     }
 
-    internal fun Resource.toComparison(): Comparison {
+    internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
         val statements = (
             statementRepository.fetchAsBundle(
-                id = id,
+                id = resource.id,
                 configuration = BundleConfiguration(
                     minLevel = null,
                     maxLevel = 3,
@@ -435,7 +433,7 @@ class ComparisonService(
                 ),
                 sort = Sort.unsorted()
             ) + statementRepository.fetchAsBundle(
-                id = id,
+                id = resource.id,
                 configuration = BundleConfiguration(
                     minLevel = null,
                     maxLevel = 1,
@@ -452,40 +450,9 @@ class ComparisonService(
                 sort = Sort.unsorted()
             )
         ).groupBy { it.subject.id }
-        val directStatements = statements[id].orEmpty()
-        return Comparison(
-            id = id,
-            title = label,
-            description = directStatements.wherePredicate(Predicates.description).firstObjectLabel(),
-            researchFields = directStatements.wherePredicate(Predicates.hasSubject).objectIdsAndLabel(),
-            identifiers = directStatements.associateIdentifiers(Identifiers.comparison),
-            publicationInfo = PublicationInfo.from(directStatements),
-            authors = statements.authors(id),
-            sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
-                .objectIdsAndLabel()
-                .sortedBy { it.id }
-                .toSet(),
-            contributions = directStatements.wherePredicate(Predicates.comparesContribution).objectIdsAndLabel(),
-            visualizations = directStatements.wherePredicate(Predicates.hasVisualization).objectIdsAndLabel(),
-            relatedFigures = directStatements.wherePredicate(Predicates.hasRelatedFigure).objectIdsAndLabel(),
-            relatedResources = directStatements.wherePredicate(Predicates.hasRelatedResource).objectIdsAndLabel(),
-            references = directStatements.wherePredicate(Predicates.reference)
-                .withoutObjectsWithBlankLabels()
-                .objects()
-                .filterIsInstance<Literal>()
-                .sortedBy { it.createdAt }
-                .map { it.label },
-            observatories = listOf(observatoryId),
-            organizations = listOf(organizationId),
-            extractionMethod = extractionMethod,
-            createdAt = createdAt,
-            createdBy = createdBy,
-            versions = comparisonRepository.findVersionHistory(id),
-            isAnonymized = directStatements.wherePredicate(Predicates.isAnonymized)
-                .firstOrNull { it.`object` is Literal && (it.`object` as Literal).datatype == Literals.XSD.BOOLEAN.prefixedUri }
-                ?.`object`?.label.toBoolean(),
-            visibility = visibility,
-            unlistedBy = unlistedBy
-        )
+        return ContentTypeSubgraph(resource.id, statements)
     }
+
+    internal fun Resource.toComparison(): Comparison =
+        findSubgraph(this).let { Comparison.from(this, it.statements, comparisonRepository.findVersionHistory(id)) }
 }

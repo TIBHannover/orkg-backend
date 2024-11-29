@@ -24,6 +24,7 @@ dependencies {
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation(project(":common:neo4j-dsl"))
+    implementation("org.apache.lucene:lucene-queryparser")
 
     testFixturesApi(project(":common"))
 

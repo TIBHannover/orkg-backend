@@ -11,17 +11,8 @@ plugins {
 }
 
 dependencies {
-    // Configure all projects for test and coverage aggregation. Ignore parent projects, or those without (tested) code.
-    val parentProjects = subprojects
-        .map(Project::getPath)
-        .filter { path -> path.count { it == ':' } < 2 }
-        .filterNot { it == ":rest-api-server" } // Not a parent project
-        .toSet()
-    val ignoredProjects = setOf(":platform", ":testing:kotest", ":testing:spring") union parentProjects
-    subprojects
-        .filterNot { it.path in ignoredProjects }
-        .onEach(::jacocoAggregation)
-        .onEach(::testReportAggregation)
+    testReportAggregation(project(":rest-api-server"))
+    jacocoAggregation(project(":rest-api-server"))
 }
 
 // Test reports

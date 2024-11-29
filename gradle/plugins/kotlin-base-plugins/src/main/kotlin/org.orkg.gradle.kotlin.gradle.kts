@@ -23,6 +23,12 @@ idea {
     }
 }
 
+java {
+    consistentResolution {
+        useCompileClasspathVersions()
+    }
+}
+
 kotlin {
     jvmToolchain {
         // This also configures the Java toolchain

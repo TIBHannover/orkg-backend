@@ -14,6 +14,7 @@ loggingCapabilities.enforceLogback()
 jvmDependencyConflicts {
     conflictResolution {
         select(CapabilityDefinition.JAKARTA_SERVLET_API, "org.apache.tomcat.embed:tomcat-embed-core")
+        select(CapabilityDefinition.SLF4J_IMPL, "ch.qos.logback:logback-classic")
     }
 }
 

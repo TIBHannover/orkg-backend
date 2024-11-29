@@ -2,7 +2,6 @@ plugins {
     id("java-base")
 }
 
-/*
 // Expose the ':rest-api-server' project runtime classpath in every project
 val app = configurations.dependencyScope("rest-api-server") {
     withDependencies {
@@ -20,15 +19,14 @@ val appRuntimeClasspath = configurations.resolvable("appRuntimeClasspath") {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
     }
 }
-*/
 
 // Every compile classpath and runtime classpath uses the versions of the
 sourceSets.all {
-//    configurations[compileClasspathConfigurationName].shouldResolveConsistentlyWith(appRuntimeClasspath.get())
-//    configurations[runtimeClasspathConfigurationName].shouldResolveConsistentlyWith(appRuntimeClasspath.get())
+    configurations[compileClasspathConfigurationName].shouldResolveConsistentlyWith(appRuntimeClasspath.get())
+    configurations[runtimeClasspathConfigurationName].shouldResolveConsistentlyWith(appRuntimeClasspath.get())
     // Source sets without production code (tests / fixtures) are allowed to have dependencies that are
     // not part of the consistent resolution result and might need additional version information
-//    if (this != sourceSets["main"]) {
+    if (this != sourceSets["main"]) {
         dependencies.add(implementationConfigurationName, dependencies.platform("org.orkg:platform"))
-//    }
+    }
 }

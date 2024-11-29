@@ -652,3 +652,25 @@ data class LiteralReferenceRepresentation(
 ) : ThingReferenceRepresentation {
     override val id: ThingId? get() = null
 }
+
+data class TableRepresentation(
+    val id: ThingId,
+    val label: String,
+    val rows: List<RowRepresentation>,
+    val observatories: List<ObservatoryId>,
+    val organizations: List<OrganizationId>,
+    @get:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    val visibility: Visibility,
+    @get:JsonProperty("unlisted_by")
+    val unlistedBy: ContributorId? = null
+) {
+    data class RowRepresentation(
+        val label: String?,
+        val data: List<ThingReferenceRepresentation?>
+    )
+}

@@ -33,3 +33,5 @@ interface SmartReviewUseCases : RetrieveSmartReviewUseCase, CreateSmartReviewUse
     PublishSmartReviewUseCase
 
 interface ContentTypeUseCases : RetrieveContentTypeUseCase
+
+interface TableUseCases : RetrieveTableUseCase

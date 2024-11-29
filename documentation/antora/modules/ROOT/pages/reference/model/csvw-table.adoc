@@ -1,0 +1,24 @@
+= CSVW Table Model Diagram
+
+[mermaid,width=100%]
+----
+ flowchart LR
+    table["Table <br/> Resource"]
+    table --> |"CSVW_Columns"| column
+    table --> |"CSVW_Rows"| row
+
+    column["Column <br/> Resource"]
+    column --> |"CSVW_Number"| columnNumber["Literal <br/> xsd:integer"]
+    column --> |"CSVW_Titles"| columnTitle["Literal <br/> xsd:string"]
+
+    row["Row <br/> Resource"]
+    row --> |"CSVW_Cells"| cell
+    row --> |"CSVW_Number"| rowNumber["Literal <br/> xsd:integer"]
+    row --> |"CSVW_Titles"| rowTitle["Literal <br/> xsd:string"]
+
+    cell["Cell <br/> Resource"]
+    cell --> |"CSVW_Column"| column
+    cell --> |"CSVW_Value"| value
+
+    value["Any"]
+----

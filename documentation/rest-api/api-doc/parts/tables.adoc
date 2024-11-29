@@ -1,0 +1,26 @@
+= Tables
+
+Tables are two-dimensional data containers for graph entities.
+They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+The provided endpoints aggregate these concepts into a table representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[tables-fetch]]
+== Fetching Tables
+
+A `GET` request provides information about a table.
+
+operation::tables-get-single[snippets='curl-request,http-response,response-fields']
+
+[[tables-list]]
+== Listing Tables
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<tables-fetch,tables>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::tables-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::tables-get-paged-with-parameters[snippets='query-parameters,curl-request']

@@ -44,6 +44,9 @@ class SmartReviewNotFound(id: ThingId) :
 class SustainableDevelopmentGoalNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Sustainable Development Goal "$id" not found.""")
 
+class TableNotFound(id: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Table "$id" not found.""")
+
 class PaperNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Paper "$id" is not modifiable.""")
 

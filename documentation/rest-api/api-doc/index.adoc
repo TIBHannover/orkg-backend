@@ -57,6 +57,10 @@ include::parts/bulk-statements.adoc[leveloffset=+1]
 [[lists]]
 include::parts/lists.adoc[leveloffset=+1]
 
+// technically a content-type
+[[tables]]
+include::parts/tables.adoc[leveloffset=+1]
+
 // Resources with special properties
 
 [[research-fields]]

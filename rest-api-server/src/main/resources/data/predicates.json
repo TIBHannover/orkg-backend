@@ -462,5 +462,33 @@
     {
         "id": "P151073",
         "label": "OpenAlex ID"
+    },
+    {
+        "id": "CSVW_Cells",
+        "label": "cells"
+    },
+    {
+        "id": "CSVW_Column",
+        "label": "column"
+    },
+    {
+        "id": "CSVW_Columns",
+        "label": "columns"
+    },
+    {
+        "id": "CSVW_Number",
+        "label": "number"
+    },
+    {
+        "id": "CSVW_Rows",
+        "label": "rows"
+    },
+    {
+        "id": "CSVW_Titles",
+        "label": "titles"
+    },
+    {
+        "id": "CSVW_Value",
+        "label": "value"
     }
 ]

@@ -480,5 +480,25 @@
     {
         "id": "VisualizationSection",
         "label": "Visualization Section"
+    },
+    {
+        "id": "Table",
+        "label": "Table",
+        "uri": "http://www.w3.org/ns/csvw#Table"
+    },
+    {
+        "id": "Cell",
+        "label": "Cell",
+        "uri": "http://www.w3.org/ns/csvw#Cell"
+    },
+    {
+        "id": "Column",
+        "label": "Column",
+        "uri": "http://www.w3.org/ns/csvw#Column"
+    },
+    {
+        "id": "Row",
+        "label": "Row",
+        "uri": "http://www.w3.org/ns/csvw#Row"
     }
 ]

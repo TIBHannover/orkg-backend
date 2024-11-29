@@ -429,3 +429,16 @@ fun ResultActions.andExpectObservatoryFilter(path: String = "$"): ResultActions 
     .andExpect(jsonPath("$path.range", `is`(notNullValue())))
     .andExpect(jsonPath("$path.exact", `is`(notNullValue())))
     .andExpect(jsonPath("$path.featured", `is`(notNullValue())))
+
+fun ResultActions.andExpectTable(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.rows").isArray)
+    .andExpect(jsonPath("$path.rows[*].label").exists())
+    .andExpect(jsonPath("$path.rows[*].data").isArray)
+    .andExpect(jsonPath("$path.observatories").isArray)
+    .andExpect(jsonPath("$path.organizations").isArray)
+    .andExpect(jsonPath("$path.extraction_method", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))

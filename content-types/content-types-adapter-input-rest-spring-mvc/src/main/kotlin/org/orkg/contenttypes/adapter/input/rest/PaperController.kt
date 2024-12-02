@@ -169,7 +169,7 @@ class PaperController(
             .path("/api/resources/{id}")
             .buildAndExpand(paperVersionId)
             .toUri()
-        return noContent().location(location).build()
+        return created(location).build()
     }
 
     data class CreatePaperRequest(

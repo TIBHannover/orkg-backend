@@ -281,7 +281,7 @@ class ComparisonController(
             .path("/api/comparisons/{id}")
             .buildAndExpand(id)
             .toUri()
-        return noContent().location(location).build()
+        return created(location).build()
     }
 
     data class CreateComparisonRequest(

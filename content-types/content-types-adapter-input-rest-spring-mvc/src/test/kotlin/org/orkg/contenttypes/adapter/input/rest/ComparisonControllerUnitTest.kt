@@ -463,7 +463,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @TestWithMockUser
     @DisplayName("Given a comparison, when publishing, then status 204 NO CONTENT")
     fun publish() {
-        val id = ThingId("R123")
+        val comparisonVersionId = ThingId("R123")
         val subject = "comparison subject"
         val description = "comparison description"
         val authors = listOf(Author("Author 1"))
@@ -481,13 +481,13 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
 
         every { comparisonService.publish(any()) } just runs
 
-        documentedPostRequestTo("/api/comparisons/{id}/publish", id)
+        documentedPostRequestTo("/api/comparisons/{id}/publish", comparisonVersionId)
             .content(request)
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
-            .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("api/comparisons/$id")))
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("api/comparisons/$comparisonVersionId")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -536,7 +536,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         verify(exactly = 1) {
             comparisonService.publish(
                 withArg {
-                    it.id shouldBe id
+                    it.id shouldBe comparisonVersionId
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
                     it.description shouldBe description
                     it.subject shouldBe subject

@@ -220,7 +220,7 @@ class LiteratureListController(
             .path("/api/literature-lists/{id}")
             .buildAndExpand(literatureListVersionId)
             .toUri()
-        return noContent().location(location).build()
+        return created(location).build()
     }
 
     data class CreateLiteratureListRequest(

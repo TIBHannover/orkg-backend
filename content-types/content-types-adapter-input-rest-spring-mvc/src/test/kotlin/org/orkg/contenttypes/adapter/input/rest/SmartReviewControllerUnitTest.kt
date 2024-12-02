@@ -1127,7 +1127,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             .accept(SMART_REVIEW_JSON_V1)
             .contentType(SMART_REVIEW_JSON_V1)
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("api/smart-reviews/$smartReviewVersionId")))
             .andDo(
                 documentationHandler.document(

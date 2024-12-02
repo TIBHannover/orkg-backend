@@ -60,6 +60,7 @@ operation::papers-update[snippets='request-fields,curl-request,http-response']
 A `POST` request publishes an existing paper with the given parameters.
 In the process, a new paper version resource is created and linked to the original paper resource.
 All contribution statements of the original paper are archived in a separate database.
-The response will be `204 No Content` when successful.
+The response will be `201 Created` when successful.
+The paper resource can be retrieved by following the URI in the `Location` header field.
 
 operation::papers-publish[snippets='request-fields,curl-request,http-response']

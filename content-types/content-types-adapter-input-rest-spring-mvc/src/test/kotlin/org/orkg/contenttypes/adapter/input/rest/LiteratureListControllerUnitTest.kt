@@ -669,7 +669,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .accept(LITERATURE_LIST_JSON_V1)
             .contentType(LITERATURE_LIST_JSON_V1)
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("api/literature-lists/$literatureListVersionId")))
             .andDo(
                 documentationHandler.document(

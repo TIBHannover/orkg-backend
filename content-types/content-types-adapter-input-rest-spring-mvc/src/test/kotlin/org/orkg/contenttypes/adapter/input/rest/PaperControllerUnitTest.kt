@@ -372,7 +372,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("api/resources/$paperVersionId")))
             .andDo(
                 documentationHandler.document(

@@ -219,7 +219,7 @@ class SmartReviewController(
             .path("/api/smart-reviews/{id}")
             .buildAndExpand(smartReviewId)
             .toUri()
-        return noContent().location(location).build()
+        return created(location).build()
     }
 
     data class CreateSmartReviewRequest(

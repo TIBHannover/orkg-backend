@@ -56,6 +56,7 @@ A `POST` request publishes an existing comparison with the given parameters.
 It automatically adds additional publication information, such as month and year published.
 All comparison cell contents will be archived in a separate database.
 Optionally, a DOI can be assigned to the comparison resource.
-The response will be `204 No Content` when successful.
+The response will be `201 Created` when successful.
+The published comparison (object) can be retrieved by following the URI in the `Location` header field.
 
 operation::comparisons-publish[snippets='request-fields,curl-request,http-response']

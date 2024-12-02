@@ -14,10 +14,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyNestedTemplateInstance
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplateInstance
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
@@ -30,6 +33,7 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
+import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
@@ -122,6 +126,75 @@ class TemplateInstanceServiceUnitTests {
         verify(exactly = 1) { resourceRepository.findById(expected.root.id) }
         verify(exactly = 1) {
             statementService.findAll(subjectId = expected.root.id, pageable = PageRequests.ALL)
+        }
+    }
+
+    @Test
+    fun `Given a template instance, when fetching it nested by id, then it is returned`() {
+        val rootTemplate = createDummyTemplate()
+        val authorTemplate = createDummyTemplate().copy(
+            id = ThingId("R032154"),
+            targetClass = ClassReference(createClass(ThingId("C28"))),
+            properties = listOf(
+                createDummyStringLiteralTemplateProperty().copy(
+                    order = 0,
+                    pattern = null,
+                    path = ObjectIdAndLabel(Predicates.hasDOI, "has doi")
+                ),
+                createDummyStringLiteralTemplateProperty().copy(
+                    order = 1,
+                    pattern = null,
+                    path = ObjectIdAndLabel(Predicates.hasWikidataId, "has wikidata id")
+                )
+            )
+        )
+        val expected = createDummyNestedTemplateInstance()
+
+        val untypedPropertyId = rootTemplate.properties[0].path.id
+        val stringLiteralPropertyId = rootTemplate.properties[1].path.id
+        val numberLiteralPropertyId = rootTemplate.properties[2].path.id
+        val otherLiteralPropertyId = rootTemplate.properties[3].path.id
+        val resourcePropertyId = rootTemplate.properties[4].path.id
+        val hasAuthor = expected.statements[resourcePropertyId]!!.single()
+
+        every { templateService.findById(rootTemplate.id) } returns Optional.of(rootTemplate)
+        every { resourceRepository.findById(expected.root.id) } returns Optional.of(expected.root)
+        every {
+            statementService.findAll(subjectId = expected.root.id, pageable = PageRequests.ALL)
+        } returns pageOf(
+            expected.statements[untypedPropertyId]!!.single().toStatement(expected.root, untypedPropertyId),
+            expected.statements[stringLiteralPropertyId]!!.single().toStatement(expected.root, stringLiteralPropertyId),
+            expected.statements[numberLiteralPropertyId]!!.single().toStatement(expected.root, numberLiteralPropertyId),
+            expected.statements[otherLiteralPropertyId]!!.single().toStatement(expected.root, otherLiteralPropertyId),
+            hasAuthor.toStatement(expected.root, resourcePropertyId)
+        )
+        every {
+            templateService.findAll(targetClass = ThingId("C28"), pageable = PageRequests.SINGLE)
+        } returns pageOf(authorTemplate)
+        every {
+            statementService.findAll(subjectId = hasAuthor.thing.id, pageable = PageRequests.ALL)
+        } returns pageOf(
+            hasAuthor.statements[Predicates.hasDOI]!!.single().toStatement(hasAuthor.thing, Predicates.hasDOI),
+        )
+
+        val actual = service.findById(rootTemplate.id, expected.root.id, nested = true)
+
+        actual.isPresent shouldBe true
+        actual.get().asClue { templateInstance ->
+            templateInstance.root shouldBe expected.root
+            templateInstance.statements shouldBe expected.statements
+        }
+
+        verify(exactly = 1) { templateService.findById(rootTemplate.id) }
+        verify(exactly = 1) { resourceRepository.findById(expected.root.id) }
+        verify(exactly = 1) {
+            statementService.findAll(subjectId = expected.root.id, pageable = PageRequests.ALL)
+        }
+        verify(exactly = 1) {
+            templateService.findAll(targetClass = ThingId("C28"), pageable = PageRequests.SINGLE)
+        }
+        verify(exactly = 1) {
+            statementService.findAll(subjectId = hasAuthor.thing.id, pageable = PageRequests.ALL)
         }
     }
 

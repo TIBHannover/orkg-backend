@@ -13,10 +13,15 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveTemplateInstanceUseCase {
-    fun findById(templateId: ThingId, id: ThingId): Optional<TemplateInstance>
+    fun findById(
+        templateId: ThingId,
+        id: ThingId,
+        nested: Boolean = false
+    ): Optional<TemplateInstance>
     fun findAll(
         templateId: ThingId,
         pageable: Pageable,
+        nested: Boolean = false,
         label: SearchString? = null,
         visibility: VisibilityFilter? = null,
         createdBy: ContributorId? = null,

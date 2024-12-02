@@ -19,8 +19,10 @@ import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstance
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
+import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
@@ -53,20 +55,21 @@ class TemplateInstanceService(
     private val classHierarchyRepository: ClassHierarchyRepository
 ) : TemplateInstanceUseCases {
 
-    override fun findById(templateId: ThingId, id: ThingId): Optional<TemplateInstance> {
+    override fun findById(templateId: ThingId, id: ThingId, nested: Boolean): Optional<TemplateInstance> {
         val template = templateService.findById(templateId)
             .orElseThrow { TemplateNotFound(templateId) }
         return resourceRepository.findById(id).map {
             if (template.targetClass.id !in it.classes) {
                 throw TemplateNotApplicable(template.id, id)
             }
-            it.toTemplateInstance(template)
+            it.toTemplateInstance(template, nested)
         }
     }
 
     override fun findAll(
         templateId: ThingId,
         pageable: Pageable,
+        nested: Boolean,
         label: SearchString?,
         visibility: VisibilityFilter?,
         createdBy: ContributorId?,
@@ -103,18 +106,85 @@ class TemplateInstanceService(
         steps.execute(command, UpdateTemplateInstanceState())
     }
 
-    fun Resource.toTemplateInstance(template: Template): TemplateInstance {
+    fun Resource.toTemplateInstance(template: Template, nested: Boolean = false): TemplateInstance {
         val statements = statementService.findAll(subjectId = id, pageable = PageRequests.ALL)
-        return TemplateInstance(
+        val templateInstance = TemplateInstance(
             root = this,
-            statements = template.properties.associateBy(
-                keySelector = { it.path.id },
-                valueTransform = { property ->
-                    statements.content
-                        .filter { it.predicate.id == property.path.id }
-                        .map { EmbeddedStatement(it.`object`, it.createdAt!!, it.createdBy, emptyMap()) }
-                }
-            )
+            statements = associateTemplatePropertiesToStatements(template, statements)
         )
+        if (nested) {
+            val visitedThings = mutableSetOf(id)
+            val visitedTemplates = mutableMapOf<ThingId, Template?>(template.id to template)
+            return templateInstance.copy(
+                statements = findNestedStatementsRecursively(
+                    template = template,
+                    statements = templateInstance.statements,
+                    visitedThings = visitedThings,
+                    visitedTemplates = visitedTemplates
+                )
+            )
+        }
+        return templateInstance
     }
+
+    private fun associateTemplatePropertiesToStatements(
+        template: Template,
+        statements: Iterable<GeneralStatement>
+    ): Map<ThingId, List<EmbeddedStatement>> =
+        template.properties.associateBy(
+            keySelector = { it.path.id },
+            valueTransform = { property ->
+                statements.filter { it.predicate.id == property.path.id }
+                    .map { EmbeddedStatement(it.`object`, it.createdAt!!, it.createdBy, emptyMap()) }
+            }
+        )
+
+    private fun findNestedStatementsRecursively(
+        template: Template,
+        statements: Map<ThingId, List<EmbeddedStatement>>,
+        visitedThings: MutableSet<ThingId>,
+        visitedTemplates: MutableMap<ThingId, Template?>
+    ): Map<ThingId, List<EmbeddedStatement>> =
+        template.properties.associateBy(
+            keySelector = { it.path.id },
+            valueTransform = { property ->
+                val objects = statements[property.path.id].orEmpty()
+                if (property !is ResourceTemplateProperty) {
+                    return@associateBy objects
+                }
+                objects.map { `object` ->
+                    if (`object`.thing.id in visitedThings || !`object`.thing.isInstanceOf(property.`class`.id)) {
+                        return@map `object`
+                    }
+                    visitedThings += `object`.thing.id
+                    val nestedTemplate = visitedTemplates.getOrPut(property.`class`.id) {
+                        templateService.findAll(
+                            targetClass = property.`class`.id,
+                            pageable = PageRequests.SINGLE
+                        ).singleOrNull()
+                    }
+                    if (nestedTemplate == null) {
+                        return@map `object`
+                    }
+                    val nestedStatements = statementService.findAll(
+                        subjectId = `object`.thing.id,
+                        pageable = PageRequests.ALL
+                    )
+                    val associatedStatements = associateTemplatePropertiesToStatements(
+                        template = nestedTemplate,
+                        statements = nestedStatements.content
+                    )
+                    val recursiveStatements = findNestedStatementsRecursively(
+                        template = nestedTemplate,
+                        statements = associatedStatements,
+                        visitedThings = visitedThings,
+                        visitedTemplates = visitedTemplates
+                    )
+                    `object`.copy(statements = recursiveStatements)
+                }
+            }
+        )
+
+    private infix fun Thing.isInstanceOf(id: ThingId): Boolean =
+        this is Resource && id in classes
 }

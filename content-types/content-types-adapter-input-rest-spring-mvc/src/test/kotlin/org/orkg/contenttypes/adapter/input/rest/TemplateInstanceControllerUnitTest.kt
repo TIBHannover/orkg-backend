@@ -171,7 +171,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
         val templateId = ThingId("R132")
         val templateInstance = createDummyTemplateInstance()
 
-        every { service.findAll(templateId, any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(templateInstance)
+        every { service.findAll(templateId, any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(templateInstance)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
 
         val label = "label"
@@ -214,7 +214,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { service.findAll(templateId, any(), any(), any(), any(), any(), any(), any(), any()) }
+        verify(exactly = 1) { service.findAll(templateId, any(), any(), any(), any(), any(), any(), any(), any(), any()) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 

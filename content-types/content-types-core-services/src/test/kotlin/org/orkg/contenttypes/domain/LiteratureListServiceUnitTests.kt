@@ -9,7 +9,6 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
@@ -378,6 +377,7 @@ class LiteratureListServiceUnitTests {
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
         every { literatureListPublishedRepository.findById(expected.id) } returns Optional.of(
             PublishedContentType(
+                id = expected.id,
                 rootId = unpublished.id,
                 subgraph = listOf(
                     createStatement(
@@ -582,7 +582,8 @@ class LiteratureListServiceUnitTests {
         every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
         every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
             PublishedContentType(
-                rootId = literatureList.id,
+                id = literatureList.id,
+                rootId = ThingId("R456"),
                 subgraph = listOf(createStatement(`object` = content))
             )
         )
@@ -605,7 +606,8 @@ class LiteratureListServiceUnitTests {
         every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
         every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
             PublishedContentType(
-                rootId = literatureList.id,
+                id = literatureList.id,
+                rootId = ThingId("R456"),
                 subgraph = listOf(createStatement(`object` = content))
             )
         )
@@ -670,7 +672,8 @@ class LiteratureListServiceUnitTests {
         every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
         every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
             PublishedContentType(
-                rootId = literatureList.id,
+                id = literatureList.id,
+                rootId = ThingId("R456"),
                 subgraph = listOf()
             )
         )
@@ -693,7 +696,8 @@ class LiteratureListServiceUnitTests {
         every { resourceRepository.findById(literatureList.id) } returns Optional.of(literatureList)
         every { literatureListPublishedRepository.findById(literatureList.id) } returns Optional.of(
             PublishedContentType(
-                rootId = literatureList.id,
+                id = literatureList.id,
+                rootId = ThingId("R456"),
                 subgraph = listOf()
             )
         )

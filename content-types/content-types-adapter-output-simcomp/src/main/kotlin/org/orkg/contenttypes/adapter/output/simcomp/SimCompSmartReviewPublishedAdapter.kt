@@ -33,7 +33,7 @@ class SimCompSmartReviewPublishedAdapter(
 
     override fun save(smartReview: PublishedContentType) {
         repository.save(
-            id = smartReview.rootId,
+            id = smartReview.id,
             type = ThingType.REVIEW,
             data = smartReview.toPublishedContentTypeRepresentation(MediaTypeCapabilities.EMPTY)
         )

@@ -494,6 +494,7 @@ class SmartReviewServiceUnitTests {
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
         every { smartReviewPublishedRepository.findById(expected.id) } returns Optional.of(
             PublishedContentType(
+                id = expected.id,
                 rootId = unpublished.id,
                 subgraph = listOf(
                     createStatement(
@@ -743,7 +744,8 @@ class SmartReviewServiceUnitTests {
         every { resourceRepository.findById(smartReview.id) } returns Optional.of(smartReview)
         every { smartReviewPublishedRepository.findById(smartReview.id) } returns Optional.of(
             PublishedContentType(
-                rootId = smartReview.id,
+                id = smartReview.id,
+                rootId = ThingId("R456"),
                 subgraph = listOf(
                     createStatement(
                         subject = createResource(classes = setOf(Classes.section)),
@@ -786,7 +788,8 @@ class SmartReviewServiceUnitTests {
         every { resourceRepository.findById(smartReview.id) } returns Optional.of(smartReview)
         every { smartReviewPublishedRepository.findById(smartReview.id) } returns Optional.of(
             PublishedContentType(
-                rootId = smartReview.id,
+                id = smartReview.id,
+                rootId = ThingId("R456"),
                 subgraph = listOf(
                     createStatement(
                         subject = createResource(classes = setOf(Classes.section)),
@@ -827,7 +830,8 @@ class SmartReviewServiceUnitTests {
         every { resourceRepository.findById(smartReview.id) } returns Optional.of(smartReview)
         every { smartReviewPublishedRepository.findById(smartReview.id) } returns Optional.of(
             PublishedContentType(
-                rootId = smartReview.id,
+                id = smartReview.id,
+                rootId = ThingId("R456"),
                 subgraph = listOf(
                     createStatement(
                         subject = createResource(classes = setOf(Classes.section)),
@@ -888,7 +892,8 @@ class SmartReviewServiceUnitTests {
         every { resourceRepository.findById(smartReview.id) } returns Optional.of(smartReview)
         every { smartReviewPublishedRepository.findById(smartReview.id) } returns Optional.of(
             PublishedContentType(
-                rootId = smartReview.id,
+                id = smartReview.id,
+                rootId = ThingId("R456"),
                 subgraph = listOf()
             )
         )
@@ -911,7 +916,8 @@ class SmartReviewServiceUnitTests {
         every { resourceRepository.findById(smartReview.id) } returns Optional.of(smartReview)
         every { smartReviewPublishedRepository.findById(smartReview.id) } returns Optional.of(
             PublishedContentType(
-                rootId = smartReview.id,
+                id = smartReview.id,
+                rootId = ThingId("R456"),
                 subgraph = listOf()
             )
         )

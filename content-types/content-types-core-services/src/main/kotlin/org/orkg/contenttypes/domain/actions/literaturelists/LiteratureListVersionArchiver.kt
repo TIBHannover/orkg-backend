@@ -21,7 +21,7 @@ class LiteratureListVersionArchiver(
     private val literatureListPublishedRepository: LiteratureListPublishedRepository
 ) : PublishLiteratureListAction {
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
-        val statementToPersist = statementService.fetchAsBundle(
+        val statementsToPersist = statementService.fetchAsBundle(
             thingId = command.id,
             configuration = bundleConfiguration,
             includeFirst = true,
@@ -29,8 +29,9 @@ class LiteratureListVersionArchiver(
         ).bundle
         literatureListPublishedRepository.save(
             PublishedContentType(
-                rootId = state.literatureListVersionId!!,
-                subgraph = statementToPersist
+                id = state.literatureListVersionId!!,
+                rootId = command.id,
+                subgraph = statementsToPersist
             )
         )
         return state

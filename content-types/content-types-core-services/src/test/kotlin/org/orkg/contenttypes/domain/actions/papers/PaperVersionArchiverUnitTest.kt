@@ -92,7 +92,8 @@ class PaperVersionArchiverUnitTest {
         }
         verify(exactly = 1) {
             paperPublishedRepository.save(withArg {
-                it.rootId shouldBe state.paperVersionId!!
+                it.id shouldBe state.paperVersionId!!
+                it.rootId shouldBe command.id
                 it.subgraph shouldBe paper.contributions.flatMapIndexed { index, _ ->
                     listOf(createStatement(StatementId("S$index")))
                 }

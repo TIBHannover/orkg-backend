@@ -84,7 +84,8 @@ class LiteratureListVersionArchiverUnitTest {
         }
         verify(exactly = 1) {
             literatureListPublishedRepository.save(withArg {
-                it.rootId shouldBe state.literatureListVersionId!!
+                it.id shouldBe state.literatureListVersionId!!
+                it.rootId shouldBe command.id
                 it.subgraph shouldBe listOf(createStatement())
             })
         }

@@ -33,7 +33,7 @@ class SimCompLiteratureListPublishedAdapter(
 
     override fun save(literatureList: PublishedContentType) {
         repository.save(
-            id = literatureList.rootId,
+            id = literatureList.id,
             type = ThingType.LIST,
             data = literatureList.toPublishedContentTypeRepresentation(MediaTypeCapabilities.EMPTY)
         )

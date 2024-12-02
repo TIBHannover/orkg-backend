@@ -84,7 +84,8 @@ class SmartReviewVersionArchiverUnitTest {
         }
         verify(exactly = 1) {
             smartReviewPublishedRepository.save(withArg {
-                it.rootId shouldBe state.smartReviewVersionId!!
+                it.id shouldBe state.smartReviewVersionId!!
+                it.rootId shouldBe command.smartReviewId
                 it.subgraph shouldBe listOf(createStatement())
             })
         }

@@ -21,7 +21,7 @@ class SmartReviewVersionArchiver(
     private val smartReviewPublishedRepository: SmartReviewPublishedRepository
 ) : PublishSmartReviewAction {
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {
-        val statementToPersist = statementService.fetchAsBundle(
+        val statementsToPersist = statementService.fetchAsBundle(
             thingId = command.smartReviewId,
             configuration = bundleConfiguration,
             includeFirst = true,
@@ -29,8 +29,9 @@ class SmartReviewVersionArchiver(
         ).bundle
         smartReviewPublishedRepository.save(
             PublishedContentType(
-                rootId = state.smartReviewVersionId!!,
-                subgraph = statementToPersist
+                id = state.smartReviewVersionId!!,
+                rootId = command.smartReviewId,
+                subgraph = statementsToPersist
             )
         )
         return state

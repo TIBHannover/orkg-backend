@@ -18,6 +18,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
 
 fun createPublishedContentType(
+    id: ThingId = ThingId("R1234"),
     rootId: ThingId = ThingId("R123"),
     subgraph: List<GeneralStatement> = listOf(
         GeneralStatement(
@@ -79,4 +80,4 @@ fun createPublishedContentType(
             createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b")
         )
     )
-): PublishedContentType = PublishedContentType(rootId, subgraph)
+): PublishedContentType = PublishedContentType(id, rootId, subgraph)

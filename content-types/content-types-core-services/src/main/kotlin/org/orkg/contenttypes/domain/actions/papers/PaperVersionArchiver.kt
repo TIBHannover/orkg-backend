@@ -29,8 +29,13 @@ class PaperVersionArchiver(
                 sort = Sort.unsorted()
             ).bundle
         }
-        val publishedContentType = PublishedContentType(state.paperVersionId!!, statementsToPersist)
-        paperPublishedRepository.save(publishedContentType)
+        paperPublishedRepository.save(
+            PublishedContentType(
+                id = state.paperVersionId!!,
+                rootId = command.id,
+                subgraph = statementsToPersist
+            )
+        )
         return state
     }
 }

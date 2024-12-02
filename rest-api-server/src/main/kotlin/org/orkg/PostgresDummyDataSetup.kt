@@ -1,12 +1,7 @@
 package org.orkg
 
-import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer
-import com.fasterxml.jackson.databind.module.SimpleModule
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -17,7 +12,6 @@ import net.datafaker.Faker
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
-import org.orkg.common.ThingId
 import org.orkg.community.domain.BadPeerReviewType
 import org.orkg.community.domain.ConferenceSeries
 import org.orkg.community.domain.Contributor
@@ -53,28 +47,6 @@ class PostgresDummyDataSetup(
     private val dummyDataUseCases: DummyDataUseCases,
     private val contributorRepository: ContributorRepository,
 ) : ApplicationRunner {
-
-    class ObservatoryDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Observatory?>(vc) {
-        override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): Observatory {
-            val node: JsonNode = jp.codec.readTree(jp)
-            return Observatory(
-                id = ObservatoryId(UUID.fromString(node["id"].asText())),
-                name = node["name"].asText(),
-                description = node["description"].asText(),
-                researchField = node["research_field"]["id"].takeIf { !it.isNull }?.let { ThingId(it.asText()) },
-                members = node["members"].map { ContributorId(UUID.fromString(it.asText())) }.toSet(),
-                organizationIds = node["organization_ids"].map { OrganizationId(UUID.fromString(it.asText())) }.toSet(),
-                displayId = node["display_id"].asText(),
-                sustainableDevelopmentGoals = node["sdgs"].map { ThingId(it.textValue()) }.toSet()
-            )
-        }
-    }
-
-    init {
-        objectMapper.registerModule(
-            SimpleModule().addDeserializer(Observatory::class.java, ObservatoryDeserializer())
-        )
-    }
 
     @Autowired
     private lateinit var context: ConfigurableApplicationContext

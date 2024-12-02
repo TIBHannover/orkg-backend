@@ -28,6 +28,8 @@ testing {
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
+                implementation("jakarta.activation:jakarta.activation-api")
+                implementation(libs.assertj.core)
                 implementation(libs.spring.mockk)
                 implementation(libs.spring.restdocs)
                 implementation("org.springframework.security:spring-security-test")

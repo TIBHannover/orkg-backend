@@ -12,10 +12,12 @@ import io.mockk.verify
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -59,8 +61,18 @@ class SmartReviewReferencesUpdaterUnitTest {
                 "@misc{R456789,title = {Another super important paper}"
             )
         )
+        val contributionId = ThingId("R2457")
         val command = dummyUpdateSmartReviewCommand()
-        val state = UpdateSmartReviewState(smartReview = smartReview)
+        val state = UpdateSmartReviewState(
+            smartReview = smartReview,
+            statements = listOf(
+                createStatement(
+                    subject = createResource(command.smartReviewId, classes = setOf(Classes.smartReview)),
+                    predicate = createPredicate(Predicates.hasContribution),
+                    `object` = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
+                )
+            ).groupBy { it.subject.id }
+        )
 
         val result = smartReviewReferencesUpdater(command, state)
 
@@ -74,12 +86,18 @@ class SmartReviewReferencesUpdaterUnitTest {
     @Test
     fun `Given a smart review update command, when references have changed, it updates the reference statements`() {
         val smartReview = createDummySmartReview()
+        val contributionId = ThingId("R2457")
         val command = dummyUpdateSmartReviewCommand()
         val state = UpdateSmartReviewState(
             smartReview = smartReview,
             statements = listOf(
-                createStatement(subject = createResource(command.smartReviewId), predicate = createPredicate(Predicates.hasReference)),
-                createStatement(subject = createResource(command.smartReviewId), predicate = createPredicate(Predicates.hasContent)),
+                createStatement(
+                    subject = createResource(command.smartReviewId, classes = setOf(Classes.smartReview)),
+                    predicate = createPredicate(Predicates.hasContribution),
+                    `object` = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
+                ),
+                createStatement(subject = createResource(contributionId), predicate = createPredicate(Predicates.hasReference)),
+                createStatement(subject = createResource(contributionId), predicate = createPredicate(Predicates.hasContent)),
                 createStatement(subject = createResource())
             ).groupBy { it.subject.id }
         )
@@ -88,7 +106,7 @@ class SmartReviewReferencesUpdaterUnitTest {
             statementCollectionPropertyUpdater.update(
                 statements = any(),
                 contributorId = command.contributorId,
-                subjectId = command.smartReviewId,
+                subjectId = contributionId,
                 predicateId = Predicates.hasReference,
                 literals = command.references!!
             )
@@ -104,9 +122,9 @@ class SmartReviewReferencesUpdaterUnitTest {
 
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
-                statements = state.statements[command.smartReviewId]!!,
+                statements = state.statements[contributionId]!!,
                 contributorId = command.contributorId,
-                subjectId = command.smartReviewId,
+                subjectId = contributionId,
                 predicateId = Predicates.hasReference,
                 literals = command.references!!
             )

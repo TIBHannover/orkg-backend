@@ -239,6 +239,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             it.researchFields shouldBe listOf(
                 ObjectIdAndLabel(ThingId("R12"), "Computer Science")
             )
+            it.identifiers shouldBe emptyMap()
             it.authors.size shouldBe 5
             it.authors[0] shouldBe AuthorRepresentation(
                 name = "Author with id",
@@ -348,6 +349,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
             it.researchFields shouldBe listOf(
                 ObjectIdAndLabel(ThingId("R194"), "Engineering")
             )
+            it.identifiers shouldBe emptyMap()
             it.authors.size shouldBe 5
             it.authors[0] shouldBe Author(
                 name = "Author with id",
@@ -431,8 +433,8 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
                 section.text shouldBe "Introduction text section contents"
             }
             it.references shouldBe listOf(
-                "@misc{R615465, title = {reference 1}}",
-                "@misc{R154146, title = {reference 2}}"
+                "@misc{R615465, title = {updated reference 1}}",
+                "@misc{R154146, title = {updated reference 2}}"
             )
             it.acknowledgements shouldBe mapOf(
                 ContributorId(MockUserId.USER) to (7.0 / 13.0),

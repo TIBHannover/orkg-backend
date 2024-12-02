@@ -15,5 +15,5 @@ class SmartReviewExistenceValidator(
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State =
         abstractSmartReviewExistenceValidator.findUnpublishedSmartReviewById(command.smartReviewId)
-            .let { state.copy(smartReview = it.first, statements = it.second) }
+            .let { (smartReview, statements) -> state.copy(smartReview = smartReview, statements = statements) }
 }

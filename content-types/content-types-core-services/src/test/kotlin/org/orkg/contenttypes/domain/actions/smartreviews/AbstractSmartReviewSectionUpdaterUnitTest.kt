@@ -452,7 +452,7 @@ class AbstractSmartReviewSectionUpdaterUnitTest {
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     label = oldSection.heading,
-                    classes = setOf(newSection.`class`, Classes.section)
+                    classes = setOfNotNull(newSection.`class`, Classes.section)
                 )
             )
         }

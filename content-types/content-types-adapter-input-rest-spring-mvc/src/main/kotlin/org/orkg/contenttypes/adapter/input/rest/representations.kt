@@ -484,6 +484,7 @@ data class SmartReviewRepresentation(
     val title: String,
     @get:JsonProperty("research_fields")
     val researchFields: List<ObjectIdAndLabel>,
+    val identifiers: Map<String, List<String>>,
     val authors: List<AuthorRepresentation>,
     val versions: VersionInfoRepresentation,
     @get:JsonProperty("sdgs")

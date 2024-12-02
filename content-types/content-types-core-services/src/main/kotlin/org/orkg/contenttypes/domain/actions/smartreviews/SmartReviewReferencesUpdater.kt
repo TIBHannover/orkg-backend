@@ -3,7 +3,9 @@ package org.orkg.contenttypes.domain.actions.smartreviews
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.smartreviews.UpdateSmartReviewAction.State
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -17,13 +19,20 @@ class SmartReviewReferencesUpdater(
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
         if (command.references != null && command.references != state.smartReview!!.references) {
-            statementCollectionPropertyUpdater.update(
-                statements = state.statements[command.smartReviewId].orEmpty(),
-                contributorId = command.contributorId,
-                subjectId = command.smartReviewId,
-                predicateId = Predicates.hasReference,
-                literals = command.references!!
-            )
+            val directStatements = state.statements[command.smartReviewId].orEmpty()
+            val contributionId = directStatements.singleOrNull {
+                it.predicate.id == Predicates.hasContribution && it.`object` is Resource &&
+                    Classes.contributionSmartReview in (it.`object` as Resource).classes
+            }?.`object`?.id
+            if (contributionId != null) {
+                statementCollectionPropertyUpdater.update(
+                    statements = state.statements[contributionId].orEmpty(),
+                    contributorId = command.contributorId,
+                    subjectId = contributionId,
+                    predicateId = Predicates.hasReference,
+                    literals = command.references!!
+                )
+            }
         }
         return state
     }

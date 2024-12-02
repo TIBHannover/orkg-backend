@@ -19,6 +19,7 @@ data class SmartReview(
     val id: ThingId,
     val title: String,
     val researchFields: List<ObjectIdAndLabel>,
+    val identifiers: Map<String, List<String>>,
     val authors: List<Author>,
     val versions: VersionInfo,
     val sustainableDevelopmentGoals: Set<ObjectIdAndLabel>,
@@ -65,6 +66,7 @@ data class SmartReview(
                 researchFields = directStatements.wherePredicate(Predicates.hasResearchField)
                     .objectIdsAndLabel()
                     .sortedBy { it.id },
+                identifiers = directStatements.associateIdentifiers(Identifiers.smartReview),
                 authors = statements.authors(root).ifEmpty { statements.legacyAuthors(root) },
                 versions = versions,
                 sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)

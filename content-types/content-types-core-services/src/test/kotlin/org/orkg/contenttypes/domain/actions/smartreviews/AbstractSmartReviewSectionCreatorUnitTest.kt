@@ -322,7 +322,7 @@ class AbstractSmartReviewSectionCreatorUnitTest {
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             label = section.heading,
-            classes = setOf(Classes.section, section.`class`),
+            classes = setOfNotNull(Classes.section, section.`class`),
             contributorId = contributorId
         )
         val sectionId = ThingId("R156465")

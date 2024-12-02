@@ -1,0 +1,14 @@
+### Get a smart review with a given ID
+GET {{server_url}}/api/smart-reviews/R75359
+Accept: application/vnd.orkg.smart-review.v1+json
+
+### Publish a smart review with a given ID
+POST {{server_url}}/api/smart-reviews/R75359/publish
+Content-Type: application/vnd.orkg.smart-review.v1+json
+Authorization: Bearer {{access_token}}
+
+{
+    "changelog": "changelog",
+    "description": "smart review description",
+    "assign_doi": false
+}

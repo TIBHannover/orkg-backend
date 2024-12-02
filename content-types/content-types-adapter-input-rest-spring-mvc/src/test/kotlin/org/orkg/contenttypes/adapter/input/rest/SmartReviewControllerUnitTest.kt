@@ -170,6 +170,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                         fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `smart-review`."),
                     ).and(authorListFields("smart review"))
                         .and(sustainableDevelopmentGoalsFields("smart review"))
+                        .and(smartReviewIdentifierFields())
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -733,10 +734,9 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                         headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
                     ),
                     requestFields(
-
                         fieldWithPath("heading").description("The heading of the text section."),
                         fieldWithPath("text").description("The text contents of the text section."),
-                        fieldWithPath("class").description("The id of the class that indicates the type of the text section."),
+                        fieldWithPath("class").description("The id of the class that indicates the type of the text section. (optional)"),
                     )
                 )
             )
@@ -1012,7 +1012,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
                         fieldWithPath("heading").description("The updated heading of the text section."),
                         fieldWithPath("text").description("The updated text contents of the text section."),
-                        fieldWithPath("class").description("The updated id of the class that indicates the type of the text section."),
+                        fieldWithPath("class").description("The updated id of the class that indicates the type of the text section. An absent value indicates no type."),
                     )
                 )
             )

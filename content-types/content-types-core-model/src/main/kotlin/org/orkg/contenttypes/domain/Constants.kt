@@ -23,6 +23,9 @@ object Identifiers {
     val comparison = setOf(
         Identifier("doi", Predicates.hasDOI, DOI::of)
     )
+    val smartReview = setOf(
+        Identifier("doi", Predicates.hasDOI, DOI::of)
+    )
     val author = setOf(
         Identifier("orcid", Predicates.hasORCID, ORCID::of),
         Identifier("google_scholar", Predicates.hasGoogleScholarId, GoogleScholarId::of),

@@ -184,7 +184,7 @@ class AbstractSmartReviewSectionUpdater(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     label = newSection.heading,
-                    classes = (oldSection.classes.filterNot { it in SmartReviewTextSection.types } + setOf(newSection.`class`, Classes.section)).toSet()
+                    classes = oldSection.classes.filterNot { it in SmartReviewTextSection.types } union setOfNotNull(newSection.`class`, Classes.section)
                 )
             )
         }

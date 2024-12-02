@@ -77,8 +77,8 @@ class AbstractSmartReviewSectionValidator(
             }
             is SmartReviewTextSectionDefinition -> {
                 Description.ofOrNull(section.text) ?: throw InvalidDescription("text")
-                if (section.`class` !in SmartReviewTextSection.types) {
-                    throw InvalidSmartReviewTextSectionType(section.`class`)
+                if (section.`class` != null && section.`class` !in SmartReviewTextSection.types) {
+                    throw InvalidSmartReviewTextSectionType(section.`class`!!)
                 }
             }
         }

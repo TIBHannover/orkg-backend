@@ -158,7 +158,7 @@ class AbstractSmartReviewSectionCreator(
         val sectionId = resourceService.createUnsafe(
             CreateResourceUseCase.CreateCommand(
                 label = section.heading,
-                classes = setOf(Classes.section, section.`class`),
+                classes = setOfNotNull(Classes.section, section.`class`),
                 contributorId = contributorId
             )
         )

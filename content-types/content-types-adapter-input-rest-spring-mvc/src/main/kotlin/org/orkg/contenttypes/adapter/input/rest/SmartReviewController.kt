@@ -435,7 +435,7 @@ class SmartReviewController(
 
     data class SmartReviewTextSectionRequest(
         override val heading: String,
-        val `class`: ThingId,
+        val `class`: ThingId?,
         val text: String
     ) : SmartReviewSectionRequest {
         override fun toSmartReviewSectionDefinition(): SmartReviewSectionDefinition =

@@ -87,7 +87,7 @@ interface CreateSmartReviewSectionUseCase {
         override val smartReviewId: ThingId,
         override val index: Int?,
         override val heading: String,
-        override val `class`: ThingId,
+        override val `class`: ThingId?,
         override val text: String
     ) : CreateCommand, SmartReviewTextSectionDefinition
 }
@@ -165,7 +165,7 @@ interface UpdateSmartReviewSectionUseCase {
         override val contributorId: ContributorId,
         override val smartReviewId: ThingId,
         override val heading: String,
-        override val `class`: ThingId,
+        override val `class`: ThingId?,
         override val text: String
     ) : UpdateCommand, SmartReviewTextSectionDefinition
 }
@@ -251,12 +251,12 @@ interface SmartReviewOntologySectionDefinition : SmartReviewSectionDefinition {
 
 interface SmartReviewTextSectionDefinition : SmartReviewSectionDefinition {
     override val heading: String
-    val `class`: ThingId
+    val `class`: ThingId?
     val text: String
 
     override fun matchesSmartReviewSection(section: SmartReviewSection): Boolean =
         super.matchesSmartReviewSection(section) && section is SmartReviewTextSection &&
-            `class` in section.classes && text == section.text
+            (`class` == null || `class` in section.classes) && text == section.text
 }
 
 sealed interface SmartReviewSectionCommand
@@ -289,6 +289,6 @@ data class SmartReviewOntologySectionCommand(
 
 data class SmartReviewTextSectionCommand(
     override val heading: String,
-    override val `class`: ThingId,
+    override val `class`: ThingId?,
     override val text: String
 ) : SmartReviewSectionCommand, SmartReviewTextSectionDefinition

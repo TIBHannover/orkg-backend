@@ -38,7 +38,6 @@ class SmartReviewVersionCreator(
         val steps = listOf(
             SmartReviewAuthorCreateValidator(resourceRepository, statementRepository),
             SmartReviewVersionResourceCreator(resourceService),
-            SmartReviewReferencesCreator(literalService, statementService),
             SmartReviewResearchFieldCreator(literalService, statementService),
             SmartReviewAuthorCreator(resourceService, statementService, literalService, listService),
             SmartReviewSDGCreator(literalService, statementService)

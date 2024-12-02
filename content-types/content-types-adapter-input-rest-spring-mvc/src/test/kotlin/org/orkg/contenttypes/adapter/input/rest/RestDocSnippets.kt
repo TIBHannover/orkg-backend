@@ -26,6 +26,11 @@ fun paperIdentifierFields(path: String = "identifiers"): List<FieldDescriptor> =
     fieldWithPath("$path.open_alex").type("Array").description("The list of OpenAlex IDs of the paper. (optional)").optional(),
 )
 
+fun smartReviewIdentifierFields(path: String = "identifiers"): List<FieldDescriptor> = listOf(
+    fieldWithPath(path).description("The unique identifiers of the smart review. (optional)"),
+    fieldWithPath("$path.doi").type("Array").description("The list of DOIs of the smart review. (optional)").optional(),
+)
+
 fun publicationInfoFields(type: String, path: String = "publication_info"): List<FieldDescriptor> = listOf(
     fieldWithPath(path).description("The publication info of the paper.").optional(),
     fieldWithPath("$path.published_month").description("The month in which the $type was published. (optional)").optional(),

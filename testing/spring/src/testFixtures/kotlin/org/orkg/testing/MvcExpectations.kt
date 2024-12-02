@@ -430,6 +430,10 @@ fun ResultActions.andExpectObservatoryFilter(path: String = "$"): ResultActions 
     .andExpect(jsonPath("$path.exact", `is`(notNullValue())))
     .andExpect(jsonPath("$path.featured", `is`(notNullValue())))
 
+fun ResultActions.andExpectStatementList(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path._class").value("statement_list"))
+    .andExpectStatement("$path.statements.[*]")
+
 fun ResultActions.andExpectTable(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.label", `is`(notNullValue())))

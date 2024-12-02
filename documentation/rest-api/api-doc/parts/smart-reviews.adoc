@@ -57,3 +57,22 @@ Optionally, a DOI can be assigned to the published smart review resource.
 The response will be `204 No Content` when successful.
 
 operation::smart-reviews-publish[snippets='request-fields,curl-request,http-response']
+
+[[smart-reviews-published-contents]]
+== Fetching Published Smart Review Contents
+
+A `GET` request returns contents of an already published smart review, at the state of publishing.
+
+operation::smart-reviews-find-published-content-by-id[snippets='curl-request']
+
+Depending on the type of the requested content, the following representations are returned:
+
+[options="header"]
+|===
+| Type           | Returned Representation
+| Comparison     | <<comparisons-fetch,Comparison>>
+| Visualization  | <<visualizations-fetch,Visualization>>
+| Other          | A wrapped list of <<statements-fetch,statements>>. See response fields below for more information.
+|===
+
+operation::smart-reviews-find-published-content-by-id[snippets='response-fields']

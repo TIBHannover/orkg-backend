@@ -9,13 +9,16 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.PositiveOrZero
 import jakarta.validation.constraints.Size
 import org.orkg.common.ContributorId
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
+import org.orkg.contenttypes.adapter.input.rest.mapping.ContentTypeRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.SmartReviewRepresentationAdapter
+import org.orkg.contenttypes.adapter.input.rest.mapping.StatementListRepresentationAdapter
 import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
@@ -31,13 +34,17 @@ import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.SmartReviewVisualizationSectionCommand
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
+import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.FormattedLabelUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
@@ -59,8 +66,11 @@ const val SMART_REVIEW_SECTION_JSON_V1 = "application/vnd.orkg.smart-review-sect
 @RestController
 @RequestMapping("/api/smart-reviews", produces = [SMART_REVIEW_JSON_V1])
 class SmartReviewController(
+    override val formattedLabelService: FormattedLabelUseCases,
+    override val statementService: StatementUseCases,
+    override val flags: FeatureFlagService,
     private val service: SmartReviewUseCases
-) : SmartReviewRepresentationAdapter {
+) : SmartReviewRepresentationAdapter, ContentTypeRepresentationAdapter, StatementListRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(
         @PathVariable id: ThingId
@@ -98,6 +108,16 @@ class SmartReviewController(
             published = published,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).mapToSmartReviewRepresentation()
+
+    @GetMapping("/{smartReviewId}/published-contents/{contentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun findPublishedContentById(
+        @PathVariable smartReviewId: ThingId,
+        @PathVariable contentId: ThingId,
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities
+    ): Any =
+        service.findPublishedContentById(smartReviewId, contentId)
+            .fold({ it.toContentTypeRepresentation() }, { it.toStatementListRepresentation(capabilities) })
 
     @RequireLogin
     @PostMapping(consumes = [SMART_REVIEW_JSON_V1])

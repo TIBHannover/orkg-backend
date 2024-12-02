@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain
 import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
+import org.orkg.common.Either
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
@@ -65,11 +66,14 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSec
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionUpdateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionUpdater
 import org.orkg.contenttypes.input.SmartReviewUseCases
+import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
@@ -94,6 +98,7 @@ class SmartReviewService(
     private val resourceRepository: ResourceRepository,
     private val smartReviewRepository: SmartReviewRepository,
     private val smartReviewPublishedRepository: SmartReviewPublishedRepository,
+    private val comparisonRepository: ComparisonRepository,
     private val statementRepository: StatementRepository,
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
@@ -141,6 +146,35 @@ class SmartReviewService(
             published = published,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).pmap { it.toSmartReview() }
+
+    override fun findPublishedContentById(
+        smartReviewId: ThingId,
+        contentId: ThingId
+    ): Either<ContentType, List<GeneralStatement>> {
+        val smartReview = resourceRepository.findById(smartReviewId)
+            .filter { Classes.smartReviewPublished in it.classes }
+            .orElseThrow { SmartReviewNotFound(smartReviewId) }
+        val statements = findSubgraph(smartReview).statements
+        val content = statements.values.flatten()
+            .firstOrNull { statement ->
+                statement.subject is Resource && Classes.section in (statement.subject as Resource).classes &&
+                    statement.`object`.id == contentId && statement.predicate.isAboutSmartReviewSection()
+            }
+            ?.`object`
+            ?: throw PublishedSmartReviewContentNotFound(smartReviewId, contentId)
+        return when {
+            content is Resource && Classes.comparison in content.classes -> {
+                Either.left(Comparison.from(content, statements, comparisonRepository.findVersionHistory(contentId)))
+            }
+            content is Resource && Classes.visualization in content.classes -> {
+                Either.left(Visualization.from(content, statements))
+            }
+            else -> Either.right(statements[contentId].orEmpty())
+        }
+    }
+
+    private fun Predicate.isAboutSmartReviewSection() =
+        id == Predicates.hasLink || id == Predicates.showProperty || id == Predicates.hasEntity
 
     override fun create(command: CreateSmartReviewCommand): ThingId {
         val steps = listOf(

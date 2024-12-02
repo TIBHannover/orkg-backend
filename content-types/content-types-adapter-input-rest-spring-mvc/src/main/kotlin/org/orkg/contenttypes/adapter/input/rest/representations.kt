@@ -7,12 +7,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.JsonTypeName
-import java.time.OffsetDateTime
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
+import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -28,6 +28,7 @@ import org.orkg.contenttypes.domain.PredicateReference
 import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
+import org.orkg.graph.adapter.input.rest.StatementRepresentation
 import org.orkg.graph.adapter.input.rest.ThingRepresentation
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
@@ -652,6 +653,11 @@ data class LiteralReferenceRepresentation(
     val datatype: String
 ) : ThingReferenceRepresentation {
     override val id: ThingId? get() = null
+}
+
+data class StatementListRepresentation(val statements: List<StatementRepresentation>) {
+    @get:JsonProperty("_class")
+    val jsonClass: String = "statement_list"
 }
 
 data class TableRepresentation(

@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -14,6 +15,7 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -21,6 +23,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
@@ -50,6 +53,7 @@ class SmartReviewServiceUnitTests {
     private val resourceRepository: ResourceRepository = mockk()
     private val smartReviewRepository: SmartReviewRepository = mockk()
     private val smartReviewPublishedRepository: SmartReviewPublishedRepository = mockk()
+    private val comparisonRepository: ComparisonRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
@@ -66,6 +70,7 @@ class SmartReviewServiceUnitTests {
         resourceRepository = resourceRepository,
         smartReviewRepository = smartReviewRepository,
         smartReviewPublishedRepository = smartReviewPublishedRepository,
+        comparisonRepository = comparisonRepository,
         statementRepository = statementRepository,
         observatoryRepository = observatoryRepository,
         organizationRepository = organizationRepository,
@@ -91,6 +96,7 @@ class SmartReviewServiceUnitTests {
             resourceRepository,
             smartReviewRepository,
             smartReviewPublishedRepository,
+            comparisonRepository,
             statementRepository,
             observatoryRepository,
             organizationRepository,
@@ -727,5 +733,196 @@ class SmartReviewServiceUnitTests {
                 sort = Sort.unsorted()
             )
         }
+    }
+
+    @Test
+    fun `Given a published smart review, when fetching one of its contents (comparison), then it is returned`() {
+        val smartReview = createResource(classes = setOf(Classes.smartReviewPublished))
+        val content = createResource(id = ThingId("R123"), classes = setOf(Classes.comparison))
+
+        every { resourceRepository.findById(smartReview.id) } returns Optional.of(smartReview)
+        every { smartReviewPublishedRepository.findById(smartReview.id) } returns Optional.of(
+            PublishedContentType(
+                rootId = smartReview.id,
+                subgraph = listOf(
+                    createStatement(
+                        subject = createResource(classes = setOf(Classes.section)),
+                        predicate = createPredicate(Predicates.hasLink),
+                        `object` = content
+                    )
+                )
+            )
+        )
+        every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
+        every { comparisonRepository.findVersionHistory(content.id) } returns emptyList()
+
+        val result = service.findPublishedContentById(smartReview.id, content.id)
+        result.isLeft shouldBe true
+        result.onLeft { comparison ->
+            comparison.shouldBeInstanceOf<Comparison>().asClue {
+                it.id shouldBe content.id
+                it.title shouldBe content.label
+                it.createdAt shouldBe content.createdAt
+                it.createdBy shouldBe content.createdBy
+                it.observatories shouldBe listOf(content.observatoryId)
+                it.extractionMethod shouldBe content.extractionMethod
+                it.organizations shouldBe listOf(content.organizationId)
+                it.visibility shouldBe content.visibility
+                it.unlistedBy shouldBe content.unlistedBy
+            }
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(smartReview.id) }
+        verify(exactly = 1) { smartReviewPublishedRepository.findById(smartReview.id) }
+        verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
+        verify(exactly = 1) { comparisonRepository.findVersionHistory(content.id) }
+    }
+
+    @Test
+    fun `Given a published smart review, when fetching one of its contents (visualization), then it is returned`() {
+        val smartReview = createResource(classes = setOf(Classes.smartReviewPublished))
+        val content = createResource(id = ThingId("R123"), classes = setOf(Classes.visualization))
+
+        every { resourceRepository.findById(smartReview.id) } returns Optional.of(smartReview)
+        every { smartReviewPublishedRepository.findById(smartReview.id) } returns Optional.of(
+            PublishedContentType(
+                rootId = smartReview.id,
+                subgraph = listOf(
+                    createStatement(
+                        subject = createResource(classes = setOf(Classes.section)),
+                        predicate = createPredicate(Predicates.hasLink),
+                        `object` = content
+                    )
+                )
+            )
+        )
+        every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
+
+        val result = service.findPublishedContentById(smartReview.id, content.id)
+        result.isLeft shouldBe true
+        result.onLeft { visualization ->
+            visualization.shouldBeInstanceOf<Visualization>().asClue {
+                it.id shouldBe content.id
+                it.title shouldBe content.label
+                it.createdAt shouldBe content.createdAt
+                it.createdBy shouldBe content.createdBy
+                it.observatories shouldBe listOf(content.observatoryId)
+                it.extractionMethod shouldBe content.extractionMethod
+                it.organizations shouldBe listOf(content.organizationId)
+                it.visibility shouldBe content.visibility
+                it.unlistedBy shouldBe content.unlistedBy
+            }
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(smartReview.id) }
+        verify(exactly = 1) { smartReviewPublishedRepository.findById(smartReview.id) }
+        verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given a published smart review, when fetching one of its contents (subgraph), then it is returned`() {
+        val smartReview = createResource(classes = setOf(Classes.smartReviewPublished))
+        val content = createResource(id = ThingId("R123"), classes = setOf(Classes.model))
+
+        every { resourceRepository.findById(smartReview.id) } returns Optional.of(smartReview)
+        every { smartReviewPublishedRepository.findById(smartReview.id) } returns Optional.of(
+            PublishedContentType(
+                rootId = smartReview.id,
+                subgraph = listOf(
+                    createStatement(
+                        subject = createResource(classes = setOf(Classes.section)),
+                        predicate = createPredicate(Predicates.hasLink),
+                        `object` = content
+                    ),
+                    createStatement(subject = content),
+                    createStatement(subject = createResource(ThingId("unrelated")))
+                )
+            )
+        )
+        every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
+
+        val result = service.findPublishedContentById(smartReview.id, content.id)
+        result.isRight shouldBe true
+        result.onRight { statements ->
+            statements shouldBe listOf(createStatement(subject = content))
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(smartReview.id) }
+        verify(exactly = 1) { smartReviewPublishedRepository.findById(smartReview.id) }
+        verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given a published smart review, when fetching one of its contents but smart review does not exist, then it throws an exception`() {
+        val smartReviewId = ThingId("R123")
+        val contentId = ThingId("R456")
+
+        every { resourceRepository.findById(smartReviewId) } returns Optional.empty()
+
+        assertThrows<SmartReviewNotFound> {
+            service.findPublishedContentById(smartReviewId, contentId)
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(smartReviewId) }
+    }
+
+    @Test
+    fun `Given a published smart review, when fetching one of its contents but provided smart review id is not of a published smart review, then it throws an exception`() {
+        val notASmartReview = createResource(classes = setOf(Classes.paper))
+        val contentId = ThingId("R456")
+
+        every { resourceRepository.findById(notASmartReview.id) } returns Optional.of(notASmartReview)
+
+        assertThrows<SmartReviewNotFound> {
+            service.findPublishedContentById(notASmartReview.id, contentId)
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(notASmartReview.id) }
+    }
+
+    @Test
+    fun `Given a published smart review, when fetching one of its contents but content is unrelated, then it throws an exception`() {
+        val smartReview = createResource(classes = setOf(Classes.smartReviewPublished))
+        val unrelatedContent = createResource(id = ThingId("R123"), classes = setOf(Classes.dataset))
+
+        every { resourceRepository.findById(smartReview.id) } returns Optional.of(smartReview)
+        every { smartReviewPublishedRepository.findById(smartReview.id) } returns Optional.of(
+            PublishedContentType(
+                rootId = smartReview.id,
+                subgraph = listOf()
+            )
+        )
+        every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
+
+        assertThrows<PublishedSmartReviewContentNotFound> {
+            service.findPublishedContentById(smartReview.id, unrelatedContent.id)
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(smartReview.id) }
+        verify(exactly = 1) { smartReviewPublishedRepository.findById(smartReview.id) }
+        verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given a published smart review, when fetching one of its contents but content is not of a know class, then it throws an exception`() {
+        val smartReview = createResource(classes = setOf(Classes.smartReviewPublished))
+        val unknownContent = createResource(id = ThingId("R123"), classes = setOf(Classes.caption))
+
+        every { resourceRepository.findById(smartReview.id) } returns Optional.of(smartReview)
+        every { smartReviewPublishedRepository.findById(smartReview.id) } returns Optional.of(
+            PublishedContentType(
+                rootId = smartReview.id,
+                subgraph = listOf()
+            )
+        )
+        every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
+
+        assertThrows<PublishedSmartReviewContentNotFound> {
+            service.findPublishedContentById(smartReview.id, unknownContent.id)
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(smartReview.id) }
+        verify(exactly = 1) { smartReviewPublishedRepository.findById(smartReview.id) }
+        verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
     }
 }

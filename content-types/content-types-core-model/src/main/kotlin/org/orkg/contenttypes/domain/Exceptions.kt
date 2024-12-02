@@ -267,6 +267,9 @@ class LiteratureListSectionTypeMismatch private constructor(
 class PublishedLiteratureListContentNotFound(literatureListId: ThingId, contentId: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Literature list content "$contentId" not found for literature list "$literatureListId".""")
 
+class PublishedSmartReviewContentNotFound(smartReviewId: ThingId, contentId: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Smart review content "$contentId" not found for smart review "$smartReviewId".""")
+
 class UnrelatedSmartReviewSection(smartReviewId: ThingId, smartReviewSectionId: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Smart review section "$smartReviewSectionId" does not belong to smart review "$smartReviewId".""")
 

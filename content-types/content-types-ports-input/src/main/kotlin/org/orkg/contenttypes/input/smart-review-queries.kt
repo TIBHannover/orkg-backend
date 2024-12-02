@@ -3,10 +3,13 @@ package org.orkg.contenttypes.input
 import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
+import org.orkg.common.Either
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.ContentType
 import org.orkg.contenttypes.domain.SmartReview
+import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
@@ -28,4 +31,8 @@ interface RetrieveSmartReviewUseCase {
         published: Boolean? = null,
         sustainableDevelopmentGoal: ThingId? = null
     ): Page<SmartReview>
+    fun findPublishedContentById(
+        smartReviewId: ThingId,
+        contentId: ThingId
+    ): Either<ContentType, List<GeneralStatement>>
 }

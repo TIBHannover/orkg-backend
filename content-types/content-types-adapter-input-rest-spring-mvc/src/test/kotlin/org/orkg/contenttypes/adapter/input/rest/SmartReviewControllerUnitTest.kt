@@ -19,9 +19,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.Either
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
@@ -32,14 +34,20 @@ import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
+import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.FormattedLabelUseCases
+import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectSmartReview
+import org.orkg.testing.andExpectStatementList
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
@@ -50,6 +58,7 @@ import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -66,13 +75,22 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ContextConfiguration(classes = [SmartReviewController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
+@ContextConfiguration(classes = [SmartReviewController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [SmartReviewController::class])
 @DisplayName("Given a SmartReview controller")
 internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
     @MockkBean
     private lateinit var smartReviewService: SmartReviewUseCases
+
+    @MockkBean
+    private lateinit var formattedLabelService: FormattedLabelUseCases
+
+    @MockkBean
+    private lateinit var statementService: StatementUseCases
+
+    @MockkBean
+    private lateinit var featureFlagService: FeatureFlagService
 
     @MockkBean
     private lateinit var contributionService: ContributionUseCases
@@ -84,7 +102,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(smartReviewService, contributionService)
+        confirmVerified(smartReviewService, formattedLabelService, statementService, featureFlagService, contributionService)
     }
 
     @Test
@@ -296,6 +314,41 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
         verify(exactly = 1) {
             smartReviewService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a published smart review, when fetching its contents, returns success")
+    fun findPublishedContentById() {
+        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R123")
+
+        every { smartReviewService.findPublishedContentById(any(), any()) } returns Either.right(listOf(createStatement(subject = createResource(id))))
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptions(any()) } returns emptyMap()
+
+        documentedGetRequestTo("/api/smart-reviews/{smartReviewId}/published-contents/{contentId}", smartReviewId, id)
+            .accept(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectStatementList()
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("smartReviewId").description("The id of the published smart review."),
+                        parameterWithName("contentId").description("The id of the resource to fetch.")
+                    ),
+                    responseFields(
+                        fieldWithPath("_class").description("Indicates which type of entity was returned."),
+                        subsectionWithPath("statements[]").description("The list of first-level <<statements-fetch,statements>>.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { smartReviewService.findPublishedContentById(smartReviewId, id) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptions(any()) }
     }
 
     @Test

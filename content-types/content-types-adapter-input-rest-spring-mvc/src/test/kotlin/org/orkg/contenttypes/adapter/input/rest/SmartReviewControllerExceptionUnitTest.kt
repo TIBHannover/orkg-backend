@@ -9,6 +9,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewControllerExceptionUnitTest.FakeExceptionController
 import org.orkg.contenttypes.domain.InvalidSmartReviewTextSectionType
 import org.orkg.contenttypes.domain.OntologyEntityNotFound
+import org.orkg.contenttypes.domain.PublishedSmartReviewContentNotFound
 import org.orkg.contenttypes.domain.SmartReviewAlreadyPublished
 import org.orkg.contenttypes.domain.SmartReviewSectionTypeMismatch
 import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
@@ -49,6 +50,23 @@ internal class SmartReviewControllerExceptionUnitTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
             .apply<DefaultMockMvcBuilder>(springSecurity())
             .build()
+    }
+
+    @Test
+    fun publishedSmartReviewContentNotFound() {
+        val smartReviewId = "R123"
+        val contentId = "R456"
+
+        get("/published-smart-review-content-not-found")
+            .param("smartReviewId", smartReviewId)
+            .param("contentId", contentId)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.error", `is`("Not Found")))
+            .andExpect(jsonPath("$.path").value("/published-smart-review-content-not-found"))
+            .andExpect(jsonPath("$.message").value("""Smart review content "$contentId" not found for smart review "$smartReviewId"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
     @Test
@@ -188,6 +206,11 @@ internal class SmartReviewControllerExceptionUnitTest {
     @TestComponent
     @RestController
     internal class FakeExceptionController {
+        @GetMapping("/published-smart-review-content-not-found")
+        fun publishedSmartReviewContentNotFound(@RequestParam smartReviewId: ThingId, @RequestParam contentId: ThingId) {
+            throw PublishedSmartReviewContentNotFound(smartReviewId, contentId)
+        }
+
         @GetMapping("/ontology-entity-not-found")
         fun ontologyEntityNotFound(@RequestParam entities: Set<ThingId>) {
             throw OntologyEntityNotFound(entities)

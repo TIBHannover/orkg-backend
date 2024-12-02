@@ -34,6 +34,9 @@ kotlin {
         // This also configures the Java toolchain
         languageVersion.set(javaLanguageVersion)
     }
+    compilerOptions {
+        languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+    }
 }
 
 tasks.withType<JavaCompile>().configureEach {

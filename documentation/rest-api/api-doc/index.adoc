@@ -48,6 +48,9 @@ include::parts/predicates.adoc[leveloffset=+1]
 [[literals]]
 include::parts/literals.adoc[leveloffset=+1]
 
+[[things]]
+include::parts/things.adoc[leveloffset=+1]
+
 [[statements]]
 include::parts/statements.adoc[leveloffset=+1]
 

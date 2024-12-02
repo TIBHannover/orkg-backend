@@ -12,8 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 class ThingService(
     private val repository: ThingRepository,
 ) : RetrieveThingUseCase {
-    override fun exists(id: ThingId): Boolean =  repository.findByThingId(id).isPresent
+    override fun exists(id: ThingId): Boolean = repository.findByThingId(id).isPresent
 
-    override fun findByThingId(id: ThingId): Optional<Thing> = repository.findByThingId(id)
-
+    override fun findById(id: ThingId): Optional<Thing> = repository.findByThingId(id)
 }

@@ -1,0 +1,15 @@
+= Things
+
+A thing represents an arbitrary node in the knowledge graph.
+They can either be a <<classes,class>>, <<resources,resource>>, <<predicates,predicate>> or a <<literals,literal>>.
+
+[[things-fetch]]
+== Fetching Things
+
+A `GET` request provides information about a thing.
+
+operation::things-get-single[snippets='curl-request,http-response']
+
+[[things-fetch_response_fields]]
+=== Response fields
+The response object can either be a <<classes-fetch,class>>, <<resources-fetch,resource>>, <<predicates-fetch,predicate>> or a <<literals-fetch,literal>>.

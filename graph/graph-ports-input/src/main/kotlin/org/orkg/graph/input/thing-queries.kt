@@ -6,5 +6,5 @@ import org.orkg.graph.domain.Thing
 
 interface RetrieveThingUseCase {
     fun exists(id: ThingId): Boolean
-    fun findByThingId(id: ThingId): Optional<Thing>
+    fun findById(id: ThingId): Optional<Thing>
 }

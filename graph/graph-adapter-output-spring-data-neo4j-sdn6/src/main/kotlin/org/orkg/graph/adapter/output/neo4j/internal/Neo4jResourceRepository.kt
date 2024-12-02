@@ -14,7 +14,6 @@ private const val classes = "${'$'}classes"
 private const val label = "${'$'}label"
 private const val id = "${'$'}id"
 private const val visibility = "${'$'}visibility"
-private const val verified = "${'$'}verified"
 
 private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} $PAGE_PARAMS"
@@ -40,12 +39,9 @@ private const val WITH_NODE_PROPERTIES =
 
 // Custom queries
 
-private const val MATCH_PAPER = """MATCH (node:`Resource`:`Paper`)"""
 private const val MATCH_PAPER_BY_ID = """MATCH (node:`Resource`:`Paper` {id: $id})"""
 
 private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility AND node.created_at IS NOT NULL"""
-
-private const val VERIFIED_IS = """COALESCE(node.verified, false) = $verified"""
 
 private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 
@@ -71,10 +67,6 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, ThingId> {
 
     @Transactional
     override fun deleteById(id: ThingId)
-
-    @Query("""$MATCH_PAPER WHERE $VERIFIED_IS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
-        countQuery = """$MATCH_PAPER WHERE $VERIFIED_IS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
-    fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""MATCH (node:Resource) $WHERE_VISIBILITY AND ANY(c in $classes WHERE c IN labels(node)) $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (node:Resource) $WHERE_VISIBILITY AND ANY(c in $classes WHERE c IN labels(node)) $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")

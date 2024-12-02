@@ -319,10 +319,6 @@ class SpringDataNeo4jResourceAdapter(
     override fun findPaperByLabel(label: String): Optional<Resource> =
         neo4jRepository.findPaperByLabel(label).map(Neo4jResource::toResource)
 
-    override fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllPapersByVerified(verified, pageable)
-            .map(Neo4jResource::toResource)
-
     override fun findPaperById(id: ThingId): Optional<Resource> =
         neo4jRepository.findPaperById(id)
             .map(Neo4jResource::toResource)

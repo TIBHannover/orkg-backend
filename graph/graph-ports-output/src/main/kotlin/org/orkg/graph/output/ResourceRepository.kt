@@ -36,7 +36,6 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     fun findPaperByLabel(label: String): Optional<Resource>
     fun findAllPapersByLabel(label: String): List<Resource>
     fun findPaperById(id: ThingId): Optional<Resource>
-    fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Resource>
     fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
 
     // TODO: refactor or remove classIn methods

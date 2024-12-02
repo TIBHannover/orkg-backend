@@ -139,9 +139,6 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
             it.id == id && Classes.paper in it.classes
         })
 
-    override fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { (it.verified ?: false) == verified && Classes.paper in it.classes }
-
     override fun findAllContributorIds(pageable: Pageable) =
         entities.values
             .map { it.createdBy }

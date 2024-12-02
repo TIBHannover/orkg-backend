@@ -22,7 +22,6 @@ import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.contenttypes.output.VisualizationRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -94,9 +93,9 @@ class VisualizationService(
         return steps.execute(command, VisualizationState()).visualizationId!!
     }
 
-    internal fun Resource.toVisualization(): Visualization {
+    internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
         val statements = statementRepository.fetchAsBundle(
-            id = id,
+            id = resource.id,
             configuration = BundleConfiguration(
                 minLevel = null,
                 maxLevel = 3,
@@ -105,19 +104,9 @@ class VisualizationService(
             ),
             sort = Sort.unsorted()
         ).groupBy { it.subject.id }
-        val directStatements = statements[id].orEmpty()
-        return Visualization(
-            id = id,
-            title = label,
-            description = directStatements.wherePredicate(Predicates.description).firstObjectLabel(),
-            authors = statements.authors(id),
-            observatories = listOf(observatoryId),
-            organizations = listOf(organizationId),
-            extractionMethod = extractionMethod,
-            createdAt = createdAt,
-            createdBy = createdBy,
-            visibility = visibility,
-            unlistedBy = unlistedBy
-        )
+        return ContentTypeSubgraph(resource.id, statements)
     }
+
+    internal fun Resource.toVisualization(): Visualization =
+        findSubgraph(this).let { Visualization.from(this, it.statements) }
 }

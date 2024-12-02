@@ -4,12 +4,12 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
-import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.noCondition
+import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.orkg.common.ContributorId
@@ -108,32 +108,45 @@ class SpringDataNeo4jPaperAdapter(
                         .withProperties("predicate_id", literalOf<String>(Predicates.mentions.value))
                 }.orEmpty().toTypedArray()
             )
+            val patternBoundWhere = listOf(
+                doiPrefix.toCondition { doiLiteral.property("label").startsWith(anonParameter(it.dropLastWhile { c -> c == '/' } + '/')) }
+            ).reduceOrNull(Condition::and) ?: noCondition()
             val match = label?.let {
                 when (label) {
                     is ExactSearchString -> {
-                        patterns.toMatchOrNull(node)?.with(collect(node).`as`(nodes)).call(
-                            function = "db.index.fulltext.queryNodes",
-                            arguments = arrayOf(
-                                anonParameter(FULLTEXT_INDEX_FOR_LABEL),
-                                anonParameter(label.query)
-                            ),
-                            yieldItems = arrayOf("node"),
-                            condition = toLower(node.property("label")).eq(toLower(anonParameter(label.input)))
-                        ).with(node)
+                        patterns.toMatchOrNull(node)
+                            ?.where(patternBoundWhere)
+                            ?.with(collect(node).`as`(nodes))
+                            .call(
+                                function = "db.index.fulltext.queryNodes",
+                                arguments = arrayOf(
+                                    anonParameter(FULLTEXT_INDEX_FOR_LABEL),
+                                    anonParameter(label.query)
+                                ),
+                                yieldItems = arrayOf("node"),
+                                condition = toLower(node.property("label")).eq(toLower(anonParameter(label.input)))
+                            )
+                            .with(node)
                     }
                     is FuzzySearchString -> {
-                        patterns.toMatchOrNull(node)?.with(collect(node).`as`(nodes)).call(
-                            function = "db.index.fulltext.queryNodes",
-                            arguments = arrayOf(
-                                anonParameter(FULLTEXT_INDEX_FOR_LABEL),
-                                anonParameter(label.query)
-                            ),
-                            yieldItems = arrayOf("node", "score"),
-                            condition = size(node.property("label")).gte(anonParameter(label.input.length))
-                        ).with(node, name("score"))
+                        patterns.toMatchOrNull(node)
+                            ?.where(patternBoundWhere)
+                            ?.with(collect(node).`as`(nodes))
+                            .call(
+                                function = "db.index.fulltext.queryNodes",
+                                arguments = arrayOf(
+                                    anonParameter(FULLTEXT_INDEX_FOR_LABEL),
+                                    anonParameter(label.query)
+                                ),
+                                yieldItems = arrayOf("node", "score"),
+                                condition = size(node.property("label")).gte(anonParameter(label.input.length))
+                            )
+                            .with(node, name("score"))
                     }
                 }
-            } ?: patterns.toMatchOrNull(node)?.with(node) ?: match(node).with(node)
+            }
+                ?: patterns.toMatchOrNull(node)?.where(patternBoundWhere)?.with(node)
+                ?: match(node).with(node)
             match.where(
                 visibility.toCondition { filter ->
                     filter.targets.map { node.property("visibility").eq(literalOf<String>(it.name)) }
@@ -148,7 +161,6 @@ class SpringDataNeo4jPaperAdapter(
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
                 organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
-                doiPrefix.toCondition { doiLiteral.property("label").startsWith(anonParameter(it.dropLastWhile { it == '/' } + '/')) },
                 if (label != null && patterns.isNotEmpty()) node.asExpression().`in`(nodes) else noCondition()
             )
         }

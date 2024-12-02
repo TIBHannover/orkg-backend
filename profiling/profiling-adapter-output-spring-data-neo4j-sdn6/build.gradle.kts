@@ -16,4 +16,5 @@ dependencies {
     implementation(project(":content-types:content-types-ports-output"))
     implementation(project(":graph:graph-ports-output"))
     implementation(project(":statistics:statistics-ports-output"))
+    implementation(project(":curation:curation-ports-output"))
 }

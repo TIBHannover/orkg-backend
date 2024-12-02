@@ -5,13 +5,17 @@ import kotlin.reflect.KFunction
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContentTypeRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
+import org.orkg.contenttypes.output.FindDatasetsQuery
 import org.orkg.contenttypes.output.LiteratureListRepository
 import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
 import org.orkg.contenttypes.output.ResearchFieldRepository
 import org.orkg.contenttypes.output.ResearchProblemRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
+import org.orkg.contenttypes.output.SummarizeBenchmarkQuery
+import org.orkg.contenttypes.output.SummarizeDatasetQuery
 import org.orkg.contenttypes.output.TemplateRepository
+import org.orkg.curation.output.CurationRepository
 import org.orkg.graph.output.AuthorRepository
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
@@ -58,6 +62,8 @@ class Neo4jRepositoryProfiler(
         ComparisonRepository::class,
         ContentTypeRepository::class,
         ContributionComparisonRepository::class,
+        CurationRepository::class,
+        FindDatasetsQuery::class,
         FormattedLabelRepository::class,
         LegacyStatisticsRepository::class,
         ListRepository::class,
@@ -72,6 +78,8 @@ class Neo4jRepositoryProfiler(
         SmartReviewRepository::class,
         StatementRepository::class,
         StatisticsRepository::class,
+        SummarizeBenchmarkQuery::class,
+        SummarizeDatasetQuery::class,
         TemplateRepository::class,
         ThingRepository::class,
     )

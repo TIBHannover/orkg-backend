@@ -35,11 +35,12 @@ abstract class RepositoryProfiler(
 
     override fun run(args: ApplicationArguments?) {
         val functionMap = repositories.functionsToProfile()
+        validateValueGenerators(functionMap)
         val repositoryCount = functionMap.keys.size
         val outputFile = File(OffsetDateTime.now(clock).format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) + ".csv")
         resultWriterFactory(outputFile).use { writer ->
             logger.info("Profiling $repositoryCount repositories with ${functionMap.values.flatten().size} functions")
-            val repositories =  functionMap.entries.toList().sortedBy { it.key.simpleName }
+            val repositories = functionMap.entries.toList().sortedBy { it.key.simpleName }
             repositories.forEachIndexed { repositoryIndex, (repository, functions) ->
                 logger.info("[${repositoryIndex + 1}/$repositoryCount] Profiling ${repository.simpleName}")
                 val adapter = context.getBean(repository.java)
@@ -69,17 +70,13 @@ abstract class RepositoryProfiler(
             }
             RepeatedMeasurement(millis, parameters)
         }
-        return FunctionResult(
-            repositoryName = repositoryName,
-            functionName = function.name,
-            measurements = measurements
-        )
+        return FunctionResult(repositoryName, function.name, measurements)
     }
 
     private fun randomInstances(random: Random, name: String, type: KType): List<Any> =
         generators[type.classifier]
             ?.let { it(random, name, type, ::randomInstances) }
-            ?: throw RuntimeException("No value generator for type $type")
+            ?: throw RuntimeException("Missing value generator for type $type")
 
     private fun List<KClass<out Any>>.functionsToProfile() =
         associateWith { repository ->
@@ -100,6 +97,17 @@ abstract class RepositoryProfiler(
             }
         }
         return results
+    }
+
+    private fun validateValueGenerators(functionMap: Map<KClass<out Any>, List<KFunction<*>>>) {
+        val missingParameters = functionMap.values.flatMapTo(mutableSetOf()) { functions ->
+            functions.flatMap { function ->
+                function.parameters.drop(1).filter { it.type.classifier !in generators }.map { it.type }
+            }
+        }
+        if (missingParameters.isNotEmpty()) {
+            throw RuntimeException("Missing value generators for types ${missingParameters.joinToString()}")
+        }
     }
 
     protected abstract val repositories: List<KClass<out Any>>

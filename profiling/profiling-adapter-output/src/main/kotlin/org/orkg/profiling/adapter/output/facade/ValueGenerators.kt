@@ -103,6 +103,19 @@ class ThingIdValueGenerator(
 
 @Component
 @Profile("profileRepositories")
+class ThingIdMapGenerator : ValueGenerator<Map<ThingId, ThingId>> {
+    override operator fun invoke(
+        random: Random,
+        name: String,
+        type: KType,
+        randomInstances: (Random, String, KType) -> List<Any>
+    ): List<Map<ThingId, ThingId>> = listOf(
+        mapOf(ThingId("R44543") to ThingId("C5000"))
+    )
+}
+
+@Component
+@Profile("profileRepositories")
 class ListValueGenerator : ValueGenerator<List<*>> {
     override operator fun invoke(
         random: Random,

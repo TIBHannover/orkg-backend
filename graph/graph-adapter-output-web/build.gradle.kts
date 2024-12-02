@@ -14,6 +14,7 @@ dependencies {
     api(project(":graph:graph-ports-output"))
     api(project(":graph:graph-core-model"))
     implementation("org.springframework:spring-web")
+    implementation("org.springframework.data:spring-data-commons")
     implementation(project(":common"))
     runtimeOnly("com.fasterxml.jackson.core:jackson-core")
 }

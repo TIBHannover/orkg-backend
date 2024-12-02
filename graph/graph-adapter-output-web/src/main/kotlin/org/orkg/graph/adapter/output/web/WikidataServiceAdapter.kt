@@ -1,8 +1,10 @@
 package org.orkg.graph.adapter.output.web
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
+import java.util.function.Predicate
 import java.util.regex.Pattern
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.exceptions.ServiceUnavailable
@@ -12,6 +14,7 @@ import org.orkg.graph.output.ExternalClassService
 import org.orkg.graph.output.ExternalPredicateService
 import org.orkg.graph.output.ExternalResourceService
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.util.Predicates
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -30,16 +33,16 @@ class WikidataServiceAdapter(
     private val propertyPattern = Pattern.compile("""https?://(?:www\.)?wikidata.org/entity/(P[0-9]+)/?""")
 
     override fun findResourceByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
-        fetch(ontologyId, shortForm, itemIdPattern)
+        fetch(ontologyId, shortForm, itemIdPattern, ::isResource)
 
     override fun findResourceByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
-        fetch(ontologyId, uri.toString(), itemPattern)
+        fetch(ontologyId, uri.toString(), itemPattern, ::isResource)
 
     override fun findClassByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
-        fetch(ontologyId, shortForm, itemIdPattern)
+        fetch(ontologyId, shortForm, itemIdPattern, ::isClass)
 
     override fun findClassByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
-        fetch(ontologyId, uri.toString(), itemPattern)
+        fetch(ontologyId, uri.toString(), itemPattern, ::isClass)
 
     override fun findPredicateByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
         fetch(ontologyId, shortForm, propertyIdPattern)
@@ -47,7 +50,20 @@ class WikidataServiceAdapter(
     override fun findPredicateByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
         fetch(ontologyId, uri.toString(), propertyPattern)
 
-    private fun fetch(ontologyId: String, input: String, pattern: Pattern): ExternalThing? {
+    private fun isResource(claims: JsonNode): Boolean {
+        return claims.size() == 0 || claims.has("P31")
+    }
+
+    private fun isClass(claims: JsonNode): Boolean {
+        return claims.size() == 0 || claims.has("P279")
+    }
+
+    private fun fetch(
+        ontologyId: String,
+        input: String,
+        pattern: Pattern,
+        predicate: Predicate<JsonNode> = Predicates.isTrue()
+    ): ExternalThing? {
         if (!supportsOntology(ontologyId)) return null
         val id = pattern.matchSingleGroupOrNull(input) ?: return null
         val uri = UriComponentsBuilder.fromHttpUrl(host)
@@ -56,7 +72,7 @@ class WikidataServiceAdapter(
             .queryParam("ids", id)
             .queryParam("format", "json")
             .queryParam("languages", "en")
-            .queryParam("props", "labels|descriptions|datatype")
+            .queryParam("props", "labels|descriptions|datatype|claims")
             .build()
             .toUri()
         val request = HttpRequest.newBuilder()
@@ -75,6 +91,9 @@ class WikidataServiceAdapter(
                 }
             }
             val entity = tree.path("entities").path(id)
+            if (!predicate.test(entity.path("claims"))) {
+                return@send null
+            }
             ExternalThing(
                 uri = ParsedIRI("https://www.wikidata.org/entity/$id"),
                 label = entity.path("labels").path("en").path("value").asText(),

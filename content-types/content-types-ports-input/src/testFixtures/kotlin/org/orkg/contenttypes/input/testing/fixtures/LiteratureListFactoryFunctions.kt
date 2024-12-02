@@ -42,7 +42,7 @@ fun dummyCreateLiteratureListCommand() = CreateLiteratureListUseCase.CreateComma
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI("http://example.org/author")
+            homepage = ParsedIRI("https://example.org/author")
         ),
         Author(
             name = "Author that just has a name"
@@ -79,7 +79,7 @@ fun dummyUpdateLiteratureListCommand() = UpdateLiteratureListUseCase.UpdateComma
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI("http://example.org/author")
+            homepage = ParsedIRI("https://example.org/author")
         ),
         Author(
             name = "Author that just has a name"

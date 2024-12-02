@@ -307,13 +307,12 @@ fun <T : Any> mutableSetOfNotNull(vararg elements: T?): MutableSet<T> {
     return result
 }
 
-fun String.toIRIOrNull(): ParsedIRI? {
+fun String.toIRIOrNull(): ParsedIRI? =
     try {
-        return ParsedIRI(this)
+        ParsedIRI(this)
     } catch (e: Exception) {
-        return null
+        null
     }
-}
 
 fun String.isValidBoolean(): Boolean =
     when (this) {

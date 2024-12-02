@@ -209,7 +209,7 @@ internal class ExceptionControllerUnitTest {
     @Test
     fun uriAlreadyInUse() {
         val id = ThingId("C123")
-        val uri = "http://example.org/C123"
+        val uri = "https://example.org/C123"
 
         get("/uri-already-in-use")
             .param("id", id.value)

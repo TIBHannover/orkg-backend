@@ -35,6 +35,7 @@ enum class OrganizationType {
     JOURNAL;
 
     companion object {
-        fun fromOrNull(name: String): OrganizationType? = values().firstOrNull { it.name.equals(name, true) }
+        fun fromOrNull(name: String): OrganizationType? =
+            entries.firstOrNull { it.name.equals(name, true) }
     }
 }

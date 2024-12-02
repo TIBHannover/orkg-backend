@@ -33,7 +33,7 @@ enum class PeerReviewType {
     OPENREVIEW;
 
     companion object {
-        fun fromOrNull(name: String): PeerReviewType? = PeerReviewType.values()
-            .firstOrNull { it.name.equals(name, true) }
+        fun fromOrNull(name: String): PeerReviewType? =
+            entries.firstOrNull { it.name.equals(name, true) }
     }
 }

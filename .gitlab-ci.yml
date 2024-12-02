@@ -57,7 +57,7 @@ build:
   needs: []
 
 # Template job for building all documentation. These jobs rely on the Gradle build cache
-# because Spring RestDoc snippets are generated from the test and we do not want re-run those.
+# because Spring RestDoc snippets are generated from the test, and we do not want to re-run those.
 .build-documentation:
   stage: deploy
   extends: .gradle_build_job
@@ -76,7 +76,7 @@ build:
     paths:
       - public
 
-# Attempt to build the documentation although we do not deploy it to GitLab Pages.
+# Attempt to build the documentation, although we do not deploy it to GitLab Pages.
 # This ensures that everything works as expected and prevents surprises when merging.
 dummy-doc-build:
   extends: .build-documentation

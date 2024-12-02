@@ -95,7 +95,7 @@ class ResourceService(
     override fun findPaperByTitle(title: String): Optional<Resource> =
         repository.findPaperByLabel(title)
 
-    override fun findAllPapersByTitle(title: String?): Iterable<Resource> =
+    override fun findAllPapersByTitle(title: String?): List<Resource> =
         repository.findAllPapersByLabel(title!!)
 
     override fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =

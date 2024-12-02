@@ -19,7 +19,6 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.pageOf
 
 class PaperTitleUpdateValidatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
@@ -43,7 +42,7 @@ class PaperTitleUpdateValidatorUnitTest {
         val command = dummyUpdatePaperCommand()
         val state = UpdatePaperState(paper = createDummyPaper())
 
-        every { resourceService.findAllPapersByTitle(command.title) } returns pageOf(
+        every { resourceService.findAllPapersByTitle(command.title) } returns listOf(
             createResource(id = command.paperId, label = command.title!!)
         )
 
@@ -63,7 +62,7 @@ class PaperTitleUpdateValidatorUnitTest {
         val state = UpdatePaperState(paper = createDummyPaper())
         val expected = PaperAlreadyExists.withTitle(command.title!!)
 
-        every { resourceService.findAllPapersByTitle(command.title) } returns pageOf(
+        every { resourceService.findAllPapersByTitle(command.title) } returns listOf(
             createResource(id = command.paperId, label = command.title!!),
             createResource(id = ThingId("R12346"), label = command.title!!)
         )

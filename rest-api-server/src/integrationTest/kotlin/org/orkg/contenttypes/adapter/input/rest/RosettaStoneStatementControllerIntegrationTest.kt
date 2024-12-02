@@ -1,3 +1,5 @@
+@file:Suppress("HttpUrlsUsage")
+
 package org.orkg.contenttypes.adapter.input.rest
 
 import io.kotest.assertions.asClue

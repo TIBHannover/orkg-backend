@@ -1164,7 +1164,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI("http://example.org/author")
+                    homepage = ParsedIRI("https://example.org/author")
                 ),
                 AuthorDTO(
                     id = null,
@@ -1213,7 +1213,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI("http://example.org/author")
+                    homepage = ParsedIRI("https://example.org/author")
                 ),
                 AuthorDTO(
                     id = null,

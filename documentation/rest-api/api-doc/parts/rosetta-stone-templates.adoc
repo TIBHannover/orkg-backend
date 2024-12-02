@@ -33,7 +33,7 @@ The response will be `201 Created` when successful.
 The rosetta stone template (object) can be retrieved by following the URI in the `Location` header field.
 
 NOTE: The first property of a rosetta stone template defines the subject position of the statement and is required to have a path of `hasSubjectPosition`, must have a minimum cardinality of at least one and is not a literal template property.
-      All other properties define a object position, which must have a path of `hasObjectPosition`.
+      All other properties define an object position, which must have a path of `hasObjectPosition`.
       At least one property is required to create a new rosetta stone template.
 
 operation::rosetta-stone-templates-create[snippets='request-fields,curl-request,http-response']

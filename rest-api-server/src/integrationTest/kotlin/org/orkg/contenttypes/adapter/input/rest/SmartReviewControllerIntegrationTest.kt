@@ -262,7 +262,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe ParsedIRI("http://example.org/author")
+                author.homepage shouldBe ParsedIRI("https://example.org/author")
             }
             it.authors[4] shouldBe AuthorRepresentation(
                 name = "Author that just has a name",
@@ -371,7 +371,7 @@ class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe ParsedIRI("http://example.org/author")
+                author.homepage shouldBe ParsedIRI("https://example.org/author")
             }
             it.authors[4] shouldBe Author(
                 name = "Another author that just has a name",
@@ -751,7 +751,7 @@ private const val createSmartReviewJson = """{
     },
     {
       "name": "Author with homepage",
-      "homepage": "http://example.org/author"
+      "homepage": "https://example.org/author"
     },
     {
       "name": "Author that just has a name"
@@ -824,7 +824,7 @@ private const val updateSmartReviewJson = """{
     },
     {
       "name": "Author with homepage",
-      "homepage": "http://example.org/author"
+      "homepage": "https://example.org/author"
     },
     {
       "name": "Another author that just has a name"

@@ -86,7 +86,7 @@ class DiscussionServiceTest {
         strings = [
             "",
             "  ",
-            "http://example.org",
+            "https://example.org",
             "https://example.org",
             "http://www.example.org",
             "https://www.example.org",

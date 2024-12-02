@@ -33,8 +33,6 @@ import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.toAsciidoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.restdocs.payload.FieldDescriptor
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -202,11 +200,6 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
             )
             .andDo(generateDefaultDocSnippets())
     }
-
-    private fun problemsPerFieldResponseFields(): Array<FieldDescriptor> = arrayOf(
-        subsectionWithPath("problem").description("A research problem resource, i. e. a <<resources,resource>> of class `Problem`."),
-        fieldWithPath("papers").description("The number of papers that address this research problem."),
-    )
 
     private fun `given a research field with a paper and a visualization`(id: ThingId) {
         val paper = createPaperResource()

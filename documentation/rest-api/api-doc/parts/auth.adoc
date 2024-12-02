@@ -3,7 +3,7 @@
 Authentication is done via the OAuth2 protocol.
 An authentication token needs to be obtained and provided to protected endpoints.
 
-NOTE: This endpoint only delivers information about the currenly logged in user.
+NOTE: This endpoint only delivers information about the currently logged-in user.
       If you need to obtain information about other users in the system, check the <<contributors>> section.
 
 == Obtaining an Access Token
@@ -53,7 +53,7 @@ This will only provide selected properties for display purposes; currently the I
 User information can be changed via a `PUT` request to the `/api/user/` endpoint.
 An authentication token needs to be provided.
 
-To change the user name, the `display_name` key needs to be present in the body.
+To change the username, the `display_name` key needs to be present in the body.
 
 == Updating Passwords
 

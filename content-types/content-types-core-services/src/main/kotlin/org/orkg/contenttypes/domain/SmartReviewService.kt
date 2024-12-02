@@ -143,7 +143,7 @@ class SmartReviewService(
         ).pmap { it.toSmartReview() }
 
     override fun create(command: CreateSmartReviewCommand): ThingId {
-        val steps = listOf<Action<CreateSmartReviewCommand, CreateSmartReviewState>>(
+        val steps = listOf(
             LabelValidator("title") { it.title },
             BibTeXReferencesValidator({ it.references }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
@@ -174,7 +174,7 @@ class SmartReviewService(
     }
 
     override fun update(command: UpdateSmartReviewCommand) {
-        val steps = listOf<Action<UpdateSmartReviewCommand, UpdateSmartReviewState>>(
+        val steps = listOf(
             SmartReviewExistenceValidator(this, resourceRepository),
             SmartReviewModifiableValidator(),
             LabelValidator("title") { it.title },
@@ -213,7 +213,7 @@ class SmartReviewService(
     }
 
     override fun publish(command: PublishSmartReviewCommand): ThingId {
-        val steps = listOf<Action<PublishSmartReviewCommand, PublishSmartReviewState>>(
+        val steps = listOf(
             SmartReviewPublishableValidator(this),
             DescriptionValidator("changelog") { it.changelog },
             DescriptionValidator { it.description?.takeIf { _ -> it.assignDOI } },

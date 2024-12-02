@@ -49,7 +49,7 @@ operation::resource-controller-integration-test-edit[snippets='request-fields,cu
 
 A `DELETE` request with the id of the resource to delete.
 The response will be `204 NO CONTENT` when successful.
-If the resource doesn't exist, the will return status `404 NOT FOUND`.
+If the resource doesn't exist, the return status will be `404 NOT FOUND`.
 To safely delete a resource, the resource shouldn't have any incoming statements.
 
 Note: This request is only acceptable if you have sufficient permissions. Otherwise, a status `403 FORBIDDEN` will be returned.

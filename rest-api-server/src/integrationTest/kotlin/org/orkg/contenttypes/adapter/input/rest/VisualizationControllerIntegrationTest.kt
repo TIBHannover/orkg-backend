@@ -184,7 +184,7 @@ private const val createVisualizationJson = """{
     },
     {
       "name": "Author with homepage",
-      "homepage": "http://example.org/author"
+      "homepage": "https://example.org/author"
     },
     {
       "name": "Author that just has a name"

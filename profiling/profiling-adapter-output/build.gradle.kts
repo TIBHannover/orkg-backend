@@ -13,7 +13,7 @@ dependencies {
     api(project(":graph:graph-ports-output"))
     api(project(":profiling:profiling-core-model"))
     api(project(":profiling:profiling-ports-output"))
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa") // TODO: Can be removed after orgnization refactoring
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa") // TODO: Can be removed after organization refactoring
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(project(":community:community-core-model"))
 }

@@ -88,7 +88,7 @@ services:
       - --optimized
       - --import-realm
     ports:
-      - 127.0.0.1:8888:8080  # Port re-mapped to prevent conflict with API
+      - '127.0.0.1:8888:8080' # Port re-mapped to prevent conflict with API
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin

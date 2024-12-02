@@ -38,7 +38,7 @@ The REST entry-point is http://localhost:8080/api/.
 NOTE: The following commands assume that you added your user to the `docker` group https://docs.docker.com/install/linux/linux-postinstall/[as suggested in the documentation].
       If you did not do so, you have to prefix all commands with `sudo`.
 
-The Docker image can be build with Jib.
+The Docker image can be built with Jib.
 Run:
 
     ./gradlew jibDockerBuild
@@ -113,7 +113,7 @@ The Neo4j Docker image includes the following extensions:
 * https://github.com/neo4j-contrib/neo4j-apoc-procedures[Awesome Procedures On Cypher (APOC)]
 
 APOC is required by the ORKG.
-You need to include it when you setup Neo4j in your environment manually.
+You need to include it when you set up Neo4j in your environment manually.
 
 === REST API documentation
 

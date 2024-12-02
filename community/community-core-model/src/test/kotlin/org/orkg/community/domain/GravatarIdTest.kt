@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-// All hashes have been pre-computed on the command line with "echo -n INPUT | md5 -".
+// All hashes have been pre-computed on the command line with `echo -n INPUT | md5 -`.
 @DisplayName("A Gravatar ID")
 internal class GravatarIdTest {
 

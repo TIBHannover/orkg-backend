@@ -22,7 +22,7 @@ import org.orkg.community.domain.Observatory
 
 @Entity
 @Table(name = "observatories")
-class ObservatoryEntity() {
+class ObservatoryEntity {
     @Id
     var id: UUID? = null
 

@@ -38,7 +38,6 @@ import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
@@ -196,7 +195,7 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
         every { statementService.findAllDescriptions(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/predicates")
-            .accept(MediaType.APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -225,7 +224,7 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
             .param("created_by", createdBy.value.toString())
             .param("created_at_start", createdAtStart.format(ISO_OFFSET_DATE_TIME))
             .param("created_at_end", createdAtEnd.format(ISO_OFFSET_DATE_TIME))
-            .accept(MediaType.APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()

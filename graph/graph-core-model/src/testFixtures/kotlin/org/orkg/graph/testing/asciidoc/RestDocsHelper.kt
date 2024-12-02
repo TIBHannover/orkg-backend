@@ -6,10 +6,10 @@ import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 
 val allowedExtractionMethodValues =
-    ExtractionMethod.values().sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    ExtractionMethod.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
 
 private val allowedValues =
-    VisibilityFilter.values().sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+    VisibilityFilter.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
 
 fun visibilityFilterRequestParameter(): ParameterDescriptor =
     parameterWithName("visibility")

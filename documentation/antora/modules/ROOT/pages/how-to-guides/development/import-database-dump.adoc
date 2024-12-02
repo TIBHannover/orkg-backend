@@ -2,7 +2,7 @@
 
 NOTE: Dumps are provided to TIB members only. This may change in the future. Or not.
 
-NOTE: You can re-load / setup a database dump with the `reload-dump` script in the `scripts` directory.
+NOTE: You can re-load/setup a database dump with the `reload-dump` script in the `scripts` directory.
 The following section is still relevant if you want to understand what is happening there.
 To load a dump, place it in the `dumps` directory and name it `neo4j-dump-latest.dump` (or use a symlink) or pass the filename of the dump you want to load as the first command line argument to the script.
 
@@ -48,7 +48,7 @@ We will create a temporary Neo4j container from which we load the dump.
 Importing the dump will be done interactively from a shell inside the container.
 It needs to be forced because the database already exists and contains data.
 +
-You also need to leave the container afterwards.
+You also need to leave the container afterward.
 This can be done by typing `exit` or pressing kbd:[Ctrl+d].
 +
 [source,shell]

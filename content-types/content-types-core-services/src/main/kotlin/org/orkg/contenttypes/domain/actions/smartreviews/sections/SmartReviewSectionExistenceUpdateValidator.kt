@@ -10,9 +10,9 @@ class SmartReviewSectionExistenceUpdateValidator(
     private val abstractSmartReviewExistenceValidator: AbstractSmartReviewExistenceValidator
 ) : UpdateSmartReviewSectionAction {
     constructor(
-        SmartReviewService: SmartReviewService,
+        smartReviewService: SmartReviewService,
         resourceRepository: ResourceRepository
-    ) : this(AbstractSmartReviewExistenceValidator(SmartReviewService, resourceRepository))
+    ) : this(AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository))
 
     override fun invoke(command: UpdateSmartReviewSectionCommand, state: State): State =
         abstractSmartReviewExistenceValidator.findUnpublishedSmartReviewById(command.smartReviewId)

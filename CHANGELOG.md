@@ -9,14 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.71.0] - 2024-11-21
 ### Added
-- Added support for Single Sign-On (SSO) via Keycloak
+- Added support for Single Sign-On (SSO) via Keycloak.
 
 ## [0.70.1] - 2024-11-07
 ### Fixed
-- Fixed potential author duplication when creating smart reviews
-- Fixed entity representations saved to SimComp
+- Fixed potential author duplication when creating smart reviews.
+- Fixed entity representations saved to SimComp.
   (See: [!1096](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1096))
-- Fixed `verified` filtering parameter for paper content-type endpoint
+- Fixed `verified` filtering parameter for paper content-type endpoint.
   (See: [!1095](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1095))
 
 ## [0.70.0] - 2024-10-18
@@ -25,7 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1087](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1087))
 - Added support for importing predicates via OLS.
   (See: [!1088](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1088))
-
 ### Fixed
 - Fixed administrator accounts not being able to execute actions that only require a curator role.
 
@@ -33,12 +32,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added support for OpenAlex IDs on authors and papers.
   (See: [!1073](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1073))
-
 ### Changed
 - The endpoint `/api/user/observatory` now accepts the field `contributor_id` in the request body, as a replacement for the now deprecated `email` field.
   For the time being, both request formats will be accepted.
   (See: [!1083](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1083))
-
 ### Fixed
 - Fixed import endpoints not working.
   (See: [!1082](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1082),
@@ -54,7 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1072](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1072))
 - The `modifiable` field is now exposed for rosetta stone templates.
   (See: [!1080](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1080))
-
 ### Changed
 - The endpoint `/api/visualizations` now supports arbitrary filter combinations.
   (See: [!1070](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1070))
@@ -62,7 +58,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1077](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1077))
 - Subclass instances for template instance values are now considered valid.
   (See: [!1075](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1075))
-
 ### Fixed
 - Fixed size limit for min and max values of number literal properties.
   (See: [!1055](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1055))
@@ -79,7 +74,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Target classes of Rosetta Stone Statement Templates are now being assigned the same description as the Rosetta Stone Statement Template.
   (See: [!1064](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1064))
-
 ### Changed
 - All 'not modifiable' error responses now return status code 403.
   (See: [!1056](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1056))
@@ -102,14 +96,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1052](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1052))
 - Added content-type endpoint for deleting comparison related figures.
   (See: [!1053](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1053))
-
 ### Changed
 - Literal values for more XSD data types are now being validated.
   (See: [!1041](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1041),
         [!1042](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1042))
 - The order of references of a comparison is now retained when updating a comparison.
   (See: [!1046](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1046))
-
 ### Fixed
 - Fixed validation of xsd:duration literal values.
   (See: [!1043](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1043))
@@ -123,7 +115,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed newly created comparison related figures not being linked to comparison.
   (See: [!1051](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1051))
 - Fixed optional fields for comparison related figure create requests being mandatory.
-
 ### Removed
 - Removed `statement_id` field from statement update requests because it had no effect.
   (See: [!1054](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1054))
@@ -136,12 +127,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1032](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1032))
 - Added support for ISSN identifiers on papers.
   (See: [!1033](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1033))
-
 ### Changed
 - Adjusted paper publishing endpoint to reflect front-end behavior.
   (See: [!1030](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1030))
 - Integer literals (xsd:integer) can now exceed 32 bit range.
-
 ### Fixed
 - The widget endpoint once again returns results when looking up entities by DOI.
   (See: [!1037](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1037))
@@ -164,7 +153,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1020](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1020))
 - Added content-type endpoint for updating rosetta stone templates.
   (See: [!1016](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1016))
-
 ### Changed
 - Updated template model diagrams.
   (See: [!1014](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1014))
@@ -178,7 +166,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1023](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1023))
 - Literal data types now must be an absolute IRI.
   (See: [!1022](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1022))
-
 ### Fixed
 - Literal values created during content-type creation are now also validated for known XSD data types.
   (See: [!1013](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1013))
@@ -197,7 +184,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         [!1008](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1008))
 - Added content-type endpoint for deleting unused rosetta stone templates.
   (See: [!1009](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1009))
-
 ### Changed
 - Literal values are now validated for known XSD data types.
   (Closes: [#578](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/578))
@@ -205,7 +191,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1003](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1003))
 - Simplified error messages for rosetta stone statement creation.
   (Closes: [#575](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/575))
-
 ### Fixed
 - Fixed URI parsing for publication info url and author website sometimes causing status 500.
   (Closes: [#578](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/578))
@@ -224,11 +209,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!997](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/997))
 - Added acknowledgements to smart review responses.
   (See: [!1000](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1000))
-
 ### Changed
 - The fields `authors`, `sdgs`, `organizations`, `observatories` and `sections` are now optional when creating a literature list.
   (See: [!1001](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1001))
-
 ### Fixed
 - Fixed retrieval of research fields for smart reviews.
   (See: [!995](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/995))
@@ -272,7 +255,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!982](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/982))
 - Added endpoint for deleting rosetta stone statements. Requires curator status.
   (See: [!983](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/983))
-
 ### Fixed
 - Fixed predicate descriptions missing from all requests except when being fetched by id.
   (See: [!984](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/984))
@@ -287,11 +269,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added validation support for xsd:double, xsd:duration, xsd:dateTime and xsd:time primitive data types.
   (See: [!981](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/981))
-
 ### Changed
 - The two distinct parameter sets for the endpoint `/api/resources` have been merged and can now be used in arbitrary combinations.
   (See: [!968](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/968))
-
 ### Fixed
 - Resources can no longer be deleted when still being used in a rosetta stone statement.
   (See: [!971](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/971))
@@ -314,7 +294,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!963](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/963))
 - Formatted labels of Rosetta Stone Templates are now persisted with each Rosetta Stone Statement version.
   (See: [!961](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/961))
-
 ### Fixed
 - Error responses with status code 406 and 415 no longer return an empty body.
   (See: [!957](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/957))
@@ -335,7 +314,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!943](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/943))
 - Added a `created_by` field to all version entries of content-type endpoints.
   (See: [!950](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/950))
-
 ### Changed
 - It is now possible to create empty literature list text sections.
   (See: [!949](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/949))
@@ -345,7 +323,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!947](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/947))
 - Rejected requests are now mapped to status 400 bad request instead of status 500 internal server error.
   (See: [!934](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/934))
-
 ### Fixed
 - Descriptions and formatted labels are now properly validated when creating or updating a template.
   (See: [!940](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/940))
@@ -356,13 +333,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added basic support for generating OpenAPI documentation.
   (See: [!736](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/736))
-
 ### Changed
 - It is no longer possible to create resources with class `RosettaStoneStatement` using the resource endpoints.
   (See: [!928](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/928))
 - It is no longer possible to use resources with class `RosettaStoneStatement` in the subject position of statements.
   (See: [!928](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/928))
-
 ### Fixed
 - Template properties can now be created with a `max_count` of zero.
   (See: [!929](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/929))
@@ -377,7 +352,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added `uri` field to `datatype` of literal template property representations.
   (See: [!921](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/921))
-
 ### Fixed
 - Fixed `unlisted_by` property for resources always being `null` when fetched via statement endpoints.
   (See: [!916](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/916))
@@ -392,7 +366,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         [!887](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/887))
 - Added content-type endpoint for creating rosetta-stone templates.
   (See: [!891](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/891))
-
 ### Fixed
 - Template properties created using the template content-type endpoint are now 0-indexed.
   (See: [!896](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/896))
@@ -405,13 +378,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!869](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/869))
 - Added content-type endpoints for updating comparisons, comparison related resources and comparison related figures.
   (See: [!863](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/863))
-
 ### Changed
 - Aligned template property model with front-end implementation.
   (See: [!874](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/874))
 - Users can now delete their own predicates, as long as they are not used in any statement.
   (Closes: [#559](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/559))
-
 ### Fixed
 - The template update endpoint no longer returns an error when updating a template with same target class that it is already assigned to.
   (See: [!875](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/875))
@@ -432,19 +403,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - unused-predicate-count
   - unused-literal-count
   - unused-class-count
-
 ### Changed
 - Changed template target class representation to include `label` and `uri`.
   (See: [!867](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/867),
         [!871](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/871))
-
 ### Fixed
 - It is now possible to create and update templates without a `description` or `formatted_label`.
   (See: [!870](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/870))
 - It is now possible to create and update templates with a `min_count` and `max_count` of `0`.
   (See: [!870](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/870))
 - Fixed request parameter documentation for listing comparisons.
-
 ### Removed
 - The following endpoints have been removed from the api:
   (Closes: [#546](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/546))
@@ -478,11 +446,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added a new endpoint to fetch statement counts of papers.
   (See: [!808](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/808))
-
 ### Changed
 - Improved traceability of label constraint violations, when using content type endpoints.
   (See: [!858](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/858))
-
 ### Fixed
 - Fixed optional fields being ignored when updating a template or template property-
   (See: [!861](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/861))
@@ -496,11 +462,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!854](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/854))
 - Added content-type endpoints for fetching rosetta-stone templates.
   (See: [!782](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/782))
-
 ### Changed
 - Changed database reload script to force-use docker compose plugin.
   (Closes: [#548](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/548))
-
 ### Fixed
 - Fixed error when trying to delete resources as a curator
   (Closes: [#552](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/552))
@@ -509,7 +473,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed some endpoints unexpectedly returning status 500.
   (See: [!853](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/853))
-
 ## [0.50.0] - 2024-03-13
 ### Added
 - Added content-type endpoints for updating template instances.
@@ -526,7 +489,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!836](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/836))
 - Added local SimComp configuration to docker image.
   (See: [!817](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/817))
-
 ### Fixed
 - Fixed research field endpoints not returning published literature lists and published smart reviews.
 - Fixed publishing of smart reviews.
@@ -576,13 +538,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!809](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/809))
 - Added support for assigning sustainable development goals to observatories.
   (See: [!815](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/815))
-
 ### Changed
 - It is now possible to use the field `name` instead of `observatory_name` when creating a new observatory.
   (See: [!813](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/813))
 - Fields for paper update requests are now only evaluated when they are different to the existing fields of the paper.
   (See: [!818](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/818))
-
 ### Fixed
 - The publication info is now properly validated when creating a paper.
   (See: [!801](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/801))
@@ -601,7 +561,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         [!789](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/789))
 - Added visibility filter parameter to `/api/classes/{id}/resources` endpoint.
   (See: [!790](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/790))
-
 ### Changed
 - The venue of papers and comparison responses now contains an additional id of the resource.
   (See: [!772](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/772))
@@ -609,7 +568,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!774](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/774))
 - It is again possible to assign research field R11 (Science) to content-types.
   (See [!781](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/781))
-
 ### Fixed
 - The author list of papers and comparisons is no longer being deleted when updating with `null` author list.
   (See [!773](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/773))
@@ -622,11 +580,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added graph model documentation for content-types
   (See: [!751](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/751))
-
 ### Changed
 - Content-type responses now support multiple identifiers per type
   (See: [!756](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/756))
-
 ### Fixed
 - Fixed metadata creation for templates
   (See: [!761](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/761))
@@ -642,11 +598,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!757](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/757))
 - Listing papers (content-type) now supports additional filtering parameters in arbitrary combinations: `exact`, `verified`, `created_at_start`, `created_at_end`, `observatory_id`, `organization_id`.
   (See: [!732](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/732))
-
 ### Changed
 - Comparison content-type endpoints now return a full list of previous versions.
   (Closes: [!537](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/537))
-
 ### Fixed
 - It is no longer possible to assign research field "Science" (R11) using content-type endpoints.
   (Closes: [!538](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/538))
@@ -692,14 +646,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
 - Added new metadata field for visualization content-type: `unlisted_by`.
   (See: [!688](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/688))
-
 ### Changed
 - All endpoints with write access to the graph now require authentication.
   (See: [!706](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/706),
   [!709](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/709))
 - The endpoint `/api/resources/` now throws an error when queried with invalid sorting parameters.
   (See: [!694](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/694))
-
 ### Fixed
 - All content-type endpoints now return status `201 CREATED` instead of `204 NO CONTENT`, as per documentation.
   (See: [!724](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/724))

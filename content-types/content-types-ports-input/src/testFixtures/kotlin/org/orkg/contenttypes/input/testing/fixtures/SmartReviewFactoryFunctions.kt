@@ -50,7 +50,7 @@ fun dummyCreateSmartReviewCommand() = CreateSmartReviewUseCase.CreateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI("http://example.org/author")
+            homepage = ParsedIRI("https://example.org/author")
         ),
         Author(
             name = "Author that just has a name"
@@ -95,7 +95,7 @@ fun dummyUpdateSmartReviewCommand() = UpdateSmartReviewUseCase.UpdateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI("http://example.org/author")
+            homepage = ParsedIRI("https://example.org/author")
         ),
         Author(
             name = "Author that just has a name"
@@ -301,7 +301,7 @@ fun SmartReviewOntologySection.toSmartReviewOntologySectionDefinition(): SmartRe
     SmartReviewOntologySectionCommand(heading, entities.map { it.id!! }, predicates.map { it.id })
 
 fun SmartReviewTextSection.toSmartReviewTextSectionDefinition(): SmartReviewTextSectionCommand =
-    SmartReviewTextSectionCommand(heading, classes.filter { it in SmartReviewTextSection.types }.single(), text)
+    SmartReviewTextSectionCommand(heading, classes.single { it in SmartReviewTextSection.types }, text)
 
 fun dummyPublishSmartReviewCommand() = PublishSmartReviewUseCase.PublishCommand(
     smartReviewId = ThingId("R123"),

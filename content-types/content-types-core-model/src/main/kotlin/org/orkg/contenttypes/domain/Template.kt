@@ -60,7 +60,7 @@ data class Template(
                 isClosed = directStatements
                     .wherePredicate(Predicates.shClosed)
                     .singleOrNull()
-                    .let { it?.`object`?.label.toBoolean() },
+                    ?.`object`?.label.toBoolean(),
                 createdAt = resource.createdAt,
                 createdBy = resource.createdBy,
                 organizations = listOf(resource.organizationId),

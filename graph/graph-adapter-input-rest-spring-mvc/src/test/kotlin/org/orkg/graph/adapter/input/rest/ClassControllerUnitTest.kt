@@ -170,9 +170,9 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             } returns pageOf()
 
             mockMvc
-                .perform(performGetByURI("http://example.org/exists"))
+                .perform(performGetByURI("https://example.org/exists"))
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.uri").value("http://example.org/exists"))
+                .andExpect(jsonPath("$.uri").value("https://example.org/exists"))
 
             verify(exactly = 1) {
                 statementService.findAll(
@@ -209,7 +209,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
     @DisplayName("Given a class is created, when service succeeds, then status is 200 OK and class is returned")
     fun create() {
         val id = ThingId("C123")
-        val uri = ParsedIRI("http://example.org/bar")
+        val uri = ParsedIRI("https://example.org/bar")
         val label = "foo"
         val request = mapOf("id" to id, "label" to label, "uri" to uri)
 
@@ -412,6 +412,6 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
         id = ThingId("C1"),
         label = "test class",
         createdAt = OffsetDateTime.now(clock),
-        uri = ParsedIRI("http://example.org/exists")
+        uri = ParsedIRI("https://example.org/exists")
     )
 }

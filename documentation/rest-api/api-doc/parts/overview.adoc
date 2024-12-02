@@ -38,7 +38,7 @@ HTTP and REST conventions in its use of HTTP verbs.
 | Used to replace an existing resource
 
 | `DELETE`
-| Used to deleta a resource
+| Used to delete a resource
 |===
 
 ////

@@ -73,7 +73,7 @@ internal class PageTest : RestDocsTest("paged") {
 
     @TestComponent
     @RestController
-    internal class FakePageController() {
+    internal class FakePageController {
         @GetMapping("/page")
         fun dummyPage(pageable: Pageable): Page<String> {
             val content = listOf("foo", "bar", "baz").sorted()

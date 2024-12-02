@@ -9,6 +9,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.data.web.config.EnableSpringDataWebSupport
 import org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.DIRECT
 import org.springframework.http.MediaType
+import org.springframework.util.MimeTypeUtils
 import org.springframework.web.accept.ContentNegotiationManager
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -64,7 +65,7 @@ class MediaTypeCapabilitiesResolver(
                 }
             }
         }
-        MediaType.sortBySpecificityAndQuality(mediaTypesToUse)
+        MimeTypeUtils.sortBySpecificity(mediaTypesToUse)
         return mediaTypesToUse.firstOrNull { it.isConcrete }
             ?.let { MediaTypeCapabilities.parse(it, mediaTypeCapabilityRegistry.getSupportedCapabilities(it)) }
             ?: MediaTypeCapabilities.EMPTY
@@ -72,6 +73,6 @@ class MediaTypeCapabilitiesResolver(
 
     private fun getMostSpecificMediaType(acceptType: MediaType, produceType: MediaType): MediaType {
         val produceTypeToUse = produceType.copyQualityValue(acceptType)
-        return if (MediaType.SPECIFICITY_COMPARATOR.compare(acceptType, produceTypeToUse) <= 0) acceptType else produceTypeToUse
+        return if (acceptType.isLessSpecific(produceTypeToUse)) produceTypeToUse else acceptType
     }
 }

@@ -123,14 +123,14 @@ class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     companion object RestDoc {
-        private fun organizationResponseFields(OrganizationType: OrganizationType.Companion) = listOf(
+        private fun organizationResponseFields(type: OrganizationType.Companion) = listOf(
             fieldWithPath("id").description("The organization ID"),
             fieldWithPath("name").description("The organization name"),
             fieldWithPath("created_by").description("The ID of the user that created the organization."),
             fieldWithPath("homepage").description("The URL of the organization's homepage."),
             fieldWithPath("observatory_ids").description("The list of observatories that belong to this organization"),
             fieldWithPath("display_id").description("The URL of an organization"),
-            fieldWithPath("type").description(OrganizationType)
+            fieldWithPath("type").description(type)
         )
 
         fun listOfOrganizationsResponseFields(): ResponseFieldsSnippet =

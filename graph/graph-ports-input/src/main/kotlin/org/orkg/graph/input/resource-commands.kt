@@ -1,5 +1,6 @@
 package org.orkg.graph.input
 
+import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId

@@ -23,11 +23,9 @@ class SpringDataNeo4jAuthorAdapter(
         neo4jRepository.findTopAuthorsOfComparison(id, pageable)
             .map(Neo4jAuthorOfComparison::toComparisonAuthor)
 
-
     override fun findAuthorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<PaperAuthor> =
         neo4jRepository.findAuthorsLeaderboardPerProblem(problemId, pageable)
             .map(Neo4jAuthorPerProblem::toPaperAuthor)
-
 }
 
 private fun Neo4jAuthorOfComparison.toComparisonAuthor() =
@@ -50,7 +48,7 @@ private fun Neo4jAuthorOfComparison.toComparisonAuthor() =
 private fun Neo4jAuthorPerProblem.toPaperAuthor() =
     PaperAuthor(
         if (thing is Neo4jResource)
-            SimpleAuthor.ResourceAuthor((thing as Neo4jResource).toResource())
+            SimpleAuthor.ResourceAuthor(thing.toResource())
         else
             SimpleAuthor.LiteralAuthor(thing.label!!),
         papers.toInt()

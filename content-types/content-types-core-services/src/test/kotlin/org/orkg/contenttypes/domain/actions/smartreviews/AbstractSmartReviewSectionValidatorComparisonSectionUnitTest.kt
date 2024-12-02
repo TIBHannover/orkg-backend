@@ -37,7 +37,7 @@ class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : AbstractSma
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
 
-        validIds shouldBe emptySet<ThingId>()
+        validIds shouldBe emptySet()
     }
 
     @Test

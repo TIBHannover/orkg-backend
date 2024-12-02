@@ -228,6 +228,7 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
         @PostMapping("/errors/http-media-type-not-supported", consumes = ["application/json", "application/xml"])
         fun httpMediaTypeNotSupported(@RequestBody body: String): Nothing = throw NotImplementedError()
 
+        @Suppress("ArrayInDataClass")
         data class JsonRequest(
             val field: String,
             val nested: Nested,

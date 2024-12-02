@@ -23,6 +23,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.PageImpl
 
+@Suppress("HttpUrlsUsage")
 internal class RdfServiceIntegrationTest : DescribeSpec({
     val statementRepository: StatementRepository = mockk()
     val classRepository: ClassRepository = mockk()

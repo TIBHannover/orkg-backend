@@ -20,7 +20,7 @@ import org.orkg.community.domain.PeerReviewType
 
 @Entity
 @Table(name = "conferences_series")
-class ConferenceSeriesEntity() {
+class ConferenceSeriesEntity {
 
     @Id
     var id: UUID? = null

@@ -6,7 +6,7 @@ They can appear in the object position in <<Statements,statements>>.
 [[literals-fetch]]
 == Fetching Literals
 
-A `GET` request provides information about a <<literal-represenation,literal>>.
+A `GET` request provides information about a literal.
 
 operation::literals-get-single[snippets='curl-request,http-response,response-fields']
 

@@ -28,7 +28,7 @@ The following sections try to explain the implications.
 The `buildSrc` project is a special project in Gradle that is built before all other projects are build.
 It is required to avoid duplication:
 All Gradle projects are independent and can have their own list of dependencies.
-This would either require duplicating large chunks of build configuration or symlinking (and thereby coupling) build configuration.
+This would either require duplicating large chunks of build configuration or sym-linking (and thereby coupling) build configuration.
 Both have severe downsides.
 In the first case, all places with an outdated dependency would need to be found.
 In the second case, adding a dependency that is not needed by other projects is not possible.

@@ -286,10 +286,10 @@ fun <
         context("by visibility") {
             val resources = fabricator.random<List<Resource>>().toPapers().mapIndexed { index, resource ->
                 resource.copy(
-                    visibility = Visibility.values()[index % Visibility.values().size]
+                    visibility = Visibility.entries[index % Visibility.entries.size]
                 )
             }
-            VisibilityFilter.values().forEach { visibilityFilter ->
+            VisibilityFilter.entries.forEach { visibilityFilter ->
                 context("when visibility is $visibilityFilter") {
                     resources.forEach(resourceRepository::save)
                     val expected = resources.filter { it.visibility in visibilityFilter.targets }

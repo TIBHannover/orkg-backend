@@ -313,7 +313,7 @@ class SpringDataNeo4jResourceAdapter(
         .mappedBy(ResourceMapper("node"))
         .fetch(pageable, false)
 
-    override fun findAllPapersByLabel(label: String): Iterable<Resource> =
+    override fun findAllPapersByLabel(label: String): List<Resource> =
         neo4jRepository.findAllPapersByLabel(label).map(Neo4jResource::toResource)
 
     override fun findPaperByLabel(label: String): Optional<Resource> =

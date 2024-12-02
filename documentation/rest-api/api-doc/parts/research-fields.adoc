@@ -1,6 +1,6 @@
 = Research Fields
 
-Research fields are meta-objects that help better classify the content within the ORKG.
+Research fields are meta objects that help better classify the content within the ORKG.
 The research field is essentially a <<Resources,resource>> and hence inherits all the specifications of resource.
 
 NOTE: In the following sections, the response fields of the page object are omitted for brevity.

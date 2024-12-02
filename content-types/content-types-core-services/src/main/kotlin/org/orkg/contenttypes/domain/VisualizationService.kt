@@ -18,7 +18,6 @@ import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAuthorCr
 import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAuthorValidator
 import org.orkg.contenttypes.domain.actions.visualizations.VisualizationDescriptionCreator
 import org.orkg.contenttypes.domain.actions.visualizations.VisualizationResourceCreator
-import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.contenttypes.output.VisualizationRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -50,7 +49,6 @@ class VisualizationService(
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
-    private val researchFieldService: RetrieveResearchFieldUseCase,
     private val visualizationRepository: VisualizationRepository
 ) : VisualizationUseCases {
     override fun findById(id: ThingId): Optional<Visualization> =

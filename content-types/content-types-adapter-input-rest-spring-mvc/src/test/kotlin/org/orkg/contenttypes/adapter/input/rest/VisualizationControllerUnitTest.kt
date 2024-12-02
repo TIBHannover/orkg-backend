@@ -375,7 +375,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI("http://example.org/author")
+                    homepage = ParsedIRI("https://example.org/author")
                 ),
                 AuthorDTO(
                     id = null,

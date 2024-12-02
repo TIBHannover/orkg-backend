@@ -50,7 +50,7 @@ html.dark-theme #banner {
 
 #banner-container {
     background: var(--orkg-header-background-color);
-    box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 8px 0px;
+    box-shadow: rgba(0, 0, 0, 0.13) 0 2px 8px 0;
     border-bottom: none;
 }
 
@@ -97,8 +97,7 @@ a:hover {
 
 .admonitionblock, .literalblock, .listingblock {
     border-radius: 4px;
-    border: 1px solid rgba(0, 0, 0, 0.125) !important;
-    border-color: var(--orkg-block-border-color) !important;
+    border: 1px solid var(--orkg-block-border-color);
 }
 
 body.fixed-toc #toc {

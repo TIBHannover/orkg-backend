@@ -306,19 +306,6 @@ class ObjectService(
      * Constants companion object
      */
     companion object Constants {
-        private const val ID_AUTHORS_PREDICATE = "hasAuthors"
-        private const val ID_PUBDATE_MONTH_PREDICATE = "P28"
-        private const val ID_PUBDATE_YEAR_PREDICATE = "P29"
-        private const val ID_RESEARCH_FIELD_PREDICATE = "P30"
-        private const val ID_URL_PREDICATE = "url"
-        private const val ID_ORCID_PREDICATE = "HAS_ORCID"
-        private const val ID_VENUE_PREDICATE = "HAS_VENUE"
-
-        // IDs of classes
-        const val ID_CONTRIBUTION_CLASS = "Contribution"
-        private const val ID_AUTHOR_CLASS = "Author"
-        private const val ID_VENUE_CLASS = "Venue"
-
         // Miscellaneous
         val MAP_PREDICATE_CLASSES = mapOf("P32" to "Problem")
     }

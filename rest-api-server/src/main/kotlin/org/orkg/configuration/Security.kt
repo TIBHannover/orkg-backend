@@ -83,7 +83,7 @@ class JwtAuthenticationConverter : Converter<Jwt, AbstractAuthenticationToken> {
 
 // TODO: can most likely be removed
 /**
- * An authentication entry point that will not redirect to login, but return `401 Unauthorized` instead.
+ * An authentication entry point that will not redirect to log in, but return `401 Unauthorized` instead.
  */
 @Component
 class RestAuthenticationEntryPoint : AuthenticationEntryPoint {

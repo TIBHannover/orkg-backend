@@ -15,9 +15,6 @@ class ObservatoryURLNotFound(id: String) :
 class ContributorNotFound(id: ContributorId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Contributor "$id" not found.""")
 
-class UserIsAlreadyMemberOfObservatory(id: ObservatoryId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """User is already a member of observatory "$id".""")
-
 class ContributorAlreadyExists(id: ContributorId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Contributor "$id" already exists.""")
 
@@ -43,9 +40,6 @@ class OrganizationAlreadyExists private constructor(
 
 class LogoNotFound(id: OrganizationId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Logo for organization "$id" not found.""")
-
-class UserIsAlreadyMemberOfOrganization(id: OrganizationId) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """User is already a member of organization "$id".""")
 
 class ObservatoryAlreadyExists private constructor(
     status: HttpStatus,

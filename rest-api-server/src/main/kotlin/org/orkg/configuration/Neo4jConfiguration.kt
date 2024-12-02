@@ -13,7 +13,7 @@ import org.springframework.data.neo4j.core.Neo4jTemplate
 import org.springframework.data.neo4j.core.mapping.Neo4jMappingContext
 import org.springframework.data.neo4j.core.transaction.Neo4jTransactionManager
 
-// Configure custom transaction manager, because Spring Data Neo4j does not do that anymore if JPA is auto-configured.
+// Configure custom transaction manager, because Spring Data Neo4j does not do that anymore if JPA is autoconfigured.
 // See https://github.com/spring-projects/spring-data-neo4j/issues/2931.
 @Configuration
 class Neo4jConfiguration {

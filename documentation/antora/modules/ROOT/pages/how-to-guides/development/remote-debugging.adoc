@@ -12,7 +12,7 @@ After calling the endpoint you would like to test, the program will halt at the 
 NOTE: This section is specific to TIB, and may be ignored by everyone not having direct access to the deployment servers.
 
 For all testing servers, remote debugging is also exposed, although on port `8002`.
-To start a debugging session, you first need to establish a SSH tunnel to the testing server.
+To start a debugging session, you first need to establish an SSH tunnel to the testing server.
 If you work remotely, this needs to be tunneled through the jump host.
 Configuring the tunnel may look like this:
 

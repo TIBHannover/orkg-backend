@@ -1,6 +1,6 @@
 = Bulk Statements
 
-Bulk operations on statements. Helps performing multiple calls together.
+Bulk operations on statements. Helps to perform multiple calls together.
 
 [[bulk-statements-fetch-by-subject]]
 == Fetching Statements by Subjects (Bulk)

@@ -1,6 +1,6 @@
 = Research Problems
 
-Research problems in the ORKG are important concepts and thus have their own API enpoint to get all related concepts.
+Research problems in the ORKG are important concepts and thus have their own API endpoint to get all related concepts.
 
 ////
 [[problems-fields]]

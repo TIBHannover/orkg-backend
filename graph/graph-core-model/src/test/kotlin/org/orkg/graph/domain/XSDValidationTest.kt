@@ -42,6 +42,7 @@ import org.orkg.graph.domain.Literals.XSD.UNSIGNED_SHORT
 import org.orkg.graph.domain.Literals.XSD.URI
 import org.orkg.graph.domain.Literals.XSD.YEAR_MONTH_DURATION
 
+@Suppress("HttpUrlsUsage")
 class XSDValidationTest {
     @ParameterizedTest
     @ValueSource(strings = ["", "   ", "abc", "563", "*/--5678", "\n"])

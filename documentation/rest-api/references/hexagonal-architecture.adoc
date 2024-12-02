@@ -19,7 +19,7 @@ NOTE: Refactoring will happen in steps, so this reference will need updates in a
 == Hexagonal Architecture
 
 Hexagonal Architecture (HA) was invented by Alistair Cockburn, https://alistair.cockburn.us/hexagonal-architecture/[published] in 2005 on his blog.
-It aims to create loosly coupled architecture components that can be connected easily via ports and adapters.
+It aims to create loosely coupled architecture components that can be connected easily via ports and adapters.
 This architecture is also called "ports & adapters" for this reason.
 Please see the https://alistair.cockburn.us/hexagonal-architecture/[original article] for more in-depth information.
 

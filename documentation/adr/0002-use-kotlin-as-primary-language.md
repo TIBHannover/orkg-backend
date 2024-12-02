@@ -20,6 +20,6 @@ Those cases should be exceptions, not the rule.
 
 ## Consequences
 
-We benefit of Kotlins advantages over Java, without sacrificing anything due to the great interoperability.
+We benefit of Kotlin's advantages over Java, without sacrificing anything due to the great interoperability.
 
 In the future, we may profit from other developments in the Kotlin ecosystem, such as code sharing between platforms.

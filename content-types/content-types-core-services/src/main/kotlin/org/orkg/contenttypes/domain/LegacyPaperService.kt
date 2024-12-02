@@ -58,7 +58,7 @@ class LegacyPaperService(
     ): ThingId {
         val userId = ContributorId(userUUID)
 
-        // check if should be merged or not
+        // check if paper should be merged or not
         val paperId = createOrFindPaper(mergeIfExists, request, userId)
 
         // paper contribution data
@@ -123,7 +123,7 @@ class LegacyPaperService(
             if (byDOI.isPresent) return byDOI.get().id
         }
         val byTitle = resourceService.findAllPapersByTitle(request.paper.title)
-        if (byTitle.count() > 0) return byTitle.first().id
+        if (byTitle.isNotEmpty()) return byTitle.first().id
         return createNewPaperWithMetadata(userId, request)
     }
 

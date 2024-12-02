@@ -30,7 +30,7 @@ interface RetrieveResourceUseCase {
         organizationId: OrganizationId? = null,
     ): Page<Resource>
     // Legacy methods:
-    fun findAllPapersByTitle(title: String?): Iterable<Resource>
+    fun findAllPapersByTitle(title: String?): List<Resource>
 
     fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource>
 

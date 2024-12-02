@@ -38,7 +38,6 @@ import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.GeneralStatement
-import org.orkg.graph.domain.List
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.PredicateNotFound
@@ -100,21 +99,6 @@ data class LiteralMapper(val name: String) : BiFunction<TypeSystem, Record, Lite
 data class ResourceMapper(val name: String) : BiFunction<TypeSystem, Record, Resource> {
     constructor(symbolicName: SymbolicName) : this(symbolicName.value)
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toResource()
-}
-
-data class ListMapper(val name: String, val elements: String) : BiFunction<TypeSystem, Record, List> {
-    constructor(name: SymbolicName, elements: SymbolicName) : this(name.value, elements.value)
-    override fun apply(typeSystem: TypeSystem, record: Record): List {
-        val node = record[name]
-        return List(
-            id = node["id"].toThingId()!!,
-            label = node["label"].asString(),
-            elements = record[elements].toThingIds(),
-            createdAt = node["created_at"].toOffsetDateTime(),
-            createdBy = node["created_by"].toContributorId(),
-            modifiable = node["modifiable"].asBoolean()
-        )
-    }
 }
 
 data class PredicateMapper(val name: String) : BiFunction<TypeSystem, Record, Predicate> {
@@ -187,7 +171,6 @@ internal fun Value.toOrganizationId() = if (isNull) OrganizationId.UNKNOWN else 
 internal fun Value.toExtractionMethod() = if (isNull) ExtractionMethod.UNKNOWN else ExtractionMethod.valueOf(asString())
 fun Value.toThingId() = if (isNull) null else ThingId(asString())
 internal fun Value.toVisibility() = if (isNull) Visibility.DEFAULT else Visibility.valueOf(asString())
-internal fun Value.toThingIds() = asList().map { ThingId(it as String) }
 internal fun Value.asNullableInt() = if (isNull) null else asInt()
 internal fun Value.asNullableLong() = if (isNull) null else asLong()
 internal fun Value.asNullableNode() = if (isNull) null else asNode()

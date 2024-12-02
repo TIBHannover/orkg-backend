@@ -19,7 +19,7 @@ class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitTest : Abs
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
 
-        validIds shouldBe emptySet<ThingId>()
+        validIds shouldBe emptySet()
     }
 
     @Test

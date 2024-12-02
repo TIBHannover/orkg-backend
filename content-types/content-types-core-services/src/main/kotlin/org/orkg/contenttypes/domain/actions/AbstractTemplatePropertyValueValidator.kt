@@ -31,6 +31,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.output.ClassHierarchyRepository
 
+@Suppress("HttpUrlsUsage")
 private const val ORKG_CLASS_NS = "http://orkg.org/orkg/class/"
 
 class AbstractTemplatePropertyValueValidator(

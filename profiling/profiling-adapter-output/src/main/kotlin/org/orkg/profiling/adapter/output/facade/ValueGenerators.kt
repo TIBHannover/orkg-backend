@@ -281,6 +281,7 @@ class StringValueGenerator : ValueGenerator<String> {
         "Benchmark"
     )
 
+    @Suppress("HttpUrlsUsage")
     override operator fun invoke(
         random: Random,
         name: String,

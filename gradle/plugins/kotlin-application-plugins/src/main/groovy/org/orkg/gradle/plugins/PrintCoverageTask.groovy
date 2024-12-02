@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import groovy.xml.XmlSlurper
 
 abstract class PrintCoverageTask extends DefaultTask {
     @Input
@@ -14,6 +15,7 @@ abstract class PrintCoverageTask extends DefaultTask {
     }
 
     @TaskAction
+    @SuppressWarnings('HttpUrlsUsage')
     def printCoverage() {
         def xml = new XmlSlurper()
         xml.setFeature('http://apache.org/xml/features/disallow-doctype-decl', false)

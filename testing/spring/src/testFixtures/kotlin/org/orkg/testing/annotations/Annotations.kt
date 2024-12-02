@@ -31,7 +31,7 @@ annotation class UsesMocking
 annotation class Neo4jContainerIntegrationTest
 
 /**
- * Annotation that helps to setup tests with PostgreSQL in TestContainers.
+ * Annotation that helps to set up tests with PostgreSQL in TestContainers.
  *
  * Tests are transactional by default. The test database is replaced with a TestContainers Docker container that is
  * configured via `application.yaml`.

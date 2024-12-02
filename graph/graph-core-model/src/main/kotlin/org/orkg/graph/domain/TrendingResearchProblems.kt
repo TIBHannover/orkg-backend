@@ -3,7 +3,7 @@ package org.orkg.graph.domain
 import org.orkg.common.ThingId
 
 /**
- * Data class comprising of resource ID,
+ * Data class comprising resource ID,
  * research problem and total number of
  * papers per research problem
  */

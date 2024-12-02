@@ -1,3 +1,5 @@
+@file:Suppress("HttpUrlsUsage")
+
 package org.orkg.graph.adapter.output.web
 
 import com.fasterxml.jackson.databind.DeserializationFeature

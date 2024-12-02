@@ -19,7 +19,7 @@ class TemplateRelationsCreator(
         return state
     }
 
-    internal fun linkResearchFields(
+    private fun linkResearchFields(
         contributorId: ContributorId,
         subjectId: ThingId,
         researchFields: List<ThingId>
@@ -34,7 +34,7 @@ class TemplateRelationsCreator(
         }
     }
 
-    internal fun linkResearchProblems(
+    private fun linkResearchProblems(
         contributorId: ContributorId,
         subjectId: ThingId,
         researchProblems: List<ThingId>
@@ -49,7 +49,7 @@ class TemplateRelationsCreator(
         }
     }
 
-    internal fun linkPredicate(
+    private fun linkPredicate(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId

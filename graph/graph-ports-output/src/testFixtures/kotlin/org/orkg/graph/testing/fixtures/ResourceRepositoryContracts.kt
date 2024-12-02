@@ -146,15 +146,15 @@ fun <
 
     describe("finding several resources") {
         context("by class and visibility") {
-            val size = 3 * Visibility.values().size * 2
+            val size = 3 * Visibility.entries.size * 2
             val classes = setOf(Classes.paper)
             val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
                 resource.copy(
-                    visibility = Visibility.values()[index % Visibility.values().size],
+                    visibility = Visibility.entries[index % Visibility.entries.size],
                     classes = if (index >= size / 2) classes else resource.classes
                 )
             }
-            Visibility.values().forEach { visibility ->
+            Visibility.entries.forEach { visibility ->
                 context("when visibility is $visibility") {
                     resources.forEach(repository::save)
 
@@ -185,11 +185,11 @@ fun <
             }
         }
         context("by class and listed visibility") {
-            val size = 3 * Visibility.values().size * 2
+            val size = 3 * Visibility.entries.size * 2
             val classes = setOf(Classes.paper)
             val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
                 resource.copy(
-                    visibility = Visibility.values()[index % Visibility.values().size],
+                    visibility = Visibility.entries[index % Visibility.entries.size],
                     classes = if (index >= size / 2) classes else resource.classes
                 )
             }
@@ -221,12 +221,12 @@ fun <
             }
         }
         context("by class and visibility and observatory id") {
-            val size = 2 * Visibility.values().size * 2 * 2
+            val size = 2 * Visibility.entries.size * 2 * 2
             val classes = setOf(Classes.paper)
             val observatoryId: ObservatoryId = fabricator.random()
             val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
                 resource.copy(
-                    visibility = Visibility.values()[index % Visibility.values().size]
+                    visibility = Visibility.entries[index % Visibility.entries.size]
                 )
             }.toMutableList()
             (0 until size / 2).forEach {
@@ -236,7 +236,7 @@ fun <
                 resources[it] = resources[it].copy(observatoryId = observatoryId)
             }
 
-            Visibility.values().forEach { visibility ->
+            Visibility.entries.forEach { visibility ->
                 context("when visibility is $visibility") {
                     resources.forEach(repository::save)
 
@@ -274,12 +274,12 @@ fun <
             }
         }
         context("by class and listed visibility and observatory id") {
-            val size = 2 * Visibility.values().size * 2 * 2
+            val size = 2 * Visibility.entries.size * 2 * 2
             val classes = setOf(Classes.paper)
             val observatoryId: ObservatoryId = fabricator.random()
             val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
                 resource.copy(
-                    visibility = Visibility.values()[index % Visibility.values().size]
+                    visibility = Visibility.entries[index % Visibility.entries.size]
                 )
             }.toMutableList()
             (0 until size / 2).forEach {
@@ -414,10 +414,10 @@ fun <
             context("by visibility") {
                 val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
                     resource.copy(
-                        visibility = Visibility.values()[index % Visibility.values().size]
+                        visibility = Visibility.entries[index % Visibility.entries.size]
                     )
                 }
-                VisibilityFilter.values().forEach { visibilityFilter ->
+                VisibilityFilter.entries.forEach { visibilityFilter ->
                     context("when visibility is $visibilityFilter") {
                         resources.forEach(repository::save)
                         val expected = resources.filter { it.visibility in visibilityFilter.targets }

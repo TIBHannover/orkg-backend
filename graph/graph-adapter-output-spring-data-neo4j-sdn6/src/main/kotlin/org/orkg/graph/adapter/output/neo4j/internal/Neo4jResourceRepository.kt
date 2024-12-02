@@ -60,7 +60,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, ThingId> {
     fun findPaperByLabel(label: String?): Optional<Neo4jResource>
 
     @Query("""MATCH (node:Paper:Resource) WHERE NOT node:PaperDeleted AND toLower(node.label) = toLower($label) $RETURN_NODE""")
-    fun findAllPapersByLabel(label: String): Iterable<Neo4jResource>
+    fun findAllPapersByLabel(label: String): List<Neo4jResource>
 
     @Query("""$MATCH_PAPER_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findPaperById(id: ThingId): Optional<Neo4jResource>

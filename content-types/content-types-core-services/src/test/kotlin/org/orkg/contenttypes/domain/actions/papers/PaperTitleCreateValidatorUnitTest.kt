@@ -17,8 +17,6 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.pageOf
-import org.springframework.data.domain.Page
 
 class PaperTitleCreateValidatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
@@ -42,7 +40,7 @@ class PaperTitleCreateValidatorUnitTest {
         val command = dummyCreatePaperCommand()
         val state = CreatePaperState()
 
-        every { resourceService.findAllPapersByTitle(command.title) } returns Page.empty()
+        every { resourceService.findAllPapersByTitle(command.title) } returns emptyList()
 
         val result = paperTitleCreateValidator(command, state)
 
@@ -64,7 +62,7 @@ class PaperTitleCreateValidatorUnitTest {
         val paper = createResource(label = command.title)
         val expected = PaperAlreadyExists.withTitle(paper.label)
 
-        every { resourceService.findAllPapersByTitle(command.title) } returns pageOf(paper)
+        every { resourceService.findAllPapersByTitle(command.title) } returns listOf(paper)
 
         assertThrows<PaperAlreadyExists> { paperTitleCreateValidator(command, state) }.message shouldBe expected.message
 

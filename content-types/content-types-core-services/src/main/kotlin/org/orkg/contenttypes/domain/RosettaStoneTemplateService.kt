@@ -8,7 +8,6 @@ import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.actions.DescriptionValidator
@@ -116,7 +115,7 @@ class RosettaStoneTemplateService(
     }
 
     override fun update(command: UpdateRosettaStoneTemplateCommand) {
-        val steps = listOf<Action<UpdateRosettaStoneTemplateCommand, UpdateRosettaStoneTemplateState>>(
+        val steps = listOf(
             RosettaStoneTemplateExistenceValidator(this, resourceRepository),
             RosettaStoneTemplateModifiableValidator(rosettaStoneStatementRepository),
             RosettaStoneTemplateLabelUpdateValidator(),

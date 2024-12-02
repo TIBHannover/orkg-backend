@@ -24,7 +24,7 @@ The new dump is consistent and will work on input into a fresh database
  property present in both the relationship (representing the statement)
  and the node (representing the Predicate).
 
-In order to by able to merge the two distinct data sets (taken on
+In order to be able to merge the two distinct data sets (taken on
  different laptops) an offset of 1000 was added to avoid conflicts in IDs.
 
 The two files where merged as `dils_2018-merged.cypher` by concatenation.

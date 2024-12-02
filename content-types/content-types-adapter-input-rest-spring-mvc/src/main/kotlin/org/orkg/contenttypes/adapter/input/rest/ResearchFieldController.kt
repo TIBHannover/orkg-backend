@@ -247,7 +247,7 @@ class ResearchFieldController(
     }
 
     /**
-     * Gets entities based on the provided classes including sub fields
+     * Gets entities based on the provided classes including subfields
      *
      */
     @GetMapping("/{id}/subfields")
@@ -273,7 +273,7 @@ class ResearchFieldController(
         ).mapToResourceRepresentation(capabilities)
 
     /**
-     * Gets entities based on the provided classes excluding sub fields
+     * Gets entities based on the provided classes excluding subfields
      *
      */
     @GetMapping("/{id}")

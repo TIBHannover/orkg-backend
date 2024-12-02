@@ -47,6 +47,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 
+@Suppress("HttpUrlsUsage")
 private const val ORKG_CLASS_NS = "http://orkg.org/orkg/class/"
 
 class AbstractTemplatePropertyValueValidatorUnitTest {

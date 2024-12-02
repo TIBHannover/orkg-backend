@@ -27,7 +27,6 @@ import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSect
 import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
-import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand
 
 class SmartReviewSectionUpdaterUnitTest {
     private val abstractSmartReviewSectionUpdater: AbstractSmartReviewSectionUpdater = mockk()
@@ -255,7 +254,7 @@ class SmartReviewSectionUpdaterUnitTest {
             statements = oldSection.toGroupedStatements()
         )
         val command = oldSection.toUpdateCommand(contributorId, smartReview.id)
-            .shouldBeInstanceOf<UpdateTextSectionCommand>()
+            .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand>()
             .copy(text = "updated text")
 
         every { abstractSmartReviewSectionUpdater.updateTextSection(any(), any(), any(), any()) } just runs
@@ -349,7 +348,7 @@ class SmartReviewSectionUpdaterUnitTest {
         contributorId = contributorId,
         smartReviewId = smartReviewId,
         heading = heading,
-        `class` = classes.filter { it in SmartReviewTextSection.types }.first(),
+        `class` = classes.first { it in SmartReviewTextSection.types },
         text = text
     )
 }

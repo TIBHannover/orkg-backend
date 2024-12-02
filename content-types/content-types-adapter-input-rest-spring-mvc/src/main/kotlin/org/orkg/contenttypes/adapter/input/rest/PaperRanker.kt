@@ -142,7 +142,7 @@ class PaperRanker(
             get() = doi != null
     }
 
-    data class Score private constructor(
+    data class Score(
         val isRejected: Boolean,
         val propertyScore: Double,
         val comparisonScore: Double,
@@ -160,9 +160,6 @@ class PaperRanker(
         )
 
         val isSufficient: Boolean = !isRejected
-
-        val totalScore: Double
-            get() = propertyScore + comparisonScore + listScore + doiScore + observatoryScore
     }
 }
 

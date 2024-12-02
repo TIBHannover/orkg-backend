@@ -16,7 +16,7 @@ class Neo4jClass : Neo4jThing() {
     fun toClass() = Class(
         id = id!!,
         label = label!!,
-        uri = uri?.let { it.toIRIOrNull() },
+        uri = uri?.toIRIOrNull(),
         createdAt = created_at!!,
         createdBy = created_by,
         modifiable = modifiable!!

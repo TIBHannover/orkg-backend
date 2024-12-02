@@ -33,8 +33,6 @@ class MissingParameter private constructor(
     override val message: String
 ) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
     companion object {
-        fun requiresAll(parameter: String, vararg parameters: String) =
-            MissingParameter("Missing parameters: All parameters out of ${formatParameters(parameter, *parameters)} are required.")
         fun requiresAtLeastOneOf(parameter: String, vararg parameters: String) =
             MissingParameter("Missing parameter: At least one parameter out of ${formatParameters(parameter, *parameters)} is required.")
     }

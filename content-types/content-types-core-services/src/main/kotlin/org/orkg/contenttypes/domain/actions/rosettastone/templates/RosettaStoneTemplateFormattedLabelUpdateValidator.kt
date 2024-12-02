@@ -27,7 +27,7 @@ class RosettaStoneTemplateFormattedLabelUpdateValidator : UpdateRosettaStoneTemp
                     is TextComponent -> null
                 }
             }
-            val requiredKeys = (0 until properties.size).map(Int::toString)
+            val requiredKeys = properties.indices.map(Int::toString)
             val missingKeys = requiredKeys - keys
             if (missingKeys.isNotEmpty()) {
                 val propertyIndex = missingKeys.first().toInt()

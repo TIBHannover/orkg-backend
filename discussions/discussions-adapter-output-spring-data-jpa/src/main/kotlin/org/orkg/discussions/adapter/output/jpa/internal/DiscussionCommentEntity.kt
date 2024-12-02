@@ -14,7 +14,7 @@ import org.orkg.discussions.domain.DiscussionCommentId
 
 @Entity
 @Table(name = "discussion_comments")
-class DiscussionCommentEntity() {
+class DiscussionCommentEntity {
     @Id
     var id: UUID? = null
 

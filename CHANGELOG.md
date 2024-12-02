@@ -6,6 +6,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added api version to documentation.
+  (See: [!1115](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1115))
+- Identifiers of smart reviews are now returned for content-type endpoints.
+  (See: [!1099](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1099))
+- Added content-type endpoint for fetching published smart review contents.
+  (See: [!1100](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1100))
+- Added filtering parameters `created_at_start`, `created_at_end`, `observatory_id` and `organization_id` to rosetta stone template find all endpoint.
+  (See: [!1106](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1106))
+- Added endpoint for fetching things by id.
+  (See: [!1110](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1110))
+- Added internal support for fetching nested template instances.
+  (See: [!1113](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1113))
+### Changed
+- Upgraded Spring Boot and all dependencies to the latest version.
+  (See: [!1112](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1112))
+- Set Kotlin language level to 1.9.
+  (See: [!1117](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1117))
+- The type for text sections of smart reviews is now optional.
+  (See: [!1099](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1099))
+- Changed response code from status 204 to status 201 for all publish endpoints.
+  (See: [!1101](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1101))
+- Sending an empty list for observatories or organizations will now unassign any observatories or organizations for all content-type endpoints.
+  (See: [!1102](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1102))
+### Fixed
+- Fixed updating references for smart reviews.
+  (See: [!1099](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1099))
+- Fixed status 500 when trying to publish a smart review.
+  (See: [!1099](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1099))
+- Fixed grammar and spelling mistakes across project.
+  (See: [!1116](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1116))
+- Fixed dummy data setup.
+  (See: [!1104](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1104))
+- Fixed published smart review and literature list mapping from snapshot data.
+  (See: [!1105](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1105))
+- Fixed paper search by DOI prefix when combined with label search.
+  (See: [!1108](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1108))
+- Imported Wikidata entities now need to match the implicit type of the import endpoint used, in order to be successfully imported.
+  (See: [!1076](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1076))
 
 ## [0.71.0] - 2024-11-21
 ### Added

@@ -1,7 +1,10 @@
 package org.orkg.contenttypes.domain
 
+import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.domain.ContributorNotFound
@@ -86,13 +89,21 @@ class RosettaStoneTemplateService(
         searchString: SearchString?,
         visibility: VisibilityFilter?,
         createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
         pageable: Pageable
     ): Page<RosettaStoneTemplate> =
         resourceRepository.findAll(
             label = searchString,
             visibility = visibility,
             createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
             includeClasses = setOf(Classes.rosettaNodeShape),
+            organizationId = organizationId,
+            observatoryId = observatoryId,
             pageable = pageable
         ).pmap { it.toRosettaStoneTemplate() }
 

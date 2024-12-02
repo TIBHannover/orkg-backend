@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
+import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -21,6 +22,8 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
@@ -58,12 +61,20 @@ class RosettaStoneTemplateController(
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
+        @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
+        @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
+        @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
+        @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
         pageable: Pageable
     ): Page<RosettaStoneTemplateRepresentation> =
         service.findAll(
             searchString = string?.let { SearchString.of(string, exactMatch = exactMatch) },
             visibility = visibility,
             createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
             pageable = pageable
         ).mapToRosettaStoneTemplateRepresentation()
 

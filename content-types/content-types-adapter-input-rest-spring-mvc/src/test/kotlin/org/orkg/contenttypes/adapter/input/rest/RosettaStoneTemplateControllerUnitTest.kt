@@ -6,6 +6,9 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
@@ -39,6 +42,7 @@ import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -71,6 +75,9 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
 
     @MockkBean
     private lateinit var templateService: RosettaStoneTemplateUseCases
+
+    @Autowired
+    private lateinit var clock: Clock
 
     @Test
     @DisplayName("Given a template, when it is fetched by id and service succeeds, then status is 200 OK and template is returned")
@@ -153,16 +160,24 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
     @DisplayName("Given several rosetta stone templates, when filtering by several parameters, then status is 200 OK and rosetta stone templates are returned")
     fun getPagedWithParameters() {
         val template = createDummyRosettaStoneTemplate()
-        val createdBy = template.createdBy
         val q = "example"
         val exact = true
         val visibility = VisibilityFilter.ALL_LISTED
+        val createdBy = template.createdBy
+        val createdAtStart = OffsetDateTime.now(clock).minusHours(1)
+        val createdAtEnd = OffsetDateTime.now(clock).plusHours(1)
+        val observatoryId = ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
 
         every {
             templateService.findAll(
                 searchString = any(),
                 visibility = visibility,
                 createdBy = createdBy,
+                createdAtStart = createdAtStart,
+                createdAtEnd = createdAtEnd,
+                observatoryId = observatoryId,
+                organizationId = organizationId,
                 pageable = any()
             )
         } returns pageOf(template)
@@ -172,6 +187,10 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
             .param("exact", exact.toString())
             .param("visibility", visibility.name)
             .param("created_by", createdBy.value.toString())
+            .param("created_at_start", createdAtStart.format(ISO_OFFSET_DATE_TIME))
+            .param("created_at_end", createdAtEnd.format(ISO_OFFSET_DATE_TIME))
+            .param("observatory_id", observatoryId.value.toString())
+            .param("organization_id", organizationId.value.toString())
             .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .perform()
             .andExpect(status().isOk)
@@ -183,7 +202,11 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
                         parameterWithName("q").description("Optional filter for the rosetta stone template label.").optional(),
                         parameterWithName("exact").description("Optional flag for whether label matching should be exact. (default: false)").optional(),
                         parameterWithName("visibility").description("""Optional filter for visibility. Either of "ALL_LISTED", "UNLISTED", "FEATURED", "NON_FEATURED", "DELETED".""").optional(),
-                        parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the rosetta stone template.").optional()
+                        parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the rosetta stone template.").optional(),
+                        parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned rosetta stone template can have. (optional)"),
+                        parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned rosetta stone template can have. (optional)"),
+                        parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the rosetta stone template belongs to. (optional)"),
+                        parameterWithName("organization_id").description("Filter for the UUID of the organization that the rosetta stone template belongs to. (optional)")
                     )
                 )
             )
@@ -194,6 +217,10 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
                 searchString = withArg<ExactSearchString> { it.input shouldBe "example" },
                 visibility = visibility,
                 createdBy = createdBy,
+                createdAtStart = createdAtStart,
+                createdAtEnd = createdAtEnd,
+                observatoryId = observatoryId,
+                organizationId = organizationId,
                 pageable = any()
             )
         }

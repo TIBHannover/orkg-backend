@@ -2,6 +2,7 @@ package org.orkg.configuration
 
 import io.github.stepio.cache.caffeine.CaffeineSpecResolver
 import org.orkg.contenttypes.adapter.output.simcomp.THING_ID_TO_PUBLISHED_LITERATURE_LIST_CACHE
+import org.orkg.contenttypes.adapter.output.simcomp.THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE
 import org.orkg.graph.adapter.output.neo4j.CLASS_ID_TO_CLASS_CACHE
 import org.orkg.graph.adapter.output.neo4j.CLASS_ID_TO_CLASS_EXISTS_CACHE
 import org.orkg.graph.adapter.output.neo4j.LITERAL_ID_TO_LITERAL_CACHE
@@ -37,7 +38,8 @@ class CacheConfiguration {
                 PREDICATE_ID_TO_PREDICATE_CACHE,
                 RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE,
                 THING_ID_TO_THING_CACHE,
-                THING_ID_TO_PUBLISHED_LITERATURE_LIST_CACHE
+                THING_ID_TO_PUBLISHED_LITERATURE_LIST_CACHE,
+                THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE
             )
         }
 }

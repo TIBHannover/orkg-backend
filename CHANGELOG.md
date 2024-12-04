@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.72.1] - 2024-12-04
 ### Fixed
 - Fixed status 500 when querying smart reviews.
 
@@ -1255,7 +1257,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.72.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.72.1...master
+[0.72.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.72.1
 [0.72.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.72.0
 [0.71.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.71.0
 [0.70.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.70.1

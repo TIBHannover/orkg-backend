@@ -35,6 +35,8 @@ dependencies {
     testImplementation("org.openrewrite:rewrite-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
+    testImplementation("org.springframework.data:spring-data-commons:3.4.0")
+    testImplementation("org.springframework.data:spring-data-neo4j:7.4.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("ch.qos.logback:logback-classic:1.5.12")
 }

@@ -6,5 +6,4 @@ dependencies {
     api("org.springframework.boot:spring-boot")
     api("org.springframework:spring-context")
     api(project(":feature-flags:feature-flags-ports"))
-    implementation("org.springframework.boot:spring-boot-starter")
 }

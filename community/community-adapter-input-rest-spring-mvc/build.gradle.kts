@@ -28,14 +28,12 @@ testing {
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
-                implementation("jakarta.activation:jakarta.activation-api")
                 implementation(libs.assertj.core)
                 implementation(libs.spring.mockk)
                 implementation(libs.spring.restdocs)
+                runtimeOnly("org.springframework.security:spring-security-test")
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("org.springframework.security:spring-security-test")
-                implementation("org.springframework.boot:spring-boot-starter-test")
-                implementation("org.springframework.security:spring-security-test")
-                implementation("org.springframework.boot:spring-boot-starter-security")
             }
         }
     }
@@ -59,8 +57,6 @@ dependencies {
     api(project(":graph:graph-ports-input"))
     api(project(":media-storage:media-storage-ports-input"))
     implementation("org.springframework:spring-core")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation(project(":media-storage:media-storage-core-model"))
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
 }

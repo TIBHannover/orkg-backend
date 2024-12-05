@@ -11,7 +11,7 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":common")))
                 implementation(testFixtures(project(":testing:spring")))
-                implementation("org.springframework.boot:spring-boot-starter-test") {
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     // exclude(module = "mockito-core") // TODO: uncomment when migrated to MockK
@@ -42,7 +42,6 @@ dependencies {
     api(project(":common")) // for exceptions
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-output"))
-    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.security:spring-security-core")
     implementation("org.springframework.security:spring-security-oauth2-core")
     implementation("org.springframework.security:spring-security-oauth2-jose")

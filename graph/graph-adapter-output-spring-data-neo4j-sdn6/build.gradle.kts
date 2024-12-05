@@ -22,7 +22,6 @@ dependencies {
     api("org.springframework:spring-tx")
 
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
-    implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation(project(":common:neo4j-dsl"))
     implementation("org.apache.lucene:lucene-queryparser")
 
@@ -65,7 +64,7 @@ testing {
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
                 implementation(libs.kotest.assertions.core)
-                implementation(libs.spring.boot.starter.neo4j.migrations)
+                runtimeOnly(libs.spring.boot.starter.neo4j.migrations)
                 runtimeOnly(libs.kotest.extensions.spring)
                 runtimeOnly(libs.kotest.runner)
                 runtimeOnly(project(":migrations:neo4j-migrations"))

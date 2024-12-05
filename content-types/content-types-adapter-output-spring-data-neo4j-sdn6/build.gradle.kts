@@ -10,12 +10,12 @@ testing {
     suites {
         val containerTest by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("org.springframework.boot:spring-boot-starter-test") {
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     exclude(module = "mockito-core")
                 }
-                implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
+                runtimeOnly("org.springframework.boot:spring-boot-starter-data-neo4j")
                 implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
                 implementation("io.kotest:kotest-framework-api")
                 implementation("org.springframework.boot:spring-boot-autoconfigure")
@@ -24,7 +24,7 @@ testing {
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
                 implementation(libs.kotest.runner)
-                implementation(libs.spring.boot.starter.neo4j.migrations)
+                runtimeOnly(libs.spring.boot.starter.neo4j.migrations)
                 implementation(project(":content-types:content-types-ports-output"))
                 implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for SDN adapters, TODO: refactor?
                 implementation(project(":graph:graph-core-services"))
@@ -53,7 +53,6 @@ dependencies {
     api(project(":graph:graph-ports-output"))
     api("org.neo4j.driver:neo4j-java-driver")
     api("org.neo4j:neo4j-cypher-dsl")
-    implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation(project(":common:neo4j-dsl"))
     implementation(libs.forkhandles.values4k)
 

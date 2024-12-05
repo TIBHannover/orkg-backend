@@ -12,9 +12,6 @@ dependencies {
     api(project(":common"))
     api(project(":discussions:discussions-core-model"))
     api(project(":discussions:discussions-ports-output"))
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("jakarta.validation:jakarta.validation-api")
     runtimeOnly(project(":migrations:liquibase"))
 
@@ -30,12 +27,12 @@ testing {
         val containerTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project())
-                implementation("org.springframework.boot:spring-boot-starter-test") {
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     exclude(module = "mockito-core")
                 }
-                implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+                runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.springframework:spring-beans")
                 runtimeOnly(project(":migrations:liquibase"))
                 runtimeOnly(libs.liquibase)

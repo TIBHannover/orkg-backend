@@ -8,7 +8,7 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation("org.springframework.boot:spring-boot-starter-test") {
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     exclude(module = "mockito-core")
@@ -25,6 +25,8 @@ testing {
                 implementation(libs.spring.mockk)
                 implementation(libs.spring.restdocs)
                 implementation(project(":data-export:data-export-core"))
+                implementation("io.kotest:kotest-assertions-api")
+                implementation("io.kotest:kotest-assertions-shared")
             }
         }
     }
@@ -45,7 +47,6 @@ dependencies {
     implementation("org.eclipse.rdf4j:rdf4j-model-api")
     implementation("org.eclipse.rdf4j:rdf4j-rio-api")
     implementation("org.slf4j:slf4j-api")
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-beans")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-n3")
     runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-rdfxml")

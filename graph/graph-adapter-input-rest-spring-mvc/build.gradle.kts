@@ -23,7 +23,6 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     implementation(project(":community:community-core-model"))
-    implementation("org.springframework.boot:spring-boot-starter-web")
 
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
 }
@@ -43,8 +42,6 @@ testing {
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
-                implementation("org.springframework.boot:spring-boot-starter-security")
-                implementation("org.springframework.boot:spring-boot-starter-test")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")

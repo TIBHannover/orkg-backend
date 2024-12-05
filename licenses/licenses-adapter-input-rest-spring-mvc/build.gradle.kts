@@ -6,7 +6,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation("org.springframework.boot:spring-boot-starter-test") {
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     exclude(module = "mockito-core")
@@ -30,6 +30,5 @@ testing {
 dependencies {
     api("org.springframework:spring-web")
     api(project(":licenses:licenses-ports-input"))
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(project(":licenses:licenses-core-model"))
 }

@@ -1,6 +1,3 @@
-// JVM Test Suite is still incubating, but expected to be stable soon, so disabling the warning.
-@file:Suppress("UnstableApiUsage")
-
 plugins {
     id("org.orkg.gradle.kotlin-library-with-test-fixtures")
     id("org.orkg.gradle.spring-library")
@@ -27,7 +24,6 @@ dependencies {
     testFixturesApi("org.springframework:spring-web")
     testFixturesApi("org.springframework.data:spring-data-commons")
     testFixturesApi(libs.jackson.databind)
-    testFixturesApi(libs.spring.boot.starter.neo4j.migrations)
     testFixturesApi(libs.spring.restdocs)
     testFixturesApi(libs.testcontainers.junit5)
     testFixturesApi(libs.testcontainers.neo4j)

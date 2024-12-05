@@ -18,7 +18,7 @@ dependencies {
     api(project(":community:community-ports-output"))
     api(project(":eventbus"))
     api("org.springframework:spring-beans")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("jakarta.validation:jakarta.validation-api")
     implementation(project(":graph:graph-core-model"))
     implementation(project(":media-storage:media-storage-core-model"))
@@ -43,11 +43,6 @@ testing {
         val containerTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project())
-                implementation("org.springframework.boot:spring-boot-starter-test") {
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    exclude(module = "mockito-core")
-                }
                 implementation("org.springframework:spring-beans")
                 implementation(libs.assertj.core)
                 runtimeOnly(project(":migrations:liquibase"))

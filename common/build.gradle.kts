@@ -42,6 +42,7 @@ testing {
                 implementation(libs.assertj.core)
                 implementation(libs.spring.restdocs)
                 runtimeOnly("com.jayway.jsonpath:json-path")
+                compileOnly(libs.spring.boot.starter.neo4j.migrations)
             }
         }
     }

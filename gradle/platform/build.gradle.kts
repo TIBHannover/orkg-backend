@@ -19,6 +19,13 @@ dependencies {
     api("com.epages:restdocs-api-spec:$apiSpecVersion") // also acts as anchor for RestdocsApiSpecVirtualPlatformAlignmentRule
     api("com.epages:restdocs-api-spec-mockmvc:$apiSpecVersion")
 
+    val keycloakAdminClientVersion = "26.0.2"
+    api("org.keycloak:keycloak-admin-client:$keycloakAdminClientVersion")
+
+    val neo4jMigrationsVersion = "2.13.4"
+    api("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter:$neo4jMigrationsVersion")
+    api("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure:$neo4jMigrationsVersion")
+
     // Declare constraints on all components that need alignment
     constraints {
         api("com.ninja-squad:springmockk:4.0.2")

@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api("org.eclipse.rdf4j:rdf4j-model-api")
-    api("org.eclipse.rdf4j:rdf4j-common-io")
+    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
     api(libs.jackson.databind)
@@ -20,6 +20,7 @@ dependencies {
     implementation("org.eclipse.rdf4j:rdf4j-model-vocabulary")
     implementation("org.springframework.data:spring-data-commons")
     implementation(project(":content-types:content-types-core-model"))
+    implementation("org.slf4j:slf4j-api")
 
     testFixturesImplementation(libs.kotest.runner)
     testFixturesImplementation("io.kotest:kotest-assertions-shared")

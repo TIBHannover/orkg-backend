@@ -15,6 +15,4 @@ dependencies {
     api(project(":common"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input-legacy"))
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-web")
 }

@@ -8,6 +8,7 @@ plugins {
     id("org.orkg.gradle.base")
     id("org.orkg.gradle.consistent-resolution")
     id("com.diffplug.spotless")
+    id("com.autonomousapps.dependency-analysis")
 }
 
 val javaLanguageVersion = JavaLanguageVersion.of(17)
@@ -54,17 +55,16 @@ tasks.withType<Test>().configureEach {
 
     systemProperty("file.encoding", "UTF-8")
 }
-testing {
-    suites {
-        val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter("") // Configure "version-less" dependency, provided by platform
-        }
-    }
+
+configurations.all {
+    // Exclude JUnit 4, because we do not want to risk using it accidentally (again)
+    exclude(group = "junit", module = "junit")
+    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 }
 
 // Configure common test runtime dependencies for *all* projects
 dependencies {
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("ch.qos.logback:logback-classic") // Logger implementation. Should be same as in production.
 }
 

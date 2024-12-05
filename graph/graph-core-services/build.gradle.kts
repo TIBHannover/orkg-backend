@@ -17,9 +17,6 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-context")
     api("org.springframework:spring-tx")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(libs.forkhandles.values4k)
     implementation(project(":community:community-core-model"))
 }

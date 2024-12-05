@@ -45,6 +45,11 @@ dependencyAnalysis {
             onAny {
                 severity("fail")
             }
+            onUnusedDependencies {
+                // This dependency gets on the classpath of integration and container tests, and causes issue with the
+                // build health. It is not an issue, so we just exclude it from the analysis.
+                exclude("org.junit.jupiter:junit-jupiter")
+            }
         }
     }
 }

@@ -37,6 +37,4 @@ dependencies {
     api("org.springframework:spring-web")
     api(project(":statistics:statistics-core-model"))
     api(project(":statistics:statistics-ports-input"))
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-web")
 }

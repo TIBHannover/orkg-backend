@@ -25,13 +25,6 @@ testing {
 
                 implementation("io.kotest:kotest-assertions-api")
                 implementation("io.kotest:kotest-assertions-shared")
-                implementation("org.springframework.boot:spring-boot-starter-test") {
-                    // Disable JUnit 4 (aka Vintage)
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
-                    // exclude(module = "mockito-core")
-                }
                 implementation("org.jetbrains.kotlin:kotlin-reflect")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
@@ -54,7 +47,7 @@ testing {
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(project(":feature-flags:feature-flags-ports"))
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-                implementation("org.springframework.boot:spring-boot-starter-test") {
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
                     // Disable JUnit 4 (aka Vintage)
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -62,13 +55,10 @@ testing {
                     // exclude(module = "mockito-core")
                 }
                 implementation(libs.spring.mockk)
-                implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-                implementation("org.postgresql:postgresql")
-                implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
+                runtimeOnly("org.postgresql:postgresql")
                 implementation(libs.kotest.assertions.core)
                 implementation(libs.forkhandles.values4k)
                 implementation("io.rest-assured:rest-assured")
-                implementation("jakarta.persistence:jakarta.persistence-api")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.springframework.data:spring-data-commons")
                 implementation("org.springframework:spring-core")
@@ -76,8 +66,7 @@ testing {
                 implementation(libs.assertj.core)
                 implementation(libs.testcontainers.keycloak)
                 implementation("io.rest-assured:json-path")
-                implementation(libs.keycloak.core)
-                runtimeOnly(libs.keycloak.client.common)
+                implementation("org.keycloak:keycloak-client-common-synced")
                 runtimeOnly("org.springframework.boot:spring-boot")
                 runtimeOnly(project(":keycloak"))
             }
@@ -206,21 +195,22 @@ dependencies {
     implementation("org.springframework:spring-web")
     implementation(libs.jackson.core)
     implementation(libs.jackson.databind)
-    implementation(libs.keycloak.core)
+    implementation("org.springframework:spring-tx")
+    implementation("org.springframework:spring-webmvc")
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly(libs.liquibase)
-    implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-    implementation("org.springframework.data:spring-data-neo4j")
-    implementation(libs.spring.boot.starter.neo4j.migrations)
+    runtimeOnly("org.springframework.boot:spring-boot-starter-data-neo4j")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-security")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-validation")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-web")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    runtimeOnly("org.springframework.data:spring-data-neo4j")
+    runtimeOnly(libs.spring.boot.starter.neo4j.migrations)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // File uploads
     runtimeOnly("commons-fileupload:commons-fileupload:1.5")
@@ -231,8 +221,7 @@ dependencies {
     // Data Faker
     implementation("net.datafaker:datafaker:1.7.0")
     // Monitoring
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    // runtimeOnly("org.jolokia:jolokia-core")
+    runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly("io.micrometer:micrometer-registry-jmx")
     //
     // Testing
@@ -264,7 +253,6 @@ dependencies {
     "integrationTestApi"("org.springframework:spring-tx")
     "integrationTestApi"(libs.jackson.databind)
     "integrationTestImplementation"(project(":content-types:content-types-core-model"))
-    "integrationTestImplementation"("org.springframework.boot:spring-boot-test-autoconfigure")
     "kaptIntegrationTest"("org.springframework.boot:spring-boot-configuration-processor")
 }
 

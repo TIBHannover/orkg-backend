@@ -29,7 +29,6 @@ dependencies {
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
     implementation("org.slf4j:slf4j-api")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation(libs.forkhandles.values4k)
     implementation(project(":common:serialization"))
 
@@ -48,8 +47,8 @@ testing {
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.junit.jupiter:junit-jupiter-params")
-                implementation("org.springframework.boot:spring-boot-starter-security")
-                implementation("org.springframework.boot:spring-boot-starter-test")
+                runtimeOnly("org.springframework.boot:spring-boot-starter-security")
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")

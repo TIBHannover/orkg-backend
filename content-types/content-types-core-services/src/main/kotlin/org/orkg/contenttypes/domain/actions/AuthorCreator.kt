@@ -79,7 +79,7 @@ abstract class AuthorCreator(
                 CreateCommand(
                     contributorId = contributorId,
                     label = author.homepage.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri // TODO: is this correct?
+                    datatype = Literals.XSD.URI.prefixedUri
                 )
             )
             statementService.add(

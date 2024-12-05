@@ -145,7 +145,6 @@ class StatementController(
     ): BundleRepresentation =
         statementService.fetchAsBundle(
             thingId,
-            // FIXME: had to pass configuration like this otherwise lists are not parsed correctly by spring
             BundleConfiguration(
                 minLevel, maxLevel,
                 blacklist, whitelist

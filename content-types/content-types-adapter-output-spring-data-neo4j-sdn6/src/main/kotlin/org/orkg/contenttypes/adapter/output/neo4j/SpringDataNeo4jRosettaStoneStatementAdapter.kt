@@ -25,6 +25,7 @@ import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResourceRepository
 import org.orkg.graph.adapter.output.neo4j.orElseGet
+import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
 import org.orkg.graph.adapter.output.neo4j.toCondition
 import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where
@@ -110,6 +111,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             val subjects = name("subjects")
             val objects = name("objects")
             val versions = name("versions")
+            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery.optionalMatch(latest.relationshipTo(contextNode, "CONTEXT"))
                 .match(
                     latest.relationshipTo(version, "VERSION").relationshipTo(metadata, "METADATA"),
@@ -164,19 +166,25 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     templateIdVar,
                     collect(listOf(version.asExpression(), metadata.asExpression(), subjects, objects)).`as`(versions)
                 )
-                // TODO: implement order by optimizations?
+                .where(
+                    orderByOptimizations(
+                        node = latest.asExpression(),
+                        sort = sort,
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                    )
+                )
+                .with(latest, contextId, templateIdVar, versions)
                 .orderBy(
-                    pageable.sort.orElseGet { Sort.by("created_at") }
-                        .toSortItems(
-                            propertyMappings = mapOf(
-                                "id" to latest.property("id"),
-                                "created_at" to latest.property("created_at"),
-                                "created_by" to latest.property("created_by"),
-                                "visibility" to latest.property("visibility"),
-                                "template_id" to templateIdVar
-                            ),
-                            knownProperties = arrayOf("id", "created_at", "created_by", "visibility", "template_id")
-                        )
+                    sort.toSortItems(
+                        propertyMappings = mapOf(
+                            "id" to latest.property("id"),
+                            "created_at" to latest.property("created_at"),
+                            "created_by" to latest.property("created_by"),
+                            "visibility" to latest.property("visibility"),
+                            "template_id" to templateIdVar
+                        ),
+                        knownProperties = arrayOf("id", "created_at", "created_by", "visibility", "template_id")
+                    )
                 )
                 .returning(latest.asExpression(), contextId, templateIdVar, versions)
         }

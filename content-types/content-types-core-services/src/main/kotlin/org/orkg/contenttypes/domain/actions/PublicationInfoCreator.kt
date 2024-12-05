@@ -110,7 +110,7 @@ abstract class PublicationInfoCreator(
             CreateCommand(
                 contributorId = contributorId,
                 label = url.toString(),
-                datatype = Literals.XSD.URI.prefixedUri // TODO: Is this correct?
+                datatype = Literals.XSD.URI.prefixedUri
             )
         )
         statementService.add(

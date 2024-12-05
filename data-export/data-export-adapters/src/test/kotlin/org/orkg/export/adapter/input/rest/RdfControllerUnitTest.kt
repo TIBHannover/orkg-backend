@@ -1,6 +1,8 @@
 package org.orkg.export.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.verify
 import org.hamcrest.Matchers.endsWith
@@ -80,7 +82,6 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
     @Test
     fun testFilterResources() {
         val someId = ThingId("R1234")
-        // TODO: Search strings are not comparable, so they cannot be used here.
         every {
             resourceRepository.findAll(
                 label = any<FuzzySearchString>(),
@@ -110,11 +111,18 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
                     )
                 )
             )
+
+        verify(exactly = 1) { statementService.countIncomingStatements(setOf(someId)) }
+        verify(exactly = 1) {
+            resourceRepository.findAll(
+                label = withArg { searchString -> searchString.shouldBeInstanceOf<FuzzySearchString> { it.input shouldBe "1" } },
+                pageable = any<Pageable>()
+            )
+        }
     }
 
     @Test
     fun testFilterClasses() {
-        // TODO: Search strings are not comparable, so they cannot be used here.
         every {
             classRepository.findAll(
                 label = any<FuzzySearchString>(),
@@ -130,11 +138,16 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
             .andExpect(jsonPath("$.content[0].label", `is`("Class 1234")))
 
         verify(exactly = 1) { statementService.findAllDescriptions(any()) }
+        verify(exactly = 1) {
+            classRepository.findAll(
+                label = withArg { searchString -> searchString.shouldBeInstanceOf<FuzzySearchString> { it.input shouldBe "1234" } },
+                pageable = any<Pageable>()
+            )
+        }
     }
 
     @Test
     fun testFilterPredicates() {
-        // TODO: Search strings are not comparable, so they cannot be used here.
         every {
             predicateRepository.findAll(
                 label = any<FuzzySearchString>(),
@@ -152,5 +165,11 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
             .andExpect(jsonPath("$.content[0].label", `is`("Predicate 1234")))
 
         verify(exactly = 1) { statementService.findAllDescriptions(any()) }
+        verify(exactly = 1) {
+            predicateRepository.findAll(
+                label = withArg { searchString -> searchString.shouldBeInstanceOf<FuzzySearchString> { it.input shouldBe "1234" } },
+                pageable = any<Pageable>()
+            )
+        }
     }
 }

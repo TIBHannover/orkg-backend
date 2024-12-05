@@ -1,13 +1,14 @@
 package org.orkg.graph.adapter.output.inmemory
 
-import java.text.SimpleDateFormat
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
@@ -31,7 +32,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
-class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
+class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
     InMemoryRepository<StatementId, GeneralStatement>(compareBy(GeneralStatement::createdAt)), StatementRepository {
 
     override val entities: InMemoryEntityAdapter<StatementId, GeneralStatement> =
@@ -196,7 +197,7 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
                         "obj.label" -> order.compare(a.`object`.label, b.`object`.label)
                         "obj.created_at" -> order.compare(a.`object`.createdAt, b.`object`.createdAt)
                         "obj.created_by" -> order.compare(a.`object`.createdBy.value, b.`object`.createdBy.value)
-                        else -> 0 // TODO: Throw exception?
+                        else -> throw UnknownSortingProperty(order.property)
                     }
                     if (result != 0) {
                         break
@@ -285,9 +286,7 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
             .distinct()
             .paged(pageable)
 
-    // TODO: rename to findAllProblemsByObservatoryId
-    override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
-        // FIXME: Create a union with all Problems that are not used in statements
+    override fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         entities.values.filter {
             it.subject is Resource && Classes.paper in (it.subject as Resource).classes && (it.subject as Resource).observatoryId == id &&
                 it.predicate.id == Predicates.hasContribution &&
@@ -298,7 +297,10 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
                     it.predicate.id == Predicates.hasResearchProblem &&
                     it.`object` is Resource && Classes.problem in (it.`object` as Resource).classes
             }.map { it.`object` as Resource }
-        }.flatten().distinct().paged(pageable)
+        }.flatten()
+            .plus(inMemoryGraph.findAllResources().filter { Classes.problem in it.classes })
+            .distinct()
+            .paged(pageable)
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
         findSubgraph(id) { statement, _ ->
@@ -326,21 +328,16 @@ class InMemoryStatementRepository(inMemoryGraph: InMemoryGraph) :
         }.asSequence()
             .map {
                 setOf(
-                    ResourceEdit(it.subject.createdBy, it.subject.createdAt.toInstant().toEpochMilli()),
-                    ResourceEdit(it.`object`.createdBy, it.`object`.createdAt.toInstant().toEpochMilli()),
-                    ResourceEdit(it.createdBy, it.createdAt!!.toInstant().toEpochMilli())
+                    ResourceContributor(it.subject.createdBy, it.subject.createdAt),
+                    ResourceContributor(it.`object`.createdBy, it.`object`.createdAt),
+                    ResourceContributor(it.createdBy, it.createdAt!!)
                 )
-            }.flatten()
+            }
+            .flatten()
             .distinct()
-            .filter { it.millis >= resource.createdAt.toInstant().toEpochMilli() }
-            .map {
-                ResourceContributor(
-                    it.contributor.value.toString(),
-                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:'00'XXX")
-                        .apply { timeZone = TimeZone.getTimeZone("UTC") }
-                        .format(it.millis)
-                )
-            }.distinct()
+            .filter { it.createdAt >= resource.createdAt }
+            .map { it.copy(createdAt = it.createdAt.withSecond(0).withNano(0).withOffsetSameInstant(ZoneOffset.UTC)) }
+            .distinct()
             .sortedByDescending { it.createdAt }
             .toList()
             .paged(pageable)

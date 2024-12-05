@@ -7,7 +7,6 @@ import io.mockk.every
 import io.mockk.verify
 import java.time.Clock
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_DATE_TIME
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.hamcrest.Matchers
@@ -159,11 +158,9 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     fun `Given a timeline is requested, when service succeeds, then status is 200 OK and timeline is returned`() {
         val id = ThingId("R123")
         val resourceContributors = listOf(
-            UUID.fromString(MockUserId.USER) to OffsetDateTime.now(clock),
-            UUID.fromString(MockUserId.ADMIN) to OffsetDateTime.now(clock)
-        ).map {
-            ResourceContributor(it.first.toString(), it.second.format(ISO_DATE_TIME))
-        }
+            ResourceContributor(ContributorId(MockUserId.USER), OffsetDateTime.now(clock)),
+            ResourceContributor(ContributorId(MockUserId.ADMIN), OffsetDateTime.now(clock))
+        )
         val timeline = PageImpl(
             resourceContributors,
             PageRequest.of(0, 25),

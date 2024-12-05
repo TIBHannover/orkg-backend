@@ -9,7 +9,6 @@ import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.asExpression
 import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.collect
-import org.neo4j.cypherdsl.core.Cypher.count
 import org.neo4j.cypherdsl.core.Cypher.countDistinct
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.Node
@@ -23,7 +22,9 @@ import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.union
+import org.neo4j.cypherdsl.core.Cypher.toUpper
 import org.neo4j.cypherdsl.core.Cypher.unwind
+import org.neo4j.cypherdsl.core.Cypher.count
 import org.neo4j.cypherdsl.core.Cypher.valueAt
 import org.neo4j.cypherdsl.core.ExposesWith
 import org.neo4j.cypherdsl.core.Relationship
@@ -605,7 +606,7 @@ class SpringDataNeo4jStatementAdapter(
             .mappedBy(ResourceMapper("n"))
             .fetch(pageable)
 
-    override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
+    override fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         CypherQueryBuilder(neo4jClient)
             .withCommonQuery {
                 val problem = name("p")
@@ -740,8 +741,7 @@ class SpringDataNeo4jStatementAdapter(
             }
             .countOver("edit")
             .withParameters("id" to id.value)
-            // TODO: Can be changed to ContributorId and OffsetDateTime once old adapters are deleted
-            .mappedBy { _, record -> ResourceContributor(record["createdBy"].asString(), record["createdAt"].asString()) }
+            .mappedBy { _, record -> ResourceContributor(record["createdBy"].toContributorId(), record["createdAt"].toOffsetDateTime()) }
             .fetch(pageable)
 
     override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =

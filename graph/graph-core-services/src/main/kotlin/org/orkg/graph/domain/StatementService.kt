@@ -80,6 +80,8 @@ class StatementService(
             } else if (predicate == Predicates.hasListElement && Classes.list in foundSubject.classes) {
                 throw InvalidStatement.isListElementStatement()
             }
+        } else if (foundSubject is Literal) {
+            throw InvalidStatement.subjectMustNotBeLiteral()
         }
 
         val foundPredicate = predicateService.findById(predicate)
@@ -130,6 +132,8 @@ class StatementService(
             } else if (predicate == Predicates.hasListElement && Classes.list in foundSubject.classes) {
                 throw InvalidStatement.isListElementStatement()
             }
+        } else if (foundSubject is Literal) {
+            throw InvalidStatement.subjectMustNotBeLiteral()
         }
 
         val foundPredicate = predicateService.findById(predicate)

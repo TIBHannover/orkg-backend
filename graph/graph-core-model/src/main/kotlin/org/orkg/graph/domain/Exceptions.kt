@@ -177,7 +177,8 @@ class InvalidStatement private constructor(
     companion object {
         fun isListElementStatement() =
             InvalidStatement("A list element statement cannot be managed using the statements endpoint. Please see the documentation on how to manage lists.")
-
+        fun subjectMustNotBeLiteral() =
+            InvalidStatement("Subject must not be a literal.")
         fun includesRosettaStoneStatementResource() =
             InvalidStatement("A rosetta stone statement resource cannot be managed using statements endpoint. Please see the documentation on how to manage rosetta stone statements.")
     }

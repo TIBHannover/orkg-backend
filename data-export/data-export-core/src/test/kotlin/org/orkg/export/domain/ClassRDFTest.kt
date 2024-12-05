@@ -5,7 +5,6 @@ import io.mockk.mockk
 import java.io.StringWriter
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.graph.output.ClassHierarchyRepository
@@ -23,23 +22,6 @@ internal class ClassRDFTest {
             |
         """.trimMargin()
         val `class` = createClass(id = ThingId("C100"), label = "some dummy label", uri = null)
-
-        every { classHierarchyRepository.findParent(`class`.id) } returns Optional.empty()
-
-        val writer = StringWriter()
-        `class`.toNTriple(writer, classHierarchyRepository)
-
-        assertThat(writer.toString()).isEqualTo(expectedOutput)
-    }
-
-    @Test
-    fun `converts to NTriple format correctly when URI equals null as value`() {
-        val expectedOutput = """
-            |<http://orkg.org/orkg/class/C100> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
-            |<http://orkg.org/orkg/class/C100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
-            |
-        """.trimMargin()
-        val `class` = createClass(id = ThingId("C100"), label = "some dummy label", uri = ParsedIRI("null"))
 
         every { classHierarchyRepository.findParent(`class`.id) } returns Optional.empty()
 

@@ -332,6 +332,18 @@ internal class ExceptionControllerUnitTest {
     }
 
     @Test
+    fun invalidStatementSubjectMustNotBeLiteral() {
+        get("/invalid-statement-subject-must-not-be-literal")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-statement-subject-must-not-be-literal"))
+            .andExpect(jsonPath("$.message").value("Subject must not be a literal."))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
     fun invalidStatementRosettaStoneStatementResource() {
         get("/invalid-statement-rosetta-stone-statement-resource")
             .perform()
@@ -558,6 +570,11 @@ internal class ExceptionControllerUnitTest {
         @GetMapping("/invalid-statement-is-list-element")
         fun invalidStatementIsListElement() {
             throw InvalidStatement.isListElementStatement()
+        }
+
+        @GetMapping("/invalid-statement-subject-must-not-be-literal")
+        fun invalidStatementSubjectMustNotBeLiteral() {
+            throw InvalidStatement.subjectMustNotBeLiteral()
         }
 
         @GetMapping("/invalid-statement-rosetta-stone-statement-resource")

@@ -39,7 +39,6 @@ class VocabController(
         if (!checkAcceptHeader(acceptHeader))
             return createRedirectResponse("resource", id.value, uriComponentsBuilder)
         val model = service.rdfModelForResource(id)
-            // TODO: Return meaningful message to the user
             .orElseThrow { ResourceNotFound.withId(id) }
         val response = getRdfSerialization(model, acceptHeader)
         return ResponseEntity.ok()
@@ -58,7 +57,6 @@ class VocabController(
         if (!checkAcceptHeader(acceptHeader))
             return createRedirectResponse("predicate", id.value, uriComponentsBuilder)
         val model = service.rdfModelForPredicate(id)
-            // TODO: Return meaningful message to the user
             .orElseThrow { PredicateNotFound(id) }
         val response = getRdfSerialization(model, acceptHeader)
         return ResponseEntity.ok()
@@ -74,7 +72,6 @@ class VocabController(
         @RequestHeader("Accept") acceptHeader: String,
     ): ResponseEntity<String> {
         val model = service.rdfModelForClass(id)
-            // TODO: Return meaningful message to the user
             .orElseThrow { ClassNotFound.withThingId(id) }
         val response = getRdfSerialization(model, acceptHeader)
         return ResponseEntity.ok()

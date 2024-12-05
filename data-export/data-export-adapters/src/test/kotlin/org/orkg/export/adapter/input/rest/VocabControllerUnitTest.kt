@@ -2,6 +2,7 @@ package org.orkg.export.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -16,12 +17,14 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createClass
+import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.data.domain.Page
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
@@ -56,10 +59,14 @@ class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
     @Test
     fun resolveResource() {
         val resourceId = ThingId("R1")
-        every { resourceRepository.findById(resourceId) } returns Optional.of(createResource(id = resourceId))
-        every { statementRepository.findAll(subjectId = resourceId, pageable = any()) } returns Page.empty() // TODO: expand example?
+        val resource = createResource(id = resourceId)
 
-        mockMvc.perform(get("/api/vocab/resource/{id}", resourceId.value).accept("application/rdf+xml"))
+        every { resourceRepository.findById(resourceId) } returns Optional.of(resource)
+        every { statementRepository.findAll(subjectId = resourceId, pageable = any()) } returns pageOf(
+            createStatement(subject = resource, `object` = createLiteral())
+        )
+
+        mockMvc.perform(get("/api/vocab/resource/{id}", resourceId).accept("application/rdf+xml"))
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -68,6 +75,9 @@ class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
                 )
             )
             .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { resourceRepository.findById(resourceId) }
+        verify(exactly = 1) { statementRepository.findAll(subjectId = resourceId, pageable = any()) }
     }
 
     @Test
@@ -75,7 +85,7 @@ class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
         val predicateId = ThingId("P1")
         every { predicateRepository.findById(predicateId) } returns Optional.of(createPredicate(id = predicateId))
 
-        mockMvc.perform(get("/api/vocab/predicate/{id}", predicateId.value).accept("text/n3"))
+        mockMvc.perform(get("/api/vocab/predicate/{id}", predicateId).accept("text/n3"))
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -84,6 +94,8 @@ class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
                 )
             )
             .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { predicateRepository.findById(predicateId) }
     }
 
     @Test
@@ -91,7 +103,7 @@ class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
         val classId = ThingId("C1")
         every { classRepository.findById(classId) } returns Optional.of(createClass(id = classId))
 
-        mockMvc.perform(get("/api/vocab/class/{id}", classId.value).accept("application/trig"))
+        mockMvc.perform(get("/api/vocab/class/{id}", classId).accept("application/trig"))
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -100,5 +112,7 @@ class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
                 )
             )
             .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { classRepository.findById(classId) }
     }
 }

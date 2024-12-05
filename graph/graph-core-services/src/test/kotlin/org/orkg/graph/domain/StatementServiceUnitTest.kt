@@ -105,6 +105,28 @@ class StatementServiceUnitTest : DescribeSpec({
                 verify(exactly = 1) { thingRepository.findByThingId(subjectId) }
             }
         }
+        context("with a literal as a subject") {
+            it("throws an error") {
+                val subjectId = ThingId("L1")
+
+                every { thingRepository.findByThingId(subjectId) } returns Optional.of(
+                    createLiteral(subjectId)
+                )
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<InvalidStatement> {
+                        service.create(
+                            ContributorId(UUID.randomUUID()),
+                            subject = subjectId,
+                            predicate = Predicates.description,
+                            `object` = ThingId("R1")
+                        )
+                    }
+                }
+
+                verify(exactly = 1) { thingRepository.findByThingId(subjectId) }
+            }
+        }
     }
 
     context("creating a statement (fast)") {
@@ -140,6 +162,28 @@ class StatementServiceUnitTest : DescribeSpec({
 
                 every { thingRepository.findByThingId(subjectId) } returns Optional.of(
                     createResource(subjectId, classes = setOf(Classes.rosettaStoneStatement))
+                )
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<InvalidStatement> {
+                        service.add(
+                            ContributorId(UUID.randomUUID()),
+                            subject = subjectId,
+                            predicate = Predicates.description,
+                            `object` = ThingId("R1")
+                        )
+                    }
+                }
+
+                verify(exactly = 1) { thingRepository.findByThingId(subjectId) }
+            }
+        }
+        context("with a literal as a subject") {
+            it("throws an error") {
+                val subjectId = ThingId("L1")
+
+                every { thingRepository.findByThingId(subjectId) } returns Optional.of(
+                    createLiteral(subjectId)
                 )
 
                 withContext(Dispatchers.IO) {

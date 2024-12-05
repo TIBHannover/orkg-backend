@@ -99,7 +99,7 @@ class ResourceService(
         repository.findAllPapersByLabel(title!!)
 
     override fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
-        statementRepository.findProblemsByObservatoryId(id, pageable)
+        statementRepository.findAllProblemsByObservatoryId(id, pageable)
 
     override fun findAllByClassInAndVisibilityAndObservatoryId(
         classes: Set<ThingId>,

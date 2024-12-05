@@ -21,6 +21,7 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
+                implementation(libs.kotest.assertions.core)
                 implementation(libs.spring.mockk)
                 implementation(libs.spring.restdocs)
                 implementation(project(":data-export:data-export-core"))

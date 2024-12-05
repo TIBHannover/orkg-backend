@@ -745,8 +745,8 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
     private fun researchFieldResponseFields() =
         listOf(
-            fieldWithPath("id").description("Research field ID").type(String::class).optional(), // FIXME: PwC
-            fieldWithPath("label").description("Research field label").type(String::class).optional() // FIXME: PwC
+            fieldWithPath("id").description("Research field ID").type(String::class).optional(),
+            fieldWithPath("label").description("Research field label").type(String::class).optional()
         )
 
     private fun researchFieldPageResponseFields() =

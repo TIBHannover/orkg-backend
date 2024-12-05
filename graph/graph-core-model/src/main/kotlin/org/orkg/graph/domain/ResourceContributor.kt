@@ -1,10 +1,12 @@
 package org.orkg.graph.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.OffsetDateTime
+import org.orkg.common.ContributorId
 
 data class ResourceContributor(
     @JsonProperty("created_by")
-    val createdBy: String, // FIXME: This should be ContributorId
+    val createdBy: ContributorId,
     @JsonProperty("created_at")
-    val createdAt: String // FIXME: This should be OffsetDateTime
+    val createdAt: OffsetDateTime
 )

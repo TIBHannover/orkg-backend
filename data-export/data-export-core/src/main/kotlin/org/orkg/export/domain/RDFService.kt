@@ -2,7 +2,6 @@ package org.orkg.export.domain
 
 import java.io.Writer
 import java.util.*
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.OWL
@@ -25,6 +24,7 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.forEach
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 private const val DEFAULT_FILE_NAME = "rdf-export-orkg.nt"
@@ -66,7 +66,9 @@ class RDFService(
                 setNamespace(RDFS.NS)
                 setNamespace(OWL.NS)
                 subject("c:$id").add(RDFS.LABEL, label).add(RDF.TYPE, "owl:Class")
-                if (uri?.isValidForNTriple() == true) add(OWL.EQUIVALENTCLASS, uri)
+                if (uri != null) {
+                    add(OWL.EQUIVALENTCLASS, uri)
+                }
             }.build()
             return Optional.of(model)
         }
@@ -88,7 +90,7 @@ class RDFService(
 
     override fun rdfModelForResource(id: ThingId): Optional<Model> {
         val resource = resourceRepository.findById(id).orElse(null) ?: return Optional.empty()
-        val statements = statementRepository.findAll(subjectId = resource.id, pageable = PageRequests.ALL) // FIXME
+        val statements = statementRepository.findAll(subjectId = resource.id, pageable = PageRequests.ALL)
         with(resource) {
             val model = ModelBuilder().apply {
                 setNamespace("r", RdfConstants.RESOURCE_NS)
@@ -102,7 +104,8 @@ class RDFService(
                     when (it.`object`) {
                         is Resource -> add("p:${it.predicate.id}", "r:${it.`object`.id}")
                         is Literal -> add("p:${it.predicate.id}", "\"${it.`object`.label}\"")
-                        else -> throw IllegalStateException("Unable to convert statement while building RDF model. This is a bug.")
+                        is Class -> add("p:${it.predicate.id}", "c:${it.`object`.id}")
+                        is Predicate -> add("p:${it.predicate.id}", "p:${it.`object`.id}")
                     }
                 }
             }.build()
@@ -114,7 +117,9 @@ class RDFService(
 fun Class.toNTriple(writer: Writer, classHierarchyRepository: ClassHierarchyRepository) {
     val cPrefix = RdfConstants.CLASS_NS
     writer.write("<$cPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
-    if (uri?.isValidForNTriple() == true) writer.write("<$cPrefix${this.id}> <${OWL.EQUIVALENTCLASS}> <$uri> .\n")
+    if (uri != null) {
+        writer.write("<$cPrefix${this.id}> <${OWL.EQUIVALENTCLASS}> <$uri> .\n")
+    }
     writer.write("<$cPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiteral(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
     classHierarchyRepository.findParent(id).ifPresent {
         writer.write("<$cPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <$cPrefix${it.id}> .\n")
@@ -144,6 +149,8 @@ fun Resource.toNTriple(writer: Writer) {
     writer.write("<$rPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiteral(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
 }
 
+private val logger = LoggerFactory.getLogger(RDFService::class.java)
+
 /**
  * Convert the triple to a statement in NTriple format.
  */
@@ -152,19 +159,11 @@ fun GeneralStatement.toNTriple(writer: Writer) {
     val statement = if (predicate.id == Predicates.hasListElement && index != null && subject is Resource && Classes.list in (subject as Resource).classes) {
         "${serializeThing(subject)} <http://www.w3.org/1999/02/22-rdf-syntax-ns#_${index!! + 1}> ${serializeThing(`object`)} .\n"
     } else "${serializeThing(subject)} <$pPrefix${predicate.id}> ${serializeThing(`object`)} .\n"
-    if (statement[0] == '"')
-        // Ignore literal
-        // TODO: log this somewhere
+    if (statement[0] == '"') {
+        logger.warn("Encountered statement with literal subject: {}", id)
         return
+    }
     writer.write(statement)
-}
-
-/**
- * Checks whether a URI is valid to be included in RDF .nt serialization.
- */
-fun ParsedIRI.isValidForNTriple(): Boolean {
-    // FIXME: what makes a URI valid to the N-Triple format ? See #349 and #220
-    return !toString().equals("null", ignoreCase = true)
 }
 
 private fun serializeThing(thing: Thing): String {

@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jBenchmarkUnpacked
+import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jDatasetSummary
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jDataset
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jDatasetRepository
 import org.orkg.contenttypes.domain.Dataset
@@ -23,9 +23,9 @@ class DatasetAdapter(
 
     override fun by(id: ThingId, pageable: Pageable): Page<DatasetSummary> =
         datasetRepository.summarizeDatasetQueryById(id, pageable)
-            .map(Neo4jBenchmarkUnpacked::toDatasetSummary)
+            .map(Neo4jDatasetSummary::toDatasetSummary)
 
     override fun byAndProblem(id: ThingId, problemId: ThingId, pageable: Pageable): Page<DatasetSummary> =
         datasetRepository.summarizeDatasetQueryByIdAndProblemId(id, problemId, pageable)
-            .map(Neo4jBenchmarkUnpacked::toDatasetSummary)
+            .map(Neo4jDatasetSummary::toDatasetSummary)
 }

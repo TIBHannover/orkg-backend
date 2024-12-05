@@ -15,8 +15,6 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -104,9 +102,9 @@ fun <
             actual shouldNotBe null
             actual.asClue {
                 it.id shouldBe expected.id
-                it.subject shouldBe expected.subject // FIXME: deep check
-                it.predicate shouldBe expected.predicate // FIXME: deep check
-                it.`object` shouldBe expected.`object` // FIXME: deep check
+                it.subject shouldBe expected.subject
+                it.predicate shouldBe expected.predicate
+                it.`object` shouldBe expected.`object`
                 it.createdAt shouldBe expected.createdAt
                 it.createdBy shouldBe expected.createdBy
                 it.index shouldBe expected.index
@@ -1536,7 +1534,7 @@ fun <
                 researchProblem
             }
 
-            val result = repository.findProblemsByObservatoryId(observatoryId, PageRequest.of(0, 5))
+            val result = repository.findAllProblemsByObservatoryId(observatoryId, PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -1669,18 +1667,14 @@ fun <
             )
             saveStatement(resourceRelatesToOldResource)
 
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:'00'XXX")
             val expected = setOf(
-                resource.createdBy to resource.createdAt,
-                otherResource.createdBy to otherResource.createdAt,
-                resourceRelatesToOtherResource.createdBy to resourceRelatesToOtherResource.createdAt,
-                anotherResource.createdBy to anotherResource.createdAt,
-                otherResourceRelatesToAnotherResource.createdBy to otherResourceRelatesToAnotherResource.createdAt
-            ).map { (createdBy, createdAt) ->
-                ResourceContributor(
-                    createdBy.toString(),
-                    formatter.format(createdAt!!.atZoneSameInstant(ZoneOffset.UTC))
-                )
+                ResourceContributor(resource.createdBy, resource.createdAt),
+                ResourceContributor(otherResource.createdBy, otherResource.createdAt),
+                ResourceContributor(resourceRelatesToOtherResource.createdBy, resourceRelatesToOtherResource.createdAt!!),
+                ResourceContributor(anotherResource.createdBy, anotherResource.createdAt),
+                ResourceContributor(otherResourceRelatesToAnotherResource.createdBy, otherResourceRelatesToAnotherResource.createdAt!!)
+            ).map {
+                it.copy(createdAt = it.createdAt.withSecond(0).withNano(0).withOffsetSameInstant(ZoneOffset.UTC))
             }
 
             val result = repository.findTimelineByResourceId(resource.id, PageRequest.of(0, 5))
@@ -1698,11 +1692,8 @@ fun <
                 result.totalElements shouldBe 5
             }
             it("sorts the results by creation date by default") {
-                result.content.map {
-                    OffsetDateTime.parse(it.createdAt, ISO_OFFSET_DATE_TIME)
-                }.zipWithNext { a, b ->
-                    a shouldBeGreaterThan b
-                }
+                result.content.map { it.createdAt }
+                    .zipWithNext { a, b -> a shouldBeGreaterThan b }
             }
         }
     }

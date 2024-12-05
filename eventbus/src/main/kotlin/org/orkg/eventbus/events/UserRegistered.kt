@@ -17,8 +17,6 @@ data class UserRegistered(
     val organizationId: String?,
 ) : Event {
     enum class Role {
-        @Deprecated("This value should not be used. It will be removed in a future release.")
-        USER, // TODO: Exists to keep the code simpler. Can be removed after Keycloak migration.
         CURATOR,
         ADMIN;
 

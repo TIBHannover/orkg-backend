@@ -183,12 +183,6 @@ internal fun startNode(symbolicName: SymbolicName): FunctionInvocation =
 internal fun endNode(symbolicName: SymbolicName): FunctionInvocation =
     FunctionInvocation.create({ "endNode" }, symbolicName)
 
-// TODO: This extension function is required because the Cypher DSL used does not support calling the method, and
-//       newer versions requiring Java 17. It can be replaced after upgrading.
-@Contract(pure = true)
-internal fun toUpper(expression: Expression): FunctionInvocation =
-    FunctionInvocation.create({ "toUpper" }, expression)
-
 internal operator fun MapAccessor.get(symbolicName: SymbolicName): Value = this[symbolicName.value]
 
 fun paperNode() = node("Paper", "Resource")

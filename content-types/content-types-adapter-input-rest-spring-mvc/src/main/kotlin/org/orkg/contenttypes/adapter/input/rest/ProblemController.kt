@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/problems", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ProblemController(
-    private val service: RetrieveResearchProblemUseCase, // FIXME
+    private val service: RetrieveResearchProblemUseCase,
     private val resourceService: ResourceUseCases,
     private val contributorService: RetrieveContributorUseCase,
     private val authorService: RetrieveAuthorUseCase,

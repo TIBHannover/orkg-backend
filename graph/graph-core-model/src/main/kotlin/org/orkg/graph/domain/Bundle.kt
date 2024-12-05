@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import org.orkg.common.ThingId
+import org.orkg.common.exceptions.UnknownSortingProperty
 import org.springframework.data.domain.Sort
 
 data class Bundle(
@@ -36,7 +37,7 @@ data class Bundle(
                     "created_at" -> order.compare(a.createdAt, b.createdAt)
                     "created_by" -> order.compare(a.createdBy.value, b.createdBy.value)
                     "index" -> order.compare(a.index, b.index)
-                    else -> 0 // TODO: Throw exception?
+                    else -> throw UnknownSortingProperty(order.property)
                 }
                 if (result != 0) {
                     break
@@ -45,7 +46,7 @@ data class Bundle(
             result
         }
 
-    private fun <T : Comparable<T>> Sort.Order.compare(a : T?, b: T?): Int {
+    private fun <T : Comparable<T>> Sort.Order.compare(a: T?, b: T?): Int {
         val result = when {
             a == null && b == null -> 0
             a == null -> 1

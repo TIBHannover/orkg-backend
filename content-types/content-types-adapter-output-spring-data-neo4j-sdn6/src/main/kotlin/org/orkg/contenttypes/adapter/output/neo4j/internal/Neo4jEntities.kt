@@ -17,11 +17,11 @@ data class Neo4jBenchmarkSummary(
 ) {
     fun toBenchmarkSummary() =
         BenchmarkSummary(
-            ResearchProblem(problem.id!!, problem.label!!),
-            fields.map { ResearchField(it.id!!.value, it.label!!) },
-            totalPapers.toInt(),
-            totalDatasets.toInt(),
-            totalCodes.toInt()
+            researchProblem = ResearchProblem(problem.id!!, problem.label!!),
+            researchFields = fields.map { ResearchField(it.id!!.value, it.label!!) },
+            totalPapers = totalPapers.toInt(),
+            totalDatasets = totalDatasets.toInt(),
+            totalCodes = totalCodes.toInt()
         )
 }
 
@@ -33,17 +33,17 @@ data class Neo4jDataset(
 ) {
     fun toDataset() =
         Dataset(
-            dataset.id!!,
-            dataset.label!!,
-            totalModels.toInt(),
-            totalPapers.toInt(),
-            totalCodes.toInt()
+            id = dataset.id!!,
+            label = dataset.label!!,
+            totalModels = totalModels.toInt(),
+            totalPapers = totalPapers.toInt(),
+            totalCodes = totalCodes.toInt()
         )
 }
 
-data class Neo4jBenchmarkUnpacked(
+data class Neo4jDatasetSummary(
     val model: String?,
-    val modelId: String?,
+    val modelId: ThingId?,
     val score: String,
     val metric: String,
     val paper: Neo4jResource,
@@ -51,17 +51,16 @@ data class Neo4jBenchmarkUnpacked(
     val month: String?,
     val year: String?
 ) {
-    // FIXME: conform the naming of the method and returning type
     fun toDatasetSummary() =
         DatasetSummary(
-            model,
-            modelId?.let(::ThingId),
-            score,
-            metric,
-            paper.id!!,
-            paper.label!!,
-            month?.toInt(),
-            year?.toInt(),
-            codes
+            modelName = model,
+            modelId = modelId,
+            score = score,
+            metric = metric,
+            paperId = paper.id!!,
+            paperTitle = paper.label!!,
+            paperMonth = month?.toInt(),
+            paperYear = year?.toInt(),
+            codeURLs = codes
         )
 }

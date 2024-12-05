@@ -59,10 +59,7 @@ fun dummyUpdateRosettaStoneTemplateCommand() = UpdateRosettaStoneTemplateUseCase
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc"))
 )
 
-//    TODO: return CreateRosettaStoneTemplatePropertyUseCase.CreateCommand
 fun dummyCreateSubjectPositionTemplatePropertyCommand() = ResourcePropertyDefinition(
-//    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
-//    templateId = ThingId("R123"),
     label = "subject",
     placeholder = "subject",
     description = "subject resource property description",
@@ -72,10 +69,7 @@ fun dummyCreateSubjectPositionTemplatePropertyCommand() = ResourcePropertyDefini
     `class` = ThingId("C28")
 )
 
-//    TODO: return CreateRosettaStoneTemplatePropertyUseCase.CreateCommand
 fun dummyCreateUntypedObjectPositionTemplatePropertyCommand() = UntypedPropertyDefinition(
-//    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
-//    templateId = ThingId("R123"),
     label = "property label",
     placeholder = "property placeholder",
     description = "property description",
@@ -84,10 +78,7 @@ fun dummyCreateUntypedObjectPositionTemplatePropertyCommand() = UntypedPropertyD
     path = Predicates.hasObjectPosition
 )
 
-//    TODO: return CreateRosettaStoneTemplatePropertyUseCase.CreateCommand
 fun dummyCreateStringLiteralObjectPositionTemplatePropertyCommand() = StringLiteralPropertyDefinition(
-//    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
-//    templateId = ThingId("R123"),
     label = "literal property label",
     placeholder = "literal property placeholder",
     description = "literal property description",
@@ -98,10 +89,7 @@ fun dummyCreateStringLiteralObjectPositionTemplatePropertyCommand() = StringLite
     datatype = Classes.string,
 )
 
-//    TODO: return CreateRosettaStoneTemplatePropertyUseCase.CreateCommand
 fun dummyCreateNumberLiteralObjectPositionTemplatePropertyCommand() = NumberLiteralPropertyDefinition(
-//    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
-//    templateId = ThingId("R123"),
     label = "number literal property label",
     placeholder = "number literal property placeholder",
     description = "number literal property description",
@@ -113,10 +101,7 @@ fun dummyCreateNumberLiteralObjectPositionTemplatePropertyCommand() = NumberLite
     datatype = Classes.integer,
 )
 
-//    TODO: return CreateRosettaStoneTemplatePropertyUseCase.CreateCommand
 fun dummyCreateOtherLiteralObjectPositionTemplatePropertyCommand() = OtherLiteralPropertyDefinition(
-//    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
-//    templateId = ThingId("R123"),
     label = "literal property label",
     placeholder = "literal property placeholder",
     description = "literal property description",
@@ -126,10 +111,7 @@ fun dummyCreateOtherLiteralObjectPositionTemplatePropertyCommand() = OtherLitera
     datatype = ThingId("C25"),
 )
 
-//    TODO: return CreateRosettaStoneTemplatePropertyUseCase.CreateCommand
 fun dummyCreateResourceObjectPositionTemplatePropertyCommand() = ResourcePropertyDefinition(
-//    contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
-//    templateId = ThingId("R123"),
     label = "resource property label",
     placeholder = "resource property placeholder",
     description = "resource property description",

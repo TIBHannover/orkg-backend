@@ -12,8 +12,6 @@ data class Dataset(
     override val totalCodes: Int
 ) : PaperTotal, CodeTotal, ModelTotal
 
-// Summary of a dataset? List of papers?
-// TODO: needs a better name!
 data class DatasetSummary(
     @JsonProperty("model_name")
     val modelName: String?,

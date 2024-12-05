@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
 
 @Service
-@Profile("(development | docker | production) & !userMigrations")
+@Profile("development", "docker", "production")
 class KeycloakEventProcessor(
     private val contributorRepository: ContributorRepository,
     private val keycloak: Keycloak,

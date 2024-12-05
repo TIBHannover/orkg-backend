@@ -58,10 +58,7 @@ include(
     "community:community-adapter-output-spring-data-jpa",
 )
 include(
-    "identity-management:idm-core-model",
-    "identity-management:idm-ports-output",
     "identity-management:idm-adapter-input-rest-spring-security-legacy",
-    "identity-management:idm-adapter-output-spring-data-jpa",
 )
 include(
     ":discussions:discussions-adapter-input-rest-spring-mvc",

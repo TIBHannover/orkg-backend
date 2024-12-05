@@ -49,7 +49,6 @@ testing {
                 implementation(project(":graph:graph-ports-output"))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
                 implementation(project(":content-types:content-types-ports-output"))
-                implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for UserEntity
                 implementation(project(":community:community-ports-output")) // for CuratorRepository
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":community:community-core-model")))
@@ -152,10 +151,7 @@ dependencies {
     implementation(project(":graph:graph-ports-input"))
     implementation(project(":graph:graph-ports-output"))
 
-    implementation(project(":identity-management:idm-ports-output")) // for KeycloakUserMigrationRunner
     runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security-legacy"))
-    implementation(project(":identity-management:idm-core-model"))
-    runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
 
     runtimeOnly(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
     runtimeOnly(project(":licenses:licenses-core-services"))

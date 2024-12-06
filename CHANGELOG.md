@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Breaking
+- Updated to Java 21.
+  (See: [!1128](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1128))
+### Fixed
+- Fixed fetching of published smart review contents being limited to comparison and visualizations.
+  (See: [!1126](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1126))
 
 ## [0.72.1] - 2024-12-04
 ### Fixed
@@ -53,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!1076](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1076))
 
 ## [0.71.0] - 2024-11-21
-### Added
+### Breaking
 - Added support for Single Sign-On (SSO) via Keycloak.
 
 ## [0.70.1] - 2024-11-07

@@ -11,7 +11,7 @@ dependencies {
     api(project(":common"))
     api(project(":media-storage:media-storage-core-model"))
     implementation(project(":graph:graph-core-model"))
-    runtimeOnly(libs.jackson.databind)
+    runtimeOnly("com.fasterxml.jackson.core:jackson-databind")
 
     testFixturesApi(project(":common"))
     testFixturesApi(project(":media-storage:media-storage-core-model"))

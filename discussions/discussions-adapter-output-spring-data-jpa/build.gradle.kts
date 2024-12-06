@@ -35,8 +35,8 @@ testing {
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.springframework:spring-beans")
                 runtimeOnly(project(":migrations:liquibase"))
-                runtimeOnly(libs.liquibase)
-                runtimeOnly(libs.postgres.driver)
+                runtimeOnly("org.liquibase:liquibase-core")
+                runtimeOnly("org.postgresql:postgresql")
             }
         }
     }

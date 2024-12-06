@@ -8,7 +8,7 @@ dependencies {
     api(project(":common"))
     api(project(":discussions:discussions-core-model"))
 
-    testFixturesApi(libs.kotest.runner)
+    testFixturesApi("io.kotest:kotest-runner-junit5")
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(project(":discussions:discussions-core-model"))
     testFixturesImplementation("org.springframework.data:spring-data-commons")
@@ -16,5 +16,5 @@ dependencies {
     testFixturesImplementation("io.kotest:kotest-assertions-shared")
     testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     testFixturesImplementation("org.springframework:spring-beans")
-    testFixturesImplementation(libs.kotest.assertions.core)
+    testFixturesImplementation("io.kotest:kotest-assertions-core")
 }

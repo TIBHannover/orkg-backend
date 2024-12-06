@@ -20,7 +20,7 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":graph:graph-ports-output")))
                 implementation("io.kotest:kotest-framework-api")
-                runtimeOnly(libs.kotest.runner)
+                runtimeOnly("io.kotest:kotest-runner-junit5")
             }
         }
     }

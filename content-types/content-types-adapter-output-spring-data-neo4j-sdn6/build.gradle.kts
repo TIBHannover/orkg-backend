@@ -23,8 +23,8 @@ testing {
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
-                implementation(libs.kotest.runner)
-                runtimeOnly(libs.spring.boot.starter.neo4j.migrations)
+                implementation("io.kotest:kotest-runner-junit5")
+                runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
                 implementation(project(":content-types:content-types-ports-output"))
                 implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for SDN adapters, TODO: refactor?
                 implementation(project(":graph:graph-core-services"))
@@ -34,7 +34,7 @@ testing {
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("org.springframework.data:spring-data-neo4j")
-                runtimeOnly(libs.kotest.extensions.spring)
+                runtimeOnly("io.kotest.extensions:kotest-extensions-spring")
             }
         }
     }
@@ -54,7 +54,7 @@ dependencies {
     api("org.neo4j.driver:neo4j-java-driver")
     api("org.neo4j:neo4j-cypher-dsl")
     implementation(project(":common:neo4j-dsl"))
-    implementation(libs.forkhandles.values4k)
+    implementation("dev.forkhandles:values4k")
 
     containerTestImplementation(kotlin("stdlib")) // "downgrade" from api()
 }

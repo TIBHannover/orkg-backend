@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    testFixturesApi(libs.testcontainers.keycloak)
+    testFixturesApi("com.github.dasniko:testcontainers-keycloak")
     testFixturesApi("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
     testFixturesApi("jakarta.persistence:jakarta.persistence-api")
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
@@ -23,15 +23,15 @@ dependencies {
     testFixturesApi("org.springframework:spring-test")
     testFixturesApi("org.springframework:spring-web")
     testFixturesApi("org.springframework.data:spring-data-commons")
-    testFixturesApi(libs.jackson.databind)
-    testFixturesApi(libs.spring.restdocs)
-    testFixturesApi(libs.testcontainers.junit5)
-    testFixturesApi(libs.testcontainers.neo4j)
-    testFixturesApi(libs.testcontainers.postgresql)
+    testFixturesApi("com.fasterxml.jackson.core:jackson-databind")
+    testFixturesApi("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testFixturesApi("org.testcontainers:junit-jupiter")
+    testFixturesApi("org.testcontainers:neo4j")
+    testFixturesApi("org.testcontainers:postgresql")
     testFixturesApi(project(":common"))
     testFixturesImplementation("org.hamcrest:hamcrest")
     testFixturesImplementation("org.springframework.security:spring-security-crypto")
-    testFixturesImplementation(libs.assertj.core)
+    testFixturesImplementation("org.assertj:assertj-core")
     testFixturesImplementation("com.epages:restdocs-api-spec-mockmvc")
-    testFixturesImplementation(libs.testcontainers.core)
+    testFixturesImplementation("org.testcontainers:testcontainers")
 }

@@ -17,7 +17,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-context")
     api("org.springframework:spring-tx")
-    implementation(libs.forkhandles.values4k)
+    implementation("dev.forkhandles:values4k")
     implementation(project(":community:community-core-model"))
 }
 
@@ -30,11 +30,11 @@ testing {
                 implementation("io.kotest:kotest-framework-api")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
-                implementation(libs.assertj.core)
+                implementation("org.assertj:assertj-core")
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring"))) // for fixedClock
-                runtimeOnly(libs.kotest.runner)
+                runtimeOnly("io.kotest:kotest-runner-junit5")
             }
         }
     }

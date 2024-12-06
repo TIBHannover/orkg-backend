@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api("org.springframework:spring-context")
-    api(libs.jackson.databind)
+    api("com.fasterxml.jackson.core:jackson-databind")
     api(project(":licenses:licenses-core-model"))
     api(project(":licenses:licenses-ports-input"))
     implementation("org.slf4j:slf4j-api")

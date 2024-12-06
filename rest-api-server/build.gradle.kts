@@ -32,6 +32,8 @@ testing {
                 implementation(project(":common:serialization"))
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.security:spring-security-test")
+                compileOnly("jakarta.servlet:jakarta.servlet-api")
+                runtimeOnly("org.apache.tomcat.embed:tomcat-embed-core")
             }
         }
         val integrationTest by registering(JvmTestSuite::class) {
@@ -54,17 +56,17 @@ testing {
                     // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
                     // exclude(module = "mockito-core")
                 }
-                implementation(libs.spring.mockk)
+                implementation("com.ninja-squad:springmockk")
                 runtimeOnly("org.postgresql:postgresql")
-                implementation(libs.kotest.assertions.core)
-                implementation(libs.forkhandles.values4k)
+                implementation("io.kotest:kotest-assertions-core")
+                implementation("dev.forkhandles:values4k")
                 implementation("io.rest-assured:rest-assured")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.springframework.data:spring-data-commons")
                 implementation("org.springframework:spring-core")
                 implementation("org.springframework:spring-web")
-                implementation(libs.assertj.core)
-                implementation(libs.testcontainers.keycloak)
+                implementation("org.assertj:assertj-core")
+                implementation("com.github.dasniko:testcontainers-keycloak")
                 implementation("io.rest-assured:json-path")
                 implementation("org.keycloak:keycloak-client-common-synced")
                 runtimeOnly("org.springframework.boot:spring-boot")
@@ -176,7 +178,6 @@ dependencies {
     runtimeOnly(project(":migrations:neo4j-migrations"))
 
     // Direct transitive dependencies
-    implementation("org.apache.tomcat.embed:tomcat-embed-core")
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.neo4j.driver:neo4j-java-driver")
     implementation("org.slf4j:slf4j-api")
@@ -193,16 +194,17 @@ dependencies {
     implementation("org.springframework:spring-context")
     implementation("org.springframework:spring-core")
     implementation("org.springframework:spring-web")
-    implementation(libs.jackson.core)
-    implementation(libs.jackson.databind)
+    implementation("com.fasterxml.jackson.core:jackson-core")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("org.springframework:spring-tx")
     implementation("org.springframework:spring-webmvc")
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
+    compileOnly("jakarta.servlet:jakarta.servlet-api")
     runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly(libs.liquibase)
+    runtimeOnly("org.liquibase:liquibase-core")
     runtimeOnly("org.springframework.boot:spring-boot-starter-data-neo4j")
     runtimeOnly("org.springframework.boot:spring-boot-starter-security")
     runtimeOnly("org.springframework.boot:spring-boot-starter-validation")
@@ -210,25 +212,33 @@ dependencies {
     runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
     runtimeOnly("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     runtimeOnly("org.springframework.data:spring-data-neo4j")
-    runtimeOnly(libs.spring.boot.starter.neo4j.migrations)
+    runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // File uploads
-    runtimeOnly("commons-fileupload:commons-fileupload:1.5")
+    runtimeOnly("commons-fileupload:commons-fileupload")
     // Caching
     runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
     runtimeOnly("com.github.ben-manes.caffeine:caffeine")
-    implementation("io.github.stepio.coffee-boots:coffee-boots:3.0.0")
+    implementation("io.github.stepio.coffee-boots:coffee-boots")
     // Data Faker
-    implementation("net.datafaker:datafaker:1.7.0")
+    implementation("net.datafaker:datafaker")
     // Monitoring
     runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly("io.micrometer:micrometer-registry-jmx")
     //
     // Testing
     //
-    // Note: Version Catalogs are not yet supported in the test suites plugin
-    "integrationTestRuntimeOnly"(libs.bundles.testcontainers)
-    "integrationTestRuntimeOnly"(libs.bundles.kotest)
+    // TODO: Most of the runtime dependencies may not be needed, needs checking
+    "integrationTestRuntimeOnly"("org.testcontainers:testcontainers")
+    "integrationTestRuntimeOnly"("org.testcontainers:junit-jupiter")
+    "integrationTestRuntimeOnly"("org.testcontainers:postgresql")
+    "integrationTestRuntimeOnly"("org.testcontainers:neo4j")
+    "integrationTestRuntimeOnly"("io.kotest:kotest-runner-junit5")
+    "integrationTestRuntimeOnly"("io.kotest:kotest-assertions-core")
+    "integrationTestRuntimeOnly"("io.kotest:kotest-property")
+    "integrationTestRuntimeOnly"("io.kotest.extensions:kotest-extensions-spring")
+    "integrationTestRuntimeOnly"("io.kotest.extensions:kotest-extensions-testcontainers")
+    "integrationTestRuntimeOnly"("io.kotest:kotest-framework-datatest")
     "integrationTestApi"("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
     "integrationTestApi"("org.springframework.security:spring-security-test")
     "integrationTestApi"(project(":common"))
@@ -251,7 +261,7 @@ dependencies {
     "integrationTestApi"("org.springframework:spring-context")
     "integrationTestApi"("org.springframework:spring-test")
     "integrationTestApi"("org.springframework:spring-tx")
-    "integrationTestApi"(libs.jackson.databind)
+    "integrationTestApi"("com.fasterxml.jackson.core:jackson-databind")
     "integrationTestImplementation"(project(":content-types:content-types-core-model"))
     "kaptIntegrationTest"("org.springframework.boot:spring-boot-configuration-processor")
 }

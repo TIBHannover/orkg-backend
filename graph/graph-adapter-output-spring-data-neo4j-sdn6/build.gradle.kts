@@ -41,7 +41,7 @@ testing {
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
-                implementation(libs.assertj.core)
+                implementation("org.assertj:assertj-core")
             }
         }
         val containerTest by getting(JvmTestSuite::class) {
@@ -63,10 +63,10 @@ testing {
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
-                implementation(libs.kotest.assertions.core)
-                runtimeOnly(libs.spring.boot.starter.neo4j.migrations)
-                runtimeOnly(libs.kotest.extensions.spring)
-                runtimeOnly(libs.kotest.runner)
+                implementation("io.kotest:kotest-assertions-core")
+                runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
+                runtimeOnly("io.kotest.extensions:kotest-extensions-spring")
+                runtimeOnly("io.kotest:kotest-runner-junit5")
                 runtimeOnly(project(":migrations:neo4j-migrations"))
             }
         }

@@ -26,6 +26,19 @@ dependencies {
     api("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter:$neo4jMigrationsVersion")
     api("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure:$neo4jMigrationsVersion")
 
+    // Kotest
+    api("io.kotest.extensions:kotest-extensions-spring:1.3.0")
+    api("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
+
+    // Testcontainers
+    api("com.github.dasniko:testcontainers-keycloak:3.5.1")
+
+    api("com.redfin:contractual:3.0.0")
+    api("org.jbibtex:jbibtex:1.0.20")
+    api("net.datafaker:datafaker:1.7.0")
+    api("commons-fileupload:commons-fileupload:1.5")
+    api("io.github.stepio.coffee-boots:coffee-boots:3.0.0")
+
     // Declare constraints on all components that need alignment
     constraints {
         api("com.ninja-squad:springmockk:4.0.2")

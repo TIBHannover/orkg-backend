@@ -18,7 +18,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core")
     implementation("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
     implementation("org.slf4j:jcl-over-slf4j") // for org.apache.commons.logging.LogFactory in ResponseEntityExceptionHandler
-    implementation(libs.jackson.databind)
+    implementation("com.fasterxml.jackson.core:jackson-databind")
     runtimeOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310") // for timestamp serialization
 }
 
@@ -39,10 +39,10 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
-                implementation(libs.assertj.core)
-                implementation(libs.spring.restdocs)
+                implementation("org.assertj:assertj-core")
+                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 runtimeOnly("com.jayway.jsonpath:json-path")
-                compileOnly(libs.spring.boot.starter.neo4j.migrations)
+                compileOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
             }
         }
     }

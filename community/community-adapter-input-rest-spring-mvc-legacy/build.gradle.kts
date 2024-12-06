@@ -8,9 +8,7 @@ plugins {
 
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
-    // api("com.fasterxml.jackson.core:jackson-core")
     api("org.springframework:spring-web")
-    // api(libs.jackson.databind)
     api("jakarta.validation:jakarta.validation-api")
     api(project(":common"))
     api(project(":community:community-core-model"))

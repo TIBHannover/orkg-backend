@@ -26,8 +26,8 @@ testing {
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
-                implementation(libs.kotest.assertions.core)
-                runtimeOnly(libs.jackson.kotlin)
+                implementation("io.kotest:kotest-assertions-core")
+                runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
             }
         }
     }
@@ -38,7 +38,7 @@ dependencies {
     api("org.springframework.security:spring-security-oauth2-resource-server")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-web")
-    api(libs.jackson.databind)
+    api("com.fasterxml.jackson.core:jackson-databind")
     api(project(":common")) // for exceptions
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-output"))

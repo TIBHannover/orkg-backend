@@ -8,11 +8,11 @@ plugins {
 
 dependencies {
     api("org.springframework:spring-context")
-    api(libs.jackson.databind)
+    api("com.fasterxml.jackson.core:jackson-databind")
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-output"))
     implementation("org.springframework:spring-web")
-    implementation(libs.forkhandles.values4k)
+    implementation("dev.forkhandles:values4k")
     implementation(project(":common"))
 }
 
@@ -28,8 +28,8 @@ testing {
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
-                implementation(libs.kotest.assertions.core)
-                implementation(libs.kotest.runner)
+                implementation("io.kotest:kotest-assertions-core")
+                implementation("io.kotest:kotest-runner-junit5")
                 implementation(testFixtures(project(":common")))
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
             }

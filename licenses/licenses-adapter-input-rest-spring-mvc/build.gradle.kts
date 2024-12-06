@@ -18,8 +18,8 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
-                implementation(libs.spring.mockk)
-                implementation(libs.spring.restdocs)
+                implementation("com.ninja-squad:springmockk")
+                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation(project(":common"))
                 implementation(testFixtures(project(":testing:spring")))
             }

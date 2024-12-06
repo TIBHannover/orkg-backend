@@ -23,16 +23,16 @@ testing {
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
-                implementation(libs.kotest.runner)
-                runtimeOnly(libs.spring.boot.starter.neo4j.migrations)
+                implementation("io.kotest:kotest-runner-junit5")
+                runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
                 implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for SDN adapters, TODO: refactor?
                 implementation(project(":graph:graph-ports-output"))
                 implementation(project(":curation:curation-ports-output"))
                 implementation(project())
                 implementation(testFixtures(project(":curation:curation-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
-                runtimeOnly(libs.kotest.extensions.spring)
-                runtimeOnly(libs.kotest.runner)
+                runtimeOnly("io.kotest.extensions:kotest-extensions-spring")
+                runtimeOnly("io.kotest:kotest-runner-junit5")
                 runtimeOnly(project(":migrations:neo4j-migrations"))
             }
         }

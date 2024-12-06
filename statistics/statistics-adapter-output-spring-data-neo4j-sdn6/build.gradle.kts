@@ -22,7 +22,7 @@ testing {
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
-                implementation(libs.kotest.runner)
+                implementation("io.kotest:kotest-runner-junit5")
                 implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for SDN adapters, TODO: refactor?
                 implementation(project(":graph:graph-ports-output"))
                 runtimeOnly(project(":migrations:neo4j-migrations"))
@@ -30,8 +30,8 @@ testing {
                 implementation(project())
                 implementation(testFixtures(project(":statistics:statistics-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
-                runtimeOnly(libs.kotest.extensions.spring)
-                runtimeOnly(libs.kotest.runner)
+                runtimeOnly("io.kotest.extensions:kotest-extensions-spring")
+                runtimeOnly("io.kotest:kotest-runner-junit5")
             }
         }
     }

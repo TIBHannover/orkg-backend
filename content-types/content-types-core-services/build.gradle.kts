@@ -9,7 +9,7 @@ dependencies {
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
     api("org.springframework:spring-tx")
-    api(libs.jbibtex)
+    api("org.jbibtex:jbibtex")
     api(project(":common"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input")) // used in LegacyPaperService
@@ -20,7 +20,7 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
-    implementation(libs.forkhandles.values4k)
+    implementation("dev.forkhandles:values4k")
 }
 
 testing {
@@ -36,8 +36,8 @@ testing {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.junit.jupiter:junit-jupiter-params")
-                implementation(libs.kotest.assertions.core)
-                implementation(libs.kotest.runner)
+                implementation("io.kotest:kotest-assertions-core")
+                implementation("io.kotest:kotest-runner-junit5")
                 implementation(project(":content-types:content-types-core-services"))
                 implementation(project(":media-storage:media-storage-core-model"))
                 implementation(testFixtures(project(":community:community-core-model")))

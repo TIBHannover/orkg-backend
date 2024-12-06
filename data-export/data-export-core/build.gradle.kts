@@ -8,7 +8,7 @@ dependencies {
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
-    api(libs.jackson.databind)
+    api("com.fasterxml.jackson.core:jackson-databind")
     api(project(":common"))
     api(project(":content-types:content-types-ports-input"))
     api(project(":content-types:content-types-ports-output"))
@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":content-types:content-types-core-model"))
     implementation("org.slf4j:slf4j-api")
 
-    testFixturesImplementation(libs.kotest.runner)
+    testFixturesImplementation("io.kotest:kotest-runner-junit5")
     testFixturesImplementation("io.kotest:kotest-assertions-shared")
 }
 

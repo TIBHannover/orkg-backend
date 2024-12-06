@@ -10,9 +10,9 @@ dependencies {
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.boot:spring-boot-autoconfigure")
     api("org.springframework:spring-context")
-    api(libs.jackson.databind)
+    api("com.fasterxml.jackson.core:jackson-databind")
     implementation("org.springframework:spring-web")
-    implementation(libs.jackson.kotlin)
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }
 
 testing {
@@ -26,7 +26,7 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
-                implementation(libs.kotest.runner)
+                implementation("io.kotest:kotest-runner-junit5")
             }
         }
     }

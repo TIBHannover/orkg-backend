@@ -13,7 +13,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                compileOnly(libs.spring.mockk)
+                compileOnly("com.ninja-squad:springmockk")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.junit.jupiter:junit-jupiter-api")

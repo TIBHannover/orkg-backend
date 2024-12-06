@@ -36,7 +36,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(libs.assertj.core)
+                implementation("org.assertj:assertj-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
             }
         }
@@ -44,10 +44,10 @@ testing {
             dependencies {
                 implementation(project())
                 implementation("org.springframework:spring-beans")
-                implementation(libs.assertj.core)
+                implementation("org.assertj:assertj-core")
                 runtimeOnly(project(":migrations:liquibase"))
-                runtimeOnly(libs.liquibase)
-                runtimeOnly(libs.postgres.driver)
+                runtimeOnly("org.liquibase:liquibase-core")
+                runtimeOnly("org.postgresql:postgresql")
             }
         }
     }

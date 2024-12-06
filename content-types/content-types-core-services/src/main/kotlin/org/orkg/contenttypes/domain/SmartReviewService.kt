@@ -157,7 +157,7 @@ class SmartReviewService(
         val statements = findSubgraph(smartReview).statements
         val content = statements.values.flatten()
             .firstOrNull { statement ->
-                statement.subject is Resource && Classes.section in (statement.subject as Resource).classes &&
+                statement.subject is Resource && SmartReviewSection.types.intersect((statement.subject as Resource).classes).isNotEmpty() &&
                     statement.`object`.id == contentId && statement.predicate.isAboutSmartReviewSection()
             }
             ?.`object`

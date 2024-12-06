@@ -748,7 +748,7 @@ class SmartReviewServiceUnitTests {
                 rootId = ThingId("R456"),
                 subgraph = listOf(
                     createStatement(
-                        subject = createResource(classes = setOf(Classes.section)),
+                        subject = createResource(classes = setOf(Classes.comparisonSection)),
                         predicate = createPredicate(Predicates.hasLink),
                         `object` = content
                     )
@@ -792,7 +792,7 @@ class SmartReviewServiceUnitTests {
                 rootId = ThingId("R456"),
                 subgraph = listOf(
                     createStatement(
-                        subject = createResource(classes = setOf(Classes.section)),
+                        subject = createResource(classes = setOf(Classes.visualizationSection)),
                         predicate = createPredicate(Predicates.hasLink),
                         `object` = content
                     )

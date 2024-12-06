@@ -99,6 +99,15 @@ sealed interface SmartReviewSection {
     val heading: String
 
     companion object {
+        val types = setOf(
+            Classes.comparisonSection,
+            Classes.visualizationSection,
+            Classes.resourceSection,
+            Classes.propertySection,
+            Classes.ontologySection,
+            Classes.section
+        )
+
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): SmartReviewSection =
             when {
                 Classes.comparisonSection in root.classes -> SmartReviewComparisonSection.from(root, statements)

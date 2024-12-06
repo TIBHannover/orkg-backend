@@ -58,7 +58,7 @@ orkg:
       comparison: "http://localhost/comparison/"
       smart-review: "http://localhost/review/"
   simcomp:
-    host: "https://orkg.org/simcomp"
+    host: "http://localhost:4321"
   external-services:
     geonames:
       host: "https://secure.geonames.org"

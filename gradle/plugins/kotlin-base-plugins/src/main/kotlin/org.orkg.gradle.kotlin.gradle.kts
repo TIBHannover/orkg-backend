@@ -11,7 +11,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
 }
 
-val javaLanguageVersion = JavaLanguageVersion.of(17)
+val javaLanguageVersion = JavaLanguageVersion.of(21)
 
 // Support downloading JavaDoc and sources artifacts by enabling it via Gradle properties
 val downloadJavadoc: String? by project

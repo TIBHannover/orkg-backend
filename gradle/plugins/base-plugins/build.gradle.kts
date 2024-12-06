@@ -13,5 +13,6 @@ dependencies {
     implementation("com.epages.restdocs-api-spec:com.epages.restdocs-api-spec.gradle.plugin")
 
     implementation("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle")
+    implementation("com.github.ben-manes:gradle-versions-plugin")
     implementation("com.osacky.doctor:doctor-plugin")
 }

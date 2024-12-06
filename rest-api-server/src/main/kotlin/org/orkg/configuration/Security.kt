@@ -1,8 +1,5 @@
 package org.orkg.configuration
 
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
-import jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.converter.Converter
@@ -12,16 +9,14 @@ import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.config.annotation.web.invoke
-import org.springframework.security.core.AuthenticationException
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtClaimNames
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter
-import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.firewall.HttpStatusRequestRejectedHandler
 import org.springframework.security.web.firewall.RequestRejectedHandler
@@ -78,22 +73,6 @@ class JwtAuthenticationConverter : Converter<Jwt, AbstractAuthenticationToken> {
         val resourceAccess = jwt.getClaim<Map<String, Any?>>("realm_access")
         val roles = resourceAccess["roles"] as? List<*> ?: emptyList<Any?>()
         return roles.map { SimpleGrantedAuthority("ROLE_${it.toString().uppercase()}") }
-    }
-}
-
-// TODO: can most likely be removed
-/**
- * An authentication entry point that will not redirect to log in, but return `401 Unauthorized` instead.
- */
-@Component
-class RestAuthenticationEntryPoint : AuthenticationEntryPoint {
-    override fun commence(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        authException: AuthenticationException
-    ) {
-        // TODO: Send WWW-Authenticate header? What does the standard say?
-        response.sendError(SC_UNAUTHORIZED, "Unauthorized")
     }
 }
 

@@ -8,7 +8,7 @@ Certain statistics can be obtained through the benchmark endpoint of the rest AP
 
 A `GET` request lists all the research fields with benchmarks (i.e., all research fields that have papers containing benchmarks in their contributions).
 
-operation::benchmark-controller-test-fetch-research-fields-with-benchmarks[snippets='curl-request,http-response']
+operation::benchmark-controller-integration-test-fetch-research-fields-with-benchmarks[snippets='curl-request,http-response']
 
 
 [[benchmarks-by-field-list]]
@@ -16,7 +16,7 @@ operation::benchmark-controller-test-fetch-research-fields-with-benchmarks[snipp
 
 A `GET` request lists benchmarks under a certain research field.
 
-operation::benchmark-controller-test-fetch-benchmark-summary-for-research-field[snippets='curl-request,http-response']
+operation::benchmark-controller-integration-test-fetch-benchmark-summary-for-research-field[snippets='curl-request,http-response']
 
 
 [[benchmarks-summary]]
@@ -24,11 +24,11 @@ operation::benchmark-controller-test-fetch-benchmark-summary-for-research-field[
 
 A `GET` request lists the datasets for a research problem (a.k.a. Benchmark Summary)
 
-operation::benchmark-controller-test-fetch-dataset-for-research-problem[snippets='curl-request,http-response']
+operation::benchmark-controller-integration-test-fetch-dataset-for-research-problem[snippets='curl-request,http-response']
 
 [[benchmark-unpacked]]
 == Listing Benchmarks (Unpacked)
 
 A `GET` request lists summary for a dataset (a.k.a. Benchmark unpacked).
 
-operation::benchmark-controller-test-fetch-dataset-summary[snippets='curl-request,http-response']
+operation::benchmark-controller-integration-test-fetch-dataset-summary[snippets='curl-request,http-response']

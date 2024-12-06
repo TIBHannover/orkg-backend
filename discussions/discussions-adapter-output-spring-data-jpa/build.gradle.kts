@@ -27,11 +27,7 @@ testing {
         val containerTest by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project())
-                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    exclude(module = "mockito-core")
-                }
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.springframework:spring-beans")
                 runtimeOnly(project(":migrations:liquibase"))

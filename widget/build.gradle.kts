@@ -25,11 +25,7 @@ testing {
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
-                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    exclude(module = "mockito-core")
-                }
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("com.epages:restdocs-api-spec")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")

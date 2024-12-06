@@ -49,13 +49,7 @@ testing {
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(project(":feature-flags:feature-flags-ports"))
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
-                    // Disable JUnit 4 (aka Vintage)
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
-                    // exclude(module = "mockito-core")
-                }
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("com.ninja-squad:springmockk")
                 runtimeOnly("org.postgresql:postgresql")
                 implementation("io.kotest:kotest-assertions-core")

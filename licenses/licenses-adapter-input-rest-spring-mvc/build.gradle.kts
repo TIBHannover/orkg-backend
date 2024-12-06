@@ -6,11 +6,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    exclude(module = "mockito-core")
-                }
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.hamcrest:hamcrest")

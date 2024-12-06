@@ -57,9 +57,10 @@ tasks.withType<Test>().configureEach {
 }
 
 configurations.all {
-    // Exclude JUnit 4, because we do not want to risk using it accidentally (again)
+    // Prevent old or unwanted dependency to end up on the classpath
     exclude(group = "junit", module = "junit")
     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    exclude(group = "org.mockito")
 }
 
 // Configure common test runtime dependencies for *all* projects

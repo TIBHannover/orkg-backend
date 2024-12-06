@@ -11,11 +11,7 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":common")))
                 implementation(testFixtures(project(":testing:spring")))
-                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    // exclude(module = "mockito-core") // TODO: uncomment when migrated to MockK
-                }
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("io.kotest:kotest-assertions-api")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.hamcrest:hamcrest")

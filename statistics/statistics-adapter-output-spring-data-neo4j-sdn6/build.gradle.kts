@@ -10,11 +10,7 @@ testing {
     suites {
         val containerTest by getting(JvmTestSuite::class) {
             dependencies {
-                runtimeOnly("org.springframework.boot:spring-boot-starter-test") {
-                    exclude(group = "junit", module = "junit")
-                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    exclude(module = "mockito-core")
-                }
+                runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
                 implementation("io.kotest:kotest-framework-api")
                 implementation("org.springframework.boot:spring-boot-autoconfigure")

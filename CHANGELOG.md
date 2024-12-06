@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.72.2] - 2024-12-06
 ### Breaking
 - Updated to Java 21.
   (See: [!1128](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1128))
@@ -1263,7 +1265,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.72.1...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.72.2...master
+[0.72.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.72.2
 [0.72.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.72.1
 [0.72.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.72.0
 [0.71.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.71.0

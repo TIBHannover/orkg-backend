@@ -7,9 +7,9 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.neo4j.cypherdsl.core.Cypher.anyNode
+import org.neo4j.cypherdsl.core.Cypher.labels
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
-import org.neo4j.cypherdsl.core.Cypher.labels
 import org.orkg.graph.adapter.output.neo4j.configuration.GraphNeo4jConfiguration
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository

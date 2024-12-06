@@ -353,5 +353,5 @@ class SpringDataNeo4jResourceAdapter(
             .map(Neo4jResource::toResource)
 
     override fun findAllContributorIds(pageable: Pageable): Page<ContributorId> =
-        neo4jRepository.findAllContributorIds(pageable).map(::ContributorId)
+        neo4jRepository.findAllContributorIds(pageable)
 }

@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.output.neo4j.internal
 
 import java.util.*
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Visibility
@@ -61,9 +62,9 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query("""$MATCH_PAPER_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findPaperById(id: ThingId): Optional<Neo4jResource>
 
-    @Query(value = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN DISTINCT n.created_by ORDER BY n.created_by ASC $ORDER_BY_PAGE_PARAMS""",
+    @Query(value = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN DISTINCT n.created_by AS id ORDER BY n.created_by ASC $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN COUNT(DISTINCT n.created_by) as cnt""")
-    fun findAllContributorIds(pageable: Pageable): Page<String> // FIXME: This should be ContributorId
+    fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
 
     @Transactional
     override fun deleteById(id: ThingId)

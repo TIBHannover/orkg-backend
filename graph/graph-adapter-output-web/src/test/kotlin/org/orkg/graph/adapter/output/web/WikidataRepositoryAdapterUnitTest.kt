@@ -27,7 +27,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
 
-class WikidataRepositoryAdapterUnitTest {
+internal class WikidataRepositoryAdapterUnitTest {
     private val wikidataHostUrl = "https://example.org/wikidata"
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper()

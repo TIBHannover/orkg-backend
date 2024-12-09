@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
-class TemplateRelationsCreatorUnitTest {
+internal class TemplateRelationsCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
 
     private val templateRelationsCreator = TemplateRelationsCreator(statementService)

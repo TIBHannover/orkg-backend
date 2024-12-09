@@ -36,7 +36,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-class AbstractSmartReviewSectionUpdaterUnitTest {
+internal class AbstractSmartReviewSectionUpdaterUnitTest {
     private val resourceService: ResourceUseCases = mockk()
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater = mockk()
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()

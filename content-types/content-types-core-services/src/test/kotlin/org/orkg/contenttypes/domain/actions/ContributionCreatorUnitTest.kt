@@ -23,7 +23,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-class ContributionCreatorUnitTest {
+internal class ContributionCreatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val subgraphCreator: SubgraphCreator = mockk()

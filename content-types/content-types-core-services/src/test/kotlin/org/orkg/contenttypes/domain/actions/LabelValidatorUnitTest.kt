@@ -5,7 +5,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.orkg.graph.domain.InvalidLabel
 
-class LabelValidatorUnitTest {
+internal class LabelValidatorUnitTest {
     private val labelValidator = LabelValidator<String?, Unit> { it }
 
     @Test

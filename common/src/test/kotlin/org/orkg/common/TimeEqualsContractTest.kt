@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
  * Postgres only stores date and time values (even with offset) in UTC, so a query will always return UTC values.
  * The values are correct, but connect be compared directly to the original value using equals().
  */
-class TimeEqualsContractTest {
+internal class TimeEqualsContractTest {
     private val withOffset = OffsetDateTime.parse("2023-11-30T09:25:14.049+01:00")
     private val withZulu = OffsetDateTime.parse("2023-11-30T08:25:14.049Z")
 

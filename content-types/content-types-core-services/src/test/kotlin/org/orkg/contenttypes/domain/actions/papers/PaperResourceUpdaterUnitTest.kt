@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-class PaperResourceUpdaterUnitTest {
+internal class PaperResourceUpdaterUnitTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val paperResourceUpdater = PaperResourceUpdater(resourceService)

@@ -27,7 +27,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-class TemplatePropertyExistenceCreateValidatorUnitTest {
+internal class TemplatePropertyExistenceCreateValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
 
     private val templatePropertyExistenceCreateValidator = TemplatePropertyExistenceCreateValidator(

@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Stats Controller")
 @Transactional
-class StatisticsControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class StatisticsControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases

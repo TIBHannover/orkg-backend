@@ -14,7 +14,7 @@ import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.testing.fixtures.createResource
 
-class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
+internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given a visualization section definition, when validating, it returns success`() {
         val section = dummySmartReviewVisualizationSectionDefinition()

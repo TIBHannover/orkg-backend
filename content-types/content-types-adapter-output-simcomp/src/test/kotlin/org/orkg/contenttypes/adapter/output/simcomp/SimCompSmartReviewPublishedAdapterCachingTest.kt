@@ -30,7 +30,7 @@ private val allCacheNames: Array<out String> = arrayOf(
 
 @ContextConfiguration
 @ExtendWith(SpringExtension::class)
-class SimCompSmartReviewPublishedAdapterCachingTest {
+internal class SimCompSmartReviewPublishedAdapterCachingTest {
 
     private lateinit var mock: SmartReviewPublishedRepository
 

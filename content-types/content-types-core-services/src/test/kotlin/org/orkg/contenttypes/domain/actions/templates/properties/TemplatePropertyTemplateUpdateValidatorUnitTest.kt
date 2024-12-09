@@ -11,7 +11,7 @@ import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateUntypedTemplatePropertyCommand
 
-class TemplatePropertyTemplateUpdateValidatorUnitTest {
+internal class TemplatePropertyTemplateUpdateValidatorUnitTest {
     private val templatePropertyTemplateUpdateValidator = TemplatePropertyTemplateUpdateValidator()
 
     @Test

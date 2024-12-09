@@ -18,7 +18,7 @@ import org.orkg.mediastorage.output.ImageRepository
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
 
-class ImageServiceUnitTest {
+internal class ImageServiceUnitTest {
     private val repository: ImageRepository = mockk()
     private val fixedTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
     private val staticClock = java.time.Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())

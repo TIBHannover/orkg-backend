@@ -24,7 +24,7 @@ import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishComparisonCommand
 import org.orkg.contenttypes.output.ComparisonTableRepository
 
-class ComparisonPublishableValidatorUnitTest {
+internal class ComparisonPublishableValidatorUnitTest {
     private val comparisonService: ComparisonUseCases = mockk()
     private val comparisonTableRepository: ComparisonTableRepository = mockk()
 

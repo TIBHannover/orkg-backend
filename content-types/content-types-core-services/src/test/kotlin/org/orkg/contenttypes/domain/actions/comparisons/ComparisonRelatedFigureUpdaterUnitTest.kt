@@ -33,7 +33,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-class ComparisonRelatedFigureUpdaterUnitTest {
+internal class ComparisonRelatedFigureUpdaterUnitTest {
     private val comparisonService: ComparisonUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()

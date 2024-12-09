@@ -53,7 +53,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @SpringBootTest
 @Import(CorsIntegrationTest.FakeController::class)
 @Suppress("HttpUrlsUsage")
-class CorsIntegrationTest {
+internal class CorsIntegrationTest {
 
     private lateinit var mockMvc: MockMvc
 

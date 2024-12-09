@@ -35,7 +35,7 @@ import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateStringLit
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
-class TemplatePropertyUpdaterUnitTest {
+internal class TemplatePropertyUpdaterUnitTest {
     private val abstractTemplatePropertyUpdater: AbstractTemplatePropertyUpdater = mockk()
 
     private val templatePropertyUpdater = TemplatePropertyUpdater(abstractTemplatePropertyUpdater)

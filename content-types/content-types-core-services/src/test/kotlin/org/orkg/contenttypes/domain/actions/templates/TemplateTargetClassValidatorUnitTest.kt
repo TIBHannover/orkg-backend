@@ -26,7 +26,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-class TemplateTargetClassValidatorUnitTest {
+internal class TemplateTargetClassValidatorUnitTest {
     private val classRepository: ClassRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
 

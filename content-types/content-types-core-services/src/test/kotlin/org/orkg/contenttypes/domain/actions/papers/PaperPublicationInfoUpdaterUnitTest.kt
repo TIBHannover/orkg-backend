@@ -42,7 +42,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 
-class PaperPublicationInfoUpdaterUnitTest {
+internal class PaperPublicationInfoUpdaterUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()

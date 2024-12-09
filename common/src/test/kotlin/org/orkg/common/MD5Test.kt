@@ -3,7 +3,7 @@ package org.orkg.common
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class MD5Test {
+internal class MD5Test {
     @Test
     fun `calculates the MD5 of the empty string correctly`() {
         assertThat("".md5).isEqualTo("d41d8cd98f00b204e9800998ecf8427e")

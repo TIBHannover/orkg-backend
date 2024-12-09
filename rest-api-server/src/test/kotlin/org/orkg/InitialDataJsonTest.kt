@@ -24,7 +24,7 @@ import org.springframework.test.context.ContextConfiguration
 
 @JsonTest // We need application.yaml loaded for @Value to work. This application context will do, as it is small.
 @ContextConfiguration(classes = [CommonJacksonModule::class])
-class InitialDataJsonTest {
+internal class InitialDataJsonTest {
     @Value("\${orkg.init.setup.directory:#{null}}")
     private var directory: String? = null
 

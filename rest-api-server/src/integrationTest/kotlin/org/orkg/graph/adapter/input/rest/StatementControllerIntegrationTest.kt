@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Statement Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var statementService: StatementUseCases

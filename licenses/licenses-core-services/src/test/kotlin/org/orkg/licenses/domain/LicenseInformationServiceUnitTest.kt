@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class LicenseInformationServiceUnitTest {
+internal class LicenseInformationServiceUnitTest {
     private val licenseProvider: LicenseInformationProvider = mockk {
         every { id } returns "dummy"
     }

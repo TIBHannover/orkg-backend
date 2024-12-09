@@ -6,7 +6,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.DuplicateTempIds
 import org.orkg.contenttypes.domain.InvalidTempId
 
-class TempIdValidatorUnitTest {
+internal class TempIdValidatorUnitTest {
     private val tempIdValidator = object : TempIdValidator() {}
 
     @Test

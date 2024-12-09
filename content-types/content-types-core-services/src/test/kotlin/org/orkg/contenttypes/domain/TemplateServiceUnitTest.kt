@@ -42,7 +42,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
-class TemplateServiceUnitTest {
+internal class TemplateServiceUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val classRepository: ClassRepository = mockk()

@@ -40,7 +40,7 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createResource
 
 @Nested
-class ThingDefinitionValidatorUnitTest {
+internal class ThingDefinitionValidatorUnitTest {
     private val thingRepository: ThingRepository = mockk()
     private val classRepository: ClassRepository = mockk()
 

@@ -11,7 +11,7 @@ import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 
-class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
+internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given a text section definition, when validating, it returns success`() {
         val section = dummySmartReviewTextSectionDefinition()

@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-class TemplateResourceUpdaterUnitTest {
+internal class TemplateResourceUpdaterUnitTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val templateResourceUpdater = TemplateResourceUpdater(resourceService)

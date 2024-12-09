@@ -23,7 +23,7 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
 import org.orkg.testing.fixedClock
 
-class ClassServiceUnitTest {
+internal class ClassServiceUnitTest {
 
     private val repository: ClassRepository = mockk()
     private val service = ClassService(repository, fixedClock)

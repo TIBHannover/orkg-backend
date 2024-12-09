@@ -27,7 +27,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSubjectPositionTe
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateUntypedObjectPositionTemplatePropertyCommand
 import org.orkg.graph.domain.Predicates
 
-class AbstractRosettaStoneTemplatePropertiesValidatorUnitTest {
+internal class AbstractRosettaStoneTemplatePropertiesValidatorUnitTest {
     private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator = mockk()
 
     private val abstractRosettaStoneTemplatePropertiesValidator = AbstractRosettaStoneTemplatePropertiesValidator(abstractTemplatePropertyValidator)

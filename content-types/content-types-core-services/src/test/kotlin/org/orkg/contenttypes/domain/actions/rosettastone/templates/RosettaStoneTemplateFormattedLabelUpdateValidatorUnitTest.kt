@@ -22,7 +22,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateUntypedObjectPosi
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
 import org.orkg.graph.domain.FormattedLabel
 
-class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
+internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     private val rosettaStoneTemplateFormattedLabelUpdateValidator = RosettaStoneTemplateFormattedLabelUpdateValidator()
 
     @Test

@@ -6,7 +6,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.graph.domain.Resources
 
-class SDGValidatorUnitTest {
+internal class SDGValidatorUnitTest {
     private val sdgCreateValidator = SDGValidator<Set<ThingId>?, Set<ThingId>>({ it }, { it })
 
     @Test

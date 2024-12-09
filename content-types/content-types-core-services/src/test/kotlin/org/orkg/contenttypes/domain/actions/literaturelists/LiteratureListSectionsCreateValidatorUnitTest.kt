@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListCommand
 
-class LiteratureListSectionsCreateValidatorUnitTest {
+internal class LiteratureListSectionsCreateValidatorUnitTest {
     private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator = mockk()
 
     private val literatureListSectionsCreateValidator = LiteratureListSectionsCreateValidator(abstractLiteratureListSectionValidator)

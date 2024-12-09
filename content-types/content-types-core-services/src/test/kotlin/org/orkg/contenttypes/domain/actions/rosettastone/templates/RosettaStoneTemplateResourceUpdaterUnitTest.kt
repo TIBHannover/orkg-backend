@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTempl
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-class RosettaStoneTemplateResourceUpdaterUnitTest {
+internal class RosettaStoneTemplateResourceUpdaterUnitTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val rosettaStoneTemplateResourceUpdater = RosettaStoneTemplateResourceUpdater(resourceService)

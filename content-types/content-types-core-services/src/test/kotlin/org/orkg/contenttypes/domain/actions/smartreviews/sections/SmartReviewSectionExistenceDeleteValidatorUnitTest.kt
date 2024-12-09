@@ -16,7 +16,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyDeleteSmartReviewSectionCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
-class SmartReviewSectionExistenceDeleteValidatorUnitTest {
+internal class SmartReviewSectionExistenceDeleteValidatorUnitTest {
     private val abstractSmartReviewExistenceValidator: AbstractSmartReviewExistenceValidator = mockk()
 
     private val smartReviewSectionExistenceDeleteValidator =

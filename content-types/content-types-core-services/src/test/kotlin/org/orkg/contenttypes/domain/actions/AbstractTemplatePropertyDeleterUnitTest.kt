@@ -25,7 +25,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-class AbstractTemplatePropertyDeleterUnitTest {
+internal class AbstractTemplatePropertyDeleterUnitTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 

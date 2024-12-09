@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemp
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneStatementCommand
 
-class RosettaStoneStatementTemplateCreateValidatorUnitTest {
+internal class RosettaStoneStatementTemplateCreateValidatorUnitTest {
     private val rosettaStoneTemplateService: RosettaStoneTemplateUseCases = mockk()
 
     private val rosettaStoneStatementTemplateCreateValidator = RosettaStoneStatementTemplateCreateValidator(rosettaStoneTemplateService)

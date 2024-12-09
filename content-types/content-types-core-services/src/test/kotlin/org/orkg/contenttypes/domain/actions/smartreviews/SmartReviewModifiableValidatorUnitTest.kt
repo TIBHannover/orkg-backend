@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
 
-class SmartReviewModifiableValidatorUnitTest {
+internal class SmartReviewModifiableValidatorUnitTest {
     private val smartReviewModifiableValidator = SmartReviewModifiableValidator()
 
     @Test

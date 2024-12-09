@@ -33,7 +33,7 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 
-class ObservatoryFilterServiceUnitTest {
+internal class ObservatoryFilterServiceUnitTest {
 
     private val repository: ObservatoryFilterRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()

@@ -25,7 +25,7 @@ import org.springframework.test.context.TestConstructor
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-class PostgresObservatoryFilterContractTests : ObservatoryFilterRepositoryContractTests {
+internal class PostgresObservatoryFilterContractTest : ObservatoryFilterRepositoryContractTests {
 
     @Autowired
     private lateinit var adapter: SpringJpaPostgresObservatoryFilterAdapter

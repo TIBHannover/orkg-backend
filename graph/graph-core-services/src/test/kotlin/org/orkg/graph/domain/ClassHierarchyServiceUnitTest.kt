@@ -17,7 +17,7 @@ import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 
-class ClassHierarchyServiceUnitTest {
+internal class ClassHierarchyServiceUnitTest {
     private val repository: ClassHierarchyRepository = mockk()
     private val relationRepository: ClassRelationRepository = mockk()
     private val classRepository: ClassRepository = mockk()

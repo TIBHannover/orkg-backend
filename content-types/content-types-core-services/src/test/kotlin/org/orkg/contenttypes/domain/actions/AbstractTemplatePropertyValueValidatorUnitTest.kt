@@ -50,7 +50,7 @@ import org.orkg.graph.testing.fixtures.createResource
 @Suppress("HttpUrlsUsage")
 private const val ORKG_CLASS_NS = "http://orkg.org/orkg/class/"
 
-class AbstractTemplatePropertyValueValidatorUnitTest {
+internal class AbstractTemplatePropertyValueValidatorUnitTest {
     private val classHierarchyRepository: ClassHierarchyRepository = mockk()
 
     private val abstractTemplatePropertyValueValidator =

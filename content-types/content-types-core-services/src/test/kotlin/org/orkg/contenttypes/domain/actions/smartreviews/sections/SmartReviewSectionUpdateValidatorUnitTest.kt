@@ -29,7 +29,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewResour
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewVisualizationSectionCommand
 
-class SmartReviewSectionUpdateValidatorUnitTest {
+internal class SmartReviewSectionUpdateValidatorUnitTest {
     private val abstractSmartReviewSectionValidator: AbstractSmartReviewSectionValidator = mockk()
 
     private val smartReviewSectionUpdateValidator = SmartReviewSectionUpdateValidator(abstractSmartReviewSectionValidator)

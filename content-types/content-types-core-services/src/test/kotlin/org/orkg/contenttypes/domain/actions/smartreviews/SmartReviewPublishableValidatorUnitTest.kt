@@ -19,7 +19,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishSmartReviewCommand
 
-class SmartReviewPublishableValidatorUnitTest {
+internal class SmartReviewPublishableValidatorUnitTest {
     private val smartReviewService: SmartReviewUseCases = mockk()
 
     private val smartReviewPublishableValidator = SmartReviewPublishableValidator(smartReviewService)

@@ -34,7 +34,7 @@ import orkg.orkg.community.testing.fixtures.observatoryResponseFields
 @DisplayName("Observatory Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

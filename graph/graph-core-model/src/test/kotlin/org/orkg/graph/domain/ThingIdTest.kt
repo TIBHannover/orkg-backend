@@ -7,7 +7,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 
 @DisplayName("A thing id")
-class ThingIdTest {
+internal class ThingIdTest {
     @Test
     fun `can not be blank`() {
         assertThrows<IllegalArgumentException> { ThingId("") }

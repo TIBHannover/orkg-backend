@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 
 @Neo4jContainerIntegrationTest
-class StatementServiceIntegrationTest {
+internal class StatementServiceIntegrationTest {
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases

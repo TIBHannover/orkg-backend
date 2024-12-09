@@ -10,7 +10,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTempl
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 
-class RosettaStoneTemplateDescriptionUpdateValidatorUnitTest {
+internal class RosettaStoneTemplateDescriptionUpdateValidatorUnitTest {
     private val rosettaStoneTemplateDescriptionUpdateValidator = RosettaStoneTemplateDescriptionUpdateValidator()
 
     @Test

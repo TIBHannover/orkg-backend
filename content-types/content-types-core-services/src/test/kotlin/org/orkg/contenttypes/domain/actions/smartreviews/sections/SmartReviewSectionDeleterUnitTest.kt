@@ -23,7 +23,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class SmartReviewSectionDeleterUnitTest {
+internal class SmartReviewSectionDeleterUnitTest {
     private val abstractSmartReviewSectionDeleter: AbstractSmartReviewSectionDeleter = mockk()
 
     private val smartReviewSectionDeleter = SmartReviewSectionDeleter(abstractSmartReviewSectionDeleter)

@@ -9,7 +9,7 @@ import org.orkg.graph.domain.DynamicLabel.TextComponent
 private const val PERSON_TRAVELS_BY_TRANSPORTATION_METHOD_FROM_LOCATION_TO_LOCATION_ON_DATETIME =
     """[ {0} ]travels[by {1} ][from {2} ][to {3} ][on {4} ]"""
 
-class DynamicLabelTest {
+internal class DynamicLabelTest {
     @Test
     fun `Given a dynamic label template, when parsing a simple string, it gets parsed correctly`() {
         val dynamicLabel = DynamicLabel("simple string")

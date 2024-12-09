@@ -7,7 +7,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
-class RealNumberUnitTest {
+internal class RealNumberUnitTest {
     @ParameterizedTest
     @ValueSource(strings = [
         "1", "0.1", "00.1", ".1", "1.1", "1.", "1.0", "1.00",

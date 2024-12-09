@@ -26,7 +26,7 @@ import org.springframework.test.context.TestConstructor
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-class ContributorAdapterIdempotencyTest {
+internal class ContributorAdapterIdempotencyTest {
     @Autowired
     private lateinit var adapter: ContributorFromUserAdapter
 

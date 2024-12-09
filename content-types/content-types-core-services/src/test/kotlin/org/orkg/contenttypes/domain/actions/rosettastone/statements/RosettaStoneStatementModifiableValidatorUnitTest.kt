@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneStatementCommand
 
-class RosettaStoneStatementModifiableValidatorUnitTest {
+internal class RosettaStoneStatementModifiableValidatorUnitTest {
     private val rosettaStoneStatementModifiableValidator = RosettaStoneStatementModifiableValidator()
 
     @Test

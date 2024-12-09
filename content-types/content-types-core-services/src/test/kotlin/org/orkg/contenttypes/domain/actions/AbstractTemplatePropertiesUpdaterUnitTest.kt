@@ -23,7 +23,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
 
-class AbstractTemplatePropertiesUpdaterUnitTest {
+internal class AbstractTemplatePropertiesUpdaterUnitTest {
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator = mockk()
     private val abstractTemplatePropertyUpdater: AbstractTemplatePropertyUpdater = mockk()
     private val abstractTemplatePropertyDeleter: AbstractTemplatePropertyDeleter = mockk()

@@ -23,7 +23,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest : AbstractTemplatePropertyUpdaterUnitTest() {
+internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest : AbstractTemplatePropertyUpdaterUnitTest() {
     @Test
     fun `Given an updated number literal template property, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())

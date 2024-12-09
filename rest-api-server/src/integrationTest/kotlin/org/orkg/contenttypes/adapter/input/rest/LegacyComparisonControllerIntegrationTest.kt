@@ -32,7 +32,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @DisplayName("Comparison Controller")
 @Import(MockUserDetailsService::class)
-class LegacyComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class LegacyComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases

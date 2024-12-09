@@ -30,7 +30,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 
-class StatementCollectionPropertyUpdaterUnitTest {
+internal class StatementCollectionPropertyUpdaterUnitTest {
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 

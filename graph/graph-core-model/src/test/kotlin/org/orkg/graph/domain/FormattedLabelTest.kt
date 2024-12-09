@@ -8,7 +8,7 @@ import org.orkg.common.ThingId
 /**
  * Test the Formatted label class.
  */
-class FormattedLabelTest {
+internal class FormattedLabelTest {
 
     @Test
     fun formattedLabelCorrectlyComposed() {

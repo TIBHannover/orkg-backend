@@ -32,7 +32,7 @@ private val allCacheNames: Array<out String> = arrayOf(
 
 @ContextConfiguration
 @ExtendWith(SpringExtension::class)
-class SpringDataNeo4jResourceAdapterCachingTest {
+internal class SpringDataNeo4jResourceAdapterCachingTest {
 
     private lateinit var mock: ResourceRepository
 

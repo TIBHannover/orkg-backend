@@ -25,7 +25,7 @@ import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-class AbstractLiteratureListSectionValidatorUnitTest {
+internal class AbstractLiteratureListSectionValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
 
     private val abstractLiteratureListSectionValidator = AbstractLiteratureListSectionValidator(resourceRepository)

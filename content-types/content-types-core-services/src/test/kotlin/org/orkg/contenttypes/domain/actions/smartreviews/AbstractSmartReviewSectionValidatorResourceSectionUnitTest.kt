@@ -13,7 +13,7 @@ import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.testing.fixtures.createResource
 
-class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
+internal class AbstractSmartReviewSectionValidatorResourceSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given a resource section definition, when validating, it returns success`() {
         val section = dummySmartReviewResourceSectionDefinition()

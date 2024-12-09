@@ -19,7 +19,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.fixedClock
 
-class LegacyStatisticsServiceUnitTest {
+internal class LegacyStatisticsServiceUnitTest {
 
     private val legacyStatisticsRepository: LegacyStatisticsRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()

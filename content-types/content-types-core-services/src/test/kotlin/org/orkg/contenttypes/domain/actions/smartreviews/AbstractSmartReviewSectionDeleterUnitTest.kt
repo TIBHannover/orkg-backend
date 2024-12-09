@@ -32,7 +32,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-class AbstractSmartReviewSectionDeleterUnitTest {
+internal class AbstractSmartReviewSectionDeleterUnitTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 

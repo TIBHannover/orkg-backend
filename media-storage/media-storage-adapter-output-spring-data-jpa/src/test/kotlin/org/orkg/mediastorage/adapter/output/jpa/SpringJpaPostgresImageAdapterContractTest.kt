@@ -20,7 +20,7 @@ import org.springframework.test.context.TestConstructor
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-class SpringJpaPostgresImageAdapterContractTest : ImageRepositoryContracts {
+internal class SpringJpaPostgresImageAdapterContractTest : ImageRepositoryContracts {
 
     @Autowired
     private lateinit var adapter: SpringJpaPostgresImageAdapter

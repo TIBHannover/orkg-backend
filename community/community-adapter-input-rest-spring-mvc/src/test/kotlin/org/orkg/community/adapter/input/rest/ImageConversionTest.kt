@@ -18,7 +18,7 @@ import org.orkg.mediastorage.testing.fixtures.testImage
 
 @Nested
 @DisplayName("When converting images")
-class ImageConversionTest {
+internal class ImageConversionTest {
 
     @ParameterizedTest
     @ValueSource(

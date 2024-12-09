@@ -19,7 +19,7 @@ import org.orkg.community.testing.fixtures.createConferenceSeries
 import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 
-class OrganizationOrConferenceValidatorUnitTest {
+internal class OrganizationOrConferenceValidatorUnitTest {
     private val organizationRepository: OrganizationRepository = mockk()
     private val conferenceSeriesRepository: ConferenceSeriesRepository = mockk()
 

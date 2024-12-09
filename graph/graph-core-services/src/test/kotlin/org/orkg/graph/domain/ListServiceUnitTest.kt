@@ -28,7 +28,7 @@ import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 
-class ListServiceUnitTest {
+internal class ListServiceUnitTest {
     private val repository: ListRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
     private val service = ListService(repository, thingRepository, fixedClock)

@@ -56,7 +56,7 @@ import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
-class ComparisonServiceUnitTest {
+internal class ComparisonServiceUnitTest {
     private val contributionComparisonRepository: ContributionComparisonRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()

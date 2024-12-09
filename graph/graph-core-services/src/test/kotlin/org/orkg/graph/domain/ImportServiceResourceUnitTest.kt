@@ -15,7 +15,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
 import org.orkg.testing.pageOf
 
-class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
+internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
     @Test
     fun `Given an import service, when importing a resource by short form and ontology id, but ontology is not supported, then it throws an exception`() {
         every { externalResourceService.supportsOntology(any()) } returns false

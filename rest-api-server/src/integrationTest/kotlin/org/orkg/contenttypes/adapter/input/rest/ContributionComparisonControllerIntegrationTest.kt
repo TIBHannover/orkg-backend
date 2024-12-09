@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Contribution Comparison Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class ContributionComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class ContributionComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var statementService: StatementUseCases

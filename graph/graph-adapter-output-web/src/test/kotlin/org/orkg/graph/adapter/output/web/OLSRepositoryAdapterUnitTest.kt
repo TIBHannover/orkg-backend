@@ -30,7 +30,7 @@ import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
 import org.springframework.web.util.UriComponentsBuilder
 
-class OLSRepositoryAdapterUnitTest {
+internal class OLSRepositoryAdapterUnitTest {
     private val olsHostUrl = "https://example.org/ols"
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper()

@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateComparisonCommand
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-class ComparisonResourceUpdaterUnitTest {
+internal class ComparisonResourceUpdaterUnitTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val comparisonResourceUpdater = ComparisonResourceUpdater(resourceService)

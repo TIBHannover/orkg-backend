@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneStatementCommand
 
-class RosettaStoneStatementTempIdCreateValidatorUnitTest {
+internal class RosettaStoneStatementTempIdCreateValidatorUnitTest {
     private val rosettaStoneStatementTempIdCreateValidator = RosettaStoneStatementTempIdCreateValidator()
 
     @Test

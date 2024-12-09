@@ -20,7 +20,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceObjectPos
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
 
-class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest {
+internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest {
     private val abstractRosettaStoneTemplatePropertiesValidator: AbstractRosettaStoneTemplatePropertiesValidator = mockk()
 
     private val rosettaStoneTemplatePropertiesUpdateValidator =

@@ -28,7 +28,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 
 @Suppress("HttpUrlsUsage")
-class DiscussionServiceTest {
+internal class DiscussionServiceTest {
     private val repository: DiscussionCommentRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()

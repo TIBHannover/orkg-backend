@@ -17,7 +17,7 @@ import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-class ResearchFieldValidatorUnitTest {
+internal class ResearchFieldValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
 
     private val researchFieldValidator = ResearchFieldValidator<List<ThingId>?, List<ThingId>>(resourceRepository, { it }, { it })

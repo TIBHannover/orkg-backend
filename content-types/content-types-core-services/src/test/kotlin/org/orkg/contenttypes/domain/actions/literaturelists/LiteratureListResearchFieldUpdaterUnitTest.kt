@@ -23,7 +23,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class LiteratureListResearchFieldUpdaterUnitTest {
+internal class LiteratureListResearchFieldUpdaterUnitTest {
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
 
     private val literatureListResearchFieldUpdater = LiteratureListResearchFieldUpdater(statementCollectionPropertyUpdater)

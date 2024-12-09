@@ -23,7 +23,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 
-class PaperIdentifierCreateValidatorUnitTest {
+internal class PaperIdentifierCreateValidatorUnitTest {
     private val statementRepository: StatementRepository = mockk()
 
     private val paperIdentifierCreateValidator = PaperIdentifierCreateValidator(statementRepository)

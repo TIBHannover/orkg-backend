@@ -61,7 +61,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("LiteratureList Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class LiteratureListControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

@@ -45,7 +45,7 @@ import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
-class LiteratureListServiceUnitTest {
+internal class LiteratureListServiceUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val literatureListRepository: LiteratureListRepository = mockk()
     private val literatureListPublishedRepository: LiteratureListPublishedRepository = mockk()

@@ -14,7 +14,7 @@ import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.testing.fixtures.createResource
 
-class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
+internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given a comparison section definition, when validating, it returns success`() {
         val section = dummySmartReviewComparisonSectionDefinition()

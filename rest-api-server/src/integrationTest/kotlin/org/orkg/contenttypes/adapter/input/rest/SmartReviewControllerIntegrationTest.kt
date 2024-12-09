@@ -66,7 +66,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("SmartReview Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class SmartReviewControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

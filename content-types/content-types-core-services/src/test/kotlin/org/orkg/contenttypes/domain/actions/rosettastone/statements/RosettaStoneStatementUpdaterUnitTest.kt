@@ -29,7 +29,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.fixedClock
 
-class RosettaStoneStatementUpdaterUnitTest {
+internal class RosettaStoneStatementUpdaterUnitTest {
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
 

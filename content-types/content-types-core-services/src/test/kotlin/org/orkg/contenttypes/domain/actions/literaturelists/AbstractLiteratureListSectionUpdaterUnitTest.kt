@@ -31,7 +31,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-class AbstractLiteratureListSectionUpdaterUnitTest {
+internal class AbstractLiteratureListSectionUpdaterUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()

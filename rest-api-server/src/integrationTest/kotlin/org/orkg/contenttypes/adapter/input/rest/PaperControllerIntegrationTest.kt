@@ -56,7 +56,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Paper Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

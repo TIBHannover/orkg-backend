@@ -61,7 +61,7 @@ import org.springframework.web.context.WebApplicationContext
 ])
 @ContextConfiguration(classes = [LegacyAuthController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LegacyAuthController::class])
-class LegacyAuthControllerUnitTest {
+internal class LegacyAuthControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc
 

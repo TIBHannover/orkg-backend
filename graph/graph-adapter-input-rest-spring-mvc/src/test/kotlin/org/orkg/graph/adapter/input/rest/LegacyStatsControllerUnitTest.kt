@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @WebMvcTest(controllers = [LegacyStatsController::class])
 @DisplayName("Given a Stats controller")
 @UsesMocking
-class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
+internal class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
 
     @MockkBean
     private lateinit var statisticsService: RetrieveLegacyStatisticsUseCase

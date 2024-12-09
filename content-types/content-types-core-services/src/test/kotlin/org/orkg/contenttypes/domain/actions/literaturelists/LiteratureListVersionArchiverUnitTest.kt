@@ -24,7 +24,7 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createStatement
 import org.springframework.data.domain.Sort
 
-class LiteratureListVersionArchiverUnitTest {
+internal class LiteratureListVersionArchiverUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val literatureListPublishedRepository: LiteratureListPublishedRepository = mockk()
 

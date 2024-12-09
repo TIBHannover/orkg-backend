@@ -22,7 +22,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-class ContributionPaperValidatorUnitTest {
+internal class ContributionPaperValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val resourceService: ResourceUseCases = mockk()

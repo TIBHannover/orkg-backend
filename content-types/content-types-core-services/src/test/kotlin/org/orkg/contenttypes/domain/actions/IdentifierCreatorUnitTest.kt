@@ -18,7 +18,7 @@ import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
-class IdentifierCreatorUnitTest {
+internal class IdentifierCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 

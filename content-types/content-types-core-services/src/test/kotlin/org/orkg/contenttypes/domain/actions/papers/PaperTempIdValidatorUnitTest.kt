@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
 
-class PaperTempIdValidatorUnitTest {
+internal class PaperTempIdValidatorUnitTest {
     private val paperTempIdValidator = PaperTempIdValidator()
 
     @Test

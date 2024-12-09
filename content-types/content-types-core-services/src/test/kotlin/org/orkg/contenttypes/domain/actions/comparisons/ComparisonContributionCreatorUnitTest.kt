@@ -18,7 +18,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
-class ComparisonContributionCreatorUnitTest {
+internal class ComparisonContributionCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
 
     private val contributionCreator = ComparisonContributionCreator(statementService)

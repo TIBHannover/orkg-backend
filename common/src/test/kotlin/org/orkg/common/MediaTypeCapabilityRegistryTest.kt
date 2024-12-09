@@ -7,7 +7,7 @@ import org.orkg.common.testing.fixtures.FORMATTED_LABEL_CAPABILITY
 import org.orkg.common.testing.fixtures.INCOMING_STATEMENTS_COUNT_CAPABILITY
 import org.springframework.http.MediaType
 
-class MediaTypeCapabilityRegistryTest {
+internal class MediaTypeCapabilityRegistryTest {
     @Test
     fun `Given a media type capability registry, when registering a new capability by string, it returns success`() {
         val registry = MediaTypeCapabilityRegistry()

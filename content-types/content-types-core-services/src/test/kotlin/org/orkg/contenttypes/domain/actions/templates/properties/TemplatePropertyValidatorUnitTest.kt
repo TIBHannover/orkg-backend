@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.TemplatePropertyDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateUntypedTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
 
-class TemplatePropertyValidatorUnitTest {
+internal class TemplatePropertyValidatorUnitTest {
     private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator = mockk()
 
     private val templatePropertyValidator =

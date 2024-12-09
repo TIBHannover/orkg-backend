@@ -35,7 +35,7 @@ private const val ISO_8601_PATTERN = """^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d
 @Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [ContributorController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ContributorController::class])
-class ContributorControllerTest {
+internal class ContributorControllerTest {
 
     private lateinit var mockMvc: MockMvc
 

@@ -17,7 +17,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class TemplatePropertiesUpdaterUnitTest {
+internal class TemplatePropertiesUpdaterUnitTest {
     private val abstractTemplatePropertiesUpdater: AbstractTemplatePropertiesUpdater = mockk()
 
     private val templatePropertiesUpdater = TemplatePropertiesUpdater(abstractTemplatePropertiesUpdater)

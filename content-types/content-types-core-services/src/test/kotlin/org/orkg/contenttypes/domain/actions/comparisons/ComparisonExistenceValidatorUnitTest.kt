@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateComparisonCommand
 
-class ComparisonExistenceValidatorUnitTest {
+internal class ComparisonExistenceValidatorUnitTest {
     private val comparisonService: ComparisonUseCases = mockk()
 
     private val comparisonExistenceValidator = ComparisonExistenceValidator(comparisonService)

@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyPublishSmartReviewComma
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
-class SmartReviewVersionHistoryUpdaterUnitTest {
+internal class SmartReviewVersionHistoryUpdaterUnitTest {
     private val statementService: StatementUseCases = mockk()
 
     private val smartReviewVersionHistoryUpdater = SmartReviewVersionHistoryUpdater(statementService)

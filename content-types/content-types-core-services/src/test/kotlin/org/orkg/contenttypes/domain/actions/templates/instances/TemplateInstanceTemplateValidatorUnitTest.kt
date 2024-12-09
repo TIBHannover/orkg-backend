@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
 
-class TemplateInstanceTemplateValidatorUnitTest {
+internal class TemplateInstanceTemplateValidatorUnitTest {
     private val templateService: TemplateUseCases = mockk()
 
 private val templateInstanceTemplateValidator = TemplateInstanceTemplateValidator(templateService)

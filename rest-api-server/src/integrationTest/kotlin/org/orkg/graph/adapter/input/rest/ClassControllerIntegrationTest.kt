@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Class Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var service: ClassUseCases

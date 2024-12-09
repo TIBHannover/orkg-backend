@@ -35,7 +35,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
-class VisualizationServiceUnitTest {
+internal class VisualizationServiceUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()

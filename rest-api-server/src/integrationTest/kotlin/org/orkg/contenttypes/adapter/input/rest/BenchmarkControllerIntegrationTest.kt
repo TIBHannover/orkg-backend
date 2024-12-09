@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @Suppress("HttpUrlsUsage")
 @DisplayName("Benchmark Controller")
 @Import(MockUserDetailsService::class)
-class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var labelsAndClasses: LabelAndClassService

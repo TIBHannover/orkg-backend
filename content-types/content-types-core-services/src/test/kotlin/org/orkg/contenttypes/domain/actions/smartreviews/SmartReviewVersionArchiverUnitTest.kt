@@ -24,7 +24,7 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createStatement
 import org.springframework.data.domain.Sort
 
-class SmartReviewVersionArchiverUnitTest {
+internal class SmartReviewVersionArchiverUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val smartReviewPublishedRepository: SmartReviewPublishedRepository = mockk()
 

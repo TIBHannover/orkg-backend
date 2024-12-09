@@ -71,7 +71,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Rosetta Stone Statement Controller")
 @Transactional
 @Import(value = [MockUserDetailsService::class, ContentTypeJacksonModule::class])
-class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class RosettaStoneStatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

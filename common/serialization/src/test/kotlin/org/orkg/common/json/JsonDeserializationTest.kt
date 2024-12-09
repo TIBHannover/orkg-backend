@@ -13,7 +13,7 @@ import org.springframework.test.context.ContextConfiguration
 
 @WebMvcTest
 @ContextConfiguration(classes = [CommonSpringConfig::class])
-class JsonDeserializationTest {
+internal class JsonDeserializationTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 

@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Organization Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

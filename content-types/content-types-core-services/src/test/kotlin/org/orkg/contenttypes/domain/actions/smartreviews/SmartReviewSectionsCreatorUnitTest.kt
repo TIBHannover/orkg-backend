@@ -16,7 +16,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewComman
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
-class SmartReviewSectionsCreatorUnitTest {
+internal class SmartReviewSectionsCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator = mockk()
 

@@ -28,7 +28,7 @@ import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase.UpdateList
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.toDefinitionEntry
 
-class LiteratureListSectionUpdaterUnitTest {
+internal class LiteratureListSectionUpdaterUnitTest {
     private val abstractLiteratureListSectionUpdater: AbstractLiteratureListSectionUpdater = mockk()
 
     private val literatureListSectionUpdateValidator = LiteratureListSectionUpdater(abstractLiteratureListSectionUpdater)

@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
 import org.orkg.graph.domain.Predicates
 
-class TemplateDescriptionCreatorUnitTest {
+internal class TemplateDescriptionCreatorUnitTest {
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()
 
     private val templateDescriptionCreator = TemplateDescriptionCreator(singleStatementPropertyCreator)

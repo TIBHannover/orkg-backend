@@ -22,7 +22,7 @@ import org.springframework.test.context.ContextConfiguration
  */
 @JsonTest
 @ContextConfiguration(classes = [ClassRepresentationAdapter::class, CommonJacksonModule::class])
-class ClassRepresentationJsonTest {
+internal class ClassRepresentationJsonTest {
 
     @Autowired
     private lateinit var json: JacksonTester<ClassRepresentation>

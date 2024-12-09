@@ -17,7 +17,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 
-class SmartReviewResourceCreatorUnitTest {
+internal class SmartReviewResourceCreatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val smartReviewResourceCreator = SmartReviewResourceCreator(resourceService)

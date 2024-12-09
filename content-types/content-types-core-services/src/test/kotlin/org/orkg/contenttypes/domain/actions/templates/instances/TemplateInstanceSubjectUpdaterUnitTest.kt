@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceC
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-class TemplateInstanceSubjectUpdaterUnitTest {
+internal class TemplateInstanceSubjectUpdaterUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
 
     private val templateInstanceSubjectUpdater = TemplateInstanceSubjectUpdater(resourceRepository)

@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
 
-class LiteratureListModifiableValidatorUnitTest {
+internal class LiteratureListModifiableValidatorUnitTest {
     private val literatureListModifiableValidator = LiteratureListModifiableValidator()
 
     @Test

@@ -19,7 +19,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
-class PaperIdentifierUpdaterUnitTest {
+internal class PaperIdentifierUpdaterUnitTest {
     private val identifierUpdater: IdentifierUpdater = mockk()
 
     private val paperIdentifierUpdater = PaperIdentifierUpdater(identifierUpdater)

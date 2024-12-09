@@ -16,7 +16,7 @@ import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 
-class OrganizationValidatorUnitTest {
+internal class OrganizationValidatorUnitTest {
     private val organizationRepository: OrganizationRepository = mockk()
 
     private val organizationValidator = OrganizationValidator<List<OrganizationId>?, List<OrganizationId>>(organizationRepository, { it }, { it })

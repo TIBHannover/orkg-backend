@@ -15,7 +15,7 @@ import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneTemplateCommand
 
-class RosettaStoneTemplatePropertiesCreatorUnitTest {
+internal class RosettaStoneTemplatePropertiesCreatorUnitTest {
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator = mockk()
 
     private val rosettaStoneTemplatePropertiesCreator = RosettaStoneTemplatePropertiesCreator(abstractTemplatePropertyCreator)

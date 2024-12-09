@@ -17,7 +17,7 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.testing.fixedClock
 
-class LiteralServiceUnitTest : DescribeSpec({
+internal class LiteralServiceUnitTest : DescribeSpec({
     val literalRepository: LiteralRepository = mockk()
     val statementRepository: StatementRepository = mockk()
     val service = LiteralService(literalRepository, statementRepository, fixedClock)

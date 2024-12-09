@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemp
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
 import org.orkg.graph.domain.InvalidLabel
 
-class RosettaStoneTemplateLabelUpdateValidatorUnitTest {
+internal class RosettaStoneTemplateLabelUpdateValidatorUnitTest {
     private val rosettaStoneTemplateLabelUpdateValidator = RosettaStoneTemplateLabelUpdateValidator()
 
     @Test

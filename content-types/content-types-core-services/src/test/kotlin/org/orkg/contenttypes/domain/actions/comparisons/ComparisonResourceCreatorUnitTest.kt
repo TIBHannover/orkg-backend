@@ -17,7 +17,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 
-class ComparisonResourceCreatorUnitTest {
+internal class ComparisonResourceCreatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val comparisonResourceCreator = ComparisonResourceCreator(resourceService)

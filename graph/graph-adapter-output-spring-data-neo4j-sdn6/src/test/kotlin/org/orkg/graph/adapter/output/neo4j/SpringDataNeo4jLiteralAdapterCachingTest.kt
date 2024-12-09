@@ -31,7 +31,7 @@ private val allCacheNames: Array<out String> = arrayOf(
 
 @ContextConfiguration
 @ExtendWith(SpringExtension::class)
-class SpringDataNeo4jLiteralAdapterCachingTest {
+internal class SpringDataNeo4jLiteralAdapterCachingTest {
 
     private lateinit var mock: LiteralRepository
 

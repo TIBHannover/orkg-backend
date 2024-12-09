@@ -20,7 +20,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 
-class CypherQueryBuilderUnitTest {
+internal class CypherQueryBuilderUnitTest {
     private val neo4jClient: Neo4jClient = mockk()
     private val unboundRunnableSpec: Neo4jClient.UnboundRunnableSpec = mockk()
     private val runnableSpec: Neo4jClient.RunnableSpec = mockk()

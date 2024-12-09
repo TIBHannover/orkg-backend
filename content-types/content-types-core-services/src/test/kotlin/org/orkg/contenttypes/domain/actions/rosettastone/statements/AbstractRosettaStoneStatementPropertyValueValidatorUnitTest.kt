@@ -53,7 +53,7 @@ import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createResource
 
-class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
+internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     private val thingRepository: ThingRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val rosettaStoneStatementService: RosettaStoneStatementUseCases = mockk()

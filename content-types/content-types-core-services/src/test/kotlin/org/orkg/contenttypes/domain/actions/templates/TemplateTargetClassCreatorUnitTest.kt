@@ -18,7 +18,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
-class TemplateTargetClassCreatorUnitTest {
+internal class TemplateTargetClassCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
 
     private val templateTargetClassCreator = TemplateTargetClassCreator(statementService)

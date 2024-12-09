@@ -22,7 +22,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class LiteratureListSectionDeleterUnitTest {
+internal class LiteratureListSectionDeleterUnitTest {
     private val abstractLiteratureListSectionDeleter: AbstractLiteratureListSectionDeleter = mockk()
 
     private val literatureListSectionDeleter = LiteratureListSectionDeleter(abstractLiteratureListSectionDeleter)

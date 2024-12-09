@@ -20,7 +20,7 @@ import org.orkg.contenttypes.domain.InvalidBibTeXReference
 private const val reference1 = "@misc{R50008,\ttitle = {Data integration and disintegration: Managing {Springer} {Nature} {SciGraph} with {SHACL} and {OWL}},}"
 private const val reference2 = "@misc{R50006,\ttitle = {Papers with code},}"
 
-class BibTeXReferencesValidatorUnitTest {
+internal class BibTeXReferencesValidatorUnitTest {
     private val parser: BibTeXParser = mockk()
 
     private val bibTeXReferencesValidator = BibTeXReferencesValidator<List<String>?, List<String>>({ it }, { it }, parser)

@@ -13,7 +13,7 @@ import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.testing.MockUserId
 
-class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
+internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
     @Test
     fun `Given an import service, when importing a class by short form and ontology id, but ontology is not supported, then it throws an exception`() {
         every { externalClassService.supportsOntology(any()) } returns false

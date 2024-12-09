@@ -6,7 +6,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 
-class DescriptionValidatorUnitTest {
+internal class DescriptionValidatorUnitTest {
     private val descriptionValidator = DescriptionValidator<String?, Unit> { it }
 
     @Test

@@ -26,7 +26,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-class SingleStatementPropertyUpdaterUnitTest {
+internal class SingleStatementPropertyUpdaterUnitTest {
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()

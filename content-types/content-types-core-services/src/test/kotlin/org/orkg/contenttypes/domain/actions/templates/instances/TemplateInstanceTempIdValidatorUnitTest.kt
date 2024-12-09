@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
 
-class TemplateInstanceTempIdValidatorUnitTest {
+internal class TemplateInstanceTempIdValidatorUnitTest {
     private val templateInstanceTempIdValidator = TemplateInstanceTempIdValidator()
 
     @Test

@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCom
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-class LiteratureListResourceUpdaterUnitTest {
+internal class LiteratureListResourceUpdaterUnitTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val literatureListResourceUpdater = LiteratureListResourceUpdater(resourceService)

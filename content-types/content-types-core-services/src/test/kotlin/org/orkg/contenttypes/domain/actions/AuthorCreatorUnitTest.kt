@@ -28,7 +28,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
 
-class AuthorCreatorUnitTest {
+internal class AuthorCreatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()

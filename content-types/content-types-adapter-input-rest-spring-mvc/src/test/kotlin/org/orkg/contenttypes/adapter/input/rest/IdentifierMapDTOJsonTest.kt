@@ -15,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration
 
 @WebMvcTest
 @ContextConfiguration(classes = [CommonSpringConfig::class, ContentTypeSpringConfig::class])
-class IdentifierMapDTOJsonTest {
+internal class IdentifierMapDTOJsonTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 

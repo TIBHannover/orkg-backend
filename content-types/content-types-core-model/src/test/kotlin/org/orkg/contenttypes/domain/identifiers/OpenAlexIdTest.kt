@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
 @Suppress("HttpUrlsUsage")
-class OpenAlexIdTest {
+internal class OpenAlexIdTest {
     @ParameterizedTest
     @MethodSource("validOpenAlexIds")
     @Suppress("UNUSED_PARAMETER")

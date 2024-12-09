@@ -32,7 +32,7 @@ import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.testing.fixtures.dummyRegisterDoiCommand
 import org.springframework.http.MediaType
 
-class DataCiteDoiServiceAdapterUnitTest {
+internal class DataCiteDoiServiceAdapterUnitTest {
     private val dataciteConfiguration: DataCiteConfiguration = mockk()
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper().registerKotlinModule()

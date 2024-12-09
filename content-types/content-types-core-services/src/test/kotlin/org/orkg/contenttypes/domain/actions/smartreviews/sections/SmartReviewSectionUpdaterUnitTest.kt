@@ -28,7 +28,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 
-class SmartReviewSectionUpdaterUnitTest {
+internal class SmartReviewSectionUpdaterUnitTest {
     private val abstractSmartReviewSectionUpdater: AbstractSmartReviewSectionUpdater = mockk()
 
     private val smartReviewSectionUpdateValidator = SmartReviewSectionUpdater(abstractSmartReviewSectionUpdater)

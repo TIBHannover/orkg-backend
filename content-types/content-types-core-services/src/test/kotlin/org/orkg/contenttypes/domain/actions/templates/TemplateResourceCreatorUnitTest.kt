@@ -17,7 +17,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 
-class TemplateResourceCreatorUnitTest {
+internal class TemplateResourceCreatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val templateResourceCreator = TemplateResourceCreator(resourceService)

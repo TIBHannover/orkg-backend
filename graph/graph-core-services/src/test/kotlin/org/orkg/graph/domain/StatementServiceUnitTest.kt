@@ -33,7 +33,7 @@ import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Sort
 
-class StatementServiceUnitTest : DescribeSpec({
+internal class StatementServiceUnitTest : DescribeSpec({
 
     val statementRepository: StatementRepository = mockk()
     val literalRepository: LiteralRepository = mockk()

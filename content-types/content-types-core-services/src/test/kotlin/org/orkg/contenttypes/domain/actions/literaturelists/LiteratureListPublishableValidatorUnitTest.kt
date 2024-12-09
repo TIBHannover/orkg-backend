@@ -19,7 +19,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishLiteratureListCommand
 
-class LiteratureListPublishableValidatorUnitTest {
+internal class LiteratureListPublishableValidatorUnitTest {
     private val literatureListService: LiteratureListUseCases = mockk()
 
     private val literatureListPublishableValidator = LiteratureListPublishableValidator(literatureListService)

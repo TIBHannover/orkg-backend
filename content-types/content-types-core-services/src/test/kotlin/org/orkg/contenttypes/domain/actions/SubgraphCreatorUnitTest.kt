@@ -46,7 +46,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 
-class SubgraphCreatorUnitTest {
+internal class SubgraphCreatorUnitTest {
     private val statementRepository: StatementRepository = mockk()
     private val classService: ClassUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()

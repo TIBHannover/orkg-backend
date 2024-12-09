@@ -24,7 +24,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.fixedClock
 
-class ComparisonPublicationInfoCreatorUnitTest {
+internal class ComparisonPublicationInfoCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val clock: Clock = fixedClock

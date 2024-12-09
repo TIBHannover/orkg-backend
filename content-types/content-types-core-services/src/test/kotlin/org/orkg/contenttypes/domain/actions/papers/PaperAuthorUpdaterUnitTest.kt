@@ -15,7 +15,7 @@ import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
 
-class PaperAuthorUpdaterUnitTest {
+internal class PaperAuthorUpdaterUnitTest {
     private val authorUpdater: AuthorUpdater = mockk()
 
     private val paperAuthorUpdater = PaperAuthorUpdater(authorUpdater)

@@ -23,7 +23,7 @@ import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 
-class ComparisonVersionDoiPublisherUnitTest {
+internal class ComparisonVersionDoiPublisherUnitTest {
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()
     private val comparisonRepository: ComparisonRepository = mockk()
     private val doiService: DoiService = mockk()

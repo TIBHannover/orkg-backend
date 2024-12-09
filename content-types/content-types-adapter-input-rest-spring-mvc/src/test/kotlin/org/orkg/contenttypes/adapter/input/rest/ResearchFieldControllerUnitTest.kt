@@ -55,7 +55,7 @@ val supportedClasses = setOf(
 @ContextConfiguration(classes = [ResearchFieldController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ResearchFieldController::class])
 @UsesMocking
-class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
+internal class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
     @MockkBean
     private lateinit var useCases: RetrieveResearchFieldUseCase
 

@@ -30,7 +30,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 
-class AuthorValidatorUnitTest {
+internal class AuthorValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
 

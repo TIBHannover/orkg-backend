@@ -22,7 +22,7 @@ import org.springframework.test.context.TestConstructor
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-class SpringJpaPostgresDiscussionCommentAdapterContractTests : DiscussionCommentRepositoryContractTest() {
+internal class SpringJpaPostgresDiscussionCommentAdapterContractTests : DiscussionCommentRepositoryContractTest() {
 
     @Autowired
     private lateinit var adapter: SpringJpaPostgresDiscussionCommentAdapter

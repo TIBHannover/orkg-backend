@@ -21,7 +21,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-class SmartReviewContributionCreatorUnitTest {
+internal class SmartReviewContributionCreatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 

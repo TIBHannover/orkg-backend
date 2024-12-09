@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateComparisonCommand
 
-class ComparisonModifiableValidatorUnitTest {
+internal class ComparisonModifiableValidatorUnitTest {
     private val comparisonModifiableValidator = ComparisonModifiableValidator()
 
     @Test

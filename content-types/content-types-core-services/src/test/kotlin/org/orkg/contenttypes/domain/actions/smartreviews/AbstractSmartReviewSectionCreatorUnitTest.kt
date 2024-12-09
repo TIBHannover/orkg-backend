@@ -28,7 +28,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-class AbstractSmartReviewSectionCreatorUnitTest {
+internal class AbstractSmartReviewSectionCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()

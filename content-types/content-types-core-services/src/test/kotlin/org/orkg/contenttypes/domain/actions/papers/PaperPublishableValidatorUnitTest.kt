@@ -26,7 +26,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class PaperPublishableValidatorUnitTest {
+internal class PaperPublishableValidatorUnitTest {
     private val paperService: PaperService = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 

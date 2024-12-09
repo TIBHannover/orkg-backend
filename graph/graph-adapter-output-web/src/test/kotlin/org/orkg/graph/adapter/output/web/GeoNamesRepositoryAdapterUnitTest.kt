@@ -27,7 +27,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
 
-class GeoNamesRepositoryAdapterUnitTest {
+internal class GeoNamesRepositoryAdapterUnitTest {
     private val geoNamesHostUrl = "https://example.org/geonames"
     private val geoNamesUser = "testuser"
     private val httpClient: HttpClient = mockk()

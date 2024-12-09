@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 @Import(MockUserDetailsService::class)
 @ImportAutoConfiguration(MigrationsAutoConfiguration::class)
-class LegacyPaperControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class LegacyPaperControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var predicateService: PredicateUseCases

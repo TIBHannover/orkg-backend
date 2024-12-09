@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Predicate Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class PredicateControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class PredicateControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var service: PredicateUseCases

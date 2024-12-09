@@ -22,7 +22,7 @@ import org.springframework.test.context.ContextConfiguration
  */
 @JsonTest
 @ContextConfiguration(classes = [ResourceRepresentationAdapter::class, CommonJacksonModule::class])
-class ResourceRepresentationJsonTest {
+internal class ResourceRepresentationJsonTest {
 
     @Autowired
     private lateinit var json: JacksonTester<ResourceRepresentation> // FIXME: This whole test might be pointless.

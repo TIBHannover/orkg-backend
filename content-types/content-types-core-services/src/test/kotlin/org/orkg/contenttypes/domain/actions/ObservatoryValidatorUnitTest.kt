@@ -16,7 +16,7 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.testing.fixtures.createObservatory
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 
-class ObservatoryValidatorUnitTest {
+internal class ObservatoryValidatorUnitTest {
     private val observatoryRepository: ObservatoryRepository = mockk()
 
     private val observatoryValidator = ObservatoryValidator<List<ObservatoryId>?, List<ObservatoryId>>(observatoryRepository, { it }, { it })

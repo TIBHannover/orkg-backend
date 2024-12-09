@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewCommand
 
-class SmartReviewSectionsCreateValidatorUnitTest {
+internal class SmartReviewSectionsCreateValidatorUnitTest {
     private val abstractSmartReviewSectionValidator: AbstractSmartReviewSectionValidator = mockk()
 
     private val smartReviewSectionsCreateValidator = SmartReviewSectionsCreateValidator(abstractSmartReviewSectionValidator)

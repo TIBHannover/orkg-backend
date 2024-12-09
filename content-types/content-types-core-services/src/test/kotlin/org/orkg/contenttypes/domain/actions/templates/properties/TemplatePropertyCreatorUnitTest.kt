@@ -15,7 +15,7 @@ import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateUntypedTemplatePropertyCommand
 
-class TemplatePropertyCreatorUnitTest {
+internal class TemplatePropertyCreatorUnitTest {
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator = mockk()
 
     private val templatePropertyCreator = TemplatePropertyCreator(abstractTemplatePropertyCreator)

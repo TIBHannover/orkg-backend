@@ -32,7 +32,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 
-class ObservatoryServiceUnitTests {
+internal class ObservatoryServiceUnitTest {
 
     private val repository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()

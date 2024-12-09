@@ -21,7 +21,7 @@ import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 
-class ResearchFieldHierarchyServiceUnitTest {
+internal class ResearchFieldHierarchyServiceUnitTest {
     private val repository: ResearchFieldHierarchyRepository = mockk()
     private val researchFieldRepository: ResearchFieldRepository = mockk()
     private val service = ResearchFieldHierarchyService(repository, researchFieldRepository)

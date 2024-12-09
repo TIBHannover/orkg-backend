@@ -16,7 +16,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListCom
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
-class LiteratureListSectionsCreatorUnitTest {
+internal class LiteratureListSectionsCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()
 

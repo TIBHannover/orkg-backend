@@ -17,7 +17,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneState
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
 
-class RosettaStoneStatementThingDefinitionCreateValidatorUnitTest {
+internal class RosettaStoneStatementThingDefinitionCreateValidatorUnitTest {
     private val thingDefinitionValidator: ThingDefinitionValidator = mockk()
 
     private val stoneStatementThingDefinitionCreateValidator = RosettaStoneStatementThingDefinitionCreateValidator(thingDefinitionValidator)

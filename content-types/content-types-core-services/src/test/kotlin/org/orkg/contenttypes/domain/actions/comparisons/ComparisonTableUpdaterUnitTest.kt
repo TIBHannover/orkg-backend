@@ -23,7 +23,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateComparisonCommand
 import org.orkg.contenttypes.output.ComparisonTableRepository
 
-class ComparisonTableUpdaterUnitTest {
+internal class ComparisonTableUpdaterUnitTest {
     private val comparisonTableRepository: ComparisonTableRepository = mockk()
 
     private val comparisonTableUpdater = ComparisonTableUpdater(comparisonTableRepository)

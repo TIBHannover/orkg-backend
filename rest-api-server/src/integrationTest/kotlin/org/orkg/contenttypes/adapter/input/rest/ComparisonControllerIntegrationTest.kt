@@ -67,7 +67,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Comparison Controller")
 @Transactional
 @Import(MockUserDetailsService::class, InMemorySimCompThingRepositoryAdapter::class)
-class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

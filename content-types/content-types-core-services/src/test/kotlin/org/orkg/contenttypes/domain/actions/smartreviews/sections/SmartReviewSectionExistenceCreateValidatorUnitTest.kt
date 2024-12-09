@@ -34,7 +34,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-class SmartReviewSectionExistenceCreateValidatorUnitTest {
+internal class SmartReviewSectionExistenceCreateValidatorUnitTest {
     private val statementRepository: StatementRepository = mockk()
 
     private val smartReviewSectionExistenceCreateValidator =

@@ -28,7 +28,7 @@ private val allCacheNames: Array<out String> = arrayOf(PREDICATE_ID_TO_PREDICATE
 
 @ContextConfiguration
 @ExtendWith(SpringExtension::class)
-class SpringDataNeo4jPredicateAdapterCachingTest {
+internal class SpringDataNeo4jPredicateAdapterCachingTest {
 
     private lateinit var mock: PredicateRepository
 

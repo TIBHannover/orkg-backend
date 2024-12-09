@@ -34,7 +34,7 @@ const val EXAMPLE_DOI = "10.1000/182"
 @ContextConfiguration(classes = [WidgetController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [WidgetController::class])
 @UsesMocking
-class WidgetControllerUnitTest : RestDocsTest("widget") {
+internal class WidgetControllerUnitTest : RestDocsTest("widget") {
 
     @MockkBean
     private lateinit var resolveDOIUseCase: ResolveDOIUseCase

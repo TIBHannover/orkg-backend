@@ -17,7 +17,7 @@ import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
 
-class LiteratureListAuthorUpdaterUnitTest {
+internal class LiteratureListAuthorUpdaterUnitTest {
     private val authorUpdater: AuthorUpdater = mockk()
 
     private val literatureListAuthorUpdater = LiteratureListAuthorUpdater(authorUpdater)

@@ -20,7 +20,7 @@ import org.springframework.test.context.ContextConfiguration
  */
 @JsonTest
 @ContextConfiguration(classes = [PredicateRepresentationAdapter::class, CommonJacksonModule::class])
-class PredicateRepresentationJsonTest {
+internal class PredicateRepresentationJsonTest {
 
     @Autowired
     private lateinit var json: JacksonTester<PredicateRepresentation>

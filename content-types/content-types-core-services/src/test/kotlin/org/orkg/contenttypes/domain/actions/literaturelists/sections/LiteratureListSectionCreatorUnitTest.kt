@@ -30,7 +30,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class LiteratureListSectionCreatorUnitTest {
+internal class LiteratureListSectionCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()

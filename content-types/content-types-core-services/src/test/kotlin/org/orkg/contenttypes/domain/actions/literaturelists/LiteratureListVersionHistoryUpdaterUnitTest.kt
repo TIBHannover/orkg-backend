@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyPublishLiteratureListCo
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
-class LiteratureListVersionHistoryUpdaterUnitTest {
+internal class LiteratureListVersionHistoryUpdaterUnitTest {
     private val statementService: StatementUseCases = mockk()
 
     private val literatureListVersionHistoryUpdater = LiteratureListVersionHistoryUpdater(statementService)

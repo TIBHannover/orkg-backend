@@ -21,7 +21,7 @@ import org.springframework.test.context.ContextConfiguration
 @JsonTest
 @DisplayName("Literal JSON Serialization Tests")
 @ContextConfiguration(classes = [LiteralRepresentationAdapter::class, CommonJacksonModule::class])
-class LiteralRepresentationJsonTest {
+internal class LiteralRepresentationJsonTest {
 
     @Autowired
     private lateinit var json: JacksonTester<LiteralRepresentation>

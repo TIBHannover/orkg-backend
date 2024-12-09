@@ -17,7 +17,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTempl
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class RosettaStoneTemplatePropertiesUpdaterUnitTest {
+internal class RosettaStoneTemplatePropertiesUpdaterUnitTest {
     private val abstractTemplatePropertiesUpdater: AbstractTemplatePropertiesUpdater = mockk()
 
     private val rosettaStoneTemplatePropertiesUpdater = RosettaStoneTemplatePropertiesUpdater(abstractTemplatePropertiesUpdater)

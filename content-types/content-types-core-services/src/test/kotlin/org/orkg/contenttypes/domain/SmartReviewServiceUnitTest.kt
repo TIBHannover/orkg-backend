@@ -48,7 +48,7 @@ import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
-class SmartReviewServiceUnitTest {
+internal class SmartReviewServiceUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val smartReviewRepository: SmartReviewRepository = mockk()
     private val smartReviewPublishedRepository: SmartReviewPublishedRepository = mockk()

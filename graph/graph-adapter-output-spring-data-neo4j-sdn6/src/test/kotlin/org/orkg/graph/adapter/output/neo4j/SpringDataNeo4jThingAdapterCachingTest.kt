@@ -41,7 +41,7 @@ private val allCacheNames: Array<out String> = arrayOf(
 
 @ContextConfiguration
 @ExtendWith(SpringExtension::class)
-class SpringDataNeo4jThingAdapterCachingTest {
+internal class SpringDataNeo4jThingAdapterCachingTest {
 
     private lateinit var mock: ThingRepository
 

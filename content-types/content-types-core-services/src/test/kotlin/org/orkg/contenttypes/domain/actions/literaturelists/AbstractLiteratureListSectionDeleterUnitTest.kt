@@ -28,7 +28,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-class AbstractLiteratureListSectionDeleterUnitTest {
+internal class AbstractLiteratureListSectionDeleterUnitTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 

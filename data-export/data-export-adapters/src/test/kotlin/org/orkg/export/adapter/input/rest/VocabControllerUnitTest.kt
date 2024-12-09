@@ -36,7 +36,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @ContextConfiguration(classes = [VocabController::class, RdfConfiguration::class, ExceptionHandler::class, RDFService::class, FixedClockConfig::class])
 @WebMvcTest(VocabController::class)
 @DisplayName("Vocab Controller")
-class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
+internal class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
 
     @MockkBean
     private lateinit var classRepository: ClassRepository

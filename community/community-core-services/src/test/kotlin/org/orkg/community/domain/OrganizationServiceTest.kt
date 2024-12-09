@@ -22,7 +22,7 @@ import org.orkg.mediastorage.testing.fixtures.loadImage
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
 
-class OrganizationServiceTest {
+internal class OrganizationServiceTest {
     private val repository: OrganizationRepository = mockk()
     private val imageService: ImageUseCases = mockk()
     private val service = OrganizationService(repository, imageService)

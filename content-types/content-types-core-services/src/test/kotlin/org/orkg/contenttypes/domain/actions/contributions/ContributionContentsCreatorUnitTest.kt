@@ -23,7 +23,7 @@ import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.testing.fixtures.createResource
 
-class ContributionContentsCreatorUnitTest {
+internal class ContributionContentsCreatorUnitTest {
     private val contributionCreator: ContributionCreator = mockk()
 
     private val contributionContentsCreatorCreator = ContributionContentsCreator(contributionCreator)

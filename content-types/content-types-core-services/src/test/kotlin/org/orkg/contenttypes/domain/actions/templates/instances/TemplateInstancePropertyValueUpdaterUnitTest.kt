@@ -21,7 +21,7 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-class TemplateInstancePropertyValueUpdaterUnitTest {
+internal class TemplateInstancePropertyValueUpdaterUnitTest {
     private val subgraphCreator: SubgraphCreator = mockk()
     private val statementService: StatementUseCases = mockk()
 

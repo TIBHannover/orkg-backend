@@ -13,7 +13,7 @@ import kotlin.time.toJavaDuration
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class CachedMetricTest {
+internal class CachedMetricTest {
     @BeforeEach
     fun resetState() {
         clearAllMocks()

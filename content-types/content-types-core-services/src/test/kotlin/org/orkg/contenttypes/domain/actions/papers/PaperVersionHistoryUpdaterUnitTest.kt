@@ -24,7 +24,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class PaperVersionHistoryUpdaterUnitTest {
+internal class PaperVersionHistoryUpdaterUnitTest {
     private val statementService: StatementUseCases = mockk()
 
     private val paperVersionHistoryUpdater = PaperVersionHistoryUpdater(statementService)

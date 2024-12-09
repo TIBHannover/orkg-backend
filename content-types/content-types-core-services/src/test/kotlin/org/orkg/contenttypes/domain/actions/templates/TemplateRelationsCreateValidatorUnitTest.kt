@@ -23,7 +23,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 
-class TemplateRelationsCreateValidatorUnitTest {
+internal class TemplateRelationsCreateValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val predicateRepository: PredicateRepository = mockk()
 

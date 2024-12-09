@@ -23,7 +23,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createStatement
 
-class TemplateRelationsUpdaterUnitTest {
+internal class TemplateRelationsUpdaterUnitTest {
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater = mockk()
 

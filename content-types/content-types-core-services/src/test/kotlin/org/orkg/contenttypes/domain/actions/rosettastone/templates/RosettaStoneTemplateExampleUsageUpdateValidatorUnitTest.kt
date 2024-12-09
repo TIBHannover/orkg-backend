@@ -10,7 +10,7 @@ import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
 
-class RosettaStoneTemplateExampleUsageUpdateValidatorUnitTest {
+internal class RosettaStoneTemplateExampleUsageUpdateValidatorUnitTest {
     private val rosettaStoneTemplateExampleUsageUpdateValidator = RosettaStoneTemplateExampleUsageUpdateValidator()
 
     @Test

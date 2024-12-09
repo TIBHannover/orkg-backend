@@ -34,7 +34,7 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 
-class AbstractTemplatePropertyValidatorUnitTest {
+internal class AbstractTemplatePropertyValidatorUnitTest {
     private val predicateRepository: PredicateRepository = mockk()
     private val classRepository: ClassRepository = mockk()
 

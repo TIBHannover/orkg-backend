@@ -22,7 +22,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyPublishSmartReviewComma
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Predicates
 
-class SmartReviewVersionDoiPublisherUnitTest {
+internal class SmartReviewVersionDoiPublisherUnitTest {
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()
     private val doiService: DoiService = mockk()
 

@@ -16,7 +16,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListTextSectionCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
-class LiteratureListSectionExistenceUpdateValidatorUnitTest {
+internal class LiteratureListSectionExistenceUpdateValidatorUnitTest {
     private val abstractLiteratureListExistenceValidator: AbstractLiteratureListExistenceValidator = mockk()
 
     private val literatureListSectionExistenceUpdateValidator =

@@ -20,7 +20,7 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.springframework.data.domain.Page
 
-class ContributionServiceUnitTest {
+internal class ContributionServiceUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
 

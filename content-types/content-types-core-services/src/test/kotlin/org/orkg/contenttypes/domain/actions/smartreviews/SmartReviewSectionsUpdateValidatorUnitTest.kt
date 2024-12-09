@@ -17,7 +17,7 @@ import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
 
-class SmartReviewSectionsUpdateValidatorUnitTest {
+internal class SmartReviewSectionsUpdateValidatorUnitTest {
     private val abstractSmartReviewSectionValidator: AbstractSmartReviewSectionValidator = mockk()
 
     private val smartReviewSectionsUpdateValidator = SmartReviewSectionsUpdateValidator(abstractSmartReviewSectionValidator)

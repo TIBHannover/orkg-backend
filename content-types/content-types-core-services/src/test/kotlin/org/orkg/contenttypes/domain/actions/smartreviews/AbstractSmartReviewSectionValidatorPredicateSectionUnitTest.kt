@@ -13,7 +13,7 @@ import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.testing.fixtures.createPredicate
 
-class AbstractSmartReviewSectionValidatorPredicateSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
+internal class AbstractSmartReviewSectionValidatorPredicateSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given a predicate section definition, when validating, it returns success`() {
         val section = dummySmartReviewPredicateSectionDefinition()

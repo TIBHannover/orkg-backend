@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneTemplateCommand
 import org.orkg.graph.domain.Predicates
 
-class RosettaStoneTemplateDescriptionCreatorUnitTest {
+internal class RosettaStoneTemplateDescriptionCreatorUnitTest {
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()
 
     private val rosettaStoneTemplateDescriptionCreator = RosettaStoneTemplateDescriptionCreator(singleStatementPropertyCreator)

@@ -33,7 +33,7 @@ import org.orkg.testing.fixedClock
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 
-class ResourceServiceUnitTest {
+internal class ResourceServiceUnitTest {
 
     private val repository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()

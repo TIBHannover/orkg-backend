@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.orkg.statistics.testing.fixtures.createDummyMetrics
 
-class StatisticsServiceUnitTest {
+internal class StatisticsServiceUnitTest {
 
     private val metrics = createDummyMetrics()
     private val service = StatisticsService(metrics)

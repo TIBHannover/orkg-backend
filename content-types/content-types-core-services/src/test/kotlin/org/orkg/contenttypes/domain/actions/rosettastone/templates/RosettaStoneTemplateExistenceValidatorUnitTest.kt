@@ -25,7 +25,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class RosettaStoneTemplateExistenceValidatorUnitTest {
+internal class RosettaStoneTemplateExistenceValidatorUnitTest {
     private val rosettaStoneTemplateService: RosettaStoneTemplateService = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 

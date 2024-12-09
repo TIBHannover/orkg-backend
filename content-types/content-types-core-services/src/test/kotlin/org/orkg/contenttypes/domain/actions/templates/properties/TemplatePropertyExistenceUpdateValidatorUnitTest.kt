@@ -33,7 +33,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-class TemplatePropertyExistenceUpdateValidatorUnitTest {
+internal class TemplatePropertyExistenceUpdateValidatorUnitTest {
     private val templateService: TemplateService = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 

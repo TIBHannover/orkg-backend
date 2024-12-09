@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateContributionCommand
 
-class ContributionTempIdValidatorUnitTest {
+internal class ContributionTempIdValidatorUnitTest {
     private val contributionTempIdValidator = ContributionTempIdValidator()
 
     @Test

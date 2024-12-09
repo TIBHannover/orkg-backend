@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
-class GitHubLicenseInformationProviderUnitTest {
+internal class GitHubLicenseInformationProviderUnitTest {
     private val httpClient: HttpClient = mockk()
     private val provider: GitHubLicenseInformationProvider = GitHubLicenseInformationProvider(ObjectMapper(), httpClient)
 

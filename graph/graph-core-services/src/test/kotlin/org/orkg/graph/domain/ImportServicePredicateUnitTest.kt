@@ -15,7 +15,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
 import org.orkg.testing.pageOf
 
-class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() {
+internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() {
     @Test
     fun `Given an import service, when importing a predicate by short form and ontology id, but ontology is not supported, then it throws an exception`() {
         every { externalPredicateService.supportsOntology(any()) } returns false

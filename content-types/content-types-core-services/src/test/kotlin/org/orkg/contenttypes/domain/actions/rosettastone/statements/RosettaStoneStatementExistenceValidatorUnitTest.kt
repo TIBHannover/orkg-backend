@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStat
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneStatementCommand
 
-class RosettaStoneStatementExistenceValidatorUnitTest {
+internal class RosettaStoneStatementExistenceValidatorUnitTest {
     private val rosettaStoneStatementService: RosettaStoneStatementUseCases = mockk()
 
     private val rosettaStoneStatementExistenceValidator = RosettaStoneStatementExistenceValidator(rosettaStoneStatementService)

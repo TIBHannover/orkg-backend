@@ -21,7 +21,7 @@ import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-class TemplateInstanceSubjectValidatorUnitTest {
+internal class TemplateInstanceSubjectValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val templateInstanceService: TemplateInstanceService = mockk()
 

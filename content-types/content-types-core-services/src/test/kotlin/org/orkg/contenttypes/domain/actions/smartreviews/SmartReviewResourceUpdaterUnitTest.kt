@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewComman
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-class SmartReviewResourceUpdaterUnitTest {
+internal class SmartReviewResourceUpdaterUnitTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val smartReviewResourceUpdater = SmartReviewResourceUpdater(resourceService)

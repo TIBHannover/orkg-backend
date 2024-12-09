@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.testing.fixtures.createResource
 
-class PaperContributionCreatorUnitTest {
+internal class PaperContributionCreatorUnitTest {
     private val contributionCreator: ContributionCreator = mockk()
 
     private val paperContributionCreator = PaperContributionCreator(contributionCreator)

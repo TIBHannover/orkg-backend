@@ -63,7 +63,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Template Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

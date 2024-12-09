@@ -38,7 +38,7 @@ import org.orkg.graph.output.ThingRepository
 import org.orkg.testing.MockUserId
 import org.orkg.testing.fixedClock
 
-class RosettaStoneStatementServiceUnitTest {
+internal class RosettaStoneStatementServiceUnitTest {
     private val repository: RosettaStoneStatementRepository = mockk()
     private val rosettaStoneTemplateService: RosettaStoneTemplateUseCases = mockk()
     private val resourceRepository: ResourceRepository = mockk()

@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneTemplateCommand
 import org.orkg.graph.domain.FormattedLabel
 
-class RosettaStoneTemplateFormattedLabelCreateValidatorUnitTest {
+internal class RosettaStoneTemplateFormattedLabelCreateValidatorUnitTest {
     private val rosettaStoneTemplateFormattedLabelCreateValidator = RosettaStoneTemplateFormattedLabelCreateValidator()
 
     @Test

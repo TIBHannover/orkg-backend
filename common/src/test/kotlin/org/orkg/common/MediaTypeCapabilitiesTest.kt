@@ -7,7 +7,7 @@ import org.orkg.common.testing.fixtures.FORMATTED_LABEL_CAPABILITY
 import org.orkg.common.testing.fixtures.INCOMING_STATEMENTS_COUNT_CAPABILITY
 import org.springframework.http.MediaType
 
-class MediaTypeCapabilitiesTest {
+internal class MediaTypeCapabilitiesTest {
     @Test
     fun `Given a media type and a set of capabilities, when parsing media type capabilities, it returns success`() {
         val mediaType = MediaType.parseMediaType("application/json;formatted-label=true;incoming-statements-count=true")

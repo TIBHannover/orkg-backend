@@ -17,7 +17,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-class ComparisonContributionValidatorUnitTest {
+internal class ComparisonContributionValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
 
     private val contributionValidator = ComparisonContributionValidator<List<ThingId>?, Unit>(resourceRepository) { it }

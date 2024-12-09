@@ -22,7 +22,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
 import org.orkg.testing.fixedClock
 
-class PredicateServiceUnitTest {
+internal class PredicateServiceUnitTest {
 
     private val repository: PredicateRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()

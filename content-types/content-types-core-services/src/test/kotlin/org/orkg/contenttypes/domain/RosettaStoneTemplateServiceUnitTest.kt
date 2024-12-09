@@ -55,7 +55,7 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
-class RosettaStoneTemplateServiceUnitTest {
+internal class RosettaStoneTemplateServiceUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val predicateRepository: PredicateRepository = mockk()

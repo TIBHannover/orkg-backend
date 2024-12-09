@@ -15,7 +15,7 @@ import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-class ResourceValidatorUnitTest {
+internal class ResourceValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val resourceValidator = ResourceValidator<Set<ThingId>?, Set<ThingId>>(resourceRepository, { it }, { it })
 

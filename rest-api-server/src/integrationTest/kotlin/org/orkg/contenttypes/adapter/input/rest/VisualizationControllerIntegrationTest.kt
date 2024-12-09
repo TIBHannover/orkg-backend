@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Visualization Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class VisualizationControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class VisualizationControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

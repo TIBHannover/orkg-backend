@@ -20,7 +20,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTempl
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.testing.pageOf
 
-class RosettaStoneTemplateModifiableValidatorUnitTest {
+internal class RosettaStoneTemplateModifiableValidatorUnitTest {
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository = mockk()
 
     private val rosettaStoneTemplateModifiableValidator =

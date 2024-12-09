@@ -18,7 +18,7 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-class LiteratureListSectionIndexValidatorUnitTest {
+internal class LiteratureListSectionIndexValidatorUnitTest {
     private val statementRepository: StatementRepository = mockk()
 
     private val literatureListSectionIndexValidator =

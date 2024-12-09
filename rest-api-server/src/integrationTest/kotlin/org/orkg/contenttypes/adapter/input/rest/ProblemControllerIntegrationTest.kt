@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Problem Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class ProblemControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class ProblemControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

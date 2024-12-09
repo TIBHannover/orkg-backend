@@ -21,7 +21,7 @@ import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
-class RosettaStoneTemplateClosedCreatorUnitTest {
+internal class RosettaStoneTemplateClosedCreatorUnitTest {
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 

@@ -27,7 +27,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
 import org.orkg.testing.pageOf
 
-class ComparisonRelatedResourceDeleterUnitTest {
+internal class ComparisonRelatedResourceDeleterUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
 

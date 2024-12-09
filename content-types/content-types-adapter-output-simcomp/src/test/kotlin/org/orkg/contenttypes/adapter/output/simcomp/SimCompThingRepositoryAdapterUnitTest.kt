@@ -47,7 +47,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.testing.fixtures.createStatement
 
-class SimCompThingRepositoryAdapterUnitTest {
+internal class SimCompThingRepositoryAdapterUnitTest {
     private val simCompHostUrl = "https://example.org/simcomp"
     private val simCompApiKey = "TEST_API_KEY"
     private val httpClient: HttpClient = mockk()

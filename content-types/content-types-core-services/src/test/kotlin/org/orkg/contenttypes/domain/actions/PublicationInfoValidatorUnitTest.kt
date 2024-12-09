@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.InvalidMonth
 import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.graph.domain.InvalidLabel
 
-class PublicationInfoValidatorUnitTest {
+internal class PublicationInfoValidatorUnitTest {
     private val publicationInfoValidator = PublicationInfoValidator<PublicationInfoDefinition, Unit> { it }
 
     @Test

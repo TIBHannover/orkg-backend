@@ -19,7 +19,7 @@ import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
 
 @Nested
-class TemplateInstanceThingDefinitionValidatorUnitTest {
+internal class TemplateInstanceThingDefinitionValidatorUnitTest {
     private val thingDefinitionValidator: ThingDefinitionValidator = mockk()
 
     private val templateInstanceThingDefinitionValidator = TemplateInstanceThingDefinitionValidator(thingDefinitionValidator)

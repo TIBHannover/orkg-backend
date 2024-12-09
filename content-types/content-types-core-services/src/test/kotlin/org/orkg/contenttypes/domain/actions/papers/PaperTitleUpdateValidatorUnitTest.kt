@@ -20,7 +20,7 @@ import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
 
-class PaperTitleUpdateValidatorUnitTest {
+internal class PaperTitleUpdateValidatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val paperTitleUpdateValidator = PaperTitleUpdateValidator(

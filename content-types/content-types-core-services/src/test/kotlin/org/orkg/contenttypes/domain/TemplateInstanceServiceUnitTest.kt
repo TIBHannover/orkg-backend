@@ -39,7 +39,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-class TemplateInstanceServiceUnitTest {
+internal class TemplateInstanceServiceUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val templateService: TemplateUseCases = mockk()
     private val statementService: StatementUseCases = mockk()

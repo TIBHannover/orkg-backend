@@ -30,7 +30,7 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 
-class ContributionContentsValidatorUnitTest {
+internal class ContributionContentsValidatorUnitTest {
     private val thingRepository: ThingRepository = mockk()
 
     private val contributionContentsValidator = ContributionContentsValidator(thingRepository)

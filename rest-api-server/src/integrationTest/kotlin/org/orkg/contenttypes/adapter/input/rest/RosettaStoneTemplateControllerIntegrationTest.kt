@@ -61,7 +61,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Rosetta Stone Template Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class RosettaStoneTemplateControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

@@ -46,7 +46,6 @@ private const val MATCH_LISTED_PROBLEM = """$MATCH_PROBLEM WHERE (node.visibilit
 private const val MATCH_CONTRIBUTION_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {id: $id})<-[:RELATED {predicate_id: 'P32'}]-(node:Contribution:Resource)"""
 private const val MATCH_PAPER_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(node:Paper:Resource)"""
 private const val MATCH_RESEARCH_FIELD_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(node:ResearchField:Resource)"""
-private const val MATCH_COMPARISON_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'compareContribution'}]-(node:Comparison:Resource)"""
 private const val MATCH_LITERATURE_LISTS_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource)<-[:RELATED {predicate_id: 'HasList'}]-(node:LiteratureList:Resource)"""
 private const val MATCH_SMART_REVIEWS_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(node:SmartReview:Resource)"""
 private const val MATCH_VISUALIZATIONS_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)-[:RELATED {predicate_id: 'hasVisualization'}]->(node:Visualization:Resource)"""
@@ -88,16 +87,6 @@ interface Neo4jProblemRepository :
     @Query("""$MATCH_RESEARCH_FIELD_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_RESEARCH_FIELD_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT""")
     fun findAllResearchFieldsByProblemAndVisibility(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
-
-    // Comparisons
-
-    @Query("""$MATCH_COMPARISON_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_COMPARISON_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY_IS_LISTED $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT""")
-    fun findAllListedComparisonsByProblem(id: ThingId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query("""$MATCH_COMPARISON_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
-        countQuery = """$MATCH_COMPARISON_RELATED_TO_PROBLEM_WITH_ID $WHERE_VISIBILITY $WITH_DISTINCT_NODE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT""")
-    fun findAllComparisonsByProblemAndVisibility(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 
     // Literature Lists
 

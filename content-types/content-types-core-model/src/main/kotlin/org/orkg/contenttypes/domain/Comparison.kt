@@ -5,6 +5,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
@@ -23,6 +24,8 @@ data class Comparison(
     val authors: List<Author>,
     val sustainableDevelopmentGoals: Set<ObjectIdAndLabel>,
     val contributions: List<ObjectIdAndLabel>,
+    val config: ComparisonConfig,
+    val data: ComparisonData,
     val visualizations: List<ObjectIdAndLabel>,
     val relatedFigures: List<ObjectIdAndLabel>,
     val relatedResources: List<ObjectIdAndLabel>,
@@ -32,14 +35,21 @@ data class Comparison(
     val extractionMethod: ExtractionMethod,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId,
-    val versions: List<HeadVersion>,
+    val versions: VersionInfo,
     val isAnonymized: Boolean,
     val visibility: Visibility,
+    val published: Boolean,
     val unlistedBy: ContributorId? = null
 ) : ContentType {
     companion object {
-        fun from(resource: Resource, statements: Map<ThingId, List<GeneralStatement>>, versions: List<HeadVersion>): Comparison {
+        fun from(
+            resource: Resource,
+            statements: Map<ThingId, List<GeneralStatement>>,
+            table: ComparisonTable,
+            versionInfo: VersionInfo
+        ): Comparison {
             val directStatements = statements[resource.id].orEmpty()
+            val published = Classes.comparisonPublished in resource.classes
             return Comparison(
                 id = resource.id,
                 title = resource.label,
@@ -53,6 +63,8 @@ data class Comparison(
                     .sortedBy { it.id }
                     .toSet(),
                 contributions = directStatements.wherePredicate(Predicates.comparesContribution).objectIdsAndLabel(),
+                config = table.config,
+                data = table.data,
                 visualizations = directStatements.wherePredicate(Predicates.hasVisualization).objectIdsAndLabel(),
                 relatedFigures = directStatements.wherePredicate(Predicates.hasRelatedFigure).objectIdsAndLabel(),
                 relatedResources = directStatements.wherePredicate(Predicates.hasRelatedResource).objectIdsAndLabel(),
@@ -67,11 +79,12 @@ data class Comparison(
                 extractionMethod = resource.extractionMethod,
                 createdAt = resource.createdAt,
                 createdBy = resource.createdBy,
-                versions = versions,
+                versions = versionInfo,
                 isAnonymized = directStatements.wherePredicate(Predicates.isAnonymized)
                     .firstOrNull { it.`object` is Literal && (it.`object` as Literal).datatype == Literals.XSD.BOOLEAN.prefixedUri }
                     ?.`object`?.label.toBoolean(),
                 visibility = resource.visibility,
+                published = published,
                 unlistedBy = resource.unlistedBy
             )
         }

@@ -5,10 +5,9 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.HeadVersion
+import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -26,28 +25,12 @@ interface ComparisonRepository {
         organizationId: OrganizationId? = null,
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
-        sustainableDevelopmentGoal: ThingId? = null
+        published: Boolean? = null,
+        sustainableDevelopmentGoal: ThingId? = null,
+        researchProblem: ThingId? = null
     ): Page<Resource>
-    fun findVersionHistory(id: ThingId): List<HeadVersion>
+    // This method could be moved to a separate ComparisonPublishedRepository
+    fun findVersionHistoryForPublishedComparison(id: ThingId): VersionInfo
     fun findAllDOIsRelatedToComparison(id: ThingId): Iterable<String>
-    fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource>
-
-    // legacy methods:
-
-    // always returns all head and all previous versions
-    @Deprecated(message = "To be removed", replaceWith = ReplaceWith("findAll"))
-    fun findAllListedComparisonsByResearchField(
-        id: ThingId,
-        includeSubfields: Boolean = false,
-        pageable: Pageable
-    ): Page<Resource>
-
-    // always returns all head and all previous versions
-    @Deprecated(message = "To be removed", replaceWith = ReplaceWith("findAll"))
-    fun findAllComparisonsByResearchFieldAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        includeSubfields: Boolean = false,
-        pageable: Pageable
-    ): Page<Resource>
+    fun findAllCurrentAndListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource>
 }

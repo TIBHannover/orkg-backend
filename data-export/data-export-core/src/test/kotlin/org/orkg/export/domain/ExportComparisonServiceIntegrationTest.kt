@@ -40,7 +40,7 @@ internal class ExportComparisonServiceIntegrationTest : DescribeSpec({
 
         val comparison = createDummyComparison()
 
-        every { comparisonService.findAllCurrentListedAndUnpublishedComparisons(any()) } returns pageOf(comparison, comparison)
+        every { comparisonService.findAllCurrentAndListedAndUnpublishedComparisons(any()) } returns pageOf(comparison, comparison)
         every { comparisonRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf("test/doi")
 
         withContext(Dispatchers.IO) {

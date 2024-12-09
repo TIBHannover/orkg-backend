@@ -5,14 +5,15 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.featureflags.output.FeatureFlagService
+import org.orkg.graph.adapter.input.rest.PaperCountPerResearchProblemRepresentation
+import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.PaperCountPerResearchProblemRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.visibilityFilterFromFlags
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.adapter.input.rest.PaperCountPerResearchProblemRepresentation
-import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController
 class ResearchFieldController(
     private val service: RetrieveResearchFieldUseCase,
     private val resourceService: ResourceUseCases,
+    private val comparisonRepository: ComparisonRepository,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
     override val flags: FeatureFlagService
@@ -106,6 +108,7 @@ class ResearchFieldController(
      * based on a research field {id}
      * that includes the sub-research fields
      */
+    @Deprecated(message = "For removal", replaceWith = ReplaceWith("/api/comparisons?research_field={id}"))
     @GetMapping("/{id}/subfields/comparisons")
     fun getComparisonsIncludingSubFields(
         @PathVariable id: ThingId,
@@ -119,10 +122,10 @@ class ResearchFieldController(
         capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return service.findAllComparisonsByResearchField(
-            id = id,
+        return comparisonRepository.findAll(
+            researchField = id,
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
-            includeSubFields = true,
+            includeSubfields = true,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
     }
@@ -184,6 +187,7 @@ class ResearchFieldController(
      * based on a research field {id}
      * that excludes the sub-research fields
      */
+    @Deprecated(message = "For removal", replaceWith = ReplaceWith("/api/comparisons?research_field={id}"))
     @GetMapping("/{id}/comparisons")
     fun getComparisonsExcludingSubFields(
         @PathVariable id: ThingId,
@@ -197,10 +201,10 @@ class ResearchFieldController(
         capabilities: MediaTypeCapabilities
     ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return service.findAllComparisonsByResearchField(
-            id = id,
+        return comparisonRepository.findAll(
+            researchField = id,
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
-            includeSubFields = false,
+            includeSubfields = false,
             pageable = pageable
         ).mapToResourceRepresentation(capabilities)
     }

@@ -16,12 +16,12 @@ import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.PublishComparisonState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.identifiers.DOI
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishComparisonCommand
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.testing.fixtures.createResource
 
 class ComparisonVersionDoiPublisherUnitTest {
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()
@@ -47,7 +47,7 @@ class ComparisonVersionDoiPublisherUnitTest {
 
     @Test
     fun `Given a comparison publish command, when a new doi should be assigned, it registers a new doi and creates a hasDOI statement`() {
-        val comparison = createResource(classes = setOf(Classes.comparison))
+        val comparison = createDummyComparison()
         val command = dummyPublishComparisonCommand().copy(id = comparison.id)
         val state = PublishComparisonState(comparison)
         val doi = "10.1000/182"
@@ -64,7 +64,7 @@ class ComparisonVersionDoiPublisherUnitTest {
         verify(exactly = 1) {
             doiService.register(withArg {
                 it.suffix shouldBe comparison.id.value
-                it.title shouldBe comparison.label
+                it.title shouldBe comparison.title
                 it.subject shouldBe command.subject
                 it.description shouldBe command.description
                 it.url shouldBe URI.create("https://orkg.org/review/${comparison.id}")
@@ -86,7 +86,7 @@ class ComparisonVersionDoiPublisherUnitTest {
 
     @Test
     fun `Given a comparison publish command, when no doi should be assigned, it does nothing`() {
-        val comparison = createResource(classes = setOf(Classes.comparison))
+        val comparison = createDummyComparison()
         val command = dummyPublishComparisonCommand().copy(id = comparison.id, assignDOI = false)
         val state = PublishComparisonState(comparison)
 

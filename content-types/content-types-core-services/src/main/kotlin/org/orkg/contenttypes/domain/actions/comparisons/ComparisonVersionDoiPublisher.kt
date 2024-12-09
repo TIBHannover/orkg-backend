@@ -38,7 +38,7 @@ class ComparisonVersionDoiPublisher(
         val doi = doiService.register(
             DoiService.RegisterCommand(
                 suffix = comparison.id.value,
-                title = comparison.label,
+                title = comparison.title,
                 subject = command.subject,
                 description = command.description,
                 url = URI.create("$comparisonPublishBaseUri/").resolve(comparison.id.value),

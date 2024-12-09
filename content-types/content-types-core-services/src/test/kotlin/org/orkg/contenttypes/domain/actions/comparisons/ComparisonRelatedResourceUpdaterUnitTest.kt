@@ -15,6 +15,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResource
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
@@ -28,7 +29,6 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
-import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
@@ -57,45 +57,46 @@ class ComparisonRelatedResourceUpdaterUnitTest {
     fun `Given a comparison related resource update command, when contents are unchanged, it does nothing`() {
         val comparisonRelatedResource = createDummyComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand()
+        val comparison = createResource(classes = setOf(Classes.comparison))
 
+        every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
         } returns Optional.of(comparisonRelatedResource)
-        every {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf()
 
         contributionCreator.execute(command)
 
+        verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
         }
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
-            )
-        }
+    }
+
+    @Test
+    fun `Given a comparison related resource update command, when comparison does not exist, it throws an exception`() {
+        val comparisonRelatedResource = createDummyComparisonRelatedResource()
+        val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand()
+
+        every { resourceService.findById(command.comparisonId) } returns Optional.empty()
+
+        assertThrows<ComparisonNotFound> { contributionCreator.execute(command) }
+
+        verify(exactly = 1) { resourceService.findById(command.comparisonId) }
     }
 
     @Test
     fun `Given a comparison related resource update command, when it does not exist, it throws an exception`() {
         val comparisonRelatedResource = createDummyComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand()
+        val comparison = createResource(classes = setOf(Classes.comparison))
 
+        every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
@@ -105,6 +106,7 @@ class ComparisonRelatedResourceUpdaterUnitTest {
 
         assertThrows<ComparisonRelatedResourceNotFound> { contributionCreator.execute(command) }
 
+        verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
@@ -114,47 +116,16 @@ class ComparisonRelatedResourceUpdaterUnitTest {
     }
 
     @Test
-    fun `Given a comparison related resource update command, when comparison is not the current version, it throws an exception`() {
+    fun `Given a comparison related resource update command, when comparison is published, it throws an exception`() {
         val comparisonRelatedResource = createDummyComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand()
+        val comparison = createResource(classes = setOf(Classes.comparisonPublished))
 
-        every {
-            comparisonService.findRelatedResourceById(
-                comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
-            )
-        } returns Optional.of(comparisonRelatedResource)
-        every {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf(
-            createStatement(
-                subject = createResource(classes = setOf(Classes.comparison)),
-                predicate = createPredicate(Predicates.hasPreviousVersion),
-                `object` = createResource(command.comparisonId, classes = setOf(Classes.comparison))
-            )
-        )
+        every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
 
         assertThrows<ComparisonRelatedResourceNotModifiable> { contributionCreator.execute(command) }
 
-        verify(exactly = 1) {
-            comparisonService.findRelatedResourceById(
-                comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
-            )
-        }
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
-            )
-        }
+        verify(exactly = 1) { resourceService.findById(command.comparisonId) }
     }
 
     @Test
@@ -167,37 +138,24 @@ class ComparisonRelatedResourceUpdaterUnitTest {
             id = comparisonRelatedResource.id,
             label = command.label
         )
+        val comparison = createResource(classes = setOf(Classes.comparison))
 
+        every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
         } returns Optional.of(comparisonRelatedResource)
-        every {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf()
         every { resourceService.update(updateResourceCommand) } just runs
 
         contributionCreator.execute(command)
 
+        verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
-            )
-        }
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) { resourceService.update(updateResourceCommand) }
@@ -213,21 +171,15 @@ class ComparisonRelatedResourceUpdaterUnitTest {
             createStatement(StatementId("S123")),
             createStatement(StatementId("S456"))
         )
+        val comparison = createResource(classes = setOf(Classes.comparison))
 
+        every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
         } returns Optional.of(comparisonRelatedResource)
-        every {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf()
         every {
             statementService.findAll(
                 subjectId = command.comparisonRelatedResourceId,
@@ -246,18 +198,11 @@ class ComparisonRelatedResourceUpdaterUnitTest {
 
         contributionCreator.execute(command)
 
+        verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
-            )
-        }
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) {
@@ -287,21 +232,15 @@ class ComparisonRelatedResourceUpdaterUnitTest {
             createStatement(StatementId("S123")),
             createStatement(StatementId("S456"))
         )
+        val comparison = createResource(classes = setOf(Classes.comparison))
 
+        every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
         } returns Optional.of(comparisonRelatedResource)
-        every {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf()
         every {
             statementService.findAll(
                 subjectId = command.comparisonRelatedResourceId,
@@ -320,18 +259,11 @@ class ComparisonRelatedResourceUpdaterUnitTest {
 
         contributionCreator.execute(command)
 
+        verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
-            )
-        }
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) {
@@ -361,21 +293,15 @@ class ComparisonRelatedResourceUpdaterUnitTest {
             createStatement(StatementId("S123")),
             createStatement(StatementId("S456"))
         )
+        val comparison = createResource(classes = setOf(Classes.comparison))
 
+        every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
             )
         } returns Optional.of(comparisonRelatedResource)
-        every {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
-            )
-        } returns pageOf()
         every {
             statementService.findAll(
                 subjectId = command.comparisonRelatedResourceId,
@@ -394,18 +320,11 @@ class ComparisonRelatedResourceUpdaterUnitTest {
 
         contributionCreator.execute(command)
 
+        verify(exactly = 1) { resourceService.findById(command.comparisonId) }
         verify(exactly = 1) {
             comparisonService.findRelatedResourceById(
                 comparisonId = command.comparisonId,
                 id = command.comparisonRelatedResourceId
-            )
-        }
-        verify(exactly = 1) {
-            statementService.findAll(
-                subjectClasses = setOf(Classes.comparison),
-                predicateId = Predicates.hasPreviousVersion,
-                objectId = command.comparisonId,
-                pageable = PageRequests.SINGLE
             )
         }
         verify(exactly = 1) {

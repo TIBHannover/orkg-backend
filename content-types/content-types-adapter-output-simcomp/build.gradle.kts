@@ -2,7 +2,7 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("org.orkg.gradle.kotlin-library")
+    id("org.orkg.gradle.kotlin-library-with-test-fixtures")
     id("org.orkg.gradle.spring-library")
 }
 
@@ -22,6 +22,9 @@ dependencies {
     api(project(":feature-flags:feature-flags-ports"))
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.springframework:spring-web")
+    testFixturesApi(project(":common"))
+    testFixturesApi("com.fasterxml.jackson.core:jackson-databind")
+    testFixturesApi("org.springframework:spring-context")
 }
 
 testing {
@@ -40,6 +43,7 @@ testing {
                 implementation("io.kotest:kotest-runner-junit5")
                 implementation("io.kotest:kotest-assertions-core")
                 implementation(project(":common:serialization"))
+                implementation(project(":content-types:content-types-adapter-output-simcomp"))
                 implementation(testFixtures(project(":common")))
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
                 implementation(testFixtures(project(":graph:graph-core-model")))

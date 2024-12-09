@@ -116,6 +116,37 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("contributions").description("The list of contributions of the comparison."),
                         fieldWithPath("contributions[].id").description("The ID of the contribution."),
                         fieldWithPath("contributions[].label").description("The label of the contribution."),
+                        fieldWithPath("config").description("The configuration of the comparison."),
+                        fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
+                        fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
+                        fieldWithPath("config.transpose").description("Whether the comparison table is transposed."),
+                        fieldWithPath("config.type").description("The type of method used to create the comparison. Either of ${ComparisonType.entries.joinToString { "\"$it\"" }}."),
+                        // The short_codes field exists for compatibility reasons, but should not end up in the documentation, as it allows for arbitrary inputs.
+                        fieldWithPath("config.short_codes").description("The list of short form ids for the comparison.").optional().ignored(),
+                        fieldWithPath("data").description("The data contained in the comparison."),
+                        fieldWithPath("data.contributions").description("The list of contributions that are being compared in the comparison."),
+                        fieldWithPath("data.contributions[].id").description("The id of the contribution."),
+                        fieldWithPath("data.contributions[].label").description("The label of the contribution."),
+                        fieldWithPath("data.contributions[].paper_id").description("The id of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].paper_label").description("The label of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].paper_year").description("The publication year of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].active").description("Whether the contribution (column or row if transposed) should be displayed."),
+                        fieldWithPath("data.predicates").description("The list of predicates used in the comparison."),
+                        fieldWithPath("data.predicates[].id").description("When the comparison type is \"MERGE\", this is the predicate id. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
+                        fieldWithPath("data.predicates[].label").description("When the comparison type is \"MERGE\", this is the label of the predicate. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
+                        fieldWithPath("data.predicates[].n_contributions").description("The count of contributions that contain a statements for the predicate."),
+                        fieldWithPath("data.predicates[].active").description("Whether the predicate (row or column if transposed) should be displayed."),
+                        fieldWithPath("data.predicates[].similar_predicates").description("The list of similar predicate labels."),
+                        fieldWithPath("data.data").description("The values of the comparison."),
+                        fieldWithPath("data.data.*").description("A map of predicate ids to the values for each contribution."),
+                        fieldWithPath("data.data.*[]").description("All values for the predicate in the comparison. This corresponds to a row (or column if transposed) of the comparison."),
+                        fieldWithPath("data.data.*[][]").description("All values for the predicate and a single contribution. Every value corresponds to a single cell of the comparison."),
+                        fieldWithPath("data.data.*[][].id").description("The id of the orkg entity behind the value."),
+                        fieldWithPath("data.data.*[][].label").description("The label of the orkg entity behind the value. This corresponds to the cell value."),
+                        fieldWithPath("data.data.*[][].classes").description("The classes of the orkg entity, if it is a resource, empty otherwise."),
+                        fieldWithPath("data.data.*[][].path").description("The predicate path (ids) of the value within the contribution."),
+                        fieldWithPath("data.data.*[][].path_labels").description("The corresponding predicate labels of the predicate path."),
+                        fieldWithPath("data.data.*[][]._class").description("The type of the orkg entity behind the value. Either of \"class\", \"resource\", \"predicate\" or \"literal\"."),
                         fieldWithPath("visualizations").description("The list of visualizations of the comparison."),
                         fieldWithPath("visualizations[].id").description("The ID of the visualization."),
                         fieldWithPath("visualizations[].label").description("The label of the visualization."),
@@ -132,14 +163,21 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         timestampFieldWithPath("created_at", "the comparison resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this comparison."),
-                        fieldWithPath("versions").description("A sorted list by creation date of previous versions of the comparison."),
-                        fieldWithPath("versions[].id").description("The ID of the resource of a previous version of the comparison."),
-                        fieldWithPath("versions[].label").description("The label of a previous version of the comparison."),
-                        timestampFieldWithPath("versions[].created_at", "the previous version of the comparison resource was created"),
-                        fieldWithPath("versions[].created_by").type("String").description("The UUID of the user or service who created the comparison version."),
+                        fieldWithPath("versions.head").description("The head version of the comparison."),
+                        fieldWithPath("versions.head.id").description("The id of the head version."),
+                        fieldWithPath("versions.head.label").description("The label of the head version."),
+                        timestampFieldWithPath("versions.head.created_at", "the head version was created"),
+                        fieldWithPath("versions.head.created_by").type("String").description("The UUID of the user or service who created the comparison version."),
+                        fieldWithPath("versions.published").description("The list of published versions of the comparison."),
+                        fieldWithPath("versions.published[].id").description("The id of the published version."),
+                        fieldWithPath("versions.published[].label").description("The label of the published version."),
+                        timestampFieldWithPath("versions.published[].created_at", "the published version was created"),
+                        fieldWithPath("versions.published[].created_by").type("String").description("The UUID of the user or service who created the comparison version."),
+                        fieldWithPath("versions.published[].changelog").description("The changelog of the comparison version. (currently unsupported)"),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison is anonymized."),
                         fieldWithPath("visibility").description("""Visibility of the comparison. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED"."""),
                         fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this comparison.").optional(),
+                        fieldWithPath("published").description("Whether the comparison is published or not."),
                         fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `comparison`."),
                     ).and(authorListFields("comparison"))
                         .and(publicationInfoFields("comparison"))
@@ -172,7 +210,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @DisplayName("Given several comparisons, when they are fetched, then status is 200 OK and comparisons are returned")
     fun getPaged() {
         every {
-            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            comparisonService.findAll(
+                any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+            )
         } returns pageOf(createDummyComparison())
 
         documentedGetRequestTo("/api/comparisons")
@@ -185,7 +225,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            comparisonService.findAll(
+                any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+            )
         }
     }
 
@@ -193,7 +235,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @DisplayName("Given several comparisons, when filtering by several parameters, then status is 200 OK and comparisons are returned")
     fun getPagedWithParameters() {
         every {
-            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            comparisonService.findAll(
+                any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+            )
         } returns pageOf(createDummyComparison())
 
         val title = "label"
@@ -207,7 +251,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
         val researchFieldId = ThingId("R456")
         val includeSubfields = true
+        val published = true
         val sdg = ThingId("SDG_1")
+        val researchProblemId = ThingId("R789")
 
         documentedGetRequestTo("/api/comparisons")
             .param("title", title)
@@ -221,7 +267,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .param("organization_id", organizationId.value.toString())
             .param("research_field", researchFieldId.value)
             .param("include_subfields", includeSubfields.toString())
+            .param("published", published.toString())
             .param("sdg", sdg.value)
+            .param("research_problem", researchProblemId.value)
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -242,7 +290,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)"),
                         parameterWithName("research_field").description("Filter for research field id. (optional)"),
                         parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
+                        parameterWithName("published").description("Filter for the publication status of the comparison. (optional)"),
                         parameterWithName("sdg").description("Filter for the sustainable development goal that the comparison belongs to. (optional)"),
+                        parameterWithName("research_problem").description("Filter for the research problem id the comparison is related to. (optional)"),
                     )
                 )
             )
@@ -263,7 +313,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                 organizationId = organizationId,
                 researchField = researchFieldId,
                 includeSubfields = includeSubfields,
-                sustainableDevelopmentGoal = sdg
+                published = published,
+                sustainableDevelopmentGoal = sdg,
+                researchProblem = researchProblemId
             )
         }
     }
@@ -272,7 +324,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     fun `Given several comparisons, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
         val exception = UnknownSortingProperty("unknown")
         every {
-            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            comparisonService.findAll(
+                any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+            )
         } throws exception
 
         mockMvc.perform(get("/api/comparisons?sort=unknown"))
@@ -284,7 +338,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpect(jsonPath("$.path").value("/api/comparisons"))
 
         verify(exactly = 1) {
-            comparisonService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            comparisonService.findAll(
+                any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+            )
         }
     }
 
@@ -463,23 +519,19 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @TestWithMockUser
     @DisplayName("Given a comparison, when publishing, then status 204 NO CONTENT")
     fun publish() {
-        val comparisonVersionId = ThingId("R123")
+        val comparisonVersionId = ThingId("R1564")
         val subject = "comparison subject"
         val description = "comparison description"
         val authors = listOf(Author("Author 1"))
-        val config = createComparisonConfig()
-        val data = createComparisonData()
         val assignDOI = true
         val request = mapOf(
             "subject" to subject,
             "description" to description,
             "authors" to authors,
-            "config" to config,
-            "data" to data,
             "assign_doi" to assignDOI
         )
 
-        every { comparisonService.publish(any()) } just runs
+        every { comparisonService.publish(any()) } returns comparisonVersionId
 
         documentedPostRequestTo("/api/comparisons/{id}/publish", comparisonVersionId)
             .content(request)
@@ -496,37 +548,6 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     requestFields(
                         fieldWithPath("subject").description("The subject of the comparison."),
                         fieldWithPath("description").description("The description of the comparison."),
-                        fieldWithPath("config").description("The configuration of the comparison."),
-                        fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
-                        fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
-                        fieldWithPath("config.transpose").description("Whether the comparison table is transposed."),
-                        fieldWithPath("config.type").description("The type of method used to create the comparison. Either of ${ComparisonType.entries.joinToString { "\"$it\"" }}"),
-                        // The short_codes field exists for compatibility reasons, but should not end up in the documentation, as it allows for arbitrary inputs.
-                        fieldWithPath("config.short_codes").description("The list of short form ids for the comparison.").optional().ignored(),
-                        fieldWithPath("data").description("The data contained in the comparison."),
-                        fieldWithPath("data.contributions").description("The list of contributions that are being compared in the comparison."),
-                        fieldWithPath("data.contributions[].id").description("The id of the contribution."),
-                        fieldWithPath("data.contributions[].label").description("The label of the contribution."),
-                        fieldWithPath("data.contributions[].paper_id").description("The id of the paper the contribution belongs to."),
-                        fieldWithPath("data.contributions[].paper_label").description("The label of the paper the contribution belongs to."),
-                        fieldWithPath("data.contributions[].paper_year").description("The publication year of the paper the contribution belongs to."),
-                        fieldWithPath("data.contributions[].active").description("Whether the contribution (column or row if transposed) should be displayed."),
-                        fieldWithPath("data.predicates").description("The list of predicates used in the comparison."),
-                        fieldWithPath("data.predicates[].id").description("When the comparison type is \"MERGE\", this is the predicate id. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
-                        fieldWithPath("data.predicates[].label").description("When the comparison type is \"MERGE\", this is the label of the predicate. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
-                        fieldWithPath("data.predicates[].n_contributions").description("The count of contributions that contain a statements for the predicate."),
-                        fieldWithPath("data.predicates[].active").description("Whether the predicate (row or column if transposed) should be displayed."),
-                        fieldWithPath("data.predicates[].similar_predicates").description("The list of similar predicate labels."),
-                        fieldWithPath("data.data").description("The values of the comparison."),
-                        fieldWithPath("data.data.*").description("A map of predicate ids to the values for each contribution."),
-                        fieldWithPath("data.data.*[]").description("All values for the predicate in the comparison. This corresponds to a row (or column if transposed) of the comparison."),
-                        fieldWithPath("data.data.*[][]").description("All values for the predicate and a single contribution. Every value corresponds to a single cell of the comparison."),
-                        fieldWithPath("data.data.*[][].id").description("The id of the orkg entity behind the value."),
-                        fieldWithPath("data.data.*[][].label").description("The label of the orkg entity behind the value. This corresponds to the cell value."),
-                        fieldWithPath("data.data.*[][].classes").description("The classes of the orkg entity, if it is a resource, empty otherwise."),
-                        fieldWithPath("data.data.*[][].path").description("The predicate path (ids) of the value within the contribution."),
-                        fieldWithPath("data.data.*[][].path_labels").description("The corresponding predicate labels of the predicate path."),
-                        fieldWithPath("data.data.*[][]._class").description("The type of the orkg entity behind the value. Either of \"class\", \"resource\", \"predicate\" or \"literal\"."),
                         fieldWithPath("assign_doi").description("Whether to assign a new DOI for the comparison when publishing."),
                     ).and(authorListFields("comparison"))
                 )
@@ -541,8 +562,6 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     it.description shouldBe description
                     it.subject shouldBe subject
                     it.authors shouldBe authors
-                    it.config shouldBe config
-                    it.data shouldBe data
                     it.assignDOI shouldBe assignDOI
                 }
             )
@@ -556,15 +575,11 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val subject = "comparison subject"
         val description = "comparison description"
         val authors = listOf(Author("Author 1"))
-        val config = createComparisonConfig()
-        val data = createComparisonData()
         val assignDOI = true
         val request = mapOf(
             "subject" to subject,
             "description" to description,
             "authors" to authors,
-            "config" to config,
-            "data" to data,
             "assign_doi" to assignDOI
         )
         val exception = ComparisonNotFound(id)
@@ -589,8 +604,6 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     it.description shouldBe description
                     it.subject shouldBe subject
                     it.authors shouldBe authors
-                    it.config shouldBe config
-                    it.data shouldBe data
                     it.assignDOI shouldBe assignDOI
                 }
             )
@@ -604,15 +617,11 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val subject = "comparison subject"
         val description = "comparison description"
         val authors = listOf(Author("Author 1"))
-        val config = createComparisonConfig()
-        val data = createComparisonData()
         val assignDOI = true
         val request = mapOf(
             "subject" to subject,
             "description" to description,
             "authors" to authors,
-            "config" to config,
-            "data" to data,
             "assign_doi" to assignDOI
         )
         val exception = ServiceUnavailable.create("DOI", 500, "Internal error")
@@ -637,8 +646,6 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     it.description shouldBe description
                     it.subject shouldBe subject
                     it.authors shouldBe authors
-                    it.config shouldBe config
-                    it.data shouldBe data
                     it.assignDOI shouldBe assignDOI
                 }
             )
@@ -670,6 +677,37 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("research_fields").description("The list of research fields the comparison will be assigned to."),
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the comparison will be assigned to. (optional)").optional(),
                         fieldWithPath("contributions[]").description("The ids of the contributions the comparison compares."),
+                        fieldWithPath("config").description("The configuration of the comparison."),
+                        fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
+                        fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
+                        fieldWithPath("config.transpose").description("Whether the comparison table is transposed."),
+                        fieldWithPath("config.type").description("The type of method used to create the comparison. Either of ${ComparisonType.entries.joinToString { "\"$it\"" }}."),
+                        // The short_codes field exists for compatibility reasons, but should not end up in the documentation, as it allows for arbitrary inputs.
+                        fieldWithPath("config.short_codes").description("The list of short form ids for the comparison.").optional().ignored(),
+                        fieldWithPath("data").description("The data contained in the comparison."),
+                        fieldWithPath("data.contributions").description("The list of contributions that are being compared in the comparison."),
+                        fieldWithPath("data.contributions[].id").description("The id of the contribution."),
+                        fieldWithPath("data.contributions[].label").description("The label of the contribution."),
+                        fieldWithPath("data.contributions[].paper_id").description("The id of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].paper_label").description("The label of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].paper_year").description("The publication year of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].active").description("Whether the contribution (column or row if transposed) should be displayed."),
+                        fieldWithPath("data.predicates").description("The list of predicates used in the comparison."),
+                        fieldWithPath("data.predicates[].id").description("When the comparison type is \"MERGE\", this is the predicate id. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
+                        fieldWithPath("data.predicates[].label").description("When the comparison type is \"MERGE\", this is the label of the predicate. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
+                        fieldWithPath("data.predicates[].n_contributions").description("The count of contributions that contain a statements for the predicate."),
+                        fieldWithPath("data.predicates[].active").description("Whether the predicate (row or column if transposed) should be displayed."),
+                        fieldWithPath("data.predicates[].similar_predicates").description("The list of similar predicate labels."),
+                        fieldWithPath("data.data").description("The values of the comparison."),
+                        fieldWithPath("data.data.*").description("A map of predicate ids to the values for each contribution."),
+                        fieldWithPath("data.data.*[]").description("All values for the predicate in the comparison. This corresponds to a row (or column if transposed) of the comparison."),
+                        fieldWithPath("data.data.*[][]").description("All values for the predicate and a single contribution. Every value corresponds to a single cell of the comparison."),
+                        fieldWithPath("data.data.*[][].id").description("The id of the orkg entity behind the value."),
+                        fieldWithPath("data.data.*[][].label").description("The label of the orkg entity behind the value. This corresponds to the cell value."),
+                        fieldWithPath("data.data.*[][].classes").description("The classes of the orkg entity, if it is a resource, empty otherwise."),
+                        fieldWithPath("data.data.*[][].path").description("The predicate path (ids) of the value within the contribution."),
+                        fieldWithPath("data.data.*[][].path_labels").description("The corresponding predicate labels of the predicate path."),
+                        fieldWithPath("data.data.*[][]._class").description("The type of the orkg entity behind the value. Either of \"class\", \"resource\", \"predicate\" or \"literal\"."),
                         fieldWithPath("references[]").description("The references to external sources that the comparison refers to."),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the comparison belongs to."),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to."),
@@ -972,6 +1010,37 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("research_fields").description("The list of research fields the comparison will be assigned to. (optional)"),
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the comparison will be assigned to. (optional)").optional(),
                         fieldWithPath("contributions[]").description("The ids of the contributions the comparison compares. (optional)"),
+                        fieldWithPath("config").description("The configuration of the comparison. (optional)"),
+                        fieldWithPath("config.predicates").description("The list of labels of the predicates used in the comparison."),
+                        fieldWithPath("config.contributions").description("The list of ids of contributions that are being compared in the comparison."),
+                        fieldWithPath("config.transpose").description("Whether the comparison table is transposed."),
+                        fieldWithPath("config.type").description("The type of method used to create the comparison. Either of ${ComparisonType.entries.joinToString { "\"$it\"" }}."),
+                        // The short_codes field exists for compatibility reasons, but should not end up in the documentation, as it allows for arbitrary inputs.
+                        fieldWithPath("config.short_codes").description("The list of short form ids for the comparison.").optional().ignored(),
+                        fieldWithPath("data").description("The data contained in the comparison."),
+                        fieldWithPath("data.contributions").description("The list of contributions that are being compared in the comparison."),
+                        fieldWithPath("data.contributions[].id").description("The id of the contribution."),
+                        fieldWithPath("data.contributions[].label").description("The label of the contribution."),
+                        fieldWithPath("data.contributions[].paper_id").description("The id of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].paper_label").description("The label of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].paper_year").description("The publication year of the paper the contribution belongs to."),
+                        fieldWithPath("data.contributions[].active").description("Whether the contribution (column or row if transposed) should be displayed."),
+                        fieldWithPath("data.predicates").description("The list of predicates used in the comparison."),
+                        fieldWithPath("data.predicates[].id").description("When the comparison type is \"MERGE\", this is the predicate id. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
+                        fieldWithPath("data.predicates[].label").description("When the comparison type is \"MERGE\", this is the label of the predicate. When the comparison type is \"PATH\", this is a '/' delimited list of predicate labels, indicating the path from the contribution resource."),
+                        fieldWithPath("data.predicates[].n_contributions").description("The count of contributions that contain a statements for the predicate."),
+                        fieldWithPath("data.predicates[].active").description("Whether the predicate (row or column if transposed) should be displayed."),
+                        fieldWithPath("data.predicates[].similar_predicates").description("The list of similar predicate labels."),
+                        fieldWithPath("data.data").description("The values of the comparison. (optional)"),
+                        fieldWithPath("data.data.*").description("A map of predicate ids to the values for each contribution."),
+                        fieldWithPath("data.data.*[]").description("All values for the predicate in the comparison. This corresponds to a row (or column if transposed) of the comparison."),
+                        fieldWithPath("data.data.*[][]").description("All values for the predicate and a single contribution. Every value corresponds to a single cell of the comparison."),
+                        fieldWithPath("data.data.*[][].id").description("The id of the orkg entity behind the value."),
+                        fieldWithPath("data.data.*[][].label").description("The label of the orkg entity behind the value. This corresponds to the cell value."),
+                        fieldWithPath("data.data.*[][].classes").description("The classes of the orkg entity, if it is a resource, empty otherwise."),
+                        fieldWithPath("data.data.*[][].path").description("The predicate path (ids) of the value within the contribution."),
+                        fieldWithPath("data.data.*[][].path_labels").description("The corresponding predicate labels of the predicate path."),
+                        fieldWithPath("data.data.*[][]._class").description("The type of the orkg entity behind the value. Either of \"class\", \"resource\", \"predicate\" or \"literal\"."),
                         fieldWithPath("references[]").description("The references to external sources that the comparison refers to. (optional)"),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the comparison belongs to. (optional)"),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to. (optional)"),
@@ -1178,6 +1247,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                 ThingId("SDG_2")
             ),
             contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
+            config = createComparisonConfig(),
+            data = createComparisonData(),
             references = listOf("https://orkg.org/resources/R1000", "paper citation"),
             observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
             organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
@@ -1227,6 +1298,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                 ThingId("SDG_2")
             ),
             contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
+            config = createComparisonConfig(),
+            data = createComparisonData(),
             references = listOf("https://orkg.org/resources/R1000", "paper citation"),
             observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
             organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),

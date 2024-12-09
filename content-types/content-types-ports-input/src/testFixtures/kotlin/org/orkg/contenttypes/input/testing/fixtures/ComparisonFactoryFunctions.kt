@@ -43,6 +43,8 @@ fun dummyCreateComparisonCommand() = CreateComparisonUseCase.CreateCommand(
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_1"), ThingId("SDG_2")),
     contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
+    config = createComparisonConfig(),
+    data = createComparisonData(),
     references = listOf("https://orkg.org/resources/R1000", "paper citation"),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
@@ -80,6 +82,8 @@ fun dummyUpdateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_2"), ThingId("SDG_3")),
     contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
+    config = createComparisonConfig(),
+    data = createComparisonData(),
     references = listOf("https://orkg.org/resources/R1000", "paper citation"),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
@@ -108,7 +112,5 @@ fun dummyPublishComparisonCommand() = PublishComparisonUseCase.PublishCommand(
             homepage = ParsedIRI("https://example.org")
         )
     ),
-    config = createComparisonConfig(),
-    data = createComparisonData(),
     assignDOI = true
 )

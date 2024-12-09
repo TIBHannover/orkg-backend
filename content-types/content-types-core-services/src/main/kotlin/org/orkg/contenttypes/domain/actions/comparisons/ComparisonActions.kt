@@ -3,11 +3,12 @@ package org.orkg.contenttypes.domain.actions.comparisons
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Comparison
+import org.orkg.contenttypes.domain.ComparisonConfig
+import org.orkg.contenttypes.domain.ComparisonData
 import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
 import org.orkg.contenttypes.domain.actions.PublishComparisonCommand
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
-import org.orkg.graph.domain.Resource
 
 interface CreateComparisonAction : Action<CreateComparisonCommand, CreateComparisonAction.State> {
     data class State(
@@ -25,6 +26,9 @@ interface UpdateComparisonAction : Action<UpdateComparisonCommand, UpdateCompari
 
 interface PublishComparisonAction : Action<PublishComparisonCommand, PublishComparisonAction.State> {
     data class State(
-        val comparison: Resource? = null
+        val comparison: Comparison? = null,
+        val comparisonVersionId: ThingId? = null,
+        val config: ComparisonConfig? = null,
+        val data: ComparisonData? = null
     )
 }

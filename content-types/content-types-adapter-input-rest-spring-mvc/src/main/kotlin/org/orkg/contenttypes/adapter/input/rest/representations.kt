@@ -22,6 +22,8 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.ClassReference
+import org.orkg.contenttypes.domain.ComparisonConfig
+import org.orkg.contenttypes.domain.ComparisonData
 import org.orkg.contenttypes.domain.LiteralReference
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PredicateReference
@@ -122,6 +124,8 @@ data class ComparisonRepresentation(
     @get:JsonProperty("sdgs")
     val sustainableDevelopmentGoals: Set<LabeledObjectRepresentation>,
     val contributions: List<LabeledObjectRepresentation>,
+    val config: ComparisonConfig,
+    val data: ComparisonData,
     val visualizations: List<LabeledObjectRepresentation>,
     @get:JsonProperty("related_figures")
     val relatedFigures: List<LabeledObjectRepresentation>,
@@ -137,13 +141,14 @@ data class ComparisonRepresentation(
     @get:JsonProperty("created_by")
     val createdBy: ContributorId,
     @get:JsonProperty("versions")
-    val versions: List<HeadVersionRepresentation>,
+    val versions: VersionInfoRepresentation,
     @get:JsonProperty("is_anonymized")
     val isAnonymized: Boolean,
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
+    val published: Boolean,
     override val jsonClass: String = "comparison"
 ) : ContentTypeRepresentation
 

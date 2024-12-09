@@ -49,6 +49,10 @@
         "label": "Comparison"
     },
     {
+        "id": "ComparisonPublished",
+        "label": "Published Comparison"
+    },
+    {
         "id": "Date",
         "label": "Date",
         "uri": "http://www.w3.org/2001/XMLSchema#date"

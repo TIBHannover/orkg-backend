@@ -1,3 +1,5 @@
+@file:Suppress("HttpUrlsUsage")
+
 package org.orkg.contenttypes.adapter.input.rest
 
 import io.kotest.assertions.asClue
@@ -18,9 +20,18 @@ import org.orkg.common.ThingId
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
+import org.orkg.contenttypes.adapter.output.simcomp.internal.InMemorySimCompThingRepositoryAdapter
 import org.orkg.contenttypes.domain.Author
+import org.orkg.contenttypes.domain.ComparisonConfig
+import org.orkg.contenttypes.domain.ComparisonData
+import org.orkg.contenttypes.domain.ComparisonHeaderCell
+import org.orkg.contenttypes.domain.ComparisonIndexCell
 import org.orkg.contenttypes.domain.ComparisonNotFound
+import org.orkg.contenttypes.domain.ComparisonType
+import org.orkg.contenttypes.domain.ConfiguredComparisonTargetCell
+import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.createClasses
 import org.orkg.createContributor
@@ -55,7 +66,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Comparison Controller")
 @Transactional
-@Import(MockUserDetailsService::class)
+@Import(MockUserDetailsService::class, InMemorySimCompThingRepositoryAdapter::class)
 class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
@@ -283,6 +294,56 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
                 LabeledObjectRepresentation(ThingId("R9786"), "Contribution 3"),
                 LabeledObjectRepresentation(ThingId("R3120"), "Contribution 4")
             )
+            it.config shouldBe ComparisonConfig(
+                predicates = listOf(),
+                contributions = listOf("R456789", "R987654"),
+                transpose = false,
+                type = ComparisonType.MERGE,
+                shortCodes = emptyList()
+            )
+            it.data shouldBe ComparisonData(
+                listOf(
+                    ComparisonHeaderCell(
+                        id = "R456789",
+                        label = "Contribution 1",
+                        paperId = "R456",
+                        paperLabel = "Paper 1",
+                        paperYear = 2024,
+                        active = true
+                    ),
+                    ComparisonHeaderCell(
+                        id = "R987654",
+                        label = "Contribution 1",
+                        paperId = "R789",
+                        paperLabel = "Paper 2",
+                        paperYear = 2022,
+                        active = true
+                    )
+                ),
+                listOf(
+                    ComparisonIndexCell(
+                        id = "P32",
+                        label = "research problem",
+                        contributionAmount = 2,
+                        active = true,
+                        similarPredicates = listOf("P15")
+                    )
+                ),
+                mapOf(
+                    "P32" to listOf(
+                        listOf(
+                            ConfiguredComparisonTargetCell(
+                                id = "R192326",
+                                label = "Covid-19 Pandemic Ontology Development",
+                                classes = listOf(ThingId("Problem")),
+                                path = listOf(ThingId("R187004"), ThingId("P32")),
+                                pathLabels = listOf("Contribution 1", "research problem"),
+                                `class` = "resource"
+                            )
+                        )
+                    )
+                )
+            )
             it.visualizations shouldBe emptyList()
             it.relatedFigures shouldBe emptyList()
             it.relatedResources shouldBe emptyList()
@@ -293,6 +354,12 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
             it.visibility shouldBe Visibility.DEFAULT
             it.extractionMethod shouldBe ExtractionMethod.MANUAL
             it.createdBy shouldBe ContributorId(MockUserId.USER)
+            it.versions shouldBe VersionInfoRepresentation(
+                head = HeadVersionRepresentation(it.id, it.title, it.createdAt, it.createdBy),
+                published = emptyList()
+            )
+            it.published shouldBe false
+            it.unlistedBy shouldBe null
         }
 
         put("/api/comparisons/{id}", id)
@@ -352,6 +419,64 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
                 ObjectIdAndLabel(ThingId("R3120"), "Contribution 4"),
                 ObjectIdAndLabel(ThingId("R7864"), "Contribution 5")
             )
+            it.config shouldBe ComparisonConfig(
+                predicates = listOf(),
+                contributions = listOf("R456790", "R987654", "R1546864"),
+                transpose = false,
+                type = ComparisonType.PATH,
+                shortCodes = emptyList()
+            )
+            it.data shouldBe ComparisonData(
+                listOf(
+                    ComparisonHeaderCell(
+                        id = "R456790",
+                        label = "Contribution 2",
+                        paperId = "R456",
+                        paperLabel = "Paper 1",
+                        paperYear = 2024,
+                        active = true
+                    ),
+                    ComparisonHeaderCell(
+                        id = "R987654",
+                        label = "Contribution 1",
+                        paperId = "R789",
+                        paperLabel = "Paper 2",
+                        paperYear = 2022,
+                        active = true
+                    ),
+                    ComparisonHeaderCell(
+                        id = "R1546864",
+                        label = "Contribution 1",
+                        paperId = "R258",
+                        paperLabel = "Paper 3",
+                        paperYear = 2023,
+                        active = true
+                    )
+                ),
+                listOf(
+                    ComparisonIndexCell(
+                        id = "P32",
+                        label = "research problem",
+                        contributionAmount = 2,
+                        active = true,
+                        similarPredicates = listOf("P15")
+                    )
+                ),
+                mapOf(
+                    "P32" to listOf(
+                        listOf(
+                            ConfiguredComparisonTargetCell(
+                                id = "R192326",
+                                label = "Covid-19 Pandemic Ontology Development",
+                                classes = listOf(ThingId("Problem")),
+                                path = listOf(ThingId("R187004"), ThingId("P32")),
+                                pathLabels = listOf("Contribution 1", "research problem"),
+                                `class` = "resource"
+                            )
+                        )
+                    )
+                )
+            )
             it.visualizations shouldBe emptyList()
             it.relatedFigures shouldBe emptyList()
             it.relatedResources shouldBe emptyList()
@@ -362,6 +487,12 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
             it.visibility shouldBe Visibility.DEFAULT
             it.extractionMethod shouldBe ExtractionMethod.AUTOMATIC
             it.createdBy shouldBe ContributorId(MockUserId.USER)
+            it.versions shouldBe VersionInfo(
+                head = HeadVersion(it.id, it.title, it.createdAt, it.createdBy),
+                published = emptyList()
+            )
+            it.published shouldBe false
+            it.unlistedBy shouldBe null
         }
     }
 
@@ -404,6 +535,64 @@ private const val createComparisonJson = """{
   "contributions": [
     "R6541", "R5364", "R9786", "R3120"
   ],
+  "config": {
+    "contributions": [
+      "R456789",
+      "R987654"
+    ],
+    "predicates": [],
+    "transpose": false,
+    "type": "MERGE"
+  },
+  "data": {
+    "contributions": [
+      {
+        "active": true,
+        "id": "R456789",
+        "label": "Contribution 1",
+        "paper_id": "R456",
+        "paper_label": "Paper 1",
+        "paper_year": 2024
+      },
+      {
+        "active": true,
+        "id": "R987654",
+        "label": "Contribution 1",
+        "paper_id": "R789",
+        "paper_label": "Paper 2",
+        "paper_year": 2022
+      }
+    ],
+    "data": {
+      "P32": [
+        [
+          {
+            "_class": "resource",
+            "classes": ["Problem"],
+            "id": "R192326",
+            "label": "Covid-19 Pandemic Ontology Development",
+            "path": [
+              "R187004",
+              "P32"
+            ],
+            "path_labels": [
+              "Contribution 1",
+              "research problem"
+            ]
+          }
+        ]
+      ]
+    },
+    "predicates": [
+      {
+        "active": true,
+        "id": "P32",
+        "label": "research problem",
+        "n_contributions": 2,
+        "similar_predicates": ["P15"]
+      }
+    ]
+  },
   "references": [
     "https://orkg.org/resources/R1000",
     "paper citation"
@@ -454,6 +643,73 @@ private const val updateComparisonJson = """{
   "contributions": [
     "R6541", "R5364", "R3120", "R7864"
   ],
+  "config": {
+    "contributions": [
+      "R456790",
+      "R987654",
+      "R1546864"
+    ],
+    "predicates": [],
+    "transpose": false,
+    "type": "PATH"
+  },
+  "data": {
+    "contributions": [
+      {
+        "active": true,
+        "id": "R456790",
+        "label": "Contribution 2",
+        "paper_id": "R456",
+        "paper_label": "Paper 1",
+        "paper_year": 2024
+      },
+      {
+        "active": true,
+        "id": "R987654",
+        "label": "Contribution 1",
+        "paper_id": "R789",
+        "paper_label": "Paper 2",
+        "paper_year": 2022
+      },
+      {
+        "active": true,
+        "id": "R1546864",
+        "label": "Contribution 1",
+        "paper_id": "R258",
+        "paper_label": "Paper 3",
+        "paper_year": 2023
+      }
+    ],
+    "data": {
+      "P32": [
+        [
+          {
+            "_class": "resource",
+            "classes": ["Problem"],
+            "id": "R192326",
+            "label": "Covid-19 Pandemic Ontology Development",
+            "path": [
+              "R187004",
+              "P32"
+            ],
+            "path_labels": [
+              "Contribution 1",
+              "research problem"
+            ]
+          }
+        ]
+      ]
+    },
+    "predicates": [
+      {
+        "active": true,
+        "id": "P32",
+        "label": "research problem",
+        "n_contributions": 2,
+        "similar_predicates": ["P15"]
+      }
+    ]
+  },
   "references": [
     "other paper citation",
     "paper citation"

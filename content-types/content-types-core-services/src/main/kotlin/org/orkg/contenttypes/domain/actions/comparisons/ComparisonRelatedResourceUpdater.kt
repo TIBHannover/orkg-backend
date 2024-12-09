@@ -1,11 +1,12 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
 import org.orkg.common.PageRequests
+import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.input.ComparisonUseCases
-import org.orkg.contenttypes.input.UpdateComparisonUseCase.*
+import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedResourceCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
@@ -32,17 +33,16 @@ class ComparisonRelatedResourceUpdater(
     )
 
     fun execute(command: UpdateComparisonRelatedResourceCommand) {
+        resourceService.findById(command.comparisonId)
+            .filter {
+                if (Classes.comparisonPublished in it.classes) {
+                    throw ComparisonRelatedResourceNotModifiable(command.comparisonRelatedResourceId)
+                }
+                Classes.comparison in it.classes
+            }
+            .orElseThrow { ComparisonNotFound(command.comparisonId) }
         val comparisonRelatedResource = comparisonService.findRelatedResourceById(command.comparisonId, command.comparisonRelatedResourceId)
             .orElseThrow { ComparisonRelatedResourceNotFound(command.comparisonRelatedResourceId) }
-        val isPreviousVersionComparison = statementService.findAll(
-            subjectClasses = setOf(Classes.comparison),
-            predicateId = Predicates.hasPreviousVersion,
-            objectId = command.comparisonId,
-            pageable = PageRequests.SINGLE
-        )
-        if (!isPreviousVersionComparison.isEmpty) {
-            throw ComparisonRelatedResourceNotModifiable(command.comparisonId)
-        }
         if (command.label != null && command.label != comparisonRelatedResource.label) {
             resourceService.update(
                 UpdateResourceUseCase.UpdateCommand(

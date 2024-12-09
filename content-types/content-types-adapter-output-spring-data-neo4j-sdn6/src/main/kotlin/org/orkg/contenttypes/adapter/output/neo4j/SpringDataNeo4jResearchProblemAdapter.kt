@@ -53,17 +53,6 @@ class SpringDataNeo4jResearchProblemAdapter(
         neo4jRepository.findAllResearchFieldsByProblemAndVisibility(id, visibility, pageable)
             .map { it.toResource() }
 
-    override fun findAllListedComparisonsByProblem(id: ThingId, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllListedComparisonsByProblem(id, pageable).map { it.toResource() }
-
-    override fun findAllComparisonsByProblemAndVisibility(
-        id: ThingId,
-        visibility: Visibility,
-        pageable: Pageable
-    ): Page<Resource> =
-        neo4jRepository.findAllComparisonsByProblemAndVisibility(id, visibility, pageable)
-            .map { it.toResource() }
-
     override fun findAllListedLiteratureListsByProblem(id: ThingId, pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllListedLiteratureListsByProblem(id, pageable).map { it.toResource() }
 

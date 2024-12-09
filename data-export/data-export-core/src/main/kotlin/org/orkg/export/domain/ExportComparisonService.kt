@@ -37,7 +37,7 @@ class ExportComparisonService(
 ) : ExportUnpublishedComparisonUseCase {
 
     override fun export(writer: Writer) {
-        comparisonService::findAllCurrentListedAndUnpublishedComparisons.forEachChunked { comparison ->
+        comparisonService::findAllCurrentAndListedAndUnpublishedComparisons.forEachChunked { comparison ->
             writer.appendLine(objectMapper.writeValueAsString(comparison.toDataCiteJson()))
         }
     }

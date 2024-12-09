@@ -111,6 +111,7 @@ dependencies {
     implementation(project(":content-types:content-types-adapter-output-simcomp"))
     runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
     runtimeOnly(project(":content-types:content-types-adapter-output-web"))
+    implementation(project(":content-types:content-types-core-model"))
     runtimeOnly(project(":content-types:content-types-core-services"))
     implementation(project(":content-types:content-types-ports-input"))
     runtimeOnly(project(":content-types:content-types-ports-output"))
@@ -243,6 +244,7 @@ dependencies {
     "integrationTestApi"(project(":graph:graph-core-model"))
     "integrationTestApi"(project(":graph:graph-ports-input"))
     "integrationTestApi"(project(":media-storage:media-storage-core-model"))
+    "integrationTestApi"(testFixtures(project(":content-types:content-types-adapter-output-simcomp")))
     "integrationTestApi"(testFixtures(project(":testing:spring")))
     "integrationTestApi"("com.fasterxml.jackson.core:jackson-annotations")
     "integrationTestApi"("org.eclipse.rdf4j:rdf4j-common-io")
@@ -312,6 +314,14 @@ tasks {
             }
         }
         finalizedBy("bootRun")
+    }
+
+    register<BootRun>("runComparisonMigrations") {
+        group = "migration"
+        description = "Migrates the current database model for comparisons to a head and published version model."
+        mainClass.set(bootRun.get().mainClass)
+        classpath(bootRun.get().classpath)
+        args("--spring.profiles.active=development,comparisonMigrations")
     }
 
     withType<JacocoReport>().configureEach {

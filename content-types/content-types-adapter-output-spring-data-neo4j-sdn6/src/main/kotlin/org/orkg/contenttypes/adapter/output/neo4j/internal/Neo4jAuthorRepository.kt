@@ -17,14 +17,14 @@ interface Neo4jAuthorRepository :
     Neo4jRepository<Neo4jResource, ThingId> {
 
     @Query("""
-MATCH (c:Comparison:Resource {id: $id})-[rel:RELATED {predicate_id: 'compareContribution'}]->(cont:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'hasAuthors'}]->(l:List)-[r:RELATED {predicate_id: "hasListElement"}]->(a:Thing)
+MATCH (c:Resource {id: $id})-[rel:RELATED {predicate_id: 'compareContribution'}]->(cont:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'hasAuthors'}]->(l:List)-[r:RELATED {predicate_id: "hasListElement"}]->(a:Thing)
 OPTIONAL MATCH (p)-[:RELATED {predicate_id: 'P29'}]->(y:Literal)
 WITH DISTINCT p.id AS id, a, toInteger(y.label) AS year, r.index AS index
 WITH a.label AS authorLabel, COLLECT({paper: id, index: index, year: year}) AS info, apoc.coll.avg(COLLECT(index)) AS rank, COLLECT(a) AS authorResource
 ORDER BY SIZE(info) DESC, rank ASC, authorLabel ASC
 RETURN authorLabel, info, authorResource[0] AS authorResource $PAGE_PARAMS""",
         countQuery = """
-MATCH (c:Comparison:Resource {id: $id})-[rel:RELATED {predicate_id: 'compareContribution'}]->(cont:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'hasAuthors'}]->(l:List)-[r:RELATED {predicate_id: "hasListElement"}]->(a:Thing)
+MATCH (c:Resource {id: $id})-[rel:RELATED {predicate_id: 'compareContribution'}]->(cont:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'hasAuthors'}]->(l:List)-[r:RELATED {predicate_id: "hasListElement"}]->(a:Thing)
 WITH a.label as authorLabel
 RETURN COUNT(DISTINCT authorLabel) as cnt""")
     fun findTopAuthorsOfComparison(id: ThingId, pageable: Pageable): Page<Neo4jAuthorOfComparison>

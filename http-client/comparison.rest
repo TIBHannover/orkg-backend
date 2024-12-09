@@ -1,0 +1,254 @@
+### Create a new comparison
+POST {{server_url}}/api/comparisons
+Content-Type: application/vnd.orkg.comparison.v2+json
+Authorization: Bearer {{access_token}}
+
+{
+    "title": "example comparison",
+    "description": "comparison description",
+    "research_fields": [
+        "R12"
+    ],
+    "authors": [
+        {
+            "name": "Author with id",
+            "id": "R70399"
+        },
+        {
+            "name": "Author with orcid",
+            "identifiers": {
+                "orcid": ["0000-1111-2222-3333"]
+            }
+        },
+        {
+            "name": "Author with id and orcid",
+            "id": "R6666",
+            "identifiers": {
+                "orcid": ["1111-2222-3333-4444"]
+            }
+        },
+        {
+            "name": "Author with homepage",
+            "homepage": "http://example.org/author"
+        },
+        {
+            "name": "Author that just has a name"
+        }
+    ],
+    "sdgs": ["SDG_1", "SDG_2"],
+    "contributions": [
+        "R1031", "R2006", "R2012", "R2101"
+    ],
+    "config": {
+        "contributions": [
+            "R1031", "R2006"
+        ],
+        "predicates": [],
+        "transpose": false,
+        "type": "MERGE"
+    },
+    "data": {
+        "contributions": [
+            {
+                "active": true,
+                "id": "R1031",
+                "label": "Contribution 1",
+                "paper_id": "R1020",
+                "paper_label": "Paper 1",
+                "paper_year": 2024
+            },
+            {
+                "active": true,
+                "id": "R2006",
+                "label": "Contribution 1",
+                "paper_id": "R2018",
+                "paper_label": "Paper 2",
+                "paper_year": 2022
+            }
+        ],
+        "data": {
+            "P32": [
+                [
+                    {
+                        "_class": "resource",
+                        "classes": ["Problem"],
+                        "id": "R192326",
+                        "label": "Covid-19 Pandemic Ontology Development",
+                        "path": [
+                            "R187004",
+                            "P32"
+                        ],
+                        "path_labels": [
+                            "Contribution 1",
+                            "research problem"
+                        ]
+                    }
+                ]
+            ]
+        },
+        "predicates": [
+            {
+                "active": true,
+                "id": "P32",
+                "label": "research problem",
+                "n_contributions": 2,
+                "similar_predicates": ["P15"]
+            }
+        ]
+    },
+    "references": [
+        "https://orkg.org/resources/R1000",
+        "paper citation"
+    ],
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "is_anonymized": false,
+    "extraction_method": "MANUAL"
+}
+
+> {%
+    const location = response.headers.valueOf("Location")
+    const id = location.substring(location.lastIndexOf('/') + 1)
+    client.global.set("comparison_id", id);
+%}
+
+### Update the newly created comparison
+PUT {{server_url}}/api/comparisons/{{comparison_id}}
+Content-Type: application/vnd.orkg.comparison.v2+json
+Authorization: Bearer {{access_token}}
+
+{
+    "title": "updated comparison",
+    "description": "updated comparison description",
+    "research_fields": [
+        "R13"
+    ],
+    "authors": [
+        {
+            "name": "Other author with id",
+            "id": "R70399"
+        },
+        {
+            "name": "Author with orcid",
+            "identifiers": {
+                "orcid": ["0000-1111-2222-3333"]
+            }
+        },
+        {
+            "name": "Author with id and orcid",
+            "id": "R6666",
+            "identifiers": {
+                "orcid": ["1111-2222-3333-4444"]
+            }
+        },
+        {
+            "name": "Author with homepage",
+            "homepage": "http://example.org/author"
+        },
+        {
+            "name": "Author that just has a name"
+        }
+    ],
+    "sdgs": ["SDG_3", "SDG_2"],
+    "contributions": [
+        "R3005", "R1010", "R1018", "R2021"
+    ],
+    "config": {
+        "contributions": [
+            "R3005", "R1010", "R1018"
+        ],
+        "predicates": [],
+        "transpose": false,
+        "type": "PATH"
+    },
+    "data": {
+        "contributions": [
+            {
+                "active": true,
+                "id": "R3005",
+                "label": "Contribution 2",
+                "paper_id": "R3000",
+                "paper_label": "Paper 1",
+                "paper_year": 2024
+            },
+            {
+                "active": true,
+                "id": "R1010",
+                "label": "Contribution 1",
+                "paper_id": "R1004",
+                "paper_label": "Paper 2",
+                "paper_year": 2022
+            },
+            {
+                "active": true,
+                "id": "R1018",
+                "label": "Contribution 1",
+                "paper_id": "R1013",
+                "paper_label": "Paper 3",
+                "paper_year": 2023
+            }
+        ],
+        "data": {
+            "P32": [
+                [
+                    {
+                        "_class": "resource",
+                        "classes": ["Problem"],
+                        "id": "R192326",
+                        "label": "Covid-19 Pandemic Ontology Development",
+                        "path": [
+                            "R187004",
+                            "P32"
+                        ],
+                        "path_labels": [
+                            "Contribution 1",
+                            "research problem"
+                        ]
+                    }
+                ]
+            ]
+        },
+        "predicates": [
+            {
+                "active": true,
+                "id": "P32",
+                "label": "research problem",
+                "n_contributions": 2,
+                "similar_predicates": ["P15"]
+            }
+        ]
+    },
+    "references": [
+        "other paper citation",
+        "paper citation"
+    ],
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "is_anonymized": true,
+    "extraction_method": "AUTOMATIC"
+}
+
+### Publish the comparison
+POST {{server_url}}/api/comparisons/{{comparison_id}}/publish
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "subject": "Comparison subject",
+    "description": "Comparison description",
+    "authors": [
+        {
+            "name": "Other author with id",
+            "id": "R70399"
+        }
+    ],
+    "assign_doi": false
+}

@@ -9,7 +9,7 @@ class ComparisonVersionArchiver(
     private val comparisonPublishedRepository: ComparisonPublishedRepository
 ) : PublishComparisonAction {
     override fun invoke(command: PublishComparisonCommand, state: State): State {
-        comparisonPublishedRepository.save(PublishedComparison(command.id, command.config, command.data))
+        comparisonPublishedRepository.save(PublishedComparison(command.id, state.config!!, state.data!!))
         return state
     }
 }

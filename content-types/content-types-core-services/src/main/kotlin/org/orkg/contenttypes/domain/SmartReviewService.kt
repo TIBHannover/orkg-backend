@@ -66,7 +66,6 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSec
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionUpdateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.SmartReviewSectionUpdater
 import org.orkg.contenttypes.input.SmartReviewUseCases
-import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
@@ -98,7 +97,7 @@ class SmartReviewService(
     private val resourceRepository: ResourceRepository,
     private val smartReviewRepository: SmartReviewRepository,
     private val smartReviewPublishedRepository: SmartReviewPublishedRepository,
-    private val comparisonRepository: ComparisonRepository,
+    private val comparisonService: ComparisonService,
     private val statementRepository: StatementRepository,
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
@@ -163,8 +162,8 @@ class SmartReviewService(
             ?.`object`
             ?: throw PublishedSmartReviewContentNotFound(smartReviewId, contentId)
         return when {
-            content is Resource && Classes.comparison in content.classes -> {
-                Either.left(Comparison.from(content, statements, comparisonRepository.findVersionHistory(contentId)))
+            content is Resource && Classes.comparison in content.classes -> with(comparisonService) {
+                Either.left(Comparison.from(content, statements, content.findTableData(), content.findVersionInfo(statements)))
             }
             content is Resource && Classes.visualization in content.classes -> {
                 Either.left(Visualization.from(content, statements))

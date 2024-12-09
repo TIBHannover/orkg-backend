@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.call
-import org.neo4j.cypherdsl.core.Cypher.exists
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
@@ -122,17 +121,7 @@ class SpringDataNeo4jContentTypeAdapter(
     ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
         when (this) {
             ContentTypeClass.PAPER -> match(node("Paper").named(node), patternGenerator)
-            ContentTypeClass.COMPARISON -> {
-                val comparison = node("Comparison").named(node)
-                match(comparison, patternGenerator)
-                    .where(
-                        exists(
-                            node("Comparison").relationshipTo(comparison, RELATED)
-                                .withProperties("predicate_id", literalOf<String>(Predicates.hasPreviousVersion.value))
-                        ).not()
-                    )
-                    .with(node)
-            }
+            ContentTypeClass.COMPARISON -> matchComparison(node, patternGenerator, true)
             ContentTypeClass.VISUALIZATION -> match(node("Visualization").named(node), patternGenerator)
             ContentTypeClass.TEMPLATE -> {
                 val n = node("NodeShape").named(node)

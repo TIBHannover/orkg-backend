@@ -25,13 +25,6 @@ interface RetrieveResearchFieldUseCase {
         pageable: Pageable
     ): Page<Resource>
 
-    fun findAllComparisonsByResearchField(
-        id: ThingId,
-        visibility: VisibilityFilter,
-        includeSubFields: Boolean = false,
-        pageable: Pageable
-    ): Page<Resource>
-
     fun findAllResearchProblemsByResearchField(
         id: ThingId,
         visibility: VisibilityFilter,

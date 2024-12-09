@@ -216,3 +216,31 @@ private fun matchUnpublishedSmartReviews(
     patternGenerator: (Node) -> Collection<RelationshipPattern>
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     match(node("SmartReview").named(symbolicName), patternGenerator)
+
+internal fun matchComparison(
+    node: SymbolicName,
+    patternGenerator: (Node) -> Collection<RelationshipPattern>,
+    published: Boolean? = null
+): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
+    when (published) {
+        true -> matchPublishedComparisons(node, patternGenerator)
+        false -> matchUnpublishedComparisons(node, patternGenerator)
+        else -> call(
+            unionAll(
+                matchPublishedComparisons(node, patternGenerator).returning(node).build(),
+                matchUnpublishedComparisons(node, patternGenerator).returning(node).build()
+            )
+        ).with(node)
+    }
+
+private fun matchPublishedComparisons(
+    symbolicName: SymbolicName,
+    patternGenerator: (Node) -> Collection<RelationshipPattern>
+): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
+    match(node("ComparisonPublished", "LatestVersion").named(symbolicName), patternGenerator)
+
+private fun matchUnpublishedComparisons(
+    symbolicName: SymbolicName,
+    patternGenerator: (Node) -> Collection<RelationshipPattern>
+): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
+    match(node("Comparison").named(symbolicName), patternGenerator)

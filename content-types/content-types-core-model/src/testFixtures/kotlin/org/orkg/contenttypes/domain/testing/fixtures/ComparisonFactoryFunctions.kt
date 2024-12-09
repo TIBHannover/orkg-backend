@@ -14,11 +14,14 @@ import org.orkg.contenttypes.domain.ComparisonHeaderCell
 import org.orkg.contenttypes.domain.ComparisonIndexCell
 import org.orkg.contenttypes.domain.ComparisonRelatedFigure
 import org.orkg.contenttypes.domain.ComparisonRelatedResource
+import org.orkg.contenttypes.domain.ComparisonTable
 import org.orkg.contenttypes.domain.ComparisonType
 import org.orkg.contenttypes.domain.ConfiguredComparisonTargetCell
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PublicationInfo
+import org.orkg.contenttypes.domain.PublishedVersion
+import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.domain.PublishedComparison
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
@@ -82,6 +85,8 @@ fun createDummyComparison() = Comparison(
             label = "Contribution 2"
         )
     ),
+    config = createComparisonConfig(),
+    data = createComparisonData(),
     visualizations = listOf(
         ObjectIdAndLabel(
             id = ThingId("R159"),
@@ -127,21 +132,32 @@ fun createDummyComparison() = Comparison(
     extractionMethod = ExtractionMethod.UNKNOWN,
     createdAt = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
-    versions = listOf(
-        HeadVersion(
-            id = ThingId("R156"),
-            label = "Previous version comparison",
-            createdAt = OffsetDateTime.parse("2023-04-11T13:15:48.959539600+02:00"),
+    versions = VersionInfo(
+        head = HeadVersion(
+            id = ThingId("R8186"),
+            label = "Dummy Comparison Title",
+            createdAt = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00"),
             createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
         ),
-        HeadVersion(
-            id = ThingId("R155"),
-            label = "Previous version comparison",
-            createdAt = OffsetDateTime.parse("2023-04-10T14:07:21.959539600+02:00"),
-            createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
+        published = listOf(
+            PublishedVersion(
+                id = ThingId("R156"),
+                label = "Previous version comparison",
+                createdAt = OffsetDateTime.parse("2023-04-11T13:15:48.959539600+02:00"),
+                createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+                changelog = null
+            ),
+            PublishedVersion(
+                id = ThingId("R155"),
+                label = "Previous version comparison",
+                createdAt = OffsetDateTime.parse("2023-04-10T14:07:21.959539600+02:00"),
+                createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+                changelog = null
+            )
         )
     ),
     isAnonymized = false,
+    published = false,
     visibility = Visibility.DEFAULT
 )
 
@@ -167,6 +183,13 @@ fun createDummyComparisonRelatedFigure() = ComparisonRelatedFigure(
 fun createPublishedComparison(): PublishedComparison =
     PublishedComparison(
         id = ThingId("R5476"),
+        config = createComparisonConfig(),
+        data = createComparisonData()
+    )
+
+fun createComparisonTable(): ComparisonTable =
+    ComparisonTable(
+        id = ThingId("R8186"),
         config = createComparisonConfig(),
         data = createComparisonData()
     )

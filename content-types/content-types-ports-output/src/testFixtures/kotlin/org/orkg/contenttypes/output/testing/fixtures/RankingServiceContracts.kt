@@ -168,13 +168,13 @@ fun <
     }
 
     describe("counting comparisons including a paper") {
-        val comparison = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.comparison)
+        val publishedComparison = fabricator.random<Resource>().copy(
+            classes = setOf(Classes.comparisonPublished, Classes.latestVersion)
         )
         val contribution = fabricator.random<Resource>().copy(
             classes = setOf(Classes.contribution)
         )
-        val previousVersionComparison = fabricator.random<Resource>().copy(
+        val headComparison = fabricator.random<Resource>().copy(
             classes = setOf(Classes.comparison)
         )
         val paper = fabricator.random<Resource>().copy(
@@ -186,17 +186,18 @@ fun <
         val hasContribution = fabricator.random<Predicate>().copy(
             id = Predicates.hasContribution
         )
-        val hasPreviousVersion = fabricator.random<Predicate>().copy(
-            id = Predicates.hasPreviousVersion
+        val hasPublishedVersion = fabricator.random<Predicate>().copy(
+            id = Predicates.hasPublishedVersion
         )
-        // create a comparison, with a previous version, that compares one contribution linked by a paper
+        // create a head comparison linked to a published version, that
+        // both compare the same contribution, that is part of a paper
         saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = comparison,
+            subject = publishedComparison,
             predicate = compareContribution,
             `object` = contribution
         ))
         saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = previousVersionComparison,
+            subject = headComparison,
             predicate = compareContribution,
             `object` = contribution
         ))
@@ -206,9 +207,9 @@ fun <
             `object` = contribution
         ))
         saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = comparison,
-            predicate = hasPreviousVersion,
-            `object` = previousVersionComparison
+            subject = headComparison,
+            predicate = hasPublishedVersion,
+            `object` = publishedComparison
         ))
 
         val expected = 1

@@ -14,11 +14,11 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.LegacyStatisticsRepository
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
-import org.orkg.graph.output.LegacyStatisticsRepository
 
 fun <
     T : LegacyStatisticsRepository,
@@ -106,6 +106,20 @@ fun <
             createStatement(cmp1, hasResearchField, r1)
             createStatement(cmp3, hasResearchField, r3)
 
+            val publishedCmp1 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished, Classes.latestVersion))
+            val publishedCmp2 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished, Classes.latestVersion))
+            val publishedCmp3 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished, Classes.latestVersion))
+
+            createStatement(publishedCmp1, hasResearchField, r1)
+            createStatement(publishedCmp3, hasResearchField, r3)
+
+            val oldCmp1 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished))
+            val oldCmp2 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished))
+            val oldCmp3 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished))
+
+            createStatement(oldCmp1, hasResearchField, r1)
+            createStatement(oldCmp3, hasResearchField, r3)
+
             val ctb1 = fabricator.random<Resource>().copy(classes = setOf(Classes.contribution))
             val ctb2 = fabricator.random<Resource>().copy(classes = setOf(Classes.contribution))
             val ctb3 = fabricator.random<Resource>().copy(classes = setOf(Classes.contribution))
@@ -113,13 +127,19 @@ fun <
             val hasContribution = fabricator.random<Predicate>().copy(id = Predicates.hasContribution)
             val comparesContribution = fabricator.random<Predicate>().copy(id = Predicates.comparesContribution)
 
+            createStatement(publishedCmp1, comparesContribution, ctb1)
+            createStatement(oldCmp1, comparesContribution, ctb1)
             createStatement(cmp1, comparesContribution, ctb1)
             createStatement(ppr1, hasContribution, ctb1)
 
+            createStatement(publishedCmp2, comparesContribution, ctb2)
+            createStatement(oldCmp2, comparesContribution, ctb2)
             createStatement(cmp2, comparesContribution, ctb2)
             createStatement(ppr1, hasContribution, ctb2)
             createStatement(ppr4, hasContribution, ctb2)
 
+            createStatement(publishedCmp3, comparesContribution, ctb3)
+            createStatement(oldCmp3, comparesContribution, ctb3)
             createStatement(cmp3, comparesContribution, ctb3)
             createStatement(ppr3, hasContribution, ctb3)
 

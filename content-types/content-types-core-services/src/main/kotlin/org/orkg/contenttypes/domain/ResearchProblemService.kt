@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.RetrieveResearchProblemUseCase
+import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.FindResearchProblemQuery
 import org.orkg.contenttypes.output.ResearchProblemRepository
 import org.orkg.graph.domain.Classes
@@ -26,6 +27,7 @@ class ResearchProblemService(
     private val researchProblemRepository: ResearchProblemRepository,
     private val resourceService: ResourceUseCases,
     private val researchProblemQueries: FindResearchProblemQuery,
+    private val comparisonRepository: ComparisonRepository
 ) : RetrieveResearchProblemUseCase {
     override fun findById(id: ThingId): Optional<Resource> =
         resourceService.findById(id).filter { Classes.problem in it.classes }
@@ -130,7 +132,12 @@ class ResearchProblemService(
                     totals += result.totalElements
                 }
                 "COMPARISON" -> {
-                    val result = researchProblemRepository.findAllListedComparisonsByProblem(problemId, pageable)
+                    val result = comparisonRepository.findAll(
+                        pageable,
+                        researchProblem = problemId,
+                        visibility = VisibilityFilter.ALL_LISTED,
+                        published = true
+                    )
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
@@ -179,7 +186,12 @@ class ResearchProblemService(
                     totals += result.totalElements
                 }
                 "COMPARISON" -> {
-                    val result = researchProblemRepository.findAllComparisonsByProblemAndVisibility(problemId, visibility, pageable)
+                    val result = comparisonRepository.findAll(
+                        pageable = pageable,
+                        researchProblem = problemId,
+                        visibility = visibility.toVisibilityFilter(),
+                        published = true
+                    )
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }

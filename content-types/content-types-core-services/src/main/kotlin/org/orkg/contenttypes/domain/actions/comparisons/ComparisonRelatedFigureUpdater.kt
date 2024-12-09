@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
 import org.orkg.common.PageRequests
+import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotModifiable
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
@@ -32,17 +33,16 @@ class ComparisonRelatedFigureUpdater(
     )
 
     fun execute(command: UpdateComparisonRelatedFigureCommand) {
+        resourceService.findById(command.comparisonId)
+            .filter {
+                if (Classes.comparisonPublished in it.classes) {
+                    throw ComparisonRelatedFigureNotModifiable(command.comparisonRelatedFigureId)
+                }
+                Classes.comparison in it.classes
+            }
+            .orElseThrow { ComparisonNotFound(command.comparisonId) }
         val comparisonRelatedFigure = comparisonService.findRelatedFigureById(command.comparisonId, command.comparisonRelatedFigureId)
             .orElseThrow { ComparisonRelatedFigureNotFound(command.comparisonRelatedFigureId) }
-        val isPreviousVersionComparison = statementService.findAll(
-            subjectClasses = setOf(Classes.comparison),
-            predicateId = Predicates.hasPreviousVersion,
-            objectId = command.comparisonId,
-            pageable = PageRequests.SINGLE
-        )
-        if (!isPreviousVersionComparison.isEmpty) {
-            throw ComparisonRelatedFigureNotModifiable(command.comparisonId)
-        }
         if (command.label != null && command.label != comparisonRelatedFigure.label) {
             resourceService.update(
                 UpdateResourceUseCase.UpdateCommand(

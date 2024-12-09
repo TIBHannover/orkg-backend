@@ -79,6 +79,8 @@ class ComparisonController(
         @RequestParam("research_field", required = false) researchField: ThingId?,
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
         @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
+        @RequestParam("published", required = false) published: Boolean?,
+        @RequestParam("research_problem", required = false) researchProblem: ThingId?,
         pageable: Pageable
     ): Page<ComparisonRepresentation> =
         service.findAll(
@@ -93,7 +95,9 @@ class ComparisonController(
             organizationId = organizationId,
             researchField = researchField,
             includeSubfields = includeSubfields,
-            sustainableDevelopmentGoal = sustainableDevelopmentGoal
+            published = published,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
+            researchProblem = researchProblem
         ).mapToComparisonRepresentation()
 
     @RequireLogin
@@ -276,10 +280,10 @@ class ComparisonController(
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
-        service.publish(request.toPublishCommand(id, contributorId))
+        val comparisonVersionId = service.publish(request.toPublishCommand(id, contributorId))
         val location = uriComponentsBuilder
             .path("/api/comparisons/{id}")
-            .buildAndExpand(id)
+            .buildAndExpand(comparisonVersionId)
             .toUri()
         return created(location).build()
     }
@@ -297,6 +301,8 @@ class ComparisonController(
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val contributions: List<ThingId>,
+        val config: ComparisonConfig,
+        val data: ComparisonData,
         val references: List<String>,
         @Size(max = 1)
         val observatories: List<ObservatoryId>,
@@ -316,6 +322,8 @@ class ComparisonController(
                 authors = authors.map { it.toAuthor() },
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
                 contributions = contributions,
+                config = config,
+                data = data,
                 references = references,
                 observatories = observatories,
                 organizations = organizations,
@@ -337,6 +345,8 @@ class ComparisonController(
         @JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val contributions: List<ThingId>?,
+        val config: ComparisonConfig?,
+        val data: ComparisonData?,
         val references: List<String>?,
         @Size(max = 1)
         val observatories: List<ObservatoryId>?,
@@ -357,6 +367,8 @@ class ComparisonController(
                 authors = authors?.map { it.toAuthor() },
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals,
                 contributions = contributions,
+                config = config,
+                data = data,
                 references = references,
                 observatories = observatories,
                 organizations = organizations,
@@ -438,8 +450,6 @@ class ComparisonController(
         @field:Valid
         @field:Size(min = 1)
         val authors: List<AuthorDTO>,
-        val config: ComparisonConfig,
-        val data: ComparisonData,
         @JsonProperty("assign_doi")
         val assignDOI: Boolean
     ) {
@@ -450,8 +460,6 @@ class ComparisonController(
                 subject = subject,
                 description = description,
                 authors = authors.map { it.toAuthor() },
-                config = config,
-                data = data,
                 assignDOI = assignDOI
             )
     }

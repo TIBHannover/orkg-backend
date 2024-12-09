@@ -73,24 +73,6 @@ class ResearchFieldService(
                 Visibility.DELETED, includeSubFields, pageable)
         }
 
-    override fun findAllComparisonsByResearchField(
-        id: ThingId,
-        visibility: VisibilityFilter,
-        includeSubFields: Boolean,
-        pageable: Pageable
-    ): Page<Resource> =
-        when (visibility) {
-            VisibilityFilter.ALL_LISTED -> comparisonRepository.findAllListedComparisonsByResearchField(id, includeSubFields, pageable)
-            VisibilityFilter.UNLISTED -> comparisonRepository.findAllComparisonsByResearchFieldAndVisibility(id,
-                Visibility.UNLISTED, includeSubFields, pageable)
-            VisibilityFilter.FEATURED -> comparisonRepository.findAllComparisonsByResearchFieldAndVisibility(id,
-                Visibility.FEATURED, includeSubFields, pageable)
-            VisibilityFilter.NON_FEATURED -> comparisonRepository.findAllComparisonsByResearchFieldAndVisibility(id,
-                Visibility.DEFAULT, includeSubFields, pageable)
-            VisibilityFilter.DELETED -> comparisonRepository.findAllComparisonsByResearchFieldAndVisibility(id,
-                Visibility.DELETED, includeSubFields, pageable)
-        }
-
     override fun findAllResearchProblemsByResearchField(
         id: ThingId,
         visibility: VisibilityFilter,
@@ -198,7 +180,12 @@ class ResearchFieldService(
     ): List<Page<Resource>> = classesList.map { classType ->
         when (classType.uppercase(Locale.getDefault())) {
             "PAPER" -> researchFieldRepository.findAllListedPapersByResearchField(id, includeSubFields, pageable)
-            "COMPARISON" -> comparisonRepository.findAllListedComparisonsByResearchField(id, includeSubFields, pageable)
+            "COMPARISON" -> comparisonRepository.findAll(
+                researchField = id,
+                includeSubfields = includeSubFields,
+                visibility = VisibilityFilter.ALL_LISTED,
+                pageable = pageable
+            )
             "VISUALIZATION" -> researchFieldRepository.findAllListedVisualizationsByResearchField(id, includeSubFields, pageable)
             "LITERATURELISTPUBLISHED" -> researchFieldRepository.findAllListedLiteratureListsByResearchField(id, includeSubFields, pageable)
             "PROBLEM" -> researchFieldRepository.findAllListedProblemsByResearchField(id, includeSubFields, pageable)
@@ -215,7 +202,12 @@ class ResearchFieldService(
     ): List<Page<Resource>> = classesList.map { classType ->
         when (classType.uppercase(Locale.getDefault())) {
             "PAPER" -> researchFieldRepository.findAllPapersByResearchFieldAndVisibility(id, visibility, includeSubFields, pageable)
-            "COMPARISON" -> comparisonRepository.findAllComparisonsByResearchFieldAndVisibility(id, visibility, includeSubFields, pageable)
+            "COMPARISON" -> comparisonRepository.findAll(
+                researchField = id,
+                includeSubfields = includeSubFields,
+                visibility = visibility.toVisibilityFilter(),
+                pageable = pageable
+            )
             "VISUALIZATION" -> researchFieldRepository.findAllVisualizationsByResearchFieldAndVisibility(id, visibility, includeSubFields, pageable)
             "LITERATURELISTPUBLISHED" -> researchFieldRepository.findAllLiteratureListsByResearchFieldAndVisibility(id, visibility, includeSubFields, pageable)
             "PROBLEM" -> researchFieldRepository.findAllProblemsByResearchFieldAndVisibility(id, visibility, includeSubFields, pageable)

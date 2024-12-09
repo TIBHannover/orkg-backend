@@ -22,9 +22,6 @@ interface ResearchProblemRepository {
     fun findAllListedResearchFieldsByProblem(id: ThingId, pageable: Pageable): Page<Resource>
     fun findAllResearchFieldsByProblemAndVisibility(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource>
 
-    fun findAllListedComparisonsByProblem(id: ThingId, pageable: Pageable): Page<Resource>
-    fun findAllComparisonsByProblemAndVisibility(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource>
-
     fun findAllListedLiteratureListsByProblem(id: ThingId, pageable: Pageable): Page<Resource>
     fun findAllLiteratureListsByProblemAndVisibility(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource>
 
@@ -41,5 +38,4 @@ interface ResearchProblemRepository {
     fun findResearchProblemForDataset(datasetId: ThingId, pageable: Pageable): Page<Resource>
     fun findAllListedProblems(pageable: Pageable): Page<Resource>
     fun findAllProblemsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
-
 }

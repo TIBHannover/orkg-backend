@@ -26,14 +26,14 @@ interface Neo4jLegacyStatisticsRepository : Neo4jRepository<Neo4jResource, Thing
     @Query("""MATCH (n:Paper:Resource {observatory_id: $id}) RETURN COUNT(n) As totalPapers""")
     fun getObservatoryPapersCount(id: ObservatoryId): Long
 
-    @Query("""MATCH (n:Comparison:Resource {observatory_id: $id}) RETURN COUNT(n) As totalComparisons""")
+    @Query("""MATCH (n:ComparisonPublished:LatestVersion:Resource {observatory_id: $id}) RETURN COUNT(n) As totalComparisons""")
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
 
     @Query("""
 MATCH (n:Paper:Resource)
 WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
 WITH n.observatory_id AS observatoryId, COUNT(n) AS papers
-OPTIONAL MATCH (c:Comparison:Resource)
+OPTIONAL MATCH (c:ComparisonPublished:LatestVersion:Resource)
 WHERE c.observatory_id <> '00000000-0000-0000-0000-000000000000' AND c.observatory_id = observatoryId
 WITH observatoryId, COUNT(c) AS comparisons, papers
 WITH observatoryId, comparisons, papers, comparisons + papers AS total
@@ -48,7 +48,7 @@ RETURN COUNT(DISTINCT(n.observatory_id))""")
     @Query("""
 MATCH (rsf:ResearchField:Resource {id: $id})
 OPTIONAL MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(rsf)
-OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:Comparison:Resource)
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:ComparisonPublished:LatestVersion)
 WITH rsf.id AS id, COUNT(DISTINCT ppr) AS papers, COUNT(DISTINCT cmp) AS comparisons
 RETURN id, papers, comparisons, (papers + comparisons) AS total""")
     fun findResearchFieldStatsById(id: ThingId): Optional<ResearchFieldStats>
@@ -56,7 +56,7 @@ RETURN id, papers, comparisons, (papers + comparisons) AS total""")
     @Query("""
 MATCH (rsf:ResearchField:Resource)<-[:RELATED*0.. {predicate_id: "P36"}]-(:ResearchField:Resource {id: $id})
 OPTIONAL MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(rsf)
-OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:Comparison:Resource)
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:ComparisonPublished:LatestVersion)
 WITH $id AS id, COUNT(DISTINCT ppr) AS papers, COUNT(DISTINCT cmp) AS comparisons
 RETURN id, papers, comparisons, (papers + comparisons) AS total""")
     fun findResearchFieldStatsByIdIncludingSubfields(id: ThingId): Optional<ResearchFieldStats>
@@ -64,7 +64,7 @@ RETURN id, papers, comparisons, (papers + comparisons) AS total""")
     @Query("""
 OPTIONAL MATCH (n:Paper:Resource {observatory_id: $id})
 WITH n.observatory_id AS observatoryId, COUNT(n) AS papers
-OPTIONAL MATCH (c:Comparison:Resource {observatory_id: $id})
+OPTIONAL MATCH (c:ComparisonPublished:LatestVersion:Resource {observatory_id: $id})
 WITH observatoryId, COUNT(c) AS comparisons, papers
 WITH observatoryId, comparisons, papers, comparisons + papers AS total
 ORDER BY total DESC
@@ -77,7 +77,7 @@ CALL {
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN n.created_by AS id, COUNT(n) AS papers, 0 AS comparisons, 0 AS contributions, 0 AS visualizations, 0 AS problems
     UNION ALL
-    MATCH (n:Comparison:Resource)
+    MATCH (n:ComparisonPublished:Resource)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN n.created_by AS id, 0 AS papers, COUNT(n) AS comparisons, 0 AS contributions, 0 AS visualizations, 0 AS problems
     UNION ALL
@@ -99,7 +99,7 @@ CALL {
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN DISTINCT n.created_by AS id
     UNION ALL
-    MATCH (n:Comparison:Resource)
+    MATCH (n:ComparisonPublished:Resource)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN DISTINCT n.created_by AS id
     UNION ALL
@@ -136,7 +136,7 @@ CALL {
 } WITH field
 MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(field)
 OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
-OPTIONAL MATCH (cmp:Comparison:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
 OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
 OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
 WITH [
@@ -166,7 +166,7 @@ CALL {
 } WITH field
 MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(field)
 OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
-OPTIONAL MATCH (cmp:Comparison:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
 OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
 OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
 WITH [ppr, ctr, cmp, vsl, prb] AS nodes
@@ -183,7 +183,7 @@ RETURN COUNT(contributor)""")
     @Query("""
 MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(:ResearchField:Resource {id: $id})
 OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
-OPTIONAL MATCH (cmp:Comparison:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
 OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
 OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
 WITH [
@@ -201,7 +201,7 @@ RETURN contributor, papers, contributions, comparisons, visualizations, problems
         countQuery = """
 MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(r:ResearchField:Resource {id: $id})
 OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
-OPTIONAL MATCH (cmp:Comparison:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
 OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
 OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
 WITH [ppr, ctr, cmp, vsl, prb] AS nodes
@@ -222,7 +222,7 @@ CALL {
     UNION ALL
     MATCH (sub:Visualization:Resource) RETURN sub
     UNION ALL
-    MATCH (sub:Comparison:Resource) WHERE NOT sub:ComparisonDeleted RETURN sub
+    MATCH (sub:ComparisonPublished:Resource) RETURN sub
 } WITH sub
 ORDER BY sub.created_at DESC
 RETURN sub $PAGE_PARAMS""",
@@ -236,7 +236,7 @@ CALL {
     UNION ALL
     MATCH (sub:Visualization:Resource) RETURN sub
     UNION ALL
-    MATCH (sub:Comparison:Resource) WHERE NOT sub:ComparisonDeleted RETURN sub
+    MATCH (sub:ComparisonPublished:Resource) RETURN sub
 } WITH sub
 RETURN COUNT(sub)
 """)
@@ -256,7 +256,7 @@ CALL {
     RETURN endNode(rel) AS field
 } WITH field
 MATCH (p:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(field)
-OPTIONAL MATCH (c:Comparison:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution:Resource)<-[:RELATED {predicate_id:"P31"}]-(p)
+OPTIONAL MATCH (c:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution:Resource)<-[:RELATED {predicate_id:"P31"}]-(p)
 OPTIONAL MATCH (c)-[:RELATED {predicate_id: "hasVisualization"}]->(v:Visualization:Resource)
 WITH [p, c, v] AS nodes
 UNWIND nodes AS n
@@ -279,7 +279,7 @@ CALL {
     RETURN endNode(rel) AS field
 } WITH field
 MATCH (p:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(field)
-OPTIONAL MATCH (c:Comparison:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution:Resource)<-[:RELATED {predicate_id:"P31"}]-(p)
+OPTIONAL MATCH (c:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution:Resource)<-[:RELATED {predicate_id:"P31"}]-(p)
 OPTIONAL MATCH (c)-[:RELATED {predicate_id: "hasVisualization"}]->(v:Visualization:Resource)
 WITH [p, c, v] AS nodes
 UNWIND nodes AS n

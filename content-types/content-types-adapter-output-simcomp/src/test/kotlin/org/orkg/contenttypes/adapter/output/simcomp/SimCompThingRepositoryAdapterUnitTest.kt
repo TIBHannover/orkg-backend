@@ -29,10 +29,12 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.TestBodyPublisher
-import org.orkg.contenttypes.adapter.output.simcomp.internal.SimCompThingRepository
+import org.orkg.contenttypes.adapter.output.simcomp.internal.SimCompThingRepositoryAdapter
 import org.orkg.contenttypes.adapter.output.simcomp.internal.ThingAddRequest
 import org.orkg.contenttypes.adapter.output.simcomp.internal.ThingType
 import org.orkg.contenttypes.adapter.output.simcomp.json.SimCompJacksonModule
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.ExtractionMethod
@@ -45,14 +47,16 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.testing.fixtures.createStatement
 
-class SimCompThingRepositoryUnitTest {
+class SimCompThingRepositoryAdapterUnitTest {
     private val simCompHostUrl = "https://example.org/simcomp"
+    private val simCompApiKey = "TEST_API_KEY"
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper()
         .findAndRegisterModules()
         .registerModules(CommonJacksonModule(), GraphJacksonModule(), SimCompJacksonModule())
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-    private val adapter = SimCompThingRepository(objectMapper, httpClient, ::TestBodyPublisher, simCompHostUrl)
+    private val adapter =
+        SimCompThingRepositoryAdapter(objectMapper, httpClient, ::TestBodyPublisher, simCompHostUrl, simCompApiKey)
 
     @BeforeEach
     fun resetState() {
@@ -316,6 +320,99 @@ class SimCompThingRepositoryUnitTest {
 
         shouldThrow<ServiceUnavailable> {
             adapter.save(id, type, data, config)
+        }.asClue {
+            it.message shouldBe "Service unavailable."
+            it.internalMessage shouldBe """SimComp service threw an exception."""
+            it.cause shouldBe exception
+        }
+
+        verify(exactly = 1) { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) }
+
+        confirmVerified(response)
+    }
+
+    @Test
+    fun `Given a thing id, thing type and contents, when updating draft comparison contents, it returns success`() {
+        val id = ThingId("R123")
+        val type = ThingType.DRAFT_COMPARISON
+        val data = createComparisonData()
+        val config = createComparisonConfig()
+        val request = ThingAddRequest(
+            thingType = type,
+            thingKey = id,
+            config = config,
+            data = data
+        )
+        // Mock HttpClient dsl
+        val response = mockk<HttpResponse<String>>()
+
+        every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
+        every { response.statusCode() } returns 204
+
+        adapter.update(id, type, data, config)
+
+        verify(exactly = 1) {
+            httpClient.send(withArg {
+                it.uri() shouldBe URI.create("$simCompHostUrl/thing/")
+                it.headers().map()["Content-Type"]!!.single() shouldBe "application/json"
+                it.headers().map()["X-API-KEY"]!!.single() shouldBe simCompApiKey
+                it.bodyPublisher().isPresent shouldBe true
+                it.bodyPublisher().get().shouldBeInstanceOf<TestBodyPublisher>().asClue { bodyPublisher ->
+                    bodyPublisher.content shouldBe objectMapper.writeValueAsString(request)
+                }
+            }, any<HttpResponse.BodyHandler<String>>())
+        }
+        verify { response.statusCode() }
+
+        confirmVerified(response)
+    }
+
+    @Test
+    fun `Given a thing id, thing type and contents, when updating draft comparison contents but service returns error, it throws an exception`() {
+        val id = ThingId("R123")
+        val type = ThingType.DRAFT_COMPARISON
+        val data = createComparisonData()
+        val config = createComparisonConfig()
+        // Mock HttpClient dsl
+        val response = mockk<HttpResponse<String>>()
+
+        every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
+        every { response.statusCode() } returns 403
+        every { response.body() } returns "Error message"
+
+        shouldThrow<ServiceUnavailable> {
+            adapter.update(id, type, data, config)
+        }.asClue {
+            it.message shouldBe "Service unavailable."
+            it.internalMessage shouldBe """SimComp service returned status 403 with error response: "Error message"."""
+        }
+
+        verify(exactly = 1) {
+            httpClient.send(
+                withArg { it.uri() shouldBe URI.create("$simCompHostUrl/thing/") },
+                any<HttpResponse.BodyHandler<String>>()
+            )
+        }
+        verify { response.statusCode() }
+        verify { response.body() }
+
+        confirmVerified(response)
+    }
+
+    @Test
+    fun `Given a thing id, thing type and contents, when updating draft comparison contents but a connection error occurs, it throws an exception`() {
+        val id = ThingId("R123")
+        val type = ThingType.DRAFT_COMPARISON
+        val data = createComparisonData()
+        val config = createComparisonConfig()
+        // Mock HttpClient dsl
+        val response = mockk<HttpResponse<String>>()
+        val exception = IOException()
+
+        every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } throws exception
+
+        shouldThrow<ServiceUnavailable> {
+            adapter.update(id, type, data, config)
         }.asClue {
             it.message shouldBe "Service unavailable."
             it.internalMessage shouldBe """SimComp service threw an exception."""

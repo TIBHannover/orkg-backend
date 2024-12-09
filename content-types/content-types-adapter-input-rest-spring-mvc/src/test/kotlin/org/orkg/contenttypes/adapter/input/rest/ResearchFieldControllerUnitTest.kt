@@ -12,6 +12,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -69,6 +70,9 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
 
     @MockkBean
     private lateinit var flags: FeatureFlagService
+
+    @MockkBean
+    private lateinit var comparisonRepository: ComparisonRepository
 
     @BeforeEach
     fun ignoreFormattedLabels() {
@@ -253,10 +257,14 @@ class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
         every {
             statementService.countIncomingStatements(setOf(comparison1.id, comparison2.id))
         } returns mapOf(comparison1.id to 12, comparison2.id to 13)
-        every { useCases.findAllComparisonsByResearchField(fieldResource.id, any(), any(), any()) } returns pageOf(
-            comparison1,
-            comparison2
-        )
+        every {
+            comparisonRepository.findAll(
+                researchField = id,
+                visibility = any(),
+                includeSubfields = false,
+                pageable = any()
+            )
+        } returns pageOf(comparison1, comparison2)
     }
 
     private fun `given a research field with several contributors`(id: ThingId) {

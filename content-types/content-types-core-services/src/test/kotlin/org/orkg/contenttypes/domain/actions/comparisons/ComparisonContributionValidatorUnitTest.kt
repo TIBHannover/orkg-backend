@@ -13,7 +13,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ContributionNotFound
-import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -71,8 +70,8 @@ class ComparisonContributionValidatorUnitTest {
     }
 
     @Test
-    fun `Given a list of contributions, when less than two contributions are specified, it throws an exception`() {
-        assertThrows<RequiresAtLeastTwoContributions> { contributionValidator(listOf(ThingId("R12")), Unit) }
+    fun `Given a list of contributions, when empty, it does not throw an exception`() {
+        assertDoesNotThrow { contributionValidator(emptyList(), Unit) }
     }
 
     @Test

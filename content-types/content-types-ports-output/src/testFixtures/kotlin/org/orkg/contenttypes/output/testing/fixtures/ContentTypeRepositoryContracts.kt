@@ -99,13 +99,6 @@ fun <
         }
     }
 
-    fun Resource.hasPreviousVersion(previous: Resource): GeneralStatement =
-        fabricator.random<GeneralStatement>().copy(
-            subject = this,
-            predicate = createPredicate(Predicates.hasPreviousVersion),
-            `object` = previous
-        )
-
     fun Resource.hasPublishedVersion(previous: Resource): GeneralStatement =
         fabricator.random<GeneralStatement>().copy(
             subject = this,
@@ -118,19 +111,22 @@ fun <
         val statements = mutableSetOf<GeneralStatement>()
 
         resources[0] = resources[0].copy(classes = setOf(Classes.paper))
-        resources[1] = resources[1].copy(classes = setOf(Classes.comparison))
+        resources[1] = resources[1].copy(classes = setOf(Classes.comparisonPublished, Classes.latestVersion))
 
-        resources[2] = resources[2].copy(classes = setOf(Classes.comparison))
-        resources[3] = resources[3].copy(classes = setOf(Classes.comparison)) // ignored, because outdated
+        resources[2] = resources[2].copy(classes = setOf(Classes.comparison)) // ignored, because head
+        resources[3] = resources[3].copy(classes = setOf(Classes.comparisonPublished, Classes.latestVersion))
 
-        statements += resources[2].hasPreviousVersion(resources[3])
+        statements += resources[2].hasPublishedVersion(resources[3])
 
-        resources[4] = resources[4].copy(classes = setOf(Classes.comparison))
-        resources[5] = resources[5].copy(classes = setOf(Classes.comparison)) // ignored, because outdated
-        resources[6] = resources[6].copy(classes = setOf(Classes.comparison)) // ignored, because outdated
+        resources[4] = resources[4].copy(classes = setOf(Classes.comparison)) // ignored, because head
+        resources[5] = resources[5].copy(classes = setOf(Classes.comparisonPublished, Classes.latestVersion))
+        resources[6] = resources[6].copy( // ignored, because outdated
+            classes = setOf(Classes.comparisonPublished),
+            createdAt = resources[5].createdAt.minusDays(1)
+        )
 
-        statements += resources[4].hasPreviousVersion(resources[5])
-        statements += resources[5].hasPreviousVersion(resources[6])
+        statements += resources[4].hasPublishedVersion(resources[5])
+        statements += resources[4].hasPublishedVersion(resources[6])
 
         resources[7] = resources[7].copy(classes = setOf(Classes.visualization))
         resources[8] = resources[8].copy(classes = setOf(Classes.nodeShape))
@@ -176,7 +172,7 @@ fun <
             `object` = fabricator.random<Class>()
         )
 
-        val ignored = listOf(3, 5, 6, 8, 14, 20).map { resources[it] }.toSet()
+        val ignored = listOf(2, 4, 6, 8, 14, 20).map { resources[it] }.toSet()
 
         return TestGraph(resources, statements, ignored)
     }
@@ -216,7 +212,7 @@ fun <
                         val expected = graph.expected.filter {
                             when (contentTypeClass) {
                                 ContentTypeClass.PAPER -> Classes.paper in it.classes
-                                ContentTypeClass.COMPARISON -> Classes.comparison in it.classes
+                                ContentTypeClass.COMPARISON -> Classes.comparisonPublished in it.classes
                                 ContentTypeClass.VISUALIZATION -> Classes.visualization in it.classes
                                 ContentTypeClass.TEMPLATE -> Classes.nodeShape in it.classes
                                 ContentTypeClass.LITERATURE_LIST -> Classes.literatureList in it.classes || Classes.literatureListPublished in it.classes

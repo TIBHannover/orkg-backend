@@ -32,8 +32,7 @@ class SpringDataNeo4jRankingServiceAdapter(
 
     override fun countComparisonsIncludingPaper(id: ThingId): Long =
         neo4jClient.query("""
-            MATCH (n:Comparison:Resource)-[:RELATED {predicate_id:"compareContribution"}]->(:Contribution:Resource)<-[:RELATED {predicate_id:"P31"}]-(:Paper:Resource {id: ${'$'}id})
-            WHERE NOT (n)-[:RELATED {predicate_id:"hasPreviousVersion"}]->(:Comparison:Resource)
+            MATCH (n:ComparisonPublished:LatestVersion)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution)<-[:RELATED {predicate_id: "P31"}]-(:Paper:Resource {id: ${'$'}id})
             RETURN COUNT(DISTINCT n.id) AS count""".trimIndent()
         ).bindAll(mapOf("id" to id.value))
             .fetchAs<Long>()

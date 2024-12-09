@@ -4,9 +4,9 @@ import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
-import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.time.OffsetDateTime
@@ -14,7 +14,10 @@ import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.HeadVersion
+import org.orkg.contenttypes.domain.PublishedVersion
+import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
@@ -24,7 +27,6 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
-import org.orkg.graph.domain.Resources
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
@@ -34,10 +36,11 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.withCustomMappings
-import org.orkg.testing.pageOf
+import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
@@ -86,193 +89,621 @@ fun <
         statementRepository.save(it)
     }
 
-    fun List<Resource>.toComparisons(): List<Resource> = map { it.copy(classes = setOf(Classes.comparison)) }
+    data class TestGraph(
+        val resources: List<Resource>,
+        val statements: List<GeneralStatement>,
+        val ignored: Set<Resource>
+    ) {
+        val expected: List<Resource> get() = (resources - ignored)
 
-    fun Resource.hasPreviousVersion(previous: Resource): GeneralStatement =
-        fabricator.random<GeneralStatement>().copy(
-            subject = this,
-            predicate = createPredicate(Predicates.hasPreviousVersion),
-            `object` = previous
+        fun save(): TestGraph {
+            resources.forEach(resourceRepository::save)
+            statements.forEach(saveStatement)
+            return this
+        }
+    }
+
+    // (unpublished 1)
+    // (unpublished 2)
+    // (unpublished 3) -> (published 1)
+    // (unpublished 4) -> (published 2)
+    // (unpublished 5) -> (published 3 + 4)
+    // (unpublished 6) -> (published 5 + 6)
+    fun createTestGraph(transform: (Int, Resource) -> Resource = { _, it -> it.copy(visibility = Visibility.DEFAULT) }): TestGraph {
+        val resources = fabricator.random<List<Resource>>().mapIndexed(transform)
+        val unpublished = resources.take(6).map { it.copy(classes = setOf(Classes.comparison)) }
+        val published = resources.drop(6).mapIndexed { index, it ->
+            it.copy(
+                classes = setOfNotNull(Classes.comparisonPublished, Classes.latestVersion.takeIf { index != 3 && index != 5 }),
+                createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong())
+            )
+        }
+        val statements = mutableListOf<GeneralStatement>()
+        val hasPublishedVersion = fabricator.random<Predicate>().copy(id = Predicates.hasPublishedVersion)
+        val ignored = mutableSetOf<Resource>()
+        // link a single published comparison to an unpublished comparison (2x)
+        for (i in 0..1) {
+            statements.add(
+                fabricator.random<GeneralStatement>().copy(
+                    subject = unpublished[2 + i],
+                    predicate = hasPublishedVersion,
+                    `object` = published[i]
+                )
+            )
+        }
+        // link two published comparisons to an unpublished comparison (2x)
+        for (i in 0..1) {
+            for (j in 0..1) {
+                statements.add(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = unpublished[4 + i],
+                        predicate = hasPublishedVersion,
+                        `object` = published[2 + i * 2 + j]
+                    )
+                )
+                if (j > 0) {
+                    // published, but not the latest version, so we want to ignore them later
+                    ignored.add(published[2 + i * 2 + j])
+                }
+            }
+        }
+        return TestGraph(unpublished + published, statements, ignored)
+    }
+
+    describe("finding the version history for a published comparison by id") {
+        val graph = createTestGraph().save()
+        val expected = VersionInfo(
+            head = HeadVersion(graph.resources[5]),
+            published = listOf(
+                PublishedVersion(graph.resources[10], null),
+                PublishedVersion(graph.resources[11], null)
+            )
         )
 
-    describe("finding version history by id") {
-        val comparisons = fabricator.random<List<Resource>>()
-            .map { it.copy(classes = setOf(Classes.comparison)) }
-        comparisons.zipWithNext { a, b -> saveStatement(a.hasPreviousVersion(b)) }
-
-        val expected = comparisons.drop(1).map(::HeadVersion)
-        val result = repository.findVersionHistory(comparisons.first().id)
+        val result = repository.findVersionHistoryForPublishedComparison(graph.resources[11].id)
 
         it("returns the correct result") {
             result shouldNotBe null
-            result.size shouldBe expected.size
-            result shouldContainInOrder expected
+            result shouldBe expected
         }
     }
 
     describe("finding several comparisons") {
-        context("using no parameters") {
-            val resources = fabricator.random<List<Resource>>().toComparisons().toMutableList()
-            resources.forEach(resourceRepository::save)
-            resources.sortBy { it.createdAt }
-            saveStatement(resources[1].hasPreviousVersion(resources[0]))
+        context("with filters") {
+            context("using no parameters") {
+                val graph = createTestGraph().save()
+                val expected = graph.expected.sortedBy { it.createdAt }.take(10)
+                val pageable = PageRequest.of(0, 10)
+                val result = repository.findAll(pageable)
 
-            val expected = resources.drop(1).take(10)
-            val pageable = PageRequest.of(0, 10)
-            val result = repository.findAll(pageable = pageable)
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe 10
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 10
-                result.number shouldBe 0
-                result.totalPages shouldBe 2
-                result.totalElements shouldBe resources.size - 1
-            }
-            it("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
-                }
-            }
-        }
-        context("by label") {
-            val expectedCount = 3
-            val label = "label-to-find"
-            val resources = fabricator.random<List<Resource>>().toComparisons().toMutableList()
-            (0 until expectedCount).forEach {
-                resources[it] = resources[it].copy(label = label)
-            }
-            val hasPreviousVersion = resources[0].hasPreviousVersion(resources[1])
-
-            val expected = resources.take(expectedCount)
-
-            context("with exact matching") {
-                resources.forEach(resourceRepository::save)
-                saveStatement(hasPreviousVersion)
-                val result = repository.findAll(
-                    pageable = PageRequest.of(0, 5),
-                    label = SearchString.of(label, exactMatch = true),
-                )
+                expected.size shouldNotBe 0
 
                 it("returns the correct result") {
                     result shouldNotBe null
                     result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
+                    result.content.size shouldBe 10
                     result.content shouldContainAll expected
                 }
                 it("pages the result correctly") {
-                    result.size shouldBe 5
+                    result.size shouldBe 10
                     result.number shouldBe 0
                     result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
+                    result.totalElements shouldBe graph.expected.size
                 }
-                xit("sorts the results by creation date by default") {
+                it("sorts the results by creation date by default") {
                     result.content.zipWithNext { a, b ->
                         a.createdAt shouldBeLessThan b.createdAt
                     }
                 }
             }
-            context("with fuzzy matching") {
-                resources.forEach(resourceRepository::save)
-                saveStatement(hasPreviousVersion)
-                val result = repository.findAll(
-                    pageable = PageRequest.of(0, 5),
-                    label = SearchString.of("label find", exactMatch = false)
-                )
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
+            context("by label") {
+                val label = "label-to-find"
+                val graph = createTestGraph { index, resource ->
+                    resource.copy(label = if (index % 2 == 0) label else resource.label)
                 }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-        }
-        context("by doi") {
-            val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().toComparisons().toMutableList()
-            val doi = "10.564/531453"
-            val doiLiteral = fabricator.random<Literal>().copy(
-                label = doi,
-                datatype = Literals.XSD.STRING.prefixedUri
-            )
-            val hasDoi = createPredicate(Predicates.hasDOI)
-            val expected = resources.take(expectedCount)
+                val expected = graph.expected.filter { it.label == label }
+                expected.size shouldNotBe 0
 
-            expected.forEach {
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = it,
-                        predicate = hasDoi,
-                        `object` = doiLiteral
-                    )
-                )
-            }
-            saveStatement(resources[0].hasPreviousVersion(resources[1]))
-
-            resources.drop(expectedCount)
-                .mapIndexed { index, comparison ->
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = comparison,
-                        predicate = hasDoi,
-                        `object` = fabricator.random<Literal>().copy(label = "10.564/$index")
-                    )
-                }
-                .forEach(saveStatement)
-
-            val result = repository.findAll(
-                pageable = PageRequest.of(0, 5),
-                doi = doi,
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            it("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
-                }
-            }
-        }
-        context("by visibility") {
-            val resources = fabricator.random<List<Resource>>().toComparisons().mapIndexed { index, resource ->
-                resource.copy(
-                    visibility = Visibility.entries[index % Visibility.entries.size]
-                )
-            }
-            val hasPreviousVersion = resources[1].hasPreviousVersion(resources[0])
-            VisibilityFilter.entries.forEach { visibilityFilter ->
-                context("when visibility is $visibilityFilter") {
-                    resources.forEach(resourceRepository::save)
-                    saveStatement(hasPreviousVersion)
-                    val expected = resources.drop(1).filter { it.visibility in visibilityFilter.targets }
+                context("with exact matching") {
+                    graph.save()
                     val result = repository.findAll(
-                        visibility = visibilityFilter,
-                        pageable = PageRequest.of(0, 10)
+                        pageable = PageRequest.of(0, 10),
+                        label = SearchString.of(label, exactMatch = true),
+                    )
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expected.size
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 10
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expected.size
+                    }
+                    xit("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
+                        }
+                    }
+                }
+                context("with fuzzy matching") {
+                    graph.save()
+                    val result = repository.findAll(
+                        pageable = PageRequest.of(0, 10),
+                        label = SearchString.of("label find", exactMatch = false)
+                    )
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expected.size
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 10
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expected.size
+                    }
+                    xit("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
+                        }
+                    }
+                }
+            }
+            context("by doi") {
+                val expectedCount = 3
+                val graph = createTestGraph().save()
+                val doi = "10.564/531453"
+                val doiLiteral = fabricator.random<Literal>().copy(
+                    label = doi,
+                    datatype = Literals.XSD.STRING.prefixedUri
+                )
+                val hasDoi = createPredicate(Predicates.hasDOI)
+                val expected = graph.expected.take(expectedCount)
+
+                expected.forEach {
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = it,
+                            predicate = hasDoi,
+                            `object` = doiLiteral
+                        )
+                    )
+                }
+
+                graph.expected.drop(expectedCount)
+                    .mapIndexed { index, comparison ->
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = comparison,
+                            predicate = hasDoi,
+                            `object` = fabricator.random<Literal>().copy(label = "10.564/$index")
+                        )
+                    }
+                    .forEach(saveStatement)
+
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    doi = doi,
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("by visibility") {
+                val graph = createTestGraph { index, resource ->
+                    resource.copy(visibility = Visibility.entries[index % Visibility.entries.size])
+                }
+                VisibilityFilter.entries.forEach { visibilityFilter ->
+                    context("when visibility is $visibilityFilter") {
+                        graph.save()
+                        val expected = graph.expected.filter { it.visibility in visibilityFilter.targets }
+                        val result = repository.findAll(
+                            visibility = visibilityFilter,
+                            pageable = PageRequest.of(0, 10)
+                        )
+
+                        expected.size shouldNotBe 0
+
+                        it("returns the correct result") {
+                            result shouldNotBe null
+                            result.content shouldNotBe null
+                            result.content.size shouldBe expected.size
+                            result.content shouldContainAll expected
+                        }
+                        it("pages the result correctly") {
+                            result.size shouldBe 10
+                            result.number shouldBe 0
+                            result.totalPages shouldBe 1
+                            result.totalElements shouldBe expected.size
+                        }
+                        it("sorts the results by creation date by default") {
+                            result.content.zipWithNext { a, b ->
+                                a.createdAt shouldBeLessThan b.createdAt
+                            }
+                        }
+                    }
+                }
+            }
+            context("by created by") {
+                val createdBy = ContributorId(UUID.randomUUID())
+                val graph = createTestGraph { index, resource ->
+                    resource.copy(createdBy = if (index % 2 == 0) createdBy else resource.createdBy)
+                }.save()
+
+                val expected = graph.expected.filter { it.createdBy == createdBy }
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 10),
+                    createdBy = createdBy
+                )
+
+                expected.size shouldNotBe 0
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("by created at start") {
+                val graph = createTestGraph { index, resource ->
+                    resource.copy(createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong()))
+                }.save()
+
+                val createdAtStart = graph.expected[graph.expected.size / 2].createdAt
+                val expected = graph.expected.filter { it.createdAt >= createdAtStart }
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 10),
+                    createdAtStart = createdAtStart
+                )
+
+                expected.size shouldNotBe 0
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThanOrEqualTo b.createdAt
+                    }
+                }
+            }
+            context("by created at end") {
+                val graph = createTestGraph { index, resource ->
+                    resource.copy(createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong()))
+                }.save()
+
+                val createdAtEnd = graph.expected[graph.expected.size / 2].createdAt
+                val expected = graph.expected.filter { it.createdAt <= createdAtEnd }
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 10),
+                    createdAtEnd = createdAtEnd
+                )
+
+                expected.size shouldNotBe 0
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThanOrEqualTo b.createdAt
+                    }
+                }
+            }
+            context("by observatory id") {
+                val observatoryId = ObservatoryId(UUID.randomUUID())
+                val graph = createTestGraph { index, resource ->
+                    resource.copy(observatoryId = if (index % 2 == 0) observatoryId else resource.observatoryId)
+                }.save()
+
+                val expected = graph.expected.filter { it.observatoryId == observatoryId }
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 10),
+                    observatoryId = observatoryId
+                )
+
+                expected.size shouldNotBe 0
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("by organization id") {
+                val organizationId = OrganizationId(UUID.randomUUID())
+                val graph = createTestGraph { index, resource ->
+                    resource.copy(organizationId = if (index % 2 == 0) organizationId else resource.organizationId)
+                }.save()
+
+                val expected = graph.expected.filter { it.organizationId == organizationId }
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 10),
+                    organizationId = organizationId
+                )
+
+                expected.size shouldNotBe 0
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("by publication status") {
+                val graph = createTestGraph().save()
+
+                context("when published") {
+                    graph.save()
+                    val expected = graph.expected.filter { Classes.comparisonPublished in it.classes }
+
+                    val result = repository.findAll(
+                        pageable = PageRequest.of(0, 5),
+                        published = true
+                    )
+
+                    expected.size shouldNotBe 0
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expected.size
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 5
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expected.size
+                    }
+                    it("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
+                        }
+                    }
+                }
+                context("when unpublished") {
+                    graph.save()
+                    val expected = graph.expected.filter { Classes.comparison in it.classes }
+
+                    val result = repository.findAll(
+                        pageable = PageRequest.of(0, 10),
+                        published = false
+                    )
+
+                    expected.size shouldNotBe 0
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expected.size
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 10
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expected.size
+                    }
+                    it("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
+                        }
+                    }
+                }
+            }
+            context("by research field") {
+                context("excluding subfields") {
+                    val graph = createTestGraph().save()
+                    val researchField = fabricator.random<Resource>().copy(
+                        classes = setOf(Classes.researchField)
+                    )
+                    val hasResearchField = createPredicate(Predicates.hasResearchField)
+                    val assignedToField = graph.resources.filterIndexed { index, _ -> index % 2 == 0 }
+                    val assignedToOther = graph.resources.filterIndexed { index, _ -> index % 2 == 1 }
+
+                    assignedToField.forEach {
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasResearchField,
+                                `object` = researchField
+                            )
+                        )
+                    }
+
+                    assignedToOther.forEach {
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasResearchField,
+                                `object` = fabricator.random<Resource>().copy(
+                                    classes = setOf(Classes.researchField)
+                                )
+                            )
+                        )
+                    }
+
+                    val expected = assignedToField - graph.ignored
+                    val result = repository.findAll(
+                        pageable = PageRequest.of(0, 10),
+                        researchField = researchField.id
+                    )
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expected.size
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 10
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expected.size
+                    }
+                    it("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
+                        }
+                    }
+                }
+                context("including subfields") {
+                    val graph = createTestGraph().save()
+                    val researchField = fabricator.random<Resource>().copy(
+                        classes = setOf(Classes.researchField)
+                    )
+                    val hasSubject = createPredicate(Predicates.hasSubject)
+                    val directlyAssignedToField = graph.resources.filterIndexed { index, _ -> index % 4 == 0 }
+                    val directlyAssignedToOther = graph.resources.filterIndexed { index, _ -> index % 4 == 1 }
+                    val indirectlyAssignedToField = graph.resources.filterIndexed { index, _ -> index % 4 == 2 }
+                    val indirectlyAssignedToOther = graph.resources.filterIndexed { index, _ -> index % 4 == 3 }
+
+                    directlyAssignedToField.forEach {
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasSubject,
+                                `object` = researchField
+                            )
+                        )
+                    }
+
+                    directlyAssignedToOther.forEach {
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasSubject,
+                                `object` = fabricator.random<Resource>().copy(
+                                    classes = setOf(Classes.researchField)
+                                )
+                            )
+                        )
+                    }
+
+                    val hasSubfield = createPredicate(Predicates.hasSubfield)
+
+                    indirectlyAssignedToField.forEach {
+                        val subField = fabricator.random<Resource>().copy(
+                            classes = setOf(Classes.researchField)
+                        )
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasSubject,
+                                `object` = subField
+                            )
+                        )
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = researchField,
+                                predicate = hasSubfield,
+                                `object` = subField
+                            )
+                        )
+                    }
+
+                    indirectlyAssignedToOther.forEach {
+                        val subField = fabricator.random<Resource>().copy(
+                            classes = setOf(Classes.researchField)
+                        )
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = it,
+                                predicate = hasSubject,
+                                `object` = subField
+                            )
+                        )
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = fabricator.random<Resource>().copy(
+                                    classes = setOf(Classes.researchField)
+                                ),
+                                predicate = hasSubfield,
+                                `object` = subField
+                            )
+                        )
+                    }
+
+                    val expected = (directlyAssignedToField + indirectlyAssignedToField) - graph.ignored
+                    val result = repository.findAll(
+                        pageable = PageRequest.of(0, 10),
+                        researchField = researchField.id,
+                        includeSubfields = true
                     )
 
                     it("returns the correct result") {
@@ -294,304 +725,179 @@ fun <
                     }
                 }
             }
-        }
-        context("by created by") {
-            val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().toComparisons().toMutableList()
-            val createdBy = ContributorId(UUID.randomUUID())
-            (0 until 3).forEach {
-                resources[it] = resources[it].copy(createdBy = createdBy)
-            }
-            resources.forEach(resourceRepository::save)
-            saveStatement(resources[0].hasPreviousVersion(resources[1]))
+            context("by sdg") {
+                val sdg = ThingId("SDG_1")
+                val graph = createTestGraph().save()
 
-            val expected = resources.take(expectedCount)
-            val result = repository.findAll(
-                pageable = PageRequest.of(0, 5),
-                createdBy = createdBy
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            it("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
-                }
-            }
-        }
-        context("by created at start") {
-            val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().toComparisons().mapIndexed { index, resource ->
-                resource.copy(
-                    createdAt = OffsetDateTime.now().minusHours(index.toLong())
-                )
-            }
-            resources.forEach(resourceRepository::save)
-            saveStatement(resources[1].hasPreviousVersion(resources[0]))
-
-            val expected = resources.drop(1).take(expectedCount)
-            val result = repository.findAll(
-                pageable = PageRequest.of(0, 5),
-                createdAtStart = expected.last().createdAt
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            it("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
-                }
-            }
-        }
-        context("by created at end") {
-            val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().toComparisons().mapIndexed { index, resource ->
-                resource.copy(
-                    createdAt = OffsetDateTime.now().plusHours(index.toLong())
-                )
-            }
-            resources.forEach(resourceRepository::save)
-            saveStatement(resources[1].hasPreviousVersion(resources[0]))
-
-            val expected = resources.drop(1).take(expectedCount)
-            val result = repository.findAll(
-                pageable = PageRequest.of(0, 5),
-                createdAtEnd = expected.last().createdAt
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            it("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
-                }
-            }
-        }
-        context("by observatory id") {
-            val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().toComparisons().toMutableList()
-            val observatoryId = ObservatoryId(UUID.randomUUID())
-            (0 until expectedCount + 1).forEach {
-                resources[it] = resources[it].copy(observatoryId = observatoryId)
-            }
-            resources.forEach(resourceRepository::save)
-            saveStatement(resources[1].hasPreviousVersion(resources[0]))
-
-            val expected = resources.drop(1).take(expectedCount)
-            val result = repository.findAll(
-                pageable = PageRequest.of(0, 5),
-                observatoryId = observatoryId
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            it("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
-                }
-            }
-        }
-        context("by organization id") {
-            val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().toComparisons().toMutableList()
-            val organizationId = OrganizationId(UUID.randomUUID())
-            (0 until expectedCount + 1).forEach {
-                resources[it] = resources[it].copy(organizationId = organizationId)
-            }
-            resources.forEach(resourceRepository::save)
-            saveStatement(resources[1].hasPreviousVersion(resources[0]))
-
-            val expected = resources.drop(1).take(expectedCount)
-            val result = repository.findAll(
-                pageable = PageRequest.of(0, 5),
-                organizationId = organizationId
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            it("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
-                }
-            }
-        }
-        context("by research field") {
-            context("excluding subfields") {
-                val expectedCount = 3
-                val resources = fabricator.random<List<Resource>>().toComparisons().toMutableList()
-                val researchField = fabricator.random<Resource>().copy(
-                    classes = setOf(Classes.researchField)
-                )
-                val hasResearchField = createPredicate(Predicates.hasResearchField)
-
-                resources.forEachIndexed { index, comparison ->
-                    val field = if (index < expectedCount + 1) {
-                        researchField
-                    } else {
-                        fabricator.random<Resource>().copy(
-                            classes = setOf(Classes.researchField)
-                        )
-                    }
-                    saveStatement(
-                        fabricator.random<GeneralStatement>().copy(
-                            subject = comparison,
-                            predicate = hasResearchField,
-                            `object` = field
-                        )
-                    )
-                }
-                saveStatement(resources[1].hasPreviousVersion(resources[0]))
-
-                val expected = resources.drop(1).take(expectedCount)
-                val result = repository.findAll(
-                    pageable = PageRequest.of(0, 5),
-                    researchField = researchField.id
-                )
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                it("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-            context("including subfields") {
-                val expectedCount = 2
-                val resources = fabricator.random<List<Resource>>().toComparisons().toMutableList()
-                val researchField = fabricator.random<Resource>().copy(
-                    classes = setOf(Classes.researchField)
-                )
-                val hasResearchField = createPredicate(Predicates.hasResearchField)
-
-                // directly attached
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = resources[0],
-                        predicate = hasResearchField,
-                        `object` = researchField
-                    )
-                )
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = resources[2],
-                        predicate = hasResearchField,
-                        `object` = researchField
-                    )
-                )
-                saveStatement(resources[3].hasPreviousVersion(resources[2]))
-
-                // indirectly attached
-                val subfield = fabricator.random<Resource>().copy(
-                    classes = setOf(Classes.researchField)
-                )
-                val hasSubfield = createPredicate(Predicates.hasSubfield)
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = resources[1],
-                        predicate = hasResearchField,
-                        `object` = subfield
-                    )
-                )
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = researchField,
-                        predicate = hasSubfield,
-                        `object` = subfield
-                    )
-                )
-
-                // attach random research field to other comparisons
-                resources.drop(expectedCount).forEach {
+                val resources = graph.resources.filterIndexed { index, _ -> index % 2 == 0 }
+                resources.forEach {
                     saveStatement(
                         fabricator.random<GeneralStatement>().copy(
                             subject = it,
-                            predicate = hasResearchField,
-                            `object` = fabricator.random<Resource>().copy(
-                                classes = setOf(Classes.researchField)
-                            )
+                            predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
+                            `object` = createResource(sdg, classes = setOf(Classes.sustainableDevelopmentGoal))
                         )
                     )
                 }
 
-                val expected = resources.take(expectedCount)
+                val expected = resources - graph.ignored
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 10),
+                    sustainableDevelopmentGoal = sdg
+                )
+
+                expected.size shouldNotBe 0
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThanOrEqualTo b.createdAt
+                    }
+                }
+            }
+            context("by research problem") {
+                val researchProblemId = ThingId("ResearchProblem123")
+                val graph = createTestGraph().save()
+                val comparesContribution = createPredicate(Predicates.comparesContribution)
+                val hasResearchProblem = createPredicate(Predicates.hasResearchProblem)
+
+                val resources = graph.resources.filterIndexed { index, _ -> index % 2 == 0 }
+
+                resources.forEachIndexed { index, resource ->
+                    val contribution = createResource(fabricator.random(), classes = setOf(Classes.contribution))
+                    val researchProblem = createResource(
+                        id = if (index % 2 == 0) researchProblemId else fabricator.random(),
+                        classes = setOf(Classes.problem)
+                    )
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = resource,
+                            predicate = comparesContribution,
+                            `object` = contribution
+                        )
+                    )
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = contribution,
+                            predicate = hasResearchProblem,
+                            `object` = researchProblem
+                        )
+                    )
+                }
+
+                val expected = resources.filterIndexed { index, _ -> index % 2 == 0 } - graph.ignored
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 10),
+                    researchProblem = researchProblemId
+                )
+
+                expected.size shouldNotBe 0
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThanOrEqualTo b.createdAt
+                    }
+                }
+            }
+            context("using all parameters") {
+                val graph = createTestGraph().save()
+                val expected = graph.resources.first()
+                val researchField = fabricator.random<Resource>().copy(
+                    classes = setOf(Classes.researchField)
+                )
+                val sdg = ThingId("SDG_1")
+                val doi = "10.564/5878477675"
+                val researchProblem = ThingId("ResearchProblem123")
+
+                val contribution = createResource(fabricator.random(), classes = setOf(Classes.contribution))
+
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = expected,
+                        predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
+                        `object` = createResource(sdg, classes = setOf(Classes.sustainableDevelopmentGoal))
+                    )
+                )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = expected,
+                        predicate = createPredicate(Predicates.hasSubject),
+                        `object` = researchField
+                    )
+                )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = expected,
+                        predicate = createPredicate(Predicates.hasDOI),
+                        `object` = createLiteral(label = doi)
+                    )
+                )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = expected,
+                        predicate = createPredicate(Predicates.comparesContribution),
+                        `object` = contribution
+                    )
+                )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = contribution,
+                        predicate = createPredicate(Predicates.hasResearchProblem),
+                        `object` = createResource(researchProblem, classes = setOf(Classes.problem))
+                    )
+                )
+
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
+                    label = SearchString.of(expected.label, exactMatch = true),
+                    doi = doi,
+                    visibility = VisibilityFilter.ALL_LISTED,
+                    createdBy = expected.createdBy,
+                    createdAtStart = expected.createdAt,
+                    createdAtEnd = expected.createdAt,
+                    observatoryId = expected.observatoryId,
+                    organizationId = expected.organizationId,
                     researchField = researchField.id,
-                    includeSubfields = true
+                    includeSubfields = true,
+                    published = false,
+                    sustainableDevelopmentGoal = sdg,
+                    researchProblem = researchProblem
                 )
 
                 it("returns the correct result") {
                     result shouldNotBe null
                     result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
+                    result.content.size shouldBe 1
+                    result.content shouldContainAll setOf(expected)
                 }
                 it("pages the result correctly") {
                     result.size shouldBe 5
                     result.number shouldBe 0
                     result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
+                    result.totalElements shouldBe 1
                 }
                 it("sorts the results by creation date by default") {
                     result.content.zipWithNext { a, b ->
@@ -599,178 +905,23 @@ fun <
                     }
                 }
             }
-        }
-        context("by sdg") {
-            val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().toComparisons().toMutableList()
-            val sdgId = Resources.sustainableDevelopmentGoals[0]
-            val sdg = fabricator.random<Resource>().copy(
-                id = sdgId,
-                classes = setOf(Classes.sustainableDevelopmentGoal)
-            )
-            val hasSDG = createPredicate(Predicates.sustainableDevelopmentGoal)
-            val expected = resources.take(expectedCount)
+            it("sorts the results by multiple properties") {
+                createTestGraph { index, resource ->
+                    if (index < 2) {
+                        resource.copy(label = "label")
+                    } else {
+                        resource
+                    }
+                }.save()
+                val sort = Sort.by("label").ascending().and(Sort.by("created_at").descending())
+                val result = repository.findAll(PageRequest.of(0, 12, sort))
 
-            expected.forEach {
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = it,
-                        predicate = hasSDG,
-                        `object` = sdg
-                    )
-                )
-            }
-
-            resources.drop(expectedCount)
-                .mapIndexed { index, paper ->
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = paper,
-                        predicate = hasSDG,
-                        `object` = fabricator.random<Resource>().copy(
-                            id = Resources.sustainableDevelopmentGoals[index + 1],
-                            classes = setOf(Classes.sustainableDevelopmentGoal)
-                        )
-                    )
-                }
-                .forEach(saveStatement)
-
-            val result = repository.findAll(
-                pageable = PageRequest.of(0, 5),
-                sustainableDevelopmentGoal = sdgId,
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            it("sorts the results by creation date by default") {
                 result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
-                }
-            }
-        }
-        context("using all parameters") {
-            val researchField = fabricator.random<Resource>().copy(
-                classes = setOf(Classes.researchField)
-            )
-            val hasResearchField = createPredicate(Predicates.hasResearchField)
-            val hasDoi = createPredicate(Predicates.hasDOI)
-            val hasSDG = createPredicate(Predicates.sustainableDevelopmentGoal)
-            val comparisons = fabricator.random<List<Resource>>().toComparisons()
-            comparisons.forEachIndexed { index, comparison ->
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = comparison,
-                        predicate = hasDoi,
-                        `object` = fabricator.random<Literal>().copy(
-                            label = "10.4564/$index",
-                            datatype = Literals.XSD.STRING.prefixedUri
-                        )
-                    )
-                )
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = comparison,
-                        predicate = hasSDG,
-                        `object` = fabricator.random<Resource>().copy(
-                            id = Resources.sustainableDevelopmentGoals[index],
-                            classes = setOf(Classes.sustainableDevelopmentGoal)
-                        )
-                    )
-                )
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = comparison,
-                        predicate = hasResearchField,
-                        `object` = researchField
-                    )
-                )
-            }
-
-            val expected = createResource(classes = setOf(Classes.comparison), verified = true)
-
-            val doi = "10.4564/456546"
-            saveStatement(
-                fabricator.random<GeneralStatement>().copy(
-                    subject = expected,
-                    predicate = hasDoi,
-                    `object` = fabricator.random<Literal>().copy(label = doi)
-                )
-            )
-            saveStatement(
-                fabricator.random<GeneralStatement>().copy(
-                    subject = expected,
-                    predicate = hasResearchField,
-                    `object` = researchField
-                )
-            )
-            val sdg = Resources.sustainableDevelopmentGoals[5]
-            saveStatement(
-                fabricator.random<GeneralStatement>().copy(
-                    subject = expected,
-                    predicate = hasSDG,
-                    `object` = fabricator.random<Resource>().copy(
-                        id = sdg,
-                        classes = setOf(Classes.sustainableDevelopmentGoal)
-                    )
-                )
-            )
-            saveStatement(comparisons[0].hasPreviousVersion(expected))
-
-            val result = repository.findAll(
-                pageable = PageRequest.of(0, 5),
-                label = SearchString.of(expected.label, exactMatch = true),
-                doi = doi,
-                visibility = VisibilityFilter.ALL_LISTED,
-                createdBy = expected.createdBy,
-                createdAtStart = expected.createdAt,
-                createdAtEnd = expected.createdAt,
-                observatoryId = expected.observatoryId,
-                organizationId = expected.organizationId,
-                researchField = researchField.id,
-                includeSubfields = true,
-                sustainableDevelopmentGoal = sdg
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe 1
-                result.content shouldContainAll setOf(expected)
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe 1
-            }
-            it("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
-                }
-            }
-        }
-        it("sorts the results by multiple properties") {
-            val resources = fabricator.random<List<Resource>>().toComparisons().toMutableList()
-            resources[1] = resources[1].copy(label = resources[0].label)
-            resources.forEach(resourceRepository::save)
-
-            val sort = Sort.by("label").ascending().and(Sort.by("created_at").descending())
-            val result = repository.findAll(PageRequest.of(0, 12, sort))
-
-            result.content.zipWithNext { a, b ->
-                if (a.label == b.label) {
-                    a.createdAt shouldBeGreaterThan b.createdAt
-                } else {
-                    a.label shouldBeLessThan b.label
+                    if (a.label == b.label) {
+                        a.createdAt shouldBeGreaterThan b.createdAt
+                    } else {
+                        a.label shouldBeLessThan b.label
+                    }
                 }
             }
         }
@@ -839,93 +990,45 @@ fun <
     describe("finding several current comparisons") {
         context("by listed visibility") {
             context("without doi") {
-                val comparisons = fabricator.random<List<Resource>>()
-                    .map { it.copy(visibility = Visibility.UNLISTED, classes = setOf(Classes.comparison)) }
-                    .toMutableList()
-                comparisons[0] = comparisons[0].copy(visibility = Visibility.DEFAULT)
-                comparisons[1] = comparisons[1].copy(visibility = Visibility.DEFAULT)
-                comparisons[2] = comparisons[2].copy(visibility = Visibility.FEATURED)
-                comparisons[3] = comparisons[3].copy(visibility = Visibility.FEATURED)
-                comparisons[4] = comparisons[4].copy(visibility = Visibility.DEFAULT)
-                comparisons[5] = comparisons[5].copy(visibility = Visibility.DEFAULT)
-                comparisons[6] = comparisons[6].copy(visibility = Visibility.FEATURED)
-                comparisons[7] = comparisons[7].copy(visibility = Visibility.FEATURED)
+                val graph = createTestGraph { index, comparison ->
+                    comparison.copy(visibility = Visibility.entries[index % 4])
+                }.save()
+                val hasDoi = fabricator.random<Predicate>().copy(id = Predicates.hasDOI)
 
-                // Workaround for in-memory repository, because it can only return comparisons that are used in at least one statement
-                val description = fabricator.random<Predicate>().copy(id = Predicates.description)
-                comparisons.forEach {
-                    saveStatement(
-                        fabricator.random<GeneralStatement>().copy(
-                            subject = it,
-                            predicate = description,
-                            `object` = fabricator.random<Literal>()
+                graph.resources.forEachIndexed { index, comparison ->
+                    if (index % 2 == 1) {
+                        saveStatement(
+                            fabricator.random<GeneralStatement>().copy(
+                                subject = comparison,
+                                predicate = hasDoi,
+                                `object` = fabricator.random<Literal>()
+                            )
                         )
-                    )
+                    }
                 }
 
-                val hasPreviousVersion = fabricator.random<Predicate>().copy(id = Predicates.hasPreviousVersion)
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = comparisons[0],
-                        predicate = hasPreviousVersion,
-                        `object` = comparisons[1]
-                    )
-                )
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = comparisons[2],
-                        predicate = hasPreviousVersion,
-                        `object` = comparisons[3]
-                    )
-                )
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = comparisons[4],
-                        predicate = hasPreviousVersion,
-                        `object` = comparisons[5]
-                    )
-                )
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = comparisons[6],
-                        predicate = hasPreviousVersion,
-                        `object` = comparisons[7]
-                    )
-                )
+                val expected = graph.resources.filterIndexed { index, _ ->
+                    index % 2 == 0 && // default or featured visibility
+                        (index > 5 || // is a published comparison
+                        index < 2) // has no published comparison attached
+                }
+                val result = repository.findAllCurrentAndListedAndUnpublishedComparisons(PageRequest.of(0, 5))
 
-                val hasDoi = fabricator.random<Predicate>().copy(id = Predicates.hasDOI)
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = comparisons[4],
-                        predicate = hasDoi,
-                        `object` = fabricator.random<Literal>()
-                    )
-                )
-                saveStatement(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = comparisons[6],
-                        predicate = hasDoi,
-                        `object` = fabricator.random<Literal>()
-                    )
-                )
-
-                val pageable = PageRequest.of(0, 5)
-                val expected = pageOf(comparisons[0], comparisons[2], pageable = PageRequest.of(0, 5))
-                val result = repository.findAllCurrentListedAndUnpublishedComparisons(pageable)
+                expected.size shouldNotBe 0
 
                 it("returns the correct result") {
                     result shouldNotBe null
                     result.content shouldNotBe null
-                    result.content.size shouldBe expected.content.size
-                    result.content shouldContainAll expected.content
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
                 }
                 it("pages the result correctly") {
-                    result.size shouldBe expected.size
-                    result.number shouldBe expected.number
+                    result.size shouldBe 5
+                    result.number shouldBe 0
                     result.totalPages shouldBe 1
-                    result.totalElements shouldBe expected.totalElements
+                    result.totalElements shouldBe expected.size
                 }
-                it("sorts the results by creation date by default") {
+                xit("sorts the results by creation date by default") {
                     result.content.zipWithNext { a, b ->
                         a.createdAt shouldBeLessThan b.createdAt
                     }

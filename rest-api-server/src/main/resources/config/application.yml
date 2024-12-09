@@ -59,6 +59,7 @@ orkg:
       smart-review: "http://localhost/review/"
   simcomp:
     host: "http://localhost:4321"
+    api-key: "K3Y-4CC3SS"
   external-services:
     geonames:
       host: "https://secure.geonames.org"

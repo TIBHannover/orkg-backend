@@ -23,7 +23,6 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
@@ -53,7 +52,7 @@ class SmartReviewServiceUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val smartReviewRepository: SmartReviewRepository = mockk()
     private val smartReviewPublishedRepository: SmartReviewPublishedRepository = mockk()
-    private val comparisonRepository: ComparisonRepository = mockk()
+    private val comparisonService: ComparisonService = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
@@ -70,7 +69,7 @@ class SmartReviewServiceUnitTest {
         resourceRepository = resourceRepository,
         smartReviewRepository = smartReviewRepository,
         smartReviewPublishedRepository = smartReviewPublishedRepository,
-        comparisonRepository = comparisonRepository,
+        comparisonService = comparisonService,
         statementRepository = statementRepository,
         observatoryRepository = observatoryRepository,
         organizationRepository = organizationRepository,
@@ -96,7 +95,7 @@ class SmartReviewServiceUnitTest {
             resourceRepository,
             smartReviewRepository,
             smartReviewPublishedRepository,
-            comparisonRepository,
+            comparisonService,
             statementRepository,
             observatoryRepository,
             organizationRepository,
@@ -740,6 +739,7 @@ class SmartReviewServiceUnitTest {
     fun `Given a published smart review, when fetching one of its contents (comparison), then it is returned`() {
         val smartReview = createResource(classes = setOf(Classes.smartReviewPublished))
         val content = createResource(id = ThingId("R123"), classes = setOf(Classes.comparison))
+        val versions = VersionInfo(HeadVersion(content), emptyList())
 
         every { resourceRepository.findById(smartReview.id) } returns Optional.of(smartReview)
         every { smartReviewPublishedRepository.findById(smartReview.id) } returns Optional.of(
@@ -756,7 +756,8 @@ class SmartReviewServiceUnitTest {
             )
         )
         every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
-        every { comparisonRepository.findVersionHistory(content.id) } returns emptyList()
+        every { with(comparisonService) { content.findTableData() } } returns ComparisonTable.empty(content.id)
+        every { with(comparisonService) { content.findVersionInfo(any()) } } returns versions
 
         val result = service.findPublishedContentById(smartReview.id, content.id)
         result.isLeft shouldBe true
@@ -771,13 +772,15 @@ class SmartReviewServiceUnitTest {
                 it.organizations shouldBe listOf(content.organizationId)
                 it.visibility shouldBe content.visibility
                 it.unlistedBy shouldBe content.unlistedBy
+                it.versions shouldBe versions
             }
         }
 
         verify(exactly = 1) { resourceRepository.findById(smartReview.id) }
         verify(exactly = 1) { smartReviewPublishedRepository.findById(smartReview.id) }
         verify(exactly = 1) { statementRepository.fetchAsBundle(any(), any(), any()) }
-        verify(exactly = 1) { comparisonRepository.findVersionHistory(content.id) }
+        verify(exactly = 1) { with(comparisonService) { content.findTableData() } }
+        verify(exactly = 1) { with(comparisonService) { content.findVersionInfo(any()) } }
     }
 
     @Test

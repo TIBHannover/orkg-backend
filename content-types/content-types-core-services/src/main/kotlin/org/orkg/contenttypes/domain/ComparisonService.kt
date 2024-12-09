@@ -39,7 +39,6 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonExistenceValid
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonModifiableValidator
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonPublicationInfoUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonPublishableValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonReferencesUpdater
@@ -53,8 +52,11 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceCreato
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGUpdater
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionArchiver
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonTableCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonTableUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionDoiPublisher
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionHistoryUpdater
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelatedFigureCommand
@@ -64,10 +66,12 @@ import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelat
 import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedResourceCommand
 import org.orkg.contenttypes.output.ComparisonPublishedRepository
 import org.orkg.contenttypes.output.ComparisonRepository
+import org.orkg.contenttypes.output.ComparisonTableRepository
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Predicates
@@ -106,6 +110,7 @@ class ComparisonService(
     private val doiService: DoiService,
     private val conferenceSeriesRepository: ConferenceSeriesRepository,
     private val comparisonRepository: ComparisonRepository,
+    private val comparisonTableRepository: ComparisonTableRepository,
     private val comparisonPublishedRepository: ComparisonPublishedRepository,
     private val clock: Clock = Clock.systemDefaultZone(),
     @Value("\${orkg.publishing.base-url.comparison}")
@@ -113,7 +118,7 @@ class ComparisonService(
 ) : ComparisonUseCases, RetrieveComparisonContributionsUseCase {
     override fun findById(id: ThingId): Optional<Comparison> =
         resourceRepository.findById(id)
-            .filter { Classes.comparison in it.classes }
+            .filter { Classes.comparison in it.classes || Classes.comparisonPublished in it.classes }
             .map { it.toComparison() }
 
     override fun findAll(
@@ -128,7 +133,9 @@ class ComparisonService(
         organizationId: OrganizationId?,
         researchField: ThingId?,
         includeSubfields: Boolean,
-        sustainableDevelopmentGoal: ThingId?
+        published: Boolean?,
+        sustainableDevelopmentGoal: ThingId?,
+        researchProblem: ThingId?
     ): Page<Comparison> =
         comparisonRepository.findAll(
             pageable = pageable,
@@ -142,7 +149,9 @@ class ComparisonService(
             organizationId = organizationId,
             researchField = researchField,
             includeSubfields = includeSubfields,
-            sustainableDevelopmentGoal = sustainableDevelopmentGoal
+            published = published,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
+            researchProblem = researchProblem
         ).pmap { it.toComparison() }
 
     override fun findRelatedResourceById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedResource> =
@@ -177,8 +186,8 @@ class ComparisonService(
         statementRepository.findAll(subjectId = comparisonId, predicateId = Predicates.hasRelatedFigure, pageable = pageable)
             .map { (it.`object` as Resource).toComparisonRelatedFigure() }
 
-    override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison> =
-        comparisonRepository.findAllCurrentListedAndUnpublishedComparisons(pageable)
+    override fun findAllCurrentAndListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison> =
+        comparisonRepository.findAllCurrentAndListedAndUnpublishedComparisons(pageable)
             .map { it.toComparison() }
 
     override fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
@@ -202,7 +211,8 @@ class ComparisonService(
             ComparisonResearchFieldCreator(literalService, statementService),
             ComparisonReferencesCreator(literalService, statementService),
             ComparisonIsAnonymizedCreator(literalService, statementService),
-            ComparisonContributionCreator(statementService)
+            ComparisonContributionCreator(statementService),
+            ComparisonTableCreator(comparisonTableRepository)
         )
         return steps.execute(command, CreateComparisonState()).comparisonId!!
     }
@@ -320,7 +330,7 @@ class ComparisonService(
             DescriptionValidator { it.description },
             LabelCollectionValidator("references") { it.references },
             ComparisonExistenceValidator(this),
-            ComparisonModifiableValidator(statementService),
+            ComparisonModifiableValidator(),
             ComparisonContributionValidator(resourceRepository) { it.contributions },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
@@ -334,7 +344,8 @@ class ComparisonService(
             ComparisonSDGUpdater(literalService, statementService),
             ComparisonContributionUpdater(literalService, statementService),
             ComparisonReferencesUpdater(literalService, statementService),
-            ComparisonIsAnonymizedUpdater(literalService, statementService)
+            ComparisonIsAnonymizedUpdater(literalService, statementService),
+            ComparisonTableUpdater(comparisonTableRepository)
         )
         steps.execute(command, UpdateComparisonState())
     }
@@ -375,14 +386,14 @@ class ComparisonService(
             .execute(comparisonId, comparisonRelatedFigureId, contributorId)
     }
 
-    override fun publish(command: PublishComparisonCommand) {
+    override fun publish(command: PublishComparisonCommand): ThingId {
         val steps = listOf<Action<PublishComparisonCommand, PublishComparisonState>>(
-            ComparisonPublishableValidator(resourceService, comparisonPublishedRepository),
-            ComparisonPublicationInfoUpdater(literalService, statementService, clock),
-            ComparisonVersionArchiver(comparisonPublishedRepository),
+            ComparisonPublishableValidator(this, comparisonTableRepository),
+            ComparisonVersionCreator(resourceRepository, statementRepository, resourceService, statementService, literalService, listService, comparisonPublishedRepository),
+            ComparisonVersionHistoryUpdater(statementService, resourceService),
             ComparisonVersionDoiPublisher(statementService, literalService, comparisonRepository, doiService, comparisonPublishBaseUri)
         )
-        steps.execute(command, PublishComparisonState())
+        return steps.execute(command, PublishComparisonState()).comparisonVersionId!!
     }
 
     private fun Resource.toComparisonRelatedResource(): ComparisonRelatedResource {
@@ -415,44 +426,69 @@ class ComparisonService(
     }
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
-        val statements = (
-            statementRepository.fetchAsBundle(
-                id = resource.id,
-                configuration = BundleConfiguration(
-                    minLevel = null,
-                    maxLevel = 3,
-                    blacklist = listOf(
-                        Classes.researchField,
-                        Classes.contribution,
-                        Classes.visualization,
-                        Classes.comparisonRelatedFigure,
-                        Classes.comparisonRelatedResource,
-                        Classes.sustainableDevelopmentGoal
-                    ),
-                    whitelist = emptyList()
+        val statements = statementRepository.fetchAsBundle(
+            id = resource.id,
+            configuration = BundleConfiguration(
+                minLevel = null,
+                maxLevel = 3,
+                blacklist = listOf(
+                    Classes.researchField,
+                    Classes.contribution,
+                    Classes.visualization,
+                    Classes.comparisonRelatedFigure,
+                    Classes.comparisonRelatedResource,
+                    Classes.sustainableDevelopmentGoal
                 ),
-                sort = Sort.unsorted()
-            ) + statementRepository.fetchAsBundle(
-                id = resource.id,
-                configuration = BundleConfiguration(
-                    minLevel = null,
-                    maxLevel = 1,
-                    blacklist = emptyList(),
-                    whitelist = listOf(
-                        Classes.researchField,
-                        Classes.contribution,
-                        Classes.visualization,
-                        Classes.comparisonRelatedFigure,
-                        Classes.comparisonRelatedResource,
-                        Classes.sustainableDevelopmentGoal
-                    )
-                ),
-                sort = Sort.unsorted()
-            )
-        ).groupBy { it.subject.id }
-        return ContentTypeSubgraph(resource.id, statements)
+                whitelist = emptyList()
+            ),
+            sort = Sort.unsorted()
+        ) + statementRepository.fetchAsBundle(
+            id = resource.id,
+            configuration = BundleConfiguration(
+                minLevel = null,
+                maxLevel = 1,
+                blacklist = emptyList(),
+                whitelist = listOf(
+                    Classes.researchField,
+                    Classes.contribution,
+                    Classes.visualization,
+                    Classes.comparisonRelatedFigure,
+                    Classes.comparisonRelatedResource,
+                    Classes.sustainableDevelopmentGoal
+                )
+            ),
+            sort = Sort.unsorted()
+        )
+        return ContentTypeSubgraph(resource.id, statements.groupBy { it.subject.id })
     }
 
+    internal fun Resource.findTableData(): ComparisonTable =
+        when {
+            Classes.comparisonPublished in classes -> comparisonPublishedRepository.findById(id)
+                .map { ComparisonTable(id, it.config, it.data) }
+                .orElseGet { ComparisonTable.empty(id) }
+            else -> comparisonTableRepository.findById(id).orElseGet { ComparisonTable.empty(id) }
+        }
+
+    internal fun Resource.findVersionInfo(statements: Map<ThingId, List<GeneralStatement>>): VersionInfo =
+        when {
+            Classes.comparisonPublished in classes -> comparisonRepository.findVersionHistoryForPublishedComparison(id)
+            else -> VersionInfo(
+                head = HeadVersion(this),
+                published = statements[id].orEmpty().wherePredicate(Predicates.hasPublishedVersion)
+                    .sortedByDescending { it.createdAt }
+                    .objects()
+                    .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
+            )
+        }
+
     internal fun Resource.toComparison(): Comparison =
-        findSubgraph(this).let { Comparison.from(this, it.statements, comparisonRepository.findVersionHistory(id)) }
+        findSubgraph(this).let {
+            Comparison.from(
+                resource = this,
+                statements = it.statements,
+                table = findTableData(),
+                versionInfo = findVersionInfo(it.statements)
+            )
+        }
 }

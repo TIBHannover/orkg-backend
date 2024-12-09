@@ -25,6 +25,8 @@ interface ComparisonRepresentationAdapter : AuthorRepresentationAdapter, Labeled
             authors = authors.mapToAuthorRepresentation(),
             sustainableDevelopmentGoals = sustainableDevelopmentGoals.mapToLabeledObjectRepresentation(),
             contributions = contributions.mapToLabeledObjectRepresentation(),
+            config = config,
+            data = data,
             visualizations = visualizations.mapToLabeledObjectRepresentation(),
             relatedFigures = relatedFigures.mapToLabeledObjectRepresentation(),
             relatedResources = relatedResources.mapToLabeledObjectRepresentation(),
@@ -34,9 +36,10 @@ interface ComparisonRepresentationAdapter : AuthorRepresentationAdapter, Labeled
             extractionMethod = extractionMethod,
             createdAt = createdAt,
             createdBy = createdBy,
-            versions = versions.map { it.toHeadVersionRepresentation() },
+            versions = versions.toVersionInfoRepresentation(),
             isAnonymized = isAnonymized,
             visibility = visibility,
-            unlistedBy = unlistedBy
+            unlistedBy = unlistedBy,
+            published = published
         )
 }

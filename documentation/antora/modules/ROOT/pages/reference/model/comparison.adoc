@@ -17,6 +17,7 @@ flowchart LR
     Comparison --> |"HAS_VENUE"| publishedIn[Venue \n Resource]
     Comparison --> |"url"| url[Literal \n xsd:anyURI]
     Comparison --> |"hasAuthors"| authorList[List \n Resource]
+    Comparison --> |"hasPublishedVersion"| comparisonPublished[ComparisonPublished&sup1; \n Resource]
     subgraph Author List
         authorList --> |"hasListElement"| Author
 		subgraph Author
@@ -60,3 +61,5 @@ flowchart LR
 	Comparison --> |"IsAnonymized"| isAnonymized[Literal \n xsd:boolean]
 	Comparison --> |"sustainableDevelopmentGoal"| sdg[SustainableDevelopmentGoal \n Resource]
 ----
+
+^1^ The latest published version of a comparison has the additional label "LatestVersion"

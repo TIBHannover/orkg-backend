@@ -22,6 +22,8 @@ interface CreateComparisonUseCase {
         val authors: List<Author>,
         val sustainableDevelopmentGoals: Set<ThingId>,
         val contributions: List<ThingId>,
+        val config: ComparisonConfig,
+        val data: ComparisonData,
         val references: List<String>,
         val observatories: List<ObservatoryId>,
         val organizations: List<OrganizationId>,
@@ -61,6 +63,8 @@ interface UpdateComparisonUseCase {
         val authors: List<Author>?,
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val contributions: List<ThingId>?,
+        val config: ComparisonConfig?,
+        val data: ComparisonData?,
         val references: List<String>?,
         val observatories: List<ObservatoryId>?,
         val organizations: List<OrganizationId>?,
@@ -102,7 +106,7 @@ interface DeleteComparisonUseCase {
 }
 
 interface PublishComparisonUseCase {
-    fun publish(command: PublishCommand)
+    fun publish(command: PublishCommand): ThingId
 
     data class PublishCommand(
         val id: ThingId,
@@ -110,8 +114,6 @@ interface PublishComparisonUseCase {
         val subject: String,
         val description: String,
         val authors: List<Author>,
-        val config: ComparisonConfig,
-        val data: ComparisonData,
         val assignDOI: Boolean
     )
 }

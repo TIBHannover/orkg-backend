@@ -1,5 +1,6 @@
 package org.orkg.testing
 
+import org.orkg.constants.BuildConfig
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
@@ -13,7 +14,8 @@ class PostgresContainerInitializer : ApplicationContextInitializer<ConfigurableA
     // TODO: might be nice to aggregate values for debugging, if possible
 
     companion object {
-        val postgresContainer: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:$POSTGRES_VERSION"))
+        val postgresContainer: PostgreSQLContainer<*> =
+            PostgreSQLContainer(DockerImageName.parse(BuildConfig.CONTAINER_IMAGE_POSTGRES))
     }
 
     override fun initialize(applicationContext: ConfigurableApplicationContext) {

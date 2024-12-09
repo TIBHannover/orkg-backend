@@ -2,9 +2,9 @@ package org.orkg.testing
 
 import dasniko.testcontainers.keycloak.KeycloakContainer
 import org.junit.jupiter.api.BeforeAll
+import org.orkg.constants.BuildConfig
 import org.testcontainers.junit.jupiter.Testcontainers
 
-const val KEYCLOAK_VERSION = "26.0.5"
 const val KEYCLOAK_REALM = "orkg"
 const val KEYCLOAK_CLIENT_ID = "orkg-frontend"
 
@@ -14,7 +14,7 @@ abstract class KeycloakTestContainersBaseTest {
         // It is important to not use @Containers here, so we can manage the life-cycle.
         // We instantiate only one container per test class.
         @JvmStatic
-        protected val container: KeycloakContainer = KeycloakContainer("registry.gitlab.com/tibhannover/orkg/keycloak-docker-image:$KEYCLOAK_VERSION")
+        protected val container: KeycloakContainer = KeycloakContainer(BuildConfig.CONTAINER_IMAGE_KEYCLOAK)
             .withRealmImportFile("import/realm_orkg.json")
             .withExposedPorts(8080, 8443, 8787, 9000)
 

@@ -1,5 +1,6 @@
 package org.orkg.testing
 
+import org.orkg.constants.BuildConfig
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
@@ -13,7 +14,8 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
     // TODO: might be nice to aggregate values for debugging, if possible
 
     companion object {
-        val neo4jContainer: Neo4jContainer<*> = Neo4jContainer(DockerImageName.parse("neo4j:4.4-community"))
+        val neo4jContainer: Neo4jContainer<*> =
+            Neo4jContainer(DockerImageName.parse(BuildConfig.CONTAINER_IMAGE_NEO4J))
             .withoutAuthentication()
             .withPlugins("apoc")
     }

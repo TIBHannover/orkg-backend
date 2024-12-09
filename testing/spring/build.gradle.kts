@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
+    testFixturesImplementation(project(":constants"))
     testFixturesApi("com.github.dasniko:testcontainers-keycloak")
     testFixturesApi("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
-    testFixturesApi("jakarta.persistence:jakarta.persistence-api")
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")
     testFixturesApi("org.springframework.boot:spring-boot-autoconfigure")
     testFixturesApi("org.springframework.boot:spring-boot-test")
@@ -31,7 +31,6 @@ dependencies {
     testFixturesApi(project(":common"))
     testFixturesImplementation("org.hamcrest:hamcrest")
     testFixturesImplementation("org.springframework.security:spring-security-crypto")
-    testFixturesImplementation("org.assertj:assertj-core")
     testFixturesImplementation("com.epages:restdocs-api-spec-mockmvc")
     testFixturesImplementation("org.testcontainers:testcontainers")
 }

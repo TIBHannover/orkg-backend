@@ -22,14 +22,6 @@ dependencies {
     implementation("jakarta.validation:jakarta.validation-api")
     implementation(project(":graph:graph-core-model"))
     implementation(project(":media-storage:media-storage-core-model"))
-
-    containerTestApi("org.junit.jupiter:junit-jupiter-api")
-    containerTestApi("org.springframework.boot:spring-boot-test-autoconfigure")
-    containerTestApi("org.springframework:spring-test")
-    containerTestApi(project(":community:community-ports-output"))
-    containerTestApi(project(":eventbus"))
-    containerTestApi(testFixtures(project(":community:community-ports-output")))
-    containerTestApi(testFixtures(project(":testing:spring")))
 }
 
 testing {
@@ -38,16 +30,14 @@ testing {
             dependencies {
                 implementation("org.assertj:assertj-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
-            }
-        }
-        val containerTest by getting(JvmTestSuite::class) {
-            dependencies {
-                implementation(project())
-                implementation("org.springframework:spring-beans")
                 implementation("org.assertj:assertj-core")
                 runtimeOnly(project(":migrations:liquibase"))
                 runtimeOnly("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
+                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework:spring-test")
+                implementation(testFixtures(project(":community:community-ports-output")))
+                implementation(testFixtures(project(":testing:spring")))
             }
         }
     }

@@ -13,20 +13,12 @@ dependencies {
     implementation("org.springframework:spring-core")
     implementation("jakarta.validation:jakarta.validation-api")
     implementation(project(":common"))
-
-    containerTestCompileOnly("org.junit.jupiter:junit-jupiter-api")
-    containerTestApi("org.springframework.boot:spring-boot-test-autoconfigure")
-    containerTestApi("org.springframework:spring-test")
-    containerTestApi(project(":media-storage:media-storage-ports-output"))
-    containerTestApi(testFixtures(project(":media-storage:media-storage-ports-output")))
-    containerTestApi(testFixtures(project(":testing:spring")))
 }
 
 testing {
     suites {
-        val containerTest by getting(JvmTestSuite::class) {
+        val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(project())
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
                 runtimeOnly(project(":migrations:liquibase"))
@@ -35,6 +27,11 @@ testing {
                 runtimeOnly("org.postgresql:postgresql")
                 implementation("org.springframework:spring-beans")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework:spring-test")
+                implementation(testFixtures(project(":media-storage:media-storage-ports-output")))
+                implementation(testFixtures(project(":testing:spring")))
             }
         }
     }

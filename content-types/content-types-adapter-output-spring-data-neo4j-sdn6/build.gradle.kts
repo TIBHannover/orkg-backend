@@ -8,25 +8,20 @@ plugins {
 
 testing {
     suites {
-        val containerTest by getting(JvmTestSuite::class) {
+        val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib") // "downgrade" from api()
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-neo4j")
                 implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
                 implementation("io.kotest:kotest-framework-api")
-                implementation("org.springframework.boot:spring-boot-autoconfigure")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-beans")
-                implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
                 implementation("io.kotest:kotest-runner-junit5")
                 runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")
-                implementation(project(":content-types:content-types-ports-output"))
-                implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for SDN adapters, TODO: refactor?
                 implementation(project(":graph:graph-core-services"))
-                implementation(project(":graph:graph-ports-output"))
                 runtimeOnly(project(":migrations:neo4j-migrations"))
-                implementation(project())
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("org.springframework.data:spring-data-neo4j")
@@ -51,6 +46,4 @@ dependencies {
     api("org.neo4j:neo4j-cypher-dsl")
     implementation(project(":common:neo4j-dsl"))
     implementation("dev.forkhandles:values4k")
-
-    containerTestImplementation(kotlin("stdlib")) // "downgrade" from api()
 }

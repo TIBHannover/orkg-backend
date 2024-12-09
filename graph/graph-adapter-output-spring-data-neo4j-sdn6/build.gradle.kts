@@ -27,8 +27,7 @@ dependencies {
 
     testFixturesApi(project(":common"))
 
-    containerTestApi("io.kotest:kotest-framework-api")
-    containerTestApi(project(":graph:graph-ports-output"))
+    testApi("io.kotest:kotest-framework-api")
 }
 
 testing {
@@ -42,13 +41,6 @@ testing {
                 implementation("org.springframework:spring-beans")
                 implementation("org.springframework:spring-test")
                 implementation("org.assertj:assertj-core")
-            }
-        }
-        val containerTest by getting(JvmTestSuite::class) {
-            dependencies {
-                implementation(project())
-                implementation(project(":common"))
-                implementation(project(":graph:graph-core-model"))
                 implementation(project(":graph:graph-core-services"))
                 implementation(testFixtures(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
@@ -56,12 +48,8 @@ testing {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
                 implementation("io.kotest:kotest-assertions-shared")
-                implementation("org.eclipse.rdf4j:rdf4j-common-io")
-                implementation("org.neo4j:neo4j-cypher-dsl")
-                implementation("org.springframework.boot:spring-boot-autoconfigure")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-beans")
-                implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
                 implementation("io.kotest:kotest-assertions-core")
                 runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")

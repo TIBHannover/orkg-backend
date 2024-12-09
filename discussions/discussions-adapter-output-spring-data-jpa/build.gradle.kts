@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("org.orkg.gradle.spring-library")
     id("org.orkg.gradle.kotlin-library-with-container-tests")
@@ -14,25 +16,22 @@ dependencies {
     api(project(":discussions:discussions-ports-output"))
     implementation("jakarta.validation:jakarta.validation-api")
     runtimeOnly(project(":migrations:liquibase"))
-
-    containerTestApi("org.springframework.boot:spring-boot-test-autoconfigure")
-    containerTestApi("org.springframework:spring-test")
-    containerTestApi(project(":discussions:discussions-ports-output"))
-    containerTestApi(testFixtures(project(":discussions:discussions-ports-output")))
-    containerTestApi(testFixtures(project(":testing:spring")))
 }
 
 testing {
     suites {
-        val containerTest by getting(JvmTestSuite::class) {
+        val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(project())
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.springframework:spring-beans")
                 runtimeOnly(project(":migrations:liquibase"))
                 runtimeOnly("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
+                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
+                implementation("org.springframework:spring-test")
+                implementation(testFixtures(project(":discussions:discussions-ports-output")))
+                implementation(testFixtures(project(":testing:spring")))
             }
         }
     }

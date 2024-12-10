@@ -54,7 +54,7 @@ class ContentTypeService(
     internal fun Resource.toContentType(): ContentType =
         when {
             Classes.paper in classes -> paperService.run { toPaper() }
-            Classes.comparison in classes -> comparisonService.run { toComparison() }
+            Classes.comparison in classes || Classes.comparisonPublished in classes -> comparisonService.run { toComparison() }
             Classes.visualization in classes -> visualizationService.run { toVisualization() }
             Classes.nodeShape in classes -> templateService.run { toTemplate() }
             Classes.literatureList in classes || Classes.literatureListPublished in classes -> literatureListService.run { toLiteratureList() }

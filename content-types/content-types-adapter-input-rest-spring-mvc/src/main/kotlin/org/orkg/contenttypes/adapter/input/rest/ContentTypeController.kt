@@ -36,6 +36,7 @@ class ContentTypeController(
         @RequestParam("research_field", required = false) researchField: ThingId?,
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
         @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
+        @RequestParam("author_id", required = false) authorId: ThingId?,
         pageable: Pageable
     ): Page<ContentTypeRepresentation> =
         service.findAll(
@@ -49,6 +50,7 @@ class ContentTypeController(
             organizationId = organizationId,
             researchField = researchField,
             includeSubfields = includeSubfields,
-            sustainableDevelopmentGoal = sustainableDevelopmentGoal
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
+            authorId = authorId
         ).mapToContentTypeRepresentation()
 }

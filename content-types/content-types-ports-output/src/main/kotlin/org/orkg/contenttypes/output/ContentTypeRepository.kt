@@ -23,6 +23,7 @@ interface ContentTypeRepository {
         organizationId: OrganizationId? = null,
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
-        sustainableDevelopmentGoal: ThingId? = null
+        sustainableDevelopmentGoal: ThingId? = null,
+        authorId: ThingId? = null,
     ): Page<Resource>
 }

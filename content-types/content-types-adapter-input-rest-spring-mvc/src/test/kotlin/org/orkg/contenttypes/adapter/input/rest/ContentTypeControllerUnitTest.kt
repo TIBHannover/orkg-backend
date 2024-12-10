@@ -70,7 +70,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
     @DisplayName("Given several content types, when they are fetched, then status is 200 OK and content types are returned")
     fun getPaged() {
         every {
-            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(
             createDummyPaper(),
             createDummyComparison(),
@@ -95,7 +95,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 
@@ -103,7 +103,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
     @DisplayName("Given several content types, when filtering by several parameters, then status is 200 OK and content types are returned")
     fun getPagedWithParameters() {
         every {
-            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(
             createDummyPaper(),
             createDummyComparison(),
@@ -123,6 +123,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
         val researchFieldId = ThingId("R456")
         val includeSubfields = true
         val sdg = ThingId("SDG_1")
+        val authorId = ThingId("147")
 
         documentedGetRequestTo("/api/content-types")
             .param("classes", classes.joinToString(","))
@@ -135,6 +136,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
             .param("research_field", researchFieldId.value)
             .param("include_subfields", includeSubfields.toString())
             .param("sdg", sdg.value)
+            .param("author_id", authorId.value)
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .perform()
@@ -159,6 +161,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
                         parameterWithName("research_field").description("Filter for research field id that the content type belongs to. (optional)"),
                         parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
                         parameterWithName("sdg").description("Filter for the sustainable development goal that the content type belongs to. (optional)"),
+                        parameterWithName("author_id").description("Filter for the author of the content type. (optional)"),
                     )
                 )
             )
@@ -176,7 +179,8 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
                 organizationId = organizationId,
                 researchField = researchFieldId,
                 includeSubfields = includeSubfields,
-                sustainableDevelopmentGoal = sdg
+                sustainableDevelopmentGoal = sdg,
+                authorId = authorId
             )
         }
     }
@@ -185,7 +189,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
     fun `Given several content types, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
         val exception = UnknownSortingProperty("unknown")
         every {
-            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
         mockMvc.perform(get("/api/content-types?sort=unknown"))
@@ -197,7 +201,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
             .andExpect(jsonPath("$.path").value("/api/content-types"))
 
         verify(exactly = 1) {
-            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 }

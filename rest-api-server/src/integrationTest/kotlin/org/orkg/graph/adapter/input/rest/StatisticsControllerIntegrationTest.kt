@@ -14,18 +14,20 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
+@Neo4jContainerIntegrationTest
 @DisplayName("Stats Controller")
 @Transactional
-internal class StatisticsControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class StatisticsControllerIntegrationTest : RestDocsTest("statistics") {
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases
@@ -78,11 +80,14 @@ internal class StatisticsControllerIntegrationTest : RestDocumentationBaseTest()
         literalService.createLiteral(label = "Out of this world")
         literalService.createLiteral(label = "We are crazy")
 
-        mockMvc.perform(getRequestTo("/api/stats")).andExpect(status().isOk).andDo(
-            document(
-                snippet, statsResponseFields()
+        mockMvc.perform(documentedGetRequestTo("/api/stats"))
+            .andExpect(status().isOk)
+            .andDo(
+                documentationHandler.document(
+                    statsResponseFields()
+                )
             )
-        )
+            .andDo(generateDefaultDocSnippets())
     }
 
     private fun statsResponseFields() = responseFields(
@@ -103,7 +108,6 @@ internal class StatisticsControllerIntegrationTest : RestDocumentationBaseTest()
         fieldWithPath("observatories").description("The number of observatories"),
         fieldWithPath("organizations").description("The number of organizations"),
         fieldWithPath("orphaned_nodes").description("The number of orphaned nodes"),
-        fieldWithPath("extras").description("A dictionary with on-the-fly classes and their corresponding numbers")
-            .optional(),
+        fieldWithPath("extras").description("A map with on-the-fly classes and their corresponding numbers").optional(),
     )
 }

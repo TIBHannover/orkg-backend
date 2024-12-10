@@ -77,4 +77,4 @@ Furthermore, to be able to further control which statements to fetch, a black/wh
 
 The endpoint also provide the parameter `includeFirst` which by default is `True` meaning it will not apply black/white listing on first level.
 
-operation::statement-controller-integration-test-fetch-bundle[snippets='curl-request,http-response,response-fields']
+operation::statements-fetch-bundle[snippets='curl-request,http-response,response-fields']

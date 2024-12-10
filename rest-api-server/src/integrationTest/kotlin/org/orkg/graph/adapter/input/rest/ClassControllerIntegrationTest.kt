@@ -9,23 +9,25 @@ import org.orkg.createClass
 import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.testing.MockUserDetailsService
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
+@Neo4jContainerIntegrationTest
 @DisplayName("Class Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-internal class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
 
     @Autowired
     private lateinit var service: ClassUseCases
@@ -45,14 +47,8 @@ internal class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createClass(label = "programming language")
 
         mockMvc
-            .perform(getRequestTo("/api/classes"))
+            .perform(get("/api/classes"))
             .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    classListDetailedResponseFields()
-                )
-            )
     }
 
     @Test
@@ -60,14 +56,14 @@ internal class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         val id = service.createClass(label = "research contribution")
 
         mockMvc
-            .perform(getRequestTo("/api/classes/{id}", id))
+            .perform(documentedGetRequestTo("/api/classes/{id}", id))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     responseFields(classResponseFields())
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -80,17 +76,17 @@ internal class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
 
         // Act and Assert
         mockMvc
-            .perform(getRequestTo("/api/classes").param("uri", uri.toString()))
+            .perform(documentedGetRequestTo("/api/classes").param("uri", uri.toString()))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(id))
             .andExpect(jsonPath("$.label").value(label))
             .andExpect(jsonPath("$.uri").value(uri.toString()))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     responseFields(classResponseFields())
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -99,14 +95,14 @@ internal class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         val id2 = service.createClass(label = "class2")
 
         mockMvc
-            .perform(getRequestTo("/api/classes").param("ids", "$id1", "$id2"))
+            .perform(documentedGetRequestTo("/api/classes").param("ids", "$id1", "$id2"))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     classListDetailedResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -116,17 +112,8 @@ internal class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createClass(label = "research topic")
 
         mockMvc
-            .perform(getRequestTo("/api/classes").param("q", "research"))
+            .perform(get("/api/classes").param("q", "research"))
             .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    queryParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label")
-                    ),
-                    classListDetailedResponseFields()
-                )
-            )
     }
 
     @Test
@@ -136,17 +123,8 @@ internal class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createClass(label = "research topic")
 
         mockMvc
-            .perform(getRequestTo("/api/classes").param("q", "PL)"))
+            .perform(get("/api/classes").param("q", "PL)"))
             .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    queryParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label")
-                    ),
-                    classListDetailedResponseFields()
-                )
-            )
     }
 
     fun classListDetailedResponseFields(): ResponseFieldsSnippet =

@@ -2,7 +2,6 @@ package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -13,27 +12,31 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.MockUserId
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.context.support.WithUserDetails
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
+@Neo4jContainerIntegrationTest
 @DisplayName("Predicate Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-internal class PredicateControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
 
     @Autowired
     private lateinit var service: PredicateUseCases
@@ -57,20 +60,8 @@ internal class PredicateControllerIntegrationTest : RestDocumentationBaseTest() 
         service.createPredicate(label = "knows")
 
         mockMvc
-            .perform(getRequestTo("/api/predicates"))
+            .perform(get("/api/predicates"))
             .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    queryParameters(
-                        parameterWithName("page").description("Page number of predicates to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of predicates to fetch per page (default: 10)").optional(),
-                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
-                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
-                    ),
-                    listOfPredicatesResponseFields3()
-                )
-            )
     }
 
     @Test
@@ -78,14 +69,14 @@ internal class PredicateControllerIntegrationTest : RestDocumentationBaseTest() 
         val id = service.createPredicate(label = "has name")
 
         mockMvc
-            .perform(getRequestTo("/api/predicates/{id}", id))
+            .perform(documentedGetRequestTo("/api/predicates/{id}", id))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     responseFields(predicateResponseFields())
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -95,17 +86,8 @@ internal class PredicateControllerIntegrationTest : RestDocumentationBaseTest() 
         service.createPredicate(label = "knows")
 
         mockMvc
-            .perform(getRequestTo("/api/predicates").param("q", "name"))
+            .perform(get("/api/predicates").param("q", "name"))
             .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    queryParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label")
-                    ),
-                    listOfPredicatesResponseFields3()
-                )
-            )
     }
 
     @Test
@@ -115,17 +97,8 @@ internal class PredicateControllerIntegrationTest : RestDocumentationBaseTest() 
         service.createPredicate(label = "know(s)")
 
         mockMvc
-            .perform(getRequestTo("/api/predicates").param("q", "know("))
+            .perform(get("/api/predicates").param("q", "know("))
             .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    queryParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label")
-                    ),
-                    listOfPredicatesResponseFields3()
-                )
-            )
     }
 
     @Test
@@ -137,31 +110,30 @@ internal class PredicateControllerIntegrationTest : RestDocumentationBaseTest() 
         val resource = mapOf("label" to newLabel)
 
         mockMvc
-            .perform(putRequestWithBody("/api/predicates/{id}", resource, predicate))
+            .perform(documentedPutRequestTo("/api/predicates/{id}", predicate)
+                .content(resource)
+                .contentType(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     requestFields(
                         fieldWithPath("label").description("The updated predicate label")
                     ),
                     responseFields(predicateResponseFields())
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
     @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deletePredicateNotFound() {
         mockMvc
-            .perform(deleteRequest("/api/predicates/{id}", "NONEXISTENT"))
+            .perform(delete("/api/predicates/{id}", "NONEXISTENT"))
             .andExpect(status().isNotFound)
-            .andDo(
-                document(
-                    snippet
-                )
-            )
     }
 
     @Test
@@ -170,13 +142,9 @@ internal class PredicateControllerIntegrationTest : RestDocumentationBaseTest() 
         val id = service.createPredicate(label = "bye bye", contributorId = ContributorId(MockUserId.ADMIN))
 
         mockMvc
-            .perform(deleteRequest("/api/predicates/{id}", id))
+            .perform(documentedDeleteRequestTo("/api/predicates/{id}", id))
             .andExpect(status().isNoContent)
-            .andDo(
-                document(
-                    snippet
-                )
-            )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -188,33 +156,18 @@ internal class PredicateControllerIntegrationTest : RestDocumentationBaseTest() 
         statementService.create(subject, predicate, `object`)
 
         mockMvc
-            .perform(deleteRequest("/api/predicates/{id}", predicate))
+            .perform(delete("/api/predicates/{id}", predicate))
             .andExpect(status().isForbidden)
-            .andDo(
-                document(
-                    snippet
-                )
-            )
     }
 
     @Test
-    @Disabled("throwing an exception with the message (An Authentication object was not found in the SecurityContext)")
     fun deletePredicateWithoutLogin() {
         val id = service.createPredicate(label = "To Delete")
 
         mockMvc
-            .perform(deleteRequest("/api/predicates/{id}", id))
-            .andExpect(status().isUnauthorized)
-            .andDo(
-                document(
-                    snippet
-                )
-            )
+            .perform(delete("/api/predicates/{id}", id))
+            .andExpect(status().isForbidden)
     }
-
-    fun listOfPredicatesResponseFields3(): ResponseFieldsSnippet =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", predicateResponseFields())
 
     companion object RestDoc {
         fun predicateResponseFields() = listOf(

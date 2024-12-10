@@ -22,20 +22,23 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
+@Neo4jContainerIntegrationTest
 @Suppress("HttpUrlsUsage")
 @DisplayName("Benchmark Controller")
 @Import(MockUserDetailsService::class)
-internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
 
     @Autowired
     private lateinit var labelsAndClasses: LabelAndClassService
@@ -137,18 +140,18 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
         statementService.create(benchCont2, ThingId(labelsAndClasses.benchmarkPredicate), bench2)
 
         mockMvc
-            .perform(getRequestTo("/api/research-fields/benchmarks"))
+            .perform(documentedGetRequestTo("/api/research-fields/benchmarks"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.content[0].label", equalTo(fieldWithBenchmarkLabel)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(1))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     researchFieldPageResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     /**
@@ -201,7 +204,7 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         mockMvc
-            .perform(getRequestTo("/api/benchmarks/summary/research-field/$fieldWithDataset").param("sort", "problem.id", "ASC"))
+            .perform(documentedGetRequestTo("/api/benchmarks/summary/research-field/$fieldWithDataset").param("sort", "problem.id", "ASC"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             // The resulting summaries are "duplicates", but listed for each research problem:
@@ -217,11 +220,11 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     benchmarkPageResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -259,7 +262,7 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         mockMvc
-            .perform(getRequestTo("/api/benchmarks/summary"))
+            .perform(documentedGetRequestTo("/api/benchmarks/summary"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.content[*].research_problem.id", containsInAnyOrder(problem1.value, problem2.value)))
@@ -269,11 +272,11 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     benchmarkPageResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -328,7 +331,7 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
         statementService.create(dummyBenchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         mockMvc
-            .perform(getRequestTo("/api/benchmarks/summary"))
+            .perform(documentedGetRequestTo("/api/benchmarks/summary"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.content[*].research_problem.id", containsInAnyOrder(problem1.value, problem2.value)))
@@ -349,11 +352,11 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     benchmarkPageResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -385,17 +388,17 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
         statementService.create(paper, Predicates.hasContribution, cont2)
 
         mockMvc
-            .perform(getRequestTo("/api/datasets/$dataset/problems"))
+            .perform(documentedGetRequestTo("/api/datasets/$dataset/problems"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     researchProblemPageResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -445,7 +448,7 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         mockMvc
-            .perform(getRequestTo("/api/datasets/research-problem/$problem?sort=totalModels,DESC"))
+            .perform(documentedGetRequestTo("/api/datasets/research-problem/$problem?sort=totalModels,DESC"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.content[0].total_papers", equalTo(1)))
@@ -457,11 +460,11 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     datasetListResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -551,17 +554,17 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
         mockMvc
-            .perform(getRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
+            .perform(documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     datasetSummaryPageResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -642,17 +645,17 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
         mockMvc
-            .perform(getRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
+            .perform(documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     datasetSummaryPageResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -730,17 +733,17 @@ internal class BenchmarkControllerIntegrationTest : RestDocumentationBaseTest() 
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
         mockMvc
-            .perform(getRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
+            .perform(documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     datasetSummaryPageResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     private fun researchFieldResponseFields() =

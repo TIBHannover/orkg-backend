@@ -21,7 +21,6 @@ dependencies {
     testFixturesApi("org.springframework:spring-context")
     testFixturesApi("org.springframework:spring-core")
     testFixturesApi("org.springframework:spring-test")
-    testFixturesApi("org.springframework:spring-web")
     testFixturesApi("org.springframework.data:spring-data-commons")
     testFixturesApi("com.fasterxml.jackson.core:jackson-databind")
     testFixturesApi("org.springframework.restdocs:spring-restdocs-mockmvc")
@@ -29,8 +28,9 @@ dependencies {
     testFixturesApi("org.testcontainers:neo4j")
     testFixturesApi("org.testcontainers:postgresql")
     testFixturesApi(project(":common"))
+    testFixturesImplementation("com.epages:restdocs-api-spec-mockmvc")
     testFixturesImplementation("org.hamcrest:hamcrest")
     testFixturesImplementation("org.springframework.security:spring-security-crypto")
-    testFixturesImplementation("com.epages:restdocs-api-spec-mockmvc")
+    testFixturesImplementation("org.springframework:spring-web")
     testFixturesImplementation("org.testcontainers:testcontainers")
 }

@@ -21,18 +21,21 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
+@Neo4jContainerIntegrationTest
 @DisplayName("Comparison Controller")
 @Import(MockUserDetailsService::class)
-internal class LegacyComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class LegacyComparisonControllerIntegrationTest : RestDocsTest("comparisons") {
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases
@@ -119,7 +122,7 @@ internal class LegacyComparisonControllerIntegrationTest : RestDocumentationBase
         statementService.create(comparison, Predicates.comparesContribution, cont3)
 
         mockMvc
-            .perform(getRequestTo("/api/comparisons/$comparison/authors?size=2"))
+            .perform(documentedGetRequestTo("/api/comparisons/$comparison/authors").param("size", "2"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.totalElements").value(2))
@@ -131,11 +134,11 @@ internal class LegacyComparisonControllerIntegrationTest : RestDocumentationBase
                 )
             )
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     authorsOfComparisonResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     private fun authorsOfComparisonResponseFields() =

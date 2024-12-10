@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.not
@@ -26,26 +25,24 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.MockUserId
+import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.queryParameters
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
+@Neo4jContainerIntegrationTest
 @DisplayName("Paper Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-@ImportAutoConfiguration(MigrationsAutoConfiguration::class)
-internal class LegacyPaperControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
 
     @Autowired
     private lateinit var predicateService: PredicateUseCases
@@ -118,20 +115,13 @@ internal class LegacyPaperControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers", paper))
-            .andExpect(status().isCreated)
-            .andDo(
-                document(
-                    snippet,
-                    queryParameters(
-                        parameterWithName("mergeIfExists")
-                            .description("Boolean (default = false) to merge newly added contribution in the paper if it already exists")
-                            .optional()
-                    ),
-                    createdResponseHeaders(),
-                    paperResponseFields()
-                )
+            .perform(
+                post("/api/papers")
+                    .content(paper)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
             )
+            .andExpect(status().isCreated)
     }
 
     fun createDummyPaperObject(title: String = "long title here", doi: String = "doi.id.here", researchField: String = "R12"): LegacyCreatePaperRequest =
@@ -199,21 +189,15 @@ internal class LegacyPaperControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers", paperWithEmptyDOI).param("mergeIfExists", "true"))
+            .perform(
+                post("/api/papers")
+                    .param("mergeIfExists", "true")
+                    .content(paperWithEmptyDOI)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id", not(originalId)))
-            .andDo(
-                document(
-                    snippet,
-                    queryParameters(
-                        parameterWithName("mergeIfExists")
-                            .description("Boolean (default = false) to merge newly added contribution in the paper if it already exists")
-                            .optional()
-                    ),
-                    createdResponseHeaders(),
-                    paperResponseFields()
-                )
-            )
     }
 
     @Test
@@ -246,21 +230,15 @@ internal class LegacyPaperControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers", paperWithSameTitle).param("mergeIfExists", "true"))
+            .perform(
+                post("/api/papers")
+                    .param("mergeIfExists", "true")
+                    .content(paperWithSameTitle)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").value(originalId))
-            .andDo(
-                document(
-                    snippet,
-                    queryParameters(
-                        parameterWithName("mergeIfExists")
-                            .description("Boolean (default = false) to merge newly added contribution in the paper if it already exists")
-                            .optional()
-                    ),
-                    createdResponseHeaders(),
-                    paperResponseFields()
-                )
-            )
     }
 
     @Test
@@ -293,21 +271,15 @@ internal class LegacyPaperControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers", paperWithSameDOI).param("mergeIfExists", "true"))
+            .perform(
+                post("/api/papers")
+                    .param("mergeIfExists", "true")
+                    .content(paperWithSameDOI)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").value(originalId))
-            .andDo(
-                document(
-                    snippet,
-                    queryParameters(
-                        parameterWithName("mergeIfExists")
-                            .description("Boolean (default = false) to merge newly added contribution in the paper if it already exists")
-                            .optional()
-                    ),
-                    createdResponseHeaders(),
-                    paperResponseFields()
-                )
-            )
     }
 
     @Test
@@ -340,21 +312,15 @@ internal class LegacyPaperControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers", paperWithSameTitleAndDOI).param("mergeIfExists", "true"))
+            .perform(
+                post("/api/papers")
+                    .param("mergeIfExists", "true")
+                    .content(paperWithSameTitleAndDOI)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").value(originalId))
-            .andDo(
-                document(
-                    snippet,
-                    queryParameters(
-                        parameterWithName("mergeIfExists")
-                            .description("Boolean (default = false) to merge newly added contribution in the paper if it already exists")
-                            .optional()
-                    ),
-                    createdResponseHeaders(),
-                    paperResponseFields()
-                )
-            )
     }
 
     @Test
@@ -371,7 +337,13 @@ internal class LegacyPaperControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/papers", paperWithNoResearchField).param("mergeIfExists", "false"))
+            .perform(
+                post("/api/papers")
+                    .param("mergeIfExists", "false")
+                    .content(paperWithNoResearchField)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isBadRequest)
     }
 
@@ -392,10 +364,22 @@ internal class LegacyPaperControllerIntegrationTest : RestDocumentationBaseTest(
 
         // Create the paper twice. It should create two papers.
         mockMvc
-            .perform(postRequestWithBody("/api/papers", paper).param("mergeIfExists", "false"))
+            .perform(
+                post("/api/papers")
+                    .param("mergeIfExists", "false")
+                    .content(paper)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isCreated)
         mockMvc
-            .perform(postRequestWithBody("/api/papers", paper).param("mergeIfExists", "false"))
+            .perform(
+                post("/api/papers")
+                    .param("mergeIfExists", "false")
+                    .content(paper)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isCreated)
     }
 
@@ -417,35 +401,15 @@ internal class LegacyPaperControllerIntegrationTest : RestDocumentationBaseTest(
         statementService.create(unrelatedPaper, predicate1, unrelatedResource)
 
         mockMvc
-            .perform(getRequestTo("/api/papers").param("linkedTo", "$id").param("size", "50"))
+            .perform(documentedGetRequestTo("/api/papers").param("linkedTo", "$id").param("size", "50"))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     // TODO: figure out how to document this call
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
-
-    private fun paperResponseFields() =
-        responseFields(
-            fieldWithPath("id").description("The paper ID"),
-            fieldWithPath("label").description("The paper label"),
-            fieldWithPath("classes").description("The list of classes the paper belongs to"),
-            fieldWithPath("created_at").description("The paper creation datetime"),
-            fieldWithPath("shared").description("The number of times this resource is shared").optional(),
-            fieldWithPath("created_by").description("The user's ID that created the paper"),
-            fieldWithPath("observatory_id").description("The observatory ID that this paper belong to"),
-            fieldWithPath("organization_id").description("The organization ID that this paper belong to"),
-            fieldWithPath("verified").description("Whether this paper is checked by the curation team or not"),
-            fieldWithPath("extraction_method").description("The method of extraction for this paper"),
-            fieldWithPath("_class").description("The type of the entity").ignored(),
-            fieldWithPath("visibility").optional().ignored(),
-            fieldWithPath("featured").optional().ignored(),
-            fieldWithPath("unlisted").optional().ignored(),
-            fieldWithPath("modifiable").description("Whether this resource can be modified.").optional().ignored(),
-            fieldWithPath("formatted_label").description("The formatted label of the resource. See <<content-negotiation,Content Negotiation>> for information on how to obtain this value.").optional()
-        )
 }
 
 //region Example data for issue #292

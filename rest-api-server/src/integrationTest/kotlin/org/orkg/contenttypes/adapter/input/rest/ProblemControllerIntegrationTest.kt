@@ -21,10 +21,12 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
@@ -34,10 +36,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
+@Neo4jContainerIntegrationTest
 @DisplayName("Problem Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-internal class ProblemControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class ProblemControllerIntegrationTest : RestDocsTest("research-problems") {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases
@@ -91,11 +94,10 @@ internal class ProblemControllerIntegrationTest : RestDocumentationBaseTest() {
         statementService.create(contributorId, contribution, predicate, problem)
 
         mockMvc
-            .perform(getRequestTo("/api/problems/$problem/users").param("size", "4"))
+            .perform(documentedGetRequestTo("/api/problems/{id}/users", problem).param("size", "4"))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     queryParameters(
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
                         parameterWithName("size").description("Number of items to fetch per page (default: 10)").optional()
@@ -103,6 +105,7 @@ internal class ProblemControllerIntegrationTest : RestDocumentationBaseTest() {
                     listOfUsersPerProblemResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -151,17 +154,21 @@ internal class ProblemControllerIntegrationTest : RestDocumentationBaseTest() {
         statementService.create(cont5, Predicates.hasResearchProblem, problem2)
 
         mockMvc
-            .perform(getRequestTo("/api/problems/$problem1/authors").param("page", "0").param("size", "1"))
+            .perform(
+                documentedGetRequestTo("/api/problems/{id}/authors", problem1)
+                    .param("page", "0")
+                    .param("size", "1")
+            )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.totalElements").value(2))
             .andExpect(jsonPath("$.content[0].papers").value(2))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     authorsOfPaperResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     private fun authorsOfPaperResponseFields() =

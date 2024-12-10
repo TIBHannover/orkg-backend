@@ -8,7 +8,7 @@ They can appear in the subject or object position in <<Statements,statements>>.
 
 A `GET` request provides information about a resource.
 
-operation::resource-controller-integration-test-fetch[snippets='curl-request,http-response,response-fields']
+operation::resources-get-single[snippets='curl-request,http-response,response-fields']
 
 [[resources-list]]
 == Listing Resources
@@ -33,7 +33,7 @@ The resource can be retrieved by following the URI in the `Location` header fiel
 
 NOTE: The created resource is returned in the body for convenience. This might be subject to change.
 
-operation::resource-controller-integration-test-add[snippets='request-fields,curl-request,http-response,response-fields']
+operation::resources-add[snippets='request-fields,curl-request,http-response,response-fields']
 
 [[resources-edit]]
 == Updating Resources
@@ -42,7 +42,7 @@ A `PUT` request updates a resource with a new given label.
 The response will be `200 OK` when successful.
 The created resource is returned in the body for convenience.
 
-operation::resource-controller-integration-test-edit[snippets='request-fields,curl-request,http-response']
+operation::resources-edit[snippets='request-fields,curl-request,http-response']
 
 [[resources-delete]]
 == Deleting Resources
@@ -54,7 +54,7 @@ To safely delete a resource, the resource shouldn't have any incoming statements
 
 Note: This request is only acceptable if you have sufficient permissions. Otherwise, a status `403 FORBIDDEN` will be returned.
 
-operation::resource-controller-integration-test-delete-resource-success[snippets='curl-request,http-response']
+operation::resources-delete-resource-success[snippets='curl-request,http-response']
 
 [[resources-import]]
 == Importing Resources

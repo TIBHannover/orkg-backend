@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -22,29 +21,39 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.MockUserId
+import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.createdResponseHeaders
+import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
+import org.orkg.testing.spring.restdocs.documentedPostRequestTo
+import org.orkg.testing.spring.restdocs.documentedPutRequestTo
+import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.context.TestPropertySource
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
+@Neo4jContainerIntegrationTest
 @DisplayName("Resource Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
 @TestPropertySource(properties = ["orkg.features.formatted_labels=false"])
-internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
 
     @Autowired
     private lateinit var flags: FeatureFlagService
@@ -86,14 +95,8 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         val id = service.createResource(label = "research contribution")
 
         mockMvc
-            .perform(getRequestTo("/api/resources/{id}", id))
+            .perform(get("/api/resources/{id}", id))
             .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    responseFields(resourceResponseFields())
-                )
-            )
     }
 
     @Test
@@ -102,11 +105,15 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         val resource = mapOf("label" to "foo")
 
         mockMvc
-            .perform(postRequestWithBody("/api/resources", resource))
+            .perform(
+                documentedPostRequestTo("/api/resources")
+                    .content(resource)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isCreated)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     requestFields(
                         fieldWithPath("label").description("The resource label."),
                         fieldWithPath("classes").type("Array").description("The classes of the resource. (optional)").optional(),
@@ -116,6 +123,7 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                     responseFields(resourceResponseFields())
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -127,7 +135,12 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         )
 
         mockMvc
-            .perform(postRequestWithBody("/api/resources", resource))
+            .perform(
+                post("/api/resources")
+                    .content(resource)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isBadRequest)
     }
 
@@ -139,7 +152,12 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createResource(id = "Test", label = "foo")
 
         mockMvc
-            .perform(postRequestWithBody("/api/resources", resource))
+            .perform(
+                post("/api/resources")
+                    .content(resource)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isBadRequest)
     }
 
@@ -152,12 +170,16 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         val update = mapOf("label" to newLabel, "classes" to setOf(oldClass))
 
         mockMvc
-            .perform(putRequestWithBody("/api/resources/{id}", update, resource))
+            .perform(
+                documentedPutRequestTo("/api/resources/{id}", resource)
+                    .content(update)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     requestFields(
                         fieldWithPath("label").description("The updated resource label. (optional)").optional(),
                         fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
@@ -166,6 +188,7 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                     responseFields(resourceResponseFields())
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -178,13 +201,17 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         val update = mapOf("classes" to listOf(newClass))
 
         mockMvc
-            .perform(putRequestWithBody("/api/resources/{id}", update, resource))
+            .perform(
+                documentedPutRequestTo("/api/resources/{id}", resource)
+                    .content(update)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value("test"))
             .andExpect(jsonPath("$.classes[0]").value(newClass.value))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     requestFields(
                         fieldWithPath("label").type("String").description("The updated resource label. (optional)").optional(),
                         fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
@@ -193,6 +220,7 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                     responseFields(resourceResponseFields())
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -204,7 +232,12 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         val update = mapOf("classes" to emptyList<ThingId>())
 
         mockMvc
-            .perform(putRequestWithBody("/api/resources/{id}", update, resource))
+            .perform(
+                put("/api/resources/{id}", resource)
+                    .content(update)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.classes", hasSize<Int>(0)))
     }
@@ -218,7 +251,12 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         val update = mapOf("classes" to setOf(ThingId("DoesNotExist")))
 
         mockMvc
-            .perform(putRequestWithBody("/api/resources/{id}", update, resource))
+            .perform(
+                put("/api/resources/{id}", resource)
+                    .content(update)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+            )
             .andExpect(status().isBadRequest)
     }
 
@@ -226,13 +264,8 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceNotFound() {
         mockMvc
-            .perform(deleteRequest("/api/resources/{id}", "NONEXISTENT"))
+            .perform(delete("/api/resources/{id}", "NONEXISTENT"))
             .andExpect(status().isNotFound)
-            .andDo(
-                document(
-                    snippet
-                )
-            )
     }
 
     @Test
@@ -241,13 +274,9 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         val id = service.createResource(label = "bye bye", userId = ContributorId(MockUserId.ADMIN))
 
         mockMvc
-            .perform(deleteRequest("/api/resources/{id}", id))
+            .perform(documentedDeleteRequestTo("/api/resources/{id}", id))
             .andExpect(status().isNoContent)
-            .andDo(
-                document(
-                    snippet
-                )
-            )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -259,28 +288,17 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         statementService.create(subject, predicate, `object`)
 
         mockMvc
-            .perform(deleteRequest("/api/resources/{id}", `object`))
+            .perform(delete("/api/resources/{id}", `object`))
             .andExpect(status().isForbidden)
-            .andDo(
-                document(
-                    snippet
-                )
-            )
     }
 
     @Test
-    @Disabled("throwing an exception with the message (An Authentication object was not found in the SecurityContext)")
     fun deleteResourceWithoutLogin() {
         val id = service.createResource(label = "To Delete")
 
         mockMvc
-            .perform(deleteRequest("/api/resources/{id}", id))
-            .andExpect(status().isUnauthorized)
-            .andDo(
-                document(
-                    snippet
-                )
-            )
+            .perform(delete("/api/resources/{id}", id))
+            .andExpect(status().isForbidden)
     }
 
     @Test
@@ -300,28 +318,15 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         service.createResource(classes = setOf(id2.value), label = "Another Resource")
 
         mockMvc
-            .perform(getRequestTo("/api/resources").param("q", "Resource").param("exclude", "$id"))
+            .perform(
+                get("/api/resources")
+                    .param("q", "Resource")
+                    .param("exclude", "$id")
+            )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.content[?(@.label == 'Resource 3')].shared").value(2))
             .andExpect(jsonPath("$.content[?(@.label == 'Another Resource')].shared").value(0))
-            .andDo(
-                document(
-                    snippet,
-                    pageableRequestParameters(
-                        parameterWithName("q")
-                            .description("A search term that must be contained in the label")
-                            .optional(),
-                        parameterWithName("exact")
-                            .description("Whether it is an exact string lookup or just containment")
-                            .optional(),
-                        parameterWithName("exclude")
-                            .description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
-                            .optional()
-                    ),
-                    pageOfDetailedResourcesResponseFields()
-                )
-            )
     }
 
     @Test
@@ -331,15 +336,9 @@ internal class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         val id = createTemplateAndTypedResource(value)
 
         mockMvc
-            .perform(getRequestTo("/api/resources/{id}", id))
+            .perform(get("/api/resources/{id}", id))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.formatted_label").value("xx${value}xx"))
-            .andDo(
-                document(
-                    snippet,
-                    responseFields(resourceResponseFields())
-                )
-            )
     }
 
     fun createTemplateAndTypedResource(value: String): ThingId {

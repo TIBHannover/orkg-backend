@@ -18,23 +18,27 @@ import org.orkg.graph.adapter.input.rest.ResourceControllerIntegrationTest.RestD
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.MockUserDetailsService
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 import orkg.orkg.community.testing.fixtures.observatoryResponseFields
 
+@Neo4jContainerIntegrationTest
 @DisplayName("Observatory Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-internal class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class ObservatoryControllerIntegrationTest : RestDocsTest("observatories") {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases
@@ -83,14 +87,14 @@ internal class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(getRequestTo("/api/observatories"))
+            .perform(documentedGetRequestTo("/api/observatories"))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     pageOfObservatoryResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -106,14 +110,14 @@ internal class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(getRequestTo("/api/observatories/$observatoryId"))
+            .perform(documentedGetRequestTo("/api/observatories/{id}", observatoryId))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     responseFields(observatoryResponseFields())
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -134,15 +138,15 @@ internal class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(getRequestTo("/api/observatories/$observatoryId/papers"))
+            .perform(documentedGetRequestTo("/api/observatories/{id}/papers", observatoryId))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     pageOfDetailedResourcesResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -163,15 +167,15 @@ internal class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(getRequestTo("/api/observatories/$observatoryId/problems"))
+            .perform(documentedGetRequestTo("/api/observatories/{id}/problems", observatoryId))
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     pageOfDetailedResourcesResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -192,7 +196,7 @@ internal class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(getRequestTo("/api/observatories/$observatoryId/class?classes=SomeClass"))
+            .perform(get("/api/observatories/{id}/class", observatoryId).param("classes", "SomeClass"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.content[0].id").value(resourceId.value))
@@ -216,7 +220,11 @@ internal class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest(
         )
 
         mockMvc
-            .perform(getRequestTo("/api/observatories/$observatoryId/class?classes=SomeClass&featured=true"))
+            .perform(
+                get("/api/observatories/{id}/class", observatoryId)
+                    .param("classes", "SomeClass")
+                    .param("featured", "true")
+            )
             .andExpect(jsonPath("$.content", hasSize<Int>(0)))
             .andExpect(status().isOk)
     }

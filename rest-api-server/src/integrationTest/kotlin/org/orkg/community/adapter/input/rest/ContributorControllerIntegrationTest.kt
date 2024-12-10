@@ -5,17 +5,19 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
+@SpringBootTest
 @DisplayName("Contributor Controller")
 @Transactional
-internal class ContributorControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class ContributorControllerIntegrationTest : RestDocsTest("contributors") {
 
     @Autowired
     private lateinit var repository: ContributorRepository
@@ -32,14 +34,14 @@ internal class ContributorControllerIntegrationTest : RestDocumentationBaseTest(
         repository.save(contributor)
 
         mockMvc
-            .perform(getRequestTo("/api/contributors/${contributor.id}"))
+            .perform(documentedGetRequestTo("/api/contributors/${contributor.id}"))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     contributorListResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     private fun contributorListResponseFields() =

@@ -17,21 +17,23 @@ import org.orkg.createResource
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.MockUserDetailsService
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
+@Neo4jContainerIntegrationTest
 @DisplayName("Organization Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-internal class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class OrganizationControllerIntegrationTest : RestDocsTest("organizations") {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases
@@ -73,14 +75,14 @@ internal class OrganizationControllerIntegrationTest : RestDocumentationBaseTest
         service.createOrganization(createdBy = contributorId)
 
         mockMvc
-            .perform(getRequestTo("/api/organizations"))
+            .perform(documentedGetRequestTo("/api/organizations"))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     listOfOrganizationsResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -89,14 +91,14 @@ internal class OrganizationControllerIntegrationTest : RestDocumentationBaseTest
         val organizationId = service.createOrganization(createdBy = contributorId)
 
         mockMvc
-            .perform(getRequestTo("/api/organizations/$organizationId"))
+            .perform(documentedGetRequestTo("/api/organizations/{id}", organizationId))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     responseFields(organizationResponseFields(OrganizationType))
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -112,14 +114,14 @@ internal class OrganizationControllerIntegrationTest : RestDocumentationBaseTest
         )
 
         mockMvc
-            .perform(getRequestTo("/api/organizations/$organizationId/observatories"))
+            .perform(documentedGetRequestTo("/api/organizations/{id}/observatories", organizationId))
             .andExpect(status().isOk)
             .andDo(
-                document(
-                    snippet,
+                documentationHandler.document(
                     ObservatoryControllerIntegrationTest.listOfObservatoriesResponseFields()
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     companion object RestDoc {

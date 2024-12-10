@@ -9,14 +9,14 @@ One Observatory can be managed by many organizations.
 
 A `GET` request provides information about an observatory.
 
-operation::observatory-controller-integration-test-fetch[snippets='curl-request,http-response,response-fields']
+operation::observatories-fetch[snippets='curl-request,http-response,response-fields']
 
 [[observatories-list]]
 == Listing Observatories
 
 A `GET` request lists all organizations:
 
-operation::observatory-controller-integration-test-index[snippets='curl-request']
+operation::observatories-index[snippets='curl-request']
 
 [[observatories-create]]
 == Creating Observatories

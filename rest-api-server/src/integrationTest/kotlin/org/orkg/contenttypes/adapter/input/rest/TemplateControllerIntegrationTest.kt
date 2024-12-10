@@ -47,23 +47,23 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectTemplate
+import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
+import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.test.web.servlet.RequestBuilder
-import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
+@Neo4jContainerIntegrationTest
 @DisplayName("Template Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-internal class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
+internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases
@@ -694,8 +694,6 @@ internal class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             .toString()
             .substringAfterLast("/")
             .let(::ThingId)
-
-    private fun RequestBuilder.perform(): ResultActions = mockMvc.perform(this)
 }
 
 private const val createTemplateJson = """{

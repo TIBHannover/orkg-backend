@@ -8,4 +8,4 @@ They can become a member of an <<organizations,organization>> or join an <<obser
 
 Information about a specific contributor can be obtained by sending a `GET` request to the contributor endpoint:
 
-operation::contributor-controller-integration-test-get-by-id[snippets='curl-request,http-response,response-fields']
+operation::contributors-get-by-id[snippets='curl-request,http-response,response-fields']

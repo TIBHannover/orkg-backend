@@ -117,6 +117,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                     )
                 )
             )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test

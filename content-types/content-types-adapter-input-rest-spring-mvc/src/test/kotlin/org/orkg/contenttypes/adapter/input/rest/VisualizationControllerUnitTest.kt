@@ -26,7 +26,7 @@ import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.VisualizationNotFound
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyVisualization
+import org.orkg.contenttypes.domain.testing.fixtures.createVisualization
 import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -68,7 +68,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
     @Test
     @DisplayName("Given a visualization, when it is fetched by id and service succeeds, then status is 200 OK and visualization is returned")
     fun getSingle() {
-        val visualization = createDummyVisualization()
+        val visualization = createVisualization()
         every { visualizationService.findById(visualization.id) } returns Optional.of(visualization)
 
         documentedGetRequestTo("/api/visualizations/{id}", visualization.id)
@@ -126,7 +126,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
     fun getPaged() {
         every {
             visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
-        } returns pageOf(createDummyVisualization())
+        } returns pageOf(createVisualization())
 
         documentedGetRequestTo("/api/visualizations")
             .accept(VISUALIZATION_JSON_V2)
@@ -145,7 +145,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
     @Test
     @DisplayName("Given several visualizations, when filtering by several parameters, then status is 200 OK and visualizations are returned")
     fun getPagedWithParameters() {
-        val visualization = createDummyVisualization()
+        val visualization = createVisualization()
         every { visualizationService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(visualization)
 
         val label = "label"

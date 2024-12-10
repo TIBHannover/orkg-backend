@@ -8,7 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.UnrelatedTemplateProperty
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateUntypedTemplatePropertyCommand
 
 internal class TemplatePropertyTemplateUpdateValidatorUnitTest {
@@ -16,7 +16,7 @@ internal class TemplatePropertyTemplateUpdateValidatorUnitTest {
 
     @Test
     fun `Given a template property update command, when validating template metadata, it returns success`() {
-        val template = createDummyTemplate().copy(isClosed = false)
+        val template = createTemplate().copy(isClosed = false)
         val state = UpdateTemplatePropertyState().copy(template = template)
         val command = dummyUpdateUntypedTemplatePropertyCommand()
 
@@ -30,7 +30,7 @@ internal class TemplatePropertyTemplateUpdateValidatorUnitTest {
 
     @Test
     fun `Given a template property update command, when template is closed, it throws an exception`() {
-        val template = createDummyTemplate().copy(isClosed = true)
+        val template = createTemplate().copy(isClosed = true)
         val state = UpdateTemplatePropertyState().copy(template = template)
         val command = dummyUpdateUntypedTemplatePropertyCommand()
 
@@ -39,7 +39,7 @@ internal class TemplatePropertyTemplateUpdateValidatorUnitTest {
 
     @Test
     fun `Given a template property update command, when template property does not belong to template, it throws an exception`() {
-        val template = createDummyTemplate().copy(isClosed = false)
+        val template = createTemplate().copy(isClosed = false)
         val state = UpdateTemplatePropertyState().copy(template = template)
         val command = dummyUpdateUntypedTemplatePropertyCommand().copy(templatePropertyId = ThingId("missing"))
 

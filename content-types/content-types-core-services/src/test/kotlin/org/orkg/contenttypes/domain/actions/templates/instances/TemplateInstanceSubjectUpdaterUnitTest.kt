@@ -13,8 +13,8 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplateInstance
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -38,10 +38,10 @@ internal class TemplateInstanceSubjectUpdaterUnitTest {
     fun `Given a template instance update command, when subject resource is not an instance of the template target class, it updates the resource`() {
         val command = dummyUpdateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
-            templateInstance = createDummyTemplateInstance().copy(
+            templateInstance = createTemplateInstance().copy(
                 root = createResource(classes = emptySet())
             ),
-            template = createDummyTemplate()
+            template = createTemplate()
         )
         val targetResource = state.templateInstance!!.root.copy(classes = setOf(state.template!!.targetClass.id))
 
@@ -68,8 +68,8 @@ internal class TemplateInstanceSubjectUpdaterUnitTest {
     fun `Given a template instance update command, when subject resource is already an instance of the template target class, it returns success`() {
         val command = dummyUpdateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
-            templateInstance = createDummyTemplateInstance(),
-            template = createDummyTemplate()
+            templateInstance = createTemplateInstance(),
+            template = createTemplate()
         )
 
         val result = templateInstanceSubjectUpdater(command, state)

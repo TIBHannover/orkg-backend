@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.SmartReviewNotModifiable
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
 
 internal class SmartReviewModifiableValidatorUnitTest {
@@ -13,7 +13,7 @@ internal class SmartReviewModifiableValidatorUnitTest {
     @Test
     fun `Given a smart review update command, when smart review is unpublished, it returns success`() {
         val command = dummyUpdateSmartReviewCommand()
-        val state = UpdateSmartReviewState(smartReview = createDummySmartReview())
+        val state = UpdateSmartReviewState(smartReview = createSmartReview())
 
         smartReviewModifiableValidator(command, state)
     }
@@ -21,7 +21,7 @@ internal class SmartReviewModifiableValidatorUnitTest {
     @Test
     fun `Given a smart review update command, when smart review is published, it throws an exception`() {
         val command = dummyUpdateSmartReviewCommand()
-        val state = UpdateSmartReviewState(smartReview = createDummySmartReview().copy(published = true))
+        val state = UpdateSmartReviewState(smartReview = createSmartReview().copy(published = true))
 
         assertThrows<SmartReviewNotModifiable> { smartReviewModifiableValidator(command, state) }
     }

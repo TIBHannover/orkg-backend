@@ -26,7 +26,7 @@ import org.orkg.contenttypes.domain.PublishedComparison
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
 
-fun createDummyComparison() = Comparison(
+fun createComparison() = Comparison(
     id = ThingId("R8186"),
     title = "Dummy Comparison Title",
     description = "Some description about the contents",
@@ -161,7 +161,7 @@ fun createDummyComparison() = Comparison(
     visibility = Visibility.DEFAULT
 )
 
-fun createDummyComparisonRelatedResource() = ComparisonRelatedResource(
+fun createComparisonRelatedResource() = ComparisonRelatedResource(
     id = ThingId("R1563"),
     label = "Comparison Related Resource",
     image = "https://example.org/image.png",
@@ -171,7 +171,7 @@ fun createDummyComparisonRelatedResource() = ComparisonRelatedResource(
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
 )
 
-fun createDummyComparisonRelatedFigure() = ComparisonRelatedFigure(
+fun createComparisonRelatedFigure() = ComparisonRelatedFigure(
     id = ThingId("R5476"),
     label = "Comparison Related Figure",
     image = "https://example.org/image.png",

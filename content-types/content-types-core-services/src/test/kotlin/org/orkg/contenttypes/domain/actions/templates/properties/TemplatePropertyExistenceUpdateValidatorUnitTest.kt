@@ -22,7 +22,7 @@ import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.TemplateService
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateNumberLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateOtherLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateResourceTemplatePropertyCommand
@@ -53,7 +53,7 @@ internal class TemplatePropertyExistenceUpdateValidatorUnitTest {
     @MethodSource("updateTemplatePropertyCommands")
     fun `Given a template property update command, when searching for existing templates, it returns success`(command: UpdateTemplatePropertyCommand) {
         val state = UpdateTemplatePropertyState()
-        val template = createDummyTemplate().copy(id = command.templateId)
+        val template = createTemplate().copy(id = command.templateId)
         val root = createResource(
             id = template.id,
             label = template.label,

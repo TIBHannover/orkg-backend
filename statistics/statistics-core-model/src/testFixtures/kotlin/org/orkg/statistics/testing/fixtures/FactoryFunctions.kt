@@ -3,7 +3,7 @@ package org.orkg.statistics.testing.fixtures
 import org.orkg.statistics.domain.Metric
 import org.orkg.statistics.domain.SimpleMetric
 
-fun createDummyMetrics(): List<Metric> = listOf(
+fun createMetrics(): List<Metric> = listOf(
     SimpleMetric(
         name = "metric1",
         description = "irrelevant1",

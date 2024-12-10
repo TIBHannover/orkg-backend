@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.PublishComparisonState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.identifiers.DOI
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishComparisonCommand
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.DoiService
@@ -47,7 +47,7 @@ internal class ComparisonVersionDoiPublisherUnitTest {
 
     @Test
     fun `Given a comparison publish command, when a new doi should be assigned, it registers a new doi and creates a hasDOI statement`() {
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
         val command = dummyPublishComparisonCommand().copy(id = comparison.id)
         val state = PublishComparisonState(comparison)
         val doi = "10.1000/182"
@@ -86,7 +86,7 @@ internal class ComparisonVersionDoiPublisherUnitTest {
 
     @Test
     fun `Given a comparison publish command, when no doi should be assigned, it does nothing`() {
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
         val command = dummyPublishComparisonCommand().copy(id = comparison.id, assignDOI = false)
         val state = PublishComparisonState(comparison)
 

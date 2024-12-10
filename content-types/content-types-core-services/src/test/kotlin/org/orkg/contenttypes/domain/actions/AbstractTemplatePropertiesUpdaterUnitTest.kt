@@ -12,10 +12,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyOtherLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyUntypedTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateOtherLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateResourceTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
@@ -48,7 +48,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest {
 
     @Test
     fun `Given a template update command, when properties are unchanged, it does nothing`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val contributorId = ContributorId(MockUserId.USER)
         val properties = template.properties.map { it.toTemplatePropertyDefinition() }
 
@@ -63,7 +63,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest {
 
     @Test
     fun `Given a template update command, when a property is removed, it deletes the old property`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val contributorId = ContributorId(MockUserId.USER)
         val properties = template.properties.dropLast(1).map { it.toTemplatePropertyDefinition() }
 
@@ -86,10 +86,10 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest {
 
     @Test
     fun `Given a template update command, when a property is removed, it deletes the old property and updates the order of the following properties`() {
-        val template = createDummyTemplate().copy(
+        val template = createTemplate().copy(
             properties = listOf(
-                createDummyUntypedTemplateProperty(),
-                createDummyStringLiteralTemplateProperty()
+                createUntypedTemplateProperty(),
+                createStringLiteralTemplateProperty()
             )
         )
         val contributorId = ContributorId(MockUserId.USER)
@@ -133,7 +133,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest {
 
     @Test
     fun `Given a template update command, when a property is added, it creates a new property`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val contributorId = ContributorId(MockUserId.USER)
         val properties = template.properties.map { it.toTemplatePropertyDefinition() } + dummyCreateOtherLiteralTemplatePropertyCommand()
 
@@ -166,8 +166,8 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest {
 
     @Test
     fun `Given a template update command, when a property is added, it creates a new property and updates the order of the following properties`() {
-        val template = createDummyTemplate().copy(
-            properties = listOf(createDummyOtherLiteralTemplateProperty())
+        val template = createTemplate().copy(
+            properties = listOf(createOtherLiteralTemplateProperty())
         )
         val contributorId = ContributorId(MockUserId.USER)
         val properties = listOf(dummyUpdateResourceTemplatePropertyCommand(), template.properties.single().toTemplatePropertyDefinition())
@@ -220,7 +220,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest {
 
     @Test
     fun `Given a template update command, when a property is replaced, it deletes the old property and creates a new one`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val contributorId = ContributorId(MockUserId.USER)
         val properties = template.properties.dropLast(1).map { it.toTemplatePropertyDefinition() } + dummyUpdateResourceTemplatePropertyCommand()
 

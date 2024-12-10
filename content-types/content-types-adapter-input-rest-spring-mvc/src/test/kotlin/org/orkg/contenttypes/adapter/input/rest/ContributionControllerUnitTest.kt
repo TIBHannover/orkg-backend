@@ -10,7 +10,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.ContributionNotFound
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyContribution
+import org.orkg.contenttypes.domain.testing.fixtures.createContribution
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectContribution
@@ -41,7 +41,7 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
     @Test
     @DisplayName("Given a contribution, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned")
     fun getSingle() {
-        val contribution = createDummyContribution()
+        val contribution = createContribution()
         every { contributionService.findById(contribution.id) } returns Optional.of(contribution)
 
         documentedGetRequestTo("/api/contributions/{id}", contribution.id)
@@ -92,7 +92,7 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
     @Test
     @DisplayName("Given several contributions, then status is 200 OK and contributions are returned")
     fun getPaged() {
-        val contribution = createDummyContribution()
+        val contribution = createContribution()
         every { contributionService.findAll(any()) } returns pageOf(contribution)
 
         documentedGetRequestTo("/api/contributions")

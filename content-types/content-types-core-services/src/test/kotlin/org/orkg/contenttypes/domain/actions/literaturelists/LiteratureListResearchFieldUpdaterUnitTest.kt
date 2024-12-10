@@ -16,7 +16,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -40,7 +40,7 @@ internal class LiteratureListResearchFieldUpdaterUnitTest {
 
     @Test
     fun `Given a literature list update command, when research fields are not set, it does nothing`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val command = dummyUpdateLiteratureListCommand().copy(researchFields = null)
         val state = UpdateLiteratureListState(literatureList = literatureList)
 
@@ -55,7 +55,7 @@ internal class LiteratureListResearchFieldUpdaterUnitTest {
 
     @Test
     fun `Given a literature list update command, when research fields are unchanged, it does nothing`() {
-        val literatureList = createDummyLiteratureList().copy(
+        val literatureList = createLiteratureList().copy(
             researchFields = listOf(ObjectIdAndLabel(ThingId("R12"), "Science"))
         )
         val command = dummyUpdateLiteratureListCommand()
@@ -72,7 +72,7 @@ internal class LiteratureListResearchFieldUpdaterUnitTest {
 
     @Test
     fun `Given a literature list update command, when research fields have changed, it updates the research field statements`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val command = dummyUpdateLiteratureListCommand()
         val state = UpdateLiteratureListState(
             literatureList = literatureList,

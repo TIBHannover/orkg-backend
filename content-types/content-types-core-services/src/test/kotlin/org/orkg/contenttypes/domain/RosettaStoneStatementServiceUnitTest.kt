@@ -19,7 +19,7 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.createContributor
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.NotACurator
@@ -105,7 +105,7 @@ internal class RosettaStoneStatementServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone statement, when soft deleting, it soft deletes the rosetta stone statement`() {
-        val statement = createDummyRosettaStoneStatement()
+        val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
@@ -131,7 +131,7 @@ internal class RosettaStoneStatementServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone statement, when soft deleting but statement is not modifiable, it throws an exception`() {
-        val statement = createDummyRosettaStoneStatement().copy(modifiable = false)
+        val statement = createRosettaStoneStatement().copy(modifiable = false)
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
@@ -143,7 +143,7 @@ internal class RosettaStoneStatementServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone statement, when soft deleting but provided id is not the latest version, it throws an exception`() {
-        val statement = createDummyRosettaStoneStatement()
+        val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
         val id = statement.versions.first().id
 
@@ -156,7 +156,7 @@ internal class RosettaStoneStatementServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone statement, when soft deleting but existing statement is already deleted, it does nothing`() {
-        val statement = createDummyRosettaStoneStatement().copy(visibility = Visibility.DELETED)
+        val statement = createRosettaStoneStatement().copy(visibility = Visibility.DELETED)
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
@@ -168,7 +168,7 @@ internal class RosettaStoneStatementServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone statement, when deleting, it deletes the rosetta stone statement`() {
-        val statement = createDummyRosettaStoneStatement()
+        val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
         val contributor = createContributor(contributorId, isCurator = true)
 
@@ -199,7 +199,7 @@ internal class RosettaStoneStatementServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone statement, when deleting but statement is not modifiable, it throws an exception`() {
-        val statement = createDummyRosettaStoneStatement().copy(modifiable = false)
+        val statement = createRosettaStoneStatement().copy(modifiable = false)
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
@@ -211,7 +211,7 @@ internal class RosettaStoneStatementServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone statement, when deleting but provided id is not the latest version, it throws an exception`() {
-        val statement = createDummyRosettaStoneStatement()
+        val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statement.versions.first().id) } returns Optional.of(statement)
@@ -225,7 +225,7 @@ internal class RosettaStoneStatementServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone statement, when deleting but contributor cannot be found, it throws an exception`() {
-        val statement = createDummyRosettaStoneStatement()
+        val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
@@ -239,7 +239,7 @@ internal class RosettaStoneStatementServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone statement, when deleting but contributor is not a curator, it throws an exception`() {
-        val statement = createDummyRosettaStoneStatement()
+        val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
         val contributor = createContributor(contributorId, isCurator = false)
 
@@ -254,7 +254,7 @@ internal class RosettaStoneStatementServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone statement, when deleting but statement version is used an object, it throws an exception`() {
-        val statement = createDummyRosettaStoneStatement()
+        val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
         val contributor = createContributor(contributorId, isCurator = true)
 

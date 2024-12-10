@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.TemplateInstanceService
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplateInstance
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.output.ResourceRepository
@@ -41,10 +41,10 @@ internal class TemplateInstanceSubjectValidatorUnitTest {
     fun `Given a template instance update command, when validating its subject, it returns success`() {
         val command = dummyUpdateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
-            template = createDummyTemplate()
+            template = createTemplate()
         )
         val subject = createResource()
-        val templateInstance = createDummyTemplateInstance()
+        val templateInstance = createTemplateInstance()
 
         every { resourceRepository.findById(command.subject) } returns Optional.of(subject)
         every { templateInstanceService.run { subject.toTemplateInstance(state.template!!) } } returns templateInstance
@@ -69,7 +69,7 @@ internal class TemplateInstanceSubjectValidatorUnitTest {
     fun `Given a template instance update command, when subject resource is not found, it throws an exception`() {
         val command = dummyUpdateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
-            template = createDummyTemplate()
+            template = createTemplate()
         )
 
         every { resourceRepository.findById(command.subject) } returns Optional.empty()

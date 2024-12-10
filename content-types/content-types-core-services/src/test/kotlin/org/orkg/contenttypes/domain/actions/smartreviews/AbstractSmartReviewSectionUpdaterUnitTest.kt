@@ -18,12 +18,12 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewComparisonSection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewOntologySection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewPredicateSection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewResourceSection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewTextSection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewVisualizationSection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewComparisonSection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewOntologySection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewPredicateSection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewResourceSection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewTextSection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewVisualizationSection
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.contenttypes.input.testing.fixtures.toSmartReviewComparisonSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.toSmartReviewOntologySectionDefinition
@@ -60,7 +60,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a comparison section, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewComparisonSection()
+        val oldSection = createSmartReviewComparisonSection()
         val newSection = oldSection.toSmartReviewComparisonSectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
@@ -70,7 +70,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a comparison section, when heading has changed, it updates the section resource`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewComparisonSection()
+        val oldSection = createSmartReviewComparisonSection()
         val newSection = oldSection.toSmartReviewComparisonSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
@@ -93,7 +93,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @ValueSource(strings = ["R12346"])
     fun `Given a comparison section, when comparison id has changed, it updates the hasLink statement`(id: String?) {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewComparisonSection()
+        val oldSection = createSmartReviewComparisonSection()
         val newSection = oldSection.toSmartReviewComparisonSectionDefinition().copy(comparison = id?.let(::ThingId))
         val statements = oldSection.toGroupedStatements()
 
@@ -123,7 +123,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a visualization section, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewVisualizationSection()
+        val oldSection = createSmartReviewVisualizationSection()
         val newSection = oldSection.toSmartReviewVisualizationSectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
@@ -133,7 +133,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a visualization section, when heading has changed, it updates the section resource`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewVisualizationSection()
+        val oldSection = createSmartReviewVisualizationSection()
         val newSection = oldSection.toSmartReviewVisualizationSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
@@ -156,7 +156,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @ValueSource(strings = ["R12346"])
     fun `Given a visualization section, when visualization id has changed, it updates the hasLink statement`(id: String?) {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewVisualizationSection()
+        val oldSection = createSmartReviewVisualizationSection()
         val newSection = oldSection.toSmartReviewVisualizationSectionDefinition().copy(visualization = id?.let(::ThingId))
         val statements = oldSection.toGroupedStatements()
 
@@ -186,7 +186,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a resource section, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewResourceSection()
+        val oldSection = createSmartReviewResourceSection()
         val newSection = oldSection.toSmartReviewResourceSectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
@@ -196,7 +196,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a resource section, when heading has changed, it updates the section resource`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewResourceSection()
+        val oldSection = createSmartReviewResourceSection()
         val newSection = oldSection.toSmartReviewResourceSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
@@ -219,7 +219,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @ValueSource(strings = ["R12346"])
     fun `Given a resource section, when resource id has changed, it updates the hasLink statement`(id: String?) {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewResourceSection()
+        val oldSection = createSmartReviewResourceSection()
         val newSection = oldSection.toSmartReviewResourceSectionDefinition().copy(resource = id?.let(::ThingId))
         val statements = oldSection.toGroupedStatements()
 
@@ -249,7 +249,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a predicate section, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewPredicateSection()
+        val oldSection = createSmartReviewPredicateSection()
         val newSection = oldSection.toSmartReviewPredicateSectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
@@ -259,7 +259,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a predicate section, when heading has changed, it updates the section resource`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewPredicateSection()
+        val oldSection = createSmartReviewPredicateSection()
         val newSection = oldSection.toSmartReviewPredicateSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
@@ -282,7 +282,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @ValueSource(strings = ["R12346"])
     fun `Given a predicate section, when predicate id has changed, it updates the hasLink statement`(id: String?) {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewPredicateSection()
+        val oldSection = createSmartReviewPredicateSection()
         val newSection = oldSection.toSmartReviewPredicateSectionDefinition().copy(predicate = id?.let(::ThingId))
         val statements = oldSection.toGroupedStatements()
 
@@ -312,7 +312,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given an ontology section, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewOntologySection()
+        val oldSection = createSmartReviewOntologySection()
         val newSection = oldSection.toSmartReviewOntologySectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
@@ -322,7 +322,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given an ontology section, when heading has changed, it updates the section resource`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewOntologySection()
+        val oldSection = createSmartReviewOntologySection()
         val newSection = oldSection.toSmartReviewOntologySectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
@@ -343,7 +343,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given an ontology section, when entity ids have changed, it updates the entity statements`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewOntologySection()
+        val oldSection = createSmartReviewOntologySection()
         val newSection = oldSection.toSmartReviewOntologySectionDefinition().copy(
             entities = listOf(ThingId("different"))
         )
@@ -375,7 +375,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given an ontology section, when predicate ids have changed, it updates the predicate statements`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewOntologySection()
+        val oldSection = createSmartReviewOntologySection()
         val newSection = oldSection.toSmartReviewOntologySectionDefinition().copy(
             predicates = listOf(ThingId("different"))
         )
@@ -407,7 +407,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a text section, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewTextSection()
+        val oldSection = createSmartReviewTextSection()
         val newSection = oldSection.toSmartReviewTextSectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
@@ -417,7 +417,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a text section, when heading has changed, it updates the section resource`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewTextSection()
+        val oldSection = createSmartReviewTextSection()
         val newSection = oldSection.toSmartReviewTextSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
@@ -439,7 +439,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a text section, when class has changed, it updates the section resource`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewTextSection()
+        val oldSection = createSmartReviewTextSection()
         val newSection = oldSection.toSmartReviewTextSectionDefinition().copy(`class` = Classes.epilogue)
         val statements = oldSection.toGroupedStatements()
 
@@ -461,7 +461,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a text section, when text has changed, it updates the text content literal`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummySmartReviewTextSection()
+        val oldSection = createSmartReviewTextSection()
         val newSection = oldSection.toSmartReviewTextSectionDefinition().copy(text = "new and different text")
         val statements = oldSection.toGroupedStatements()
 

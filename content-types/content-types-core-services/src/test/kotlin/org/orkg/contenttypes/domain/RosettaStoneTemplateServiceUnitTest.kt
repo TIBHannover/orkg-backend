@@ -26,8 +26,8 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.createContributor
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -600,7 +600,7 @@ internal class RosettaStoneTemplateServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone template, when deleting it by id, it deletes the template`() {
-        val template = createDummyRosettaStoneTemplate()
+        val template = createRosettaStoneTemplate()
         val resource = createResource(
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),
@@ -721,7 +721,7 @@ internal class RosettaStoneTemplateServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone template, when deleting it by id and id does not belong to a template, it throws an exception`() {
-        val template = createDummyRosettaStoneTemplate()
+        val template = createRosettaStoneTemplate()
         val resource = createResource(
             id = template.id,
             createdBy = template.createdBy
@@ -739,7 +739,7 @@ internal class RosettaStoneTemplateServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone template, when deleting it by id and template is not modifiable, it throws an exception`() {
-        val template = createDummyRosettaStoneTemplate()
+        val template = createRosettaStoneTemplate()
         val resource = createResource(
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),
@@ -759,7 +759,7 @@ internal class RosettaStoneTemplateServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone template, when deleting it by id and template is used in a statement, it throws an exception`() {
-        val template = createDummyRosettaStoneTemplate()
+        val template = createRosettaStoneTemplate()
         val resource = createResource(
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),
@@ -780,7 +780,7 @@ internal class RosettaStoneTemplateServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone template, when deleting it by id and template is used in a rosetta stone statement, it throws an exception`() {
-        val template = createDummyRosettaStoneTemplate()
+        val template = createRosettaStoneTemplate()
         val resource = createResource(
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),
@@ -796,7 +796,7 @@ internal class RosettaStoneTemplateServiceUnitTest {
                 pageable = PageRequests.SINGLE
             )
         } returns pageOf(
-            createDummyRosettaStoneStatement()
+            createRosettaStoneStatement()
         )
 
         assertThrows<RosettaStoneTemplateInUse> {
@@ -815,7 +815,7 @@ internal class RosettaStoneTemplateServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone template, when deleting it by id and template is not owned by contributor and contributor cannot be found, it throws an exception`() {
-        val template = createDummyRosettaStoneTemplate()
+        val template = createRosettaStoneTemplate()
         val resource = createResource(
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),
@@ -850,7 +850,7 @@ internal class RosettaStoneTemplateServiceUnitTest {
 
     @Test
     fun `Given a rosetta stone template, when deleting it by id and template is not owned by contributor and contributor is not a curator, it throws an exception`() {
-        val template = createDummyRosettaStoneTemplate()
+        val template = createRosettaStoneTemplate()
         val resource = createResource(
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),

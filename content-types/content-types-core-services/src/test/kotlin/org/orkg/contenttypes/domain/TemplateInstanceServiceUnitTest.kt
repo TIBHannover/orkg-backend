@@ -14,10 +14,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyNestedTemplateInstance
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplateInstance
+import org.orkg.contenttypes.domain.testing.fixtures.createNestedTemplateInstance
+import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
@@ -93,8 +93,8 @@ internal class TemplateInstanceServiceUnitTest {
 
     @Test
     fun `Given a template instance, when fetching it by id, then it is returned`() {
-        val template = createDummyTemplate()
-        val expected = createDummyTemplateInstance()
+        val template = createTemplate()
+        val expected = createTemplateInstance()
 
         val untypedPropertyId = template.properties[0].path.id
         val stringLiteralPropertyId = template.properties[1].path.id
@@ -131,24 +131,24 @@ internal class TemplateInstanceServiceUnitTest {
 
     @Test
     fun `Given a template instance, when fetching it nested by id, then it is returned`() {
-        val rootTemplate = createDummyTemplate()
-        val authorTemplate = createDummyTemplate().copy(
+        val rootTemplate = createTemplate()
+        val authorTemplate = createTemplate().copy(
             id = ThingId("R032154"),
             targetClass = ClassReference(createClass(ThingId("C28"))),
             properties = listOf(
-                createDummyStringLiteralTemplateProperty().copy(
+                createStringLiteralTemplateProperty().copy(
                     order = 0,
                     pattern = null,
                     path = ObjectIdAndLabel(Predicates.hasDOI, "has doi")
                 ),
-                createDummyStringLiteralTemplateProperty().copy(
+                createStringLiteralTemplateProperty().copy(
                     order = 1,
                     pattern = null,
                     path = ObjectIdAndLabel(Predicates.hasWikidataId, "has wikidata id")
                 )
             )
         )
-        val expected = createDummyNestedTemplateInstance()
+        val expected = createNestedTemplateInstance()
 
         val untypedPropertyId = rootTemplate.properties[0].path.id
         val stringLiteralPropertyId = rootTemplate.properties[1].path.id
@@ -211,7 +211,7 @@ internal class TemplateInstanceServiceUnitTest {
 
     @Test
     fun `Given a template instance, when resource is not an instance of template target class, then it throws an exception`() {
-        every { templateService.findById(any()) } returns Optional.of(createDummyTemplate())
+        every { templateService.findById(any()) } returns Optional.of(createTemplate())
         every { resourceRepository.findById(any()) } returns Optional.of(createResource())
 
         shouldThrow<TemplateNotApplicable> {

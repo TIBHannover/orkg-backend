@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.AuthorUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
 
 internal class SmartReviewAuthorUpdaterUnitTest {
@@ -35,7 +35,7 @@ internal class SmartReviewAuthorUpdaterUnitTest {
     @Test
     fun `Given a smart review update command, it updates the authors`() {
         val command = dummyUpdateSmartReviewCommand()
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewState(smartReview = smartReview)
 
         every { authorUpdater.update(command.contributorId, state.authors, command.smartReviewId) } just runs
@@ -52,7 +52,7 @@ internal class SmartReviewAuthorUpdaterUnitTest {
     @Test
     fun `Given a smart review update command, when new author list is identical to new author list, it does nothing`() {
         val command = dummyUpdateSmartReviewCommand()
-        val smartReview = createDummySmartReview().copy(authors = command.authors!!)
+        val smartReview = createSmartReview().copy(authors = command.authors!!)
         val state = UpdateSmartReviewState(smartReview = smartReview)
 
         smartReviewAuthorUpdater(command, state).asClue {

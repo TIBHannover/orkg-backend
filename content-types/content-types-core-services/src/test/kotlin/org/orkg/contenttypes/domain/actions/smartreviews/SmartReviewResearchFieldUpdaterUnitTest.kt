@@ -16,7 +16,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -40,7 +40,7 @@ internal class SmartReviewResearchFieldUpdaterUnitTest {
 
     @Test
     fun `Given a smart review update command, when research fields are not set, it does nothing`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyUpdateSmartReviewCommand().copy(researchFields = null)
         val state = UpdateSmartReviewState(smartReview = smartReview)
 
@@ -55,7 +55,7 @@ internal class SmartReviewResearchFieldUpdaterUnitTest {
 
     @Test
     fun `Given a smart review update command, when research fields are unchanged, it does nothing`() {
-        val smartReview = createDummySmartReview().copy(
+        val smartReview = createSmartReview().copy(
             researchFields = listOf(ObjectIdAndLabel(ThingId("R12"), "Science"))
         )
         val command = dummyUpdateSmartReviewCommand()
@@ -72,7 +72,7 @@ internal class SmartReviewResearchFieldUpdaterUnitTest {
 
     @Test
     fun `Given a smart review update command, when research fields have changed, it updates the research field statements`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyUpdateSmartReviewCommand()
         val state = UpdateSmartReviewState(
             smartReview = smartReview,

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.DeleteSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewExistenceValidator
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyDeleteSmartReviewSectionCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
@@ -34,7 +34,7 @@ internal class SmartReviewSectionExistenceDeleteValidatorUnitTest {
 
     @Test
     fun `Given a smart review section delete command, when checking for smart review existence, it returns success`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyDeleteSmartReviewSectionCommand().copy(smartReviewId = smartReview.id)
         val state = DeleteSmartReviewSectionState()
         val statements = listOf(createStatement()).groupBy { it.subject.id }

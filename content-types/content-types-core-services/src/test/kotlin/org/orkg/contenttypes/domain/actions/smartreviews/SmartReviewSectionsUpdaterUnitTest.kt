@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummySmartReviewTextSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
 import org.orkg.contenttypes.input.testing.fixtures.toSmartReviewSectionDefinition
@@ -48,7 +48,7 @@ internal class SmartReviewSectionsUpdaterUnitTest {
 
     @Test
     fun `Given a smart review update command, when sections are not set, it does nothing`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyUpdateSmartReviewCommand().copy(
             sections = null
         )
@@ -61,7 +61,7 @@ internal class SmartReviewSectionsUpdaterUnitTest {
 
     @Test
     fun `Given a smart review update command, when sections are unchanged, it does nothing`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyUpdateSmartReviewCommand().copy(
             sections = smartReview.sections.map { it.toSmartReviewSectionDefinition() }
         )
@@ -74,7 +74,7 @@ internal class SmartReviewSectionsUpdaterUnitTest {
 
     @Test
     fun `Given a smart review update command, when a section is removed, it deletes the old section`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyUpdateSmartReviewCommand().copy(
             sections = smartReview.sections.dropLast(1).map { it.toSmartReviewSectionDefinition() }
         )
@@ -134,7 +134,7 @@ internal class SmartReviewSectionsUpdaterUnitTest {
 
     @Test
     fun `Given a smart review update command, when a section is added, it creates a new section`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val newSection = dummySmartReviewTextSectionDefinition().copy(text = "new section")
         val contributionId = ThingId("R1144651")
         val command = dummyUpdateSmartReviewCommand().copy(
@@ -184,7 +184,7 @@ internal class SmartReviewSectionsUpdaterUnitTest {
 
     @Test
     fun `Given a smart review update command, when a section is replaced, it deletes the old section and creates a new one`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val newSection = dummySmartReviewTextSectionDefinition().copy(text = "new section")
         val contributionId = ThingId("R1144651")
         val command = dummyUpdateSmartReviewCommand().copy(

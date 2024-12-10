@@ -7,7 +7,7 @@ import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyOtherLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateProperty
 import org.orkg.contenttypes.input.ResourcePropertyDefinition
 import org.orkg.contenttypes.input.testing.fixtures.toOtherLiteralTemplatePropertyDefinition
 import org.orkg.graph.domain.Classes
@@ -25,7 +25,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     @Test
     fun `Given an updated literal template property, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty()
+        val oldProperty = createOtherLiteralTemplateProperty()
         val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition()
 
         abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 3, newProperty, oldProperty)
@@ -34,7 +34,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     @Test
     fun `Given an updated literal template property, when label has changed, it updates the label`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty()
+        val oldProperty = createOtherLiteralTemplateProperty()
         val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
             label = "new label"
         )
@@ -63,7 +63,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     @Test
     fun `Given an updated literal template property, when placeholder has changed, it updates the placeholder`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty()
+        val oldProperty = createOtherLiteralTemplateProperty()
         val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
             placeholder = "new placeholder"
         )
@@ -101,7 +101,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     @Test
     fun `Given an updated literal template property, when description has changed, it updates the description`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty()
+        val oldProperty = createOtherLiteralTemplateProperty()
         val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
             description = "new description"
         )
@@ -139,7 +139,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     @Test
     fun `Given an updated literal template property, when min count has changed, it updates the min count`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty()
+        val oldProperty = createOtherLiteralTemplateProperty()
         val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
             minCount = 5
         )
@@ -179,7 +179,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     @Test
     fun `Given an updated literal template property, when max count has changed, it updates the max count`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty()
+        val oldProperty = createOtherLiteralTemplateProperty()
         val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
             maxCount = 5
         )
@@ -219,7 +219,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     @Test
     fun `Given an updated literal template property, when datatype has changed, it updates the datatype`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty()
+        val oldProperty = createOtherLiteralTemplateProperty()
         val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
             datatype = Classes.string
         )
@@ -259,7 +259,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     @Test
     fun `Given an updated literal template property, when changed to a resource template property, it updates the datatype statement to a class statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty()
+        val oldProperty = createOtherLiteralTemplateProperty()
         val newProperty = ResourcePropertyDefinition(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,
@@ -305,7 +305,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     @Test
     fun `Given an updated literal template property, when path has changed, it updates the path`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty()
+        val oldProperty = createOtherLiteralTemplateProperty()
         val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition().copy(
             path = Predicates.hasLink
         )
@@ -343,7 +343,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
     @Test
     fun `Given an updated literal template property, when order has changed, it updates the order`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty()
+        val oldProperty = createOtherLiteralTemplateProperty()
         val newProperty = oldProperty.toOtherLiteralTemplatePropertyDefinition()
         val statements = listOf(
             createStatement(

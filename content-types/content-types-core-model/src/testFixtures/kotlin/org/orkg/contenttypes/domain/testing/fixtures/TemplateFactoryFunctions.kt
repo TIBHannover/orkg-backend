@@ -23,7 +23,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 
-fun createDummyTemplate() = Template(
+fun createTemplate() = Template(
     id = ThingId("R54631"),
     label = "Dummy Template Label",
     description = "Some description about the template",
@@ -39,11 +39,11 @@ fun createDummyTemplate() = Template(
         predicate = ObjectIdAndLabel(ThingId("P22"), "Predicate label")
     ),
     properties = listOf(
-        createDummyUntypedTemplateProperty(),
-        createDummyStringLiteralTemplateProperty(),
-        createDummyNumberLiteralTemplateProperty(),
-        createDummyOtherLiteralTemplateProperty(),
-        createDummyResourceTemplateProperty()
+        createUntypedTemplateProperty(),
+        createStringLiteralTemplateProperty(),
+        createNumberLiteralTemplateProperty(),
+        createOtherLiteralTemplateProperty(),
+        createResourceTemplateProperty()
     ),
     isClosed = true,
     observatories = listOf(
@@ -60,7 +60,7 @@ fun createDummyTemplate() = Template(
     visibility = Visibility.DEFAULT
 )
 
-fun createDummyUntypedTemplateProperty() = UntypedTemplateProperty(
+fun createUntypedTemplateProperty() = UntypedTemplateProperty(
     id = ThingId("R23"),
     label = "property label",
     placeholder = "property placeholder",
@@ -73,7 +73,7 @@ fun createDummyUntypedTemplateProperty() = UntypedTemplateProperty(
     path = ObjectIdAndLabel(Predicates.field, "property path label"),
 )
 
-fun createDummyStringLiteralTemplateProperty() = StringLiteralTemplateProperty(
+fun createStringLiteralTemplateProperty() = StringLiteralTemplateProperty(
     id = ThingId("R24"),
     label = "string property label",
     placeholder = "string literal placeholder",
@@ -88,7 +88,7 @@ fun createDummyStringLiteralTemplateProperty() = StringLiteralTemplateProperty(
     datatype = ClassReference(Classes.string, "string literal property class label", ParsedIRI(Literals.XSD.STRING.uri))
 )
 
-fun createDummyNumberLiteralTemplateProperty() = NumberLiteralTemplateProperty(
+fun createNumberLiteralTemplateProperty() = NumberLiteralTemplateProperty(
     id = ThingId("R25"),
     label = "number property label",
     placeholder = "number literal placeholder",
@@ -104,7 +104,7 @@ fun createDummyNumberLiteralTemplateProperty() = NumberLiteralTemplateProperty(
     datatype = ClassReference(Classes.integer, "number literal property class label", ParsedIRI(Literals.XSD.INT.uri))
 )
 
-fun createDummyFloatLiteralTemplateProperty() = NumberLiteralTemplateProperty(
+fun createFloatLiteralTemplateProperty() = NumberLiteralTemplateProperty(
     id = ThingId("R25"),
     label = "float property label",
     placeholder = "float literal placeholder",
@@ -120,7 +120,7 @@ fun createDummyFloatLiteralTemplateProperty() = NumberLiteralTemplateProperty(
     datatype = ClassReference(Classes.float, "float literal property class label", ParsedIRI(Literals.XSD.FLOAT.uri))
 )
 
-fun createDummyDecimalLiteralTemplateProperty(): NumberLiteralTemplateProperty = NumberLiteralTemplateProperty(
+fun createDecimalLiteralTemplateProperty(): NumberLiteralTemplateProperty = NumberLiteralTemplateProperty(
     id = ThingId("R25"),
     label = "decimal property label",
     placeholder = "decimal literal placeholder",
@@ -136,7 +136,7 @@ fun createDummyDecimalLiteralTemplateProperty(): NumberLiteralTemplateProperty =
     datatype = ClassReference(Classes.decimal, "decimal literal property class label", ParsedIRI(Literals.XSD.DECIMAL.uri))
 )
 
-fun createDummyOtherLiteralTemplateProperty() = OtherLiteralTemplateProperty(
+fun createOtherLiteralTemplateProperty() = OtherLiteralTemplateProperty(
     id = ThingId("R26"),
     label = "property label",
     placeholder = "literal placeholder",
@@ -150,7 +150,7 @@ fun createDummyOtherLiteralTemplateProperty() = OtherLiteralTemplateProperty(
     datatype = ClassReference(Classes.integer, "literal property class label", ParsedIRI(Literals.XSD.INT.uri))
 )
 
-fun createDummyResourceTemplateProperty() = ResourceTemplateProperty(
+fun createResourceTemplateProperty() = ResourceTemplateProperty(
     id = ThingId("R27"),
     label = "resource property label",
     placeholder = "resource placeholder",

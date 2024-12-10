@@ -22,12 +22,12 @@ import org.orkg.contenttypes.domain.StringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.UntypedTemplateProperty
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyNumberLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyOtherLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyResourceTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyUntypedTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createNumberLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createResourceTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateNumberLiteralPropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateOtherLiteralPropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateResourcePropertyCommand
@@ -56,9 +56,9 @@ internal class TemplatePropertyUpdaterUnitTest {
 
     @Test
     fun `Given an update untyped template property command, when contents are equal, it does nothing`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val contributorId = ContributorId(UUID.randomUUID())
-        val property = createDummyUntypedTemplateProperty()
+        val property = createUntypedTemplateProperty()
         val command = property.toUpdateUntypedTemplatePropertyCommand(contributorId, template.id)
         val state = UpdateTemplatePropertyState(
             template = template,
@@ -76,8 +76,8 @@ internal class TemplatePropertyUpdaterUnitTest {
 
     @Test
     fun `Given an update untyped template property command, when contents have changed, it updates the property`() {
-        val template = createDummyTemplate()
-        val property = createDummyUntypedTemplateProperty()
+        val template = createTemplate()
+        val property = createUntypedTemplateProperty()
         val command = property.toUpdateUntypedTemplatePropertyCommand(ContributorId(UUID.randomUUID()), template.id).copy(
             label = "updated label"
         )
@@ -114,9 +114,9 @@ internal class TemplatePropertyUpdaterUnitTest {
 
     @Test
     fun `Given an update string literal template property command, when contents are equal, it does nothing`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val contributorId = ContributorId(UUID.randomUUID())
-        val property = createDummyStringLiteralTemplateProperty()
+        val property = createStringLiteralTemplateProperty()
         val command = property.toUpdateStringLiteralTemplatePropertyCommand(contributorId, template.id)
         val state = UpdateTemplatePropertyState(
             template = template,
@@ -135,8 +135,8 @@ internal class TemplatePropertyUpdaterUnitTest {
 
     @Test
     fun `Given an update string literal template property command, when contents have changed, it updates the property`() {
-        val template = createDummyTemplate()
-        val property = createDummyStringLiteralTemplateProperty()
+        val template = createTemplate()
+        val property = createStringLiteralTemplateProperty()
         val command = property.toUpdateStringLiteralTemplatePropertyCommand(ContributorId(UUID.randomUUID()), template.id).copy(
             label = "updated label"
         )
@@ -173,9 +173,9 @@ internal class TemplatePropertyUpdaterUnitTest {
 
     @Test
     fun `Given an update number literal template property command, when contents are equal, it does nothing`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val contributorId = ContributorId(UUID.randomUUID())
-        val property = createDummyNumberLiteralTemplateProperty()
+        val property = createNumberLiteralTemplateProperty()
         val command = property.toUpdateNumberLiteralTemplatePropertyCommand(contributorId, template.id)
         val state = UpdateTemplatePropertyState(
             template = template,
@@ -194,8 +194,8 @@ internal class TemplatePropertyUpdaterUnitTest {
 
     @Test
     fun `Given an update number literal template property command, when contents have changed, it updates the property`() {
-        val template = createDummyTemplate()
-        val property = createDummyNumberLiteralTemplateProperty()
+        val template = createTemplate()
+        val property = createNumberLiteralTemplateProperty()
         val command = property.toUpdateNumberLiteralTemplatePropertyCommand(ContributorId(UUID.randomUUID()), template.id).copy(
             label = "updated label"
         )
@@ -232,9 +232,9 @@ internal class TemplatePropertyUpdaterUnitTest {
 
     @Test
     fun `Given an update literal template property command, when contents are equal, it does nothing`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val contributorId = ContributorId(UUID.randomUUID())
-        val property = createDummyOtherLiteralTemplateProperty()
+        val property = createOtherLiteralTemplateProperty()
         val command = property.toUpdateOtherLiteralTemplatePropertyCommand(contributorId, template.id)
         val state = UpdateTemplatePropertyState(
             template = template,
@@ -253,8 +253,8 @@ internal class TemplatePropertyUpdaterUnitTest {
 
     @Test
     fun `Given an update literal template property command, when contents have changed, it updates the property`() {
-        val template = createDummyTemplate()
-        val property = createDummyOtherLiteralTemplateProperty()
+        val template = createTemplate()
+        val property = createOtherLiteralTemplateProperty()
         val command = property.toUpdateOtherLiteralTemplatePropertyCommand(ContributorId(UUID.randomUUID()), template.id).copy(
             label = "updated label"
         )
@@ -291,9 +291,9 @@ internal class TemplatePropertyUpdaterUnitTest {
 
     @Test
     fun `Given an update resource template property command, when contents are equal, it does nothing`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val contributorId = ContributorId(UUID.randomUUID())
-        val property = createDummyResourceTemplateProperty()
+        val property = createResourceTemplateProperty()
         val command = property.toUpdateResourceTemplatePropertyCommand(contributorId, template.id)
         val state = UpdateTemplatePropertyState(
             template = template,
@@ -312,8 +312,8 @@ internal class TemplatePropertyUpdaterUnitTest {
 
     @Test
     fun `Given an update resource template property command, when contents have changed, it updates the property`() {
-        val template = createDummyTemplate()
-        val property = createDummyResourceTemplateProperty()
+        val template = createTemplate()
+        val property = createResourceTemplateProperty()
         val command = property.toUpdateResourceTemplatePropertyCommand(ContributorId(UUID.randomUUID()), template.id).copy(
             label = "updated label"
         )

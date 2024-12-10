@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.Template
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.TemplateService
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
@@ -43,7 +43,7 @@ internal class TemplateExistenceValidatorUnitTest {
 
     @Test
     fun `Given a template update command, when checking for template existence, it returns success`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val command = dummyUpdateTemplateCommand().copy(templateId = template.id)
         val state = UpdateTemplateState()
         val root = createResource(
@@ -71,7 +71,7 @@ internal class TemplateExistenceValidatorUnitTest {
 
     @Test
     fun `Given a template update command, when checking for template existence and template is not found, it throws an exception`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val command = dummyUpdateTemplateCommand().copy(templateId = template.id)
         val state = UpdateTemplateState()
 

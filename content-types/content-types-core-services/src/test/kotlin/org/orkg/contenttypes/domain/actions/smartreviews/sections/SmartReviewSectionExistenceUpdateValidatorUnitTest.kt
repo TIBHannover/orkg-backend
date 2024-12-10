@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewExistenceValidator
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewComparisonSectionCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
@@ -34,7 +34,7 @@ internal class SmartReviewSectionExistenceUpdateValidatorUnitTest {
 
     @Test
     fun `Given a smart review section update command, when checking for smart review existence, it returns success`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyUpdateSmartReviewComparisonSectionCommand().copy(smartReviewId = smartReview.id)
         val state = UpdateSmartReviewSectionState()
         val statements = listOf(createStatement()).groupBy { it.subject.id }

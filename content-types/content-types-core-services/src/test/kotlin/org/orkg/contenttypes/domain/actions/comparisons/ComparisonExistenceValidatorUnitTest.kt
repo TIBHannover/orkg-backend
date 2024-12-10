@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.actions.UpdateComparisonState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateComparisonCommand
 
@@ -35,7 +35,7 @@ internal class ComparisonExistenceValidatorUnitTest {
 
     @Test
     fun `Given a comparison update command, when checking for comparison existence, it returns success`() {
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
         val command = dummyUpdateComparisonCommand().copy(comparisonId = comparison.id)
         val state = UpdateComparisonState()
 
@@ -50,7 +50,7 @@ internal class ComparisonExistenceValidatorUnitTest {
 
     @Test
     fun `Given a comparison update command, when checking for comparison existence and comparison is not found, it throws an exception`() {
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
         val command = dummyUpdateComparisonCommand().copy(comparisonId = comparison.id)
         val state = UpdateComparisonState()
 

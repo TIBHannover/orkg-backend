@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.Paper
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperService
 import org.orkg.contenttypes.domain.actions.PublishPaperState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
+import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.testing.fixtures.createPaperPublishCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishPaperCommand
 import org.orkg.graph.domain.Classes
@@ -44,7 +44,7 @@ internal class PaperPublishableValidatorUnitTest {
 
     @Test
     fun `Given a paper publish command, when checking for paper existence, it returns success`() {
-        val paper = createDummyPaper()
+        val paper = createPaper()
         val command = createPaperPublishCommand().copy(id = paper.id)
         val state = PublishPaperState()
         val root = createResource(
@@ -73,7 +73,7 @@ internal class PaperPublishableValidatorUnitTest {
 
     @Test
     fun `Given a paper publish command, when checking for paper existence and paper is not found, it throws an exception`() {
-        val paper = createDummyPaper()
+        val paper = createPaper()
         val command = dummyPublishPaperCommand().copy(id = paper.id)
         val state = PublishPaperState()
 

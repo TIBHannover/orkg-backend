@@ -7,7 +7,7 @@ import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyResourceTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createResourceTemplateProperty
 import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
 import org.orkg.contenttypes.input.testing.fixtures.toResourceTemplatePropertyDefinition
 import org.orkg.graph.domain.Classes
@@ -24,7 +24,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     @Test
     fun `Given an updated resource template property, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyResourceTemplateProperty()
+        val oldProperty = createResourceTemplateProperty()
         val newProperty = oldProperty.toResourceTemplatePropertyDefinition()
 
         abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 4, newProperty, oldProperty)
@@ -33,7 +33,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     @Test
     fun `Given an updated resource template property, when label has changed, it updates the label`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyResourceTemplateProperty()
+        val oldProperty = createResourceTemplateProperty()
         val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
             label = "new label"
         )
@@ -62,7 +62,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     @Test
     fun `Given an updated resource template property, when placeholder has changed, it updates the placeholder`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyResourceTemplateProperty()
+        val oldProperty = createResourceTemplateProperty()
         val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
             placeholder = "new placeholder"
         )
@@ -100,7 +100,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     @Test
     fun `Given an updated resource template property, when description has changed, it updates the description`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyResourceTemplateProperty()
+        val oldProperty = createResourceTemplateProperty()
         val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
             description = "new description"
         )
@@ -138,7 +138,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     @Test
     fun `Given an updated resource template property, when min count has changed, it updates the min count`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyResourceTemplateProperty()
+        val oldProperty = createResourceTemplateProperty()
         val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
             minCount = 5
         )
@@ -178,7 +178,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     @Test
     fun `Given an updated resource template property, when max count has changed, it updates the max count`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyResourceTemplateProperty()
+        val oldProperty = createResourceTemplateProperty()
         val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
             maxCount = 5
         )
@@ -218,7 +218,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     @Test
     fun `Given an updated resource template property, when class has changed, it updates the class`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyResourceTemplateProperty()
+        val oldProperty = createResourceTemplateProperty()
         val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
             `class` = Classes.paper
         )
@@ -258,7 +258,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     @Test
     fun `Given an updated resource template property, when changed to a literal template property, it updates the class statement to a datatype statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyResourceTemplateProperty()
+        val oldProperty = createResourceTemplateProperty()
         val newProperty = OtherLiteralPropertyDefinition(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,
@@ -304,7 +304,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     @Test
     fun `Given an updated resource template property, when path has changed, it updates the path`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyResourceTemplateProperty()
+        val oldProperty = createResourceTemplateProperty()
         val newProperty = oldProperty.toResourceTemplatePropertyDefinition().copy(
             path = Predicates.hasLink
         )
@@ -342,7 +342,7 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
     @Test
     fun `Given an updated resource template property, when order has changed, it updates the order`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyResourceTemplateProperty()
+        val oldProperty = createResourceTemplateProperty()
         val newProperty = oldProperty.toResourceTemplatePropertyDefinition()
         val statements = listOf(
             createStatement(

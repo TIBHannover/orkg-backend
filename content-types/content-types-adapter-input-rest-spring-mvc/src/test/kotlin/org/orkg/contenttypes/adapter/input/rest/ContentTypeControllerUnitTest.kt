@@ -20,12 +20,12 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.ContentTypeClass
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyVisualization
+import org.orkg.contenttypes.domain.testing.fixtures.createComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createPaper
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createVisualization
 import org.orkg.contenttypes.input.ContentTypeUseCases
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.FixedClockConfig
@@ -72,12 +72,12 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
         every {
             contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(
-            createDummyPaper(),
-            createDummyComparison(),
-            createDummyVisualization(),
-            createDummyTemplate(),
-            createDummyLiteratureList(),
-            createDummySmartReview()
+            createPaper(),
+            createComparison(),
+            createVisualization(),
+            createTemplate(),
+            createLiteratureList(),
+            createSmartReview()
         )
 
         documentedGetRequestTo("/api/content-types")
@@ -105,12 +105,12 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
         every {
             contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(
-            createDummyPaper(),
-            createDummyComparison(),
-            createDummyVisualization(),
-            createDummyTemplate(),
-            createDummyLiteratureList(),
-            createDummySmartReview()
+            createPaper(),
+            createComparison(),
+            createVisualization(),
+            createTemplate(),
+            createLiteratureList(),
+            createSmartReview()
         )
 
         val classes = ContentTypeClass.entries.toSet()

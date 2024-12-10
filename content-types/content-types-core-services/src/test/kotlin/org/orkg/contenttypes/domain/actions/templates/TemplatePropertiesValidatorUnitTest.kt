@@ -13,11 +13,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyNumberLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyOtherLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyResourceTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyUntypedTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createNumberLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createResourceTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateNumberLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateOtherLiteralTemplatePropertyCommand
@@ -78,11 +78,11 @@ internal class TemplatePropertiesValidatorUnitTest {
             dummyUpdateResourceTemplatePropertyCommand()
         )
         val state = listOf(
-            createDummyUntypedTemplateProperty(),
-            createDummyStringLiteralTemplateProperty(),
-            createDummyNumberLiteralTemplateProperty(),
-            createDummyOtherLiteralTemplateProperty(),
-            createDummyResourceTemplateProperty()
+            createUntypedTemplateProperty(),
+            createStringLiteralTemplateProperty(),
+            createNumberLiteralTemplateProperty(),
+            createOtherLiteralTemplateProperty(),
+            createResourceTemplateProperty()
         )
 
         command.forEach {
@@ -99,11 +99,11 @@ internal class TemplatePropertiesValidatorUnitTest {
     @Test
     fun `Given a template update command, when template properties are identical to existing template properties, they are not validated again`() {
         val state = listOf(
-            createDummyUntypedTemplateProperty(),
-            createDummyStringLiteralTemplateProperty(),
-            createDummyNumberLiteralTemplateProperty(),
-            createDummyOtherLiteralTemplateProperty(),
-            createDummyResourceTemplateProperty()
+            createUntypedTemplateProperty(),
+            createStringLiteralTemplateProperty(),
+            createNumberLiteralTemplateProperty(),
+            createOtherLiteralTemplateProperty(),
+            createResourceTemplateProperty()
         )
         val command = state.map { it.toTemplatePropertyDefinition() }
 

@@ -37,10 +37,10 @@ import org.orkg.contenttypes.domain.TooManyObjectPositionValues
 import org.orkg.contenttypes.domain.TooManyPropertyValues
 import org.orkg.contenttypes.domain.TooManySubjectPositionValues
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValueValidator
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyNumberLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralObjectPositionTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySubjectPositionTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createNumberLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
+import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralObjectPositionTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createSubjectPositionTemplateProperty
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
@@ -81,8 +81,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when validating its properties, it returns success`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty(),
-            createDummyStringLiteralObjectPositionTemplateProperty()
+            createSubjectPositionTemplateProperty(),
+            createStringLiteralObjectPositionTemplateProperty()
         )
         val thingDefinitions = mapOf(
             "#temp1" to LiteralDefinition("1"),
@@ -145,8 +145,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when too few object positions are defined, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty(),
-            createDummyStringLiteralObjectPositionTemplateProperty()
+            createSubjectPositionTemplateProperty(),
+            createStringLiteralObjectPositionTemplateProperty()
         )
         val thingDefinitions = emptyMap<String, ThingDefinition>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
@@ -171,8 +171,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when too many input positions are defined, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty(),
-            createDummyStringLiteralObjectPositionTemplateProperty()
+            createSubjectPositionTemplateProperty(),
+            createStringLiteralObjectPositionTemplateProperty()
         )
         val thingDefinitions = emptyMap<String, ThingDefinition>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
@@ -200,12 +200,12 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that contains rosetta stone statements, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty().copy(
+            createSubjectPositionTemplateProperty().copy(
                 `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
             )
         )
         val templateId = ThingId("R456")
-        val rosettaStoneStatement = createDummyRosettaStoneStatement().let {
+        val rosettaStoneStatement = createRosettaStoneStatement().let {
             it.copy(
                 versions = listOf(
                     it.latestVersion.copy(
@@ -242,12 +242,12 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that does not contain a rosetta stone statement, it returns success`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty().copy(
+            createSubjectPositionTemplateProperty().copy(
                 `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
             )
         )
         val templateId = ThingId("R456")
-        val rosettaStoneStatement = createDummyRosettaStoneStatement()
+        val rosettaStoneStatement = createRosettaStoneStatement()
         val latestVersionId = rosettaStoneStatement.latestVersion.id
         val rosettaStoneStatementResource = createResource(latestVersionId, classes = setOf(Classes.rosettaStoneStatement))
         val subjects = listOf(latestVersionId.value)
@@ -280,12 +280,12 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that cannot be found, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty().copy(
+            createSubjectPositionTemplateProperty().copy(
                 `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
             )
         )
         val templateId = ThingId("R456")
-        val rosettaStoneStatement = createDummyRosettaStoneStatement()
+        val rosettaStoneStatement = createRosettaStoneStatement()
         val latestVersionId = rosettaStoneStatement.latestVersion.id
         val rosettaStoneStatementResource = createResource(latestVersionId, classes = setOf(Classes.rosettaStoneStatement))
         val subjects = listOf(latestVersionId.value)
@@ -314,12 +314,12 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that does not have the specified version, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty().copy(
+            createSubjectPositionTemplateProperty().copy(
                 `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
             )
         )
         val templateId = ThingId("R456")
-        val rosettaStoneStatement = createDummyRosettaStoneStatement()
+        val rosettaStoneStatement = createRosettaStoneStatement()
         val latestVersionId = ThingId("Missing")
         val rosettaStoneStatementResource = createResource(latestVersionId, classes = setOf(Classes.rosettaStoneStatement))
         val subjects = listOf(latestVersionId.value)
@@ -348,8 +348,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when too few subject inputs are specified, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty(),
-            createDummyStringLiteralObjectPositionTemplateProperty()
+            createSubjectPositionTemplateProperty(),
+            createStringLiteralObjectPositionTemplateProperty()
         )
         val thingDefinitions = emptyMap<String, ThingDefinition>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
@@ -379,8 +379,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when too few object inputs are specified, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty(),
-            createDummyStringLiteralObjectPositionTemplateProperty()
+            createSubjectPositionTemplateProperty(),
+            createStringLiteralObjectPositionTemplateProperty()
         )
         val thingDefinitions = mapOf(
             "#temp2" to LiteralDefinition("subject")
@@ -414,8 +414,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when too many subject inputs are specified, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty(),
-            createDummyStringLiteralObjectPositionTemplateProperty()
+            createSubjectPositionTemplateProperty(),
+            createStringLiteralObjectPositionTemplateProperty()
         )
         val thingDefinitions = emptyMap<String, ThingDefinition>()
         val validatedIds: Map<String, Either<String, Thing>> = emptyMap()
@@ -445,8 +445,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when too many object inputs are specified, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty(),
-            createDummyStringLiteralObjectPositionTemplateProperty()
+            createSubjectPositionTemplateProperty(),
+            createStringLiteralObjectPositionTemplateProperty()
         )
         val thingDefinitions = mapOf(
             "#temp2" to LiteralDefinition("subject")
@@ -480,8 +480,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when object position value does not match property pattern, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty(),
-            createDummyStringLiteralObjectPositionTemplateProperty()
+            createSubjectPositionTemplateProperty(),
+            createStringLiteralObjectPositionTemplateProperty()
         )
         val thingDefinitions = emptyMap<String, ThingDefinition>()
         val literal = createLiteral(ThingId("L123"), label = "15603")
@@ -519,8 +519,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when object position value is too low, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty(),
-            createDummyNumberLiteralTemplateProperty()
+            createSubjectPositionTemplateProperty(),
+            createNumberLiteralTemplateProperty()
         )
         val thingDefinitions = emptyMap<String, ThingDefinition>()
         val literal = createLiteral(ThingId("L123"), label = "-20")
@@ -558,8 +558,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     @Test
     fun `Given a rosetta stone statement create command, when object position value is too high, it throws an exception`() {
         val templateProperties = listOf(
-            createDummySubjectPositionTemplateProperty(),
-            createDummyNumberLiteralTemplateProperty()
+            createSubjectPositionTemplateProperty(),
+            createNumberLiteralTemplateProperty()
         )
         val literal = createLiteral(ThingId("L123"), label = "20")
         val thingDefinitions = emptyMap<String, ThingDefinition>()

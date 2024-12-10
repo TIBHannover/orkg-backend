@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishLiteratureListCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
@@ -36,7 +36,7 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest {
 
     @Test
     fun `Given a literature list publish command, it crates a new previous version statement`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val command = dummyPublishLiteratureListCommand().copy(id = literatureList.id)
         val literatureListVersionId = ThingId("R165")
         val state = PublishLiteratureListState(literatureList, literatureListVersionId)

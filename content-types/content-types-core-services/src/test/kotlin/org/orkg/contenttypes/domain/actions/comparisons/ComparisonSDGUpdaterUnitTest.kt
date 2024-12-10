@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateComparisonState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateComparisonCommand
 import org.orkg.graph.domain.Predicates
 
@@ -35,7 +35,7 @@ internal class ComparisonSDGUpdaterUnitTest {
     @Test
     fun `Given a comparison update command, it updates the sdgs`() {
         val command = dummyUpdateComparisonCommand()
-        val state = UpdateComparisonState(comparison = createDummyComparison())
+        val state = UpdateComparisonState(comparison = createComparison())
 
         every {
             statementCollectionPropertyUpdater.update(
@@ -62,7 +62,7 @@ internal class ComparisonSDGUpdaterUnitTest {
     fun `Given a comparison update command, when new sdgs set is identical to new sdgs set, it does nothing`() {
         val command = dummyUpdateComparisonCommand()
         val state = UpdateComparisonState(
-            comparison = createDummyComparison().copy(
+            comparison = createComparison().copy(
                 sustainableDevelopmentGoals = command.sustainableDevelopmentGoals!!.map { ObjectIdAndLabel(it, "irrelevant") }.toSet()
             )
         )

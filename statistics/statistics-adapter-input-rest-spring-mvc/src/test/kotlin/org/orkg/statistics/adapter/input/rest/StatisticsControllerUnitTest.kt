@@ -10,7 +10,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.statistics.domain.SimpleMetric
 import org.orkg.statistics.input.RetrieveStatisticsUseCase
-import org.orkg.statistics.testing.fixtures.createDummyMetrics
+import org.orkg.statistics.testing.fixtures.createMetrics
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -60,7 +60,7 @@ internal class StatisticsControllerUnitTest : RestDocsTest("statistics") {
     @DisplayName("Given several metrics, when fetching the metrics of a group, then status is 200 OK and metrics are returned")
     fun findAllMetricsByGroup() {
         val group = "group1"
-        val metrics = createDummyMetrics().filter { it.group == group }
+        val metrics = createMetrics().filter { it.group == group }
 
         every { service.findAllMetricsByGroup(group) } returns metrics
 

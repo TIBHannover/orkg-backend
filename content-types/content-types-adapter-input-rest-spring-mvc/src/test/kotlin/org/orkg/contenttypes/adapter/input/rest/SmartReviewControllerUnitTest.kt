@@ -28,7 +28,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
@@ -107,7 +107,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @Test
     @DisplayName("Given a smart review, when it is fetched by id and service succeeds, then status is 200 OK and smart review is returned")
     fun getSingle() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         every { smartReviewService.findById(smartReview.id) } returns Optional.of(smartReview)
 
         documentedGetRequestTo("/api/smart-reviews/{id}", smartReview.id)
@@ -200,7 +200,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     fun getPaged() {
         every {
             smartReviewService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
-        } returns pageOf(createDummySmartReview())
+        } returns pageOf(createSmartReview())
 
         documentedGetRequestTo("/api/smart-reviews")
             .accept(SMART_REVIEW_JSON_V1)
@@ -221,7 +221,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     fun getPagedWithParameters() {
         every {
             smartReviewService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
-        } returns pageOf(createDummySmartReview())
+        } returns pageOf(createSmartReview())
 
         val title = "label"
         val exact = true

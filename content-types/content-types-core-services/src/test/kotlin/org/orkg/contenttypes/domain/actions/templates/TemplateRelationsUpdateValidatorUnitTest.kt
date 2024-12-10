@@ -16,7 +16,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.TemplateRelations
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.TemplateRelationsDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
 import org.orkg.graph.domain.Classes
@@ -47,7 +47,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest {
     @Test
     fun `Given a template update command, when validating its relations, it returns success`() {
         val command = dummyUpdateTemplateCommand()
-        val state = UpdateTemplateState(template = createDummyTemplate())
+        val state = UpdateTemplateState(template = createTemplate())
 
         every {
             resourceRepository.findById(command.relations!!.researchFields.first())
@@ -73,7 +73,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest {
     @Test
     fun `Given a template update command, when relations are null, it returns success`() {
         val command = dummyUpdateTemplateCommand().copy(relations = null)
-        val state = UpdateTemplateState(template = createDummyTemplate())
+        val state = UpdateTemplateState(template = createTemplate())
 
         val result = templateRelationsUpdateValidator(command, state)
 
@@ -87,7 +87,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest {
         val command = dummyUpdateTemplateCommand().copy(
             relations = TemplateRelationsDefinition()
         )
-        val state = UpdateTemplateState(template = createDummyTemplate())
+        val state = UpdateTemplateState(template = createTemplate())
 
         val result = templateRelationsUpdateValidator(command, state)
 
@@ -103,7 +103,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest {
                 researchFields = listOf(ThingId("R24"))
             )
         )
-        val state = UpdateTemplateState(template = createDummyTemplate())
+        val state = UpdateTemplateState(template = createTemplate())
 
         every {
             resourceRepository.findById(command.relations!!.researchFields.first())
@@ -121,7 +121,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest {
                 researchProblems = listOf(ThingId("R29"))
             )
         )
-        val state = UpdateTemplateState(template = createDummyTemplate())
+        val state = UpdateTemplateState(template = createTemplate())
 
         every {
             resourceRepository.findById(command.relations!!.researchProblems.first())
@@ -141,7 +141,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest {
                 predicate = ThingId("P23")
             )
         )
-        val state = UpdateTemplateState(template = createDummyTemplate())
+        val state = UpdateTemplateState(template = createTemplate())
 
         every {
             predicateRepository.findById(command.relations!!.predicate!!)
@@ -159,7 +159,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest {
                 researchFields = listOf(ThingId("R123"), ThingId("R789"))
             )
         )
-        val state = UpdateTemplateState(template = createDummyTemplate().copy(
+        val state = UpdateTemplateState(template = createTemplate().copy(
             relations = TemplateRelations(
                 researchFields = listOf(
                     ObjectIdAndLabel(ThingId("R123"), "irrelevant"),
@@ -188,7 +188,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest {
                 researchProblems = listOf(ThingId("R123"), ThingId("R789"))
             )
         )
-        val state = UpdateTemplateState(template = createDummyTemplate().copy(
+        val state = UpdateTemplateState(template = createTemplate().copy(
             relations = TemplateRelations(
                 researchProblems = listOf(
                     ObjectIdAndLabel(ThingId("R123"), "irrelevant"),
@@ -217,7 +217,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest {
                 predicate = ThingId("R123")
             )
         )
-        val state = UpdateTemplateState(template = createDummyTemplate().copy(
+        val state = UpdateTemplateState(template = createTemplate().copy(
             relations = TemplateRelations(
                 predicate = ObjectIdAndLabel(ThingId("R123"), "irrelevant")
             )

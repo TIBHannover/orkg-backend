@@ -28,7 +28,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-fun createDummyLiteratureList() = LiteratureList(
+fun createLiteratureList() = LiteratureList(
     id = ThingId("R658946"),
     title = "Dummy Literature List Title",
     researchFields = listOf(
@@ -106,8 +106,8 @@ fun createDummyLiteratureList() = LiteratureList(
     unlistedBy = null,
     published = false,
     sections = listOf(
-        createDummyLiteratureListTextSection(),
-        createDummyLiteratureListListSection()
+        createLiteratureListTextSection(),
+        createLiteratureListListSection()
     ),
     acknowledgements = mapOf(
         ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620") to 0.75,
@@ -115,7 +115,7 @@ fun createDummyLiteratureList() = LiteratureList(
     )
 )
 
-fun createDummyLiteratureListTextSection(): LiteratureListTextSection =
+fun createLiteratureListTextSection(): LiteratureListTextSection =
     LiteratureListTextSection(
         id = ThingId("R154686"),
         heading = "Heading",
@@ -123,7 +123,7 @@ fun createDummyLiteratureListTextSection(): LiteratureListTextSection =
         text = "text section contents"
     )
 
-fun createDummyLiteratureListListSection(): LiteratureListListSection =
+fun createLiteratureListListSection(): LiteratureListListSection =
     LiteratureListListSection(
         id = ThingId("R456351"),
         entries = listOf(

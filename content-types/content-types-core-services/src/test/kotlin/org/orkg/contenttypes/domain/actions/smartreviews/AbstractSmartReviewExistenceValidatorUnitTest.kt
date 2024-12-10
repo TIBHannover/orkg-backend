@@ -20,7 +20,7 @@ import org.orkg.contenttypes.domain.SmartReview
 import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.domain.SmartReviewNotModifiable
 import org.orkg.contenttypes.domain.SmartReviewService
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -45,7 +45,7 @@ internal class AbstractSmartReviewExistenceValidatorUnitTest {
 
     @Test
     fun `Given a smart review id, when checking for smart review existence, it returns success`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val root = createResource(id = smartReview.id, classes = setOf(Classes.smartReview))
         val statements = listOf(createStatement()).groupBy { it.subject.id }
 

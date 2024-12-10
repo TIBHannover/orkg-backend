@@ -20,7 +20,7 @@ import org.orkg.contenttypes.domain.LiteratureList
 import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.LiteratureListNotModifiable
 import org.orkg.contenttypes.domain.LiteratureListService
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -45,7 +45,7 @@ internal class AbstractLiteratureListExistenceValidatorUnitTest {
 
     @Test
     fun `Given a literature list id, when checking for literature list existence, it returns success`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val root = createResource(id = literatureList.id, classes = setOf(Classes.literatureList))
         val statements = listOf(createStatement()).groupBy { it.subject.id }
 

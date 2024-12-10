@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.PublishComparisonState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishComparisonCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -40,7 +40,7 @@ internal class ComparisonVersionHistoryUpdaterUnitTest {
 
     @Test
     fun `Given a comparison publish command, it crates a new previous version statement and updates the previous version comparison class labels`() {
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
         val command = dummyPublishComparisonCommand().copy(id = comparison.id)
         val comparisonVersionId = ThingId("R165")
         val state = PublishComparisonState(comparison, comparisonVersionId)
@@ -80,7 +80,7 @@ internal class ComparisonVersionHistoryUpdaterUnitTest {
 
     @Test
     fun `Given a comparison publish command, when no previous published version exists, it only crates a new previous version statement`() {
-        val comparison = createDummyComparison().let {
+        val comparison = createComparison().let {
             it.copy(versions = it.versions.copy(it.versions.head, emptyList()))
         }
         val command = dummyPublishComparisonCommand().copy(id = comparison.id)

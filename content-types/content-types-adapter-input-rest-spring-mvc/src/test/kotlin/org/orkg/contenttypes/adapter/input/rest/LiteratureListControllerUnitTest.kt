@@ -29,8 +29,8 @@ import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.LiteratureListListSectionRequest.Entry
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
@@ -106,7 +106,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     @Test
     @DisplayName("Given a literature list, when it is fetched by id and service succeeds, then status is 200 OK and literature list is returned")
     fun getSingle() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         every { literatureListService.findById(literatureList.id) } returns Optional.of(literatureList)
 
         documentedGetRequestTo("/api/literature-lists/{id}", literatureList.id)
@@ -176,7 +176,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     fun getPaged() {
         every {
             literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
-        } returns pageOf(createDummyLiteratureList())
+        } returns pageOf(createLiteratureList())
 
         documentedGetRequestTo("/api/literature-lists")
             .accept(LITERATURE_LIST_JSON_V1)
@@ -197,7 +197,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     fun getPagedWithParameters() {
         every {
             literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
-        } returns pageOf(createDummyLiteratureList())
+        } returns pageOf(createLiteratureList())
 
         val title = "label"
         val exact = true
@@ -560,7 +560,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     fun findPublishedContentById() {
         val literatureListId = ThingId("R3541")
         val id = ThingId("R123")
-        every { literatureListService.findPublishedContentById(any(), any()) } returns Either.left(createDummyPaper())
+        every { literatureListService.findPublishedContentById(any(), any()) } returns Either.left(createPaper())
 
         documentedGetRequestTo("/api/literature-lists/{literatureListId}/published-contents/{contentId}", literatureListId, id)
             .accept(MediaType.APPLICATION_JSON)

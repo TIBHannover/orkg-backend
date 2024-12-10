@@ -19,7 +19,7 @@ import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
 import org.orkg.contenttypes.domain.actions.PublishComparisonState
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonTable
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishComparisonCommand
 import org.orkg.contenttypes.output.ComparisonTableRepository
@@ -43,7 +43,7 @@ internal class ComparisonPublishableValidatorUnitTest {
 
     @Test
     fun `Given a comparison publish command, when comparison is unpublished, it returns success`() {
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
         val table = createComparisonTable()
         val command = dummyPublishComparisonCommand().copy(id = comparison.id)
         val state = PublishComparisonState()
@@ -73,7 +73,7 @@ internal class ComparisonPublishableValidatorUnitTest {
 
     @Test
     fun `Given a comparison publish command, when comparison is already published, it throws an exception`() {
-        val comparison = createDummyComparison().copy(published = true)
+        val comparison = createComparison().copy(published = true)
         val command = dummyPublishComparisonCommand().copy(id = comparison.id)
         val state = PublishComparisonState()
 
@@ -86,7 +86,7 @@ internal class ComparisonPublishableValidatorUnitTest {
 
     @Test
     fun `Given a comparison publish command, when comparison table does not exist, it throws an exception`() {
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
         val command = dummyPublishComparisonCommand().copy(id = comparison.id)
         val state = PublishComparisonState()
 
@@ -101,7 +101,7 @@ internal class ComparisonPublishableValidatorUnitTest {
 
     @Test
     fun `Given a comparison publish command, when comparison has less than two contributions, it throws an exception`() {
-        val comparison = createDummyComparison().copy(
+        val comparison = createComparison().copy(
             contributions = listOf(ObjectIdAndLabel(ThingId("R123456"), "Contribution 1"))
         )
         val command = dummyPublishComparisonCommand().copy(id = comparison.id)

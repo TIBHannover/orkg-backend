@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.RosettaStoneTemplate
 import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
 import org.orkg.contenttypes.domain.RosettaStoneTemplateService
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
@@ -44,7 +44,7 @@ internal class RosettaStoneTemplateExistenceValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template update command, when checking for rosetta stone template existence, it returns success`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(templateId = rosettaStoneTemplate.id)
         val state = UpdateRosettaStoneTemplateState()
         val root = createResource(
@@ -73,7 +73,7 @@ internal class RosettaStoneTemplateExistenceValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template update command, when checking for template existence and rosetta stone template is not found, it throws an exception`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(templateId = rosettaStoneTemplate.id)
         val state = UpdateRosettaStoneTemplateState()
 

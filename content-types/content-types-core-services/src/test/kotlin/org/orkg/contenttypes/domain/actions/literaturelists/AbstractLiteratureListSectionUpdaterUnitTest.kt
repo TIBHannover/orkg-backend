@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureListListSection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureListTextSection
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureListListSection
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureListTextSection
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.contenttypes.domain.wherePredicate
 import org.orkg.contenttypes.input.LiteratureListListSectionCommand
@@ -59,7 +59,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a list section, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummyLiteratureListListSection()
+        val oldSection = createLiteratureListListSection()
         val newSection = oldSection.toLiteratureListListSectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
@@ -69,7 +69,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a list section, when an entry has been deleted at the end of the list, it deletes the entry`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummyLiteratureListListSection()
+        val oldSection = createLiteratureListListSection()
         val newSection = oldSection.copy(entries = oldSection.entries.take(1)).toLiteratureListListSectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
@@ -85,7 +85,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a list section, when an entry has been deleted at the beginning of the list, it deletes the entry`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummyLiteratureListListSection()
+        val oldSection = createLiteratureListListSection()
         val newSection = oldSection.copy(entries = oldSection.entries.drop(1)).toLiteratureListListSectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
@@ -101,7 +101,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a list section, when an entry has been added to the beginning of the list, it creates a new entry node and reassigns existing entry nodes`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummyLiteratureListListSection()
+        val oldSection = createLiteratureListListSection()
         val newSection = oldSection.toLiteratureListListSectionDefinition().copy(
             entries = listOf(LiteratureListListSectionDefinition.Entry(ThingId("R789"))) + oldSection.entries.map { it.toDefinitionEntry() }
         )
@@ -169,7 +169,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a list section, when an entry has been added to the end of the list, it creates new a section entry`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummyLiteratureListListSection()
+        val oldSection = createLiteratureListListSection()
         val newEntry = LiteratureListListSectionDefinition.Entry(ThingId("R789"))
         val newSection = oldSection.toLiteratureListListSectionDefinition().copy(
             entries = oldSection.entries.map { it.toDefinitionEntry() } + newEntry
@@ -198,7 +198,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a list section, when an entry has been inserted to the list, it reuses the existing entry node and creates a new entry node for each entry after the new one`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummyLiteratureListListSection()
+        val oldSection = createLiteratureListListSection()
         val entry = oldSection.entries.last().toDefinitionEntry()
         val newSection = LiteratureListListSectionCommand(
             entries = listOf(
@@ -251,7 +251,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a list section, when description of an entry changes, it only updates the description`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummyLiteratureListListSection()
+        val oldSection = createLiteratureListListSection()
         val newSection = LiteratureListListSectionCommand(
             entries = listOf(
                 oldSection.entries.first().toDefinitionEntry(),
@@ -278,7 +278,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a text section, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummyLiteratureListTextSection()
+        val oldSection = createLiteratureListTextSection()
         val newSection = oldSection.toLiteratureListTextSectionDefinition()
         val statements = oldSection.toGroupedStatements()
 
@@ -288,7 +288,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a text section, when heading has changed, it updates the resource`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummyLiteratureListTextSection()
+        val oldSection = createLiteratureListTextSection()
         val newSection = oldSection.toLiteratureListTextSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
@@ -309,7 +309,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a text section, when heading size has changed, it updates the literal`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummyLiteratureListTextSection()
+        val oldSection = createLiteratureListTextSection()
         val newSection = oldSection.toLiteratureListTextSectionDefinition().copy(headingSize = 5)
         val statements = oldSection.toGroupedStatements()
 
@@ -341,7 +341,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a text section, when text has changed, it updates the literal`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldSection = createDummyLiteratureListTextSection()
+        val oldSection = createLiteratureListTextSection()
         val newSection = oldSection.toLiteratureListTextSectionDefinition().copy(text = "new text contents")
         val statements = oldSection.toGroupedStatements()
 

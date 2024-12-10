@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertiesUpdater
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
@@ -34,7 +34,7 @@ internal class RosettaStoneTemplatePropertiesUpdaterUnitTest {
 
     @Test
     fun `Given a template update command, when properties are not set, it does nothing`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(
             properties = null
         )
@@ -45,7 +45,7 @@ internal class RosettaStoneTemplatePropertiesUpdaterUnitTest {
 
     @Test
     fun `Given a template update command, when properties are set, it validates each property`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand()
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,

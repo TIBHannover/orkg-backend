@@ -21,7 +21,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
+import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
 import org.orkg.graph.domain.Classes
@@ -67,7 +67,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating with empty publication info, it does nothing`() {
-        val paper = createDummyPaper()
+        val paper = createPaper()
         val command = dummyUpdatePaperCommand().copy(
             publicationInfo = null
         )
@@ -89,7 +89,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
             publishedIn = null,
             url = null
         )
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = publicationInfo
         )
         val command = dummyUpdatePaperCommand().copy(
@@ -107,7 +107,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication month with null, it deletes the old literal`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = 5,
                 publishedYear = null,
@@ -149,7 +149,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication month with a new value, it creates a new literal`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = null,
                 publishedYear = null,
@@ -215,7 +215,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication month with a new value, it replaces the old statement`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = 5,
                 publishedYear = null,
@@ -301,7 +301,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
             publishedIn = null,
             url = null
         )
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = publicationInfo
         )
         val command = dummyUpdatePaperCommand().copy(
@@ -319,7 +319,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication year with null, it deletes the old literal`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = null,
                 publishedYear = 2023,
@@ -361,7 +361,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication year with a new value, it creates a new literal`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = null,
                 publishedYear = null,
@@ -427,7 +427,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication year with a new value, it replaces the old statement`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = null,
                 publishedYear = 2022,
@@ -513,7 +513,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
             publishedIn = ObjectIdAndLabel(ThingId("irrelevant"), "Conference"),
             url = null
         )
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = publicationInfo
         )
         val command = dummyUpdatePaperCommand().copy(
@@ -531,7 +531,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication venue with null, it deletes the old statement`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = null,
                 publishedYear = null,
@@ -576,7 +576,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication venue with a new value, it creates a new venue resource`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = null,
                 publishedYear = null,
@@ -648,7 +648,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication venue with a new value, it reuses an existing venue resource`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = null,
                 publishedYear = null,
@@ -730,7 +730,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
             publishedIn = null,
             url = ParsedIRI("https://orkg.org/")
         )
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = publicationInfo
         )
         val command = dummyUpdatePaperCommand().copy(
@@ -748,7 +748,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication url with null, it deletes the old literal`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = null,
                 publishedYear = null,
@@ -790,7 +790,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication url with a new value, it creates a new literal`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = null,
                 publishedYear = null,
@@ -856,7 +856,7 @@ internal class PaperPublicationInfoUpdaterUnitTest {
 
     @Test
     fun `Given a paper update command, when updating publication url with a new value, it replaces the old statement`() {
-        val paper = createDummyPaper().copy(
+        val paper = createPaper().copy(
             publicationInfo = PublicationInfo(
                 publishedMonth = null,
                 publishedYear = null,

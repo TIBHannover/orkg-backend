@@ -23,7 +23,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplateInstance
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.ExtractionMethod
@@ -88,7 +88,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
     @DisplayName("Given a template instance, when it is fetched by id and service succeeds, then status is 200 OK and template instance is returned")
     fun getSingle() {
         val templateId = ThingId("R132")
-        val templateInstance = createDummyTemplateInstance()
+        val templateInstance = createTemplateInstance()
 
         every { service.findById(templateId, templateInstance.root.id) } returns Optional.of(templateInstance)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
@@ -146,7 +146,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
     @DisplayName("Given several template instances, when they are fetched with no parameters, then status is 200 OK and template instances are returned")
     fun getPaged() {
         val templateId = ThingId("R132")
-        val templateInstance = createDummyTemplateInstance()
+        val templateInstance = createTemplateInstance()
 
         every { service.findAll(templateId, pageable = any()) } returns pageOf(templateInstance)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
@@ -168,7 +168,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
     @DisplayName("Given several template instances, when they are fetched with all possible filtering parameters, then status is 200 OK and template instances are returned")
     fun getPagedWithParameters() {
         val templateId = ThingId("R132")
-        val templateInstance = createDummyTemplateInstance()
+        val templateInstance = createTemplateInstance()
 
         every { service.findAll(templateId, any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(templateInstance)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()

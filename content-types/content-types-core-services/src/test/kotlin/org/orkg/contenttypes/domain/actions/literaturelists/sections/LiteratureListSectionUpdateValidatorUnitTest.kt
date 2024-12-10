@@ -16,7 +16,7 @@ import org.orkg.contenttypes.domain.LiteratureListSectionTypeMismatch
 import org.orkg.contenttypes.domain.UnrelatedLiteratureListSection
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionValidator
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListTextSectionCommand
@@ -39,14 +39,14 @@ internal class LiteratureListSectionUpdateValidatorUnitTest {
     @Test
     fun `Given a literature list section update command, when section is not related to the literature list, it throws an exception`() {
         val command = dummyUpdateLiteratureListTextSectionCommand()
-        val state = UpdateLiteratureListSectionState(literatureList = createDummyLiteratureList())
+        val state = UpdateLiteratureListSectionState(literatureList = createLiteratureList())
 
         assertThrows<UnrelatedLiteratureListSection> { literatureListSectionUpdateValidator(command, state) }
     }
 
     @Test
     fun `Given a text section update command, when validation succeeds, it returns success`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
         val command = dummyUpdateLiteratureListTextSectionCommand().copy(literatureListSectionId = literatureList.sections.first().id)
 
@@ -64,7 +64,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a text section update command, when types mismatch, it throws an exception`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
         val command = dummyUpdateLiteratureListTextSectionCommand().copy(literatureListSectionId = literatureList.sections.last().id)
 
@@ -73,7 +73,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a list section update command, when validation succeeds, it returns success`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
         val command = dummyUpdateLiteratureListListSectionCommand().copy(literatureListSectionId = literatureList.sections.last().id)
 
@@ -91,7 +91,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a list section update command, when types mismatch, it throws an exception`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
         val command = dummyUpdateLiteratureListListSectionCommand().copy(literatureListSectionId = literatureList.sections.first().id)
 

@@ -10,7 +10,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createResource
 
-fun createDummyTemplateInstance() = TemplateInstance(
+fun createTemplateInstance() = TemplateInstance(
     root = createResource(ThingId("R54631"), classes = setOf(ThingId("targetClass"))),
     statements = mapOf(
         Predicates.field to listOf(
@@ -56,7 +56,7 @@ fun createDummyTemplateInstance() = TemplateInstance(
     )
 )
 
-fun createDummyNestedTemplateInstance() = TemplateInstance(
+fun createNestedTemplateInstance() = TemplateInstance(
     root = createResource(ThingId("R54631"), classes = setOf(ThingId("targetClass"))),
     statements = mapOf(
         Predicates.field to listOf(

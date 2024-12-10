@@ -30,13 +30,13 @@ import org.orkg.contenttypes.domain.ObjectIsNotAPredicate
 import org.orkg.contenttypes.domain.ObjectMustNotBeALiteral
 import org.orkg.contenttypes.domain.ResourceIsNotAnInstanceOfTargetClass
 import org.orkg.contenttypes.domain.TooManyPropertyValues
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyDecimalLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyFloatLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyNumberLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyOtherLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyResourceTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyUntypedTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createDecimalLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createFloatLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createNumberLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createResourceTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
@@ -72,7 +72,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a template instance update command, when specified value count is within bounds, it returns success`() {
-        val property = createDummyUntypedTemplateProperty()
+        val property = createUntypedTemplateProperty()
         val propertyInstances = listOf("R123")
 
         assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateCardinality(property, propertyInstances) }
@@ -80,7 +80,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a template property, when too few values for a property are specified, it throws an exception`() {
-        val property = createDummyUntypedTemplateProperty()
+        val property = createUntypedTemplateProperty()
         val propertyInstances = emptyList<String>()
 
         shouldThrow<MissingPropertyValues> {
@@ -92,7 +92,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a template property, when too many values for a property are specified, it throws an exception`() {
-        val property = createDummyUntypedTemplateProperty()
+        val property = createUntypedTemplateProperty()
         val propertyInstances = listOf("R123", "R123", "R123")
 
         shouldThrow<TooManyPropertyValues> {
@@ -108,7 +108,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a resource template property with classes as class constraint, when validating a class object, it returns success`() {
-        val property = createDummyResourceTemplateProperty().copy(
+        val property = createResourceTemplateProperty().copy(
             minCount = 0,
             `class` = ObjectIdAndLabel(Classes.classes, "Classes")
         )
@@ -120,7 +120,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a resource template property with classes as class constraint, when object value is not a class, it throws an exception`() {
-        val property = createDummyResourceTemplateProperty().copy(
+        val property = createResourceTemplateProperty().copy(
             minCount = 0,
             `class` = ObjectIdAndLabel(Classes.classes, "Classes")
         )
@@ -136,7 +136,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a resource template property with predicates as class constraint, when validating a predicate object, it returns success`() {
-        val property = createDummyResourceTemplateProperty().copy(
+        val property = createResourceTemplateProperty().copy(
             minCount = 0,
             `class` = ObjectIdAndLabel(Classes.predicates, "Predicates")
         )
@@ -148,7 +148,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a resource template property with predicates as class constraint, when object value is not a predicate, it throws an exception`() {
-        val property = createDummyResourceTemplateProperty().copy(
+        val property = createResourceTemplateProperty().copy(
             minCount = 0,
             `class` = ObjectIdAndLabel(Classes.predicates, "Predicates")
         )
@@ -164,7 +164,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a resource template property with list as class constraint, when validating a list object, it returns success`() {
-        val property = createDummyResourceTemplateProperty().copy(
+        val property = createResourceTemplateProperty().copy(
             minCount = 0,
             `class` = ObjectIdAndLabel(Classes.list, "List")
         )
@@ -176,7 +176,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a resource template property with list as class constraint, when object value is not a list, it throws an exception`() {
-        val property = createDummyResourceTemplateProperty().copy(
+        val property = createResourceTemplateProperty().copy(
             minCount = 0,
             `class` = ObjectIdAndLabel(Classes.list, "List")
         )
@@ -192,7 +192,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a resource template property, when object value is an instance of target class, it returns success`() {
-        val property = createDummyResourceTemplateProperty().copy(
+        val property = createResourceTemplateProperty().copy(
             minCount = 0,
             `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
         )
@@ -204,7 +204,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a resource template property, when object value is not an instance of target class, it throws an exception`() {
-        val property = createDummyResourceTemplateProperty().copy(
+        val property = createResourceTemplateProperty().copy(
             minCount = 0,
             `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
         )
@@ -220,7 +220,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a resource template property, when object value is not an instance of the target class but an instance of a subclass of target class, it returns success`() {
-        val property = createDummyResourceTemplateProperty().copy(
+        val property = createResourceTemplateProperty().copy(
             minCount = 0,
             `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
         )
@@ -236,7 +236,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a resource template property, when object value is not an instance of the target class and not an instance of a subclass of target class, it throws an exception`() {
-        val property = createDummyResourceTemplateProperty().copy(
+        val property = createResourceTemplateProperty().copy(
             minCount = 0,
             `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
         )
@@ -256,7 +256,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a resource template property, when object value is a literal, it throws an exception`() {
-        val property = createDummyResourceTemplateProperty().copy(
+        val property = createResourceTemplateProperty().copy(
             minCount = 0,
             `class` = ObjectIdAndLabel(Classes.author, "Author")
         )
@@ -272,7 +272,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a literal template property, when object value is not a literal, it throws an exception`() {
-        val property = createDummyOtherLiteralTemplateProperty()
+        val property = createOtherLiteralTemplateProperty()
         val id = "R123"
         val `object` = createResource(ThingId("R123")).toThingDefinition()
 
@@ -285,7 +285,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a string literal template property, when literal label does not match the required pattern, it throws an exception`() {
-        val property = createDummyStringLiteralTemplateProperty().copy(
+        val property = createStringLiteralTemplateProperty().copy(
             minCount = 0,
             datatype = ClassReference(Classes.string, "String", ParsedIRI(Literals.XSD.STRING.uri))
         )
@@ -301,7 +301,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a string literal template property, when literal label matches the required pattern, it returns success`() {
-        val property = createDummyStringLiteralTemplateProperty().copy(
+        val property = createStringLiteralTemplateProperty().copy(
             minCount = 0,
             pattern = """\w+""",
             datatype = ClassReference(Classes.string, "String", ParsedIRI(Literals.XSD.STRING.uri))
@@ -314,7 +314,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a number literal template property, when object label is within bounds, it returns success`() {
-        val property = createDummyNumberLiteralTemplateProperty().copy(
+        val property = createNumberLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(0),
             maxInclusive = RealNumber(10),
@@ -331,7 +331,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a number literal template property, when object label is lower than minInclusive, it throws an exception`() {
-        val property = createDummyNumberLiteralTemplateProperty().copy(
+        val property = createNumberLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(10),
             datatype = ClassReference(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
@@ -351,7 +351,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a number literal template property, when object label is higher than maxInclusive, it throws an exception`() {
-        val property = createDummyNumberLiteralTemplateProperty().copy(
+        val property = createNumberLiteralTemplateProperty().copy(
             minCount = 0,
             maxInclusive = RealNumber(5)
         )
@@ -370,7 +370,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a decimal literal template property, when object label is within bounds, it returns success`() {
-        val property = createDummyDecimalLiteralTemplateProperty().copy(
+        val property = createDecimalLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(0.0),
             maxInclusive = RealNumber(10.0),
@@ -387,7 +387,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a decimal literal template property, when object label is lower than minInclusive, it throws an exception`() {
-        val property = createDummyDecimalLiteralTemplateProperty().copy(
+        val property = createDecimalLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(10.0),
             datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
@@ -407,7 +407,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a decimal literal template property, when object label is higher than maxInclusive, it throws an exception`() {
-        val property = createDummyDecimalLiteralTemplateProperty().copy(
+        val property = createDecimalLiteralTemplateProperty().copy(
             minCount = 0,
             maxInclusive = RealNumber(5.0),
             datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI(Literals.XSD.DECIMAL.uri))
@@ -427,7 +427,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a float literal template property, when object label is within bounds, it returns success`() {
-        val property = createDummyFloatLiteralTemplateProperty().copy(
+        val property = createFloatLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(0.0F),
             maxInclusive = RealNumber(10.0F),
@@ -444,7 +444,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a float literal template property, when object label is lower than minInclusive, it throws an exception`() {
-        val property = createDummyFloatLiteralTemplateProperty().copy(
+        val property = createFloatLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(10.0F),
             datatype = ClassReference(Classes.float, "Float", ParsedIRI(Literals.XSD.FLOAT.uri))
@@ -464,7 +464,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a float literal template property, when object label is higher than maxInclusive, it throws an exception`() {
-        val property = createDummyFloatLiteralTemplateProperty().copy(
+        val property = createFloatLiteralTemplateProperty().copy(
             minCount = 0,
             maxInclusive = RealNumber(5.0F),
             datatype = ClassReference(Classes.float, "Float", ParsedIRI(Literals.XSD.FLOAT.uri))
@@ -484,7 +484,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a literal template property, when object label cannot be parsed by data type, it throws an exception`() {
-        val property = createDummyOtherLiteralTemplateProperty().copy(
+        val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
             datatype = ClassReference(Classes.integer, "Integer", ParsedIRI(Literals.XSD.INT.uri))
         )
@@ -504,7 +504,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
     @Test
     fun `Given a literal template property with a custom datatype, when object data type matches the uri of the custom data type, it returns success`() {
         val uri = "https://example.org/classes/software"
-        val property = createDummyOtherLiteralTemplateProperty().copy(
+        val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
             datatype = ClassReference(Classes.software, "Software", ParsedIRI(uri))
         )
@@ -519,7 +519,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a literal template property with a custom datatype, when object data type does not match the uri of the custom data type, it throws an exception`() {
-        val property = createDummyOtherLiteralTemplateProperty().copy(
+        val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
             datatype = ClassReference(Classes.software, "Software", null)
         )
@@ -538,7 +538,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a literal template property with a custom datatype, when object data type matches the id of the custom data type, it returns success`() {
-        val property = createDummyOtherLiteralTemplateProperty().copy(
+        val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
             datatype = ClassReference(Classes.software, "Software", null)
         )
@@ -553,7 +553,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest {
 
     @Test
     fun `Given a literal template property with a custom datatype, when object data type does not match the id of the custom data type, it throws an exception`() {
-        val property = createDummyOtherLiteralTemplateProperty().copy(
+        val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
             datatype = ClassReference(Classes.software, "Software", null)
         )

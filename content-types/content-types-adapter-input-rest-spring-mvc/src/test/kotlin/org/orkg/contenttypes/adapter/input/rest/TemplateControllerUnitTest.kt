@@ -34,7 +34,7 @@ import org.orkg.contenttypes.domain.InvalidRegexPattern
 import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.TemplateNotFound
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateCommand
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateNumberLiteralPropertyCommand
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase.CreateOtherLiteralPropertyCommand
@@ -108,7 +108,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @Test
     @DisplayName("Given a template, when it is fetched by id and service succeeds, then status is 200 OK and template is returned")
     fun getSingle() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         every { templateService.findById(template.id) } returns Optional.of(template)
 
         documentedGetRequestTo("/api/templates/{id}", template.id)
@@ -184,7 +184,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     fun getPaged() {
         every {
             templateService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
-        } returns pageOf(createDummyTemplate())
+        } returns pageOf(createTemplate())
 
         documentedGetRequestTo("/api/templates")
             .accept(TEMPLATE_JSON_V1)
@@ -203,7 +203,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
     @Test
     @DisplayName("Given several templates, when filtering by several parameters, then status is 200 OK and templates are returned")
     fun getPagedWithParameters() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         every { templateService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(template)
 
         val label = "label"

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneStatementCommand
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Classes
@@ -48,7 +48,7 @@ internal class RosettaStoneStatementCreatorUnitTest {
     fun `Given a rosetta stone statement create command, when creating a new rosetta stone statement, it returns success`() {
         val command = dummyCreateRosettaStoneStatementCommand()
         val state = CreateRosettaStoneStatementState(
-            rosettaStoneTemplate = createDummyRosettaStoneTemplate(),
+            rosettaStoneTemplate = createRosettaStoneTemplate(),
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4", "#temp5"),
             validatedIds = mapOf(
                 "R258" to Either.right(createResource(ThingId("R258"))),

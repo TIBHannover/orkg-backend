@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneStatementCommand
 
@@ -35,7 +35,7 @@ internal class RosettaStoneStatementExistenceValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone statement update command, when checking for rosetta stone statement existence, it returns success`() {
-        val rosettaStoneStatement = createDummyRosettaStoneStatement()
+        val rosettaStoneStatement = createRosettaStoneStatement()
         val command = dummyUpdateRosettaStoneStatementCommand().copy(id = rosettaStoneStatement.id)
         val state = UpdateRosettaStoneStatementState()
 
@@ -50,7 +50,7 @@ internal class RosettaStoneStatementExistenceValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone statement update command, when checking for rosetta stone statement existence and rosetta stone statement is not found, it throws an exception`() {
-        val rosettaStoneStatement = createDummyRosettaStoneStatement()
+        val rosettaStoneStatement = createRosettaStoneStatement()
         val command = dummyUpdateRosettaStoneStatementCommand().copy(id = rosettaStoneStatement.id)
         val state = UpdateRosettaStoneStatementState()
 

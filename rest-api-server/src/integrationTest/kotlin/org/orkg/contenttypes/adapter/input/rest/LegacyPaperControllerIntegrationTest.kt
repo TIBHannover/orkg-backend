@@ -122,7 +122,7 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
             .andExpect(status().isCreated)
     }
 
-    fun createDummyPaperObject(title: String = "long title here", doi: String = "doi.id.here", researchField: String = "R12"): LegacyCreatePaperRequest =
+    fun createPaperObject(title: String = "long title here", doi: String = "doi.id.here", researchField: String = "R12"): LegacyCreatePaperRequest =
         LegacyCreatePaperRequest(null, PaperDefinition(
             title = title,
             doi = doi,
@@ -161,7 +161,7 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
     @Test
     @TestWithMockUser
     fun shouldNotMergeIfDoiIsEmpty() {
-        val originalPaper = createDummyPaperObject(doi = "")
+        val originalPaper = createPaperObject(doi = "")
 
         val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
@@ -201,7 +201,7 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
     @Test
     @TestWithMockUser
     fun mergePapersThatExistsOnTitle() {
-        val originalPaper = createDummyPaperObject()
+        val originalPaper = createPaperObject()
 
         val userUUID = UUID.fromString(MockUserId.USER)
         val originalId = legacyPaperService.addPaperContent(originalPaper, false, userUUID).value
@@ -242,7 +242,7 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
     @Test
     @TestWithMockUser
     fun mergePapersThatExistsOnDoi() {
-        val originalPaper = createDummyPaperObject()
+        val originalPaper = createPaperObject()
 
         val userUUID = UUID.fromString(MockUserId.USER)
         val originalId = legacyPaperService.addPaperContent(originalPaper, false, userUUID).value
@@ -283,7 +283,7 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
     @Test
     @TestWithMockUser
     fun mergePapersIfBothTitleAndDoiExist() {
-        val originalPaper = createDummyPaperObject()
+        val originalPaper = createPaperObject()
 
         val userUUID = UUID.fromString(MockUserId.USER)
         val originalId = legacyPaperService.addPaperContent(originalPaper, false, userUUID).value

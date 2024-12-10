@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
 
 internal class LiteratureListSectionsUpdateValidatorUnitTest {
@@ -35,7 +35,7 @@ internal class LiteratureListSectionsUpdateValidatorUnitTest {
     @Test
     fun `Given a literature list update command, when no literature list sections are defined, it does nothing`() {
         val command = dummyUpdateLiteratureListCommand().copy(sections = null)
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val state = UpdateLiteratureListState(literatureList = literatureList)
 
         literatureListSectionsUpdateValidator(command, state).asClue {
@@ -48,7 +48,7 @@ internal class LiteratureListSectionsUpdateValidatorUnitTest {
     @Test
     fun `Given a literature list update command, when validating literature list sections, it returns success`() {
         val command = dummyUpdateLiteratureListCommand()
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val state = UpdateLiteratureListState(literatureList = literatureList)
         val validIds = mutableSetOf(ThingId("R154686"), ThingId("R6416"))
 

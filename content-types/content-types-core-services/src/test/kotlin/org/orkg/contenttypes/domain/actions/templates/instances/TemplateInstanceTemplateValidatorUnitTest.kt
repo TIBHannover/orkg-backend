@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
 
@@ -37,7 +37,7 @@ private val templateInstanceTemplateValidator = TemplateInstanceTemplateValidato
     fun `Given a template instance update command, when validating its template, it returns success`() {
         val command = dummyUpdateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState()
-        val template = createDummyTemplate()
+        val template = createTemplate()
 
         every { templateService.findById(command.templateId) } returns Optional.of(template)
 
@@ -60,7 +60,7 @@ private val templateInstanceTemplateValidator = TemplateInstanceTemplateValidato
     fun `Given a template instance update command, when template is not found, it throws an exception`() {
         val command = dummyUpdateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
-            template = createDummyTemplate()
+            template = createTemplate()
         )
 
         every { templateService.findById(command.templateId) } returns Optional.empty()

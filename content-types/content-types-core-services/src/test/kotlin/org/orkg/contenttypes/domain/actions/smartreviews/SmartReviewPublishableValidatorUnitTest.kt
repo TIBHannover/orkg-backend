@@ -15,7 +15,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.SmartReviewAlreadyPublished
 import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.domain.actions.PublishSmartReviewState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishSmartReviewCommand
 
@@ -36,7 +36,7 @@ internal class SmartReviewPublishableValidatorUnitTest {
 
     @Test
     fun `Given a smart review publish command, when smart review is unpublished, it returns success`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyPublishSmartReviewCommand().copy(smartReviewId = smartReview.id)
         val state = PublishSmartReviewState()
 
@@ -52,7 +52,7 @@ internal class SmartReviewPublishableValidatorUnitTest {
 
     @Test
     fun `Given a smart review publish command, when smart review is published, it throws an exception`() {
-        val smartReview = createDummySmartReview().copy(published = true)
+        val smartReview = createSmartReview().copy(published = true)
         val command = dummyPublishSmartReviewCommand().copy(smartReviewId = smartReview.id)
         val state = PublishSmartReviewState()
 

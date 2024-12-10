@@ -15,7 +15,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
 
-fun createDummyPaper() = Paper(
+fun createPaper() = Paper(
     id = ThingId("R8186"),
     title = "Dummy Paper Title",
     researchFields = listOf(

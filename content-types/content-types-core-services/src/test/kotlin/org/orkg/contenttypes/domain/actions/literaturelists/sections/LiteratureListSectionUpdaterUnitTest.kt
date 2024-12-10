@@ -20,7 +20,7 @@ import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionUpdater
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
 import org.orkg.contenttypes.input.LiteratureListTextSectionDefinition
@@ -46,7 +46,7 @@ internal class LiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a text section update command, when contents are equal, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
         val command = literatureList.sections.first()
             .toUpdateListSectionCommand(contributorId, literatureList.id)
@@ -58,7 +58,7 @@ internal class LiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a text section update command, when contents have changed, it updates the text section`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val oldSection = literatureList.sections.first()
         val state = UpdateLiteratureListSectionState(
             literatureList = literatureList,
@@ -85,7 +85,7 @@ internal class LiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a list section update command, when contents are equal, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
         val command = literatureList.sections.last()
             .toUpdateListSectionCommand(contributorId, literatureList.id)
@@ -97,7 +97,7 @@ internal class LiteratureListSectionUpdaterUnitTest {
     @Test
     fun `Given a list section update command, when contents have changed, it updates the list section`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val oldSection = literatureList.sections.last()
         val state = UpdateLiteratureListSectionState(
             literatureList = literatureList,

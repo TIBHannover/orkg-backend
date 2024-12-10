@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -40,7 +40,7 @@ internal class SmartReviewReferencesUpdaterUnitTest {
 
     @Test
     fun `Given a smart review update command, when references are not set, it does nothing`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyUpdateSmartReviewCommand().copy(references = null)
         val state = UpdateSmartReviewState(smartReview = smartReview)
 
@@ -55,7 +55,7 @@ internal class SmartReviewReferencesUpdaterUnitTest {
 
     @Test
     fun `Given a smart review update command, when references are unchanged, it does nothing`() {
-        val smartReview = createDummySmartReview().copy(
+        val smartReview = createSmartReview().copy(
             references = listOf(
                 "@misc{R123456,title = {Fancy title of a super important paper}",
                 "@misc{R456789,title = {Another super important paper}"
@@ -85,7 +85,7 @@ internal class SmartReviewReferencesUpdaterUnitTest {
 
     @Test
     fun `Given a smart review update command, when references have changed, it updates the reference statements`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val contributionId = ThingId("R2457")
         val command = dummyUpdateSmartReviewCommand()
         val state = UpdateSmartReviewState(

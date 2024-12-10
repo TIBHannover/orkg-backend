@@ -7,7 +7,7 @@ import org.orkg.contenttypes.domain.Contribution
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
 
-fun createDummyContribution() = Contribution(
+fun createContribution() = Contribution(
     id = ThingId("R15634"),
     label = "Contribution",
     classes = setOf(ThingId("C123")),

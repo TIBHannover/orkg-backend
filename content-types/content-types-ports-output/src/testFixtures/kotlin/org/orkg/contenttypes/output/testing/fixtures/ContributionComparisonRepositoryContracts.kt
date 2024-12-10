@@ -70,29 +70,29 @@ fun <
         createRequiredEntities()
     }
 
-    val createDummyYearLiteral: () -> Literal = {
+    val createYearLiteral: () -> Literal = {
         val year: Int = fabricator.random()
         fabricator.random<Literal>().copy(label = year.toString())
     }
 
-    val createDummyYearResource: () -> Resource = {
+    val createYearResource: () -> Resource = {
         val year: Int = fabricator.random()
         fabricator.random<Resource>().copy(label = year.toString())
     }
 
-    val createDummyPaper: () -> Resource = {
+    val createPaper: () -> Resource = {
         fabricator.random<Resource>().copy(classes = setOf(Classes.paper))
     }
 
-    val createDummyContribution: () -> Resource = {
+    val createContribution: () -> Resource = {
         fabricator.random<Resource>().copy(classes = setOf(Classes.contribution))
     }
 
-    val createDummySubgraph: (year: Thing?) -> List<ContributionInfo> = {
+    val createSubgraph: (year: Thing?) -> List<ContributionInfo> = {
         val contributionIds = ArrayList<ContributionInfo>()
         for (i in 1..5) {
-            val paper = createDummyPaper()
-            val cont = createDummyContribution()
+            val paper = createPaper()
+            val cont = createContribution()
             val year = it
             resourceRepository.save(paper)
             resourceRepository.save(cont)
@@ -140,15 +140,15 @@ fun <
     }
 
     val createSubgraphWithYearAsLiteral: () -> List<ContributionInfo> = {
-        createDummySubgraph(createDummyYearLiteral())
+        createSubgraph(createYearLiteral())
     }
 
     val createSubgraphWithYearAsResource: () -> List<ContributionInfo> = {
-        createDummySubgraph(createDummyYearResource())
+        createSubgraph(createYearResource())
     }
 
     val createSubgraphWithoutYear: () -> List<ContributionInfo> = {
-        createDummySubgraph(null)
+        createSubgraph(null)
     }
 
     describe("fetching contribution information") {

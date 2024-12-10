@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createStatement
@@ -39,7 +39,7 @@ internal class TemplateTargetClassUpdaterUnitTest {
     fun `Given a template update command, when new target class has changed, it updates the target class statement`() {
         val command = dummyUpdateTemplateCommand()
         val state = UpdateTemplateState(
-            template = createDummyTemplate(),
+            template = createTemplate(),
             statements = mapOf(command.templateId to listOf(createStatement()))
         )
 
@@ -65,7 +65,7 @@ internal class TemplateTargetClassUpdaterUnitTest {
     @Test
     fun `Given a template update command, when target class did not change, id does nothing`() {
         val command = dummyUpdateTemplateCommand().copy(targetClass = ThingId("targetClass"))
-        val state = UpdateTemplateState(template = createDummyTemplate())
+        val state = UpdateTemplateState(template = createTemplate())
 
         val result = templateTargetClassUpdater(command, state)
 
@@ -77,7 +77,7 @@ internal class TemplateTargetClassUpdaterUnitTest {
     @Test
     fun `Given a template update command, when new target class is not set, id does nothing`() {
         val command = dummyUpdateTemplateCommand().copy(targetClass = null)
-        val state = UpdateTemplateState(template = createDummyTemplate())
+        val state = UpdateTemplateState(template = createTemplate())
 
         val result = templateTargetClassUpdater(command, state)
 

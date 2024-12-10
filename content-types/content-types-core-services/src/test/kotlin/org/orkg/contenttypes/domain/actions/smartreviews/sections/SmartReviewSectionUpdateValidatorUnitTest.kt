@@ -21,7 +21,7 @@ import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionValidator
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewComparisonSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewOntologySectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewPredicateSectionCommand
@@ -47,14 +47,14 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
     @Test
     fun `Given a smart review section update command, when section is not related to the smart review, it throws an exception`() {
         val command = dummyUpdateSmartReviewComparisonSectionCommand()
-        val state = UpdateSmartReviewSectionState(smartReview = createDummySmartReview())
+        val state = UpdateSmartReviewSectionState(smartReview = createSmartReview())
 
         assertThrows<UnrelatedSmartReviewSection> { smartReviewSectionUpdateValidator(command, state) }
     }
 
     @Test
     fun `Given a comparison section update command, when validation succeeds, it returns success`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewComparisonSection>().first()
         val command = dummyUpdateSmartReviewComparisonSectionCommand().copy(smartReviewSectionId = section.id)
@@ -70,7 +70,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a comparison section update command, when types mismatch, it throws an exception`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = dummyUpdateSmartReviewComparisonSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
 
@@ -79,7 +79,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a visualization section update command, when validation succeeds, it returns success`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewVisualizationSection>().first()
         val command = dummyUpdateSmartReviewVisualizationSectionCommand().copy(smartReviewSectionId = section.id)
@@ -95,7 +95,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a visualization section update command, when types mismatch, it throws an exception`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = dummyUpdateSmartReviewVisualizationSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
 
@@ -104,7 +104,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a resource section update command, when validation succeeds, it returns success`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewResourceSection>().first()
         val command = dummyUpdateSmartReviewResourceSectionCommand().copy(smartReviewSectionId = section.id)
@@ -120,7 +120,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a resource section update command, when types mismatch, it throws an exception`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = dummyUpdateSmartReviewResourceSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
 
@@ -129,7 +129,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a predicate section update command, when validation succeeds, it returns success`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewPredicateSection>().first()
         val command = dummyUpdateSmartReviewPredicateSectionCommand().copy(smartReviewSectionId = section.id)
@@ -145,7 +145,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a predicate section update command, when types mismatch, it throws an exception`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = dummyUpdateSmartReviewPredicateSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
 
@@ -154,7 +154,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a ontology section update command, when validation succeeds, it returns success`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewOntologySection>().first()
         val command = dummyUpdateSmartReviewOntologySectionCommand().copy(smartReviewSectionId = section.id)
@@ -171,7 +171,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a ontology section update command, when types mismatch, it throws an exception`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = dummyUpdateSmartReviewOntologySectionCommand().copy(smartReviewSectionId = smartReview.sections.first().id)
 
@@ -180,7 +180,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a text section update command, when validation succeeds, it returns success`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewTextSection>().first()
         val command = dummyUpdateSmartReviewTextSectionCommand().copy(smartReviewSectionId = section.id)
@@ -196,7 +196,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest {
 
     @Test
     fun `Given a text section update command, when types mismatch, it throws an exception`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = dummyUpdateSmartReviewTextSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
 

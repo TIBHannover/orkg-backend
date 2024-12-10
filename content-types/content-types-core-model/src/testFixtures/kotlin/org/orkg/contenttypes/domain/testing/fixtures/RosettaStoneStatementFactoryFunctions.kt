@@ -13,14 +13,14 @@ import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.testing.fixtures.createResource
 
-fun createDummyRosettaStoneStatement() = RosettaStoneStatement(
+fun createRosettaStoneStatement() = RosettaStoneStatement(
     id = ThingId("R123"),
     contextId = ThingId("R789"),
     templateId = ThingId("R456"),
     templateTargetClassId = ThingId("R321"),
     label = "Dummy Rosetta Stone Statement Label",
     versions = listOf(
-        createDummyRosettaStoneStatementVersion()
+        createRosettaStoneStatementVersion()
     ),
     observatories = listOf(
         ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
@@ -34,7 +34,7 @@ fun createDummyRosettaStoneStatement() = RosettaStoneStatement(
     unlistedBy = null
 )
 
-fun createDummyRosettaStoneStatementVersion() = RosettaStoneStatementVersion(
+fun createRosettaStoneStatementVersion() = RosettaStoneStatementVersion(
     id = ThingId("R147"),
     formattedLabel = FormattedLabel.of("{0} {1} {2}"),
     subjects = listOf(

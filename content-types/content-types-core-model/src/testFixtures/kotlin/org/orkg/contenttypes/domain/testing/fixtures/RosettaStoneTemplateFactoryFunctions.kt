@@ -17,7 +17,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 
-fun createDummyRosettaStoneTemplate() = RosettaStoneTemplate(
+fun createRosettaStoneTemplate() = RosettaStoneTemplate(
     id = ThingId("R21325"),
     label = "Dummy Rosetta Stone Template Label",
     description = "Some description about the rosetta stone template",
@@ -25,8 +25,8 @@ fun createDummyRosettaStoneTemplate() = RosettaStoneTemplate(
     targetClass = ThingId("targetClass"),
     exampleUsage = "example sentence of the statement",
     properties = listOf(
-        createDummySubjectPositionTemplateProperty(),
-        createDummyStringLiteralObjectPositionTemplateProperty()
+        createSubjectPositionTemplateProperty(),
+        createStringLiteralObjectPositionTemplateProperty()
     ),
     observatories = listOf(
         ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
@@ -42,7 +42,7 @@ fun createDummyRosettaStoneTemplate() = RosettaStoneTemplate(
     modifiable = true
 )
 
-fun createDummySubjectPositionTemplateProperty() = ResourceTemplateProperty(
+fun createSubjectPositionTemplateProperty() = ResourceTemplateProperty(
     id = ThingId("R27"),
     label = "resource property label",
     placeholder = "resource placeholder",
@@ -56,7 +56,7 @@ fun createDummySubjectPositionTemplateProperty() = ResourceTemplateProperty(
     `class` = ObjectIdAndLabel(ThingId("C28"), "resource property class label")
 )
 
-fun createDummyStringLiteralObjectPositionTemplateProperty() = StringLiteralTemplateProperty(
+fun createStringLiteralObjectPositionTemplateProperty() = StringLiteralTemplateProperty(
     id = ThingId("R24"),
     label = "string property label",
     placeholder = "string literal placeholder",

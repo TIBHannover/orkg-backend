@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneStatementCommand
 
@@ -35,7 +35,7 @@ internal class RosettaStoneStatementTemplateCreateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone statement create command, when validating the rosetta stone template, it returns success`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyCreateRosettaStoneStatementCommand()
         val state = CreateRosettaStoneStatementState()
 

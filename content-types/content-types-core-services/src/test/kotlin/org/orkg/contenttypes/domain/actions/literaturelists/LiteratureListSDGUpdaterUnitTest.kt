@@ -16,7 +16,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -40,7 +40,7 @@ internal class LiteratureListSDGUpdaterUnitTest {
 
     @Test
     fun `Given a literature list update command, when SDGs are not set, it does nothing`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val command = dummyUpdateLiteratureListCommand().copy(sustainableDevelopmentGoals = null)
         val state = UpdateLiteratureListState(literatureList = literatureList)
 
@@ -55,7 +55,7 @@ internal class LiteratureListSDGUpdaterUnitTest {
 
     @Test
     fun `Given a literature list update command, when SDGs are unchanged, it does nothing`() {
-        val literatureList = createDummyLiteratureList().copy(
+        val literatureList = createLiteratureList().copy(
             sustainableDevelopmentGoals = setOf(ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"))
         )
         val command = dummyUpdateLiteratureListCommand()
@@ -72,7 +72,7 @@ internal class LiteratureListSDGUpdaterUnitTest {
 
     @Test
     fun `Given a literature list update command, when SDGs have changed, it updates the SDG statements`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val command = dummyUpdateLiteratureListCommand()
         val statements = listOf(
             createStatement(

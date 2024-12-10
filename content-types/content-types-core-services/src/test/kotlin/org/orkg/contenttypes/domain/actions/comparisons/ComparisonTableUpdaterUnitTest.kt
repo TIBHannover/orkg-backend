@@ -19,7 +19,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.orkg.contenttypes.domain.ComparisonTable
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.contenttypes.domain.actions.UpdateComparisonState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateComparisonCommand
 import org.orkg.contenttypes.output.ComparisonTableRepository
 
@@ -40,7 +40,7 @@ internal class ComparisonTableUpdaterUnitTest {
 
     @Test
     fun `Given a comparison update command, when comparison config and data are unchanged, does nothing`() {
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
         val command = dummyUpdateComparisonCommand().copy(
             comparisonId = comparison.id,
             config = comparison.config,
@@ -57,7 +57,7 @@ internal class ComparisonTableUpdaterUnitTest {
     @ParameterizedTest
     @MethodSource("validUpdateCommands")
     fun `Given a comparison update command, when comparison config or data is set, it updates the comparison table`(value: UpdateComparisonCommand) {
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
         val command = value.copy(comparisonId = comparison.id)
         val state = UpdateComparisonState(comparison)
 
@@ -81,7 +81,7 @@ internal class ComparisonTableUpdaterUnitTest {
 
     @Test
     fun `Given a comparison update command, when comparison config and data is not set, does nothing`() {
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
         val command = dummyUpdateComparisonCommand().copy(
             comparisonId = comparison.id,
             config = null,

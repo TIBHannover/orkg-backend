@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.DeleteSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionDeleter
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyDeleteSmartReviewSectionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -40,7 +40,7 @@ internal class SmartReviewSectionDeleterUnitTest {
 
     @Test
     fun `Given a smart review section delete command, when section belongs to smart review, it deletes the section`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyDeleteSmartReviewSectionCommand().copy(sectionId = smartReview.sections.last().id)
         val contributionId = ThingId("R456")
         val statements = listOf(
@@ -93,7 +93,7 @@ internal class SmartReviewSectionDeleterUnitTest {
 
     @Test
     fun `Given a smart review section delete command, when section does not belong to smart review, it does nothing`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyDeleteSmartReviewSectionCommand().copy(sectionId = ThingId("R123"))
         val contributionId = ThingId("R456")
         val statements = listOf(

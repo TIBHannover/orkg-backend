@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.PublishSmartReviewState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishSmartReviewCommand
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.graph.domain.Bundle
@@ -42,7 +42,7 @@ internal class SmartReviewVersionArchiverUnitTest {
 
     @Test
     fun `Given a smart review publish command, it archives all statements about the smart review`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyPublishSmartReviewCommand().copy(smartReviewId = smartReview.id)
         val smartReviewVersionId = ThingId("R321")
         val state = PublishSmartReviewState(

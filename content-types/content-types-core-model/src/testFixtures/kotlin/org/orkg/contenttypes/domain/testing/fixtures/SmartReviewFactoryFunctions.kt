@@ -32,7 +32,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-fun createDummySmartReview() = SmartReview(
+fun createSmartReview() = SmartReview(
     id = ThingId("R1456"),
     title = "Dummy Smart Review Title",
     researchFields = listOf(
@@ -111,12 +111,12 @@ fun createDummySmartReview() = SmartReview(
     unlistedBy = null,
     published = false,
     sections = listOf(
-        createDummySmartReviewTextSection(),
-        createDummySmartReviewComparisonSection(),
-        createDummySmartReviewVisualizationSection(),
-        createDummySmartReviewResourceSection(),
-        createDummySmartReviewPredicateSection(),
-        createDummySmartReviewOntologySection()
+        createSmartReviewTextSection(),
+        createSmartReviewComparisonSection(),
+        createSmartReviewVisualizationSection(),
+        createSmartReviewResourceSection(),
+        createSmartReviewPredicateSection(),
+        createSmartReviewOntologySection()
     ),
     references = listOf("@misc{R615465, title = {reference 1}}", "@misc{R615465, title = {reference 2}}"),
     acknowledgements = mapOf(
@@ -125,7 +125,7 @@ fun createDummySmartReview() = SmartReview(
     )
 )
 
-fun createDummySmartReviewComparisonSection() = SmartReviewComparisonSection(
+fun createSmartReviewComparisonSection() = SmartReviewComparisonSection(
     id = ThingId("R456351"),
     heading = "comparison section heading",
     comparison = ResourceReference(
@@ -135,7 +135,7 @@ fun createDummySmartReviewComparisonSection() = SmartReviewComparisonSection(
     )
 )
 
-fun createDummySmartReviewVisualizationSection() = SmartReviewVisualizationSection(
+fun createSmartReviewVisualizationSection() = SmartReviewVisualizationSection(
     id = ThingId("R6521"),
     heading = "visualization section heading",
     visualization = ResourceReference(
@@ -145,19 +145,19 @@ fun createDummySmartReviewVisualizationSection() = SmartReviewVisualizationSecti
     )
 )
 
-fun createDummySmartReviewResourceSection() = SmartReviewResourceSection(
+fun createSmartReviewResourceSection() = SmartReviewResourceSection(
     id = ThingId("R14565"),
     heading = "resource section heading",
     resource = ResourceReference(ThingId("R1"), "some resource label", classes = setOf(Classes.problem))
 )
 
-fun createDummySmartReviewPredicateSection() = SmartReviewPredicateSection(
+fun createSmartReviewPredicateSection() = SmartReviewPredicateSection(
     id = ThingId("R15696541"),
     heading = "predicate section heading",
     predicate = PredicateReference(ThingId("P1"), "some predicate label")
 )
 
-fun createDummySmartReviewOntologySection() = SmartReviewOntologySection(
+fun createSmartReviewOntologySection() = SmartReviewOntologySection(
     id = ThingId("R16532"),
     heading = "ontology section heading",
     entities = listOf(
@@ -167,7 +167,7 @@ fun createDummySmartReviewOntologySection() = SmartReviewOntologySection(
     predicates = listOf(PredicateReference(ThingId("P1"), "some predicate label"))
 )
 
-fun createDummySmartReviewTextSection() = SmartReviewTextSection(
+fun createSmartReviewTextSection() = SmartReviewTextSection(
     id = ThingId("R154686"),
     heading = "Heading",
     classes = setOf(Classes.introduction),

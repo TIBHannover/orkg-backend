@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishLiteratureListCommand
 import org.orkg.contenttypes.output.LiteratureListPublishedRepository
 import org.orkg.graph.domain.Bundle
@@ -42,7 +42,7 @@ internal class LiteratureListVersionArchiverUnitTest {
 
     @Test
     fun `Given a literature list publish command, it archives all statements about the literature list`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val command = dummyPublishLiteratureListCommand().copy(id = literatureList.id)
         val literatureListVersionId = ThingId("R321")
         val state = PublishLiteratureListState(

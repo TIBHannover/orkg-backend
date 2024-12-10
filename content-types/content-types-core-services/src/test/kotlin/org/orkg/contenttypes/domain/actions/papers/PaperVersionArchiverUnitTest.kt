@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.PublishPaperState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
+import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.testing.fixtures.createPaperPublishCommand
 import org.orkg.contenttypes.output.PaperPublishedRepository
 import org.orkg.graph.domain.Bundle
@@ -43,7 +43,7 @@ internal class PaperVersionArchiverUnitTest {
 
     @Test
     fun `Given a paper publish command, it archives all paper contribution statements`() {
-        val paper = createDummyPaper()
+        val paper = createPaper()
         val command = createPaperPublishCommand().copy(id = paper.id)
         val statements = listOf(createStatement()).groupBy { it.subject.id }
         val paperVersionId = ThingId("R321")

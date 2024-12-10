@@ -10,7 +10,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.orkg.contenttypes.input.ComparisonUseCases
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.export.testing.fixtures.verifyThatDirectoryExistsAndIsEmpty
 import org.orkg.testing.pageOf
@@ -38,7 +38,7 @@ internal class ExportComparisonServiceIntegrationTest : DescribeSpec({
         val targetFile = targetDir.resolve("test-export.jsonl")
         targetFile.exists() shouldBe false
 
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
 
         every { comparisonService.findAllCurrentAndListedAndUnpublishedComparisons(any()) } returns pageOf(comparison, comparison)
         every { comparisonRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf("test/doi")

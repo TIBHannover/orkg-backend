@@ -15,12 +15,12 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewComparisonSection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewOntologySection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewPredicateSection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewResourceSection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewTextSection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReviewVisualizationSection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewComparisonSection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewOntologySection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewPredicateSection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewResourceSection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewTextSection
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewVisualizationSection
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.Predicates
@@ -52,7 +52,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a comparison section, when referenced by no resource other than the smart review contribution, it deletes the comparison section`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewComparisonSection()
+        val section = createSmartReviewComparisonSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -86,7 +86,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a comparison section, when referenced by another resource, it just removes the comparison section from the smart review`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewComparisonSection()
+        val section = createSmartReviewComparisonSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -124,7 +124,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a comparison section, when comparison section is owned by another user, it does not throw an exception`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewComparisonSection()
+        val section = createSmartReviewComparisonSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -160,7 +160,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a visualization section, when referenced by no resource other than the smart review contribution, it deletes the visualization section`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewVisualizationSection()
+        val section = createSmartReviewVisualizationSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -194,7 +194,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a visualization section, when referenced by another resource, it just removes the visualization section from the smart review`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewVisualizationSection()
+        val section = createSmartReviewVisualizationSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -232,7 +232,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a visualization section, when visualization section is owned by another user, it does not throw an exception`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewVisualizationSection()
+        val section = createSmartReviewVisualizationSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -268,7 +268,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a resource section, when referenced by no resource other than the smart review contribution, it deletes the resource section`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewResourceSection()
+        val section = createSmartReviewResourceSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -302,7 +302,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a resource section, when referenced by another resource, it just removes the resource section from the smart review`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewResourceSection()
+        val section = createSmartReviewResourceSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -340,7 +340,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a resource section, when resource section is owned by another user, it does not throw an exception`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewResourceSection()
+        val section = createSmartReviewResourceSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -376,7 +376,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a predicate section, when referenced by no resource other than the smart review contribution, it deletes the predicate section`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewPredicateSection()
+        val section = createSmartReviewPredicateSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -410,7 +410,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a predicate section, when referenced by another resource, it just removes the predicate section from the smart review`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewPredicateSection()
+        val section = createSmartReviewPredicateSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -448,7 +448,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a predicate section, when predicate section is owned by another user, it does not throw an exception`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewPredicateSection()
+        val section = createSmartReviewPredicateSection()
         val statements = section.toGroupedStatements()
         val smartReviewHasSectionStatement = createStatement(
             subject = createResource(contributionId),
@@ -483,7 +483,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a ontology section, when referenced by no resource other than the smart review contribution, it deletes the ontology section`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewOntologySection()
+        val section = createSmartReviewOntologySection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -526,7 +526,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a ontology section, when referenced by another resource, it just removes the ontology section from the smart review`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewOntologySection()
+        val section = createSmartReviewOntologySection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             subject = createResource(contributionId),
@@ -562,7 +562,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a ontology section, when ontology section is owned by another user, it does not throw an exception`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewOntologySection()
+        val section = createSmartReviewOntologySection()
         val statements = section.toGroupedStatements()
         val smartReviewHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -607,7 +607,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a text section, when referenced by no resource other than the smart review contribution, it deletes the text section`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewTextSection()
+        val section = createSmartReviewTextSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -641,7 +641,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a text section, when referenced by another resource, it just removes the text section from the smart review`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewTextSection()
+        val section = createSmartReviewTextSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -679,7 +679,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest {
     fun `Given a text section, when text section is owned by another user, it does not throw an exception`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R123")
-        val section = createDummySmartReviewTextSection()
+        val section = createSmartReviewTextSection()
         val statements = section.toGroupedStatements()
         val contributionHasSectionStatement = createStatement(
             id = StatementId("S123"),

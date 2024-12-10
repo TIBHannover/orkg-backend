@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
 
 internal class SmartReviewSectionsUpdateValidatorUnitTest {
@@ -35,7 +35,7 @@ internal class SmartReviewSectionsUpdateValidatorUnitTest {
     @Test
     fun `Given a smart review update command, when no smart review sections are defined, it does nothing`() {
         val command = dummyUpdateSmartReviewCommand().copy(sections = null)
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewState(smartReview = smartReview)
 
         smartReviewSectionsUpdateValidator(command, state).asClue {
@@ -48,7 +48,7 @@ internal class SmartReviewSectionsUpdateValidatorUnitTest {
     @Test
     fun `Given a smart review update command, when validating smart review sections, it returns success`() {
         val command = dummyUpdateSmartReviewCommand()
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewState(smartReview = smartReview)
         val validIds = mutableSetOf(ThingId("R1"), ThingId("P1"), ThingId("R6416"), ThingId("R215648"))
 

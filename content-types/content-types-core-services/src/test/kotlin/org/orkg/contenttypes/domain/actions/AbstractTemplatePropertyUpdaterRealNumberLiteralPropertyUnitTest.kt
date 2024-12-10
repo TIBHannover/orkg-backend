@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.RealNumber
 import org.orkg.contenttypes.domain.ClassReference
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyNumberLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyOtherLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createNumberLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateProperty
 import org.orkg.contenttypes.input.NumberLiteralPropertyDefinition
 import org.orkg.contenttypes.input.OtherLiteralPropertyDefinition
 import org.orkg.contenttypes.input.testing.fixtures.toNumberLiteralTemplatePropertyDefinition
@@ -27,7 +27,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
     @Test
     fun `Given an updated number literal template property, when there are no changes, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyNumberLiteralTemplateProperty()
+        val oldProperty = createNumberLiteralTemplateProperty()
         val newProperty = oldProperty.toNumberLiteralTemplatePropertyDefinition()
 
         abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 2, newProperty, oldProperty)
@@ -36,7 +36,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
     @Test
     fun `Given an updated number literal template property, when minInclusive has changed, it updates the minInclusive literal`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyNumberLiteralTemplateProperty()
+        val oldProperty = createNumberLiteralTemplateProperty()
         val newProperty = oldProperty.toNumberLiteralTemplatePropertyDefinition().copy(
             minInclusive = RealNumber(1)
         )
@@ -76,7 +76,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
     @Test
     fun `Given an updated number literal template property, when old template property was of another type, it creates a minInclusive statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty().copy(
+        val oldProperty = createOtherLiteralTemplateProperty().copy(
             datatype = ClassReference(Classes.decimal, "Decimal", null)
         )
         val newProperty = NumberLiteralPropertyDefinition(
@@ -126,7 +126,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
     @Test
     fun `Given an updated number template property, when new template property is not a number literal property, it deletes all minInclusive statements`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyNumberLiteralTemplateProperty()
+        val oldProperty = createNumberLiteralTemplateProperty()
         val newProperty = OtherLiteralPropertyDefinition(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,
@@ -156,7 +156,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
     @Test
     fun `Given an updated number literal template property, when maxInclusive has changed, it updates the maxInclusive literal`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyNumberLiteralTemplateProperty()
+        val oldProperty = createNumberLiteralTemplateProperty()
         val newProperty = oldProperty.toNumberLiteralTemplatePropertyDefinition().copy(
             maxInclusive = RealNumber(1)
         )
@@ -196,7 +196,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
     @Test
     fun `Given an updated number literal template property, when old template property was of another type, it creates a maxInclusive statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyOtherLiteralTemplateProperty().copy(
+        val oldProperty = createOtherLiteralTemplateProperty().copy(
             datatype = ClassReference(Classes.decimal, "Decimal", null)
         )
         val newProperty = NumberLiteralPropertyDefinition(
@@ -246,7 +246,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
     @Test
     fun `Given an updated number template property, when new template property is not a number literal property, it deletes all maxInclusive statements`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyNumberLiteralTemplateProperty()
+        val oldProperty = createNumberLiteralTemplateProperty()
         val newProperty = OtherLiteralPropertyDefinition(
             label = oldProperty.label,
             placeholder = oldProperty.placeholder,
@@ -276,7 +276,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
     @Test
     fun `Given an updated number literal template property, when old number literal template property had another datatype, it updates the minInclusive and maxInclusive statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val oldProperty = createDummyNumberLiteralTemplateProperty()
+        val oldProperty = createNumberLiteralTemplateProperty()
         val newProperty = oldProperty.toNumberLiteralTemplatePropertyDefinition().copy(
             datatype = Classes.decimal
         )

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertiesUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
@@ -34,7 +34,7 @@ internal class TemplatePropertiesUpdaterUnitTest {
 
     @Test
     fun `Given a template update command, when properties are not set, it does nothing`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val command = dummyUpdateTemplateCommand().copy(
             properties = null
         )
@@ -45,7 +45,7 @@ internal class TemplatePropertiesUpdaterUnitTest {
 
     @Test
     fun `Given a template update command, when properties are set, it validates each property`() {
-        val template = createDummyTemplate()
+        val template = createTemplate()
         val command = dummyUpdateTemplateCommand()
         val state = UpdateTemplateState(
             template = template,

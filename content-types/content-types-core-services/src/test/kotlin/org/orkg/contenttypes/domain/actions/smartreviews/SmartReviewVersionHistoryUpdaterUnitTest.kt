@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.PublishSmartReviewState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishSmartReviewCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
@@ -36,7 +36,7 @@ internal class SmartReviewVersionHistoryUpdaterUnitTest {
 
     @Test
     fun `Given a smart review publish command, it crates a new previous version statement`() {
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val command = dummyPublishSmartReviewCommand().copy(smartReviewId = smartReview.id)
         val smartReviewVersionId = ThingId("R165")
         val state = PublishSmartReviewState(smartReview, smartReviewVersionId)

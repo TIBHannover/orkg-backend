@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.AuthorUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
+import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
 
 internal class PaperAuthorUpdaterUnitTest {
@@ -33,7 +33,7 @@ internal class PaperAuthorUpdaterUnitTest {
     @Test
     fun `Given a paper update command, it updates the authors`() {
         val command = dummyUpdatePaperCommand()
-        val state = UpdatePaperState(paper = createDummyPaper())
+        val state = UpdatePaperState(paper = createPaper())
 
         every { authorUpdater.update(command.contributorId, state.authors, command.paperId) } just runs
 
@@ -45,7 +45,7 @@ internal class PaperAuthorUpdaterUnitTest {
     @Test
     fun `Given a paper update command, when new author list is identical to new author list, it does nothing`() {
         val command = dummyUpdatePaperCommand()
-        val state = UpdatePaperState(paper = createDummyPaper().copy(authors = command.authors!!))
+        val state = UpdatePaperState(paper = createPaper().copy(authors = command.authors!!))
 
         paperAuthorUpdater(command, state)
     }

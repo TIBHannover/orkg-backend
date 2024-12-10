@@ -17,8 +17,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneStatementCommand
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Classes
@@ -49,7 +49,7 @@ internal class RosettaStoneStatementUpdaterUnitTest {
     @Test
     fun `Given a rosetta stone statement update command, when updating a rosetta stone statement, it returns success`() {
         val command = dummyUpdateRosettaStoneStatementCommand()
-        val originalStatement = createDummyRosettaStoneStatement()
+        val originalStatement = createRosettaStoneStatement()
         val r258 = createResource(ThingId("R258"))
         val r369 = createResource(ThingId("R369"))
         val r987 = createResource(ThingId("R987"))
@@ -58,7 +58,7 @@ internal class RosettaStoneStatementUpdaterUnitTest {
         val r741 = createResource(ThingId("R741"))
         val c123 = createClass(ThingId("C123"))
         val state = UpdateRosettaStoneStatementState(
-            rosettaStoneTemplate = createDummyRosettaStoneTemplate(),
+            rosettaStoneTemplate = createRosettaStoneTemplate(),
             rosettaStoneStatement = originalStatement,
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4", "#temp5"),
             validatedIds = mapOf(

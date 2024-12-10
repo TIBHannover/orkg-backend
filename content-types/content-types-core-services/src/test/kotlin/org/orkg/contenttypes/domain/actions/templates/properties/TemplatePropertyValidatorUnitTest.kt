@@ -13,8 +13,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyStringLiteralTemplateProperty
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyUntypedTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
+import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateUntypedTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
@@ -54,7 +54,7 @@ internal class TemplatePropertyValidatorUnitTest {
     @Test
     fun `Given a template property update command, when new template property is different to existing template property, it is validated`() {
         val command = dummyUpdateUntypedTemplatePropertyCommand()
-        val state = createDummyStringLiteralTemplateProperty()
+        val state = createStringLiteralTemplateProperty()
 
         every { abstractTemplatePropertyValidator.validate(command) } just runs
 
@@ -65,7 +65,7 @@ internal class TemplatePropertyValidatorUnitTest {
 
     @Test
     fun `Given a template property update command, when new template property is identical to existing template property, it is not validated again`() {
-        val state = createDummyUntypedTemplateProperty()
+        val state = createUntypedTemplateProperty()
         val command = state.toTemplatePropertyDefinition()
 
         templatePropertyValidator(command, state) shouldBe state

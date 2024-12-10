@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.AuthorUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
 
 internal class LiteratureListAuthorUpdaterUnitTest {
@@ -35,7 +35,7 @@ internal class LiteratureListAuthorUpdaterUnitTest {
     @Test
     fun `Given a literature list update command, it updates the authors`() {
         val command = dummyUpdateLiteratureListCommand()
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val state = UpdateLiteratureListState(literatureList = literatureList)
 
         every { authorUpdater.update(command.contributorId, state.authors, command.literatureListId) } just runs
@@ -52,7 +52,7 @@ internal class LiteratureListAuthorUpdaterUnitTest {
     @Test
     fun `Given a literature list update command, when new author list is identical to new author list, it does nothing`() {
         val command = dummyUpdateLiteratureListCommand()
-        val literatureList = createDummyLiteratureList().copy(authors = command.authors!!)
+        val literatureList = createLiteratureList().copy(authors = command.authors!!)
         val state = UpdateLiteratureListState(literatureList = literatureList)
 
         literatureListAuthorUpdater(command, state).asClue {

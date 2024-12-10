@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneStatementCommand
 
@@ -36,8 +36,8 @@ internal class RosettaStoneStatementTemplateUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone statement update command, when validating the rosetta stone template, it returns success`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
-        val rosettaStoneStatement = createDummyRosettaStoneStatement().copy(templateId = rosettaStoneTemplate.id)
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
+        val rosettaStoneStatement = createRosettaStoneStatement().copy(templateId = rosettaStoneTemplate.id)
         val command = dummyUpdateRosettaStoneStatementCommand().copy(id = rosettaStoneStatement.id)
         val state = UpdateRosettaStoneStatementState(rosettaStoneStatement = rosettaStoneStatement)
 
@@ -52,8 +52,8 @@ internal class RosettaStoneStatementTemplateUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone statement update command, when rosetta stone template is missing, it throws an exception`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
-        val rosettaStoneStatement = createDummyRosettaStoneStatement().copy(templateId = rosettaStoneTemplate.id)
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
+        val rosettaStoneStatement = createRosettaStoneStatement().copy(templateId = rosettaStoneTemplate.id)
         val command = dummyUpdateRosettaStoneStatementCommand().copy(id = rosettaStoneStatement.id)
         val state = UpdateRosettaStoneStatementState(rosettaStoneStatement = rosettaStoneStatement)
 

@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.Paper
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperService
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
+import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
@@ -43,7 +43,7 @@ internal class PaperExistenceValidatorUnitTest {
 
     @Test
     fun `Given a paper update command, when checking for paper existence, it returns success`() {
-        val paper = createDummyPaper()
+        val paper = createPaper()
         val command = dummyUpdatePaperCommand().copy(paperId = paper.id)
         val state = UpdatePaperState()
         val root = createResource(
@@ -72,7 +72,7 @@ internal class PaperExistenceValidatorUnitTest {
 
     @Test
     fun `Given a paper update command, when checking for paper existence and paper is not found, it throws an exception`() {
-        val paper = createDummyPaper()
+        val paper = createPaper()
         val command = dummyUpdatePaperCommand().copy(paperId = paper.id)
         val state = UpdatePaperState()
 

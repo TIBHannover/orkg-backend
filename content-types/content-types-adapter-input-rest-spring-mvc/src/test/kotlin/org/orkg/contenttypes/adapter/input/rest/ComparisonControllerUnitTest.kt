@@ -37,9 +37,9 @@ import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedFigure
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedResource
+import org.orkg.contenttypes.domain.testing.fixtures.createComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedFigure
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedResource
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -88,7 +88,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @Test
     @DisplayName("Given a comparison, when it is fetched by id and service succeeds, then status is 200 OK and comparison is returned")
     fun getSingle() {
-        val comparison = createDummyComparison()
+        val comparison = createComparison()
         every { comparisonService.findById(comparison.id) } returns Optional.of(comparison)
 
         documentedGetRequestTo("/api/comparisons/{id}", comparison.id)
@@ -212,7 +212,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             comparisonService.findAll(
                 any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
             )
-        } returns pageOf(createDummyComparison())
+        } returns pageOf(createComparison())
 
         documentedGetRequestTo("/api/comparisons")
             .accept(COMPARISON_JSON_V2)
@@ -237,7 +237,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             comparisonService.findAll(
                 any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
             )
-        } returns pageOf(createDummyComparison())
+        } returns pageOf(createComparison())
 
         val title = "label"
         val exact = true
@@ -347,7 +347,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @DisplayName("Given a comparison related resource, when fetched by id, then status is 200 OK and comparison related resource is returned")
     fun relatedResourceGetSingle() {
         val comparisonId = ThingId("R123")
-        val comparisonRelatedResource = createDummyComparisonRelatedResource()
+        val comparisonRelatedResource = createComparisonRelatedResource()
 
         every {
             comparisonService.findRelatedResourceById(comparisonId, comparisonRelatedResource.id)
@@ -407,7 +407,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @DisplayName("Given several comparison related resources, when fetched, then status is 200 OK and comparison related resources are returned")
     fun relatedResourceGetPaged() {
         val comparisonId = ThingId("R123")
-        val comparisonRelatedResource = listOf(createDummyComparisonRelatedResource())
+        val comparisonRelatedResource = listOf(createComparisonRelatedResource())
 
         every { comparisonService.findAllRelatedResources(comparisonId, any()) } returns pageOf(comparisonRelatedResource)
 
@@ -433,7 +433,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @DisplayName("Given a comparison related figure, when fetched by id, then status is 200 OK and comparison related figure is returned")
     fun relatedFigureGetSingle() {
         val comparisonId = ThingId("R123")
-        val comparisonRelatedFigure = createDummyComparisonRelatedFigure()
+        val comparisonRelatedFigure = createComparisonRelatedFigure()
 
         every {
             comparisonService.findRelatedFigureById(comparisonId, comparisonRelatedFigure.id)
@@ -492,7 +492,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @DisplayName("Given several comparison related figures, when fetched, then status is 200 OK and comparison related figures are returned")
     fun relatedFigureGetPaged() {
         val comparisonId = ThingId("R123")
-        val comparisonRelatedFigure = listOf(createDummyComparisonRelatedFigure())
+        val comparisonRelatedFigure = listOf(createComparisonRelatedFigure())
 
         every { comparisonService.findAllRelatedFigures(comparisonId, any()) } returns pageOf(comparisonRelatedFigure)
 
@@ -873,7 +873,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a comparison related resource request, when service succeeds, it creates and returns the comparison related resource")
-    fun createComparisonRelatedResource() {
+    fun createComparisonRelatedResourceTest() {
         val id = ThingId("R123")
         val comparisonId = ThingId("R100")
         every { comparisonService.createComparisonRelatedResource(any()) } returns id
@@ -932,7 +932,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     @Test
     @TestWithMockUser
     @DisplayName("Given a comparison related figure request, when service succeeds, it creates and returns the comparison related figure")
-    fun createComparisonRelatedFigure() {
+    fun createComparisonRelatedFigureTest() {
         val id = ThingId("R123")
         val comparisonId = ThingId("R100")
         every { comparisonService.createComparisonRelatedFigure(any()) } returns id

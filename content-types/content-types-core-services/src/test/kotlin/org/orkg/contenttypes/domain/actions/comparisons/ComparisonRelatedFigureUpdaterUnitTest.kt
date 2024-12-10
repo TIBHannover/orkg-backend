@@ -20,7 +20,7 @@ import org.orkg.contenttypes.domain.ComparisonRelatedFigure
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotModifiable
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedFigure
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedFigure
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedFigureCommand
 import org.orkg.graph.domain.Classes
@@ -55,7 +55,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related figure update command, when contents are unchanged, it does nothing`() {
-        val comparisonRelatedFigure = createDummyComparisonRelatedFigure()
+        val comparisonRelatedFigure = createComparisonRelatedFigure()
         val command = comparisonRelatedFigure.toComparisonRelatedFigureUpdateCommand()
         val comparison = createResource(classes = setOf(Classes.comparison))
 
@@ -80,7 +80,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related figure update command, when comparison does not exist, it throws an exception`() {
-        val comparisonRelatedFigure = createDummyComparisonRelatedFigure()
+        val comparisonRelatedFigure = createComparisonRelatedFigure()
         val command = comparisonRelatedFigure.toComparisonRelatedFigureUpdateCommand()
 
         every { resourceService.findById(command.comparisonId) } returns Optional.empty()
@@ -92,7 +92,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related figure update command, when it does not exist, it throws an exception`() {
-        val comparisonRelatedFigure = createDummyComparisonRelatedFigure()
+        val comparisonRelatedFigure = createComparisonRelatedFigure()
         val command = comparisonRelatedFigure.toComparisonRelatedFigureUpdateCommand()
         val comparison = createResource(classes = setOf(Classes.comparison))
 
@@ -117,7 +117,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related figure update command, when comparison is published, it throws an exception`() {
-        val comparisonRelatedFigure = createDummyComparisonRelatedFigure()
+        val comparisonRelatedFigure = createComparisonRelatedFigure()
         val command = comparisonRelatedFigure.toComparisonRelatedFigureUpdateCommand()
         val comparison = createResource(classes = setOf(Classes.comparisonPublished))
 
@@ -130,7 +130,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related figure update command, when label has changed, it updates the label`() {
-        val comparisonRelatedFigure = createDummyComparisonRelatedFigure()
+        val comparisonRelatedFigure = createComparisonRelatedFigure()
         val command = comparisonRelatedFigure.toComparisonRelatedFigureUpdateCommand().copy(
             label = "updated label"
         )
@@ -163,7 +163,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related figure update command, when image has changed, it updates the image`() {
-        val comparisonRelatedFigure = createDummyComparisonRelatedFigure()
+        val comparisonRelatedFigure = createComparisonRelatedFigure()
         val command = comparisonRelatedFigure.toComparisonRelatedFigureUpdateCommand().copy(
             image = "https://orkg.org/path/to/new/image.png"
         )
@@ -224,7 +224,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related figure update command, when description has changed, it updates the description`() {
-        val comparisonRelatedFigure = createDummyComparisonRelatedFigure()
+        val comparisonRelatedFigure = createComparisonRelatedFigure()
         val command = comparisonRelatedFigure.toComparisonRelatedFigureUpdateCommand().copy(
             description = "updated description"
         )

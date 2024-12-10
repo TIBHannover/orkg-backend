@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.RosettaStoneTemplateLabelMustStartWithPrevio
 import org.orkg.contenttypes.domain.RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties
 import org.orkg.contenttypes.domain.TooManyNewRosettaStoneTemplateLabelSections
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceObjectPositionTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateStringLiteralObjectPositionTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSubjectPositionTemplatePropertyCommand
@@ -27,7 +27,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template update command, when validating the formatted label, it returns success`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand()
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
@@ -42,7 +42,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template update command, when formatted label did not change, it does nothing`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(
             formattedLabel = rosettaStoneTemplate.formattedLabel
         )
@@ -59,7 +59,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template update command, when formatted label is not set, it does nothing`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(formattedLabel = null)
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
@@ -74,7 +74,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template update command, when formatted label placeholder is missing, it throws an exception`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(
             formattedLabel = FormattedLabel.of("placeholder missing")
         )
@@ -87,7 +87,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template update command, when formatted label placeholder is missing and template property does not have a placeholder, it throws an exception`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(
             formattedLabel = FormattedLabel.of("placeholder missing"),
             properties = listOf(dummyCreateResourceObjectPositionTemplatePropertyCommand().copy(placeholder = null))
@@ -101,7 +101,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template update command, when validating the formatted label and template is used in a rosetta stone statement, it returns success`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate().copy(
+        val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
             formattedLabel = FormattedLabel.of("[{0}] travels [to {1}]")
         )
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(
@@ -128,7 +128,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template update command, when template is used in a rosetta stone statement and properties did not change, it throws an exception`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(properties = null)
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
@@ -142,7 +142,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template update command, when template is used in a rosetta stone statement and property count did not change, it throws an exception`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(
             properties = listOf(
                 dummyCreateSubjectPositionTemplatePropertyCommand(),
@@ -162,7 +162,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @Test
     @DisplayName("Given a rosetta stone template update command, when template is used in a rosetta stone statement and new formatted label has less sections than before, it throws an exception")
     fun lessSectionThanBefore_throwsError() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate().copy(
+        val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
             formattedLabel = FormattedLabel.of("Entity [{0}] travels [to {1}] by car")
         )
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(
@@ -187,7 +187,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @ValueSource(strings = ["[{2}] Entity [{0}] travels [to {1}] by car", "[{0}] travels [to {1}] by car [{2}]"])
     @DisplayName("Given a rosetta stone template update command, when template is used in a rosetta stone statement and new formatted label does not start with previous formatted label sections, it throws an exception")
     fun doesNotStartWithPreviousFormattedLabel_throwsError(newFormattedLabelPattern: String) {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate().copy(
+        val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
             formattedLabel = FormattedLabel.of("Entity [{0}] travels [to {1}] by car")
         )
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(
@@ -211,7 +211,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @Test
     @DisplayName("Given a rosetta stone template update command, when template is used in a rosetta stone statement and new formatted label defines more than one new section per new template property, it throws an exception")
     fun moreThanOneNewSectionPerTemplateProperty_throwsException() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate().copy(
+        val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
             formattedLabel = FormattedLabel.of("Entity [{0}] travels [to {1}]")
         )
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(
@@ -235,7 +235,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @Test
     @DisplayName("Given a rosetta stone template update command, when template is used in a rosetta stone statement and new formatted label defines a new section that is not optional, it throws an exception")
     fun newSectionIsNotOptional_throwsException() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate().copy(
+        val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
             formattedLabel = FormattedLabel.of("Entity [{0}] travels [to {1}]")
         )
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(
@@ -258,7 +258,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone template update command, when formatted label is not set and rosetta stone template properties have changed, it throws an exception`() {
-        val rosettaStoneTemplate = createDummyRosettaStoneTemplate()
+        val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = dummyUpdateRosettaStoneTemplateCommand().copy(
             formattedLabel = null,
             properties = listOf(dummyCreateResourceObjectPositionTemplatePropertyCommand())

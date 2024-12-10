@@ -3,11 +3,11 @@ package org.orkg.statistics.domain
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
-import org.orkg.statistics.testing.fixtures.createDummyMetrics
+import org.orkg.statistics.testing.fixtures.createMetrics
 
 internal class StatisticsServiceUnitTest {
 
-    private val metrics = createDummyMetrics()
+    private val metrics = createMetrics()
     private val service = StatisticsService(metrics)
 
     @Test

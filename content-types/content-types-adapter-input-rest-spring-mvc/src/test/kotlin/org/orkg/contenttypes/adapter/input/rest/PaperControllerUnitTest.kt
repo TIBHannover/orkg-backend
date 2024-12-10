@@ -48,7 +48,7 @@ import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
 import org.orkg.contenttypes.domain.ThingNotDefined
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
+import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.graph.domain.ExactSearchString
@@ -112,7 +112,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @Test
     @DisplayName("Given a paper, when it is fetched by id and service succeeds, then status is 200 OK and paper is returned")
     fun getSingle() {
-        val paper = createDummyPaper()
+        val paper = createPaper()
         every { paperService.findById(paper.id) } returns Optional.of(paper)
 
         documentedGetRequestTo("/api/papers/{id}", paper.id)
@@ -186,7 +186,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     fun getPaged() {
         every {
             paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
-        } returns pageOf(createDummyPaper())
+        } returns pageOf(createPaper())
 
         documentedGetRequestTo("/api/papers")
             .accept(PAPER_JSON_V2)
@@ -207,7 +207,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     fun getPagedWithParameters() {
         every {
             paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
-        } returns pageOf(createDummyPaper())
+        } returns pageOf(createPaper())
 
         val title = "label"
         val exact = true

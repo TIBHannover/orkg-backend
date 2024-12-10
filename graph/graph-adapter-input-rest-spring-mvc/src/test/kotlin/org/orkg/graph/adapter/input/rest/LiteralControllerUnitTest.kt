@@ -215,7 +215,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     @TestWithMockUser
     fun whenPUT_AndLabelIsEmpty_ThenSucceed() {
         val literal = createUpdateRequestWithEmptyLabel()
-        val double = createDummyLiteral() // needed so "expected" has the same timestamp
+        val double = createLiteral() // needed so "expected" has the same timestamp
         val expected = double.copy(label = "")
         every { literalService.findById(any()) } returns Optional.of(double) andThen Optional.of(expected)
         every { literalService.update(any()) } just runs
@@ -249,7 +249,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     @TestWithMockUser
     fun whenPUT_AndDatatypeIsBlank_ThenFailValidation() {
         val literal = createUpdateRequestWithBlankDatatype()
-        every { literalService.findById(any()) } returns Optional.of(createDummyLiteral())
+        every { literalService.findById(any()) } returns Optional.of(createLiteral())
 
         mockMvc
             .perform(updateOf(literal, "L1"))
@@ -287,7 +287,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             label = "a".repeat(MAX_LABEL_LENGTH + 1),
             datatype = null
         )
-        every { literalService.findById(any()) } returns Optional.of(createDummyLiteral())
+        every { literalService.findById(any()) } returns Optional.of(createLiteral())
         every { literalService.update(any()) } throws InvalidLiteralLabel()
 
         mockMvc
@@ -349,7 +349,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     private fun createUpdateRequestWithBlankDatatype() =
         LiteralUpdateRequest(id = null, label = null, datatype = " ".repeat(5))
 
-    private fun createDummyLiteral(): Literal {
+    private fun createLiteral(): Literal {
         return Literal(
             id = ThingId("L1"),
             label = "irrelevant",

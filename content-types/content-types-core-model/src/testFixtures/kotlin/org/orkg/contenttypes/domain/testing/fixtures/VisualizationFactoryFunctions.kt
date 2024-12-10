@@ -11,7 +11,7 @@ import org.orkg.contenttypes.domain.Visualization
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
 
-fun createDummyVisualization() = Visualization(
+fun createVisualization() = Visualization(
     id = ThingId("R8186"),
     title = "Dummy Visualization Title",
     description = "Some description about the contents",

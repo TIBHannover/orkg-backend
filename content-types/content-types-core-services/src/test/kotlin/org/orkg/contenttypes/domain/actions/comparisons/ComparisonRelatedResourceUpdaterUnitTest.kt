@@ -20,7 +20,7 @@ import org.orkg.contenttypes.domain.ComparisonRelatedResource
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedResource
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedResource
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.UpdateComparisonUseCase.UpdateComparisonRelatedResourceCommand
 import org.orkg.graph.domain.Classes
@@ -55,7 +55,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related resource update command, when contents are unchanged, it does nothing`() {
-        val comparisonRelatedResource = createDummyComparisonRelatedResource()
+        val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand()
         val comparison = createResource(classes = setOf(Classes.comparison))
 
@@ -80,7 +80,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related resource update command, when comparison does not exist, it throws an exception`() {
-        val comparisonRelatedResource = createDummyComparisonRelatedResource()
+        val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand()
 
         every { resourceService.findById(command.comparisonId) } returns Optional.empty()
@@ -92,7 +92,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related resource update command, when it does not exist, it throws an exception`() {
-        val comparisonRelatedResource = createDummyComparisonRelatedResource()
+        val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand()
         val comparison = createResource(classes = setOf(Classes.comparison))
 
@@ -117,7 +117,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related resource update command, when comparison is published, it throws an exception`() {
-        val comparisonRelatedResource = createDummyComparisonRelatedResource()
+        val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand()
         val comparison = createResource(classes = setOf(Classes.comparisonPublished))
 
@@ -130,7 +130,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related resource update command, when label has changed, it updates the label`() {
-        val comparisonRelatedResource = createDummyComparisonRelatedResource()
+        val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand().copy(
             label = "updated label"
         )
@@ -163,7 +163,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related resource update command, when image has changed, it updates the image`() {
-        val comparisonRelatedResource = createDummyComparisonRelatedResource()
+        val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand().copy(
             image = "https://orkg.org/path/to/new/image.png"
         )
@@ -224,7 +224,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related resource update command, when url has changed, it updates the url`() {
-        val comparisonRelatedResource = createDummyComparisonRelatedResource()
+        val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand().copy(
             url = "https://orkg.org/path/to/new/url"
         )
@@ -285,7 +285,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest {
 
     @Test
     fun `Given a comparison related resource update command, when description has changed, it updates the description`() {
-        val comparisonRelatedResource = createDummyComparisonRelatedResource()
+        val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand().copy(
             description = "updated description"
         )

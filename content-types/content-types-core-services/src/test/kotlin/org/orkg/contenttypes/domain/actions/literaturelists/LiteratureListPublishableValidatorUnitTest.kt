@@ -15,7 +15,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.LiteratureListAlreadyPublished
 import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishLiteratureListCommand
 
@@ -36,7 +36,7 @@ internal class LiteratureListPublishableValidatorUnitTest {
 
     @Test
     fun `Given a literature list publish command, when literature list is unpublished, it returns success`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val command = dummyPublishLiteratureListCommand().copy(id = literatureList.id)
         val state = PublishLiteratureListState()
 
@@ -52,7 +52,7 @@ internal class LiteratureListPublishableValidatorUnitTest {
 
     @Test
     fun `Given a literature list publish command, when literature list is published, it throws an exception`() {
-        val literatureList = createDummyLiteratureList().copy(published = true)
+        val literatureList = createLiteratureList().copy(published = true)
         val command = dummyPublishLiteratureListCommand().copy(id = literatureList.id)
         val state = PublishLiteratureListState()
 

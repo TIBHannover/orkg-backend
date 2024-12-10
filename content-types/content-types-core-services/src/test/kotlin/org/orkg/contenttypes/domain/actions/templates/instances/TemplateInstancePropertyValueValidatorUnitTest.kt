@@ -19,8 +19,8 @@ import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValueValidator
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplateInstance
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
@@ -76,8 +76,8 @@ internal class TemplateInstancePropertyValueValidatorUnitTest {
             classes = emptyMap()
         )
         val state = UpdateTemplateInstanceState(
-            template = createDummyTemplate(),
-            templateInstance = createDummyTemplateInstance(),
+            template = createTemplate(),
+            templateInstance = createTemplateInstance(),
             tempIds = setOf("#temp1", "#temp2"),
             validatedIds = mapOf(
                 "R123" to Either.right(
@@ -156,8 +156,8 @@ internal class TemplateInstancePropertyValueValidatorUnitTest {
             classes = emptyMap()
         )
         val state = UpdateTemplateInstanceState(
-            template = createDummyTemplate(),
-            templateInstance = createDummyTemplateInstance()
+            template = createTemplate(),
+            templateInstance = createTemplateInstance()
         )
 
         shouldThrow<UnknownTemplateProperties> { templateInstancePropertyValueValidator(command, state) }.asClue {

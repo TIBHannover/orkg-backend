@@ -15,8 +15,8 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureListListSection
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureListTextSection
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureListListSection
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureListTextSection
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.Predicates
@@ -48,7 +48,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest {
     fun `Given a list section, when referenced by no resource other than the literature list, it deletes the list section`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyLiteratureListListSection()
+        val section = createLiteratureListListSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -93,7 +93,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest {
     fun `Given a list section, when referenced by another resource, it just removes the list section from the literature list`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyLiteratureListListSection()
+        val section = createLiteratureListListSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -131,7 +131,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest {
     fun `Given a list section, when list section is owned by another user, it does not throw an exception`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyLiteratureListListSection()
+        val section = createLiteratureListListSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -178,7 +178,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest {
     fun `Given a text section, when referenced by no resource other than the literature list, it deletes the text section`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyLiteratureListTextSection()
+        val section = createLiteratureListTextSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -212,7 +212,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest {
     fun `Given a text section, when referenced by another resource, it just removes the text section from the literature list`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyLiteratureListTextSection()
+        val section = createLiteratureListTextSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
             id = StatementId("S123"),
@@ -250,7 +250,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest {
     fun `Given a text section, when text section is owned by another user, it does not throw an exception`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val literatureListId = ThingId("R123")
-        val section = createDummyLiteratureListTextSection()
+        val section = createLiteratureListTextSection()
         val statements = section.toGroupedStatements()
         val literatureListHasSectionStatement = createStatement(
             id = StatementId("S123"),

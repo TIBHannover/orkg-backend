@@ -21,7 +21,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneStatement
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
@@ -74,7 +74,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
     @Test
     @DisplayName("Given a statement, when it is fetched by id and service succeeds, then status is 200 OK and statement is returned")
     fun getSingle() {
-        val statement = createDummyRosettaStoneStatement()
+        val statement = createRosettaStoneStatement()
         every { statementService.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
 
         documentedGetRequestTo("/api/rosetta-stone/statements/{id}", statement.id)
@@ -142,7 +142,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
     @Test
     @DisplayName("Given several rosetta stone statements, when they are fetched, then status is 200 OK and rosetta stone statements are returned")
     fun getPaged() {
-        val statement = createDummyRosettaStoneStatement()
+        val statement = createRosettaStoneStatement()
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(statement)
 
         documentedGetRequestTo("/api/rosetta-stone/statements")
@@ -160,7 +160,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
     @Test
     @DisplayName("Given several rosetta stone statements, when filtering by several parameters, then status is 200 OK and rosetta stone statements are returned")
     fun getPagedWithParameters() {
-        val statement = createDummyRosettaStoneStatement()
+        val statement = createRosettaStoneStatement()
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(statement)
 
         val context = ThingId("R123")
@@ -225,7 +225,7 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
     @Test
     @DisplayName("Given a rosetta stone statement, when fetching all of its versions, then status is 200 OK and rosetta stone statements are returned")
     fun getAllVersions() {
-        val statement = createDummyRosettaStoneStatement()
+        val statement = createRosettaStoneStatement()
         every { statementService.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
 
         documentedGetRequestTo("/api/rosetta-stone/statements/{id}/versions", statement.id)

@@ -21,7 +21,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyRosettaStoneTemplate
+import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.input.testing.fixtures.numberLiteralTemplatePropertyRequest
 import org.orkg.contenttypes.input.testing.fixtures.otherLiteralTemplatePropertyRequest
@@ -81,7 +81,7 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
     @Test
     @DisplayName("Given a template, when it is fetched by id and service succeeds, then status is 200 OK and template is returned")
     fun getSingle() {
-        val template = createDummyRosettaStoneTemplate()
+        val template = createRosettaStoneTemplate()
         every { templateService.findById(template.id) } returns Optional.of(template)
 
         documentedGetRequestTo("/api/rosetta-stone/templates/{id}", template.id)
@@ -140,7 +140,7 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
     @Test
     @DisplayName("Given several rosetta stone templates, when they are fetched, then status is 200 OK and rosetta stone templates are returned")
     fun getPaged() {
-        val template = createDummyRosettaStoneTemplate()
+        val template = createRosettaStoneTemplate()
         every { templateService.findAll(pageable = any()) } returns pageOf(template)
 
         documentedGetRequestTo("/api/rosetta-stone/templates")
@@ -158,7 +158,7 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
     @Test
     @DisplayName("Given several rosetta stone templates, when filtering by several parameters, then status is 200 OK and rosetta stone templates are returned")
     fun getPagedWithParameters() {
-        val template = createDummyRosettaStoneTemplate()
+        val template = createRosettaStoneTemplate()
         val q = "example"
         val exact = true
         val visibility = VisibilityFilter.ALL_LISTED

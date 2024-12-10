@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.PublishPaperState
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
+import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.testing.fixtures.createPaperPublishCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -41,7 +41,7 @@ internal class PaperVersionHistoryUpdaterUnitTest {
 
     @Test
     fun `Given a paper publish command, when paper does not yet have a published version, it creates a new hasPreviousVersion statement`() {
-        val paper = createDummyPaper()
+        val paper = createPaper()
         val command = createPaperPublishCommand().copy(id = paper.id)
         val statements = listOf(createStatement()).groupBy { it.subject.id }
         val paperVersionId = ThingId("R321")
@@ -85,7 +85,7 @@ internal class PaperVersionHistoryUpdaterUnitTest {
      */
     @Test
     fun `Given a paper publish command, when paper already has a published version, it inserts the new version between the paper and the already published version`() {
-        val paper = createDummyPaper()
+        val paper = createPaper()
         val command = createPaperPublishCommand().copy(id = paper.id)
         val resource = createResource(
             id = paper.id,

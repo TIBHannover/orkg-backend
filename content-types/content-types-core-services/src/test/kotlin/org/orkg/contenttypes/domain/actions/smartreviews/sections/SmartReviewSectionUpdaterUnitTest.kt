@@ -24,7 +24,7 @@ import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionUpdater
-import org.orkg.contenttypes.domain.testing.fixtures.createDummySmartReview
+import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 
@@ -46,7 +46,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a comparison section update command, when contents are equal, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = smartReview.sections.filterIsInstance<SmartReviewComparisonSection>().single()
             .toUpdateCommand(contributorId, smartReview.id)
@@ -57,7 +57,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a comparison section update command, when contents have changed, it updates the comparison section`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewComparisonSection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,
@@ -84,7 +84,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a visualization section update command, when contents are equal, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = smartReview.sections.filterIsInstance<SmartReviewVisualizationSection>().single()
             .toUpdateCommand(contributorId, smartReview.id)
@@ -95,7 +95,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a visualization section update command, when contents have changed, it updates the visualization section`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewVisualizationSection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,
@@ -122,7 +122,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a resource section update command, when contents are equal, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = smartReview.sections.filterIsInstance<SmartReviewResourceSection>().single()
             .toUpdateCommand(contributorId, smartReview.id)
@@ -133,7 +133,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a resource section update command, when contents have changed, it updates the resource section`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewResourceSection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,
@@ -160,7 +160,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a predicate section update command, when contents are equal, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = smartReview.sections.filterIsInstance<SmartReviewPredicateSection>().single()
             .toUpdateCommand(contributorId, smartReview.id)
@@ -171,7 +171,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a predicate section update command, when contents have changed, it updates the predicate section`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewPredicateSection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,
@@ -198,7 +198,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a ontology section update command, when contents are equal, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = smartReview.sections.filterIsInstance<SmartReviewOntologySection>().single()
             .toUpdateCommand(contributorId, smartReview.id)
@@ -209,7 +209,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a ontology section update command, when contents have changed, it updates the ontology section`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewOntologySection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,
@@ -236,7 +236,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a text section update command, when contents are equal, it does nothing`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val command = smartReview.sections.filterIsInstance<SmartReviewTextSection>().single()
             .toUpdateCommand(contributorId, smartReview.id)
@@ -247,7 +247,7 @@ internal class SmartReviewSectionUpdaterUnitTest {
     @Test
     fun `Given a text section update command, when contents have changed, it updates the text section`() {
         val contributorId = ContributorId(UUID.randomUUID())
-        val smartReview = createDummySmartReview()
+        val smartReview = createSmartReview()
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewTextSection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,

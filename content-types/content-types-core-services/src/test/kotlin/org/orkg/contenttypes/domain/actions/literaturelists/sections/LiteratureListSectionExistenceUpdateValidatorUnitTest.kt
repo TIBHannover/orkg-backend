@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListExistenceValidator
-import org.orkg.contenttypes.domain.testing.fixtures.createDummyLiteratureList
+import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListTextSectionCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
@@ -34,7 +34,7 @@ internal class LiteratureListSectionExistenceUpdateValidatorUnitTest {
 
     @Test
     fun `Given a literature list section update command, when checking for literature list existence, it returns success`() {
-        val literatureList = createDummyLiteratureList()
+        val literatureList = createLiteratureList()
         val command = dummyUpdateLiteratureListTextSectionCommand().copy(literatureListId = literatureList.id)
         val state = UpdateLiteratureListSectionState()
         val statements = listOf(createStatement()).groupBy { it.subject.id }

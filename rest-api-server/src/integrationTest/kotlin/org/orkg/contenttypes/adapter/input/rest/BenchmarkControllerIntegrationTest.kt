@@ -6,7 +6,6 @@ import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.LabelAndClassService
@@ -36,7 +35,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Neo4jContainerIntegrationTest
 @Suppress("HttpUrlsUsage")
-@DisplayName("Benchmark Controller")
 @Import(MockUserDetailsService::class)
 internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
 

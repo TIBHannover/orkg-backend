@@ -60,7 +60,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [VisualizationController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [VisualizationController::class])
-@DisplayName("Given a Visualization controller")
 internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") {
 
     @MockkBean

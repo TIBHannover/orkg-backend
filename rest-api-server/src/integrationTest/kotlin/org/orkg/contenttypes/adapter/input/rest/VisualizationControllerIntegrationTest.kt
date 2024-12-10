@@ -3,7 +3,6 @@ package org.orkg.contenttypes.adapter.input.rest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -36,7 +35,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@DisplayName("Visualization Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
 internal class VisualizationControllerIntegrationTest : RestDocsTest("visualizations") {

@@ -8,7 +8,6 @@ import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId
@@ -59,7 +58,6 @@ import org.springframework.web.context.WebApplicationContext
 @Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [OrganizationController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [OrganizationController::class])
-@DisplayName("Given an Organization controller")
 internal class OrganizationControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc

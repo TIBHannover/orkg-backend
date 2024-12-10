@@ -19,7 +19,6 @@ import org.springframework.test.context.ContextConfiguration
  * Test the JSON serialization of a [Literal].
  */
 @JsonTest
-@DisplayName("Literal JSON Serialization Tests")
 @ContextConfiguration(classes = [LiteralRepresentationAdapter::class, CommonJacksonModule::class])
 internal class LiteralRepresentationJsonTest {
 

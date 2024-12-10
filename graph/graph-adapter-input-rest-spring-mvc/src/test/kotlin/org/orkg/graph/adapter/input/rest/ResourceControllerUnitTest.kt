@@ -63,7 +63,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ResourceController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ResourceController::class])
-@DisplayName("Given a Resource controller")
 internal class ResourceControllerUnitTest : RestDocsTest("resources") {
 
     @MockkBean

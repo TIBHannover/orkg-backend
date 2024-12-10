@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [StatisticsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [StatisticsController::class])
-@DisplayName("Given a Statistics controller")
 internal class StatisticsControllerUnitTest : RestDocsTest("statistics") {
 
     @MockkBean

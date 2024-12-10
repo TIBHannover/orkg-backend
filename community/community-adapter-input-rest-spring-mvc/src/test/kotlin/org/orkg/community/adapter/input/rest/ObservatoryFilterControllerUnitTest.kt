@@ -67,7 +67,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     ]
 )
 @WebMvcTest(controllers = [ObservatoryFilterController::class])
-@DisplayName("Given an ObservatoryFilter controller")
 @UsesMocking
 internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-filters") {
 

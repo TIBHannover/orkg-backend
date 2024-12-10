@@ -2,7 +2,6 @@ package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.createClass
 import org.orkg.createClasses
@@ -25,7 +24,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@DisplayName("Stats Controller")
 @Transactional
 internal class StatisticsControllerIntegrationTest : RestDocsTest("statistics") {
 

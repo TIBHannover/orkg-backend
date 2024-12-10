@@ -32,7 +32,6 @@ import org.springframework.web.context.WebApplicationContext
 @Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [PaperVerificationCommandController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [PaperVerificationCommandController::class])
-@DisplayName("Given a Resource")
 internal class PaperVerificationControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc

@@ -5,7 +5,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.not
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -39,7 +38,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@DisplayName("Paper Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
 internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {

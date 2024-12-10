@@ -3,7 +3,6 @@ package org.orkg.community.adapter.input.rest
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -17,7 +16,6 @@ import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
 
 @Nested
-@DisplayName("When converting images")
 internal class ImageConversionTest {
 
     @ParameterizedTest

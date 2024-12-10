@@ -77,7 +77,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [SmartReviewController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [SmartReviewController::class])
-@DisplayName("Given a SmartReview controller")
 internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
     @MockkBean

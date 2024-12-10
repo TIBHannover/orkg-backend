@@ -70,7 +70,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     ]
 )
 @WebMvcTest(controllers = [RosettaStoneTemplateController::class])
-@DisplayName("Given a Rosetta Stone Template controller")
 internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-stone-templates") {
 
     @MockkBean

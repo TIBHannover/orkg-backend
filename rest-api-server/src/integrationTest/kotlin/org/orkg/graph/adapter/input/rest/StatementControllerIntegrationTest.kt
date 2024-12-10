@@ -3,7 +3,6 @@ package org.orkg.graph.adapter.input.rest
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.createLiteral
 import org.orkg.createPredicate
@@ -34,7 +33,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@DisplayName("Statement Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
 internal class StatementControllerIntegrationTest : RestDocsTest("statements") {

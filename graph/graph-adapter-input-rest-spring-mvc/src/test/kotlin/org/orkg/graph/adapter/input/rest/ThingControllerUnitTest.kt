@@ -9,7 +9,6 @@ import java.time.Clock
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
@@ -31,7 +30,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ThingController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ThingController::class])
-@DisplayName("Given a Thing controller")
 internal class ThingControllerUnitTest : RestDocsTest("things") {
 
     @MockkBean

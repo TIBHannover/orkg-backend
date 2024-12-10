@@ -8,7 +8,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -58,7 +57,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@DisplayName("Rosetta Stone Template Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
 internal class RosettaStoneTemplateControllerIntegrationTest : RestDocsTest("rosetta-stone-templates") {

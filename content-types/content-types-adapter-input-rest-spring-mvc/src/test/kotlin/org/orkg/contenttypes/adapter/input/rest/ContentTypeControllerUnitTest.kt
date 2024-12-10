@@ -51,7 +51,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ContentTypeController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ContentTypeController::class])
-@DisplayName("Given a ContentType controller")
 internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
 
     @MockkBean

@@ -54,7 +54,6 @@ import orkg.orkg.community.testing.fixtures.observatoryResponseFields
 
 @ContextConfiguration(classes = [ObservatoryController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ObservatoryController::class])
-@DisplayName("Given an Observatory controller")
 internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
 
     @MockkBean

@@ -47,7 +47,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [TableController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [TableController::class])
-@DisplayName("Given a Table controller")
 internal class TableControllerUnitTest : RestDocsTest("tables") {
 
     @MockkBean

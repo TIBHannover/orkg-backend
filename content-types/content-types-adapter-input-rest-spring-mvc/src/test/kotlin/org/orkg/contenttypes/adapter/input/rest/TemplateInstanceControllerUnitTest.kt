@@ -60,7 +60,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [TemplateInstanceController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [TemplateInstanceController::class])
-@DisplayName("Given a Template Instance controller")
 internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-instances") {
 
     @MockkBean

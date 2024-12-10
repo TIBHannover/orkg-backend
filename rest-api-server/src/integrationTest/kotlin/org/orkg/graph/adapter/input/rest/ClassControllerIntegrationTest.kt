@@ -3,7 +3,6 @@ package org.orkg.graph.adapter.input.rest
 import org.assertj.core.api.Assertions.assertThat
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.createClass
 import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
@@ -24,7 +23,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@DisplayName("Class Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
 internal class ClassControllerIntegrationTest : RestDocsTest("classes") {

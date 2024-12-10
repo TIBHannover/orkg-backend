@@ -5,7 +5,6 @@ import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.createClasses
 import org.orkg.createList
@@ -33,7 +32,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @Neo4jContainerIntegrationTest
-@DisplayName("Comparison Controller")
 @Import(MockUserDetailsService::class)
 internal class LegacyComparisonControllerIntegrationTest : RestDocsTest("comparisons") {
 

@@ -28,7 +28,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [CurationController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [CurationController::class])
-@DisplayName("Given a Curation controller")
 internal class CurationControllerUnitTest : RestDocsTest("curation") {
 
     @MockkBean

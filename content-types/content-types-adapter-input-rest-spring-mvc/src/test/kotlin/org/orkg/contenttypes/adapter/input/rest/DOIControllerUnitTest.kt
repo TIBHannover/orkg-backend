@@ -6,7 +6,6 @@ import io.mockk.every
 import io.mockk.verify
 import java.net.URI
 import java.util.*
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
@@ -31,7 +30,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [DOIController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [DOIController::class])
-@DisplayName("Given a DOI controller")
 @UsesMocking
 internal class DOIControllerUnitTest : RestDocsTest("dois") {
 
@@ -48,7 +46,6 @@ internal class DOIControllerUnitTest : RestDocsTest("dois") {
     private lateinit var literalService: LiteralUseCases
 
     @Test
-    @DisplayName("correctly registers a doi")
     fun registerDOI() {
         val resourceId = ThingId("R696006")
         val resource = createResource(id = resourceId, classes = setOf(Classes.paper))

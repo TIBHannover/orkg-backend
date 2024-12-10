@@ -33,7 +33,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ContributionController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ContributionController::class])
-@DisplayName("Given a Contribution controller")
 internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
 
     @MockkBean

@@ -4,7 +4,6 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
@@ -35,7 +34,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [VocabController::class, RdfConfiguration::class, ExceptionHandler::class, RDFService::class, FixedClockConfig::class])
 @WebMvcTest(VocabController::class)
-@DisplayName("Vocab Controller")
 internal class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
 
     @MockkBean

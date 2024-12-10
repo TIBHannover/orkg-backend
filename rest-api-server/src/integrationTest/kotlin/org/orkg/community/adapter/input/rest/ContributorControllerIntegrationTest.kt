@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
-@DisplayName("Contributor Controller")
 @Transactional
 internal class ContributorControllerIntegrationTest : RestDocsTest("contributors") {
 

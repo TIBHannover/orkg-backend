@@ -61,7 +61,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     ]
 )
 @WebMvcTest(controllers = [PredicateController::class])
-@DisplayName("Given a Predicate controller")
 @UsesMocking
 internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
 

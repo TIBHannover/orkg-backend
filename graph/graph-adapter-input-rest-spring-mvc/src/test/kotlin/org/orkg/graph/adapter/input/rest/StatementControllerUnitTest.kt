@@ -74,7 +74,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [StatementController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [StatementController::class])
-@DisplayName("Given a Statement controller")
 @UsesMocking
 internal class StatementControllerUnitTest : RestDocsTest("statements") {
 

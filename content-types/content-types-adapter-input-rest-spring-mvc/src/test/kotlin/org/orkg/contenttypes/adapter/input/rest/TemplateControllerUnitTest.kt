@@ -100,7 +100,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     ]
 )
 @WebMvcTest(controllers = [TemplateController::class])
-@DisplayName("Given a Template controller")
 internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @MockkBean

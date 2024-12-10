@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -54,7 +53,6 @@ import org.springframework.web.context.WebApplicationContext
 @Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [DiscussionController::class, ExceptionHandler::class, CommonJacksonModule::class, DiscussionsJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [DiscussionController::class])
-@DisplayName("Given a Discussion controller")
 internal class DiscussionControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc

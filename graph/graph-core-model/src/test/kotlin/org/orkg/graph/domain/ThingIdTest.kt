@@ -1,12 +1,10 @@
 package org.orkg.graph.domain
 
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 
-@DisplayName("A thing id")
 internal class ThingIdTest {
     @Test
     fun `can not be blank`() {

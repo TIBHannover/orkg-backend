@@ -80,7 +80,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ComparisonController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ComparisonController::class])
-@DisplayName("Given a Comparison controller")
 internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
 
     @MockkBean

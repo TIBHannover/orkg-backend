@@ -55,7 +55,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ListController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ListController::class])
-@DisplayName("Given a List controller")
 internal class ListControllerUnitTest : RestDocsTest("lists") {
 
     @MockkBean

@@ -42,7 +42,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ResearchFieldHierarchyController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ResearchFieldHierarchyController::class])
-@DisplayName("Given a ResearchField controller")
 internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research-fields") {
 
     @MockkBean

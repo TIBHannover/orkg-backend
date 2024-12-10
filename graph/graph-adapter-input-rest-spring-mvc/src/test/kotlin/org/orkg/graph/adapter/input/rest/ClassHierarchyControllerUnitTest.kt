@@ -7,7 +7,6 @@ import io.mockk.verify
 import java.util.*
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
@@ -52,7 +51,6 @@ import org.springframework.web.context.WebApplicationContext
 @Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [ClassHierarchyController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ClassHierarchyController::class])
-@DisplayName("Given a Class controller")
 internal class ClassHierarchyControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc

@@ -91,7 +91,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [PaperController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [PaperController::class])
-@DisplayName("Given a Paper controller")
 internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @MockkBean

@@ -76,7 +76,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [LiteratureListController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, WebMvcConfiguration::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LiteratureListController::class])
-@DisplayName("Given a LiteratureList controller")
 internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists") {
 
     @MockkBean

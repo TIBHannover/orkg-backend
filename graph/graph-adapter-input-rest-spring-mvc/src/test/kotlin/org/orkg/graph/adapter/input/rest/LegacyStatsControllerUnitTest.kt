@@ -33,7 +33,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [LegacyStatsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LegacyStatsController::class])
-@DisplayName("Given a Stats controller")
 @UsesMocking
 internal class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
 

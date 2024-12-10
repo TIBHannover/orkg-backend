@@ -41,7 +41,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ObservatoryResourceController::class, ExceptionHandler::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ObservatoryResourceController::class])
-@DisplayName("Given an ObservatoryResourceController controller")
 internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory-resources") {
 
     @MockkBean

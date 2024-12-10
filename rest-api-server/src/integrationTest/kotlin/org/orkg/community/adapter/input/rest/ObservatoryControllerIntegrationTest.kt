@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
@@ -35,7 +34,6 @@ import org.springframework.transaction.annotation.Transactional
 import orkg.orkg.community.testing.fixtures.observatoryResponseFields
 
 @Neo4jContainerIntegrationTest
-@DisplayName("Observatory Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
 internal class ObservatoryControllerIntegrationTest : RestDocsTest("observatories") {

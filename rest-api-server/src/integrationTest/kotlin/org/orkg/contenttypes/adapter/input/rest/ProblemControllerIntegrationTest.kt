@@ -2,7 +2,6 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.createClasses
@@ -37,7 +36,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
-@DisplayName("Problem Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
 internal class ProblemControllerIntegrationTest : RestDocsTest("research-problems") {

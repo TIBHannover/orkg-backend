@@ -66,7 +66,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     ]
 )
 @WebMvcTest(controllers = [RosettaStoneStatementController::class])
-@DisplayName("Given a Rosetta Stone Statement controller")
 internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-stone-statements") {
 
     @MockkBean

@@ -58,7 +58,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [LiteralController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LiteralController::class])
-@DisplayName("Given a Literal controller")
 @UsesMocking
 internal class LiteralControllerUnitTest : RestDocsTest("literals") {
 
@@ -69,7 +68,6 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     private lateinit var clock: Clock
 
     @Test
-    @DisplayName("correctly serializes an existing literal")
     fun getSingle() {
         val id = ThingId("L1234")
         val literal = createLiteral(

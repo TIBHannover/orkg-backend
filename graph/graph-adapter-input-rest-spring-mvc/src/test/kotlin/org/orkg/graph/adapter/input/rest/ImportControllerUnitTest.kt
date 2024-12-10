@@ -27,7 +27,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ImportController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ImportController::class])
-@DisplayName("Given an import controller")
 internal class ImportControllerUnitTest : RestDocsTest("import") {
 
     @MockkBean

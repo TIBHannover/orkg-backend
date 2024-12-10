@@ -42,6 +42,9 @@ kotlin {
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
+
+    // Always run linter before compiling
+    dependsOn(tasks.named("spotlessApply"))
 }
 
 // Configure details for *all* test executions directly on 'Test' task

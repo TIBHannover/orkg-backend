@@ -27,7 +27,7 @@ dependencies {
     testFixturesApi("org.testcontainers:junit-jupiter")
     testFixturesApi("org.testcontainers:neo4j")
     testFixturesApi("org.testcontainers:postgresql")
-    testFixturesApi(project(":common"))
+    testFixturesApi(project(":common:spring-webmvc"))
     testFixturesImplementation("com.epages:restdocs-api-spec-mockmvc")
     testFixturesImplementation("org.hamcrest:hamcrest")
     testFixturesImplementation("org.springframework.security:spring-security-crypto")

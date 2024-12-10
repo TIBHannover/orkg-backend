@@ -11,7 +11,7 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-databind")
     api("org.keycloak:keycloak-admin-client")
     api(project(":community:community-ports-output"))
-    implementation(project(":common"))
+    implementation(project(":common:identifiers"))
     implementation(project(":community:community-core-model"))
     implementation("org.springframework:spring-web")
     implementation("com.fasterxml.jackson.core:jackson-core")

@@ -5,11 +5,11 @@ plugins {
 
 dependencies {
     api("org.springframework.data:spring-data-commons")
-    api(project(":common"))
+    api(project(":common:identifiers"))
     api(project(":discussions:discussions-core-model"))
 
     testFixturesApi("io.kotest:kotest-runner-junit5")
-    testFixturesImplementation(project(":common"))
+    testFixturesImplementation(project(":common:identifiers"))
     testFixturesImplementation(project(":discussions:discussions-core-model"))
     testFixturesImplementation("org.springframework.data:spring-data-commons")
     testFixturesApi("org.junit.jupiter:junit-jupiter-api")

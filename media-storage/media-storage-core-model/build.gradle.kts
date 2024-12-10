@@ -3,11 +3,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":common"))
+    api(project(":common:identifiers"))
+    api(project(":common:spring-webmvc"))
     api("org.springframework:spring-core")
     implementation("org.springframework:spring-web")
 
-    testFixturesApi(project(":common"))
+    testFixturesApi(project(":common:identifiers"))
     testFixturesApi(project(":community:community-ports-input"))
     testFixturesImplementation("org.springframework:spring-core")
     testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock

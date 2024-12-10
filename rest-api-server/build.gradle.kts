@@ -20,7 +20,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(testFixtures(project(":common")))
+                implementation(testFixtures(project(":common:spring-webmvc")))
                 implementation(testFixtures(project(":testing:spring")))
 
                 implementation("io.kotest:kotest-assertions-api")
@@ -40,6 +40,7 @@ testing {
             testType.set(TestSuiteType.INTEGRATION_TEST)
             dependencies {
                 implementation(project())
+                implementation(project(":common:pagination"))
                 implementation(project(":graph:graph-core-services"))
                 implementation(project(":graph:graph-ports-output"))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
@@ -94,7 +95,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib") // "downgrade" from api()
 
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
-    implementation(project(":common"))
+    implementation(project(":common:pagination"))
+    implementation(project(":common:identifiers"))
     runtimeOnly(project(":common:serialization"))
 
     runtimeOnly(project(":community:community-adapter-input-keycloak"))
@@ -234,7 +236,7 @@ dependencies {
     "integrationTestRuntimeOnly"("io.kotest.extensions:kotest-extensions-spring")
     "integrationTestRuntimeOnly"("io.kotest.extensions:kotest-extensions-testcontainers")
     "integrationTestRuntimeOnly"("io.kotest:kotest-framework-datatest")
-    "integrationTestApi"(project(":common"))
+    "integrationTestApi"(project(":common:identifiers"))
     "integrationTestApi"(project(":community:community-core-model"))
     "integrationTestApi"(project(":community:community-ports-input"))
     "integrationTestApi"(project(":graph:graph-core-model"))
@@ -244,6 +246,7 @@ dependencies {
     "integrationTestApi"("org.eclipse.rdf4j:rdf4j-common-io")
     "integrationTestApi"("org.springframework:spring-context")
     "integrationTestApi"("com.fasterxml.jackson.core:jackson-databind")
+    "integrationTestImplementation"(project(":common:datatypes"))
     "integrationTestImplementation"("org.junit.jupiter:junit-jupiter-api")
     "integrationTestImplementation"("org.junit.jupiter:junit-jupiter-params")
     "integrationTestImplementation"("org.springframework.boot:spring-boot-test")

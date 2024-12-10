@@ -8,12 +8,15 @@ plugins {
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("org.springframework:spring-web")
-    api(project(":common"))
+    implementation(project(":common:datatypes"))
+    implementation(project(":common:string-utils"))
+    api(project(":common:identifiers"))
+    api(project(":common:spring-webmvc"))
     api(project(":media-storage:media-storage-core-model"))
     implementation(project(":graph:graph-core-model"))
     runtimeOnly("com.fasterxml.jackson.core:jackson-databind")
 
-    testFixturesApi(project(":common"))
+    testFixturesApi(project(":common:identifiers"))
     testFixturesApi(project(":media-storage:media-storage-core-model"))
     testFixturesImplementation(project(":graph:graph-core-model"))
     testFixturesImplementation(testFixtures(project(":testing:spring")))

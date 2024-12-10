@@ -6,12 +6,14 @@ plugins {
 }
 
 dependencies {
-    api(project(":common"))
+    api(project(":common:identifiers"))
     api(project(":community:community-ports-input"))
     api(project(":community:community-ports-output"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
+    implementation(project(":common:pagination"))
+    implementation(project(":common:datatypes"))
 
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")

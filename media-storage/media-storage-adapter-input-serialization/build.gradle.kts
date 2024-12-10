@@ -7,5 +7,5 @@ dependencies {
     api("org.springframework:spring-context")
     api("com.fasterxml.jackson.core:jackson-databind")
     api(project(":media-storage:media-storage-core-model"))
-    implementation(project(":common")) // for exception
+    implementation(project(":common:spring-webmvc"))
 }

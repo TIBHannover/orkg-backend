@@ -13,6 +13,12 @@ include(
     "common",
     "common:serialization",
     "common:neo4j-dsl",
+    "common:spring-webmvc",
+    "common:identifiers",
+    "common:pagination",
+    "common:string-utils",
+    "common:datatypes",
+    "common:functional",
 )
 include(
     "migrations:liquibase",

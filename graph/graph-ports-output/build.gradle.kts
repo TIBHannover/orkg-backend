@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":common"))
+    api(project(":common:identifiers"))
     api(project(":content-types:content-types-core-model"))
     api(project(":graph:graph-core-model"))
 
@@ -18,7 +18,7 @@ dependencies {
     testFixturesImplementation("org.springframework.data:spring-data-commons")
     testFixturesImplementation("dev.forkhandles:fabrikate4k")
     testFixturesImplementation("io.kotest:kotest-assertions-core")
-    testFixturesImplementation(project(":common"))
+    testFixturesImplementation(project(":common:identifiers"))
     testFixturesImplementation(project(":graph:graph-core-model"))
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
     testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock

@@ -17,7 +17,8 @@ dependencies {
     api("org.springframework:spring-web")
     api("com.fasterxml.jackson.core:jackson-databind")
     api("jakarta.validation:jakarta.validation-api")
-    api(project(":common"))
+    api(project(":common:identifiers"))
+    api(project(":common:spring-webmvc"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input"))
     api(project(":content-types:content-types-core-model"))
@@ -31,8 +32,10 @@ dependencies {
     implementation("org.slf4j:slf4j-api")
     implementation("dev.forkhandles:values4k")
     implementation(project(":common:serialization"))
-
-    testFixturesImplementation(project(":common"))
+    api(project(":common:datatypes"))
+    implementation(project(":common:functional"))
+    testFixturesImplementation(project(":common:datatypes"))
+    testFixturesImplementation(project(":common:identifiers"))
     testFixturesImplementation(project(":graph:graph-core-model"))
 }
 

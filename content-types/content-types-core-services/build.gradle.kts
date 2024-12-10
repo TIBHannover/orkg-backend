@@ -10,7 +10,10 @@ dependencies {
     api("org.springframework:spring-context")
     api("org.springframework:spring-tx")
     api("org.jbibtex:jbibtex")
-    api(project(":common"))
+    api(project(":common:functional"))
+    implementation(project(":common:pagination"))
+    implementation(project(":common:datatypes"))
+    api(project(":common:identifiers"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input")) // used in LegacyPaperService
     api(project(":community:community-ports-output"))

@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":common"))
-
+    api(project(":common:identifiers"))
+    implementation(project(":common:spring-webmvc"))
     api("com.fasterxml.jackson.core:jackson-core")
     api("jakarta.validation:jakarta.validation-api")
     api("org.eclipse.rdf4j:rdf4j-common-io")

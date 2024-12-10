@@ -1,0 +1,24 @@
+= Pitfalls
+
+This section covers pitfalls that developers might fall into when starting to work on the codebase.
+
+== Comparing `OffsetDateTime`
+
+When comparing timestamps, care needs to be taken, especially with timestamps that contain an offset.
+Two timestamps representing the same instant can be expressed in a way where they differ in their representations, so calling `equals()` will produce `false`.
+In certain cases, we would like to know if the timestamps represents the same instant, so `isEqual()` needs to be used.
+
+This is illustrated in the example below:
+
+[source,kotlin]
+----
+// These two timestamps refer to the same instant
+val withOffset = OffsetDateTime.parse("2023-11-30T09:25:14.049+01:00")
+val withZulu = OffsetDateTime.parse("2023-11-30T08:25:14.049Z")
+
+// The two timestamps are not equal by equals():
+require(withOffset != withZulu)
+
+// They are equal by isEquals(), because it compares the instants
+require(withOffset.isEqual(withZulu))
+----

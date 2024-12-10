@@ -13,7 +13,7 @@ dependencies {
     api(project(":content-types:content-types-ports-output"))
     implementation("org.springframework:spring-web")
     implementation("dev.forkhandles:values4k")
-    implementation(project(":common"))
+    implementation(project(":common:spring-webmvc"))
 }
 
 testing {
@@ -30,7 +30,7 @@ testing {
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-runner-junit5")
-                implementation(testFixtures(project(":common")))
+                implementation(testFixtures(project(":common:spring-webmvc")))
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
             }
         }

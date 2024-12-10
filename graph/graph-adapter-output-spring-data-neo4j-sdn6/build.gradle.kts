@@ -8,9 +8,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":common"))
+    api(project(":common:identifiers"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-output"))
+    implementation(project(":common:datatypes"))
+    implementation(project(":common:spring-webmvc"))
+    implementation(project(":common:string-utils"))
 
     api("org.neo4j.driver:neo4j-java-driver")
     api("org.neo4j:neo4j-cypher-dsl")
@@ -25,7 +28,7 @@ dependencies {
     implementation(project(":common:neo4j-dsl"))
     implementation("org.apache.lucene:lucene-queryparser")
 
-    testFixturesApi(project(":common"))
+    testFixturesApi(project(":common:identifiers"))
 
     testApi("io.kotest:kotest-framework-api")
 }

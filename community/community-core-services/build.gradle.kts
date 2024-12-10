@@ -9,7 +9,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-context")
     api("org.springframework:spring-tx")
-    api(project(":common"))
+    api(project(":common:identifiers"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-input"))
     api(project(":community:community-ports-output"))
@@ -25,6 +25,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation(project(":common:pagination"))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))

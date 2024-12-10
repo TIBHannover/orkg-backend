@@ -5,7 +5,7 @@ plugins {
 dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-context")
-    api(project(":common"))
+    api(project(":common:identifiers"))
     api(project(":community:community-ports-output"))
     api(project(":discussions:discussions-core-model"))
     api(project(":discussions:discussions-ports-input"))

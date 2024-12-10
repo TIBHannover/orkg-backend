@@ -8,10 +8,11 @@ plugins {
 
 dependencies {
     api("org.springframework.data:spring-data-commons")
-    api(project(":common"))
+    api(project(":common:identifiers"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-output"))
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
+    implementation(project(":common:spring-webmvc"))
 }
 
 testing {

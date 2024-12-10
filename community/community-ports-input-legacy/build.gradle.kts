@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":common"))
+    api(project(":common:identifiers"))
     api(project(":community:community-core-model"))
 }

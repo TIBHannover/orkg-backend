@@ -11,7 +11,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-jpa")
     api("org.springframework:spring-context")
-    api(project(":common"))
+    api(project(":common:identifiers"))
     api(project(":discussions:discussions-core-model"))
     api(project(":discussions:discussions-ports-output"))
     implementation("jakarta.validation:jakarta.validation-api")

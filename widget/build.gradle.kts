@@ -8,7 +8,8 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
-    api(project(":common"))
+    api(project(":common:identifiers"))
+    implementation(project(":common:spring-webmvc"))
     api(project(":graph:graph-ports-input"))
     implementation(project(":graph:graph-core-model"))
 }

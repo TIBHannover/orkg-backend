@@ -4,6 +4,6 @@ plugins {
 
 dependencies {
     api("org.springframework.data:spring-data-commons")
-    api(project(":common"))
+    api(project(":common:identifiers"))
     api(project(":discussions:discussions-core-model"))
 }

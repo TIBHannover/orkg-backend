@@ -12,7 +12,7 @@ dependencies {
     api(project(":media-storage:media-storage-ports-output"))
     implementation("org.springframework:spring-core")
     implementation("jakarta.validation:jakarta.validation-api")
-    implementation(project(":common"))
+    implementation(project(":common:identifiers"))
 }
 
 testing {

@@ -16,7 +16,8 @@ val restdocs: Configuration by configurations.creating {
 
 dependencies {
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
-    restdocs(project(withSnippets(":common")))
+    restdocs(project(withSnippets(":common:pagination")))
+    restdocs(project(withSnippets(":common:spring-webmvc")))
     restdocs(project(withSnippets(":rest-api-server")))
     restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":data-export:data-export-adapters")))

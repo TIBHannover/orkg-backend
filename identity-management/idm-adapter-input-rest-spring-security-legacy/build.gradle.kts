@@ -9,7 +9,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(testFixtures(project(":common")))
+                implementation(testFixtures(project(":common:spring-webmvc")))
                 implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("io.kotest:kotest-assertions-api")
@@ -35,7 +35,8 @@ dependencies {
     api("org.springframework:spring-beans")
     api("org.springframework:spring-web")
     api("com.fasterxml.jackson.core:jackson-databind")
-    api(project(":common")) // for exceptions
+    api(project(":common:identifiers"))
+    implementation(project(":common:spring-webmvc"))
     api(project(":community:community-core-model"))
     api(project(":community:community-ports-output"))
     implementation("org.springframework.security:spring-security-core")

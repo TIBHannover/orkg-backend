@@ -16,7 +16,7 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation("com.ninja-squad:springmockk")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-                implementation(project(":common"))
+                implementation(project(":common:spring-webmvc"))
                 implementation(testFixtures(project(":testing:spring")))
             }
         }

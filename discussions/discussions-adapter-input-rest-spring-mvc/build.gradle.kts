@@ -38,7 +38,8 @@ dependencies {
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
     api("com.fasterxml.jackson.core:jackson-databind")
-    api(project(":common"))
+    api(project(":common:identifiers"))
+    api(project(":common:spring-webmvc"))
     api(project(":discussions:discussions-core-model"))
     api(project(":discussions:discussions-ports-input"))
 }

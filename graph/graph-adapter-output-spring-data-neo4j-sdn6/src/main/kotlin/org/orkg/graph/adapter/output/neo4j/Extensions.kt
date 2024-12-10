@@ -265,12 +265,12 @@ fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere?.call(
 fun Collection<PatternElement>.toMatchOrNull(node: org.neo4j.cypherdsl.core.Node): StatementBuilder.OngoingReadingWithoutWhere? =
     if (isEmpty()) null else match(node).match(this)
 
-fun match(
+fun matchDistinct(
     node: org.neo4j.cypherdsl.core.Node,
     patternGenerator: (org.neo4j.cypherdsl.core.Node) -> Collection<PatternElement>
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     patternGenerator(node).let { patterns ->
-        match(node).let { if (patterns.isNotEmpty()) it.match(patterns) else it }.with(node)
+        match(node).let { if (patterns.isNotEmpty()) it.match(patterns) else it }.withDistinct(node)
     }
 
 inline fun Pageable.withDefaultSort(sort: () -> Sort): Pageable =

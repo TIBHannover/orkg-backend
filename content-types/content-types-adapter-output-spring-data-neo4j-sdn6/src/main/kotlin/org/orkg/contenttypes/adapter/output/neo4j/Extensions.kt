@@ -25,7 +25,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
-import org.orkg.graph.adapter.output.neo4j.match
+import org.orkg.graph.adapter.output.neo4j.matchDistinct
 import org.orkg.graph.adapter.output.neo4j.toResource
 import org.orkg.graph.adapter.output.neo4j.toThing
 import org.orkg.graph.adapter.output.neo4j.toThingId
@@ -171,7 +171,7 @@ private fun matchUnpublishedLiteratureLists(
     symbolicName: SymbolicName,
     patternGenerator: (Node) -> Collection<RelationshipPattern>
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
-    match(node("LiteratureList").named(symbolicName), patternGenerator)
+    matchDistinct(node("LiteratureList").named(symbolicName), patternGenerator)
 
 internal fun matchSmartReview(
     node: SymbolicName,
@@ -215,7 +215,7 @@ private fun matchUnpublishedSmartReviews(
     symbolicName: SymbolicName,
     patternGenerator: (Node) -> Collection<RelationshipPattern>
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
-    match(node("SmartReview").named(symbolicName), patternGenerator)
+    matchDistinct(node("SmartReview").named(symbolicName), patternGenerator)
 
 internal fun matchComparison(
     node: SymbolicName,
@@ -237,10 +237,10 @@ private fun matchPublishedComparisons(
     symbolicName: SymbolicName,
     patternGenerator: (Node) -> Collection<RelationshipPattern>
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
-    match(node("ComparisonPublished", "LatestVersion").named(symbolicName), patternGenerator)
+    matchDistinct(node("ComparisonPublished", "LatestVersion").named(symbolicName), patternGenerator)
 
 private fun matchUnpublishedComparisons(
     symbolicName: SymbolicName,
     patternGenerator: (Node) -> Collection<RelationshipPattern>
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
-    match(node("Comparison").named(symbolicName), patternGenerator)
+    matchDistinct(node("Comparison").named(symbolicName), patternGenerator)

@@ -23,7 +23,7 @@ import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.graph.adapter.output.neo4j.ResourceMapper
-import org.orkg.graph.adapter.output.neo4j.match
+import org.orkg.graph.adapter.output.neo4j.matchDistinct
 import org.orkg.graph.adapter.output.neo4j.node
 import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
@@ -94,7 +94,7 @@ class SpringDataNeo4jTemplateAdapter(
             }
             val node = name("node")
             val nodes = name("nodes")
-            val matchTemplates = match(node("NodeShape").named(node), patterns)
+            val matchTemplates = matchDistinct(node("NodeShape").named(node), patterns)
             val match = label?.let { searchString ->
                 when (searchString) {
                     is ExactSearchString -> {

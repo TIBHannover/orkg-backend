@@ -26,7 +26,7 @@ import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.contenttypes.domain.ContentTypeClass
 import org.orkg.contenttypes.output.ContentTypeRepository
 import org.orkg.graph.adapter.output.neo4j.ResourceMapper
-import org.orkg.graph.adapter.output.neo4j.match
+import org.orkg.graph.adapter.output.neo4j.matchDistinct
 import org.orkg.graph.adapter.output.neo4j.node
 import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.toCondition
@@ -120,9 +120,9 @@ class SpringDataNeo4jContentTypeAdapter(
         patternGenerator: (Node) -> Collection<RelationshipPattern>
     ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
         when (this) {
-            ContentTypeClass.PAPER -> match(node("Paper").named(node), patternGenerator)
+            ContentTypeClass.PAPER -> matchDistinct(node("Paper").named(node), patternGenerator)
             ContentTypeClass.COMPARISON -> matchComparison(node, patternGenerator, true)
-            ContentTypeClass.VISUALIZATION -> match(node("Visualization").named(node), patternGenerator)
+            ContentTypeClass.VISUALIZATION -> matchDistinct(node("Visualization").named(node), patternGenerator)
             ContentTypeClass.TEMPLATE -> {
                 val n = node("NodeShape").named(node)
                 val patterns = listOf(

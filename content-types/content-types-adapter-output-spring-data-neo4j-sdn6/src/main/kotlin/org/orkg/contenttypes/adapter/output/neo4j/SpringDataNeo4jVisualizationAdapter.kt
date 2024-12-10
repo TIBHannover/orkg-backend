@@ -6,7 +6,6 @@ import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.name
-import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.noCondition
 import org.neo4j.cypherdsl.core.Cypher.size
@@ -23,7 +22,7 @@ import org.orkg.common.neo4jdsl.PagedQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.QueryCache
 import org.orkg.contenttypes.output.VisualizationRepository
 import org.orkg.graph.adapter.output.neo4j.ResourceMapper
-import org.orkg.graph.adapter.output.neo4j.match
+import org.orkg.graph.adapter.output.neo4j.matchDistinct
 import org.orkg.graph.adapter.output.neo4j.node
 import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
@@ -83,7 +82,7 @@ class SpringDataNeo4jVisualizationAdapter(
             }
             val node = name("node")
             val nodes = name("nodes")
-            val matchVisualizations = match(node(Classes.visualization).named(node), patterns)
+            val matchVisualizations = matchDistinct(node(Classes.visualization).named(node), patterns)
             val match = label?.let { searchString ->
                 when (searchString) {
                     is ExactSearchString -> {

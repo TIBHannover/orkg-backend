@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.servers.Server
 
 plugins {
     id("org.orkg.gradle.asciidoctor")
+    id("java-library")
 }
 
 fun withSnippets(path: String): Map<String, String> = mapOf("path" to path, "configuration" to "restdocs")

@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.74.0] - 2024-12-11
 ### Added
 - Add author id filter for generic content-type endpoint.
   (Closes: [#597](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/597))
@@ -1277,7 +1279,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.73.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.74.0...master
+[0.74.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.74.0
 [0.73.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.73.0
 [0.72.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.72.2
 [0.72.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.72.1

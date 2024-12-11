@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Add author id filter for generic content-type endpoint.
+  (Closes: [#597](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/597))
+### Fixed
+- Fixed performance issue for find all endpoints of content-types.
+  (See: [!1134](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1134))
+- Fixed potential status 500 when querying the generic content-type endpoint.
 
 ## [0.73.0] - 2024-12-09
 ### Breaking

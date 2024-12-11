@@ -68,6 +68,7 @@ configurations.all {
 
 // Configure common test runtime dependencies for *all* projects
 dependencies {
+    api(platform("org.orkg:platform"))
     testApi(platform("org.orkg:platform"))
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("ch.qos.logback:logback-classic") // Logger implementation. Should be same as in production.

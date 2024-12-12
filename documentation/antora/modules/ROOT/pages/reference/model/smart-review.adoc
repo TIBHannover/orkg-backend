@@ -5,6 +5,7 @@
 flowchart LR
     SmartReviewPublished[SmartReviewPublished \n Resource] --> |"P26 \n has DOI"| doi[Literal \n xsd:string]
     SmartReviewPublished --> |"description"| description[Literal \n xsd:string]
+	SmartReviewPublished --> |"P30 \n has research field"| researchField2[ResearchField \n Resource]
 	SmartReview --> |"P31 \n has Contribution"| contribution
     SmartReview --> |"hasAuthors"| authorList[List \n Resource]
 	SmartReview --> |"P30 \n has research field"| researchField[ResearchField \n Resource]

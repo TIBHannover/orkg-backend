@@ -30,7 +30,6 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -61,7 +60,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     ]
 )
 @WebMvcTest(controllers = [PredicateController::class])
-@UsesMocking
 internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
 
     @MockkBean

@@ -36,7 +36,6 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectLiteral
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -58,7 +57,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [LiteralController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LiteralController::class])
-@UsesMocking
 internal class LiteralControllerUnitTest : RestDocsTest("literals") {
 
     @MockkBean

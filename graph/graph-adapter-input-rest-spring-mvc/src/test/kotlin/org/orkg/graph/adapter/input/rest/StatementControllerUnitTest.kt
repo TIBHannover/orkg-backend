@@ -47,7 +47,6 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
@@ -74,7 +73,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [StatementController::class, ExceptionHandler::class, CommonJacksonModule::class, GraphJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [StatementController::class])
-@UsesMocking
 internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
     @MockkBean

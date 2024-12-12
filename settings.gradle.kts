@@ -10,7 +10,7 @@ rootProject.name = "orkg-backend"
 
 include("documentation")
 include(
-    "common",
+    "common:testing",
     "common:serialization",
     "common:neo4j-dsl",
     "common:spring-webmvc",

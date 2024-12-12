@@ -27,7 +27,6 @@ import org.orkg.graph.testing.fixtures.createVisualizationResource
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
-import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -54,7 +53,6 @@ val supportedClasses = setOf(
 
 @ContextConfiguration(classes = [ResearchFieldController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ResearchFieldController::class])
-@UsesMocking
 internal class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
     @MockkBean
     private lateinit var useCases: RetrieveResearchFieldUseCase

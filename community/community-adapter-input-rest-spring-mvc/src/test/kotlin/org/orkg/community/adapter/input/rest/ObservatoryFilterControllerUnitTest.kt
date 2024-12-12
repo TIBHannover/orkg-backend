@@ -32,7 +32,6 @@ import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectObservatoryFilter
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
@@ -67,7 +66,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     ]
 )
 @WebMvcTest(controllers = [ObservatoryFilterController::class])
-@UsesMocking
 internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-filters") {
 
     @MockkBean

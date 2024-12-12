@@ -24,7 +24,6 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
-import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -43,7 +42,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [RdfController::class, ExceptionHandler::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [RdfController::class])
-@UsesMocking
 internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
 
     @MockkBean

@@ -1,11 +1,9 @@
 package org.orkg.widget.domain
 
+import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.datatest.withData
-import io.kotest.matchers.Matcher
-import io.kotest.matchers.MatcherResult
-import io.kotest.matchers.reflection.compose
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
@@ -22,7 +20,6 @@ import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.RetrieveResourceUseCase
 import org.orkg.graph.input.RetrieveStatementUseCase
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.widget.input.ResolveDOIUseCase.WidgetInfo
 
 internal class ResolveDOIServiceUnitTest : DescribeSpec({
     val resourceUseCases: RetrieveResourceUseCase = mockk()
@@ -82,13 +79,13 @@ internal class ResolveDOIServiceUnitTest : DescribeSpec({
                 else
                     verify(exactly = 0) { statementUseCases.countStatements(ThingId("R1")) }
 
-                result shouldBe widgetInfo(
-                    id = ThingId("R1"),
-                    doi = "some DOI",
-                    title = "some irrelevant title",
-                    numberOfStatements = numStatements ?: 0,
-                    publishedClass = publishedClassName
-                )
+                result.asClue {
+                    it.id shouldBe ThingId("R1")
+                    it.doi shouldBe "some DOI"
+                    it.title shouldBe "some irrelevant title"
+                    it.numberOfStatements shouldBe (numStatements ?: 0)
+                    it.`class` shouldBe publishedClassName
+                }
             }
         }
     }
@@ -119,64 +116,14 @@ internal class ResolveDOIServiceUnitTest : DescribeSpec({
                 else
                     verify(exactly = 0) { statementUseCases.countStatements(ThingId("R1")) }
 
-                result shouldBe widgetInfo(
-                    id = ThingId("R1"),
-                    doi = "some DOI",
-                    title = "some irrelevant title",
-                    numberOfStatements = numStatements ?: 0,
-                    publishedClass = publishedClassName,
-                )
+                result.asClue {
+                    it.id shouldBe ThingId("R1")
+                    it.doi shouldBe "some DOI"
+                    it.title shouldBe "some irrelevant title"
+                    it.numberOfStatements shouldBe (numStatements ?: 0)
+                    it.`class` shouldBe publishedClassName
+                }
             }
         }
     }
 })
-
-// TODO: Why does it also display the failed messages for successful tests? Bug?
-internal fun widgetInfo(id: ThingId, doi: String?, title: String, numberOfStatements: Long, publishedClass: String) =
-    Matcher.compose(
-        thingIdMatcher(id) to WidgetInfo::id,
-        doiMatcher(doi) to WidgetInfo::doi,
-        titleMatcher(title) to WidgetInfo::title,
-        numberOfStatementsMatcher(numberOfStatements) to WidgetInfo::numberOfStatements,
-        classMatcher(publishedClass) to WidgetInfo::`class`,
-)
-
-internal fun thingIdMatcher(expected: ThingId) = object : Matcher<ThingId?> {
-    override fun test(value: ThingId?) = MatcherResult(
-        value == expected,
-        { "The ID should be <$expected>" },
-        { "The ID should not be <$expected" },
-    )
-}
-
-internal fun doiMatcher(expected: String?) = object : Matcher<String?> {
-    override fun test(value: String?) = MatcherResult(
-        value == expected,
-        { "The DOI should be <$expected>" },
-        { "The DOI should not be <$expected" },
-    )
-}
-
-internal fun titleMatcher(expected: String) = object : Matcher<String?> {
-    override fun test(value: String?) = MatcherResult(
-        value == expected,
-        { "The title should be <$expected>" },
-        { "The title should not be <$expected>" }
-    )
-}
-
-internal fun numberOfStatementsMatcher(expected: Long) = object : Matcher<Long?> {
-    override fun test(value: Long?): MatcherResult = MatcherResult(
-        value == expected,
-        { "The number of statements should be <$expected>" },
-        { "The number of statements should not be <$expected>" }
-    )
-}
-
-internal fun classMatcher(expected: String) = object : Matcher<String?> {
-    override fun test(value: String?): MatcherResult = MatcherResult(
-        value == expected,
-        { "The class should be <$expected>" },
-        { "The class should not be <$expected>" }
-    )
-}

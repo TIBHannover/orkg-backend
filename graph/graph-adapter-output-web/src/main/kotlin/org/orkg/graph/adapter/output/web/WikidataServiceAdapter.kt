@@ -66,7 +66,7 @@ class WikidataServiceAdapter(
     ): ExternalThing? {
         if (!supportsOntology(ontologyId)) return null
         val id = pattern.matchSingleGroupOrNull(input) ?: return null
-        val uri = UriComponentsBuilder.fromHttpUrl(host)
+        val uri = UriComponentsBuilder.fromUriString(host)
             .path("/w/api.php")
             .queryParam("action", "wbgetentities")
             .queryParam("ids", id)

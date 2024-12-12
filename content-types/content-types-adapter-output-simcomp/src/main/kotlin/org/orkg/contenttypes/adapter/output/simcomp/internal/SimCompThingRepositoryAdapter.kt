@@ -29,7 +29,7 @@ class SimCompThingRepositoryAdapter(
     private val apiKey: String
 ) : SimCompThingRepository {
     override fun findById(id: ThingId, type: ThingType): Optional<BaseThing> {
-        val uri = UriComponentsBuilder.fromHttpUrl(host)
+        val uri = UriComponentsBuilder.fromUriString(host)
             .path("/thing/") // The trailing slash is important, otherwise we get a redirect (307)
             .queryParam("thing_type", type.name)
             .queryParam("thing_key", id.value)
@@ -54,7 +54,7 @@ class SimCompThingRepositoryAdapter(
             config = config,
             data = data
         )
-        val uri = UriComponentsBuilder.fromHttpUrl(host)
+        val uri = UriComponentsBuilder.fromUriString(host)
             .path("/thing/") // The trailing slash is important, otherwise we get a redirect (307)
             .build()
             .toUri()
@@ -82,7 +82,7 @@ class SimCompThingRepositoryAdapter(
             config = config,
             data = data
         )
-        val uri = UriComponentsBuilder.fromHttpUrl(host)
+        val uri = UriComponentsBuilder.fromUriString(host)
             .path("/thing/") // The trailing slash is important, otherwise we get a redirect (307)
             .build()
             .toUri()

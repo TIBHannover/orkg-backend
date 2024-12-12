@@ -83,6 +83,7 @@ internal class GeoNamesRepositoryAdapterUnitTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
+    @Suppress("UNUSED_PARAMETER")
     fun <T> `Given an ontology id and user input, when geonames returns status not found, it returns null`(
         entityId: String,
         userInput: T,
@@ -146,6 +147,7 @@ internal class GeoNamesRepositoryAdapterUnitTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
+    @Suppress("UNUSED_PARAMETER")
     fun <T> `Given an ontology id and user input, when ontology is invalid, it returns null`(
         entityId: String,
         userInput: T,

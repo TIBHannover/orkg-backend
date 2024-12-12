@@ -74,7 +74,7 @@ internal class OLSRepositoryAdapterUnitTest {
             httpClient.send(withArg {
                 it.uri() shouldBe if (userInput is ParsedIRI) {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
-                    UriComponentsBuilder.fromHttpUrl(olsHostUrl)
+                    UriComponentsBuilder.fromUriString(olsHostUrl)
                         .path("/ontologies/$ontologyId/$entityType")
                         .queryParam("iri", userInput.toString())
                         .build()
@@ -95,6 +95,7 @@ internal class OLSRepositoryAdapterUnitTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
+    @Suppress("UNUSED_PARAMETER")
     fun <T> `Given an ontology id and user input, when ols returns status not found, it returns null`(
         entityType: String,
         userInput: T,
@@ -115,7 +116,7 @@ internal class OLSRepositoryAdapterUnitTest {
             httpClient.send(withArg {
                 it.uri() shouldBe if (userInput is ParsedIRI) {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
-                    UriComponentsBuilder.fromHttpUrl(olsHostUrl)
+                    UriComponentsBuilder.fromUriString(olsHostUrl)
                         .path("/ontologies/$ontologyId/$entityType")
                         .queryParam("iri", userInput.toString())
                         .build()
@@ -157,7 +158,7 @@ internal class OLSRepositoryAdapterUnitTest {
             httpClient.send(withArg {
                 it.uri() shouldBe if (userInput is ParsedIRI) {
                     // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
-                    UriComponentsBuilder.fromHttpUrl(olsHostUrl)
+                    UriComponentsBuilder.fromUriString(olsHostUrl)
                         .path("/ontologies/$ontologyId/$entityType")
                         .queryParam("iri", userInput.toString())
                         .build()

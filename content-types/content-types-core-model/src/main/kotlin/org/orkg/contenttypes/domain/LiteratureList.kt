@@ -92,7 +92,7 @@ sealed interface LiteratureListSection {
         fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
             when {
                 Classes.listSection in root.classes -> LiteratureListListSection.contributors(root, statements)
-                Classes.textSection in root.classes -> LiteratureListTextSection.contributors(root, statements)
+                Classes.textSection in root.classes -> LiteratureListTextSection.contributors(root)
                 else -> throw IllegalStateException("Cannot convert section ${root.id} to literature list section. This is a bug.")
             }
     }
@@ -165,7 +165,7 @@ data class LiteratureListTextSection(
                     .orEmpty()
             )
 
-        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+        fun contributors(root: Resource): List<ContributorId> =
             listOf(root.createdBy)
     }
 }

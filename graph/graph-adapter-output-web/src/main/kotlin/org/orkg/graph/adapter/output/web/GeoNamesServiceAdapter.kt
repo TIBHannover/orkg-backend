@@ -27,7 +27,7 @@ class GeoNamesServiceAdapter(
     override fun findResourceByShortForm(ontologyId: String, shortForm: String): ExternalThing? {
         // geonames only supports 32-bit integer ids, anything above will *not* throw a status 404
         if (!supportsOntology(ontologyId) || shortForm.toIntOrNull() == null) return null
-        val apiUri = UriComponentsBuilder.fromHttpUrl(host)
+        val apiUri = UriComponentsBuilder.fromUriString(host)
             .path("/get")
             .queryParam("geonameId", shortForm)
             .queryParam("username", username)

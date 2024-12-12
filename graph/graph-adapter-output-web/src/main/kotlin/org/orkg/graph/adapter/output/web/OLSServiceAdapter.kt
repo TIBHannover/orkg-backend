@@ -47,7 +47,7 @@ class OLSServiceAdapter(
         if (!supportsOntology(ontologyId)) return null
         return fetch(
             type = type,
-            uri = UriComponentsBuilder.fromHttpUrl(host)
+            uri = UriComponentsBuilder.fromUriString(host)
                 .path("/ontologies/$ontologyId/$type")
                 .queryParam("iri", uri.toString())
                 .build()
@@ -59,7 +59,7 @@ class OLSServiceAdapter(
         if (!supportsOntology(ontologyId)) return null
         return fetch(
             type = type,
-            uri = UriComponentsBuilder.fromHttpUrl(host)
+            uri = UriComponentsBuilder.fromUriString(host)
                 .path("/ontologies/$ontologyId/$type")
                 .queryParam("short_form", shortForm)
                 .build()

@@ -136,7 +136,7 @@ class OrganizationController(
             logo = logo?.let {
                 val bytes = logo.bytes
                 val mimeType = try {
-                    MimeType.valueOf(logo.contentType)
+                    MimeType.valueOf(logo.contentType!!)
                 } catch (e: Exception) {
                     throw InvalidMimeType(logo.contentType, e)
                 }

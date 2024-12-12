@@ -25,5 +25,5 @@ class IdentifierMapDTODeserializer : JsonDeserializer<IdentifierMapDTO>() {
     }
 
     private fun fieldPath(jsonParser: JsonParser, key: String, index: Int): String =
-        "$." + jsonParser.currentName?.let { "$it." }.orEmpty() + "$key[$index]"
+        "$." + jsonParser.currentName()?.let { "$it." }.orEmpty() + "$key[$index]"
 }

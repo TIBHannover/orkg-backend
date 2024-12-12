@@ -10,10 +10,6 @@ package org.orkg.featureflags.output
  * To find (and remove) all usages before that, use [DeprecationLevel.ERROR] and follow the compiler messages.
  */
 interface FeatureFlagService {
-    /** Determine if the old (legacy) model of Papers With Code should be used. */
-    @Deprecated("This flag is obsolete and will be removed.", level = DeprecationLevel.HIDDEN)
-    fun isPapersWithCodeLegacyModelEnabled(): Boolean
-
     /** Determine if formatted labels are enabled and appended to resource representation. */
     fun isFormattedLabelsEnabled(): Boolean
 

@@ -1,7 +1,5 @@
 package org.orkg.graph.testing.fixtures
 
-import dev.forkhandles.fabrikate.FabricatorConfig
-import dev.forkhandles.fabrikate.Fabrikate
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
@@ -49,13 +47,6 @@ fun <
             )
         }
     }
-
-    val fabricator = Fabrikate(
-        FabricatorConfig(
-            collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
-        ).withStandardMappings()
-    ).withCustomMappings()
 
     fun createRelation(parentId: ThingId, childId: ThingId) =
         ClassSubclassRelation(

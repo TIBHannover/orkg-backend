@@ -48,6 +48,7 @@ internal class WikidataRepositoryAdapterUnitTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
+    @Suppress("UNUSED_PARAMETER")
     fun <T> `Given an ontology id and user input, when wikidata returns success, it returns the external object`(
         entityId: String,
         userInput: T,
@@ -83,6 +84,7 @@ internal class WikidataRepositoryAdapterUnitTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
+    @Suppress("UNUSED_PARAMETER")
     fun <T> `Given an ontology id and user input, when wikidata returns status not found, it returns null`(
         entityId: String,
         userInput: T,
@@ -149,6 +151,7 @@ internal class WikidataRepositoryAdapterUnitTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
+    @Suppress("UNUSED_PARAMETER")
     fun <T> `Given an ontology id and user input, when ontology is invalid, it returns null`(
         entityId: String,
         userInput: T,

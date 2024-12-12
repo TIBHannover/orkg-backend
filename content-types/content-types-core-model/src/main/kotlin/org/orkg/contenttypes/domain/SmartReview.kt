@@ -126,7 +126,7 @@ sealed interface SmartReviewSection {
                 Classes.resourceSection in root.classes -> SmartReviewResourceSection.contributors(root, statements)
                 Classes.propertySection in root.classes -> SmartReviewPredicateSection.contributors(root, statements)
                 Classes.ontologySection in root.classes -> SmartReviewOntologySection.contributors(root, statements)
-                Classes.section in root.classes -> SmartReviewTextSection.contributors(root, statements)
+                Classes.section in root.classes -> SmartReviewTextSection.contributors(root)
                 else -> throw IllegalStateException("Cannot convert section ${root.id} to smart review section. This is a bug.")
             }
     }
@@ -290,7 +290,7 @@ data class SmartReviewTextSection(
                     .orEmpty()
             )
 
-        fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
+        fun contributors(root: Resource): List<ContributorId> =
             listOf(root.createdBy)
     }
 }

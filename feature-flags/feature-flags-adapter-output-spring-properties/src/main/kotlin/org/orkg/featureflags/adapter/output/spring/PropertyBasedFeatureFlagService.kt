@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component
 class PropertyBasedFeatureFlagService(
     private val config: FeatureFlags
 ) : FeatureFlagService {
-    override fun isPapersWithCodeLegacyModelEnabled(): Boolean = false
-
     override fun isFormattedLabelsEnabled(): Boolean = config.formattedLabels
 
     override fun isCacheWarmupEnabled(): Boolean = config.cacheWarmup

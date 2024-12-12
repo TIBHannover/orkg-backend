@@ -24,6 +24,7 @@ internal class OpenAlexIdTest {
 
     @ParameterizedTest
     @MethodSource("validOpenAlexIds")
+    @Suppress("UNUSED_PARAMETER")
     fun `Given a valid open alex id, it returns the correct uri`(openAlexId: String, uri: String) {
         OpenAlexId.of(openAlexId).uri shouldBe "https://openalex.org/$openAlexId"
     }

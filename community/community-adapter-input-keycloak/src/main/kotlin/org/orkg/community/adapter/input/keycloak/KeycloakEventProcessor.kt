@@ -168,7 +168,7 @@ class KeycloakEventProcessor(
     private val AdminEventRepresentation.isUserEvent get() = resourceType == "USER"
 
     private val AdminEventRepresentation.isRoleEvent get() =
-        (resourceType == "REALM_ROLE_MAPPING" || resourceType == "CLIENT_ROLE_MAPPING") &&
+        (resourceType == "REALM_ROLE_MAPPING" || resourceType == "CLIENT_ROLE_MAPPING" || resourceType == "GROUP_MEMBERSHIP") &&
             (operationType == "CREATE" || operationType == "DELETE")
 
     private fun UserResource.toContributor(): Contributor {

@@ -113,7 +113,7 @@ dependencies {
     implementation(project(":content-types:content-types-adapter-output-simcomp"))
     runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
     runtimeOnly(project(":content-types:content-types-adapter-output-web"))
-    implementation(project(":content-types:content-types-core-model"))
+    runtimeOnly(project(":content-types:content-types-core-model"))
     runtimeOnly(project(":content-types:content-types-core-services"))
     implementation(project(":content-types:content-types-ports-input"))
     runtimeOnly(project(":content-types:content-types-ports-output"))

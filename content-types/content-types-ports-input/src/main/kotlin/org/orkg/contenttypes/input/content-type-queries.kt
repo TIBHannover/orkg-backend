@@ -24,6 +24,7 @@ interface RetrieveContentTypeUseCase {
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
         sustainableDevelopmentGoal: ThingId? = null,
-        authorId: ThingId? = null
+        authorId: ThingId? = null,
+        authorName: String? = null
     ): Page<ContentType>
 }

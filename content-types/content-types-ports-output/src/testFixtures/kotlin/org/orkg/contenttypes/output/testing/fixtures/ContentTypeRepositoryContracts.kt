@@ -32,6 +32,7 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.withCustomMappings
@@ -668,6 +669,58 @@ fun <
                     }
                 }
             }
+            context("by author name") {
+                val graph = createTestGraph().save()
+                val author = createLiteral(ThingId("R102354"), label = "Famous Author")
+                val hasAuthors = createPredicate(Predicates.hasAuthors)
+                val hasListElement = createPredicate(Predicates.hasListElement)
+
+                val resources = graph.resources.filterIndexed { index, _ -> index % 2 == 0 }
+                resources.forEach {
+                    val authorList = fabricator.random<Resource>().copy(classes = setOf(Classes.list))
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = it,
+                            predicate = hasAuthors,
+                            `object` = authorList
+                        )
+                    )
+                    saveStatement(
+                        fabricator.random<GeneralStatement>().copy(
+                            subject = authorList,
+                            predicate = hasListElement,
+                            `object` = author,
+                            index = 0
+                        )
+                    )
+                }
+
+                val expected = (resources - graph.ignored).sortedBy { it.createdAt }
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 10),
+                    authorName = author.label
+                )
+
+                expected.size shouldNotBe 0
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThanOrEqualTo b.createdAt
+                    }
+                }
+            }
             context("using all parameters") {
                 val graph = createTestGraph().save()
                 val expected = graph.resources.first()
@@ -706,6 +759,14 @@ fun <
                         index = 0
                     )
                 )
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = authorList,
+                        predicate = createPredicate(Predicates.hasListElement),
+                        `object` = createLiteral(ThingId("R102355"), label = "Famous Author"),
+                        index = 1
+                    )
+                )
 
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
@@ -720,6 +781,7 @@ fun <
                     includeSubfields = true,
                     sustainableDevelopmentGoal = ThingId("SDG_1"),
                     authorId = ThingId("R102354")
+                    /* authorName filter is not compatible with authorId in neo4j adapter */
                 )
 
                 it("returns the correct result") {

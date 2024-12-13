@@ -17,6 +17,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
+import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.ContentTypeClass
@@ -70,7 +71,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
     @DisplayName("Given several content types, when they are fetched, then status is 200 OK and content types are returned")
     fun getPaged() {
         every {
-            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(
             createPaper(),
             createComparison(),
@@ -95,7 +96,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 
@@ -103,7 +104,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
     @DisplayName("Given several content types, when filtering by several parameters, then status is 200 OK and content types are returned")
     fun getPagedWithParameters() {
         every {
-            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(
             createPaper(),
             createComparison(),
@@ -161,7 +162,8 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
                         parameterWithName("research_field").description("Filter for research field id that the content type belongs to. (optional)"),
                         parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)"),
                         parameterWithName("sdg").description("Filter for the sustainable development goal that the content type belongs to. (optional)"),
-                        parameterWithName("author_id").description("Filter for the author of the content type. (optional)"),
+                        parameterWithName("author_id").description("Filter for the author of the content type. Cannot be used in combination with `author_name`. (optional)"),
+                        parameterWithName("author_name").description("Filter for the name of the author of the content type. Cannot be used in combination with `author_id`. (optional)").optional(),
                     )
                 )
             )
@@ -180,7 +182,8 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
                 researchField = researchFieldId,
                 includeSubfields = includeSubfields,
                 sustainableDevelopmentGoal = sdg,
-                authorId = authorId
+                authorId = authorId,
+                authorName = null
             )
         }
     }
@@ -189,7 +192,7 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
     fun `Given several content types, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
         val exception = UnknownSortingProperty("unknown")
         every {
-            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
         mockMvc.perform(get("/api/content-types?sort=unknown"))
@@ -201,7 +204,24 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
             .andExpect(jsonPath("$.path").value("/api/content-types"))
 
         verify(exactly = 1) {
-            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
+    }
+
+    @Test
+    fun `Given several content types, when using incompatible filtering parameters, then status is 400 BAD REQUEST`() {
+        val exception = TooManyParameters.atMostOneOf("author_id", "author_name")
+
+        mockMvc.perform(
+            get("/api/content-types")
+                .param("author_id", "R123")
+                .param("author_name", "Author")
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/content-types"))
     }
 }

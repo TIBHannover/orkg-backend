@@ -5,6 +5,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContentTypeRepresentationAdapter
 import org.orkg.contenttypes.domain.ContentTypeClass
 import org.orkg.contenttypes.input.ContentTypeUseCases
@@ -37,9 +38,13 @@ class ContentTypeController(
         @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
         @RequestParam("sdg", required = false) sustainableDevelopmentGoal: ThingId?,
         @RequestParam("author_id", required = false) authorId: ThingId?,
+        @RequestParam("author_name", required = false) authorName: String?,
         pageable: Pageable
-    ): Page<ContentTypeRepresentation> =
-        service.findAll(
+    ): Page<ContentTypeRepresentation> {
+        if (authorId != null && authorName != null) {
+            throw TooManyParameters.atMostOneOf("author_id", "author_name")
+        }
+        return service.findAll(
             pageable = pageable,
             classes = classes.ifEmpty { ContentTypeClass.entries.toSet() },
             visibility = visibility,
@@ -53,4 +58,5 @@ class ContentTypeController(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
             authorId = authorId
         ).mapToContentTypeRepresentation()
+    }
 }

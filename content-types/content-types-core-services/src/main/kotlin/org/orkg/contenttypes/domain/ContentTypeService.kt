@@ -37,6 +37,7 @@ class ContentTypeService(
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
         authorId: ThingId?,
+        authorName: String?,
     ): Page<ContentType> =
         repository.findAll(
             pageable = pageable,
@@ -51,6 +52,7 @@ class ContentTypeService(
             includeSubfields = includeSubfields,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
             authorId = authorId,
+            authorName = authorName,
         ).pmap { it.toContentType() }
 
     internal fun Resource.toContentType(): ContentType =

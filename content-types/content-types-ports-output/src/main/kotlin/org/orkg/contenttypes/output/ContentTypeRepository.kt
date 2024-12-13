@@ -25,5 +25,6 @@ interface ContentTypeRepository {
         includeSubfields: Boolean = false,
         sustainableDevelopmentGoal: ThingId? = null,
         authorId: ThingId? = null,
+        authorName: String? = null,
     ): Page<Resource>
 }

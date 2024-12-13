@@ -60,7 +60,8 @@ class SpringDataNeo4jContentTypeAdapter(
         researchField: ThingId?,
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
-        authorId: ThingId?
+        authorId: ThingId?,
+        authorName: String?
     ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
         .withCommonQuery {
             val node = name("node")
@@ -86,6 +87,12 @@ class SpringDataNeo4jContentTypeAdapter(
                             node.relationshipTo(node(Classes.list), RELATED)
                                 .withProperties("predicate_id", literalOf<String>(Predicates.hasAuthors.value))
                                 .relationshipTo(node(Classes.author).withProperties("id", anonParameter(it.value)), RELATED)
+                                .properties("predicate_id", literalOf<String>(Predicates.hasListElement.value))
+                        },
+                        authorName?.let {
+                            node.relationshipTo(node(Classes.list), RELATED)
+                                .withProperties("predicate_id", literalOf<String>(Predicates.hasAuthors.value))
+                                .relationshipTo(node(Classes.thing).withProperties("label", anonParameter(it)), RELATED)
                                 .properties("predicate_id", literalOf<String>(Predicates.hasListElement.value))
                         }
                     )

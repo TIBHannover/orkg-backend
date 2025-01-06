@@ -44,7 +44,7 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
 
     // Always run linter before compiling
-    dependsOn(tasks.named("spotlessApply"))
+    dependsOn(tasks.named("spotlessCheck"))
 }
 
 // Configure details for *all* test executions directly on 'Test' task
@@ -97,7 +97,7 @@ extensions.configure<SpotlessExtension> {
                 // Disable some rules to keep the changes minimal
                 "disabled_rules" to "no-wildcard-imports,filename,import-ordering,indent",
                 "ij_kotlin_imports_layout" to "*,^",
-            )
+            ),
         )
     }
     kotlinGradle {

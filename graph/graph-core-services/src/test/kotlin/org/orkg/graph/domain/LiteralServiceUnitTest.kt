@@ -1,35 +1,26 @@
 package org.orkg.graph.domain
 
 import io.kotest.assertions.throwables.shouldThrowExactly
-import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkDescribeSpec
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.testing.fixedClock
 
-internal class LiteralServiceUnitTest : DescribeSpec({
+internal class LiteralServiceUnitTest : MockkDescribeSpec({
     val literalRepository: LiteralRepository = mockk()
     val statementRepository: StatementRepository = mockk()
     val service = LiteralService(literalRepository, statementRepository, fixedClock)
 
-    beforeTest {
-        clearAllMocks()
-    }
-    afterTest {
-        confirmVerified(literalRepository, statementRepository)
-    }
-
-    context("creating a literal") {
+    describe("creating a literal") {
         context("invalid inputs") {
             it("fails when the datatype is an invalid URI") {
                 shouldThrowExactly<InvalidLiteralDatatype> {

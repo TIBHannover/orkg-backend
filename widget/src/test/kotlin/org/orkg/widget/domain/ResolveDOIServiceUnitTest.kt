@@ -2,11 +2,8 @@ package org.orkg.widget.domain
 
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrowExactly
-import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -14,6 +11,7 @@ import java.util.*
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
+import org.orkg.common.testing.fixtures.MockkDescribeSpec
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PUBLISHABLE_CLASSES
 import org.orkg.graph.domain.ResourceNotFound
@@ -21,15 +19,10 @@ import org.orkg.graph.input.RetrieveResourceUseCase
 import org.orkg.graph.input.RetrieveStatementUseCase
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class ResolveDOIServiceUnitTest : DescribeSpec({
+internal class ResolveDOIServiceUnitTest : MockkDescribeSpec({
     val resourceUseCases: RetrieveResourceUseCase = mockk()
     val statementUseCases: RetrieveStatementUseCase = mockk()
     val service = ResolveDOIService(resourceUseCases, statementUseCases)
-
-    afterTest { (_, _) ->
-        confirmVerified(resourceUseCases, statementUseCases)
-        clearAllMocks()
-    }
 
     describe("neither doi nor title parameters are provided") {
         it("should throw") {
@@ -53,7 +46,7 @@ internal class ResolveDOIServiceUnitTest : DescribeSpec({
     val publishableClasses = PUBLISHABLE_CLASSES + Classes.paperVersion
 
     describe("DOI is provided, but title is not") {
-        describe("a resource with this DOI is not found") {
+        context("a resource with this DOI is not found") {
             every { resourceUseCases.findByDOI("some DOI", publishableClasses) } returns Optional.empty()
 
             it("should throw") {
@@ -63,7 +56,7 @@ internal class ResolveDOIServiceUnitTest : DescribeSpec({
                 verify(exactly = 1) { resourceUseCases.findByDOI("some DOI", publishableClasses) }
             }
         }
-        describe("a resource with this DOI is found") {
+        context("a resource with this DOI is found") {
             withData(classNamesAndOutputs) { (publishedClassName, numStatements) ->
                 val resource = createResource(label = "some irrelevant title")
                     .copy(classes = setOf(ThingId(publishedClassName)))
@@ -90,7 +83,7 @@ internal class ResolveDOIServiceUnitTest : DescribeSpec({
         }
     }
     describe("title is provided, but DOI is not") {
-        describe("a resource with this title is not found") {
+        context("a resource with this title is not found") {
             every { resourceUseCases.findPaperByTitle("some title") } returns Optional.empty()
 
             it("should throw") {
@@ -100,7 +93,7 @@ internal class ResolveDOIServiceUnitTest : DescribeSpec({
                 verify(exactly = 1) { resourceUseCases.findPaperByTitle("some title") }
             }
         }
-        describe("a resource with this title is found") {
+        context("a resource with this title is found") {
             withData(classNamesAndOutputs) { (publishedClassName, numStatements) ->
                 val resource = createResource(label = "some irrelevant title")
                     .copy(classes = setOf(ThingId(publishedClassName)))

@@ -36,6 +36,7 @@ testing {
                 implementation("com.ninja-squad:springmockk")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation(project(":common:serialization"))
+                implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes

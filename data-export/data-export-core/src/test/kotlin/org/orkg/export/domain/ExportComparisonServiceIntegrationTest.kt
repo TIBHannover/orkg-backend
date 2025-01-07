@@ -1,21 +1,21 @@
 package org.orkg.export.domain
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.kotest.core.spec.IsolationMode
-import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.engine.spec.tempdir
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.orkg.contenttypes.input.ComparisonUseCases
+import org.orkg.common.testing.fixtures.MockkDescribeSpec
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
+import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.export.testing.fixtures.verifyThatDirectoryExistsAndIsEmpty
 import org.orkg.testing.pageOf
 
-internal class ExportComparisonServiceIntegrationTest : DescribeSpec({
+internal class ExportComparisonServiceIntegrationTest : MockkDescribeSpec({
     val comparisonService: ComparisonUseCases = mockk()
     val comparisonRepository: ComparisonRepository = mockk()
     val fileExportService = FileExportService()
@@ -50,11 +50,11 @@ internal class ExportComparisonServiceIntegrationTest : DescribeSpec({
         it("writes the correct result") {
             targetFile.exists() shouldBe true
             targetFile.readText() shouldBe (dummyComparisonDataCiteJson.toJsonL() + dummyComparisonDataCiteJson.toJsonL())
+            verify(exactly = 1) { comparisonService.findAllCurrentAndListedAndUnpublishedComparisons(any()) }
+            verify(exactly = 2) { comparisonRepository.findAllDOIsRelatedToComparison(comparison.id) }
         }
     }
-}) {
-    override fun isolationMode() = IsolationMode.InstancePerLeaf
-}
+})
 
 private const val dummyComparisonDataCiteJson = """
 {

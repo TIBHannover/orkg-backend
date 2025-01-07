@@ -1,12 +1,9 @@
 package org.orkg.graph.domain
 
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.IsolationMode
-import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.Runs
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -19,6 +16,7 @@ import kotlinx.coroutines.withContext
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkDescribeSpec
 import org.orkg.graph.input.UpdateStatementUseCase
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.OwnershipInfo
@@ -33,7 +31,7 @@ import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Sort
 
-internal class StatementServiceUnitTest : DescribeSpec({
+internal class StatementServiceUnitTest : MockkDescribeSpec({
 
     val statementRepository: StatementRepository = mockk()
     val literalRepository: LiteralRepository = mockk()
@@ -48,12 +46,7 @@ internal class StatementServiceUnitTest : DescribeSpec({
         fixedClock,
     )
 
-    afterEach {
-        // Confirm all calls. This is a protection against false-positive test results.
-        confirmVerified(statementRepository, literalRepository, thingRepository, statementRepository)
-    }
-
-    context("creating a statement") {
+    describe("creating a statement") {
         context("with a list as a subject and hasListElement as a predicate") {
             it("throws an error") {
                 val listId = ThingId("L1")
@@ -129,7 +122,7 @@ internal class StatementServiceUnitTest : DescribeSpec({
         }
     }
 
-    context("creating a statement (fast)") {
+    describe("creating a statement (fast)") {
         context("with a list as a subject and hasListElement as a predicate") {
             it("throws an error") {
                 val listId = ThingId("L1")
@@ -202,7 +195,7 @@ internal class StatementServiceUnitTest : DescribeSpec({
         }
     }
 
-    context("updating a statement") {
+    describe("updating a statement") {
         context("with a non-literal object") {
             it("successfully updates the statement") {
                 val id = StatementId("S1")
@@ -500,7 +493,7 @@ internal class StatementServiceUnitTest : DescribeSpec({
         }
     }
 
-    context("deleting a single statement") {
+    describe("deleting a single statement") {
         // Disabled because functionality has temporarily been removed
         xcontext("statement is owned by contributor") {
             val subject = createResource()
@@ -616,7 +609,7 @@ internal class StatementServiceUnitTest : DescribeSpec({
             }
         }
     }
-    context("deleting multiple statements") {
+    describe("deleting multiple statements") {
         // Disabled because functionality has temporarily been removed
         xcontext("all statements are owned by contributor") {
             val statementIds = (1..4).map { StatementId("S$it") }.toSet()
@@ -726,8 +719,6 @@ internal class StatementServiceUnitTest : DescribeSpec({
             }
         }
     }
-}) {
-    override fun isolationMode(): IsolationMode = IsolationMode.InstancePerLeaf
-}
+})
 
 internal fun randomContributorId() = ContributorId(UUID.randomUUID())

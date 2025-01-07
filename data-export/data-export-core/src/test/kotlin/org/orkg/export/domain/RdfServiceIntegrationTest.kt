@@ -1,11 +1,10 @@
 package org.orkg.export.domain
 
-import io.kotest.core.spec.IsolationMode
-import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.engine.spec.tempdir
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.time.OffsetDateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,6 +12,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkDescribeSpec
 import org.orkg.export.testing.fixtures.verifyThatDirectoryExistsAndIsEmpty
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Resource
@@ -24,7 +24,7 @@ import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.PageImpl
 
 @Suppress("HttpUrlsUsage")
-internal class RdfServiceIntegrationTest : DescribeSpec({
+internal class RdfServiceIntegrationTest : MockkDescribeSpec({
     val statementRepository: StatementRepository = mockk()
     val classRepository: ClassRepository = mockk()
     val predicateRepository: PredicateRepository = mockk()
@@ -42,17 +42,15 @@ internal class RdfServiceIntegrationTest : DescribeSpec({
 
     val targetDir = tempdir()
 
-    every { classRepository.findAll(any()) } returns PageImpl(emptyList())
-    every { predicateRepository.findAll(any()) } returns PageImpl(emptyList())
-    every { resourceRepository.findAll(any()) } returns PageImpl(emptyList())
-    every { statementRepository.findAll(any()) } returns PageImpl(emptyList())
-
     context("dumping to default location") {
         verifyThatDirectoryExistsAndIsEmpty(targetDir)
 
         val targetFile = targetDir.resolve("test-export.nt")
         targetFile.exists() shouldBe false
 
+        every { classRepository.findAll(any()) } returns PageImpl(emptyList())
+        every { predicateRepository.findAll(any()) } returns PageImpl(emptyList())
+        every { statementRepository.findAll(any()) } returns PageImpl(emptyList())
         every { resourceRepository.findAll(any()) } returns PageImpl(
             listOf(
                 Resource(
@@ -79,8 +77,11 @@ internal class RdfServiceIntegrationTest : DescribeSpec({
                 |<http://orkg.org/orkg/resource/R1234> <http://www.w3.org/2000/01/rdf-schema#label> "some label"^^<http://www.w3.org/2001/XMLSchema#string> .
                 |
             """.trimMargin()
+
+            verify(exactly = 1) { classRepository.findAll(any()) }
+            verify(exactly = 1) { predicateRepository.findAll(any()) }
+            verify(exactly = 1) { resourceRepository.findAll(any()) }
+            verify(exactly = 1) { statementRepository.findAll(any()) }
         }
     }
-}) {
-    override fun isolationMode() = IsolationMode.InstancePerLeaf
-}
+})

@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain.actions
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -10,12 +8,11 @@ import io.mockk.verify
 import java.time.OffsetDateTime
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.input.ClassDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.ListDefinition
@@ -46,7 +43,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 
-internal class SubgraphCreatorUnitTest {
+internal class SubgraphCreatorUnitTest : MockkBaseTest {
     private val statementRepository: StatementRepository = mockk()
     private val classService: ClassUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
@@ -64,24 +61,6 @@ internal class SubgraphCreatorUnitTest {
         statementRepository = statementRepository,
         listService = listService
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            statementRepository,
-            classService,
-            resourceService,
-            statementService,
-            literalService,
-            predicateService,
-            listService
-        )
-    }
 
     @Test
     fun `Given paper contents, when a newly defined resource is valid, it gets created`() {

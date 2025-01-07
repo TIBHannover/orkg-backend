@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("org.orkg.gradle.kotlin")
 }
@@ -17,6 +19,7 @@ testing {
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation(testFixtures(project(":common:testing")))
             }
         }
     }

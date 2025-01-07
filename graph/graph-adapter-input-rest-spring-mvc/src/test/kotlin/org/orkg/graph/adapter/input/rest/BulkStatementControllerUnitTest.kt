@@ -1,16 +1,12 @@
 package org.orkg.graph.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
 import org.hamcrest.Matchers.hasSize
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
@@ -56,16 +52,6 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
 
     @MockkBean
     private lateinit var flags: FeatureFlagService
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementService, formattedLabelService, flags)
-    }
 
     @Test
     fun lookupBySubjects() {

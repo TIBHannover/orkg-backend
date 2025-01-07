@@ -1,16 +1,13 @@
 package org.orkg.contenttypes.domain.actions
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.OrganizationId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.domain.ConferenceSeriesId
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.output.ConferenceSeriesRepository
@@ -19,23 +16,13 @@ import org.orkg.community.testing.fixtures.createConferenceSeries
 import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 
-internal class OrganizationOrConferenceValidatorUnitTest {
+internal class OrganizationOrConferenceValidatorUnitTest : MockkBaseTest {
     private val organizationRepository: OrganizationRepository = mockk()
     private val conferenceSeriesRepository: ConferenceSeriesRepository = mockk()
 
     private val organizationValidator = OrganizationOrConferenceValidator<List<OrganizationId>?, List<OrganizationId>>(
         organizationRepository, conferenceSeriesRepository, { it }, { it }
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(organizationRepository, conferenceSeriesRepository)
-    }
 
     @Test
     fun `Given a list of organizations, when validating, it returns success`() {

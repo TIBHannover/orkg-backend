@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.domain.actions
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -9,12 +7,11 @@ import io.mockk.runs
 import io.mockk.verify
 import java.time.OffsetDateTime
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
@@ -30,21 +27,11 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 
-internal class StatementCollectionPropertyUpdaterUnitTest {
+internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 
     private val statementCollectionPropertyUpdater = StatementCollectionPropertyUpdater(literalService, statementService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(literalService, statementService)
-    }
 
     @Test
     fun `Given set of objects, it replaces the all object statements`() {

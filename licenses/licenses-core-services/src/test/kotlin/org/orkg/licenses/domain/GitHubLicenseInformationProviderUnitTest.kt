@@ -1,8 +1,6 @@
 package org.orkg.licenses.domain
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -11,25 +9,15 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import org.orkg.common.testing.fixtures.MockkBaseTest
 
-internal class GitHubLicenseInformationProviderUnitTest {
+internal class GitHubLicenseInformationProviderUnitTest : MockkBaseTest {
+
     private val httpClient: HttpClient = mockk()
     private val provider: GitHubLicenseInformationProvider = GitHubLicenseInformationProvider(ObjectMapper(), httpClient)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(httpClient)
-    }
 
     @Test
     fun `provider ID is github`() {
@@ -67,8 +55,6 @@ internal class GitHubLicenseInformationProviderUnitTest {
         verify(exactly = 1) { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) }
         verify(exactly = 0) { mockResponse.statusCode() }
         verify(exactly = 0) { mockResponse.body() }
-
-        confirmVerified(mockResponse)
     }
 
     @Test
@@ -84,8 +70,6 @@ internal class GitHubLicenseInformationProviderUnitTest {
         verify(exactly = 1) { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) }
         verify(exactly = 1) { mockResponse.statusCode() }
         verify(exactly = 0) { mockResponse.body() }
-
-        confirmVerified(mockResponse)
     }
 
     @Test
@@ -104,8 +88,6 @@ internal class GitHubLicenseInformationProviderUnitTest {
         verify(exactly = 1) { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) }
         verify(exactly = 1) { mockResponse.statusCode() }
         verify(exactly = 1) { mockResponse.body() }
-
-        confirmVerified(mockResponse)
     }
 
     @Test
@@ -122,8 +104,6 @@ internal class GitHubLicenseInformationProviderUnitTest {
         verify(exactly = 1) { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) }
         verify(exactly = 1) { mockResponse.statusCode() }
         verify(exactly = 1) { mockResponse.body() }
-
-        confirmVerified(mockResponse)
     }
 }
 

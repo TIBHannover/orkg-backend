@@ -2,35 +2,22 @@ package org.orkg.contenttypes.domain.actions.comparisons
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 
-internal class ComparisonVersionResourceCreatorUnitTest {
+internal class ComparisonVersionResourceCreatorUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val comparisonVersionResourceCreator = ComparisonVersionResourceCreator(resourceService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(resourceService)
-    }
 
     @Test
     fun `Given a literature list create command, it crates a new literature list version resource`() {

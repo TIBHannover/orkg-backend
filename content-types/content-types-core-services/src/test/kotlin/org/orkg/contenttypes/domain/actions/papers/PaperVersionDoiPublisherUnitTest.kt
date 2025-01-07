@@ -2,18 +2,15 @@ package org.orkg.contenttypes.domain.actions.papers
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.PublishPaperState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.identifiers.DOI
@@ -23,7 +20,7 @@ import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 
-internal class PaperVersionDoiPublisherUnitTest {
+internal class PaperVersionDoiPublisherUnitTest : MockkBaseTest {
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = mockk()
     private val doiService: DoiService = mockk()
 
@@ -32,16 +29,6 @@ internal class PaperVersionDoiPublisherUnitTest {
         doiService = doiService,
         paperPublishBaseUri = "https://orkg.org/paper/"
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(singleStatementPropertyCreator, doiService)
-    }
 
     @Test
     fun `Given a paper publish command, it registers a new doi creates a hasDOI statement`() {

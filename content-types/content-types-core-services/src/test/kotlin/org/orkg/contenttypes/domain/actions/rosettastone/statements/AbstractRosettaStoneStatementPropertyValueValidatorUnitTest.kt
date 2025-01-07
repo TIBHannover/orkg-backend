@@ -2,20 +2,17 @@ package org.orkg.contenttypes.domain.actions.rosettastone.statements
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.Either
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.MissingInputPositions
 import org.orkg.contenttypes.domain.MissingObjectPositionValue
@@ -53,7 +50,7 @@ import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
+internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : MockkBaseTest {
     private val thingRepository: ThingRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val rosettaStoneStatementService: RosettaStoneStatementUseCases = mockk()
@@ -62,21 +59,6 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest {
     private val abstractRosettaStoneStatementPropertyValueValidator = AbstractRosettaStoneStatementPropertyValueValidator(
         thingRepository, statementRepository, rosettaStoneStatementService, abstractTemplatePropertyValueValidator
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            thingRepository,
-            statementRepository,
-            rosettaStoneStatementService,
-            abstractTemplatePropertyValueValidator
-        )
-    }
 
     @Test
     fun `Given a rosetta stone statement create command, when validating its properties, it returns success`() {

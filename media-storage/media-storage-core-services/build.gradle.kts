@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("org.orkg.gradle.spring-library")
 }
@@ -15,6 +17,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation(testFixtures(project(":common:testing")))
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.kotest:kotest-common")
                 implementation("io.mockk:mockk-dsl")

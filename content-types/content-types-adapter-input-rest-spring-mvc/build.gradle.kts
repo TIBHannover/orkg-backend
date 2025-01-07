@@ -55,7 +55,6 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
-                implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework:spring-test")
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("com.ninja-squad:springmockk")

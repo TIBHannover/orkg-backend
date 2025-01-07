@@ -2,17 +2,14 @@ package org.orkg.contenttypes.domain.actions.smartreviews.sections
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.DeleteSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionDeleter
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
@@ -23,20 +20,10 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class SmartReviewSectionDeleterUnitTest {
+internal class SmartReviewSectionDeleterUnitTest : MockkBaseTest {
     private val abstractSmartReviewSectionDeleter: AbstractSmartReviewSectionDeleter = mockk()
 
     private val smartReviewSectionDeleter = SmartReviewSectionDeleter(abstractSmartReviewSectionDeleter)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractSmartReviewSectionDeleter)
-    }
 
     @Test
     fun `Given a smart review section delete command, when section belongs to smart review, it deletes the section`() {

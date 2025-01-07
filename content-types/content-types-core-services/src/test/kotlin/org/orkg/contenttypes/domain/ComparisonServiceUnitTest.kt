@@ -4,8 +4,6 @@ import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -14,13 +12,12 @@ import io.mockk.verify
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -56,7 +53,7 @@ import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
-internal class ComparisonServiceUnitTest {
+internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val contributionComparisonRepository: ContributionComparisonRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
@@ -93,32 +90,6 @@ internal class ComparisonServiceUnitTest {
         clock = clock,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            contributionComparisonRepository,
-            resourceRepository,
-            statementRepository,
-            observatoryRepository,
-            organizationRepository,
-            resourceService,
-            statementService,
-            literalService,
-            listService,
-            listRepository,
-            doiService,
-            conferenceSeriesRepository,
-            comparisonRepository,
-            comparisonTableRepository,
-            comparisonPublishedRepository
-        )
-    }
 
     @Test
     fun `Given an unpublished comparison, when fetching it by id, then it is returned`() {

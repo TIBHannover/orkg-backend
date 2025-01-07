@@ -2,16 +2,13 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.LiteratureListAlreadyPublished
 import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
@@ -19,20 +16,10 @@ import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishLiteratureListCommand
 
-internal class LiteratureListPublishableValidatorUnitTest {
+internal class LiteratureListPublishableValidatorUnitTest : MockkBaseTest {
     private val literatureListService: LiteratureListUseCases = mockk()
 
     private val literatureListPublishableValidator = LiteratureListPublishableValidator(literatureListService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(literatureListService)
-    }
 
     @Test
     fun `Given a literature list publish command, when literature list is unpublished, it returns success`() {

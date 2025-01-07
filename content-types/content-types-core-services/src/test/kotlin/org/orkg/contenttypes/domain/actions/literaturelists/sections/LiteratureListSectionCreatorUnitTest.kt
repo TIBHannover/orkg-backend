@@ -2,21 +2,18 @@ package org.orkg.contenttypes.domain.actions.literaturelists.sections
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.stream.Stream
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
@@ -30,7 +27,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class LiteratureListSectionCreatorUnitTest {
+internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
@@ -38,16 +35,6 @@ internal class LiteratureListSectionCreatorUnitTest {
     private val literatureListSectionCreator = LiteratureListSectionCreator(
         statementService, abstractLiteratureListSectionCreator, statementCollectionPropertyUpdater
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementService, abstractLiteratureListSectionCreator, statementCollectionPropertyUpdater)
-    }
 
     @ParameterizedTest
     @MethodSource("createLiteratureListSectionCommands")

@@ -1,19 +1,16 @@
 package org.orkg.contenttypes.domain.actions
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.Author
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -27,7 +24,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-internal class AuthorUpdaterUnitTest {
+internal class AuthorUpdaterUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
@@ -37,16 +34,6 @@ internal class AuthorUpdaterUnitTest {
 
     private val authorUpdater =
         AuthorUpdater(resourceService, statementService, literalService, listService, listRepository, authorCreator)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(resourceService, statementService, literalService, listService, listRepository, authorCreator)
-    }
 
     @Test
     fun `Given a subject resource without author list, it creates a new author list`() {

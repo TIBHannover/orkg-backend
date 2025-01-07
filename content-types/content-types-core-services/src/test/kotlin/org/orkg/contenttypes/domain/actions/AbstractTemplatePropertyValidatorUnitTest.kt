@@ -2,17 +2,14 @@ package org.orkg.contenttypes.domain.actions
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.RealNumber
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.InvalidBounds
 import org.orkg.contenttypes.domain.InvalidCardinality
 import org.orkg.contenttypes.domain.InvalidDatatype
@@ -34,21 +31,11 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 
-internal class AbstractTemplatePropertyValidatorUnitTest {
+internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
     private val predicateRepository: PredicateRepository = mockk()
     private val classRepository: ClassRepository = mockk()
 
     private val abstractTemplatePropertyValidator = AbstractTemplatePropertyValidator(predicateRepository, classRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(predicateRepository, classRepository)
-    }
 
     @Test
     fun `Given an untyped template property definition, when validating, it returns success`() {

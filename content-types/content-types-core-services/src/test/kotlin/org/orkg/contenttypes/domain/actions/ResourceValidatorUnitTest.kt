@@ -1,33 +1,20 @@
 package org.orkg.contenttypes.domain.actions
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class ResourceValidatorUnitTest {
+internal class ResourceValidatorUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val resourceValidator = ResourceValidator<Set<ThingId>?, Set<ThingId>>(resourceRepository, { it }, { it })
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(resourceRepository)
-    }
 
     @Test
     fun `Given a set of resource ids, when validating, it returns success`() {

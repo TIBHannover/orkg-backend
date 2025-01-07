@@ -1,13 +1,10 @@
 package org.orkg.auth.adapter.input.rest
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.assertions.asClue
 import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import io.mockk.clearMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -20,8 +17,6 @@ import java.net.http.HttpResponse
 import java.util.*
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -29,6 +24,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
+import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -39,18 +35,12 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED
 import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE
 import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
-import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup
-import org.springframework.web.context.WebApplicationContext
 
 @Import(SecurityTestConfiguration::class, LegacyAuthControllerUnitTest.LegacyAuthControllerTestConfiguration::class)
 @TestPropertySource(properties = [
@@ -61,15 +51,7 @@ import org.springframework.web.context.WebApplicationContext
 ])
 @ContextConfiguration(classes = [LegacyAuthController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LegacyAuthController::class])
-internal class LegacyAuthControllerUnitTest {
-
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var context: WebApplicationContext
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
+internal class LegacyAuthControllerUnitTest : RestDocsTest("legacy-auth") {
 
     @Autowired
     private lateinit var httpClient: HttpClient
@@ -85,20 +67,6 @@ internal class LegacyAuthControllerUnitTest {
 
     @Value("\${orkg.oauth.registration-endpoint}")
     private lateinit var registrationEndpoint: String
-
-    @BeforeEach
-    fun setup() {
-        mockMvc = webAppContextSetup(context)
-            .apply<DefaultMockMvcBuilder>(springSecurity())
-            .build()
-
-        clearMocks(httpClient)
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(httpClient)
-    }
 
     @Test
     fun `Given a user registration request, then status is 301 MOVED PERMANENTLY`() {
@@ -180,8 +148,6 @@ internal class LegacyAuthControllerUnitTest {
         }
         verify(exactly = 1) { response.statusCode() }
         verify(exactly = 1) { response.body() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -291,8 +257,6 @@ internal class LegacyAuthControllerUnitTest {
         }
         verify(exactly = 2) { response.statusCode() }
         verify(exactly = 1) { response.body() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -353,8 +317,6 @@ internal class LegacyAuthControllerUnitTest {
         }
         verify(exactly = 2) { response.statusCode() }
         verify(exactly = 1) { response.body() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -415,8 +377,6 @@ internal class LegacyAuthControllerUnitTest {
         }
         verify(exactly = 2) { response.statusCode() }
         verify(exactly = 1) { response.body() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -488,8 +448,6 @@ internal class LegacyAuthControllerUnitTest {
         encoded.split("&")
             .map { kv -> kv.trim().split("=", limit = 2) }
             .associate { (key, value) -> key.trim() to URLDecoder.decode(value, Charsets.UTF_8) }
-
-    private fun MockHttpServletRequestBuilder.perform() = mockMvc.perform(this)
 
     @TestConfiguration
     class LegacyAuthControllerTestConfiguration {

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.input.UpdateOrganizationUseCases
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.createOrganization
@@ -22,7 +23,7 @@ import org.orkg.mediastorage.testing.fixtures.loadImage
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
 
-internal class OrganizationServiceTest {
+internal class OrganizationServiceUnitTest : MockkBaseTest {
     private val repository: OrganizationRepository = mockk()
     private val imageService: ImageUseCases = mockk()
     private val service = OrganizationService(repository, imageService)
@@ -54,6 +55,7 @@ internal class OrganizationServiceTest {
         val result = service.findLogo(id)
         result.isPresent shouldBe false
 
+        verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 0) { imageService.find(any()) }
     }
 
@@ -84,7 +86,9 @@ internal class OrganizationServiceTest {
 
         service.updateLogo(id, image, contributorId)
 
+        verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) { imageService.create(command) }
+        verify(exactly = 1) { repository.save(organization) }
     }
 
     @Test
@@ -118,6 +122,7 @@ internal class OrganizationServiceTest {
 
         service.updateLogo(id, image, contributor)
 
+        verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) { imageService.create(command) }
         verify(exactly = 1) { repository.save(organization) }
     }
@@ -139,6 +144,8 @@ internal class OrganizationServiceTest {
         assertThrows<OrganizationNotFound> {
             service.update(contributorId, command)
         }
+
+        verify(exactly = 1) { repository.findById(id) }
     }
 
     @Test
@@ -159,6 +166,7 @@ internal class OrganizationServiceTest {
 
         service.update(contributorId, command)
 
+        verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
             repository.save(withArg {
                 assertEquals(organization.id, it.id)
@@ -188,6 +196,7 @@ internal class OrganizationServiceTest {
 
         service.update(contributorId, command)
 
+        verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
             repository.save(withArg {
                 assertEquals(organization.id, it.id)
@@ -217,6 +226,7 @@ internal class OrganizationServiceTest {
 
         service.update(contributorId, command)
 
+        verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
             repository.save(withArg {
                 assertEquals(organization.id, it.id)
@@ -242,13 +252,15 @@ internal class OrganizationServiceTest {
             type = null,
             logo = image
         )
+        val createImageCommand = CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributorId)
 
         every { repository.findById(id) } returns Optional.of(organization)
         every { repository.save(organization) } just runs
-        every { imageService.create(CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributorId)) } returns imageId
+        every { imageService.create(createImageCommand) } returns imageId
 
         service.update(contributorId, command)
 
+        verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
             repository.save(withArg {
                 assertEquals(organization.id, it.id)
@@ -258,6 +270,7 @@ internal class OrganizationServiceTest {
                 assertEquals(imageId, it.logoId)
             })
         }
+        verify(exactly = 1) { imageService.create(createImageCommand) }
     }
 
     @Test
@@ -281,6 +294,7 @@ internal class OrganizationServiceTest {
 
         service.update(contributorId, command)
 
+        verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
             repository.save(withArg {
                 assertEquals(organization.id, it.id)
@@ -290,6 +304,7 @@ internal class OrganizationServiceTest {
                 assertEquals(imageId, it.logoId)
             })
         }
+        verify(exactly = 1) { imageService.create(CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributorId)) }
     }
 
     @Test
@@ -316,6 +331,7 @@ internal class OrganizationServiceTest {
 
         service.update(contributorId, command)
 
+        verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) {
             repository.save(withArg {
                 assertEquals(organization.id, it.id)

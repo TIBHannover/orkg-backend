@@ -1,16 +1,13 @@
 package org.orkg.contenttypes.domain.actions
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateNumberLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateOtherLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
@@ -25,23 +22,13 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-internal class AbstractTemplatePropertyCreatorUnitTest {
+internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 
     private val abstractTemplatePropertyCreator =
         AbstractTemplatePropertyCreator(resourceService, literalService, statementService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(resourceService, literalService, statementService)
-    }
 
     @Test
     fun `Given an untyped template property definition, when creating, it returns success`() {

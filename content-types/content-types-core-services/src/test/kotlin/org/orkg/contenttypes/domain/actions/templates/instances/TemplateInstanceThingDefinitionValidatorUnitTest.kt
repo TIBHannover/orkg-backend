@@ -2,16 +2,13 @@ package org.orkg.contenttypes.domain.actions.templates.instances
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.orkg.common.Either
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.ThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
@@ -19,20 +16,10 @@ import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
 
 @Nested
-internal class TemplateInstanceThingDefinitionValidatorUnitTest {
+internal class TemplateInstanceThingDefinitionValidatorUnitTest : MockkBaseTest {
     private val thingDefinitionValidator: ThingDefinitionValidator = mockk()
 
     private val templateInstanceThingDefinitionValidator = TemplateInstanceThingDefinitionValidator(thingDefinitionValidator)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(thingDefinitionValidator)
-    }
 
     @Test
     fun `Given a template instance update command, when validating its thing definitions, it returns success`() {

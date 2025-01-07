@@ -19,7 +19,6 @@ testing {
                 implementation("org.junit.jupiter:junit-jupiter-params")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
-                implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework:spring-context")
                 implementation("org.springframework:spring-test")
                 implementation("io.kotest:kotest-assertions-core")

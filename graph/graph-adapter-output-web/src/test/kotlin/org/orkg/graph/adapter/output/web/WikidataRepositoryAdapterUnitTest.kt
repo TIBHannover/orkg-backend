@@ -6,8 +6,6 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -16,18 +14,17 @@ import java.net.http.HttpClient
 import java.net.http.HttpResponse
 import java.util.stream.Stream
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
 
-internal class WikidataRepositoryAdapterUnitTest {
+internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
     private val wikidataHostUrl = "https://example.org/wikidata"
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper()
@@ -35,16 +32,6 @@ internal class WikidataRepositoryAdapterUnitTest {
         .registerModules(CommonJacksonModule(), GraphJacksonModule())
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
     private val repository = WikidataServiceAdapter(objectMapper, httpClient, wikidataHostUrl)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(httpClient)
-    }
 
     @ParameterizedTest
     @MethodSource("validInputs")
@@ -78,8 +65,6 @@ internal class WikidataRepositoryAdapterUnitTest {
         }
         verify(exactly = 1) { response.statusCode() }
         verify(exactly = 1) { response.body() }
-
-        confirmVerified(response)
     }
 
     @ParameterizedTest
@@ -112,8 +97,6 @@ internal class WikidataRepositoryAdapterUnitTest {
         }
         verify(exactly = 1) { response.statusCode() }
         verify(exactly = 1) { response.body() }
-
-        confirmVerified(response)
     }
 
     @ParameterizedTest
@@ -145,8 +128,6 @@ internal class WikidataRepositoryAdapterUnitTest {
         }
         verify(exactly = 2) { response.statusCode() }
         verify(exactly = 1) { response.body() }
-
-        confirmVerified(response)
     }
 
     @ParameterizedTest

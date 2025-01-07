@@ -3,16 +3,12 @@ package org.orkg.contenttypes.domain
 import io.kotest.assertions.asClue
 import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
@@ -21,6 +17,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
@@ -55,7 +52,7 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
-internal class RosettaStoneTemplateServiceUnitTest {
+internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val predicateRepository: PredicateRepository = mockk()
@@ -85,30 +82,6 @@ internal class RosettaStoneTemplateServiceUnitTest {
         contributorRepository,
         thingRepository
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            resourceRepository,
-            statementRepository,
-            predicateRepository,
-            classRepository,
-            observatoryRepository,
-            organizationRepository,
-            resourceService,
-            classService,
-            statementService,
-            literalService,
-            rosettaStoneStatementRepository,
-            contributorRepository,
-            thingRepository
-        )
-    }
 
     @Test
     fun `Given a rosetta stone template, when fetching it by id, it is returned`() {

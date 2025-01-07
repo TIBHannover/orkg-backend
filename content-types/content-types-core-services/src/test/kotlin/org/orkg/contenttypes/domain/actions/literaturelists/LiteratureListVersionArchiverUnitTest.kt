@@ -2,17 +2,14 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishLiteratureListCommand
@@ -24,21 +21,11 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createStatement
 import org.springframework.data.domain.Sort
 
-internal class LiteratureListVersionArchiverUnitTest {
+internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val literatureListPublishedRepository: LiteratureListPublishedRepository = mockk()
 
     private val literatureListVersionArchiver = LiteratureListVersionArchiver(statementService, literatureListPublishedRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementService, literatureListPublishedRepository)
-    }
 
     @Test
     fun `Given a literature list publish command, it archives all statements about the literature list`() {

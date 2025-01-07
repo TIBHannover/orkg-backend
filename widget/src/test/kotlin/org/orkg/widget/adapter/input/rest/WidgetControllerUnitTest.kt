@@ -4,6 +4,7 @@ import com.epages.restdocs.apispec.ResourceDocumentation.resource
 import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.verify
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -91,6 +92,8 @@ internal class WidgetControllerUnitTest : RestDocsTest("widget") {
                     responseFields(*responseFields)
                 )
             )
+
+        verify(exactly = 1) { resolveDOIUseCase.resolveDOI(EXAMPLE_DOI, null) }
     }
 
     @Test
@@ -112,6 +115,8 @@ internal class WidgetControllerUnitTest : RestDocsTest("widget") {
                     `is`("Too many parameters: At most one out of \"doi\", \"title\" is allowed.")
                 )
             )
+
+        verify(exactly = 1) { resolveDOIUseCase.resolveDOI(EXAMPLE_DOI, "some title") }
     }
 
     @Test
@@ -128,5 +133,7 @@ internal class WidgetControllerUnitTest : RestDocsTest("widget") {
                     `is`("Missing parameter: At least one parameter out of \"doi\", \"title\" is required.")
                 )
             )
+
+        verify(exactly = 1) { resolveDOIUseCase.resolveDOI(null, null) }
     }
 }

@@ -2,18 +2,15 @@ package org.orkg.contenttypes.domain.actions.contributions
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ContributionCreator
 import org.orkg.contenttypes.domain.actions.ContributionState
@@ -23,20 +20,10 @@ import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class ContributionContentsCreatorUnitTest {
+internal class ContributionContentsCreatorUnitTest : MockkBaseTest {
     private val contributionCreator: ContributionCreator = mockk()
 
     private val contributionContentsCreatorCreator = ContributionContentsCreator(contributionCreator)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(contributionCreator)
-    }
 
     @Test
     fun `Given a contribution create command, when creating its contents, it returns success`() {

@@ -26,6 +26,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project(":common:pagination"))
+                implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))

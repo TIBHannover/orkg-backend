@@ -2,16 +2,13 @@ package org.orkg.contenttypes.domain.actions.templates.instances
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
@@ -19,20 +16,10 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceC
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class TemplateInstanceSubjectUpdaterUnitTest {
+internal class TemplateInstanceSubjectUpdaterUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
 
     private val templateInstanceSubjectUpdater = TemplateInstanceSubjectUpdater(resourceRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(resourceRepository)
-    }
 
     @Test
     fun `Given a template instance update command, when subject resource is not an instance of the template target class, it updates the resource`() {

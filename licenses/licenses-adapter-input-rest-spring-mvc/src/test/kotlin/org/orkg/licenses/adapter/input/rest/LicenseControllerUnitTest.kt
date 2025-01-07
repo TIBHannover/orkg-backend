@@ -36,11 +36,12 @@ internal class LicenseControllerUnitTest : RestDocsTest("licenses") {
     @DisplayName("correctly serializes license information")
     fun getLicense() {
         val license = LicenseInformation("github", "CC-BY-4.0")
-        val uri = "https://github.com/github/docs"
+        val uri = URI.create("https://github.com/github/docs")
 
-        every { licenseService.determineLicense(URI.create(uri)) } returns license
+        every { licenseService.determineLicense(uri) } returns license
 
-        documentedGetRequestTo("/api/licenses?uri={uri}", uri)
+        documentedGetRequestTo("/api/licenses")
+            .param("uri", uri.toString())
             .accept(LICENSE_JSON_V1)
             .contentType(LICENSE_JSON_V1)
             .perform()
@@ -55,6 +56,8 @@ internal class LicenseControllerUnitTest : RestDocsTest("licenses") {
                 )
             )
             .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { licenseService.determineLicense(uri) }
     }
 
     @Test

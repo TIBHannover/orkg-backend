@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("org.orkg.gradle.kotlin-library")
     id("org.orkg.gradle.spring-library")
@@ -43,6 +45,7 @@ testing {
                 implementation("io.kotest:kotest-runner-junit5")
                 implementation(project(":content-types:content-types-core-services"))
                 implementation(project(":media-storage:media-storage-core-model"))
+                implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
                 implementation(testFixtures(project(":content-types:content-types-ports-input")))

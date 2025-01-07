@@ -33,6 +33,7 @@ testing {
                 implementation("io.kotest:kotest-assertions-core")
                 implementation(project(":common:serialization"))
                 implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
+                implementation(testFixtures(project(":common:testing")))
             }
         }
     }

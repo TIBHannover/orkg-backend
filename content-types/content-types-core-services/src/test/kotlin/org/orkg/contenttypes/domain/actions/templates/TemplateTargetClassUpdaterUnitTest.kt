@@ -2,17 +2,14 @@ package org.orkg.contenttypes.domain.actions.templates
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
@@ -20,20 +17,10 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class TemplateTargetClassUpdaterUnitTest {
+internal class TemplateTargetClassUpdaterUnitTest : MockkBaseTest {
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater = mockk()
 
     private val templateTargetClassUpdater = TemplateTargetClassUpdater(singleStatementPropertyUpdater)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(singleStatementPropertyUpdater)
-    }
 
     @Test
     fun `Given a template update command, when new target class has changed, it updates the target class statement`() {

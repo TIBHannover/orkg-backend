@@ -4,7 +4,6 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.util.MimeType
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -12,13 +11,15 @@ import java.time.ZoneOffset
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.input.UpdateOrganizationUseCases
 import org.orkg.mediastorage.input.CreateImageUseCase
 import org.orkg.mediastorage.output.ImageRepository
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
+import org.springframework.util.MimeType
 
-internal class ImageServiceUnitTest {
+internal class ImageServiceUnitTest : MockkBaseTest {
     private val repository: ImageRepository = mockk()
     private val fixedTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
     private val staticClock = java.time.Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())

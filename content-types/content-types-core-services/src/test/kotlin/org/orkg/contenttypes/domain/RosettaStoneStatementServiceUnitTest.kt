@@ -1,19 +1,16 @@
 package org.orkg.contenttypes.domain
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
@@ -38,7 +35,7 @@ import org.orkg.graph.output.ThingRepository
 import org.orkg.testing.MockUserId
 import org.orkg.testing.fixedClock
 
-internal class RosettaStoneStatementServiceUnitTest {
+internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
     private val repository: RosettaStoneStatementRepository = mockk()
     private val rosettaStoneTemplateService: RosettaStoneTemplateUseCases = mockk()
     private val resourceRepository: ResourceRepository = mockk()
@@ -75,33 +72,6 @@ internal class RosettaStoneStatementServiceUnitTest {
         classHierarchyRepository,
         fixedClock
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            repository,
-            rosettaStoneTemplateService,
-            resourceRepository,
-            observatoryRepository,
-            organizationRepository,
-            thingRepository,
-            classRepository,
-            classService,
-            resourceService,
-            statementService,
-            literalService,
-            predicateService,
-            statementRepository,
-            contributorRepository,
-            listService,
-            classHierarchyRepository
-        )
-    }
 
     @Test
     fun `Given a rosetta stone statement, when soft deleting, it soft deletes the rosetta stone statement`() {

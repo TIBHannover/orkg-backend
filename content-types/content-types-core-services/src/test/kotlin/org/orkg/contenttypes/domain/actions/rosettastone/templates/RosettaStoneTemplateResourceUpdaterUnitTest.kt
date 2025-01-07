@@ -2,37 +2,24 @@ package org.orkg.contenttypes.domain.actions.rosettastone.templates
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-internal class RosettaStoneTemplateResourceUpdaterUnitTest {
+internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val rosettaStoneTemplateResourceUpdater = RosettaStoneTemplateResourceUpdater(resourceService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(resourceService)
-    }
 
     @Test
     fun `Given a rosetta stone template update command, it updates the rosetta stone template resource`() {

@@ -2,17 +2,14 @@ package org.orkg.contenttypes.domain.actions.templates.instances
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.SubgraphCreator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
@@ -21,21 +18,11 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-internal class TemplateInstancePropertyValueUpdaterUnitTest {
+internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
     private val subgraphCreator: SubgraphCreator = mockk()
     private val statementService: StatementUseCases = mockk()
 
     private val templateInstancePropertyValueUpdater = TemplateInstancePropertyValueUpdater(subgraphCreator, statementService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(subgraphCreator, statementService)
-    }
 
     @Test
     fun `Given a template instance update command, when updating the properties, it returns success`() {

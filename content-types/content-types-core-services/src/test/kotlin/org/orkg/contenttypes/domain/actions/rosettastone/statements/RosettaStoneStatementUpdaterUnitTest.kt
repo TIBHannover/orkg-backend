@@ -2,8 +2,6 @@ package org.orkg.contenttypes.domain.actions.rosettastone.statements
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -11,11 +9,10 @@ import io.mockk.runs
 import io.mockk.verify
 import java.time.OffsetDateTime
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
@@ -29,22 +26,12 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.fixedClock
 
-internal class RosettaStoneStatementUpdaterUnitTest {
+internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
 
     private val rosettaStoneStatementUpdater =
         RosettaStoneStatementUpdater(rosettaStoneStatementRepository, thingRepository, fixedClock)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(rosettaStoneStatementRepository, thingRepository)
-    }
 
     @Test
     fun `Given a rosetta stone statement update command, when updating a rosetta stone statement, it returns success`() {

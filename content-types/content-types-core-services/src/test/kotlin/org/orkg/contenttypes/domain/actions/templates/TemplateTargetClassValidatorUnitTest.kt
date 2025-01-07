@@ -1,19 +1,16 @@
 package org.orkg.contenttypes.domain.actions.templates
 
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Classes
@@ -26,22 +23,12 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-internal class TemplateTargetClassValidatorUnitTest {
+internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
     private val classRepository: ClassRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
 
     private val templateTargetClassValidator =
         TemplateTargetClassValidator<ThingId?, ThingId?>(classRepository, statementRepository, { it }, { it })
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(classRepository, statementRepository)
-    }
 
     @Test
     fun `Given a target class id, when validating, it returns success`() {

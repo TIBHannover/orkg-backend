@@ -2,34 +2,21 @@ package org.orkg.contenttypes.domain.actions.smartreviews
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class SmartReviewExistenceValidatorUnitTest {
+internal class SmartReviewExistenceValidatorUnitTest : MockkBaseTest {
     private val abstractSmartReviewExistenceValidator: AbstractSmartReviewExistenceValidator = mockk()
 
     private val smartReviewExistenceValidator =
         SmartReviewExistenceValidator(abstractSmartReviewExistenceValidator)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractSmartReviewExistenceValidator)
-    }
 
     @Test
     fun `Given a smart review update command, when checking for smart review existence, it returns success`() {

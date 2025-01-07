@@ -1,12 +1,10 @@
 package org.orkg.graph.adapter.input.rest
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import java.util.*
 import org.hamcrest.Matchers.endsWith
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
@@ -30,36 +28,23 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.pageOf
-import org.springframework.beans.factory.annotation.Autowired
+import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
 
 @Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [ClassHierarchyController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ClassHierarchyController::class])
-internal class ClassHierarchyControllerUnitTest {
-
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
-
-    @Autowired
-    private lateinit var context: WebApplicationContext
+internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy") {
 
     @MockkBean
     private lateinit var classService: ClassUseCases
@@ -72,13 +57,6 @@ internal class ClassHierarchyControllerUnitTest {
 
     @MockkBean
     private lateinit var classHierarchyService: ClassHierarchyUseCases
-
-    @BeforeEach
-    fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-            .apply<DefaultMockMvcBuilder>(springSecurity())
-            .build()
-    }
 
     @Test
     fun `Given a parent class id, when searched for its children, then status is 200 OK and children class ids are returned`() {
@@ -95,6 +73,7 @@ internal class ClassHierarchyControllerUnitTest {
             .andExpect(jsonPath("$.content[0].child_count").value(response.childCount))
             .andExpect(jsonPath("$.totalElements").value(1))
 
+        verify(exactly = 1) { classHierarchyService.findChildren(parentId, any()) }
         verify(exactly = 1) { statementService.findAllDescriptions(any()) }
     }
 
@@ -106,6 +85,8 @@ internal class ClassHierarchyControllerUnitTest {
 
         mockMvc.perform(get("/api/classes/{id}/children", parentId))
             .andExpect(status().isNotFound)
+
+        verify(exactly = 1) { classHierarchyService.findChildren(parentId, any()) }
     }
 
     @Test
@@ -127,6 +108,7 @@ internal class ClassHierarchyControllerUnitTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(parentId.value))
 
+        verify(exactly = 1) { classHierarchyService.findParent(childId) }
         verify(exactly = 1) {
             statementService.findAll(
                 pageable = PageRequests.SINGLE,
@@ -145,6 +127,8 @@ internal class ClassHierarchyControllerUnitTest {
 
         mockMvc.perform(get("/api/classes/{id}/parent", childId))
             .andExpect(status().isNotFound)
+
+        verify(exactly = 1) { classHierarchyService.findParent(childId) }
     }
 
     @Test
@@ -155,6 +139,8 @@ internal class ClassHierarchyControllerUnitTest {
 
         mockMvc.perform(get("/api/classes/{id}/parent", childId))
             .andExpect(status().isNoContent)
+
+        verify(exactly = 1) { classHierarchyService.findParent(childId) }
     }
 
     @Test
@@ -176,6 +162,7 @@ internal class ClassHierarchyControllerUnitTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(rootId.value))
 
+        verify(exactly = 1) { classHierarchyService.findRoot(childId) }
         verify(exactly = 1) {
             statementService.findAll(
                 pageable = PageRequests.SINGLE,
@@ -194,6 +181,8 @@ internal class ClassHierarchyControllerUnitTest {
 
         mockMvc.perform(get("/api/classes/{id}/root", childId))
             .andExpect(status().isNotFound)
+
+        verify(exactly = 1) { classHierarchyService.findRoot(childId) }
     }
 
     @Test
@@ -204,6 +193,8 @@ internal class ClassHierarchyControllerUnitTest {
 
         mockMvc.perform(get("/api/classes/{id}/root", childId))
             .andExpect(status().isNoContent)
+
+        verify(exactly = 1) { classHierarchyService.findRoot(childId) }
     }
 
     @Test
@@ -247,6 +238,8 @@ internal class ClassHierarchyControllerUnitTest {
                     .content(objectMapper.writeValueAsString(request))
             )
             .andExpect(status().isNotFound)
+
+        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) }
     }
 
     @Test
@@ -267,6 +260,8 @@ internal class ClassHierarchyControllerUnitTest {
                     .content(objectMapper.writeValueAsString(request))
             )
             .andExpect(status().isBadRequest)
+
+        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), true) }
     }
 
     @Test
@@ -289,6 +284,8 @@ internal class ClassHierarchyControllerUnitTest {
                     .content(objectMapper.writeValueAsString(request))
             )
             .andExpect(status().isBadRequest)
+
+        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) }
     }
 
     @Test
@@ -339,6 +336,8 @@ internal class ClassHierarchyControllerUnitTest {
                     .content(objectMapper.writeValueAsString(request))
             )
             .andExpect(status().isNotFound)
+
+        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
     }
 
     @Test
@@ -359,6 +358,8 @@ internal class ClassHierarchyControllerUnitTest {
                     .content(objectMapper.writeValueAsString(request))
             )
             .andExpect(status().isBadRequest)
+
+        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false) }
     }
 
     @Test
@@ -381,6 +382,8 @@ internal class ClassHierarchyControllerUnitTest {
                     .content(objectMapper.writeValueAsString(request))
             )
             .andExpect(status().isBadRequest)
+
+        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
     }
 
     @Test
@@ -453,6 +456,8 @@ internal class ClassHierarchyControllerUnitTest {
                     .content(objectMapper.writeValueAsString(request))
             )
             .andExpect(status().isNotFound)
+
+        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
     }
 
     @Test
@@ -473,6 +478,8 @@ internal class ClassHierarchyControllerUnitTest {
                     .content(objectMapper.writeValueAsString(request))
             )
             .andExpect(status().isBadRequest)
+
+        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false) }
     }
 
     @Test
@@ -495,6 +502,8 @@ internal class ClassHierarchyControllerUnitTest {
                     .content(objectMapper.writeValueAsString(request))
             )
             .andExpect(status().isBadRequest)
+
+        verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
     }
 
     @Test
@@ -506,6 +515,8 @@ internal class ClassHierarchyControllerUnitTest {
         mockMvc.perform(get("/api/classes/{id}/count", id))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.count").value(5))
+
+        verify(exactly = 1) { classHierarchyService.countClassInstances(id) }
     }
 
     @Test
@@ -516,6 +527,8 @@ internal class ClassHierarchyControllerUnitTest {
 
         mockMvc.perform(get("/api/classes/{id}/count", id))
             .andExpect(status().isNotFound)
+
+        verify(exactly = 1) { classHierarchyService.countClassInstances(id) }
     }
 
     @Test
@@ -537,6 +550,7 @@ internal class ClassHierarchyControllerUnitTest {
             .andExpect(jsonPath("$.content[0].parent_id").value(parentId.value))
             .andExpect(jsonPath("$.totalElements").value(1))
 
+        verify(exactly = 1) { classHierarchyService.findClassHierarchy(childId, any()) }
         verify(exactly = 1) { statementService.findAllDescriptions(any()) }
     }
 
@@ -548,5 +562,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         mockMvc.perform(get("/api/classes/{id}/hierarchy", childId))
             .andExpect(status().isNotFound)
+
+        verify(exactly = 1) { classHierarchyService.findClassHierarchy(childId, any()) }
     }
 }

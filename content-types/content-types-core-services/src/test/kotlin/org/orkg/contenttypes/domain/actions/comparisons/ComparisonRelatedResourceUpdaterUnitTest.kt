@@ -1,20 +1,17 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResource
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
@@ -33,7 +30,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-internal class ComparisonRelatedResourceUpdaterUnitTest {
+internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
     private val comparisonService: ComparisonUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
@@ -42,16 +39,6 @@ internal class ComparisonRelatedResourceUpdaterUnitTest {
     private val contributionCreator = ComparisonRelatedResourceUpdater(
         comparisonService, resourceService, statementService, singleStatementPropertyUpdater
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(comparisonService, resourceService, statementService, singleStatementPropertyUpdater)
-    }
 
     @Test
     fun `Given a comparison related resource update command, when contents are unchanged, it does nothing`() {

@@ -1,6 +1,5 @@
 package org.orkg.community.domain
 
-import org.orkg.community.output.ObservatoryFilterRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -19,8 +18,10 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.input.CreateObservatoryFilterUseCase
 import org.orkg.community.input.UpdateObservatoryFilterUseCase
+import org.orkg.community.output.ObservatoryFilterRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.testing.fixtures.createObservatory
 import org.orkg.community.testing.fixtures.createObservatoryFilter
@@ -33,7 +34,7 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 
-internal class ObservatoryFilterServiceUnitTest {
+internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
 
     private val repository: ObservatoryFilterRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()

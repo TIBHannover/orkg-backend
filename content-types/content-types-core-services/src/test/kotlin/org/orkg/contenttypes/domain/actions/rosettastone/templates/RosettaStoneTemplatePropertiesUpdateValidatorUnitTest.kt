@@ -1,17 +1,14 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.templates
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.NewRosettaStoneTemplatePropertyMustBeOptional
 import org.orkg.contenttypes.domain.RosettaStoneTemplatePropertyNotModifiable
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
@@ -20,21 +17,11 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceObjectPos
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
 
-internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest {
+internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest : MockkBaseTest {
     private val abstractRosettaStoneTemplatePropertiesValidator: AbstractRosettaStoneTemplatePropertiesValidator = mockk()
 
     private val rosettaStoneTemplatePropertiesUpdateValidator =
         RosettaStoneTemplatePropertiesUpdateValidator(abstractRosettaStoneTemplatePropertiesValidator)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractRosettaStoneTemplatePropertiesValidator)
-    }
 
     @Test
     @DisplayName("Given a rosetta stone template update command, when template is not used in any rosetta stone statement, it returns success")

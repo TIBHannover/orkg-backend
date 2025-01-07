@@ -3,18 +3,15 @@ package org.orkg.contenttypes.domain
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.output.VisualizationRepository
@@ -35,7 +32,7 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
-internal class VisualizationServiceUnitTest {
+internal class VisualizationServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
@@ -57,26 +54,6 @@ internal class VisualizationServiceUnitTest {
         listService = listService,
         visualizationRepository = visualizationRepository
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            resourceRepository,
-            statementRepository,
-            observatoryRepository,
-            organizationRepository,
-            resourceService,
-            statementService,
-            literalService,
-            listService,
-            visualizationRepository
-        )
-    }
 
     @Test
     fun `Given a visualization exists, when fetching it by id, then it is returned`() {

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreatePredicateUseCase
@@ -22,7 +23,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
 import org.orkg.testing.fixedClock
 
-internal class PredicateServiceUnitTest {
+internal class PredicateServiceUnitTest : MockkBaseTest {
 
     private val repository: PredicateRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
@@ -37,6 +38,7 @@ internal class PredicateServiceUnitTest {
         service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", id = null)) shouldBe mockPredicateId
 
         verify(exactly = 1) { repository.nextIdentity() }
+        verify(exactly = 1) { repository.save(any()) }
     }
 
     @Test
@@ -79,6 +81,8 @@ internal class PredicateServiceUnitTest {
             service.create(CreatePredicateUseCase.CreateCommand(label = " \t "))
         }
         assertThat(exception.message).isEqualTo("A label must not be blank or contain newlines and must be at most 8164 characters long.")
+
+        verify(exactly = 1) { repository.nextIdentity() }
     }
 
     @Test
@@ -90,6 +94,7 @@ internal class PredicateServiceUnitTest {
         service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant")) shouldBe mockPredicateId
 
         verify(exactly = 1) {
+            repository.nextIdentity()
             repository.save(
                 Predicate(
                     id = mockPredicateId,
@@ -116,6 +121,7 @@ internal class PredicateServiceUnitTest {
         ) shouldBe mockPredicateId
 
         verify(exactly = 1) {
+            repository.nextIdentity()
             repository.save(
                 Predicate(
                     id = mockPredicateId,
@@ -156,18 +162,18 @@ internal class PredicateServiceUnitTest {
             service.delete(mockPredicate.id, couldBeAnyone)
         }
 
+        verify(exactly = 1) { repository.findById(mockPredicate.id) }
+        verify(exactly = 1) { repository.isInUse(mockPredicate.id) }
         verify(exactly = 0) { repository.deleteById(any()) }
     }
 
     @Test
     fun `given a predicate is being deleted, when it is not used in a statement, and it is owned by the user, it gets deleted`() {
         val theOwningContributorId = ContributorId(MockUserId.USER)
-        val theOwningContributor = createContributor(id = theOwningContributorId)
         val predicate = createPredicate(createdBy = theOwningContributorId)
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
         every { repository.isInUse(predicate.id) } returns false
-        every { contributorRepository.findById(theOwningContributorId) } returns Optional.of(theOwningContributor)
         every { repository.deleteById(predicate.id) } returns Unit
 
         service.delete(predicate.id, theOwningContributorId)
@@ -206,7 +212,6 @@ internal class PredicateServiceUnitTest {
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
         every { repository.isInUse(predicate.id) } returns false
         every { contributorRepository.findById(loggedInUserId) } returns Optional.of(loggedInUser)
-        every { repository.deleteById(predicate.id) } returns Unit
 
         shouldThrow<NeitherOwnerNorCurator> {
             service.delete(predicate.id, loggedInUserId)

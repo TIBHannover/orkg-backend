@@ -1,20 +1,17 @@
 package org.orkg.graph.domain
 
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.UpdateListUseCase
 import org.orkg.graph.output.ListRepository
@@ -28,20 +25,10 @@ import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 
-internal class ListServiceUnitTest {
+internal class ListServiceUnitTest : MockkBaseTest {
     private val repository: ListRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
     private val service = ListService(repository, thingRepository, fixedClock)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(repository, thingRepository)
-    }
 
     @Test
     fun `given a list is created, when valid inputs are provided, it returns success`() {

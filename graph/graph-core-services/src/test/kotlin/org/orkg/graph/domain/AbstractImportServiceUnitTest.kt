@@ -1,16 +1,13 @@
 package org.orkg.graph.domain
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.LiteralUseCases
@@ -21,7 +18,7 @@ import org.orkg.graph.output.ExternalClassService
 import org.orkg.graph.output.ExternalPredicateService
 import org.orkg.graph.output.ExternalResourceService
 
-abstract class AbstractImportServiceUnitTest {
+abstract class AbstractImportServiceUnitTest : MockkBaseTest {
     protected val externalClassService = mockk<ExternalClassService> {
         every { this@mockk.supportsMultipleOntologies() } returns false
     }
@@ -46,25 +43,6 @@ abstract class AbstractImportServiceUnitTest {
         predicateService = predicateService,
         literalService = literalService
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            externalClassService,
-            externalResourceService,
-            externalPredicateService,
-            statementService,
-            resourceService,
-            classService,
-            predicateService,
-            literalService
-        )
-    }
 
     protected fun mockDescriptionCreation(
         contributorId: ContributorId,

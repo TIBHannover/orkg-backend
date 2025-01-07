@@ -1,20 +1,17 @@
 package org.orkg.contenttypes.domain.actions.literaturelists
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureListListSection
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureListTextSection
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
@@ -28,21 +25,11 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-internal class AbstractLiteratureListSectionDeleterUnitTest {
+internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 
     private val abstractLiteratureListSectionDeleter = AbstractLiteratureListSectionDeleter(statementService, resourceService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementService, resourceService)
-    }
 
     @Test
     fun `Given a list section, when referenced by no resource other than the literature list, it deletes the list section`() {

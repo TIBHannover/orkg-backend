@@ -102,6 +102,8 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
                 )
             )
             .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { literalService.findById(any()) }
     }
 
     @Test
@@ -128,6 +130,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
+        verify(exactly = 1) { literalService.findById(any()) }
         verify(exactly = 1) { literalService.create(command) }
     }
 
@@ -207,6 +210,8 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/literals"))
+
+        verify(exactly = 1) { literalService.findAll(any()) }
     }
 
     @Test
@@ -222,6 +227,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .perform(updateOf(literal, "L1"))
             .andExpect(status().isOk)
 
+        verify(exactly = 2) { literalService.findById(any()) }
         verify(exactly = 1) {
             literalService.update(expected)
         }
@@ -256,6 +262,8 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpect(jsonPath("\$.errors.length()").value(1))
             .andExpect(jsonPath("\$.errors[0].field").value("datatype"))
             .andExpect(jsonPath("\$.errors[0].message").value("must not be blank"))
+
+        verify(exactly = 1) { literalService.findById(any()) }
     }
 
     @Test
@@ -295,6 +303,9 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpect(jsonPath("\$.errors.length()").value(1))
             .andExpect(jsonPath("\$.errors[0].field").value("label"))
             .andExpect(jsonPath("\$.errors[0].message").value("A literal must be at most $MAX_LABEL_LENGTH characters long."))
+
+        verify(exactly = 1) { literalService.findById(any()) }
+        verify(exactly = 1) { literalService.update(any()) }
     }
 
     @Test
@@ -324,6 +335,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
+        verify(exactly = 1) { literalService.findById(any()) }
         verify(exactly = 1) { literalService.create(command) }
     }
 

@@ -1,16 +1,13 @@
 package org.orkg.contenttypes.domain.actions.smartreviews.sections
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.SmartReviewComparisonSection
 import org.orkg.contenttypes.domain.SmartReviewOntologySection
 import org.orkg.contenttypes.domain.SmartReviewPredicateSection
@@ -29,20 +26,10 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewResour
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewVisualizationSectionCommand
 
-internal class SmartReviewSectionUpdateValidatorUnitTest {
+internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
     private val abstractSmartReviewSectionValidator: AbstractSmartReviewSectionValidator = mockk()
 
     private val smartReviewSectionUpdateValidator = SmartReviewSectionUpdateValidator(abstractSmartReviewSectionValidator)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractSmartReviewSectionValidator)
-    }
 
     @Test
     fun `Given a smart review section update command, when section is not related to the smart review, it throws an exception`() {

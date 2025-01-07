@@ -1,38 +1,25 @@
 package org.orkg.contenttypes.domain.actions.literaturelists
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
-internal class LiteratureListSectionsCreatorUnitTest {
+internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()
 
     private val literatureListSectionsCreator = LiteratureListSectionsCreator(
         statementService, abstractLiteratureListSectionCreator
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementService, abstractLiteratureListSectionCreator)
-    }
 
     @Test
     fun `Given a literature list create command, when sections are empty, it does nothing`() {

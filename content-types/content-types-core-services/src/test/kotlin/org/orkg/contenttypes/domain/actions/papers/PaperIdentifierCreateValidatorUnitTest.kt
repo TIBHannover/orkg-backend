@@ -1,15 +1,12 @@
 package org.orkg.contenttypes.domain.actions.papers
 
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.PaperAlreadyExists
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
@@ -23,20 +20,10 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 
-internal class PaperIdentifierCreateValidatorUnitTest {
+internal class PaperIdentifierCreateValidatorUnitTest : MockkBaseTest {
     private val statementRepository: StatementRepository = mockk()
 
     private val paperIdentifierCreateValidator = PaperIdentifierCreateValidator(statementRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementRepository)
-    }
 
     @Test
     fun `Given a paper create command, when validating its identifiers, it returns success`() {

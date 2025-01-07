@@ -2,35 +2,22 @@ package org.orkg.contenttypes.domain.actions.smartreviews.sections
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.DeleteSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewExistenceValidator
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.dummyDeleteSmartReviewSectionCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class SmartReviewSectionExistenceDeleteValidatorUnitTest {
+internal class SmartReviewSectionExistenceDeleteValidatorUnitTest : MockkBaseTest {
     private val abstractSmartReviewExistenceValidator: AbstractSmartReviewExistenceValidator = mockk()
 
     private val smartReviewSectionExistenceDeleteValidator =
         SmartReviewSectionExistenceDeleteValidator(abstractSmartReviewExistenceValidator)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractSmartReviewExistenceValidator)
-    }
 
     @Test
     fun `Given a smart review section delete command, when checking for smart review existence, it returns success`() {

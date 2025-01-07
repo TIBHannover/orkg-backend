@@ -1,16 +1,13 @@
 package org.orkg.contenttypes.domain.actions
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.Identifiers
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -18,21 +15,11 @@ import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
-internal class IdentifierCreatorUnitTest {
+internal class IdentifierCreatorUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
     private val identifierCreator = object : IdentifierCreator(statementService, literalService) {}
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementService, literalService)
-    }
 
     @Test
     fun `Given a map of identifiers, it crates new paper identifiers`() {

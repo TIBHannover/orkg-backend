@@ -1,19 +1,16 @@
 package org.orkg.contenttypes.domain.actions
 
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.graph.domain.Classes
@@ -23,7 +20,7 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-internal class ContributionCreatorUnitTest {
+internal class ContributionCreatorUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val subgraphCreator: SubgraphCreator = mockk()
@@ -33,16 +30,6 @@ internal class ContributionCreatorUnitTest {
         statementService = statementService,
         subgraphCreator = subgraphCreator
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(resourceService, statementService, subgraphCreator)
-    }
 
     @Test
     fun `Given paper contents, when creating new contributions, it returns success`() {

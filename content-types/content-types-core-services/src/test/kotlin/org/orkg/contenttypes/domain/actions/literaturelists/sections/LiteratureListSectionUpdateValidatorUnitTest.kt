@@ -1,17 +1,14 @@
 package org.orkg.contenttypes.domain.actions.literaturelists.sections
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.LiteratureListSectionTypeMismatch
 import org.orkg.contenttypes.domain.UnrelatedLiteratureListSection
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
@@ -21,20 +18,10 @@ import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListTextSectionCommand
 
-internal class LiteratureListSectionUpdateValidatorUnitTest {
+internal class LiteratureListSectionUpdateValidatorUnitTest : MockkBaseTest {
     private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator = mockk()
 
     private val literatureListSectionUpdateValidator = LiteratureListSectionUpdateValidator(abstractLiteratureListSectionValidator)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractLiteratureListSectionValidator)
-    }
 
     @Test
     fun `Given a literature list section update command, when section is not related to the literature list, it throws an exception`() {

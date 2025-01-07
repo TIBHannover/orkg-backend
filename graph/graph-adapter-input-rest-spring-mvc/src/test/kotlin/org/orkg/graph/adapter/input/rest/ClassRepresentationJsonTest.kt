@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.input.rest
 
-import io.mockk.mockk
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import org.assertj.core.api.Assertions.assertThat
@@ -11,7 +10,6 @@ import org.orkg.common.ThingId
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.domain.Class
-import org.orkg.graph.input.StatementUseCases
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
@@ -26,10 +24,6 @@ internal class ClassRepresentationJsonTest {
 
     @Autowired
     private lateinit var json: JacksonTester<ClassRepresentation>
-
-    private val classRepresentationAdapter: ClassRepresentationAdapter = object : ClassRepresentationAdapter {
-        override val statementService: StatementUseCases = mockk()
-    }
 
     @Test
     fun serializedClassShouldHaveId() {

@@ -8,8 +8,6 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -18,19 +16,18 @@ import java.net.http.HttpClient
 import java.net.http.HttpResponse
 import java.util.stream.Stream
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
 import org.springframework.web.util.UriComponentsBuilder
 
-internal class OLSRepositoryAdapterUnitTest {
+internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
     private val olsHostUrl = "https://example.org/ols"
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper()
@@ -38,16 +35,6 @@ internal class OLSRepositoryAdapterUnitTest {
         .registerModules(CommonJacksonModule(), GraphJacksonModule())
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
     private val repository = OLSServiceAdapter(objectMapper, httpClient, olsHostUrl)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(httpClient)
-    }
 
     @ParameterizedTest
     @MethodSource("validInputs")
@@ -89,8 +76,6 @@ internal class OLSRepositoryAdapterUnitTest {
         }
         verify(exactly = 1) { response.statusCode() }
         verify(exactly = 1) { response.body() }
-
-        confirmVerified(response)
     }
 
     @ParameterizedTest
@@ -130,8 +115,6 @@ internal class OLSRepositoryAdapterUnitTest {
             }, any<HttpResponse.BodyHandler<String>>())
         }
         verify(exactly = 1) { response.statusCode() }
-
-        confirmVerified(response)
     }
 
     @ParameterizedTest
@@ -173,8 +156,6 @@ internal class OLSRepositoryAdapterUnitTest {
         }
         verify(exactly = 2) { response.statusCode() }
         verify(exactly = 1) { response.body() }
-
-        confirmVerified(response)
     }
 
     @ParameterizedTest

@@ -2,8 +2,6 @@ package org.orkg.graph.domain
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -11,14 +9,13 @@ import io.mockk.runs
 import io.mockk.verify
 import java.time.OffsetDateTime
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreateResourceUseCase
@@ -33,7 +30,7 @@ import org.orkg.testing.fixedClock
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 
-internal class ResourceServiceUnitTest {
+internal class ResourceServiceUnitTest : MockkBaseTest {
 
     private val repository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
@@ -49,22 +46,6 @@ internal class ResourceServiceUnitTest {
         thingRepository,
         fixedClock,
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            repository,
-            statementRepository,
-            classRepository,
-            contributorRepository,
-            thingRepository
-        )
-    }
 
     @Test
     fun `given a resource create command, when inputs are valid, it creates a new resource`() {
@@ -359,7 +340,6 @@ internal class ResourceServiceUnitTest {
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
         every { thingRepository.isUsedAsObject(mockResource.id) } returns false
         every { contributorRepository.findById(loggedInUserId) } returns Optional.of(loggedInUser)
-        every { repository.deleteById(mockResource.id) } returns Unit
 
         shouldThrow<NeitherOwnerNorCurator> {
             service.delete(mockResource.id, loggedInUserId)

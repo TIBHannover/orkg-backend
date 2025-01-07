@@ -1,18 +1,15 @@
 package org.orkg.contenttypes.domain.actions.literaturelists
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureListListSection
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureListTextSection
@@ -31,7 +28,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-internal class AbstractLiteratureListSectionUpdaterUnitTest {
+internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()
@@ -40,21 +37,6 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest {
     private val abstractLiteratureListSectionUpdater = AbstractLiteratureListSectionUpdater(
         statementService, resourceService, abstractLiteratureListSectionCreator, singleStatementPropertyUpdater
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            statementService,
-            resourceService,
-            abstractLiteratureListSectionCreator,
-            singleStatementPropertyUpdater
-        )
-    }
 
     @Test
     fun `Given a list section, when there are no changes, it does nothing`() {

@@ -1,19 +1,16 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotModifiable
 import org.orkg.graph.domain.Classes
@@ -27,21 +24,11 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
 import org.orkg.testing.pageOf
 
-internal class ComparisonRelatedFigureDeleterUnitTest {
+internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
 
     private val contributionCreator = ComparisonRelatedFigureDeleter(statementService, resourceService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementService, resourceService)
-    }
 
     @Test
     fun `Given a comparison related figure, when deleting, it deletes the comparison related figure`() {

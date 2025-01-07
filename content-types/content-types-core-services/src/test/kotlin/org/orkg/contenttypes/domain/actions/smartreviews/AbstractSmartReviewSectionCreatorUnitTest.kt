@@ -1,18 +1,15 @@
 package org.orkg.contenttypes.domain.actions.smartreviews
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyCreator
 import org.orkg.contenttypes.input.testing.fixtures.dummySmartReviewComparisonSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummySmartReviewOntologySectionDefinition
@@ -28,7 +25,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-internal class AbstractSmartReviewSectionCreatorUnitTest {
+internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
@@ -37,16 +34,6 @@ internal class AbstractSmartReviewSectionCreatorUnitTest {
     private val abstractSmartReviewSectionCreator = AbstractSmartReviewSectionCreator(
         statementService, resourceService, literalService, statementCollectionPropertyCreator
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementService, resourceService, literalService, statementCollectionPropertyCreator)
-    }
 
     @Test
     fun `Given a comparison section definition, when creating a comparison section with a linked comparison, it returns success`() {

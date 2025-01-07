@@ -1,12 +1,8 @@
 package org.orkg.curation.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.exceptions.ExceptionHandler
@@ -35,16 +31,6 @@ internal class CurationControllerUnitTest : RestDocsTest("curation") {
 
     @MockkBean
     private lateinit var statementService: StatementUseCases
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(service, statementService)
-    }
 
     @Test
     @DisplayName("Given several predicates, when fetching all predicates without descriptions, then status is 200 OK and predicates are returned")

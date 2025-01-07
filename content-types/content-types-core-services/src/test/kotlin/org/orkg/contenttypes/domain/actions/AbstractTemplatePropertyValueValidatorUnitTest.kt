@@ -3,18 +3,15 @@ package org.orkg.contenttypes.domain.actions
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
@@ -50,21 +47,11 @@ import org.orkg.graph.testing.fixtures.createResource
 @Suppress("HttpUrlsUsage")
 private const val ORKG_CLASS_NS = "http://orkg.org/orkg/class/"
 
-internal class AbstractTemplatePropertyValueValidatorUnitTest {
+internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     private val classHierarchyRepository: ClassHierarchyRepository = mockk()
 
     private val abstractTemplatePropertyValueValidator =
         AbstractTemplatePropertyValueValidator(classHierarchyRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(classHierarchyRepository)
-    }
 
     /*
      * Test cardinality validation

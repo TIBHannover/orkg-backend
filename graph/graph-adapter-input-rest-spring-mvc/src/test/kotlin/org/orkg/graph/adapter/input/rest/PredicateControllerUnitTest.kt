@@ -265,5 +265,7 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
             .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/predicates"))
+
+        verify(exactly = 1) { predicateService.findAll(any()) }
     }
 }

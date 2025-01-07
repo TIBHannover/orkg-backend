@@ -1,17 +1,14 @@
 package org.orkg.contenttypes.domain
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
 import org.orkg.contenttypes.output.ResearchFieldRepository
 import org.orkg.graph.domain.Classes
@@ -21,20 +18,10 @@ import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 
-internal class ResearchFieldHierarchyServiceUnitTest {
+internal class ResearchFieldHierarchyServiceUnitTest : MockkBaseTest {
     private val repository: ResearchFieldHierarchyRepository = mockk()
     private val researchFieldRepository: ResearchFieldRepository = mockk()
     private val service = ResearchFieldHierarchyService(repository, researchFieldRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(repository, researchFieldRepository)
-    }
 
     @Test
     fun `given a research field id, when searching for its subfields, when the research field is not found, then an exception is thrown`() {

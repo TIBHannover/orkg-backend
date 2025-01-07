@@ -2,17 +2,14 @@ package org.orkg.contenttypes.domain.actions.comparisons
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.PublishComparisonState
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishComparisonCommand
@@ -22,21 +19,11 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-internal class ComparisonVersionHistoryUpdaterUnitTest {
+internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
 
     private val comparisonVersionHistoryUpdater = ComparisonVersionHistoryUpdater(statementService, resourceService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementService, resourceService)
-    }
 
     @Test
     fun `Given a comparison publish command, it crates a new previous version statement and updates the previous version comparison class labels`() {

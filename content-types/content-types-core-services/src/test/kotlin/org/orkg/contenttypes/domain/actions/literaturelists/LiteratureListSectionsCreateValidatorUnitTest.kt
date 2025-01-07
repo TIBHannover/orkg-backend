@@ -2,33 +2,20 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListCommand
 
-internal class LiteratureListSectionsCreateValidatorUnitTest {
+internal class LiteratureListSectionsCreateValidatorUnitTest : MockkBaseTest {
     private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator = mockk()
 
     private val literatureListSectionsCreateValidator = LiteratureListSectionsCreateValidator(abstractLiteratureListSectionValidator)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractLiteratureListSectionValidator)
-    }
 
     @Test
     fun `Given a literature list create command, when no literature list sections are defined, it does nothing`() {

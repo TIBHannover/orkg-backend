@@ -3,18 +3,15 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ContentTypeSubgraph
 import org.orkg.contenttypes.domain.LiteratureList
 import org.orkg.contenttypes.domain.LiteratureListNotFound
@@ -26,22 +23,12 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class AbstractLiteratureListExistenceValidatorUnitTest {
+internal class AbstractLiteratureListExistenceValidatorUnitTest : MockkBaseTest {
     private val literatureListService: LiteratureListService = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
     private val abstractLiteratureListExistenceValidator =
         AbstractLiteratureListExistenceValidator(literatureListService, resourceRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(literatureListService, resourceRepository)
-    }
 
     @Test
     fun `Given a literature list id, when checking for literature list existence, it returns success`() {

@@ -2,17 +2,14 @@ package org.orkg.contenttypes.domain.actions.papers
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
@@ -24,20 +21,10 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class PaperMentioningsUpdaterUnitTest {
+internal class PaperMentioningsUpdaterUnitTest : MockkBaseTest {
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
 
     private val paperMentioningsUpdater = PaperMentioningsUpdater(statementCollectionPropertyUpdater)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementCollectionPropertyUpdater)
-    }
 
     @Test
     fun `Given a paper update command, when mentionings are not set, it does nothing`() {

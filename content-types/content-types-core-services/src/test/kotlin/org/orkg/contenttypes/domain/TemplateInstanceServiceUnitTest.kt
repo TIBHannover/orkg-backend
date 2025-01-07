@@ -3,17 +3,14 @@ package org.orkg.contenttypes.domain
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.testing.fixtures.createNestedTemplateInstance
 import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
@@ -39,7 +36,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-internal class TemplateInstanceServiceUnitTest {
+internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val templateService: TemplateUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
@@ -67,29 +64,6 @@ internal class TemplateInstanceServiceUnitTest {
         classRepository = classRepository,
         classHierarchyRepository = classHierarchyRepository
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            resourceRepository,
-            templateService,
-            statementService,
-            thingRepository,
-            classService,
-            resourceService,
-            literalService,
-            predicateService,
-            listService,
-            statementRepository,
-            classRepository,
-            classHierarchyRepository
-        )
-    }
 
     @Test
     fun `Given a template instance, when fetching it by id, then it is returned`() {

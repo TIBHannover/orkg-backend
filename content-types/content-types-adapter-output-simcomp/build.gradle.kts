@@ -47,6 +47,7 @@ testing {
                 implementation(project(":common:serialization"))
                 implementation(project(":content-types:content-types-adapter-output-simcomp"))
                 implementation(testFixtures(project(":common:spring-webmvc")))
+                implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
             }

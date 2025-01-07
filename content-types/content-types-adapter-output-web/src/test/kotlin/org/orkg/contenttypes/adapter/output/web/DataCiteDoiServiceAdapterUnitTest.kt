@@ -7,8 +7,6 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -22,17 +20,16 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.exceptions.ServiceUnavailable
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.testing.fixtures.dummyRegisterDoiCommand
 import org.springframework.http.MediaType
 
-internal class DataCiteDoiServiceAdapterUnitTest {
+internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
     private val dataciteConfiguration: DataCiteConfiguration = mockk()
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper().registerKotlinModule()
@@ -40,16 +37,6 @@ internal class DataCiteDoiServiceAdapterUnitTest {
     private val staticClock = Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
     private val adapter =
         DataCiteDoiServiceAdapter(dataciteConfiguration, objectMapper, httpClient, ::TestBodyPublisher, staticClock)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(dataciteConfiguration, httpClient)
-    }
 
     @Test
     fun `Creating a doi, returns success`() {
@@ -97,8 +84,6 @@ internal class DataCiteDoiServiceAdapterUnitTest {
             )
         }
         verify(exactly = 1) { response.statusCode() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -132,8 +117,6 @@ internal class DataCiteDoiServiceAdapterUnitTest {
         verify(exactly = 1) { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) }
         verify(exactly = 2) { response.statusCode() }
         verify(exactly = 1) { response.body() }
-
-        confirmVerified(response)
     }
 }
 

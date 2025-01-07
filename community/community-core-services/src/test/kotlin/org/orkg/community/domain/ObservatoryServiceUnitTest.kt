@@ -2,22 +2,19 @@ package org.orkg.community.domain
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.input.CreateObservatoryUseCase.CreateCommand
 import org.orkg.community.input.UpdateObservatoryUseCase.UpdateCommand
 import org.orkg.community.output.ObservatoryRepository
@@ -32,23 +29,13 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 
-internal class ObservatoryServiceUnitTest {
+internal class ObservatoryServiceUnitTest : MockkBaseTest {
 
     private val repository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
     private val service = ObservatoryService(repository, organizationRepository, resourceRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(repository, organizationRepository, resourceRepository)
-    }
 
     @Test
     fun `Find an observatory by name after creating it`() {

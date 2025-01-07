@@ -3,16 +3,13 @@ package org.orkg.contenttypes.domain.actions.rosettastone.templates
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ContentTypeSubgraph
 import org.orkg.contenttypes.domain.RosettaStoneTemplate
 import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
@@ -25,22 +22,12 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class RosettaStoneTemplateExistenceValidatorUnitTest {
+internal class RosettaStoneTemplateExistenceValidatorUnitTest : MockkBaseTest {
     private val rosettaStoneTemplateService: RosettaStoneTemplateService = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
     private val rosettaStoneTemplateExistenceValidator =
         RosettaStoneTemplateExistenceValidator(rosettaStoneTemplateService, resourceRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(rosettaStoneTemplateService, resourceRepository)
-    }
 
     @Test
     fun `Given a rosetta stone template update command, when checking for rosetta stone template existence, it returns success`() {

@@ -1,20 +1,17 @@
 package org.orkg.graph.domain
 
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.time.OffsetDateTime
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
@@ -23,20 +20,10 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
 import org.orkg.testing.fixedClock
 
-internal class ClassServiceUnitTest {
+internal class ClassServiceUnitTest : MockkBaseTest {
 
     private val repository: ClassRepository = mockk()
     private val service = ClassService(repository, fixedClock)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(repository)
-    }
 
     @Test
     fun `given a class is created, when no id is given, then it gets an id from the repository`() {

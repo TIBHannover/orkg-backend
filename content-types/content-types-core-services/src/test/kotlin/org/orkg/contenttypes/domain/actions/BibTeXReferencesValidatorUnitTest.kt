@@ -1,8 +1,6 @@
 package org.orkg.contenttypes.domain.actions
 
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -11,29 +9,18 @@ import java.io.StringWriter
 import org.jbibtex.BibTeXDatabase
 import org.jbibtex.BibTeXParser
 import org.jbibtex.ParseException
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.InvalidBibTeXReference
 
 private const val reference1 = "@misc{R50008,\ttitle = {Data integration and disintegration: Managing {Springer} {Nature} {SciGraph} with {SHACL} and {OWL}},}"
 private const val reference2 = "@misc{R50006,\ttitle = {Papers with code},}"
 
-internal class BibTeXReferencesValidatorUnitTest {
+internal class BibTeXReferencesValidatorUnitTest : MockkBaseTest {
     private val parser: BibTeXParser = mockk()
 
     private val bibTeXReferencesValidator = BibTeXReferencesValidator<List<String>?, List<String>>({ it }, { it }, parser)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(parser)
-    }
 
     @Test
     fun `Given a list of bibtex references, when validating, it returns success`() {

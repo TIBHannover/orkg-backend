@@ -2,19 +2,16 @@ package org.orkg.contenttypes.domain.actions.templates.properties
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.NumberLiteralTemplateProperty
 import org.orkg.contenttypes.domain.OtherLiteralTemplateProperty
 import org.orkg.contenttypes.domain.ResourceTemplateProperty
@@ -35,20 +32,10 @@ import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateStringLit
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class TemplatePropertyUpdaterUnitTest {
+internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyUpdater: AbstractTemplatePropertyUpdater = mockk()
 
     private val templatePropertyUpdater = TemplatePropertyUpdater(abstractTemplatePropertyUpdater)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractTemplatePropertyUpdater)
-    }
 
     //
     // Untyped property

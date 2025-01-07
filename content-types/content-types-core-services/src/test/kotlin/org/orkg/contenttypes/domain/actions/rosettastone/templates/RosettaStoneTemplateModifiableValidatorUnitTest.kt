@@ -3,15 +3,12 @@ package org.orkg.contenttypes.domain.actions.rosettastone.templates
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.RosettaStoneTemplateNotModifiable
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
@@ -20,21 +17,11 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTempl
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.testing.pageOf
 
-internal class RosettaStoneTemplateModifiableValidatorUnitTest {
+internal class RosettaStoneTemplateModifiableValidatorUnitTest : MockkBaseTest {
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository = mockk()
 
     private val rosettaStoneTemplateModifiableValidator =
         RosettaStoneTemplateModifiableValidator(rosettaStoneStatementRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(rosettaStoneStatementRepository)
-    }
 
     @Test
     fun `Given a rosetta stone template update command, when rosetta stone template is modifiable and template is used in a rosetta stone statement, it returns success`() {

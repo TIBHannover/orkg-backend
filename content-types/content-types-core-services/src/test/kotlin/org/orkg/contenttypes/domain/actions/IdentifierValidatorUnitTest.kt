@@ -1,16 +1,13 @@
 package org.orkg.contenttypes.domain.actions
 
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.identifiers.InvalidIdentifier
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -22,20 +19,10 @@ import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 
-internal class IdentifierValidatorUnitTest {
+internal class IdentifierValidatorUnitTest : MockkBaseTest {
     private val statementRepository: StatementRepository = mockk()
 
     private val identifierCreateValidator = object : IdentifierValidator(statementRepository) {}
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementRepository)
-    }
 
     @Test
     fun `Given a map of identifiers, when searching for existing resources, it returns success`() {

@@ -2,17 +2,14 @@ package org.orkg.contenttypes.domain.actions.templates
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.TemplateRelations
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
@@ -28,21 +25,11 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class TemplateRelationsUpdateValidatorUnitTest {
+internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val predicateRepository: PredicateRepository = mockk()
 
     private val templateRelationsUpdateValidator = TemplateRelationsUpdateValidator(resourceRepository, predicateRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(resourceRepository, predicateRepository)
-    }
 
     @Test
     fun `Given a template update command, when validating its relations, it returns success`() {

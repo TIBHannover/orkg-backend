@@ -2,16 +2,13 @@ package org.orkg.contenttypes.domain.actions.contributions
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperNotModifiable
 import org.orkg.contenttypes.domain.actions.ContributionState
@@ -22,7 +19,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class ContributionPaperValidatorUnitTest {
+internal class ContributionPaperValidatorUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val resourceService: ResourceUseCases = mockk()
@@ -30,16 +27,6 @@ internal class ContributionPaperValidatorUnitTest {
     private val contributionPaperValidator = ContributionPaperValidator(
         resourceRepository = resourceRepository
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(resourceRepository, statementRepository, resourceService)
-    }
 
     @Test
     fun `Given a contribution create command, when searching for existing papers, it returns success`() {

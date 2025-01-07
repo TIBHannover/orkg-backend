@@ -2,20 +2,17 @@ package org.orkg.contenttypes.domain.actions.templates.properties
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.verify
 import java.util.*
 import java.util.stream.Stream
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ContentTypeSubgraph
 import org.orkg.contenttypes.domain.Template
 import org.orkg.contenttypes.domain.TemplateNotFound
@@ -33,21 +30,11 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class TemplatePropertyExistenceUpdateValidatorUnitTest {
+internal class TemplatePropertyExistenceUpdateValidatorUnitTest : MockkBaseTest {
     private val templateService: TemplateService = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
     private val templatePropertyExistenceUpdateValidator = TemplatePropertyExistenceUpdateValidator(templateService, resourceRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(templateService, resourceRepository)
-    }
 
     @ParameterizedTest
     @MethodSource("updateTemplatePropertyCommands")

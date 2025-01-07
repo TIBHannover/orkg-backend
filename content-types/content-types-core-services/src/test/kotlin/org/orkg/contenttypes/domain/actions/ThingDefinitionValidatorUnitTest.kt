@@ -1,20 +1,17 @@
 package org.orkg.contenttypes.domain.actions
 
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.Either
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.input.ClassDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
@@ -40,21 +37,11 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createResource
 
 @Nested
-internal class ThingDefinitionValidatorUnitTest {
+internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
     private val thingRepository: ThingRepository = mockk()
     private val classRepository: ClassRepository = mockk()
 
     private val thingDefinitionValidator = object : ThingDefinitionValidator(thingRepository, classRepository) {}
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(thingRepository, classRepository)
-    }
 
     @Test
     fun `Given paper contents, when valid, it returns success`() {

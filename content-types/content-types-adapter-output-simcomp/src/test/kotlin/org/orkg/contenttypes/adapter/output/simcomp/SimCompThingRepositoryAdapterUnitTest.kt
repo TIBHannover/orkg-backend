@@ -6,8 +6,6 @@ import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -19,8 +17,6 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -28,6 +24,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.contenttypes.adapter.output.simcomp.internal.SimCompThingRepositoryAdapter
 import org.orkg.contenttypes.adapter.output.simcomp.internal.ThingAddRequest
@@ -47,7 +44,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class SimCompThingRepositoryAdapterUnitTest {
+internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
     private val simCompHostUrl = "https://example.org/simcomp"
     private val simCompApiKey = "TEST_API_KEY"
     private val httpClient: HttpClient = mockk()
@@ -57,16 +54,6 @@ internal class SimCompThingRepositoryAdapterUnitTest {
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
     private val adapter =
         SimCompThingRepositoryAdapter(objectMapper, httpClient, ::TestBodyPublisher, simCompHostUrl, simCompApiKey)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(httpClient)
-    }
 
     @Test
     fun `Given a thing id, when fetching list contents, it returns the list`() {
@@ -158,8 +145,6 @@ internal class SimCompThingRepositoryAdapterUnitTest {
         }
         verify(exactly = 1) { response.statusCode() }
         verify(exactly = 1) { response.body() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -180,8 +165,6 @@ internal class SimCompThingRepositoryAdapterUnitTest {
             }, any<HttpResponse.BodyHandler<String>>())
         }
         verify { response.statusCode() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -206,8 +189,6 @@ internal class SimCompThingRepositoryAdapterUnitTest {
         }
         verify { response.statusCode() }
         verify { response.body() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -226,8 +207,6 @@ internal class SimCompThingRepositoryAdapterUnitTest {
         }
 
         verify(exactly = 1) { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -264,8 +243,6 @@ internal class SimCompThingRepositoryAdapterUnitTest {
             }, any<HttpResponse.BodyHandler<String>>())
         }
         verify { response.statusCode() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -299,8 +276,6 @@ internal class SimCompThingRepositoryAdapterUnitTest {
         }
         verify { response.statusCode() }
         verify { response.body() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -327,8 +302,6 @@ internal class SimCompThingRepositoryAdapterUnitTest {
         }
 
         verify(exactly = 1) { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -363,8 +336,6 @@ internal class SimCompThingRepositoryAdapterUnitTest {
             }, any<HttpResponse.BodyHandler<String>>())
         }
         verify { response.statusCode() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -395,8 +366,6 @@ internal class SimCompThingRepositoryAdapterUnitTest {
         }
         verify { response.statusCode() }
         verify { response.body() }
-
-        confirmVerified(response)
     }
 
     @Test
@@ -420,8 +389,6 @@ internal class SimCompThingRepositoryAdapterUnitTest {
         }
 
         verify(exactly = 1) { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) }
-
-        confirmVerified(response)
     }
 }
 

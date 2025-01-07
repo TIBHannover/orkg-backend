@@ -38,6 +38,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             dependencies {
                 implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
+                implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.junit.jupiter:junit-jupiter-api")

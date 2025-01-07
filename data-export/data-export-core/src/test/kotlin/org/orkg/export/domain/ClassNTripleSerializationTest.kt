@@ -2,16 +2,18 @@ package org.orkg.export.domain
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.io.StringWriter
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.testing.fixtures.createClass
 
 @Suppress("HttpUrlsUsage")
-internal class ClassNTripleSerializationTest {
+internal class ClassNTripleSerializationTest : MockkBaseTest {
     private val classHierarchyRepository: ClassHierarchyRepository = mockk()
 
     @Test
@@ -29,6 +31,8 @@ internal class ClassNTripleSerializationTest {
         `class`.toNTriple(writer, classHierarchyRepository)
 
         assertThat(writer.toString()).isEqualTo(expectedOutput)
+
+        verify(exactly = 1) { classHierarchyRepository.findParent(`class`.id) }
     }
 
     @Test
@@ -47,6 +51,8 @@ internal class ClassNTripleSerializationTest {
         `class`.toNTriple(writer, classHierarchyRepository)
 
         assertThat(writer.toString()).isEqualTo(expectedOutput)
+
+        verify(exactly = 1) { classHierarchyRepository.findParent(`class`.id) }
     }
 
     @Test
@@ -67,5 +73,7 @@ internal class ClassNTripleSerializationTest {
         `class`.toNTriple(writer, classHierarchyRepository)
 
         assertThat(writer.toString()).isEqualTo(expectedOutput)
+
+        verify(exactly = 1) { classHierarchyRepository.findParent(`class`.id) }
     }
 }

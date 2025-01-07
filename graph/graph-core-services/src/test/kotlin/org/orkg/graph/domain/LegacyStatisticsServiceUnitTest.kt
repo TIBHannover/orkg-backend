@@ -1,16 +1,13 @@
 package org.orkg.graph.domain
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -19,7 +16,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.fixedClock
 
-internal class LegacyStatisticsServiceUnitTest {
+internal class LegacyStatisticsServiceUnitTest : MockkBaseTest {
 
     private val legacyStatisticsRepository: LegacyStatisticsRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
@@ -35,22 +32,6 @@ internal class LegacyStatisticsServiceUnitTest {
         resourceRepository,
         fixedClock,
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            legacyStatisticsRepository,
-            contributorRepository,
-            observatoryRepository,
-            organizationRepository,
-            resourceRepository
-        )
-    }
 
     @Test
     fun `given a research field id, when fetching the research field stats, it returns success`() {

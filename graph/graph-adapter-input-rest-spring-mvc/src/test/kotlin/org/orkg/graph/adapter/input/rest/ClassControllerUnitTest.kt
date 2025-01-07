@@ -150,6 +150,8 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/classes"))
+
+        verify(exactly = 1) { classService.findAll(any()) }
     }
 
     @Nested
@@ -173,6 +175,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.uri").value("https://example.org/exists"))
 
+            verify(exactly = 1) { classService.findByURI(any()) }
             verify(exactly = 1) {
                 statementService.findAll(
                     pageable = PageRequests.SINGLE,
@@ -200,6 +203,8 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.path").value("/api/classes"))
+
+            verify(exactly = 1) { classService.findByURI(any()) }
         }
     }
 

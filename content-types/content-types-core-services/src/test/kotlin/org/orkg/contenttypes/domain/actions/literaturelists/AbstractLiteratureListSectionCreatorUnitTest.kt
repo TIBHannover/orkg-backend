@@ -1,18 +1,15 @@
 package org.orkg.contenttypes.domain.actions.literaturelists
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.input.LiteratureListListSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyLiteratureListListSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyLiteratureListTextSectionDefinition
@@ -25,23 +22,13 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 
-internal class AbstractLiteratureListSectionCreatorUnitTest {
+internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
     private val abstractLiteratureListSectionCreator =
         AbstractLiteratureListSectionCreator(statementService, resourceService, literalService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementService, resourceService, literalService)
-    }
 
     @Test
     fun `Given a list section definition, when creating a section entry with a description, it returns success`() {

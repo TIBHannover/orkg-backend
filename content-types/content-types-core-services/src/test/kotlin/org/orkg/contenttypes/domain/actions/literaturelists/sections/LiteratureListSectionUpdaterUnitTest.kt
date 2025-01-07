@@ -1,19 +1,16 @@
 package org.orkg.contenttypes.domain.actions.literaturelists.sections
 
 import io.kotest.matchers.types.shouldBeInstanceOf
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListSection
 import org.orkg.contenttypes.domain.LiteratureListTextSection
@@ -28,20 +25,10 @@ import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase.UpdateList
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.toDefinitionEntry
 
-internal class LiteratureListSectionUpdaterUnitTest {
+internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
     private val abstractLiteratureListSectionUpdater: AbstractLiteratureListSectionUpdater = mockk()
 
     private val literatureListSectionUpdateValidator = LiteratureListSectionUpdater(abstractLiteratureListSectionUpdater)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractLiteratureListSectionUpdater)
-    }
 
     @Test
     fun `Given a text section update command, when contents are equal, it does nothing`() {

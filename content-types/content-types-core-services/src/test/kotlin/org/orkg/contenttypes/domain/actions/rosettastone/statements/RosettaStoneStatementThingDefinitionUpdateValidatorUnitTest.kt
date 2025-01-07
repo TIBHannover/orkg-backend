@@ -2,35 +2,22 @@ package org.orkg.contenttypes.domain.actions.rosettastone.statements
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.Either
-import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.ThingDefinitionValidator
+import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneStatementCommand
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class RosettaStoneStatementThingDefinitionUpdateValidatorUnitTest {
+internal class RosettaStoneStatementThingDefinitionUpdateValidatorUnitTest : MockkBaseTest {
     private val thingDefinitionValidator: ThingDefinitionValidator = mockk()
 
     private val stoneStatementThingDefinitionUpdateValidator = RosettaStoneStatementThingDefinitionUpdateValidator(thingDefinitionValidator)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(thingDefinitionValidator)
-    }
 
     @Test
     fun `Given a rosetta stone statement update command, when validating its thing definitions, it returns success`() {

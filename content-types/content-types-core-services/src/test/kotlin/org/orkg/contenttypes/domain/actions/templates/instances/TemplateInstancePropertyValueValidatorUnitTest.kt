@@ -3,18 +3,15 @@ package org.orkg.contenttypes.domain.actions.templates.instances
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValueValidator
 import org.orkg.contenttypes.domain.actions.BakedStatement
@@ -32,7 +29,7 @@ import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class TemplateInstancePropertyValueValidatorUnitTest {
+internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
     private val thingRepository: ThingRepository = mockk()
     private val classRepository: ClassRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
@@ -41,16 +38,6 @@ internal class TemplateInstancePropertyValueValidatorUnitTest {
     private val templateInstancePropertyValueValidator = TemplateInstancePropertyValueValidator(
         thingRepository, classRepository, statementRepository, abstractTemplatePropertyValueValidator
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(thingRepository, classRepository, statementRepository, abstractTemplatePropertyValueValidator)
-    }
 
     @Test
     fun `Given a template instance update command, when validating its properties, it returns success`() {

@@ -77,6 +77,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(status().isOk)
 
         verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
+        verify(exactly = 1) { resourceUseCases.findById(any()) }
     }
 
     @Test
@@ -90,6 +91,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.path").value("/api/observatories/$id"))
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
+
+        verify(exactly = 1) { observatoryUseCases.findById(id) }
     }
 
     @Test
@@ -97,8 +100,6 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
     fun `Creating the observatory without existing organization, status must be 404`() {
         val organizationId = OrganizationId(UUID.randomUUID())
 
-        every { observatoryUseCases.findByName(any()) } returns Optional.empty()
-        every { observatoryUseCases.findByDisplayId(any()) } returns Optional.empty()
         every { observatoryUseCases.create(any()) } throws OrganizationNotFound(organizationId)
 
         val body = ObservatoryController.CreateObservatoryRequest(
@@ -120,6 +121,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.path").value("/api/observatories"))
             .andExpect(jsonPath("$.message").value(OrganizationNotFound(organizationId).message))
+
+        verify(exactly = 1) { observatoryUseCases.create(any()) }
     }
 
     @Test
@@ -134,6 +137,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(status().isOk)
 
         verify(exactly = 1) { observatoryUseCases.findByDisplayId(observatory.displayId) }
+        verify(exactly = 1) { resourceUseCases.findById(any()) }
     }
 
     @Test
@@ -146,6 +150,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.path").value("/api/observatories/IncorrectId"))
             .andExpect(jsonPath("$.message").value(ObservatoryURLNotFound(wrongId).message))
+
+        verify(exactly = 1) { observatoryUseCases.findByDisplayId(wrongId) }
     }
 
     @Test
@@ -163,6 +169,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(status().isOk)
 
         verify(exactly = 1) { observatoryUseCases.findAll(any()) }
+        verify(exactly = 2) { resourceUseCases.findById(any()) }
     }
 
     @Test
@@ -178,6 +185,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(status().isOk)
 
         verify(exactly = 1) { observatoryUseCases.findAllByNameContains("Label", any()) }
+        verify(exactly = 1) { resourceUseCases.findById(any()) }
     }
 
     @Test
@@ -206,6 +214,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(status().isOk)
 
         verify(exactly = 1) { observatoryUseCases.findAllByResearchField(observatory1.researchField!!, any()) }
+        verify(exactly = 2) { resourceUseCases.findById(any()) }
     }
 
     @Test
@@ -228,6 +237,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         )
             .andExpect(status().isOk)
 
+        verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
+        verify(exactly = 1) { observatoryUseCases.changeName(observatory.id, updatedName) }
+        verify(exactly = 1) { resourceUseCases.findById(any()) }
+
         mockMvc.perform(
             post("/api/observatories/{id}/name", observatory.id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -235,6 +248,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
                 .content(objectMapper.writeValueAsString(body))
         )
             .andExpect(status().isOk)
+
+        verify(exactly = 2) { observatoryUseCases.findById(observatory.id) }
+        verify(exactly = 2) { observatoryUseCases.changeName(observatory.id, updatedName) }
+        verify(exactly = 2) { resourceUseCases.findById(any()) }
     }
 
     @Test
@@ -244,9 +261,6 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         val observatoryId = observatory.id
         val updatedName = ""
         val body = ObservatoryController.UpdateRequest(updatedName)
-
-        every { observatoryUseCases.findById(observatoryId) } returns Optional.of(observatory)
-        every { observatoryUseCases.changeName(observatoryId, updatedName) } just runs
 
         mockMvc.perform(
             put("/api/observatories/{id}/name", observatoryId)
@@ -289,6 +303,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
             .andExpect(jsonPath("$.path").value("/api/observatories/$id/name"))
 
+        verify(exactly = 1) { observatoryUseCases.changeName(id, updatedName) }
+
         mockMvc.perform(
             post("/api/observatories/{id}/name", id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -299,6 +315,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
             .andExpect(jsonPath("$.path").value("/api/observatories/$id/name"))
+
+        verify(exactly = 2) { observatoryUseCases.changeName(id, updatedName) }
     }
 
     @Test
@@ -322,6 +340,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         )
             .andExpect(status().isOk)
 
+        verify(exactly = 1) { observatoryUseCases.findById(id) }
+        verify(exactly = 1) { observatoryUseCases.changeDescription(id, updatedDescription) }
+        verify(exactly = 1) { resourceUseCases.findById(any()) }
+
         mockMvc.perform(
             post("/api/observatories/{id}/description", id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -329,6 +351,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
                 .content(objectMapper.writeValueAsString(body))
         )
             .andExpect(status().isOk)
+
+        verify(exactly = 2) { observatoryUseCases.findById(id) }
+        verify(exactly = 2) { observatoryUseCases.changeDescription(id, updatedDescription) }
+        verify(exactly = 2) { resourceUseCases.findById(any()) }
     }
 
     @Test
@@ -352,6 +378,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         )
             .andExpect(status().isOk)
 
+        verify(exactly = 1) { observatoryUseCases.findById(id) }
+        verify(exactly = 1) { observatoryUseCases.addOrganization(id, updatedOrganizationId) }
+        verify(exactly = 1) { resourceUseCases.findById(any()) }
+
         mockMvc.perform(
             post("/api/observatories/add/{id}/organization", id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -359,6 +389,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
                 .content(objectMapper.writeValueAsString(body))
         )
             .andExpect(status().isOk)
+
+        verify(exactly = 2) { observatoryUseCases.findById(id) }
+        verify(exactly = 2) { observatoryUseCases.addOrganization(id, updatedOrganizationId) }
+        verify(exactly = 2) { resourceUseCases.findById(any()) }
     }
 
     @Test
@@ -381,6 +415,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.path").value("/api/observatories/add/$id/organization"))
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
 
+        verify(exactly = 1) { observatoryUseCases.addOrganization(id, updatedOrganizationId) }
+
         mockMvc.perform(
             post("/api/observatories/add/{id}/organization", id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -391,6 +427,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.path").value("/api/observatories/add/$id/organization"))
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
+
+        verify(exactly = 2) { observatoryUseCases.addOrganization(id, updatedOrganizationId) }
     }
 
     @Test
@@ -402,7 +440,6 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         val organizationId = OrganizationId(UUID.randomUUID())
         val body = ObservatoryController.UpdateOrganizationRequest(organizationId)
 
-        every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every {
             observatoryUseCases.addOrganization(observatory.id, organizationId)
         } throws OrganizationNotFound(organizationId)
@@ -418,6 +455,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.path").value("/api/observatories/add/${observatory.id}/organization"))
             .andExpect(jsonPath("$.message").value(OrganizationNotFound(organizationId).message))
 
+        verify(exactly = 1) { observatoryUseCases.addOrganization(observatory.id, organizationId) }
+
         mockMvc.perform(
             post("/api/observatories/add/{id}/organization", observatory.id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -428,6 +467,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.path").value("/api/observatories/add/${observatory.id}/organization"))
             .andExpect(jsonPath("$.message").value(OrganizationNotFound(organizationId).message))
+
+        verify(exactly = 2) { observatoryUseCases.addOrganization(observatory.id, organizationId) }
     }
 
     @Test
@@ -450,6 +491,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
             .andExpect(jsonPath("$.path").value("/api/observatories/$id/description"))
 
+        verify(exactly = 1) { observatoryUseCases.changeDescription(id, updatedDescription) }
+
         mockMvc.perform(
             post("/api/observatories/{id}/description", id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -460,6 +503,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
             .andExpect(jsonPath("$.path").value("/api/observatories/$id/description"))
+
+        verify(exactly = 2) { observatoryUseCases.changeDescription(id, updatedDescription) }
     }
 
     @Test
@@ -469,9 +514,6 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         val id = observatory.id
         val updatedDescription = ""
         val body = ObservatoryController.UpdateRequest(updatedDescription)
-
-        every { observatoryUseCases.findById(id) } returns Optional.of(observatory)
-        every { observatoryUseCases.changeDescription(id, updatedDescription) } just runs
 
         mockMvc.perform(
             put("/api/observatories/{id}/description", id)
@@ -516,6 +558,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         )
             .andExpect(status().isOk)
 
+        verify(exactly = 1) { observatoryUseCases.findById(id) }
+        verify(exactly = 1) { observatoryUseCases.changeResearchField(id, newResearchField) }
+        verify(exactly = 1) { resourceUseCases.findById(any()) }
+
         mockMvc.perform(
             post("/api/observatories/{id}/research_field", id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -523,6 +569,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
                 .content(objectMapper.writeValueAsString(body))
         )
             .andExpect(status().isOk)
+
+        verify(exactly = 2) { observatoryUseCases.findById(id) }
+        verify(exactly = 2) { observatoryUseCases.changeResearchField(id, newResearchField) }
+        verify(exactly = 2) { resourceUseCases.findById(any()) }
     }
 
     @Test
@@ -572,6 +622,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
             .andExpect(jsonPath("$.path").value("/api/observatories/$id/research_field"))
 
+        verify(exactly = 1) { observatoryUseCases.changeResearchField(id, researchFieldId) }
+
         mockMvc.perform(
             post("/api/observatories/{id}/research_field", id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -582,6 +634,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
             .andExpect(jsonPath("$.path").value("/api/observatories/$id/research_field"))
+
+        verify(exactly = 2) { observatoryUseCases.changeResearchField(id, researchFieldId) }
     }
 
     @Test
@@ -605,6 +659,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         )
             .andExpect(status().isOk)
 
+        verify(exactly = 1) { observatoryUseCases.findById(id) }
+        verify(exactly = 1) { observatoryUseCases.deleteOrganization(id, organizationId) }
+        verify(exactly = 1) { resourceUseCases.findById(any()) }
+
         mockMvc.perform(
             post("/api/observatories/delete/{id}/organization", id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -612,6 +670,10 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
                 .content(objectMapper.writeValueAsString(body))
         )
             .andExpect(status().isOk)
+
+        verify(exactly = 2) { observatoryUseCases.findById(id) }
+        verify(exactly = 2) { observatoryUseCases.deleteOrganization(id, organizationId) }
+        verify(exactly = 2) { resourceUseCases.findById(any()) }
     }
 
     @Test
@@ -644,6 +706,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
             .andExpect(jsonPath("$.path").value("/api/observatories/delete/$id/organization"))
+
+        verify(exactly = 2) { observatoryUseCases.deleteOrganization(id, organizationId) }
     }
 
     @Test
@@ -656,7 +720,6 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
         // deleting non-existing organization
         val body = ObservatoryController.UpdateOrganizationRequest(organizationId)
 
-        every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { observatoryUseCases.deleteOrganization(observatory.id, organizationId) } throws OrganizationNotFound(organizationId)
 
         mockMvc.perform(
@@ -670,6 +733,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.message").value(OrganizationNotFound(organizationId).message))
             .andExpect(jsonPath("$.path").value("/api/observatories/delete/${observatory.id}/organization"))
 
+        verify(exactly = 1) { observatoryUseCases.deleteOrganization(observatory.id, organizationId) }
+
         mockMvc.perform(
             post("/api/observatories/delete/{id}/organization", observatory.id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -680,6 +745,8 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.path").value("/api/observatories/delete/${observatory.id}/organization"))
             .andExpect(jsonPath("$.message").value(OrganizationNotFound(organizationId).message))
+
+        verify(exactly = 2) { observatoryUseCases.deleteOrganization(observatory.id, organizationId) }
     }
 
     @Test
@@ -703,6 +770,7 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(jsonPath("$.content[0].label").value(label))
 
         verify(exactly = 1) { observatoryUseCases.findAllResearchFields(any()) }
+        verify(exactly = 1) { resourceUseCases.findById(id) }
     }
 
     @Test

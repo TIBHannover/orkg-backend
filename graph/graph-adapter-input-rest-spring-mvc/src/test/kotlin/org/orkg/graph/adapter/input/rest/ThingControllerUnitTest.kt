@@ -1,14 +1,10 @@
 package org.orkg.graph.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.verify
 import java.time.Clock
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
@@ -46,16 +42,6 @@ internal class ThingControllerUnitTest : RestDocsTest("things") {
 
     @Autowired
     private lateinit var clock: Clock
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(thingService, statementService, formattedLabelService, flags)
-    }
 
     @Test
     fun getSingle() {

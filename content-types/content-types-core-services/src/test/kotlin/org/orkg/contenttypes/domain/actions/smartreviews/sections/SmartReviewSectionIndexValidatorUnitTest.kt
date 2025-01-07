@@ -2,16 +2,13 @@ package org.orkg.contenttypes.domain.actions.smartreviews.sections
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewVisualizationSectionCommand
 import org.orkg.graph.domain.Predicates
@@ -19,21 +16,11 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-internal class SmartReviewSectionIndexValidatorUnitTest {
+internal class SmartReviewSectionIndexValidatorUnitTest : MockkBaseTest {
     private val statementRepository: StatementRepository = mockk()
 
     private val smartReviewSectionIndexValidator =
         SmartReviewSectionIndexValidator(statementRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementRepository)
-    }
 
     @Test
     fun `Given a smart review section create command, when index is not specified, it does not load any statements`() {

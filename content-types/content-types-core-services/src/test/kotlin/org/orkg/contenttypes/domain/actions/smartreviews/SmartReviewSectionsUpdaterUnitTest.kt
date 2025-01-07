@@ -1,16 +1,13 @@
 package org.orkg.contenttypes.domain.actions.smartreviews
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
@@ -23,7 +20,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class SmartReviewSectionsUpdaterUnitTest {
+internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
     private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator = mockk()
     private val abstractSmartReviewSectionDeleter: AbstractSmartReviewSectionDeleter = mockk()
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
@@ -31,20 +28,6 @@ internal class SmartReviewSectionsUpdaterUnitTest {
     private val smartReviewSectionsUpdater = SmartReviewSectionsUpdater(
         abstractSmartReviewSectionCreator, abstractSmartReviewSectionDeleter, statementCollectionPropertyUpdater
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            abstractSmartReviewSectionCreator,
-            abstractSmartReviewSectionDeleter,
-            statementCollectionPropertyUpdater
-        )
-    }
 
     @Test
     fun `Given a smart review update command, when sections are not set, it does nothing`() {

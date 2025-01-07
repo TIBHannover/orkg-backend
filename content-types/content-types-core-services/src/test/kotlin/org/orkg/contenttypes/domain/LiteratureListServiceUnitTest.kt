@@ -4,16 +4,12 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.time.OffsetDateTime
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
@@ -21,6 +17,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.output.LiteratureListPublishedRepository
@@ -45,7 +42,7 @@ import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
-internal class LiteratureListServiceUnitTest {
+internal class LiteratureListServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val literatureListRepository: LiteratureListRepository = mockk()
     private val literatureListPublishedRepository: LiteratureListPublishedRepository = mockk()
@@ -71,28 +68,6 @@ internal class LiteratureListServiceUnitTest {
         listService,
         listRepository
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            resourceRepository,
-            literatureListRepository,
-            literatureListPublishedRepository,
-            statementRepository,
-            observatoryRepository,
-            organizationRepository,
-            resourceService,
-            literalService,
-            statementService,
-            listService,
-            listRepository
-        )
-    }
 
     @Test
     fun `Given an unpublished literature list, when fetching it by id, then it is returned`() {

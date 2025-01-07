@@ -2,19 +2,16 @@ package org.orkg.contenttypes.domain.actions.templates.properties
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.stream.Stream
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.orkg.common.PageRequests
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
@@ -33,20 +30,10 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 
-internal class TemplatePropertyTemplateCreateValidatorUnitTest {
+internal class TemplatePropertyTemplateCreateValidatorUnitTest : MockkBaseTest {
     private val statementRepository: StatementRepository = mockk()
 
     private val templatePropertyTemplateCreateValidator = TemplatePropertyTemplateCreateValidator(statementRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementRepository)
-    }
 
     @ParameterizedTest
     @MethodSource("createTemplatePropertyCommands")

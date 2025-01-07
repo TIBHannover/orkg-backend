@@ -20,7 +20,7 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 
-interface ObservatoryFilterRepositoryContractTests {
+interface ObservatoryFilterRepositoryContracts {
     val repository: ObservatoryFilterRepository
     val observatoryRepository: ObservatoryRepository
     val organizationRepository: OrganizationRepository

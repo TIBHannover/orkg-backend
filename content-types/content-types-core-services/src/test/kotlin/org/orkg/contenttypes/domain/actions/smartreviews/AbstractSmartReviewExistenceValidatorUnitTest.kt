@@ -3,18 +3,15 @@ package org.orkg.contenttypes.domain.actions.smartreviews
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ContentTypeSubgraph
 import org.orkg.contenttypes.domain.SmartReview
 import org.orkg.contenttypes.domain.SmartReviewNotFound
@@ -26,22 +23,12 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class AbstractSmartReviewExistenceValidatorUnitTest {
+internal class AbstractSmartReviewExistenceValidatorUnitTest : MockkBaseTest {
     private val smartReviewService: SmartReviewService = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
     private val abstractSmartReviewExistenceValidator =
         AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(smartReviewService, resourceRepository)
-    }
 
     @Test
     fun `Given a smart review id, when checking for smart review existence, it returns success`() {

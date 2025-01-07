@@ -1,16 +1,13 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.templates
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.InvalidObjectPositionPath
 import org.orkg.contenttypes.domain.InvalidSubjectPositionCardinality
 import org.orkg.contenttypes.domain.InvalidSubjectPositionPath
@@ -27,20 +24,10 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSubjectPositionTe
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateUntypedObjectPositionTemplatePropertyCommand
 import org.orkg.graph.domain.Predicates
 
-internal class AbstractRosettaStoneTemplatePropertiesValidatorUnitTest {
+internal class AbstractRosettaStoneTemplatePropertiesValidatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyValidator: AbstractTemplatePropertyValidator = mockk()
 
     private val abstractRosettaStoneTemplatePropertiesValidator = AbstractRosettaStoneTemplatePropertiesValidator(abstractTemplatePropertyValidator)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractTemplatePropertyValidator)
-    }
 
     @Test
     fun `Given a list of template properties, when validating, it returns success`() {

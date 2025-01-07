@@ -2,16 +2,13 @@ package org.orkg.contenttypes.domain.actions.papers
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.Identifiers
 import org.orkg.contenttypes.domain.actions.IdentifierUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
@@ -19,20 +16,10 @@ import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class PaperIdentifierUpdaterUnitTest {
+internal class PaperIdentifierUpdaterUnitTest : MockkBaseTest {
     private val identifierUpdater: IdentifierUpdater = mockk()
 
     private val paperIdentifierUpdater = PaperIdentifierUpdater(identifierUpdater)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(identifierUpdater)
-    }
 
     @Test
     fun `Given a paper update command, it updates paper identifier`() {

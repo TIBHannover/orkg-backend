@@ -1,15 +1,11 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.verify
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -56,16 +52,6 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
 
     @MockkBean
     private lateinit var contentTypeService: ContentTypeUseCases
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(contentTypeService)
-    }
 
     @Test
     @DisplayName("Given several content types, when they are fetched, then status is 200 OK and content types are returned")

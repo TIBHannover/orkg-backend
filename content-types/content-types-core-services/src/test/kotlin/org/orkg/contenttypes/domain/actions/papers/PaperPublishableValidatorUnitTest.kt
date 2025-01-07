@@ -3,16 +3,13 @@ package org.orkg.contenttypes.domain.actions.papers
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ContentTypeSubgraph
 import org.orkg.contenttypes.domain.Paper
 import org.orkg.contenttypes.domain.PaperNotFound
@@ -26,21 +23,11 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class PaperPublishableValidatorUnitTest {
+internal class PaperPublishableValidatorUnitTest : MockkBaseTest {
     private val paperService: PaperService = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
     private val paperPublishableValidator = PaperPublishableValidator(paperService, resourceRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(paperService, resourceRepository)
-    }
 
     @Test
     fun `Given a paper publish command, when checking for paper existence, it returns success`() {

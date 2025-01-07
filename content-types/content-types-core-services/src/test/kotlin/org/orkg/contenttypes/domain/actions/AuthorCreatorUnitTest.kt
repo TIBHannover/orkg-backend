@@ -1,20 +1,16 @@
 package org.orkg.contenttypes.domain.actions
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.net.URI
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.Author
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
@@ -28,7 +24,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
 
-internal class AuthorCreatorUnitTest {
+internal class AuthorCreatorUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
@@ -36,16 +32,6 @@ internal class AuthorCreatorUnitTest {
 
     private val authorCreator =
         object : AuthorCreator(resourceService, statementService, literalService, listService) {}
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(resourceService, statementService, literalService, listService)
-    }
 
     @Test
     fun `Given a list of authors, when linking an existing author to the subject resource, it returns success`() {

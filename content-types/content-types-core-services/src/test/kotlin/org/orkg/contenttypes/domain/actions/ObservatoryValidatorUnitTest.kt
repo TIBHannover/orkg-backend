@@ -1,35 +1,22 @@
 package org.orkg.contenttypes.domain.actions
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ObservatoryId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.testing.fixtures.createObservatory
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 
-internal class ObservatoryValidatorUnitTest {
+internal class ObservatoryValidatorUnitTest : MockkBaseTest {
     private val observatoryRepository: ObservatoryRepository = mockk()
 
     private val observatoryValidator = ObservatoryValidator<List<ObservatoryId>?, List<ObservatoryId>>(observatoryRepository, { it }, { it })
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(observatoryRepository)
-    }
 
     @Test
     fun `Given a list of observatories, when validating, it returns success`() {

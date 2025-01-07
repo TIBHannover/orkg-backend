@@ -2,44 +2,31 @@ package org.orkg.contenttypes.domain.actions.comparisons
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
 import org.orkg.contenttypes.domain.actions.PublishComparisonState
-import org.orkg.contenttypes.domain.testing.fixtures.createComparisonTable
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonTable
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishComparisonCommand
 import org.orkg.contenttypes.output.ComparisonTableRepository
 
-internal class ComparisonPublishableValidatorUnitTest {
+internal class ComparisonPublishableValidatorUnitTest : MockkBaseTest {
     private val comparisonService: ComparisonUseCases = mockk()
     private val comparisonTableRepository: ComparisonTableRepository = mockk()
 
     private val comparisonPublishableValidator =
         ComparisonPublishableValidator(comparisonService, comparisonTableRepository)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(comparisonService, comparisonTableRepository)
-    }
 
     @Test
     fun `Given a comparison publish command, when comparison is unpublished, it returns success`() {

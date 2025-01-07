@@ -3,35 +3,22 @@ package org.orkg.contenttypes.domain.actions.rosettastone.statements
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneStatementCommand
 
-internal class RosettaStoneStatementExistenceValidatorUnitTest {
+internal class RosettaStoneStatementExistenceValidatorUnitTest : MockkBaseTest {
     private val rosettaStoneStatementService: RosettaStoneStatementUseCases = mockk()
 
     private val rosettaStoneStatementExistenceValidator = RosettaStoneStatementExistenceValidator(rosettaStoneStatementService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(rosettaStoneStatementService)
-    }
 
     @Test
     fun `Given a rosetta stone statement update command, when checking for rosetta stone statement existence, it returns success`() {

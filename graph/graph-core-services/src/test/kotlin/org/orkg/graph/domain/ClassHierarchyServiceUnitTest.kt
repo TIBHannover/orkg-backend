@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
@@ -17,7 +18,7 @@ import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 
-internal class ClassHierarchyServiceUnitTest {
+internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
     private val repository: ClassHierarchyRepository = mockk()
     private val relationRepository: ClassRelationRepository = mockk()
     private val classRepository: ClassRepository = mockk()
@@ -34,6 +35,8 @@ internal class ClassHierarchyServiceUnitTest {
             service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
         }
         assertThat(exception.message).isEqualTo(InvalidSubclassRelation(childId, parentId).message)
+
+        verify(exactly = 1) { classRepository.findById(parentId) }
     }
 
     @Test
@@ -48,6 +51,9 @@ internal class ClassHierarchyServiceUnitTest {
             service.create(ContributorId.UNKNOWN, parentId, setOf(childId), true)
         }
         assertThat(exception.message).isEqualTo(ParentClassAlreadyHasChildren(parentId).message)
+
+        verify(exactly = 1) { classRepository.findById(parentId) }
+        verify(exactly = 1) { repository.existsChildren(parentId) }
     }
 
     @Test
@@ -62,6 +68,9 @@ internal class ClassHierarchyServiceUnitTest {
             service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
         }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(childId).message)
+
+        verify(exactly = 1) { classRepository.findById(parentId) }
+        verify(exactly = 1) { classRepository.findById(childId) }
     }
 
     @Test
@@ -69,13 +78,14 @@ internal class ClassHierarchyServiceUnitTest {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
         every { classRepository.findById(parentId) } returns Optional.empty()
 
         val exception = assertThrows<ClassNotFound> {
             service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
         }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(parentId).message)
+
+        verify(exactly = 1) { classRepository.findById(parentId) }
     }
 
     @Test
@@ -91,6 +101,10 @@ internal class ClassHierarchyServiceUnitTest {
             service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
         }
         assertThat(exception.message).isEqualTo(ParentClassAlreadyExists(childId, parentId).message)
+
+        verify(exactly = 1) { classRepository.findById(childId) }
+        verify(exactly = 1) { classRepository.findById(parentId) }
+        verify(exactly = 1) { repository.findParent(childId) }
     }
 
     @Test
@@ -107,6 +121,11 @@ internal class ClassHierarchyServiceUnitTest {
             service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
         }
         assertThat(exception.message).isEqualTo(InvalidSubclassRelation(childId, parentId).message)
+
+        verify(exactly = 1) { classRepository.findById(childId) }
+        verify(exactly = 1) { classRepository.findById(parentId) }
+        verify(exactly = 1) { repository.findParent(childId) }
+        verify(exactly = 1) { repository.existsChild(childId, parentId) }
     }
 
     @Test
@@ -122,6 +141,10 @@ internal class ClassHierarchyServiceUnitTest {
 
         service.create(ContributorId.UNKNOWN, parentId, setOf(childId), false)
 
+        verify(exactly = 1) { classRepository.findById(childId) }
+        verify(exactly = 1) { classRepository.findById(parentId) }
+        verify(exactly = 1) { repository.findParent(childId) }
+        verify(exactly = 1) { repository.existsChild(childId, parentId) }
         verify(exactly = 1) { relationRepository.saveAll(any()) }
     }
 
@@ -135,6 +158,8 @@ internal class ClassHierarchyServiceUnitTest {
             service.findChildren(childId, PageRequest.of(0, 5))
         }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(childId).message)
+
+        verify(exactly = 1) { classRepository.findById(childId) }
     }
 
     @Test
@@ -147,6 +172,7 @@ internal class ClassHierarchyServiceUnitTest {
 
         service.findChildren(childId, pageable)
 
+        verify(exactly = 1) { classRepository.findById(childId) }
         verify(exactly = 1) { repository.findChildren(childId, pageable) }
     }
 
@@ -160,6 +186,8 @@ internal class ClassHierarchyServiceUnitTest {
             service.findParent(childId)
         }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(childId).message)
+
+        verify(exactly = 1) { classRepository.findById(childId) }
     }
 
     @Test
@@ -171,6 +199,7 @@ internal class ClassHierarchyServiceUnitTest {
 
         service.findParent(childId)
 
+        verify(exactly = 1) { classRepository.findById(childId) }
         verify(exactly = 1) { repository.findParent(childId) }
     }
 
@@ -183,6 +212,7 @@ internal class ClassHierarchyServiceUnitTest {
 
         service.findParent(childId)
 
+        verify(exactly = 1) { classRepository.findById(childId) }
         verify(exactly = 1) { repository.findParent(childId) }
     }
 
@@ -196,6 +226,8 @@ internal class ClassHierarchyServiceUnitTest {
             service.findRoot(childId)
         }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(childId).message)
+
+        verify(exactly = 1) { classRepository.findById(childId) }
     }
 
     @Test
@@ -207,6 +239,7 @@ internal class ClassHierarchyServiceUnitTest {
 
         service.findRoot(childId)
 
+        verify(exactly = 1) { classRepository.findById(childId) }
         verify(exactly = 1) { repository.findRoot(childId) }
     }
 
@@ -219,6 +252,7 @@ internal class ClassHierarchyServiceUnitTest {
 
         service.findRoot(childId)
 
+        verify(exactly = 1) { classRepository.findById(childId) }
         verify(exactly = 1) { repository.findRoot(childId) }
     }
 
@@ -232,6 +266,8 @@ internal class ClassHierarchyServiceUnitTest {
             service.findClassHierarchy(childId, PageRequest.of(0, 5))
         }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(childId).message)
+
+        verify(exactly = 1) { classRepository.findById(childId) }
     }
 
     @Test
@@ -244,6 +280,7 @@ internal class ClassHierarchyServiceUnitTest {
 
         service.findClassHierarchy(childId, pageable)
 
+        verify(exactly = 1) { classRepository.findById(childId) }
         verify(exactly = 1) { repository.findClassHierarchy(childId, pageable) }
     }
 
@@ -257,6 +294,8 @@ internal class ClassHierarchyServiceUnitTest {
             service.countClassInstances(childId)
         }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(childId).message)
+
+        verify(exactly = 1) { classRepository.findById(childId) }
     }
 
     @Test
@@ -268,6 +307,7 @@ internal class ClassHierarchyServiceUnitTest {
 
         service.countClassInstances(childId)
 
+        verify(exactly = 1) { classRepository.findById(childId) }
         verify(exactly = 1) { repository.countClassInstances(childId) }
     }
 
@@ -281,6 +321,8 @@ internal class ClassHierarchyServiceUnitTest {
             service.delete(childId)
         }
         assertThat(exception.message).isEqualTo(ClassNotFound.withThingId(childId).message)
+
+        verify(exactly = 1) { classRepository.findById(childId) }
     }
 
     @Test
@@ -292,6 +334,7 @@ internal class ClassHierarchyServiceUnitTest {
 
         service.delete(childId)
 
+        verify(exactly = 1) { classRepository.findById(childId) }
         verify(exactly = 1) { relationRepository.deleteByChildId(childId) }
     }
 }

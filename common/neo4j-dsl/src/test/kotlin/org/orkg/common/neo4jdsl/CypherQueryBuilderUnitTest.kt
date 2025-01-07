@@ -1,14 +1,10 @@
 package org.orkg.common.neo4jdsl
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.count
@@ -16,27 +12,18 @@ import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Statement
 import org.neo4j.driver.summary.ResultSummary
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 
-internal class CypherQueryBuilderUnitTest {
+internal class CypherQueryBuilderUnitTest : MockkBaseTest {
     private val neo4jClient: Neo4jClient = mockk()
     private val unboundRunnableSpec: Neo4jClient.UnboundRunnableSpec = mockk()
     private val runnableSpec: Neo4jClient.RunnableSpec = mockk()
     private val resultSummary: ResultSummary = mockk()
     private val stringMappingSpec: Neo4jClient.MappingSpec<String> = mockk()
     private val longMappingSpec: Neo4jClient.MappingSpec<Long> = mockk()
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(neo4jClient, unboundRunnableSpec, runnableSpec, resultSummary, stringMappingSpec, longMappingSpec)
-    }
 
     class SimpleQueryCache : QueryCache {
         private val cache: MutableMap<Any, Statement> = mutableMapOf()

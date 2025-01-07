@@ -3,15 +3,12 @@ package org.orkg.contenttypes.domain.actions.rosettastone.statements
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
@@ -19,20 +16,10 @@ import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneStatementCommand
 
-internal class RosettaStoneStatementTemplateUpdateValidatorUnitTest {
+internal class RosettaStoneStatementTemplateUpdateValidatorUnitTest : MockkBaseTest {
     private val rosettaStoneTemplateService: RosettaStoneTemplateUseCases = mockk()
 
     private val rosettaStoneStatementTemplateUpdateValidator = RosettaStoneStatementTemplateUpdateValidator(rosettaStoneTemplateService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(rosettaStoneTemplateService)
-    }
 
     @Test
     fun `Given a rosetta stone statement update command, when validating the rosetta stone template, it returns success`() {

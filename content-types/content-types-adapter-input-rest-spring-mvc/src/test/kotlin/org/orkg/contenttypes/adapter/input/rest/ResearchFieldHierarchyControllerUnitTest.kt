@@ -1,13 +1,9 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.verify
 import org.hamcrest.Matchers.empty
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -58,16 +54,6 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
 
     @MockkBean
     private lateinit var service: ResearchFieldHierarchyUseCases
-
-    @BeforeEach
-    fun setup() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(statementService, formattedLabelService, flags, service)
-    }
 
     @Test
     @DisplayName("Given a parent research field id, when searched for its children, then status is 200 OK and children research field ids are returned")

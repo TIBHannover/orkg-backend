@@ -117,6 +117,9 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                 )
             )
             .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { resourceService.findById(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(resource.id) }
     }
 
     @Test
@@ -138,6 +141,8 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
+
+        verify(exactly = 1) { resourceService.findAllContributorsByResourceId(id, any()) }
     }
 
     @Test
@@ -152,6 +157,8 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpect(jsonPath("$.error").value("Not Found"))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/resources/$id/contributors"))
+
+        verify(exactly = 1) { resourceService.findAllContributorsByResourceId(id, any()) }
     }
 
     @Test
@@ -173,6 +180,8 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
+
+        verify(exactly = 1) { resourceService.findTimelineByResourceId(id, any()) }
     }
 
     @Test
@@ -187,6 +196,8 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpect(jsonPath("$.error").value("Not Found"))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/resources/$id/timeline"))
+
+        verify(exactly = 1) { resourceService.findTimelineByResourceId(id, any()) }
     }
 
     @Test
@@ -216,6 +227,9 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/resources"))
+
+        verify(exactly = 1) { contributorService.findById(any()) }
+        verify(exactly = 1) { resourceService.create(any<CreateCommand>()) }
     }
 
     @Test
@@ -243,6 +257,9 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/resources/${resource.id}"))
+
+        verify(exactly = 1) { resourceService.findById(any()) }
+        verify(exactly = 1) { resourceService.update(command) }
     }
 
     @Test
@@ -349,5 +366,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/resources"))
+
+        verify(exactly = 1) { resourceService.findAll(any()) }
     }
 }

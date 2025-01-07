@@ -1,20 +1,18 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
 import java.util.function.BiFunction
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.neo4j.driver.Record
 import org.neo4j.driver.types.TypeSystem
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jLiteralRepository
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.output.LiteralRepository
@@ -43,7 +41,7 @@ private val allCacheNames: Array<out String> = arrayOf(
 
 @ContextConfiguration
 @ExtendWith(SpringExtension::class)
-internal class SpringDataNeo4jStatementAdapterCachingTest {
+internal class SpringDataNeo4jStatementAdapterCachingTest : MockkBaseTest {
 
     // Autowire the beans created by the configuration below.
     // The cacheManager just needs to be present, and we will use an in-memory one here.
@@ -78,15 +76,6 @@ internal class SpringDataNeo4jStatementAdapterCachingTest {
 
         // Obtain access to the proxied object, which is our mock created in the configuration below.
         mockedNeo4jLiteralRepository = AopTestUtils.getTargetObject(neo4jLiteralRepository)
-
-        // Clear the internal state of the mock, since Spring's Application context is not cleared between tests.
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        // Verify that there we no more interactions with the repository
-        confirmVerified(neo4jClient, mockedNeo4jLiteralRepository)
     }
 
     @Test
@@ -132,8 +121,6 @@ internal class SpringDataNeo4jStatementAdapterCachingTest {
         // Verify that the cache was evicted
         assertThat(literalAdapter.findById(literalId).get()).isEqualTo(literal)
         verify(exactly = 2) { mockedNeo4jLiteralRepository.findById(literalId) }
-
-        confirmVerified(mockUnboundRunnableSpec, mockMappingSpec)
     }
 
     @Configuration

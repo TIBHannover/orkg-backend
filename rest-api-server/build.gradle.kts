@@ -31,7 +31,6 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation(project(":common:serialization"))
                 implementation("org.springframework.boot:spring-boot-test")
-                implementation("org.springframework.security:spring-security-test")
                 compileOnly("jakarta.servlet:jakarta.servlet-api")
                 runtimeOnly("org.apache.tomcat.embed:tomcat-embed-core")
             }

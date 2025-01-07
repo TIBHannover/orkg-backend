@@ -1,21 +1,18 @@
 package org.orkg.contenttypes.domain.actions.smartreviews
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.NullSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewComparisonSection
@@ -36,7 +33,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
-internal class AbstractSmartReviewSectionUpdaterUnitTest {
+internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater = mockk()
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
@@ -44,18 +41,6 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest {
     private val abstractSmartReviewSectionUpdater = AbstractSmartReviewSectionUpdater(
         resourceService, singleStatementPropertyUpdater, statementCollectionPropertyUpdater
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(
-            resourceService, singleStatementPropertyUpdater, statementCollectionPropertyUpdater
-        )
-    }
 
     @Test
     fun `Given a comparison section, when there are no changes, it does nothing`() {

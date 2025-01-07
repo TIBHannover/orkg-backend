@@ -4,7 +4,6 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
@@ -58,11 +57,6 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
     @MockkBean
     private lateinit var flags: FeatureFlagService
 
-    @BeforeEach
-    fun setup() {
-        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
-    }
-
     @Test
     fun `Given an observatory id, when no parameters are specified and service succeeds, then status is 200 OK and papers are returned`() {
         val id = ObservatoryId(UUID.randomUUID())
@@ -73,6 +67,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         every {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.ALL_LISTED, any())
         } returns PageImpl(listOf(paperResource))
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
 
         get("/api/observatories/{id}/papers", id)
             .perform()
@@ -83,6 +78,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         verify(exactly = 1) {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.ALL_LISTED, any())
         }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -96,6 +92,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         every {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.FEATURED, any())
         } returns PageImpl(listOf(paperResource))
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
 
         get("/api/observatories/{id}/papers", id).param("visibility", "FEATURED")
             .perform()
@@ -106,6 +103,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         verify(exactly = 1) {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.FEATURED, any())
         }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -135,6 +133,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         every {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.ALL_LISTED, any())
         } returns PageImpl(listOf(paperResource))
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
 
         get("/api/observatories/{id}/papers", id)
             .param("filter_config", encodedFilterConfig)
@@ -146,6 +145,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         verify(exactly = 1) {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.ALL_LISTED, any())
         }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -176,6 +176,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         every {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.FEATURED, any())
         } returns PageImpl(listOf(paperResource))
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/observatories/{id}/papers", id, encodedFilterConfig)
             .param("visibility", VisibilityFilter.FEATURED.name)
@@ -197,6 +198,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         verify(exactly = 1) {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.FEATURED, any())
         }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 
     @Test
@@ -226,6 +228,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         every {
             resourceService.findAllProblemsByObservatoryId(id, any())
         } returns PageImpl(listOf(problemResource))
+        every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
 
         get("/api/observatories/{id}/problems", id)
             .perform()
@@ -234,5 +237,6 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
             .andExpectResource("$.content[*]")
 
         verify(exactly = 1) { resourceService.findAllProblemsByObservatoryId(id, any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 }

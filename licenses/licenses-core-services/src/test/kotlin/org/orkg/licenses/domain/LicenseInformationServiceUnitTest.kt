@@ -1,32 +1,20 @@
 package org.orkg.licenses.domain
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.testing.fixtures.MockkBaseTest
 
-internal class LicenseInformationServiceUnitTest {
+internal class LicenseInformationServiceUnitTest : MockkBaseTest {
+
     private val licenseProvider: LicenseInformationProvider = mockk {
         every { id } returns "dummy"
     }
     private val service = LicenseInformationService(listOf(licenseProvider))
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(licenseProvider)
-    }
 
     @Test
     fun `returns the correct result when provider succeeds`() {

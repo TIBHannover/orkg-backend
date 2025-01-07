@@ -1,15 +1,12 @@
 package org.orkg.contenttypes.domain.actions.templates
 
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertiesUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
@@ -17,20 +14,10 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
-internal class TemplatePropertiesUpdaterUnitTest {
+internal class TemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     private val abstractTemplatePropertiesUpdater: AbstractTemplatePropertiesUpdater = mockk()
 
     private val templatePropertiesUpdater = TemplatePropertiesUpdater(abstractTemplatePropertiesUpdater)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractTemplatePropertiesUpdater)
-    }
 
     @Test
     fun `Given a template update command, when properties are not set, it does nothing`() {

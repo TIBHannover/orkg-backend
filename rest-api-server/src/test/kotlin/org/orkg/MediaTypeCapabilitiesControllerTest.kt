@@ -1,10 +1,8 @@
 package org.orkg
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.MediaTypeCapabilitiesControllerTest.NonProducingFakeController
 import org.orkg.MediaTypeCapabilitiesControllerTest.ProducingFakeController
@@ -17,24 +15,18 @@ import org.orkg.common.testing.fixtures.FORMATTED_LABEL_CAPABILITY
 import org.orkg.common.testing.fixtures.INCOMING_STATEMENTS_COUNT_CAPABILITY
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
-import org.springframework.beans.factory.annotation.Autowired
+import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.context.WebApplicationContext
 
 @Import(SecurityTestConfiguration::class)
 @ContextConfiguration(
@@ -49,22 +41,7 @@ import org.springframework.web.context.WebApplicationContext
     ]
 )
 @WebMvcTest
-internal class MediaTypeCapabilitiesControllerTest {
-
-    @Autowired
-    private lateinit var webApplicationContext: WebApplicationContext
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
-
-    private lateinit var mockMvc: MockMvc
-
-    @BeforeEach
-    fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-            .apply<DefaultMockMvcBuilder>(springSecurity())
-            .build()
-    }
+internal class MediaTypeCapabilitiesControllerTest : RestDocsTest("media-type-capabilities") {
 
     @Test
     fun `Given rest controller, when an endpoint produces a media type that supports capabilities, then media type capabilities are parsed correctly`() {
@@ -183,8 +160,6 @@ internal class MediaTypeCapabilitiesControllerTest {
 
     private fun ResultActions.responseContentsAsMap() = andReturn().response
         .let { objectMapper.readValue(it.contentAsString, object : TypeReference<Map<String, Any>>() {}) }
-
-    private fun MockHttpServletRequestBuilder.perform(): ResultActions = mockMvc.perform(this)
 }
 
 private fun MediaTypeCapabilities.toParameterMap() =

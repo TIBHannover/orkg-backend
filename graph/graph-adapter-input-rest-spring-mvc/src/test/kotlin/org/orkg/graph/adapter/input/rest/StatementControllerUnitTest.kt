@@ -3,8 +3,6 @@ package org.orkg.graph.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.mockk.Runs
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
@@ -14,7 +12,6 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import org.hamcrest.Matchers.endsWith
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -86,12 +83,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
     @Autowired
     private lateinit var clock: Clock
-
-    @AfterEach
-    fun verifyMockedCalls() {
-        confirmVerified(statementService)
-        clearAllMocks()
-    }
 
     @Test
     @DisplayName("Given a statement, when it is fetched by id and service succeeds, then status is 200 OK and statement is returned")

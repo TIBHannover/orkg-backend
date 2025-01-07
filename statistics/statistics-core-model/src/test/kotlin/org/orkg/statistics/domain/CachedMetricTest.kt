@@ -1,8 +1,6 @@
 package org.orkg.statistics.domain
 
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -10,14 +8,10 @@ import java.time.Clock
 import java.time.Instant
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toJavaDuration
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 
-internal class CachedMetricTest {
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
+internal class CachedMetricTest : MockkBaseTest {
 
     @Test
     fun `Given a cached metric, retrieving its value should be cached`() {
@@ -72,7 +66,5 @@ internal class CachedMetricTest {
         metric.value() shouldBe 10
 
         verify(exactly = 6) { clock.instant() }
-
-        confirmVerified(mockMetricSupplier, clock)
     }
 }

@@ -1,15 +1,10 @@
 package org.orkg.community.adapter.input.rest
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import java.time.Clock
-import java.time.OffsetDateTime
 import java.util.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
@@ -21,8 +16,6 @@ import org.orkg.community.input.OrganizationUseCases
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.graph.input.ResourceUseCases
-import org.orkg.mediastorage.domain.Image
-import org.orkg.mediastorage.domain.ImageData
 import org.orkg.mediastorage.domain.ImageId
 import org.orkg.mediastorage.domain.InvalidImageData
 import org.orkg.mediastorage.domain.InvalidMimeType
@@ -33,40 +26,23 @@ import org.orkg.mediastorage.testing.fixtures.testImage
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.SecurityTestConfiguration
-import org.springframework.beans.factory.annotation.Autowired
+import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.context.annotation.Import
 import org.springframework.http.HttpMethod.PATCH
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.util.MimeType
-import org.springframework.web.context.WebApplicationContext
 
-@Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [OrganizationController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [OrganizationController::class])
-internal class OrganizationControllerUnitTest {
-
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
-
-    @Autowired
-    private lateinit var context: WebApplicationContext
+internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
     @MockkBean
     private lateinit var organizationService: OrganizationUseCases
@@ -82,16 +58,6 @@ internal class OrganizationControllerUnitTest {
 
     @MockkBean
     private lateinit var organizationRepository: OrganizationRepository
-
-    @Autowired
-    private lateinit var clock: Clock
-
-    @BeforeEach
-    fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-            .apply<DefaultMockMvcBuilder>(springSecurity())
-            .build()
-    }
 
     @Test
     fun `Given a logo is fetched, when service succeeds, then status is 200 OK and logo is returned`() {
@@ -116,6 +82,8 @@ internal class OrganizationControllerUnitTest {
 
         mockMvc.perform(get("/api/organizations/{id}/logo", id))
             .andExpect(status().isNotFound)
+
+        verify(exactly = 1) { organizationService.findLogo(id) }
     }
 
     @Test
@@ -126,27 +94,20 @@ internal class OrganizationControllerUnitTest {
 
         mockMvc.perform(get("/api/organizations/{id}/logo", id))
             .andExpect(status().isNotFound)
+
+        verify(exactly = 1) { organizationService.findLogo(id) }
     }
 
     @Test
-    fun `Given an organization is fetched, when service succeeds, then status 200 OK and the organization is returned with the encoded logo`() {
+    fun `Given an organization is fetched, when service succeeds, then status 200 OK and the organization is returned`() {
         val id = OrganizationId(UUID.randomUUID())
         val logoId = ImageId(UUID.randomUUID())
         val organization = createOrganization().copy(
             id = id,
             logoId = logoId
         )
-        val contributor = ContributorId(UUID.randomUUID())
-        val image = Image(
-            id = logoId,
-            data = ImageData("irrelevant".toByteArray()),
-            mimeType = MimeType.valueOf("image/png"),
-            createdBy = contributor,
-            createdAt = OffsetDateTime.now(clock)
-        )
 
         every { organizationService.findById(id) } returns Optional.of(organization)
-        every { organizationService.findLogo(id) } returns Optional.of(image)
 
         mockMvc.perform(get("/api/organizations/{id}", id))
             .andExpect(status().isOk)

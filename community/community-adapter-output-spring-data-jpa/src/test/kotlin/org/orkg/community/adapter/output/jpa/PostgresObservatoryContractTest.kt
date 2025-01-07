@@ -3,7 +3,7 @@ package org.orkg.community.adapter.output.jpa
 import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaConfiguration
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
-import org.orkg.community.testing.fixtures.ObservatoryRepositoryContractTests
+import org.orkg.community.testing.fixtures.ObservatoryRepositoryContracts
 import org.orkg.eventbus.ReallySimpleEventBus
 import org.orkg.testing.PostgresContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +23,7 @@ import org.springframework.test.context.TestConstructor
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-internal class PostgresObservatoryContractTest : ObservatoryRepositoryContractTests {
+internal class PostgresObservatoryContractTest : ObservatoryRepositoryContracts {
 
     @Autowired
     private lateinit var adapter: SpringJpaPostgresObservatoryAdapter

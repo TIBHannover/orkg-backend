@@ -4,20 +4,16 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEqualIgnoringCase
 import io.kotest.matchers.types.shouldBeInstanceOf
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.net.URI
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
@@ -35,7 +31,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 
-internal class PaperPublicationInfoCreatorUnitTest {
+internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
@@ -47,16 +43,6 @@ internal class PaperPublicationInfoCreatorUnitTest {
         statementService = statementService,
         literalService = literalService
     )
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(resourceRepository, resourceService, statementService, literalService)
-    }
 
     @Test
     fun `Given a paper create command, when linking empty publication info, it returns success`() {

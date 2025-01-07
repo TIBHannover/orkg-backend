@@ -2,16 +2,13 @@ package org.orkg.contenttypes.domain.actions.smartreviews
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.SmartReviewAlreadyPublished
 import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.domain.actions.PublishSmartReviewState
@@ -19,20 +16,10 @@ import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishSmartReviewCommand
 
-internal class SmartReviewPublishableValidatorUnitTest {
+internal class SmartReviewPublishableValidatorUnitTest : MockkBaseTest {
     private val smartReviewService: SmartReviewUseCases = mockk()
 
     private val smartReviewPublishableValidator = SmartReviewPublishableValidator(smartReviewService)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(smartReviewService)
-    }
 
     @Test
     fun `Given a smart review publish command, when smart review is unpublished, it returns success`() {

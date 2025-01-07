@@ -1,19 +1,16 @@
 package org.orkg.contenttypes.domain.actions.smartreviews.sections
 
 import io.kotest.matchers.types.shouldBeInstanceOf
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.SmartReviewComparisonSection
 import org.orkg.contenttypes.domain.SmartReviewOntologySection
 import org.orkg.contenttypes.domain.SmartReviewPredicateSection
@@ -28,20 +25,10 @@ import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 
-internal class SmartReviewSectionUpdaterUnitTest {
+internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
     private val abstractSmartReviewSectionUpdater: AbstractSmartReviewSectionUpdater = mockk()
 
     private val smartReviewSectionUpdateValidator = SmartReviewSectionUpdater(abstractSmartReviewSectionUpdater)
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(abstractSmartReviewSectionUpdater)
-    }
 
     @Test
     fun `Given a comparison section update command, when contents are equal, it does nothing`() {

@@ -3,8 +3,6 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import io.mockk.clearAllMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
@@ -14,8 +12,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -92,16 +88,6 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
 
     @MockkBean
     private lateinit var flags: FeatureFlagService
-
-    @BeforeEach
-    fun resetState() {
-        clearAllMocks()
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        confirmVerified(literatureListService, contributionService)
-    }
 
     @Test
     @DisplayName("Given a literature list, when it is fetched by id and service succeeds, then status is 200 OK and literature list is returned")

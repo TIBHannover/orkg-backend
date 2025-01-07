@@ -31,6 +31,7 @@ testing {
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-runner-junit5")
                 implementation(testFixtures(project(":common:spring-webmvc")))
+                implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
             }
         }

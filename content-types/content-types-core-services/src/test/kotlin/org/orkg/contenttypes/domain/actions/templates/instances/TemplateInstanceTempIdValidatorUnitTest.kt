@@ -3,10 +3,11 @@ package org.orkg.contenttypes.domain.actions.templates.instances
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
 
-internal class TemplateInstanceTempIdValidatorUnitTest {
+internal class TemplateInstanceTempIdValidatorUnitTest : MockkBaseTest {
     private val templateInstanceTempIdValidator = TemplateInstanceTempIdValidator()
 
     @Test

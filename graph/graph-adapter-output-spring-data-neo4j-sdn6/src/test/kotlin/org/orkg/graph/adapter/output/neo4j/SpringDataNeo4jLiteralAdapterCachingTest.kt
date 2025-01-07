@@ -1,17 +1,15 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import io.mockk.clearMocks
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,7 +29,7 @@ private val allCacheNames: Array<out String> = arrayOf(
 
 @ContextConfiguration
 @ExtendWith(SpringExtension::class)
-internal class SpringDataNeo4jLiteralAdapterCachingTest {
+internal class SpringDataNeo4jLiteralAdapterCachingTest : MockkBaseTest {
 
     private lateinit var mock: LiteralRepository
 
@@ -50,14 +48,6 @@ internal class SpringDataNeo4jLiteralAdapterCachingTest {
 
         // Obtain access to the proxied object, which is our mock created in the configuration below.
         mock = AopTestUtils.getTargetObject(adapter)
-        // Clear the internal state of the mock, since Spring's Application context is not cleared between tests.
-        clearMocks(mock)
-    }
-
-    @AfterEach
-    fun verifyMocks() {
-        // Verify that there we no more interactions with the repository
-        confirmVerified(mock)
     }
 
     @Test

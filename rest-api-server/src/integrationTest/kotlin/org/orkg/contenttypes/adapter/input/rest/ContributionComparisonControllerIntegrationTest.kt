@@ -18,14 +18,12 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -89,8 +87,9 @@ internal class ContributionComparisonControllerIntegrationTest : RestDocsTest("c
 
         val ids = listOf(cont1, cont2)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/contribution-comparisons/contributions").param("ids", *ids.map(ThingId::value).toTypedArray()))
+        documentedGetRequestTo("/api/contribution-comparisons/contributions")
+            .param("ids", *ids.map(ThingId::value).toTypedArray())
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(ids.size)))
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
@@ -116,8 +115,9 @@ internal class ContributionComparisonControllerIntegrationTest : RestDocsTest("c
 
         val ids = listOf(cont1)
 
-        mockMvc
-            .perform(get("/api/contribution-comparisons/contributions").param("ids", *ids.map(ThingId::value).toTypedArray()))
+        get("/api/contribution-comparisons/contributions")
+            .param("ids", *ids.map(ThingId::value).toTypedArray())
+            .perform()
             .andExpect(status().isBadRequest)
     }
 

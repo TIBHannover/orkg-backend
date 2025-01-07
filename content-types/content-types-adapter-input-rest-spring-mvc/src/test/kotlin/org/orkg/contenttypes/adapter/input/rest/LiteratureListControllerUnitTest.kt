@@ -47,13 +47,8 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.testing.spring.restdocs.documentedPostRequestTo
-import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -64,8 +59,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -264,7 +257,10 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             literatureListService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
-        mockMvc.perform(get("/api/literature-lists?sort=unknown"))
+        get("/api/literature-lists")
+            .param("sort", "unknown")
+            .accept(LITERATURE_LIST_JSON_V1)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -326,7 +322,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         )
         every { literatureListService.createSection(any()) } returns id
 
-        MockMvcRequestBuilders.post("/api/literature-lists/{literatureListId}/sections", literatureListId)
+        post("/api/literature-lists/{literatureListId}/sections", literatureListId)
             .content(request)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
@@ -403,7 +399,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         )
         every { literatureListService.createSection(any()) } returns id
 
-        MockMvcRequestBuilders.post("/api/literature-lists/{literatureListId}/sections", literatureListId)
+        post("/api/literature-lists/{literatureListId}/sections", literatureListId)
             .content(request)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
@@ -549,7 +545,6 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         every { literatureListService.findPublishedContentById(any(), any()) } returns Either.left(createPaper())
 
         documentedGetRequestTo("/api/literature-lists/{literatureListId}/published-contents/{contentId}", literatureListId, id)
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPaper()

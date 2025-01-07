@@ -32,8 +32,6 @@ import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -44,8 +42,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -160,7 +156,7 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
         } returns pageOf()
 
         post("/api/predicates")
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .contentType(APPLICATION_JSON)
             .perform()
             .andExpect(status().isCreated)
@@ -258,7 +254,9 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
         val exception = UnknownSortingProperty("unknown")
         every { predicateService.findAll(any()) } throws exception
 
-        mockMvc.perform(get("/api/predicates?sort=unknown"))
+        get("/api/predicates")
+            .param("sort", "unknown")
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))

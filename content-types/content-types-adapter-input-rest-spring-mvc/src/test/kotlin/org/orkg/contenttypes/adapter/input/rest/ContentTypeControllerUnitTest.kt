@@ -36,13 +36,10 @@ import org.orkg.testing.andExpectVisualization
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -68,8 +65,6 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
         )
 
         documentedGetRequestTo("/api/content-types")
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -124,8 +119,6 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
             .param("include_subfields", includeSubfields.toString())
             .param("sdg", sdg.value)
             .param("author_id", authorId.value)
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -181,7 +174,9 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
             contentTypeService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
-        mockMvc.perform(get("/api/content-types?sort=unknown"))
+        get("/api/content-types")
+            .param("sort", "unknown")
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -198,11 +193,10 @@ internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
     fun `Given several content types, when using incompatible filtering parameters, then status is 400 BAD REQUEST`() {
         val exception = TooManyParameters.atMostOneOf("author_id", "author_name")
 
-        mockMvc.perform(
-            get("/api/content-types")
-                .param("author_id", "R123")
-                .param("author_name", "Author")
-        )
+        get("/api/content-types")
+            .param("author_id", "R123")
+            .param("author_name", "Author")
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))

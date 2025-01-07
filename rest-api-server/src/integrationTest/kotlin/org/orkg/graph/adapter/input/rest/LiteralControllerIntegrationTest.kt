@@ -11,16 +11,12 @@ import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.createdResponseHeaders
-import org.orkg.testing.spring.restdocs.documentedPostRequestTo
-import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -45,8 +41,8 @@ internal class LiteralControllerIntegrationTest : RestDocsTest("literals") {
         service.createLiteral(label = "research contribution")
         service.createLiteral(label = "programming language")
 
-        mockMvc
-            .perform(get("/api/literals"))
+        get("/api/literals")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -59,8 +55,8 @@ internal class LiteralControllerIntegrationTest : RestDocsTest("literals") {
         service.createLiteral(label = "programming language")
         service.createLiteral(label = "research topic")
 
-        mockMvc
-            .perform(get("/api/literals").param("q", "research"))
+        get("/api/literals").param("q", "research")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -73,8 +69,8 @@ internal class LiteralControllerIntegrationTest : RestDocsTest("literals") {
         service.createLiteral(label = "programming language (PL)")
         service.createLiteral(label = "research topic")
 
-        mockMvc
-            .perform(get("/api/literals").param("q", "PL)"))
+        get("/api/literals").param("q", "PL)")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -85,8 +81,8 @@ internal class LiteralControllerIntegrationTest : RestDocsTest("literals") {
     fun fetch() {
         val id = service.createLiteral(label = "research contribution")
 
-        mockMvc
-            .perform(get("/api/literals/{id}", id))
+        get("/api/literals/{id}", id)
+            .perform()
             .andExpect(status().isOk)
     }
 
@@ -95,13 +91,9 @@ internal class LiteralControllerIntegrationTest : RestDocsTest("literals") {
     fun add() {
         val input = mapOf("label" to "foo", "datatype" to "xs:foo")
 
-        mockMvc
-            .perform(
-                documentedPostRequestTo("/api/literals")
-                    .content(input)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        documentedPostRequestTo("/api/literals")
+            .content(input)
+            .perform()
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.label").value(input["label"] as String))
             .andExpect(jsonPath("$.datatype").value(input["datatype"] as String))
@@ -125,13 +117,9 @@ internal class LiteralControllerIntegrationTest : RestDocsTest("literals") {
 
         val update = mapOf("label" to "bar", "datatype" to "dt:new")
 
-        mockMvc
-            .perform(
-                documentedPutRequestTo("/api/literals/{id}", resource)
-                    .content(update)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        documentedPutRequestTo("/api/literals/{id}", resource)
+            .content(update)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(update["label"] as String))
             .andExpect(jsonPath("$.datatype").value(update["datatype"] as String))

@@ -48,13 +48,8 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.testing.spring.restdocs.documentedPostRequestTo
-import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -65,8 +60,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -288,7 +281,10 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             smartReviewService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
-        mockMvc.perform(get("/api/smart-reviews?sort=unknown"))
+        get("/api/smart-reviews")
+            .param("sort", "unknown")
+            .accept(SMART_REVIEW_JSON_V1)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -313,7 +309,6 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/smart-reviews/{smartReviewId}/published-contents/{contentId}", smartReviewId, id)
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectStatementList()
@@ -382,7 +377,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
         every { smartReviewService.createSection(any()) } returns id
 
-        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -451,7 +446,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
         every { smartReviewService.createSection(any()) } returns id
 
-        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -520,7 +515,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
         every { smartReviewService.createSection(any()) } returns id
 
-        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -589,7 +584,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
         every { smartReviewService.createSection(any()) } returns id
 
-        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -658,7 +653,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
         every { smartReviewService.createSection(any()) } returns id
 
-        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -728,7 +723,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
         every { smartReviewService.createSection(any()) } returns id
 
-        MockMvcRequestBuilders.post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)

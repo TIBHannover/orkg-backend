@@ -24,14 +24,10 @@ import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.createdResponseHeaders
-import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
-import org.orkg.testing.spring.restdocs.documentedPostRequestTo
-import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -39,10 +35,6 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -92,8 +84,8 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
     fun fetch() {
         val id = service.createResource(label = "research contribution")
 
-        mockMvc
-            .perform(get("/api/resources/{id}", id))
+        get("/api/resources/{id}", id)
+            .perform()
             .andExpect(status().isOk)
     }
 
@@ -102,13 +94,9 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
     fun add() {
         val resource = mapOf("label" to "foo")
 
-        mockMvc
-            .perform(
-                documentedPostRequestTo("/api/resources")
-                    .content(resource)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        documentedPostRequestTo("/api/resources")
+            .content(resource)
+            .perform()
             .andExpect(status().isCreated)
             .andDo(
                 documentationHandler.document(
@@ -132,13 +120,9 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
             "classes" to setOf(ThingId("doesNotExist"))
         )
 
-        mockMvc
-            .perform(
-                post("/api/resources")
-                    .content(resource)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        post("/api/resources")
+            .content(resource)
+            .perform()
             .andExpect(status().isBadRequest)
     }
 
@@ -149,13 +133,9 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
 
         service.createResource(id = "Test", label = "foo")
 
-        mockMvc
-            .perform(
-                post("/api/resources")
-                    .content(resource)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        post("/api/resources")
+            .content(resource)
+            .perform()
             .andExpect(status().isBadRequest)
     }
 
@@ -167,13 +147,9 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
         val newLabel = "bar"
         val update = mapOf("label" to newLabel, "classes" to setOf(oldClass))
 
-        mockMvc
-            .perform(
-                documentedPutRequestTo("/api/resources/{id}", resource)
-                    .content(update)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        documentedPutRequestTo("/api/resources/{id}", resource)
+            .content(update)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
             .andDo(
@@ -198,13 +174,9 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
         val newClass = classService.createClass("clazz")
         val update = mapOf("classes" to listOf(newClass))
 
-        mockMvc
-            .perform(
-                documentedPutRequestTo("/api/resources/{id}", resource)
-                    .content(update)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        documentedPutRequestTo("/api/resources/{id}", resource)
+            .content(update)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value("test"))
             .andExpect(jsonPath("$.classes[0]").value(newClass.value))
@@ -229,13 +201,9 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
 
         val update = mapOf("classes" to emptyList<ThingId>())
 
-        mockMvc
-            .perform(
-                put("/api/resources/{id}", resource)
-                    .content(update)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        put("/api/resources/{id}", resource)
+            .content(update)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.classes", hasSize<Int>(0)))
     }
@@ -248,21 +216,17 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
 
         val update = mapOf("classes" to setOf(ThingId("DoesNotExist")))
 
-        mockMvc
-            .perform(
-                put("/api/resources/{id}", resource)
-                    .content(update)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        put("/api/resources/{id}", resource)
+            .content(update)
+            .perform()
             .andExpect(status().isBadRequest)
     }
 
     @Test
     @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceNotFound() {
-        mockMvc
-            .perform(delete("/api/resources/{id}", "NONEXISTENT"))
+        delete("/api/resources/{id}", "NONEXISTENT")
+            .perform()
             .andExpect(status().isNotFound)
     }
 
@@ -271,8 +235,8 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
     fun deleteResourceSuccess() {
         val id = service.createResource(label = "bye bye", userId = ContributorId(MockUserId.ADMIN))
 
-        mockMvc
-            .perform(documentedDeleteRequestTo("/api/resources/{id}", id))
+        documentedDeleteRequestTo("/api/resources/{id}", id)
+            .perform()
             .andExpect(status().isNoContent)
             .andDo(generateDefaultDocSnippets())
     }
@@ -285,8 +249,8 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
         val predicate = predicateService.createPredicate(label = "related")
         statementService.create(subject, predicate, `object`)
 
-        mockMvc
-            .perform(delete("/api/resources/{id}", `object`))
+        delete("/api/resources/{id}", `object`)
+            .perform()
             .andExpect(status().isForbidden)
     }
 
@@ -294,8 +258,8 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
     fun deleteResourceWithoutLogin() {
         val id = service.createResource(label = "To Delete")
 
-        mockMvc
-            .perform(delete("/api/resources/{id}", id))
+        delete("/api/resources/{id}", id)
+            .perform()
             .andExpect(status().isForbidden)
     }
 
@@ -315,12 +279,10 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
         val id2 = classService.createClass(label = "Class 2")
         service.createResource(classes = setOf(id2.value), label = "Another Resource")
 
-        mockMvc
-            .perform(
-                get("/api/resources")
-                    .param("q", "Resource")
-                    .param("exclude", "$id")
-            )
+        get("/api/resources")
+            .param("q", "Resource")
+            .param("exclude", "$id")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.content[?(@.label == 'Resource 3')].shared").value(2))
@@ -333,8 +295,8 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
         val value = "Wow!"
         val id = createTemplateAndTypedResource(value)
 
-        mockMvc
-            .perform(get("/api/resources/{id}", id))
+        get("/api/resources/{id}", id)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.formatted_label").value("xx${value}xx"))
     }

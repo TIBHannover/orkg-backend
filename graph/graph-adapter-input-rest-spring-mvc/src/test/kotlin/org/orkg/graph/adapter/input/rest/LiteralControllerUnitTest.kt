@@ -38,7 +38,6 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -49,8 +48,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -74,7 +71,8 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
         )
         every { literalService.findById(any()) } returns Optional.of(literal)
 
-        mockMvc.perform(documentedGetRequestTo("/api/literals/{id}", id))
+        documentedGetRequestTo("/api/literals/{id}", id)
+            .perform()
             .andExpect(status().isOk)
             // Explicitly test all properties of the representation. This works as serialization test.
             .andExpect(jsonPath("$.id", `is`("L1234")))
@@ -125,8 +123,9 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
         every { literalService.findById(any()) } returns Optional.of(mockResult)
         every { literalService.create(command) } returns mockResult.id
 
-        mockMvc
-            .perform(creationOf(literal))
+        post("/api/literals")
+            .content(literal)
+            .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
@@ -203,7 +202,9 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
         val exception = UnknownSortingProperty("unknown")
         every { literalService.findAll(any()) } throws exception
 
-        mockMvc.perform(get("/api/literals?sort=unknown"))
+        get("/api/literals")
+            .param("sort", "unknown")
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -223,8 +224,9 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
         every { literalService.findById(any()) } returns Optional.of(double) andThen Optional.of(expected)
         every { literalService.update(any()) } just runs
 
-        mockMvc
-            .perform(updateOf(literal, "L1"))
+        put("/api/literals/{id}", "L1")
+            .content(literal)
+            .perform()
             .andExpect(status().isOk)
 
         verify(exactly = 2) { literalService.findById(any()) }
@@ -240,8 +242,9 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             datatype = " ".repeat(5)
         )
 
-        mockMvc
-            .perform(creationOf(literal))
+        post("/api/literals")
+            .content(literal)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("\$.status").value(400))
             .andExpect(jsonPath("\$.errors.length()").value(1))
@@ -255,8 +258,9 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
         val literal = createUpdateRequestWithBlankDatatype()
         every { literalService.findById(any()) } returns Optional.of(createLiteral())
 
-        mockMvc
-            .perform(updateOf(literal, "L1"))
+        put("/api/literals/{id}", "L1")
+            .content(literal)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("\$.status").value(400))
             .andExpect(jsonPath("\$.errors.length()").value(1))
@@ -274,8 +278,9 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
         )
         every { literalService.create(any()) } throws InvalidLiteralLabel()
 
-        mockMvc
-            .perform(creationOf(literal))
+        post("/api/literals")
+            .content(literal)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("\$.status").value(400))
             .andExpect(jsonPath("\$.errors.length()").value(1))
@@ -296,8 +301,9 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
         every { literalService.findById(any()) } returns Optional.of(createLiteral())
         every { literalService.update(any()) } throws InvalidLiteralLabel()
 
-        mockMvc
-            .perform(updateOf(literal, "L1"))
+        put("/api/literals/{id}", "L1")
+            .content(literal)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("\$.status").value(400))
             .andExpect(jsonPath("\$.errors.length()").value(1))
@@ -330,26 +336,15 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
         every { literalService.findById(any()) } returns Optional.of(mockResult)
         every { literalService.create(command) } returns mockResult.id
 
-        mockMvc
-            .perform(creationOf(literal))
+        post("/api/literals")
+            .content(literal)
+            .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
         verify(exactly = 1) { literalService.findById(any()) }
         verify(exactly = 1) { literalService.create(command) }
     }
-
-    private fun creationOf(literal: LiteralCreateRequest) =
-        MockMvcRequestBuilders.post("/api/literals")
-            .contentType(APPLICATION_JSON)
-            .characterEncoding("UTF-8")
-            .content(objectMapper.writeValueAsString(literal))
-
-    private fun updateOf(literal: LiteralUpdateRequest, id: String) =
-        MockMvcRequestBuilders.put("/api/literals/{id}", id)
-            .contentType(APPLICATION_JSON)
-            .characterEncoding("UTF-8")
-            .content(objectMapper.writeValueAsString(literal))
 
     private fun createCreateRequestWithEmptyLabel() = LiteralCreateRequest(label = "")
 

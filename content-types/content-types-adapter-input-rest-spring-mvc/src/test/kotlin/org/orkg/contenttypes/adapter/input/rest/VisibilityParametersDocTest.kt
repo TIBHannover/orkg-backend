@@ -5,7 +5,6 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.visibilityFilterRequestParameter
 import org.orkg.graph.testing.asciidoc.legacyVisibilityFilterRequestParameters
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

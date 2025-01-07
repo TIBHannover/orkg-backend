@@ -14,9 +14,7 @@ import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 /** A regular expression to match ISO 8601 formatted dates. */
@@ -35,8 +33,8 @@ internal class ContributorControllerUnitTest : RestDocsTest("contributors") {
         val id = MockUserId.USER.let(::ContributorId)
         every { retrieveContributor.findById(id) } returns Optional.empty()
 
-        mockMvc
-            .perform(contributorRequest(id))
+        get("/api/contributors/{id}", id)
+            .perform()
             .andExpect(MockMvcResultMatchers.status().isNotFound)
 
         verify(exactly = 1) { retrieveContributor.findById(id) }
@@ -47,19 +45,14 @@ internal class ContributorControllerUnitTest : RestDocsTest("contributors") {
         val id = MockUserId.USER.let(::ContributorId)
         every { retrieveContributor.findById(id) } returns Optional.of(createContributor(id = id))
 
-        mockMvc
-            .perform(contributorRequest(id))
+        get("/api/contributors/{id}", id)
+            .perform()
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("\$.joined_at").value(isISO8601()))
             .andExpect(MockMvcResultMatchers.header().string("Cache-Control", "max-age=300"))
 
         verify(exactly = 1) { retrieveContributor.findById(id) }
     }
-
-    private fun contributorRequest(id: ContributorId) =
-        MockMvcRequestBuilders.get("/api/contributors/{id}", id)
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding("UTF-8")
 
     private fun isISO8601() = Matchers.matchesRegex(ISO_8601_PATTERN)
 }

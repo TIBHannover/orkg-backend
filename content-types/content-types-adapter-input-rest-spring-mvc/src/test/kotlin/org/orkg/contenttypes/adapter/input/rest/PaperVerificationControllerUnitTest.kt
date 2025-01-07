@@ -14,12 +14,8 @@ import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [PaperVerificationCommandController::class, ExceptionHandler::class, FixedClockConfig::class])
@@ -43,7 +39,9 @@ internal class PaperVerificationControllerUnitTest : RestDocsTest("papers") {
             fun `Then the controller returns 404 Not Found`() {
                 val id = ThingId("unknown")
                 every { service.markAsVerified(any()) } throws ResourceNotFound.withId(id)
-                mockMvc.perform(markVerifiedRequest(id.value)).andExpect(status().isNotFound)
+                put("/api/papers/{id}/metadata/verified", id.value)
+                    .perform()
+                    .andExpect(status().isNotFound)
                 verify(exactly = 1) { service.markAsVerified(any()) }
             }
         }
@@ -55,7 +53,9 @@ internal class PaperVerificationControllerUnitTest : RestDocsTest("papers") {
             @TestWithMockCurator
             fun `Then the controller returns 204 No Content`() {
                 every { service.markAsVerified(any()) } returns Unit
-                mockMvc.perform(markVerifiedRequest("R1")).andExpect(status().isNoContent)
+                put("/api/papers/{id}/metadata/verified", "R1")
+                    .perform()
+                    .andExpect(status().isNoContent)
                 verify(exactly = 1) { service.markAsVerified(any()) }
             }
         }
@@ -72,7 +72,9 @@ internal class PaperVerificationControllerUnitTest : RestDocsTest("papers") {
             fun `Then the controller returns 404 Not Found`() {
                 val id = ThingId("unknown")
                 every { service.markAsUnverified(any()) } throws ResourceNotFound.withId(id)
-                mockMvc.perform(markUnverifiedRequest(id.value)).andExpect(status().isNotFound)
+                delete("/api/papers/{id}/metadata/verified", id.value)
+                    .perform()
+                    .andExpect(status().isNotFound)
                 verify(exactly = 1) { service.markAsUnverified(any()) }
             }
         }
@@ -84,19 +86,11 @@ internal class PaperVerificationControllerUnitTest : RestDocsTest("papers") {
             @TestWithMockCurator
             fun `Then the controller returns 204 No Content`() {
                 every { service.markAsUnverified(any()) } returns Unit
-                mockMvc.perform(markUnverifiedRequest("R1")).andExpect(status().isNoContent)
+                delete("/api/papers/{id}/metadata/verified", "R1")
+                    .perform()
+                    .andExpect(status().isNoContent)
                 verify(exactly = 1) { service.markAsUnverified(any()) }
             }
         }
     }
-
-    private fun markVerifiedRequest(id: String): MockHttpServletRequestBuilder =
-        put("/api/papers/{id}/metadata/verified", id)
-            .contentType(APPLICATION_JSON)
-            .characterEncoding("UTF-8")
-
-    private fun markUnverifiedRequest(id: String): MockHttpServletRequestBuilder =
-        delete("/api/papers/{id}/metadata/verified", id)
-            .contentType(APPLICATION_JSON)
-            .characterEncoding("UTF-8")
 }

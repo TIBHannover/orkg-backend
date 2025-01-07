@@ -34,13 +34,8 @@ import org.orkg.testing.andExpectObservatoryFilter
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.testing.spring.restdocs.documentedPatchRequestTo
-import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -49,10 +44,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -280,8 +271,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryFilterUseCases.create(any()) } returns filter.id
 
         documentedPostRequestTo("/api/observatories/{observatoryId}/filters", observatory.id)
-            .content(objectMapper.writeValueAsString(command))
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(command)
             .perform()
             .andExpect(status().isCreated)
             .andDo(
@@ -297,7 +287,8 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
                         fieldWithPath("path[]").description(pathDescription),
                         fieldWithPath("range").description(rangeDescription),
                         fieldWithPath("exact").description(exactMatchDescription),
-                        fieldWithPath("featured").description("Whether or not the filter is featured. (optional)").optional(),
+                        fieldWithPath("featured").description("Whether or not the filter is featured. (optional)")
+                            .optional(),
                     )
                 )
             )
@@ -328,8 +319,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryFilterUseCases.create(any()) } throws exception
 
         post("/api/observatories/${observatory.id}/filters")
-            .content(objectMapper.writeValueAsString(command))
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(command)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -361,8 +351,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryFilterUseCases.create(any()) } throws exception
 
         post("/api/observatories/${observatory.id}/filters")
-            .content(objectMapper.writeValueAsString(command))
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(command)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -394,8 +383,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryFilterUseCases.create(any()) } throws exception
 
         post("/api/observatories/${observatory.id}/filters")
-            .content(objectMapper.writeValueAsString(command))
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(command)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -425,8 +413,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
 
         post("/api/observatories/${observatory.id}/filters")
-            .content(objectMapper.writeValueAsString(command))
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(command)
             .perform()
             .andExpect(status().isForbidden)
 
@@ -456,8 +443,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryFilterUseCases.update(any()) } just runs
 
         documentedPatchRequestTo("/api/observatories/{observatoryId}/filters/{filterId}", observatory.id, id)
-            .content(objectMapper.writeValueAsString(command))
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(command)
             .perform()
             .andExpect(status().isNoContent)
             .andDo(
@@ -471,7 +457,8 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
                         fieldWithPath("path[]").description("$pathDescription (optional)").optional(),
                         fieldWithPath("range").description("$rangeDescription (optional)").optional(),
                         fieldWithPath("exact").description("$exactMatchDescription(optional)").optional(),
-                        fieldWithPath("featured").description("Whether or not the filter is featured. (optional)").optional(),
+                        fieldWithPath("featured").description("Whether or not the filter is featured. (optional)")
+                            .optional(),
                     )
                 )
             )
@@ -505,8 +492,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryFilterUseCases.update(any()) } throws exception
 
         patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
-            .content(objectMapper.writeValueAsString(command))
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(command)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -541,8 +527,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryFilterUseCases.update(any()) } throws exception
 
         patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
-            .content(objectMapper.writeValueAsString(command))
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(command)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -577,8 +562,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryFilterUseCases.update(any()) } throws exception
 
         patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
-            .content(objectMapper.writeValueAsString(command))
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(command)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -612,8 +596,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
 
         patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
-            .content(objectMapper.writeValueAsString(command))
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(command)
             .perform()
             .andExpect(status().isForbidden)
             .andExpect(jsonPath("$.status").value(403))
@@ -641,8 +624,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryUseCases.findById(observatoryId) } returns Optional.empty()
 
         patch("/api/observatories/{observatoryId}/filters/{id}", observatoryId, id)
-            .content(objectMapper.writeValueAsString(command))
-            .contentType(MediaType.APPLICATION_JSON)
+            .content(command)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -653,6 +635,9 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
     }
 }
 
-private const val pathDescription = "Describes the path from the contribution node of a paper to the node that should be matched, where every entry stands for the predicate id of a statement."
-private const val rangeDescription = "The class id that represents the range of the value that should be matched. Subclasses will also be considered when matching."
-private const val exactMatchDescription = "Whether to exactly match the given path. If `true`, the given path needs to exactly match, starting from the contribution resource. If `false`, the given path needs to exactly match, starting at any node in the subgraph of the contribution or the contribution node itself. The total path length limited to 10, including the length of the specified path, starting from the contribution node."
+private const val pathDescription =
+    "Describes the path from the contribution node of a paper to the node that should be matched, where every entry stands for the predicate id of a statement."
+private const val rangeDescription =
+    "The class id that represents the range of the value that should be matched. Subclasses will also be considered when matching."
+private const val exactMatchDescription =
+    "Whether to exactly match the given path. If `true`, the given path needs to exactly match, starting from the contribution resource. If `false`, the given path needs to exactly match, starting at any node in the subgraph of the contribution or the contribution node itself. The total path length limited to 10, including the length of the specified path, starting from the contribution node."

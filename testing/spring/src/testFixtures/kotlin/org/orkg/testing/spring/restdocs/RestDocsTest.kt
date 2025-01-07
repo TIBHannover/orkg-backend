@@ -9,22 +9,26 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpMethod.PATCH
+import org.springframework.http.MediaType
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
 import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
-import org.springframework.restdocs.payload.FieldDescriptor
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.ResultHandler
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
@@ -47,9 +51,7 @@ abstract class RestDocsTest(val prefix: String) : MockkBaseTest {
     val identifier = "$prefix-{method-name}"
 
     @BeforeEach
-    fun setup(
-        restDocumentation: RestDocumentationContextProvider
-    ) {
+    fun setup(restDocumentation: RestDocumentationContextProvider) {
         documentationHandler = MockMvcRestDocumentationWrapper.document(
             identifier,
             preprocessRequest(prettyPrint()),
@@ -79,21 +81,76 @@ abstract class RestDocsTest(val prefix: String) : MockkBaseTest {
 
     private fun Any.toContent(): String = if (this is String) this else objectMapper.writeValueAsString(this)
 
-    fun ignorePageableFieldsExceptContent(): Array<FieldDescriptor> = arrayOf(
-        subsectionWithPath("pageable").ignored(),
-        *(listOf(
-            "empty",
-            "first",
-            "last",
-            "number",
-            "numberOfElements",
-            "size",
-            "sort",
-            "sort.empty",
-            "sort.sorted",
-            "sort.unsorted",
-            "totalElements",
-            "totalPages"
-        ).map { fieldWithPath(it).ignored() }.toTypedArray()),
-    )
+    protected fun MockMultipartHttpServletRequestBuilder.json(
+        name: String,
+        data: Map<String, Any>,
+        originalFileName: String = "$name.json"
+    ): MockMultipartHttpServletRequestBuilder =
+        file(MockMultipartFile(name, originalFileName, MediaType.APPLICATION_JSON_VALUE, data.toContent().toByteArray()))
+
+    companion object {
+        fun get(urlTemplate: String, vararg uriVariables: Any): MockHttpServletRequestBuilder =
+            MockMvcRequestBuilders.get(urlTemplate, *uriVariables)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
+        fun documentedGetRequestTo(urlTemplate: String, vararg uriValues: Any): MockHttpServletRequestBuilder =
+            RestDocumentationRequestBuilders.get(urlTemplate, *uriValues)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
+        fun post(urlTemplate: String, vararg uriVariables: Any): MockHttpServletRequestBuilder =
+            MockMvcRequestBuilders.post(urlTemplate, *uriVariables)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
+        fun documentedPostRequestTo(urlTemplate: String, vararg uriValues: Any): MockHttpServletRequestBuilder =
+            RestDocumentationRequestBuilders.post(urlTemplate, *uriValues)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
+        fun put(urlTemplate: String, vararg uriVariables: Any): MockHttpServletRequestBuilder =
+            MockMvcRequestBuilders.put(urlTemplate, *uriVariables)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
+        fun documentedPutRequestTo(urlTemplate: String, vararg uriValues: Any): MockHttpServletRequestBuilder =
+            RestDocumentationRequestBuilders.put(urlTemplate, *uriValues)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
+        fun patch(urlTemplate: String, vararg uriVariables: Any): MockHttpServletRequestBuilder =
+            MockMvcRequestBuilders.patch(urlTemplate, *uriVariables)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
+        fun documentedPatchRequestTo(urlTemplate: String, vararg uriValues: Any): MockHttpServletRequestBuilder =
+            RestDocumentationRequestBuilders.patch(urlTemplate, *uriValues)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
+        fun delete(urlTemplate: String, vararg uriVariables: Any): MockHttpServletRequestBuilder =
+            MockMvcRequestBuilders.delete(urlTemplate, *uriVariables)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
+        fun documentedDeleteRequestTo(urlTemplate: String, vararg uriValues: Any): MockHttpServletRequestBuilder =
+            RestDocumentationRequestBuilders.delete(urlTemplate, *uriValues)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
+        fun patchMultipart(urlTemplate: String, vararg uriVariables: Any): MockMultipartHttpServletRequestBuilder =
+            multipart(PATCH, urlTemplate, *uriVariables)
+                .characterEncoding(Charsets.UTF_8.name()) as MockMultipartHttpServletRequestBuilder
+    }
 }

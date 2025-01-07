@@ -28,14 +28,9 @@ import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpMethod.PATCH
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -66,7 +61,8 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.findLogo(id) } returns Optional.of(image)
 
-        mockMvc.perform(get("/api/organizations/{id}/logo", id))
+        get("/api/organizations/{id}/logo", id)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(content().contentType(image.mimeType.toString()))
             .andExpect(content().bytes(image.data.bytes))
@@ -80,7 +76,8 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.findLogo(id) } throws LogoNotFound(id)
 
-        mockMvc.perform(get("/api/organizations/{id}/logo", id))
+        get("/api/organizations/{id}/logo", id)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { organizationService.findLogo(id) }
@@ -92,7 +89,8 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.findLogo(id) } throws OrganizationNotFound(id)
 
-        mockMvc.perform(get("/api/organizations/{id}/logo", id))
+        get("/api/organizations/{id}/logo", id)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { organizationService.findLogo(id) }
@@ -109,7 +107,8 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.findById(id) } returns Optional.of(organization)
 
-        mockMvc.perform(get("/api/organizations/{id}", id))
+        get("/api/organizations/{id}", id)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value("$id"))
             .andExpect(jsonPath("$.logo_id").doesNotExist())
@@ -127,12 +126,9 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.update(any(), any()) } throws OrganizationNotFound(id)
 
-        mockMvc
-            .perform(
-                multipart(PATCH, "/api/organizations/{id}", id)
-                    .json("properties", body)
-                    .characterEncoding(Charsets.UTF_8.name())
-            )
+        patchMultipart("/api/organizations/{id}", id)
+            .json("properties", body)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
@@ -149,12 +145,9 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.update(any(), any()) } throws exception
 
-        mockMvc
-            .perform(
-                multipart(PATCH, "/api/organizations/{id}", id)
-                    .json("properties", body)
-                    .characterEncoding(Charsets.UTF_8.name())
-            )
+        patchMultipart("/api/organizations/{id}", id)
+            .json("properties", body)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/organizations/$id"))
@@ -174,12 +167,9 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.update(any(), any()) } throws exception
 
-        mockMvc
-            .perform(
-                multipart(PATCH, "/api/organizations/{id}", id)
-                    .json("properties", body)
-                    .characterEncoding(Charsets.UTF_8.name())
-            )
+        patchMultipart("/api/organizations/{id}", id)
+            .json("properties", body)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/organizations/$id"))
@@ -198,12 +188,9 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        mockMvc
-            .perform(
-                multipart(PATCH, "/api/organizations/{id}", id)
-                    .json("properties", body)
-                    .characterEncoding(Charsets.UTF_8.name())
-            )
+        patchMultipart("/api/organizations/{id}", id)
+            .json("properties", body)
+            .perform()
             .andExpect(status().isNoContent)
             .andExpect(content().string(""))
 
@@ -218,12 +205,9 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
             "name" to ""
         )
 
-        mockMvc
-            .perform(
-                multipart(PATCH, "/api/organizations/{id}", id)
-                    .json("properties", body)
-                    .characterEncoding(Charsets.UTF_8.name())
-            )
+        patchMultipart("/api/organizations/{id}", id)
+            .json("properties", body)
+            .perform()
             .andExpect(status().isBadRequest)
 
         verify(exactly = 0) { organizationService.update(any(), any()) }
@@ -237,12 +221,9 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
             "url" to ""
         )
 
-        mockMvc
-            .perform(
-                multipart(PATCH, "/api/organizations/{id}", id)
-                    .json("properties", body)
-                    .characterEncoding(Charsets.UTF_8.name())
-            )
+        patchMultipart("/api/organizations/{id}", id)
+            .json("properties", body)
+            .perform()
             .andExpect(status().isBadRequest)
 
         verify(exactly = 0) { organizationService.update(any(), any()) }
@@ -261,13 +242,10 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        mockMvc
-            .perform(
-                multipart(PATCH, "/api/organizations/{id}", id)
-                    .json("properties", body)
-                    .file(MockMultipartFile("logo", "image.png", image.mimeType.toString(), image.data.bytes))
-                    .characterEncoding(Charsets.UTF_8.name())
-            )
+        patchMultipart("/api/organizations/{id}", id)
+            .json("properties", body)
+            .file(MockMultipartFile("logo", "image.png", image.mimeType.toString(), image.data.bytes))
+            .perform()
             .andExpect(status().isNoContent)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
@@ -281,12 +259,9 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        mockMvc
-            .perform(
-                multipart(PATCH, "/api/organizations/{id}", id)
-                    .file(MockMultipartFile("logo", "image.png", image.mimeType.toString(), image.data.bytes))
-                    .characterEncoding(Charsets.UTF_8.name())
-            )
+        patchMultipart("/api/organizations/{id}", id)
+            .file(MockMultipartFile("logo", "image.png", image.mimeType.toString(), image.data.bytes))
+            .perform()
             .andExpect(status().isNoContent)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
@@ -304,12 +279,9 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        mockMvc
-            .perform(
-                multipart(PATCH, "/api/organizations/{id}", id)
-                    .json("properties", body)
-                    .characterEncoding(Charsets.UTF_8.name())
-            )
+        patchMultipart("/api/organizations/{id}", id)
+            .json("properties", body)
+            .perform()
             .andExpect(status().isNoContent)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
@@ -322,25 +294,10 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        mockMvc
-            .perform(
-                multipart(PATCH, "/api/organizations/{id}", id)
-                    .characterEncoding(Charsets.UTF_8.name())
-            )
+        patchMultipart("/api/organizations/{id}", id)
+            .perform()
             .andExpect(status().isNoContent)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
-
-    private fun MockMultipartHttpServletRequestBuilder.json(
-        name: String,
-        data: Map<String, Any>
-    ): MockMultipartHttpServletRequestBuilder = file(
-        MockMultipartFile(
-            name,
-            null,
-            MediaType.APPLICATION_JSON_VALUE,
-            objectMapper.writeValueAsString(data).toByteArray()
-        )
-    )
 }

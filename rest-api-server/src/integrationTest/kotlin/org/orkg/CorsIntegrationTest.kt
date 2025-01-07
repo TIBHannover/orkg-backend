@@ -4,7 +4,6 @@ import com.ninjasquad.springmockk.MockkBean
 import java.time.OffsetDateTime
 import java.util.stream.Stream
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -27,6 +26,7 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.testing.fixedClock
+import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestComponent
@@ -37,28 +37,18 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultMatcher
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.context.WebApplicationContext
 import org.springframework.web.util.UriComponentsBuilder
 
 @SpringBootTest
 @Import(CorsIntegrationTest.FakeController::class)
 @Suppress("HttpUrlsUsage")
-internal class CorsIntegrationTest {
-
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var context: WebApplicationContext
+internal class CorsIntegrationTest : RestDocsTest("cors") {
 
     @Autowired
     private lateinit var repository: ResourceRepository
@@ -75,24 +65,14 @@ internal class CorsIntegrationTest {
     @MockkBean
     private lateinit var thingRepository: ThingRepository
 
-    @BeforeEach
-    fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-            .apply<DefaultMockMvcBuilder>(springSecurity())
-            .dispatchOptions<DefaultMockMvcBuilder>(true)
-            .build()
-    }
-
     @DisplayName("CORS Pre-flight requests should pass with `200 OK`")
     @ParameterizedTest(name = "to endpoint {0} requesting method {1}")
     @ArgumentsSource(RequestArgumentsProvider::class)
     fun preflightRequestToOauthEndpointWorksFromAnyOrigin(endpoint: String, method: String) {
-        mockMvc
-            .perform(
-                options(endpoint)
-                    .header("Origin", "http://example.com")
-                    .header("Access-Control-Request-Method", method)
-            )
+        options(endpoint)
+            .header("Origin", "http://example.com")
+            .header("Access-Control-Request-Method", method)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(allOriginsAllowed())
             .andExpect(allAllowedMethodsPresent())

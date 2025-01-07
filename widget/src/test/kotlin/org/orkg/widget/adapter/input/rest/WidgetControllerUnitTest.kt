@@ -16,7 +16,6 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.testing.asciidoc.Asciidoc
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.widget.input.ResolveDOIUseCase
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
@@ -62,7 +61,9 @@ internal class WidgetControllerUnitTest : RestDocsTest("widget") {
             fieldWithPath("num_statements").description("The number of statements connected to the resource if the class is `Paper`, or 0 in all other cases."),
         )
 
-        mockMvc.perform(documentedGetRequestTo("/api/widgets").param("doi", EXAMPLE_DOI))
+        documentedGetRequestTo("/api/widgets")
+            .param("doi", EXAMPLE_DOI)
+            .perform()
             .andExpect(status().isOk)
             // Explicitly test all properties of the representation. This works as a serialization test.
             .andExpect(jsonPath("$.id", `is`("R1234")))
@@ -104,10 +105,10 @@ internal class WidgetControllerUnitTest : RestDocsTest("widget") {
             "title"
         )
 
-        mockMvc.perform(documentedGetRequestTo("/api/widgets")
+        documentedGetRequestTo("/api/widgets")
             .param("doi", EXAMPLE_DOI)
             .param("title", "some title")
-        )
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(
                 jsonPath(
@@ -125,7 +126,8 @@ internal class WidgetControllerUnitTest : RestDocsTest("widget") {
         // TODO: this is not ideal, as it re-implements service logic.
         every { resolveDOIUseCase.resolveDOI(null, null) } throws MissingParameter.requiresAtLeastOneOf("doi", "title")
 
-        mockMvc.perform(documentedGetRequestTo("/api/widgets"))
+        documentedGetRequestTo("/api/widgets")
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(
                 jsonPath(

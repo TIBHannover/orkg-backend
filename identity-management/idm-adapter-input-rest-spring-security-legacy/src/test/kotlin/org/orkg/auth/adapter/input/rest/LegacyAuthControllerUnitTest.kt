@@ -37,7 +37,6 @@ import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -160,13 +159,11 @@ internal class LegacyAuthControllerUnitTest : RestDocsTest("legacy-auth") {
             .header(HttpHeaders.AUTHORIZATION, createBasicAuthorizationToken())
             .contentType(APPLICATION_JSON)
             .content(
-                objectMapper.writeValueAsString(
-                    mapOf(
-                        "grant_type" to grantType,
-                        "username" to username,
-                        "password" to password,
-                        "client_id" to "orkg-client",
-                    )
+                mapOf(
+                    "grant_type" to grantType,
+                    "username" to username,
+                    "password" to password,
+                    "client_id" to "orkg-client",
                 )
             )
             .perform()

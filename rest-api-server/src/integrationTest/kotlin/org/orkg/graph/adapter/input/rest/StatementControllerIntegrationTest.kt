@@ -17,17 +17,12 @@ import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -79,8 +74,8 @@ internal class StatementControllerIntegrationTest : RestDocsTest("statements") {
         statementService.create(r1, p2, r3)
         statementService.create(r2, pl, l1)
 
-        mockMvc
-            .perform(get("/api/statements/{id}", statement))
+        get("/api/statements/{id}", statement)
+            .perform()
             .andExpect(status().isOk)
     }
 
@@ -99,8 +94,8 @@ internal class StatementControllerIntegrationTest : RestDocsTest("statements") {
         statementService.create(r1, p2, r3)
         val statement = statementService.create(r2, pl, l1)
 
-        mockMvc
-            .perform(get("/api/statements/{id}", statement))
+        get("/api/statements/{id}", statement)
+            .perform()
             .andExpect(status().isOk)
     }
 
@@ -117,12 +112,9 @@ internal class StatementControllerIntegrationTest : RestDocsTest("statements") {
             "object_id" to r2
         )
 
-        mockMvc.perform(
-            post("/api/statements")
-                .content(body)
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-        )
+        post("/api/statements")
+            .content(body)
+            .perform()
             .andExpect(status().isCreated)
     }
 
@@ -139,12 +131,9 @@ internal class StatementControllerIntegrationTest : RestDocsTest("statements") {
             "object_id" to l
         )
 
-        mockMvc.perform(
-            post("/api/statements")
-                .content(body)
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-        )
+        post("/api/statements")
+            .content(body)
+            .perform()
             .andExpect(status().isCreated)
     }
 
@@ -164,12 +153,9 @@ internal class StatementControllerIntegrationTest : RestDocsTest("statements") {
             "object_id" to o2
         )
 
-        mockMvc.perform(
-            put("/api/statements/{id}", st)
-                .content(body)
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-        )
+        put("/api/statements/{id}", st)
+            .content(body)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.predicate.id").value(p2.value))
             .andExpect(jsonPath("$.object.id").value(o2.value))
@@ -188,12 +174,9 @@ internal class StatementControllerIntegrationTest : RestDocsTest("statements") {
         val body = mapOf(
             "predicate_id" to p2
         )
-        mockMvc.perform(
-            put("/api/statements/{id}", st)
-                .content(body)
-                .contentType(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-        )
+        put("/api/statements/{id}", st)
+            .content(body)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.predicate.id").value(p2.value))
     }
@@ -211,8 +194,8 @@ internal class StatementControllerIntegrationTest : RestDocsTest("statements") {
         statementService.create(r1, p2, r3)
         statementService.create(r2, p1, r4)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/statements/{id}/bundle", r1))
+        documentedGetRequestTo("/api/statements/{id}/bundle", r1)
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -258,8 +241,8 @@ internal class StatementControllerIntegrationTest : RestDocsTest("statements") {
         statementService.create(e, p, f)
         statementService.create(f, p, d)
 
-        mockMvc
-            .perform(get("/api/statements/{id}/bundle", a))
+        get("/api/statements/{id}/bundle", a)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.statements", hasSize<Int>(9)))
     }

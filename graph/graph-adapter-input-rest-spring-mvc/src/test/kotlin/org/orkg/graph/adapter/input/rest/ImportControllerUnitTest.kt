@@ -16,9 +16,7 @@ import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.test.context.ContextConfiguration
@@ -45,8 +43,6 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
         every { service.importResourceByURI(any(), any(), any()) } returns id
 
         documentedPostRequestTo("/api/import/resources")
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .content(request)
             .perform()
             .andExpect(status().isCreated)
@@ -83,8 +79,6 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
         every { service.importResourceByShortForm(any(), any(), any()) } returns id
 
         documentedPostRequestTo("/api/import/resources")
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .content(request)
             .perform()
             .andExpect(status().isCreated)
@@ -121,8 +115,6 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
         every { service.importPredicateByURI(any(), any(), any()) } returns id
 
         documentedPostRequestTo("/api/import/predicates")
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .content(request)
             .perform()
             .andExpect(status().isCreated)
@@ -159,8 +151,6 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
         every { service.importPredicateByShortForm(any(), any(), any()) } returns id
 
         documentedPostRequestTo("/api/import/predicates")
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .content(request)
             .perform()
             .andExpect(status().isCreated)
@@ -197,8 +187,6 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
         every { service.importClassByURI(any(), any(), any()) } returns id
 
         documentedPostRequestTo("/api/import/classes")
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .content(request)
             .perform()
             .andExpect(status().isCreated)
@@ -235,8 +223,6 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
         every { service.importClassByShortForm(any(), any(), any()) } returns id
 
         documentedPostRequestTo("/api/import/classes")
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .content(request)
             .perform()
             .andExpect(status().isCreated)

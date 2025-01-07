@@ -17,7 +17,6 @@ import org.orkg.testing.andExpectContribution
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
@@ -27,7 +26,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithP
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -80,7 +78,9 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
         val exception = ContributionNotFound(id)
         every { contributionService.findById(id) } returns Optional.empty()
 
-        mockMvc.perform(get("/api/contributions/{id}", id).accept("application/vnd.orkg.contribution.v2+json"))
+        get("/api/contributions/{id}", id)
+            .accept(CONTRIBUTION_JSON_V2)
+            .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(jsonPath("$.path").value("/api/contributions/$id"))

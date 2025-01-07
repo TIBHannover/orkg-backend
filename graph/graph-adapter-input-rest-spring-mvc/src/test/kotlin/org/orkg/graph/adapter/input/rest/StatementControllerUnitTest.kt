@@ -46,14 +46,9 @@ import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Sort
-import org.springframework.http.MediaType
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -61,9 +56,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -92,7 +84,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/statements/{id}", statement.id)
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectStatement()
@@ -117,7 +108,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
         documentedGetRequestTo("/api/statements")
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -163,7 +153,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .param("object_classes", objectClasses.joinToString(separator = ","))
             .param("object_id", objectId.value)
             .param("object_label", objectLabel)
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -210,7 +199,9 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
         val exception = UnknownSortingProperty("unknown")
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } throws exception
 
-        mockMvc.perform(get("/api/statements").param("sort", "unknown"))
+        get("/api/statements")
+            .param("sort", "unknown")
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -239,10 +230,8 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        RestDocumentationRequestBuilders.post("/api/statements")
+        documentedPostRequestTo("/api/statements")
             .content(request)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/statements/$id")))
@@ -288,7 +277,9 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
         every { statementService.create(any(), any(), any(), any()) } throws StatementSubjectNotFound(ThingId(subject))
 
-        mockMvc.perform(performPost(body))
+        post("/api/statements")
+            .content(body)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value("""Subject "$subject" not found."""))
@@ -325,7 +316,9 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             )
         )
 
-        mockMvc.perform(performPost(body))
+        post("/api/statements")
+            .content(body)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value("""Predicate "$predicate" not found."""))
@@ -358,7 +351,9 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
         every { statementService.create(any(), any(), any(), any()) } throws StatementObjectNotFound(ThingId(`object`))
 
-        mockMvc.perform(performPost(body))
+        post("/api/statements")
+            .content(body)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value("""Object "$`object`" not found."""))
@@ -402,7 +397,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
         documentedPutRequestTo("/api/statements/{id}", id)
             .content(request)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectStatement()
@@ -481,7 +475,9 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             statementService.fetchAsBundle(thingId, any(), false, Sort.unsorted())
         } throws exception
 
-        mockMvc.perform(get("/api/statements/{thingId}/bundle", thingId).param("includeFirst", "false"))
+        get("/api/statements/{thingId}/bundle", thingId)
+            .param("includeFirst", "false")
+            .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -493,10 +489,4 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             statementService.fetchAsBundle(thingId, any(), false, Sort.unsorted())
         }
     }
-
-    private fun performPost(body: Map<String, String>) =
-        post("/api/statements")
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding("UTF-8")
-            .content(objectMapper.writeValueAsString(body))
 }

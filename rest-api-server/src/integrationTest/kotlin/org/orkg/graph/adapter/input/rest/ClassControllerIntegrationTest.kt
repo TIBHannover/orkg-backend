@@ -10,14 +10,12 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -44,8 +42,8 @@ internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
         service.createClass(label = "research contribution")
         service.createClass(label = "programming language")
 
-        mockMvc
-            .perform(get("/api/classes"))
+        get("/api/classes")
+            .perform()
             .andExpect(status().isOk)
     }
 
@@ -53,8 +51,8 @@ internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
     fun fetch() {
         val id = service.createClass(label = "research contribution")
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/classes/{id}", id))
+        documentedGetRequestTo("/api/classes/{id}", id)
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -73,8 +71,8 @@ internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
         service.createClass(id = id, label = label, uri = uri)
 
         // Act and Assert
-        mockMvc
-            .perform(documentedGetRequestTo("/api/classes").param("uri", uri.toString()))
+        documentedGetRequestTo("/api/classes").param("uri", uri.toString())
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(id))
             .andExpect(jsonPath("$.label").value(label))
@@ -92,8 +90,8 @@ internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
         val id1 = service.createClass(label = "class1")
         val id2 = service.createClass(label = "class2")
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/classes").param("ids", "$id1", "$id2"))
+        documentedGetRequestTo("/api/classes").param("ids", "$id1", "$id2")
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -109,8 +107,8 @@ internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
         service.createClass(label = "programming language")
         service.createClass(label = "research topic")
 
-        mockMvc
-            .perform(get("/api/classes").param("q", "research"))
+        get("/api/classes").param("q", "research")
+            .perform()
             .andExpect(status().isOk)
     }
 
@@ -120,8 +118,8 @@ internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
         service.createClass(label = "programming language (PL)")
         service.createClass(label = "research topic")
 
-        mockMvc
-            .perform(get("/api/classes").param("q", "PL)"))
+        get("/api/classes").param("q", "PL)")
+            .perform()
             .andExpect(status().isOk)
     }
 

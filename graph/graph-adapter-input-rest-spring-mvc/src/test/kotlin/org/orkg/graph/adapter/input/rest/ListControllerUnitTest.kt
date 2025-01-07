@@ -30,9 +30,6 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.testing.spring.restdocs.documentedPatchRequestTo
-import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -45,10 +42,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -77,7 +70,8 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         every { listService.findById(id) } returns Optional.of(list)
 
-        mockMvc.perform(documentedGetRequestTo("/api/lists/{id}", id))
+        documentedGetRequestTo("/api/lists/{id}", id)
+            .perform()
             .andExpect(status().isOk)
             // Explicitly test all properties of the representation. This works as serialization test.
             .andExpect(jsonPath("$.id").value(id.toString()))
@@ -117,6 +111,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
         every { listService.findById(id) } returns Optional.empty()
 
         get("/api/lists/{id}", id)
+            .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -145,7 +140,9 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
         every { listService.create(any()) } returns id
         every { listService.findById(any()) } returns Optional.of(list)
 
-        mockMvc.perform(documentedPostRequestTo("/api/lists").content(request))
+        documentedPostRequestTo("/api/lists")
+            .content(request)
+            .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/lists/$id")))
             .andDo(
@@ -174,7 +171,9 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         every { listService.create(any()) } throws exception
 
-        post("/api/lists", request)
+        post("/api/lists")
+            .content(request)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.errors.length()").value(1))
@@ -200,7 +199,9 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         every { listService.create(any()) } throws exception
 
-        post("/api/lists", request)
+        post("/api/lists")
+            .content(request)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.errors.length()").value(1))
@@ -263,7 +264,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
         patch("/api/lists/{id}", id)
             .contentType(APPLICATION_JSON)
             .characterEncoding(Charsets.UTF_8.name())
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
@@ -292,7 +293,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
         patch("/api/lists/{id}", id)
             .contentType(APPLICATION_JSON)
             .characterEncoding(Charsets.UTF_8.name())
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
@@ -321,7 +322,8 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        mockMvc.perform(documentedGetRequestTo("/api/lists/{id}/elements", id))
+        documentedGetRequestTo("/api/lists/{id}/elements", id)
+            .perform()
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpect(jsonPath("content", Matchers.hasSize<Int>(elements.size)))
@@ -353,6 +355,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
         every { listService.findAllElementsById(id, any()) } throws exception
 
         get("/api/lists/{id}/elements", id)
+            .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -362,14 +365,4 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         verify(exactly = 1) { listService.findAllElementsById(id, any()) }
     }
-
-    private fun get(urlTemplate: String, vararg params: Any): ResultActions =
-        mockMvc.perform(MockMvcRequestBuilders.get(urlTemplate, *params))
-
-    private fun post(urlTemplate: String, body: Map<String, Any>): ResultActions = mockMvc.perform(
-        post(urlTemplate)
-            .contentType(APPLICATION_JSON)
-            .characterEncoding(Charsets.UTF_8.name())
-            .content(objectMapper.writeValueAsString(body))
-    )
 }

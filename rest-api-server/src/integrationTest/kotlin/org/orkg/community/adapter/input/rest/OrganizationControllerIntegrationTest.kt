@@ -18,7 +18,6 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
@@ -72,8 +71,8 @@ internal class OrganizationControllerIntegrationTest : RestDocsTest("organizatio
         val contributorId = contributorService.createContributor()
         service.createOrganization(createdBy = contributorId)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/organizations"))
+        documentedGetRequestTo("/api/organizations")
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -88,8 +87,8 @@ internal class OrganizationControllerIntegrationTest : RestDocsTest("organizatio
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/organizations/{id}", organizationId))
+        documentedGetRequestTo("/api/organizations/{id}", organizationId)
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -111,8 +110,8 @@ internal class OrganizationControllerIntegrationTest : RestDocsTest("organizatio
             researchField = researchField
         )
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/organizations/{id}/observatories", organizationId))
+        documentedGetRequestTo("/api/organizations/{id}/observatories", organizationId)
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(

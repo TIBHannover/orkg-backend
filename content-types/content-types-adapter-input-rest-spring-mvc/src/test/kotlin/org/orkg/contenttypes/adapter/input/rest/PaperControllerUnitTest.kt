@@ -59,15 +59,11 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.testing.spring.restdocs.documentedPostRequestTo
-import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -78,9 +74,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -286,7 +279,10 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
-        mockMvc.perform(get("/api/papers?sort=unknown"))
+        get("/api/papers")
+            .param("sort", "unknown")
+            .accept(PAPER_JSON_V2)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -307,8 +303,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.findAllContributorsByPaperId(id, any()) } returns PageImpl(contributors, PageRequest.of(0, 5), 1)
 
         documentedGetRequestTo("/api/papers/{id}/contributors", id)
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -324,8 +318,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.findAllContributorsByPaperId(id, any()) } throws exception
 
         get("/api/papers/{id}/contributors", id)
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
@@ -354,8 +346,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
         documentedPostRequestTo("/api/papers/{id}/publish", id)
             .content(request)
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("api/resources/$paperVersionId")))
@@ -402,9 +392,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.publish(any()) } throws exception
 
         post("/api/papers/$id/publish")
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
@@ -441,9 +429,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.publish(any()) } throws exception
 
         post("/api/papers/$id/publish")
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .perform()
             .andExpect(status().isServiceUnavailable)
             .andExpect(jsonPath("$.status").value(HttpStatus.SERVICE_UNAVAILABLE.value()))
@@ -529,7 +515,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -548,7 +534,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -567,7 +553,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -586,7 +572,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -605,7 +591,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -624,7 +610,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -643,7 +629,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -662,7 +648,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -681,7 +667,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -706,7 +692,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -725,7 +711,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -744,7 +730,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -763,7 +749,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -782,7 +768,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -801,7 +787,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.create(any()) } throws exception
 
         post("/api/papers")
-            .content(objectMapper.writeValueAsString(createPaperRequest()))
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -1074,7 +1060,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.createContribution(any()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
-            .content(objectMapper.writeValueAsString(createContributionRequest()))
+            .content(createContributionRequest())
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1094,7 +1080,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.createContribution(any()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
-            .content(objectMapper.writeValueAsString(createContributionRequest()))
+            .content(createContributionRequest())
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1114,7 +1100,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.createContribution(any()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
-            .content(objectMapper.writeValueAsString(createContributionRequest()))
+            .content(createContributionRequest())
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1134,7 +1120,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.createContribution(any()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
-            .content(objectMapper.writeValueAsString(createContributionRequest()))
+            .content(createContributionRequest())
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1154,7 +1140,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.createContribution(any()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
-            .content(objectMapper.writeValueAsString(createContributionRequest()))
+            .content(createContributionRequest())
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1174,7 +1160,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.createContribution(any()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
-            .content(objectMapper.writeValueAsString(createContributionRequest()))
+            .content(createContributionRequest())
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1194,7 +1180,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.createContribution(any()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
-            .content(objectMapper.writeValueAsString(createContributionRequest()))
+            .content(createContributionRequest())
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1214,7 +1200,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.createContribution(any()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
-            .content(objectMapper.writeValueAsString(createContributionRequest()))
+            .content(createContributionRequest())
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -1234,7 +1220,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.createContribution(any()) } throws exception
 
         post("/api/papers/{id}/contributions", paperId)
-            .content(objectMapper.writeValueAsString(createContributionRequest()))
+            .content(createContributionRequest())
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()

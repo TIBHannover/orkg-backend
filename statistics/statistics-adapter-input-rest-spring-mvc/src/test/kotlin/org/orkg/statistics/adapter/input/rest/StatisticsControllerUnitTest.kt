@@ -13,9 +13,7 @@ import org.orkg.statistics.input.RetrieveStatisticsUseCase
 import org.orkg.statistics.testing.fixtures.createMetrics
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
@@ -37,8 +35,6 @@ internal class StatisticsControllerUnitTest : RestDocsTest("statistics") {
         every { service.findAllGroups() } returns groups
 
         documentedGetRequestTo("/api/statistics")
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.group1.href").value(endsWith("/api/statistics/group1")))
@@ -65,8 +61,6 @@ internal class StatisticsControllerUnitTest : RestDocsTest("statistics") {
         every { service.findAllMetricsByGroup(group) } returns metrics
 
         documentedGetRequestTo("/api/statistics/{group}", group)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.metric1.href").value(endsWith("/api/statistics/$group/metric1")))
@@ -97,8 +91,6 @@ internal class StatisticsControllerUnitTest : RestDocsTest("statistics") {
         every { service.findMetricByGroupAndName(metric.group, metric.name) } returns metric
 
         documentedGetRequestTo("/api/statistics/{group}/{name}", metric.group, metric.name)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.name").value(metric.name))

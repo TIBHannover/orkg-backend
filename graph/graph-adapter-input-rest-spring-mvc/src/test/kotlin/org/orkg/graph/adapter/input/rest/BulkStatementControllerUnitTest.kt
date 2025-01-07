@@ -26,9 +26,6 @@ import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -80,8 +77,9 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/statements/subjects").param("ids", "$r1", "$r3"))
+        documentedGetRequestTo("/api/statements/subjects")
+            .param("ids", "$r1", "$r3")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
             .andExpect(jsonPath("$", hasSize<Int>(2)))
@@ -137,8 +135,9 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/statements/objects").param("ids", "$r2", "$r4"))
+        documentedGetRequestTo("/api/statements/objects")
+            .param("ids", "$r2", "$r4")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
             .andExpect(jsonPath("$", hasSize<Int>(2)))
@@ -216,8 +215,10 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        mockMvc
-            .perform(documentedPutRequestTo("/api/statements").param("ids", "${s1.id}", "${s2.id}").content(payload))
+        documentedPutRequestTo("/api/statements")
+            .param("ids", "${s1.id}", "${s2.id}")
+            .content(payload)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
             .andExpect(jsonPath("$", hasSize<Int>(2)))
@@ -252,12 +253,10 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
 
         every { statementService.delete(setOf(s1, s2)) } just runs
 
-        mockMvc
-            .perform(
-                // TODO: For unknown reasons, delete requests do not work with param builders.
-                // Tested on spring rest docs 3.0.3.
-                documentedDeleteRequestTo("/api/statements?ids=$s1,$s2")
-            )
+        // TODO: For unknown reasons, delete requests do not work with param builders.
+        // Tested on spring rest docs 3.0.3.
+        documentedDeleteRequestTo("/api/statements?ids=$s1,$s2")
+            .perform()
             .andExpect(status().isNoContent)
             .andDo(
                 documentationHandler.document(

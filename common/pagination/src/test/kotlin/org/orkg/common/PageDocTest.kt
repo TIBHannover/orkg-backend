@@ -3,7 +3,6 @@ package org.orkg.common
 import org.junit.jupiter.api.Test
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.data.domain.Page
@@ -25,10 +24,11 @@ import org.springframework.web.bind.annotation.RestController
 internal class PageDocTest : RestDocsTest("paged") {
     @Test
     fun page() {
-        mockMvc
-            .perform(
-                documentedGetRequestTo("/page").param("page", "0").param("size", "10").param("sort", "label", "desc")
-            )
+        documentedGetRequestTo("/page")
+            .param("page", "0")
+            .param("size", "10")
+            .param("sort", "label", "desc")
+            .perform()
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andDo(MockMvcResultHandlers.print())
             .andExpectPage()

@@ -23,7 +23,6 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -137,8 +136,8 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchCont1, ThingId(labelsAndClasses.benchmarkPredicate), bench1)
         statementService.create(benchCont2, ThingId(labelsAndClasses.benchmarkPredicate), bench2)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/research-fields/benchmarks"))
+        documentedGetRequestTo("/api/research-fields/benchmarks")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.content[0].label", equalTo(fieldWithBenchmarkLabel)))
@@ -201,8 +200,9 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/benchmarks/summary/research-field/$fieldWithDataset").param("sort", "problem.id", "ASC"))
+        documentedGetRequestTo("/api/benchmarks/summary/research-field/$fieldWithDataset")
+            .param("sort", "problem.id", "ASC")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             // The resulting summaries are "duplicates", but listed for each research problem:
@@ -259,8 +259,8 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/benchmarks/summary"))
+        documentedGetRequestTo("/api/benchmarks/summary")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.content[*].research_problem.id", containsInAnyOrder(problem1.value, problem2.value)))
@@ -328,8 +328,8 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
 
         statementService.create(dummyBenchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/benchmarks/summary"))
+        documentedGetRequestTo("/api/benchmarks/summary")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.content[*].research_problem.id", containsInAnyOrder(problem1.value, problem2.value)))
@@ -385,8 +385,8 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(paper, Predicates.hasContribution, cont1)
         statementService.create(paper, Predicates.hasContribution, cont2)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/datasets/$dataset/problems"))
+        documentedGetRequestTo("/api/datasets/$dataset/problems")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -445,8 +445,9 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset1)
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/datasets/research-problem/$problem?sort=totalModels,DESC"))
+        documentedGetRequestTo("/api/datasets/research-problem/$problem")
+            .param("sort", "totalModels,DESC")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.content[0].total_papers", equalTo(1)))
@@ -551,8 +552,8 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
+        documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -642,8 +643,8 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
+        documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -730,8 +731,8 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
+        documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number

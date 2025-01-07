@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -32,8 +31,8 @@ internal class ContributorControllerIntegrationTest : RestDocsTest("contributors
         val contributor = createContributor()
         repository.save(contributor)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/contributors/${contributor.id}"))
+        documentedGetRequestTo("/api/contributors/${contributor.id}")
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(

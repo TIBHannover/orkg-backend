@@ -17,10 +17,8 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -51,7 +49,6 @@ internal class ThingControllerUnitTest : RestDocsTest("things") {
         every { statementService.countIncomingStatements(thing.id) } returns 23
 
         documentedGetRequestTo("/api/things/{id}", thing.id)
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectResource()

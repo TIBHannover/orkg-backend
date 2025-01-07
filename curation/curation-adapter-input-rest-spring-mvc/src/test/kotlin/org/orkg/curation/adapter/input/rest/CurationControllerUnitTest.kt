@@ -16,9 +16,7 @@ import org.orkg.testing.andExpectClass
 import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -38,7 +36,6 @@ internal class CurationControllerUnitTest : RestDocsTest("curation") {
         every { service.findAllPredicatesWithoutDescriptions(any()) } returns pageOf(createPredicate())
 
         documentedGetRequestTo("/api/curation/predicates-without-descriptions")
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPredicate("$.content[*]")
@@ -53,7 +50,6 @@ internal class CurationControllerUnitTest : RestDocsTest("curation") {
         every { service.findAllClassesWithoutDescriptions(any()) } returns pageOf(createClass())
 
         documentedGetRequestTo("/api/curation/classes-without-descriptions")
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectClass("$.content[*]")

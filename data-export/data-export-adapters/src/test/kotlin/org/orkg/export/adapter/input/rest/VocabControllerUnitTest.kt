@@ -64,7 +64,9 @@ internal class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
             createStatement(subject = resource, `object` = createLiteral())
         )
 
-        mockMvc.perform(get("/api/vocab/resource/{id}", resourceId).accept("application/rdf+xml"))
+        get("/api/vocab/resource/{id}", resourceId)
+            .accept("application/rdf+xml")
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -83,7 +85,9 @@ internal class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
         val predicateId = ThingId("P1")
         every { predicateRepository.findById(predicateId) } returns Optional.of(createPredicate(id = predicateId))
 
-        mockMvc.perform(get("/api/vocab/predicate/{id}", predicateId).accept("text/n3"))
+        get("/api/vocab/predicate/{id}", predicateId)
+            .accept("text/n3")
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -101,7 +105,9 @@ internal class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
         val classId = ThingId("C1")
         every { classRepository.findById(classId) } returns Optional.of(createClass(id = classId))
 
-        mockMvc.perform(get("/api/vocab/class/{id}", classId).accept("application/trig"))
+        get("/api/vocab/class/{id}", classId)
+            .accept("application/trig")
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(

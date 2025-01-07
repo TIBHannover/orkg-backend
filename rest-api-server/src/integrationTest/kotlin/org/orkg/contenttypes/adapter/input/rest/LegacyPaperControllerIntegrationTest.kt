@@ -27,12 +27,9 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -112,13 +109,9 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
             )
         )
 
-        mockMvc
-            .perform(
-                post("/api/papers")
-                    .content(paper)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        post("/api/papers")
+            .content(paper)
+            .perform()
             .andExpect(status().isCreated)
     }
 
@@ -186,14 +179,10 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
             )
         )
 
-        mockMvc
-            .perform(
-                post("/api/papers")
-                    .param("mergeIfExists", "true")
-                    .content(paperWithEmptyDOI)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        post("/api/papers")
+            .param("mergeIfExists", "true")
+            .content(paperWithEmptyDOI)
+            .perform()
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id", not(originalId)))
     }
@@ -227,14 +216,10 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
             )
         )
 
-        mockMvc
-            .perform(
-                post("/api/papers")
-                    .param("mergeIfExists", "true")
-                    .content(paperWithSameTitle)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        post("/api/papers")
+            .param("mergeIfExists", "true")
+            .content(paperWithSameTitle)
+            .perform()
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").value(originalId))
     }
@@ -268,14 +253,10 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
             )
         )
 
-        mockMvc
-            .perform(
-                post("/api/papers")
-                    .param("mergeIfExists", "true")
-                    .content(paperWithSameDOI)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        post("/api/papers")
+            .param("mergeIfExists", "true")
+            .content(paperWithSameDOI)
+            .perform()
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").value(originalId))
     }
@@ -309,14 +290,10 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
             )
         )
 
-        mockMvc
-            .perform(
-                post("/api/papers")
-                    .param("mergeIfExists", "true")
-                    .content(paperWithSameTitleAndDOI)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        post("/api/papers")
+            .param("mergeIfExists", "true")
+            .content(paperWithSameTitleAndDOI)
+            .perform()
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").value(originalId))
     }
@@ -334,14 +311,10 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
             )
         )
 
-        mockMvc
-            .perform(
-                post("/api/papers")
-                    .param("mergeIfExists", "false")
-                    .content(paperWithNoResearchField)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        post("/api/papers")
+            .param("mergeIfExists", "false")
+            .content(paperWithNoResearchField)
+            .perform()
             .andExpect(status().isBadRequest)
     }
 
@@ -361,23 +334,16 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
             objectMapper.readValue(exampleDataFromIssue, Map::class.java) as Map<String, Any?>
 
         // Create the paper twice. It should create two papers.
-        mockMvc
-            .perform(
-                post("/api/papers")
-                    .param("mergeIfExists", "false")
-                    .content(paper)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+        post("/api/papers")
+            .param("mergeIfExists", "false")
+            .content(paper)
+            .perform()
             .andExpect(status().isCreated)
-        mockMvc
-            .perform(
-                post("/api/papers")
-                    .param("mergeIfExists", "false")
-                    .content(paper)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-            )
+
+        post("/api/papers")
+            .param("mergeIfExists", "false")
+            .content(paper)
+            .perform()
             .andExpect(status().isCreated)
     }
 
@@ -398,8 +364,10 @@ internal class LegacyPaperControllerIntegrationTest : RestDocsTest("papers") {
         statementService.create(intermediateResource, predicate1, id)
         statementService.create(unrelatedPaper, predicate1, unrelatedResource)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/papers").param("linkedTo", "$id").param("size", "50"))
+        documentedGetRequestTo("/api/papers")
+            .param("linkedTo", "$id")
+            .param("size", "50")
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(

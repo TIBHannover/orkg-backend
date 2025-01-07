@@ -67,9 +67,6 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.testing.spring.restdocs.documentedPostRequestTo
-import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
@@ -84,8 +81,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -326,7 +321,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -345,7 +340,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -364,7 +359,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -383,7 +378,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -402,7 +397,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -421,7 +416,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -440,7 +435,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -459,7 +454,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -478,7 +473,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -497,7 +492,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -516,7 +511,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -535,7 +530,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.create(any()) } throws exception
 
         post("/api/templates")
-            .content(objectMapper.writeValueAsString(createTemplateRequest()))
+            .content(createTemplateRequest())
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -686,7 +681,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.createTemplateProperty(any()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -709,7 +704,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.createTemplateProperty(any()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -732,7 +727,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.createTemplateProperty(any()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -755,7 +750,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.createTemplateProperty(any()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -778,7 +773,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.createTemplateProperty(any()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -801,7 +796,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.createTemplateProperty(any()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -824,7 +819,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         every { templateService.createTemplateProperty(any()) } throws exception
 
         post("/api/templates/{id}/properties", templateId)
-            .content(objectMapper.writeValueAsString(request))
+            .content(request)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()

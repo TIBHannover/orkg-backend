@@ -8,7 +8,6 @@ import org.orkg.graph.domain.SearchFilter.Operator
 import org.orkg.graph.domain.SearchFilter.Value
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath

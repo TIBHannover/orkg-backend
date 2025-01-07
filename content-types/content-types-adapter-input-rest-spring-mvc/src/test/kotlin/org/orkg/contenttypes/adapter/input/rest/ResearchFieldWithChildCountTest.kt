@@ -13,7 +13,6 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectResearchFieldWithChildCount
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -29,7 +28,8 @@ import org.springframework.web.bind.annotation.RestController
 internal class ResearchFieldWithChildCountTest : RestDocsTest("research-fields") {
     @Test
     fun researchFieldWithChildCount() {
-        mockMvc.perform(documentedGetRequestTo("/subfield"))
+        documentedGetRequestTo("/subfield")
+            .perform()
             .andExpect(status().isOk)
             .andExpectResearchFieldWithChildCount()
             .andDo(

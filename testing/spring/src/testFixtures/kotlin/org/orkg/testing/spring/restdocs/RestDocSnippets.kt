@@ -1,10 +1,12 @@
 package org.orkg.testing.spring.restdocs
 
+import java.time.OffsetDateTime
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.headers.ResponseHeadersSnippet
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 
 fun createdResponseHeaders(): ResponseHeadersSnippet =
     responseHeaders(
@@ -36,3 +38,37 @@ fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(
     fieldWithPath("first").description("The first attribute"),
     fieldWithPath("empty").description("The empty attribute")
 )
+
+fun ignorePageableFieldsExceptContent(): Array<FieldDescriptor> = arrayOf(
+    subsectionWithPath("pageable").ignored(),
+    *(listOf(
+        "empty",
+        "first",
+        "last",
+        "number",
+        "numberOfElements",
+        "size",
+        "sort",
+        "sort.empty",
+        "sort.sorted",
+        "sort.unsorted",
+        "totalElements",
+        "totalPages"
+    ).map { fieldWithPath(it).ignored() }.toTypedArray())
+)
+
+/**
+ * Template field descriptor for timestamps.
+ *
+ * Using this template will link to the documentation of the timestamp representation.
+ * It will also add a type description to [OffsetDateTime].
+ *
+ * @param path the path of the field
+ * @param suffix a suffix for description, finishing the string "The timestamp when …"
+ */
+fun timestampFieldWithPath(path: String, suffix: String): FieldDescriptor = fieldWithPath(path)
+    .description(
+        "The <<timestamp-representation,timestamp>> when $suffix. " +
+        "(Also see https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/OffsetDateTime.html[JavaDoc])."
+    )
+    .type(OffsetDateTime::class.simpleName)

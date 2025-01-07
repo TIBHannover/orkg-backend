@@ -22,7 +22,6 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -91,8 +90,8 @@ internal class ProblemControllerIntegrationTest : RestDocsTest("research-problem
 
         statementService.create(contributorId, contribution, predicate, problem)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/problems/{id}/users", problem).param("size", "4"))
+        documentedGetRequestTo("/api/problems/{id}/users", problem).param("size", "4")
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -151,12 +150,10 @@ internal class ProblemControllerIntegrationTest : RestDocsTest("research-problem
         statementService.create(cont4, Predicates.hasResearchProblem, problem1)
         statementService.create(cont5, Predicates.hasResearchProblem, problem2)
 
-        mockMvc
-            .perform(
-                documentedGetRequestTo("/api/problems/{id}/authors", problem1)
-                    .param("page", "0")
-                    .param("size", "1")
-            )
+        documentedGetRequestTo("/api/problems/{id}/authors", problem1)
+            .param("page", "0")
+            .param("size", "1")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.totalElements").value(2))

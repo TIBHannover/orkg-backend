@@ -32,10 +32,7 @@ import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
-import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -67,7 +64,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
         every { classHierarchyService.findChildren(parentId, any()) } returns PageImpl(listOf(response))
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        mockMvc.perform(get("/api/classes/{id}/children", parentId))
+        get("/api/classes/{id}/children", parentId)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].class.id").value(response.`class`.id.value))
             .andExpect(jsonPath("$.content[0].child_count").value(response.childCount))
@@ -83,7 +81,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.findChildren(parentId, any()) } throws ClassNotFound.withThingId(parentId)
 
-        mockMvc.perform(get("/api/classes/{id}/children", parentId))
+        get("/api/classes/{id}/children", parentId)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { classHierarchyService.findChildren(parentId, any()) }
@@ -104,7 +103,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
             )
         } returns pageOf()
 
-        mockMvc.perform(get("/api/classes/{id}/parent", childId))
+        get("/api/classes/{id}/parent", childId)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(parentId.value))
 
@@ -125,7 +125,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.findParent(childId) } throws ClassNotFound.withThingId(childId)
 
-        mockMvc.perform(get("/api/classes/{id}/parent", childId))
+        get("/api/classes/{id}/parent", childId)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { classHierarchyService.findParent(childId) }
@@ -137,7 +138,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.findParent(childId) } returns Optional.empty()
 
-        mockMvc.perform(get("/api/classes/{id}/parent", childId))
+        get("/api/classes/{id}/parent", childId)
+            .perform()
             .andExpect(status().isNoContent)
 
         verify(exactly = 1) { classHierarchyService.findParent(childId) }
@@ -158,7 +160,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
             )
         } returns pageOf()
 
-        mockMvc.perform(get("/api/classes/{id}/root", childId))
+        get("/api/classes/{id}/root", childId)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(rootId.value))
 
@@ -179,7 +182,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.findRoot(childId) } throws ClassNotFound.withThingId(childId)
 
-        mockMvc.perform(get("/api/classes/{id}/root", childId))
+        get("/api/classes/{id}/root", childId)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { classHierarchyService.findRoot(childId) }
@@ -191,7 +195,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.findRoot(childId) } returns Optional.empty()
 
-        mockMvc.perform(get("/api/classes/{id}/root", childId))
+        get("/api/classes/{id}/root", childId)
+            .perform()
             .andExpect(status().isNoContent)
 
         verify(exactly = 1) { classHierarchyService.findRoot(childId) }
@@ -206,13 +211,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) } returns Unit
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/api/classes/{id}/children", parentId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        post("/api/classes/{id}/children", parentId)
+            .content(request)
+            .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("location", endsWith("/api/classes/$parentId/children")))
 
@@ -230,13 +231,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
             classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true)
         } throws ClassNotFound.withThingId(childId)
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/api/classes/{id}/children", parentId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        post("/api/classes/{id}/children", parentId)
+            .content(request)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) }
@@ -252,13 +249,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
             classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), true)
         } throws InvalidSubclassRelation(classId, classId)
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/api/classes/{id}/children", classId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        post("/api/classes/{id}/children", classId)
+            .content(request)
+            .perform()
             .andExpect(status().isBadRequest)
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), true) }
@@ -276,13 +269,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
             classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true)
         } throws ParentClassAlreadyExists(childId, otherParentId)
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/api/classes/{id}/children", parentId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        post("/api/classes/{id}/children", parentId)
+            .content(request)
+            .perform()
             .andExpect(status().isBadRequest)
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), true) }
@@ -297,13 +286,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) } returns Unit
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.patch("/api/classes/{id}/children", parentId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        patch("/api/classes/{id}/children", parentId)
+            .content(request)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(header().string("location", endsWith("/api/classes/$parentId/children")))
 
@@ -328,13 +313,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
             classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
         } throws ClassNotFound.withThingId(childId)
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.patch("/api/classes/{id}/children", parentId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        patch("/api/classes/{id}/children", parentId)
+            .content(request)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
@@ -350,13 +331,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
             classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false)
         } throws InvalidSubclassRelation(classId, classId)
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.patch("/api/classes/{id}/children", classId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        patch("/api/classes/{id}/children", classId)
+            .content(request)
+            .perform()
             .andExpect(status().isBadRequest)
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false) }
@@ -374,13 +351,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
             classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
         } throws ParentClassAlreadyExists(childId, otherParentId)
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.patch("/api/classes/{id}/children", parentId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        patch("/api/classes/{id}/children", parentId)
+            .content(request)
+            .perform()
             .andExpect(status().isBadRequest)
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
@@ -393,8 +366,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.delete(childId) } returns Unit
 
-        mockMvc
-            .perform(MockMvcRequestBuilders.delete("/api/classes/{id}/parent", childId))
+        delete("/api/classes/{id}/parent", childId)
+            .perform()
             .andExpect(status().isNoContent)
             .andExpect(content().string(""))
 
@@ -408,8 +381,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.delete(childId) } throws ClassNotFound.withThingId(childId)
 
-        mockMvc
-            .perform(MockMvcRequestBuilders.delete("/api/classes/{id}/parent", childId))
+        delete("/api/classes/{id}/parent", childId)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { classHierarchyService.delete(childId) }
@@ -424,13 +397,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) } returns Unit
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/api/classes/{id}/parent", childId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        post("/api/classes/{id}/parent", childId)
+            .content(request)
+            .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("location", endsWith("/api/classes/$childId/parent")))
 
@@ -448,13 +417,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
             classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
         } throws ClassNotFound.withThingId(childId)
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/api/classes/{id}/parent", childId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        post("/api/classes/{id}/parent", childId)
+            .content(request)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
@@ -470,13 +435,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
             classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false)
         } throws InvalidSubclassRelation(classId, classId)
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/api/classes/{id}/parent", classId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        post("/api/classes/{id}/parent", classId)
+            .content(request)
+            .perform()
             .andExpect(status().isBadRequest)
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), classId, setOf(classId), false) }
@@ -494,13 +455,9 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
             classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false)
         } throws ParentClassAlreadyExists(childId, otherParentId)
 
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/api/classes/{id}/parent", childId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("UTF-8")
-                    .content(objectMapper.writeValueAsString(request))
-            )
+        post("/api/classes/{id}/parent", childId)
+            .content(request)
+            .perform()
             .andExpect(status().isBadRequest)
 
         verify(exactly = 1) { classHierarchyService.create(ContributorId(MockUserId.CURATOR), parentId, setOf(childId), false) }
@@ -512,7 +469,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.countClassInstances(id) } returns 5
 
-        mockMvc.perform(get("/api/classes/{id}/count", id))
+        get("/api/classes/{id}/count", id)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.count").value(5))
 
@@ -525,7 +483,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.countClassInstances(id) } throws ClassNotFound.withThingId(id)
 
-        mockMvc.perform(get("/api/classes/{id}/count", id))
+        get("/api/classes/{id}/count", id)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { classHierarchyService.countClassInstances(id) }
@@ -544,7 +503,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
         )
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        mockMvc.perform(get("/api/classes/{id}/hierarchy", childId))
+        get("/api/classes/{id}/hierarchy", childId)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].class.id").value(childId.value))
             .andExpect(jsonPath("$.content[0].parent_id").value(parentId.value))
@@ -560,7 +520,8 @@ internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchy"
 
         every { classHierarchyService.findClassHierarchy(childId, any()) } throws ClassNotFound.withThingId(childId)
 
-        mockMvc.perform(get("/api/classes/{id}/hierarchy", childId))
+        get("/api/classes/{id}/hierarchy", childId)
+            .perform()
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { classHierarchyService.findClassHierarchy(childId, any()) }

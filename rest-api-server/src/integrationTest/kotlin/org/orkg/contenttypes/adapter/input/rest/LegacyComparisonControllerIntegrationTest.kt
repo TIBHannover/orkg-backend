@@ -22,7 +22,6 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -119,8 +118,9 @@ internal class LegacyComparisonControllerIntegrationTest : RestDocsTest("compari
         statementService.create(comparison, Predicates.comparesContribution, cont2)
         statementService.create(comparison, Predicates.comparesContribution, cont3)
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/comparisons/$comparison/authors").param("size", "2"))
+        documentedGetRequestTo("/api/comparisons/$comparison/authors")
+            .param("size", "2")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.totalElements").value(2))

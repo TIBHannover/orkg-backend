@@ -35,9 +35,9 @@ import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
+import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonData
-import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedFigure
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedResource
 import org.orkg.contenttypes.input.ComparisonUseCases
@@ -55,14 +55,9 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedDeleteRequestTo
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.testing.spring.restdocs.documentedPostRequestTo
-import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -72,8 +67,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -328,7 +321,10 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             )
         } throws exception
 
-        mockMvc.perform(get("/api/comparisons?sort=unknown"))
+        get("/api/comparisons")
+            .param("sort", "unknown")
+            .accept(COMPARISON_JSON_V2)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -534,8 +530,6 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
 
         documentedPostRequestTo("/api/comparisons/{id}/publish", comparisonVersionId)
             .content(request)
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("api/comparisons/$comparisonVersionId")))
@@ -587,8 +581,6 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
 
         post("/api/comparisons/$id/publish")
             .content(request)
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
@@ -629,8 +621,6 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
 
         post("/api/comparisons/$id/publish")
             .content(request)
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isServiceUnavailable)
             .andExpect(jsonPath("$.status").value(HttpStatus.SERVICE_UNAVAILABLE.value()))
@@ -726,7 +716,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = RequiresAtLeastTwoContributions()
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
+        post("/api/comparisons")
+            .content(createComparisonRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -744,7 +735,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = ContributionNotFound(ThingId("R123"))
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
+        post("/api/comparisons")
+            .content(createComparisonRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -762,7 +754,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = OnlyOneResearchFieldAllowed()
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
+        post("/api/comparisons")
+            .content(createComparisonRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -780,7 +773,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = ResearchFieldNotFound(ThingId("R123"))
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
+        post("/api/comparisons")
+            .content(createComparisonRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -798,7 +792,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = OnlyOneOrganizationAllowed()
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
+        post("/api/comparisons")
+            .content(createComparisonRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -816,7 +811,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = OnlyOneObservatoryAllowed()
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
+        post("/api/comparisons")
+            .content(createComparisonRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -834,7 +830,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = AuthorNotFound(ThingId("R123"))
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
+        post("/api/comparisons")
+            .content(createComparisonRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -858,7 +855,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         )
         every { comparisonService.create(any()) } throws exception
 
-        post("/api/comparisons").content(objectMapper.writeValueAsString(createComparisonRequest()))
+        post("/api/comparisons")
+            .content(createComparisonRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -913,11 +911,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val exception = ComparisonNotFound(comparisonId)
         every { comparisonService.createComparisonRelatedResource(any()) } throws exception
 
-        post("/api/comparisons/$comparisonId/related-resources").content(
-            objectMapper.writeValueAsString(
-                createComparisonRelatedResourceRequest()
-            )
-        )
+        post("/api/comparisons/$comparisonId/related-resources")
+            .content(createComparisonRelatedResourceRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -972,7 +967,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         every { comparisonService.createComparisonRelatedFigure(any()) } throws exception
 
         post("/api/comparisons/$comparisonId/related-figures")
-            .content(objectMapper.writeValueAsString(createComparisonRelatedFigureRequest()))
+            .content(createComparisonRelatedFigureRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()

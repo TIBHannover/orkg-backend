@@ -26,7 +26,6 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -35,7 +34,6 @@ import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -64,7 +62,9 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
 
     @Test
     fun legacyRedirectToDump() {
-        mockMvc.perform(documentedGetRequestTo(DUMP_ENDPOINT).accept("application/n-triples"))
+        documentedGetRequestTo(DUMP_ENDPOINT)
+            .accept("application/n-triples")
+            .perform()
             .andExpect(status().isMovedPermanently)
             .andExpect(header().string("Location", endsWith("/files/rdf-dumps/rdf-export-orkg.nt")))
             .andDo(
@@ -92,12 +92,11 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
         every { statementService.countIncomingStatements(setOf(someId)) } returns mapOf(someId to 5L)
 
         // TODO: tests else-branch, not ideal
-        mockMvc.perform(
-            documentedGetRequestTo(HINTS_ENDPOINT)
-                .param("q", "1")
-                .param("exact", "false")
-                .param("type", "item")
-        )
+        documentedGetRequestTo(HINTS_ENDPOINT)
+            .param("q", "1")
+            .param("exact", "false")
+            .param("type", "item")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].label", `is`("Resource 1234")))
             .andDo(
@@ -131,7 +130,10 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
         )
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        mockMvc.perform(get(HINTS_ENDPOINT).param("q", "1234").param("type", "class"))
+        get(HINTS_ENDPOINT)
+            .param("q", "1234")
+            .param("type", "class")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].label", `is`("Class 1234")))
 
@@ -156,9 +158,10 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
         )
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        mockMvc.perform(get(HINTS_ENDPOINT)
+        get(HINTS_ENDPOINT)
             .param("q", "1234")
-            .param("type", "property"))
+            .param("type", "property")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content[0].label", `is`("Predicate 1234")))
 

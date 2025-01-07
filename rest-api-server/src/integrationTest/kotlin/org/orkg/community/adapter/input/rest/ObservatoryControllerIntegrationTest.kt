@@ -19,7 +19,6 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -27,7 +26,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -84,8 +82,8 @@ internal class ObservatoryControllerIntegrationTest : RestDocsTest("observatorie
             researchField = researchField
         )
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/observatories"))
+        documentedGetRequestTo("/api/observatories")
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -107,8 +105,8 @@ internal class ObservatoryControllerIntegrationTest : RestDocsTest("observatorie
             researchField = researchField
         )
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/observatories/{id}", observatoryId))
+        documentedGetRequestTo("/api/observatories/{id}", observatoryId)
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -135,8 +133,8 @@ internal class ObservatoryControllerIntegrationTest : RestDocsTest("observatorie
             observatoryId = observatoryId
         )
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/observatories/{id}/papers", observatoryId))
+        documentedGetRequestTo("/api/observatories/{id}/papers", observatoryId)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andDo(
@@ -164,8 +162,8 @@ internal class ObservatoryControllerIntegrationTest : RestDocsTest("observatorie
             observatoryId = observatoryId
         )
 
-        mockMvc
-            .perform(documentedGetRequestTo("/api/observatories/{id}/problems", observatoryId))
+        documentedGetRequestTo("/api/observatories/{id}/problems", observatoryId)
+            .perform()
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(status().isOk)
             .andDo(
@@ -193,8 +191,9 @@ internal class ObservatoryControllerIntegrationTest : RestDocsTest("observatorie
             observatoryId = observatoryId
         )
 
-        mockMvc
-            .perform(get("/api/observatories/{id}/class", observatoryId).param("classes", "SomeClass"))
+        get("/api/observatories/{id}/class", observatoryId)
+            .param("classes", "SomeClass")
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.content[0].id").value(resourceId.value))
@@ -217,12 +216,10 @@ internal class ObservatoryControllerIntegrationTest : RestDocsTest("observatorie
             observatoryId = observatoryId
         )
 
-        mockMvc
-            .perform(
-                get("/api/observatories/{id}/class", observatoryId)
-                    .param("classes", "SomeClass")
-                    .param("featured", "true")
-            )
+        get("/api/observatories/{id}/class", observatoryId)
+            .param("classes", "SomeClass")
+            .param("featured", "true")
+            .perform()
             .andExpect(jsonPath("$.content", hasSize<Int>(0)))
             .andExpect(status().isOk)
     }

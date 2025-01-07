@@ -38,21 +38,14 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
-import org.orkg.testing.spring.restdocs.documentedPatchRequestTo
-import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -77,7 +70,6 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
         every { statementService.findAllDescriptions(any<Set<ThingId>>()) } returns emptyMap()
 
         documentedGetRequestTo("/api/classes")
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -106,7 +98,6 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             .param("created_by", createdBy.value.toString())
             .param("created_at_start", createdAtStart.format(ISO_OFFSET_DATE_TIME))
             .param("created_at_end", createdAtEnd.format(ISO_OFFSET_DATE_TIME))
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -143,7 +134,9 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
         val exception = UnknownSortingProperty("unknown")
         every { classService.findAll(any()) } throws exception
 
-        mockMvc.perform(get("/api/classes").param("sort", "unknown"))
+        get("/api/classes")
+            .param("sort", "unknown")
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value(exception.message))
@@ -170,8 +163,9 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
                 )
             } returns pageOf()
 
-            mockMvc
-                .perform(performGetByURI("https://example.org/exists"))
+            get("/api/classes")
+                .param("uri", "https://example.org/exists")
+                .perform()
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.uri").value("https://example.org/exists"))
 
@@ -195,8 +189,9 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
         fun shouldReturn404() {
             every { classService.findByURI(any()) } returns Optional.empty()
 
-            mockMvc
-                .perform(performGetByURI("http://example.org/non-existent"))
+            get("/api/classes")
+                .param("uri", "http://example.org/non-existent")
+                .perform()
                 .andExpect(status().isNotFound)
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.message").value("""Class with URI "http://example.org/non-existent" not found."""))
@@ -230,8 +225,6 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
 
         post("/api/classes")
             .content(request)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
@@ -298,7 +291,6 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
 
         documentedPutRequestTo("/api/classes/{id}", id)
             .content(body)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value("new label"))
@@ -342,7 +334,6 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
 
         documentedPatchRequestTo("/api/classes/{id}", id)
             .content(body)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andDo(
@@ -373,7 +364,6 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
 
         patch("/api/classes/{id}", id)
             .content(body)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
 
@@ -395,7 +385,6 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
 
         patch("/api/classes/{id}", id)
             .content(body)
-            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
         verify(exactly = 1) {
@@ -406,11 +395,6 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             })
         }
     }
-
-    private fun performGetByURI(uri: String) =
-        get("/api/classes").param("uri", uri)
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding("UTF-8")
 
     private fun mockReply() = Class(
         id = ThingId("C1"),

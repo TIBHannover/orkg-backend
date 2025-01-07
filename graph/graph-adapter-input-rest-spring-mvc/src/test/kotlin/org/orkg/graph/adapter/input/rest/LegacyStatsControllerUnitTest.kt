@@ -18,7 +18,6 @@ import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -26,7 +25,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -48,7 +46,8 @@ internal class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
             statisticsService.findAllObservatoryStats(any())
         } returns pageOf(response)
 
-        mockMvc.perform(get("/api/stats/observatories"))
+        get("/api/stats/observatories")
+            .perform()
             .andExpect(status().isOk)
 
         verify(exactly = 1) { statisticsService.findAllObservatoryStats(any()) }
@@ -62,7 +61,8 @@ internal class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
             statisticsService.findObservatoryStatsById(id)
         } returns response
 
-        mockMvc.perform(get("/api/stats/observatories/{id}", id))
+        get("/api/stats/observatories/{id}", id)
+            .perform()
             .andExpect(status().isOk)
 
         verify(exactly = 1) { statisticsService.findObservatoryStatsById(id) }
@@ -81,7 +81,8 @@ internal class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
 
         every { statisticsService.findResearchFieldStatsById(id, false) } returns response
 
-        mockMvc.perform(documentedGetRequestTo("/api/stats/research-fields/{id}?includeSubfields={includeSubfields}", id, false))
+        documentedGetRequestTo("/api/stats/research-fields/{id}?includeSubfields={includeSubfields}", id, false)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(id.value))
             .andExpect(jsonPath("$.papers").value(response.papers))
@@ -115,7 +116,8 @@ internal class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
 
         every { statisticsService.findResearchFieldStatsById(id, false) } throws exception
 
-        mockMvc.perform(get("/api/stats/research-fields/{id}", id))
+        get("/api/stats/research-fields/{id}", id)
+            .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.error").value("Not Found"))

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.configuration.CommonSpringConfig
 import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.http.HttpStatus
@@ -14,8 +13,6 @@ import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -30,7 +27,8 @@ import org.springframework.web.bind.annotation.RestController
 internal class ExceptionHandlerUnitTest : RestDocsTest("errors") {
     @Test
     fun simpleMessageException() {
-        mockMvc.perform(documentedGetRequestTo("/errors/simple"))
+        documentedGetRequestTo("/errors/simple")
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status", `is`(400)))
             .andExpect(jsonPath("$.error", `is`("Bad Request")))

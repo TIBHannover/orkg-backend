@@ -154,6 +154,14 @@ class Metrics {
     )
 
     @Bean
+    fun publishedComparisonVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "published-comparison-version-count",
+        description = "Number of individual published comparison versions in the graph.",
+        group = "content-types",
+        supplier = { statisticsRepository.countNodes("ComparisonPublished") }
+    )
+
+    @Bean
     fun visualizationCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "visualization-count",
         description = "Number of visualizations in the graph.",
@@ -170,17 +178,33 @@ class Metrics {
     )
 
     @Bean
+    fun publishedLiteratureListVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "published-literature-list-version-count",
+        description = "Number of individual published literature list versions in the graph.",
+        group = "content-types",
+        supplier = { statisticsRepository.countNodes("LiteratureListPublished") }
+    )
+
+    @Bean
     fun smartReviewCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "smart-review-count",
-        description = "Number of smart reviews lists in the graph.",
+        description = "Number of smart reviews in the graph.",
         group = "content-types",
         supplier = { statisticsRepository.countNodes("SmartReview") }
     )
 
     @Bean
+    fun publishedSmartReviewVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "published-smart-review-version-count",
+        description = "Number of individual published smart review versions in the graph.",
+        group = "content-types",
+        supplier = { statisticsRepository.countNodes("SmartReviewPublished") }
+    )
+
+    @Bean
     fun templateCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "template-count",
-        description = "Number of templates lists in the graph.",
+        description = "Number of templates in the graph.",
         group = "content-types",
         supplier = { statisticsRepository.countNodes("NodeShape") }
     )
@@ -207,6 +231,22 @@ class Metrics {
         description = "Number of benchmarks in the graph.",
         group = "content-types",
         supplier = { statisticsRepository.countNodes("C14022") }
+    )
+
+    @Bean
+    fun rosettaStoneTemplateVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "rosetta-stone-template-count",
+        description = "Number of rosetta stone templates in the graph.",
+        group = "content-types",
+        supplier = { statisticsRepository.countNodes("RosettaNodeShape") }
+    )
+
+    @Bean
+    fun rosettaStoneStatementVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+        name = "rosetta-stone-statement-version-count",
+        description = "Number of individual rosetta stone statement versions in the graph.",
+        group = "content-types",
+        supplier = { statisticsRepository.countNodes("RosettaStoneStatement") }
     )
 
     //

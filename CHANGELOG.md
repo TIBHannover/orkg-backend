@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.75.0] - 2025-01-08
 ### Added
-- Added automatic research field association for legacy published smart reviews and literature lists generated.
+- Added automatic research field association for legacy published smart reviews and literature lists.
   (See: [!1145](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1145))
 - Added author name filter for generic content-type endpoint.
   (Closes: [#599](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/599))

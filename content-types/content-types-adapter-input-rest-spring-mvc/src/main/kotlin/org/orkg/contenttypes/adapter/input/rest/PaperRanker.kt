@@ -42,13 +42,13 @@ class PaperRanker(
     fun run() {
         val startMillis = System.nanoTime()
         rankPapersAsync(workers!!) { paper, score ->
-            if (paper.visibility == Visibility.UNLISTED && score.isSufficient) { // paper.unlistedBy is already checked by rankPapersAsync
+            if (paper.visibility == Visibility.UNLISTED && !score.isRejected) { // paper.unlistedBy is already checked by rankPapersAsync
                 resourceRepository.save(paper.copy(
                     visibility = Visibility.DEFAULT,
                     unlistedBy = null
                 ))
                 logger.debug("""Re-listing paper "{}".""", paper.id)
-            } else if (paper.visibility == Visibility.DEFAULT && !score.isSufficient) {
+            } else if (paper.visibility == Visibility.DEFAULT && score.isRejected) {
                 resourceRepository.save(paper.copy(
                     visibility = Visibility.UNLISTED,
                     unlistedBy = ContributorId.SYSTEM
@@ -151,15 +151,13 @@ class PaperRanker(
         val observatoryScore: Int
     ) {
         constructor(stats: PaperStats) : this(
-            isRejected = !stats.hasTitle || stats.authors == 0 || stats.contributions == 0 && stats.rosettaStoneStatements == 0L || stats.properties == 0L,
+            isRejected = !stats.hasTitle || stats.authors == 0 || stats.contributions == 0 && stats.rosettaStoneStatements == 0L && stats.properties == 0L,
             propertyScore = if (stats.properties > 0) (1 + log10(stats.properties.toDouble())) * 2 else 0.0,
             comparisonScore = if (stats.comparisons > 0) (1 + log10(stats.comparisons.toDouble())) * 2 else 0.0,
             listScore = if (stats.lists > 0) (1 + log10(stats.lists.toDouble())) else 0.0,
             doiScore = if (stats.hasDoi) 1 else 0,
             observatoryScore = if (stats.hasObservatory) 5 else 0
         )
-
-        val isSufficient: Boolean = !isRejected
     }
 }
 

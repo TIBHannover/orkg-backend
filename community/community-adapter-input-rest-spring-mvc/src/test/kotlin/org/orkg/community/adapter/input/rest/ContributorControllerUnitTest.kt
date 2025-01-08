@@ -10,7 +10,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.community.testing.fixtures.createContributor
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest

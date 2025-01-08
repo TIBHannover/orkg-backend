@@ -37,6 +37,7 @@ testing {
                 runtimeOnly("org.postgresql:postgresql")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-test")
+                implementation(testFixtures(project(":common:testing")))
                 implementation(testFixtures(project(":community:community-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
             }

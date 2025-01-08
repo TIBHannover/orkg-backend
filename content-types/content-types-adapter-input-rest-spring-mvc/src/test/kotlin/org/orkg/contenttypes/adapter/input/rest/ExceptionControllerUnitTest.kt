@@ -43,7 +43,7 @@ import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.contenttypes.domain.UnrelatedLiteratureListSection
 import org.orkg.contenttypes.domain.UnrelatedTemplateProperty
 import org.orkg.graph.domain.Predicates
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent

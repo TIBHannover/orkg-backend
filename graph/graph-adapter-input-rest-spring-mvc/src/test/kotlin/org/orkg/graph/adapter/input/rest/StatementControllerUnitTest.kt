@@ -39,7 +39,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement

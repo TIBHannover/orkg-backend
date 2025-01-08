@@ -16,6 +16,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreateResourceUseCase
@@ -26,7 +27,6 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
-import org.orkg.testing.fixedClock
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 

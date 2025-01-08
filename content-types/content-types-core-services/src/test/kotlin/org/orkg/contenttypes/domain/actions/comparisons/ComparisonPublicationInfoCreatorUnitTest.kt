@@ -7,11 +7,11 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.time.Clock
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
 import org.orkg.graph.domain.Literals
@@ -19,21 +19,20 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.testing.fixedClock
 
 internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
-    private val clock: Clock = fixedClock
 
-    private val comparisonPublicationInfoCreator = ComparisonPublicationInfoCreator(statementService, literalService, clock)
+    private val comparisonPublicationInfoCreator =
+        ComparisonPublicationInfoCreator(statementService, literalService, fixedClock)
 
     @Test
     fun `Given a comparison publish command, it updates the publication metadata`() {
         val comparisonId = ThingId("R123")
         val command = dummyCreateComparisonCommand()
         val state = CreateComparisonState(comparisonId = comparisonId)
-        val now = OffsetDateTime.now(clock)
+        val now = OffsetDateTime.now(fixedClock)
         val publicationYearLiteralId = ThingId("L123")
         val publicationMonthLiteralId = ThingId("L456")
 

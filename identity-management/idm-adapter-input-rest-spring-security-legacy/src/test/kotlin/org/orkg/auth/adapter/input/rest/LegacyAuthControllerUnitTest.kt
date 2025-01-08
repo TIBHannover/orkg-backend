@@ -22,7 +22,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.testing.fixtures.TestBodyPublisher
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired

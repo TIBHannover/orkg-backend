@@ -6,7 +6,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.SearchFilter.Operator
 import org.orkg.graph.domain.SearchFilter.Value
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent

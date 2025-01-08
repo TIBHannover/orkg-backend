@@ -22,6 +22,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
@@ -45,14 +46,13 @@ import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparison
 import org.orkg.testing.andExpectComparisonRelatedFigure
 import org.orkg.testing.andExpectComparisonRelatedResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.fixedClock
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath

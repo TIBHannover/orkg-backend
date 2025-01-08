@@ -19,6 +19,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.featureflags.output.FeatureFlagService
@@ -27,11 +28,10 @@ import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectTemplateInstance
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.fixedClock
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath

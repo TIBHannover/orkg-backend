@@ -9,11 +9,11 @@ import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkDescribeSpec
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createLiteral
-import org.orkg.testing.fixedClock
 
 internal class LiteralServiceUnitTest : MockkDescribeSpec({
     val literalRepository: LiteralRepository = mockk()

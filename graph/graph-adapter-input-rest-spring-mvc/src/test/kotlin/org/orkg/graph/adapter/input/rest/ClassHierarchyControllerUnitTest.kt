@@ -23,7 +23,7 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createClass
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.configuration.SecurityTestConfiguration

@@ -21,6 +21,7 @@ dependencies {
     testFixturesImplementation(project(":common:identifiers"))
     testFixturesImplementation(project(":content-types:content-types-core-model"))
     testFixturesImplementation(project(":graph:graph-core-model"))
+    testFixturesImplementation(testFixtures(project(":common:testing")))
     testFixturesImplementation(testFixtures(project(":content-types:content-types-core-model")))
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
     testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock

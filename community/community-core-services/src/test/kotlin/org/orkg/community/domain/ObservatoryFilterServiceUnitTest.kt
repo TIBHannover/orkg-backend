@@ -7,18 +7,14 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.time.Clock
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.input.CreateObservatoryFilterUseCase
 import org.orkg.community.input.UpdateObservatoryFilterUseCase
 import org.orkg.community.output.ObservatoryFilterRepository
@@ -40,11 +36,9 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val predicateRepository: PredicateRepository = mockk()
     private val classRepository: ClassRepository = mockk()
-    private val fixedTime = OffsetDateTime.of(2023, 8, 29, 13, 37, 35, 12345, ZoneOffset.ofHours(1))
-    private val staticClock = Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
 
     private val service = ObservatoryFilterService(
-        repository, observatoryRepository, predicateRepository, classRepository, staticClock
+        repository, observatoryRepository, predicateRepository, classRepository, fixedClock
     )
 
     @Test
@@ -80,7 +74,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             repository.save(withArg {
                 it.id shouldBe id
                 it.observatoryId shouldBe command.observatoryId
-                it.createdAt shouldBe LocalDateTime.now(staticClock)
+                it.createdAt shouldBe LocalDateTime.now(fixedClock)
                 it.createdBy shouldBe command.contributorId
                 it.path shouldBe command.path
                 it.label shouldBe command.label
@@ -123,7 +117,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             repository.save(withArg {
                 it.id shouldBe command.id
                 it.observatoryId shouldBe command.observatoryId
-                it.createdAt shouldBe LocalDateTime.now(staticClock)
+                it.createdAt shouldBe LocalDateTime.now(fixedClock)
                 it.createdBy shouldBe command.contributorId
                 it.path shouldBe command.path
                 it.label shouldBe command.label

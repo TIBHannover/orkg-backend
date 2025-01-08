@@ -11,7 +11,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.statistics.domain.SimpleMetric
 import org.orkg.statistics.input.RetrieveStatisticsUseCase
 import org.orkg.statistics.testing.fixtures.createMetrics
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath

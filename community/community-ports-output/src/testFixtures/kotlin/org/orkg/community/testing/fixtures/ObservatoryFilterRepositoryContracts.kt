@@ -9,6 +9,7 @@ import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.OrganizationId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.domain.ObservatoryFilter
 import org.orkg.community.domain.ObservatoryFilterId
 import org.orkg.community.output.ObservatoryFilterRepository
@@ -17,7 +18,6 @@ import org.orkg.community.output.OrganizationRepository
 import org.orkg.eventbus.EventBus
 import org.orkg.eventbus.events.UserRegistered
 import org.orkg.testing.MockUserId
-import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 
 interface ObservatoryFilterRepositoryContracts {

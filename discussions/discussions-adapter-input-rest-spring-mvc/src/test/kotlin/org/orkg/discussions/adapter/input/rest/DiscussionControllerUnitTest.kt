@@ -25,7 +25,7 @@ import org.orkg.discussions.input.CreateDiscussionCommentUseCase
 import org.orkg.discussions.input.DiscussionUseCases
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.UserNotFound
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.SecurityTestConfiguration

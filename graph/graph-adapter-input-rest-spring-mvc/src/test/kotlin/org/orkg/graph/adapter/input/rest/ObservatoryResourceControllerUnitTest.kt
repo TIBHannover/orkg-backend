@@ -24,7 +24,7 @@ import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.spring.restdocs.RestDocsTest

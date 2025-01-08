@@ -9,11 +9,11 @@ import java.time.OffsetDateTime
 import java.util.*
 import kotlin.io.path.Path
 import org.orkg.common.ContributorId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.input.UpdateOrganizationUseCases
 import org.orkg.mediastorage.domain.Image
 import org.orkg.mediastorage.domain.ImageData
 import org.orkg.mediastorage.domain.ImageId
-import org.orkg.testing.fixedClock
 import org.springframework.core.io.ClassPathResource
 
 val testImage: URI = URI.create("classpath:/images/test_image.png")

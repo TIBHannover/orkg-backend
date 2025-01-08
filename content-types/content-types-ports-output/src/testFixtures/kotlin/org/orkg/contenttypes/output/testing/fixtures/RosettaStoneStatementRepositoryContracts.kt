@@ -16,6 +16,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.testing.fixtures.withRosettaStoneStatementMappings
@@ -36,7 +37,6 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.withCustomMappings
 import org.orkg.testing.MockUserId
-import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 

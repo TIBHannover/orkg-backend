@@ -25,7 +25,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPredicate

@@ -40,6 +40,7 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(project(":common:pagination"))
+                implementation(testFixtures(project(":common:testing")))
                 implementation(project(":graph:graph-core-services"))
                 implementation(project(":graph:graph-ports-output"))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))

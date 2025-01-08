@@ -23,7 +23,7 @@ import org.orkg.mediastorage.input.ImageUseCases
 import org.orkg.mediastorage.testing.fixtures.loadImage
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest

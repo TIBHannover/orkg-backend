@@ -11,7 +11,7 @@ import org.orkg.curation.input.RetrieveCurationUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectClass
 import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.pageOf

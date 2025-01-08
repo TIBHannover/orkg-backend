@@ -17,6 +17,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.domain.ClassSubclassRelation
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Resource
@@ -26,7 +27,6 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
-import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 

@@ -14,16 +14,12 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.time.Clock
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.TestBodyPublisher
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.testing.fixtures.dummyRegisterDoiCommand
@@ -33,10 +29,8 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
     private val dataciteConfiguration: DataCiteConfiguration = mockk()
     private val httpClient: HttpClient = mockk()
     private val objectMapper = ObjectMapper().registerKotlinModule()
-    private val fixedTime = OffsetDateTime.of(2023, 9, 8, 13, 9, 34, 12345, ZoneOffset.ofHours(1))
-    private val staticClock = Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
     private val adapter =
-        DataCiteDoiServiceAdapter(dataciteConfiguration, objectMapper, httpClient, ::TestBodyPublisher, staticClock)
+        DataCiteDoiServiceAdapter(dataciteConfiguration, objectMapper, httpClient, ::TestBodyPublisher, fixedClock)
 
     @Test
     fun `Creating a doi, returns success`() {

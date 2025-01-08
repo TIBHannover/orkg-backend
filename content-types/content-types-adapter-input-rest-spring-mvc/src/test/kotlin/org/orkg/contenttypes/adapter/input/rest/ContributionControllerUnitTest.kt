@@ -12,7 +12,7 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createContribution
 import org.orkg.contenttypes.input.ContributionUseCases
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectContribution
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.pageOf

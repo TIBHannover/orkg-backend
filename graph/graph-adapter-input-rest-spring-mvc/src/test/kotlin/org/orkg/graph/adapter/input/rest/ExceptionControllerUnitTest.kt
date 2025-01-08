@@ -32,7 +32,7 @@ import org.orkg.graph.domain.StatementNotModifiable
 import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest

@@ -8,13 +8,13 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.graph.output.LegacyStatisticsRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.fixedClock
 
 internal class LegacyStatisticsServiceUnitTest : MockkBaseTest {
 

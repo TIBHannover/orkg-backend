@@ -30,7 +30,7 @@ import org.orkg.contenttypes.input.testing.fixtures.stringLiteralTemplatePropert
 import org.orkg.contenttypes.input.testing.fixtures.untypedTemplatePropertyRequest
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneTemplate

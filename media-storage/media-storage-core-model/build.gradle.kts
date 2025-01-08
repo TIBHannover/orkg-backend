@@ -11,5 +11,5 @@ dependencies {
     testFixturesApi(project(":common:identifiers"))
     testFixturesApi(project(":community:community-ports-input"))
     testFixturesImplementation("org.springframework:spring-core")
-    testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
+    testFixturesImplementation(testFixtures(project(":common:testing")))
 }

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
@@ -33,7 +34,6 @@ import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.testing.MockUserId
-import org.orkg.testing.fixedClock
 
 internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
     private val repository: RosettaStoneStatementRepository = mockk()

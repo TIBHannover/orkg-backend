@@ -23,6 +23,7 @@ import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.ContributionUseCases
@@ -39,13 +40,12 @@ import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectSmartReview
 import org.orkg.testing.andExpectStatementList
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.fixedClock
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath

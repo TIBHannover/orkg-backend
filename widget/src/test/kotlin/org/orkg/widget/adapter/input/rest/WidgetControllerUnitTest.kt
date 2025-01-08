@@ -14,7 +14,7 @@ import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.testing.asciidoc.Asciidoc
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.widget.input.ResolveDOIUseCase
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest

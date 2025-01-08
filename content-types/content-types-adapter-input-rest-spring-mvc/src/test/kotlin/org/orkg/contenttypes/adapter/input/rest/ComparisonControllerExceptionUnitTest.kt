@@ -7,7 +7,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.contenttypes.adapter.input.rest.ComparisonControllerExceptionUnitTest.FakeExceptionController
 import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent

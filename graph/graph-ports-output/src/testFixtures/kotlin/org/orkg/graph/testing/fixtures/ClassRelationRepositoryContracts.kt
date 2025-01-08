@@ -7,11 +7,11 @@ import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.domain.ClassSubclassRelation
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
-import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 
 fun <

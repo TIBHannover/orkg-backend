@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
@@ -24,7 +25,6 @@ import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.fixedClock
 
 internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository = mockk()

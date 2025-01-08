@@ -28,7 +28,7 @@ import org.orkg.contenttypes.domain.ResearchField
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectObservatory
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.pageOf

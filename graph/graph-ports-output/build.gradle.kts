@@ -20,6 +20,6 @@ dependencies {
     testFixturesImplementation("io.kotest:kotest-assertions-core")
     testFixturesImplementation(project(":common:identifiers"))
     testFixturesImplementation(project(":graph:graph-core-model"))
+    testFixturesImplementation(testFixtures(project(":common:testing")))
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
-    testFixturesImplementation(testFixtures(project(":testing:spring"))) // for fixedClock
 }

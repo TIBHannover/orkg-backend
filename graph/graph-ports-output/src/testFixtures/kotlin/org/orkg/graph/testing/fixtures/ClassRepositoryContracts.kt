@@ -15,10 +15,10 @@ import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.output.ClassRepository
-import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 

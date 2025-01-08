@@ -3,12 +3,12 @@ package org.orkg.community.adapter.output.jpa
 import java.time.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaConfiguration
 import org.orkg.eventbus.ReallySimpleEventBus
 import org.orkg.eventbus.events.UserRegistered
 import org.orkg.testing.MockUserId
 import org.orkg.testing.PostgresContainerInitializer
-import org.orkg.testing.fixedClock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest

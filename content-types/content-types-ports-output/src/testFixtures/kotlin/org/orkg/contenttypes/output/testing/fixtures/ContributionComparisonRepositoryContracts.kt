@@ -8,6 +8,7 @@ import io.kotest.matchers.shouldBe
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.ContributionInfo
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.graph.domain.Classes
@@ -24,7 +25,6 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.withCustomMappings
-import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 
 fun <

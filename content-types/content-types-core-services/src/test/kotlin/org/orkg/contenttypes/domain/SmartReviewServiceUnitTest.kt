@@ -18,6 +18,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.output.DoiService
@@ -41,7 +42,6 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 

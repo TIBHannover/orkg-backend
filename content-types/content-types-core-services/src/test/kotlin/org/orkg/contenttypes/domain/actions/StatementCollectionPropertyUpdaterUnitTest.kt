@@ -12,6 +12,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
@@ -24,7 +25,6 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 
 internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {

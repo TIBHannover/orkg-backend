@@ -12,13 +12,13 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
-import org.orkg.testing.fixedClock
 
 internal class ClassServiceUnitTest : MockkBaseTest {
 

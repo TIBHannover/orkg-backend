@@ -6,6 +6,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.domain.OrganizationType
 import org.orkg.community.domain.internal.MD5Hash
 import org.orkg.community.input.ContributorUseCases
@@ -23,7 +24,6 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.mediastorage.domain.ImageId
 import org.orkg.testing.MockUserId
-import org.orkg.testing.fixedClock
 
 // Classes
 

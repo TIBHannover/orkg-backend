@@ -7,6 +7,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.time.OffsetDateTime
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.domain.ChildClass
 import org.orkg.graph.domain.ClassHierarchyEntry
 import org.orkg.graph.domain.ClassSubclassRelation
@@ -14,7 +15,6 @@ import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
-import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 
 fun <

@@ -31,7 +31,7 @@ import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectLiteral
 import org.orkg.testing.andExpectPage

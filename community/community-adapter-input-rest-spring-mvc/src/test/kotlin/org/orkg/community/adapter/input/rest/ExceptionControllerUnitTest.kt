@@ -11,7 +11,7 @@ import org.orkg.community.adapter.input.rest.ExceptionControllerUnitTest.FakeExc
 import org.orkg.community.domain.ContributorAlreadyExists
 import org.orkg.community.domain.ObservatoryAlreadyExists
 import org.orkg.community.domain.OrganizationNotFound
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent

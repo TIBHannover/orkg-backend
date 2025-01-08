@@ -28,7 +28,7 @@ import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.Predicates
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectObservatoryFilter
 import org.orkg.testing.annotations.TestWithMockUser

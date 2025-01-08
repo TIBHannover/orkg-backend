@@ -24,7 +24,7 @@ import org.orkg.graph.testing.fixtures.createComparisonResource
 import org.orkg.graph.testing.fixtures.createPaperResource
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createVisualizationResource
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.pageOf

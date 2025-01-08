@@ -7,7 +7,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.statistics.adapter.input.rest.StatisticsControllerExceptionUnitTest.FakeExceptionController
 import org.orkg.statistics.domain.GroupNotFound
 import org.orkg.statistics.domain.MetricNotFound
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest

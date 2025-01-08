@@ -14,6 +14,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreatePredicateUseCase
@@ -21,7 +22,6 @@ import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
-import org.orkg.testing.fixedClock
 
 internal class PredicateServiceUnitTest : MockkBaseTest {
 

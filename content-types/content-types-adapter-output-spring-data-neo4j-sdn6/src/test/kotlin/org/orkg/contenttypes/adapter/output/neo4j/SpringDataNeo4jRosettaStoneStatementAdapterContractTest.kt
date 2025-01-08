@@ -16,8 +16,8 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
-import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.annotations.Neo4jContainerUnitTest
+import org.orkg.testing.configuration.FixedClockConfig
 import org.springframework.beans.factory.annotation.Autowired
 
 @Neo4jContainerUnitTest(

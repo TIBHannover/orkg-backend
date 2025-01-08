@@ -18,6 +18,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.RosettaStoneStatementNotFound
@@ -26,13 +27,12 @@ import org.orkg.contenttypes.input.RosettaStoneStatementUseCases
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.testing.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneStatement
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.fixedClock
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath

@@ -3,7 +3,7 @@ package org.orkg.discussions.adapter.output.jpa
 import org.orkg.discussions.adapter.output.jpa.configuration.DiscussionsJpaConfiguration
 import org.orkg.discussions.output.DiscussionCommentRepository
 import org.orkg.discussions.output.DiscussionCommentRepositoryContractTest
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.PostgresContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase

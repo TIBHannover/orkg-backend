@@ -17,6 +17,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkDescribeSpec
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.input.UpdateStatementUseCase
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.OwnershipInfo
@@ -27,7 +28,6 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Sort
 

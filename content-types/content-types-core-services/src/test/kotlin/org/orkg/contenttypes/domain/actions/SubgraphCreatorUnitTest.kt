@@ -13,6 +13,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.input.ClassDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.ListDefinition
@@ -40,7 +41,6 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 
 internal class SubgraphCreatorUnitTest : MockkBaseTest {

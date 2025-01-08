@@ -15,6 +15,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceService
@@ -25,7 +26,6 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
-import org.orkg.testing.fixedClock
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest

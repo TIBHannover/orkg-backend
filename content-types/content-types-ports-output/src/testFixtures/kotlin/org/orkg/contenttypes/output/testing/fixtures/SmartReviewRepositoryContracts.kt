@@ -15,6 +15,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
@@ -35,7 +36,6 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.withCustomMappings
-import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 

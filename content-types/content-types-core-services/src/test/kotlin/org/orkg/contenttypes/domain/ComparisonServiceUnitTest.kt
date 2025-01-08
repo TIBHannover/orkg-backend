@@ -9,7 +9,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.junit.jupiter.api.Test
@@ -18,6 +17,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -49,7 +49,6 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
-import org.orkg.testing.fixedClock
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
 
@@ -69,7 +68,6 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val comparisonRepository: ComparisonRepository = mockk()
     private val comparisonTableRepository: ComparisonTableRepository = mockk()
     private val comparisonPublishedRepository: ComparisonPublishedRepository = mockk()
-    private val clock: Clock = fixedClock
 
     private val service = ComparisonService(
         repository = contributionComparisonRepository,
@@ -87,7 +85,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         comparisonRepository = comparisonRepository,
         comparisonTableRepository = comparisonTableRepository,
         comparisonPublishedRepository = comparisonPublishedRepository,
-        clock = clock,
+        clock = fixedClock,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
     )
 

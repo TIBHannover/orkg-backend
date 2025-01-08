@@ -20,6 +20,7 @@ dependencies {
     testFixturesImplementation(project(":common:identifiers"))
     testFixturesImplementation(project(":community:community-core-model"))
     testFixturesImplementation(project(":media-storage:media-storage-core-model"))
+    testFixturesImplementation(testFixtures(project(":common:testing")))
     testFixturesImplementation(testFixtures(project(":community:community-core-model")))
     testFixturesImplementation(testFixtures(project(":testing:spring")))
 }

@@ -20,6 +20,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Classes
@@ -44,7 +45,6 @@ import org.orkg.graph.output.OwnershipInfo
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
-import org.orkg.testing.fixedClock
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 

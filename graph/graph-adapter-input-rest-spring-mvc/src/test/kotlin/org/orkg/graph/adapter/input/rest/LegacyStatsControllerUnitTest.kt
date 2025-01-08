@@ -15,7 +15,7 @@ import org.orkg.graph.domain.ObservatoryStats
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.ResearchFieldStats
 import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
-import org.orkg.testing.FixedClockConfig
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest

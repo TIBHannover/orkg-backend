@@ -35,13 +35,14 @@ class ComparisonVersionDoiPublisher(
             return state
         }
         val comparison = state.comparison!!
+        val comparisonVersionId = state.comparisonVersionId!!
         val doi = doiService.register(
             DoiService.RegisterCommand(
-                suffix = comparison.id.value,
+                suffix = comparisonVersionId.value,
                 title = comparison.title,
                 subject = command.subject,
                 description = command.description,
-                url = URI.create("$comparisonPublishBaseUri/").resolve(comparison.id.value),
+                url = URI.create("$comparisonPublishBaseUri/").resolve(comparisonVersionId.value),
                 creators = command.authors,
                 resourceType = Classes.comparison.value,
                 resourceTypeGeneral = "Dataset",
@@ -50,7 +51,7 @@ class ComparisonVersionDoiPublisher(
         )
         singleStatementPropertyCreator.create(
             contributorId = command.contributorId,
-            subjectId = comparison.id,
+            subjectId = comparisonVersionId,
             predicateId = Predicates.hasDOI,
             label = doi.value
         )

@@ -9,6 +9,7 @@ import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
 import org.junit.jupiter.api.Test
+import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.PublishComparisonState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
@@ -35,9 +36,10 @@ internal class ComparisonVersionDoiPublisherUnitTest : MockkBaseTest {
     @Test
     fun `Given a comparison publish command, when a new doi should be assigned, it registers a new doi and creates a hasDOI statement`() {
         val comparison = createComparison()
+        val comparisonVersionId = ThingId("R45214")
         val command = dummyPublishComparisonCommand().copy(id = comparison.id)
-        val state = PublishComparisonState(comparison)
-        val doi = "10.1000/182"
+        val state = PublishComparisonState(comparison, comparisonVersionId)
+        val doi = "10.1000/$comparisonVersionId"
         val relatedDOIs = listOf("10.1000/a", "10.1000/b")
 
         every { doiService.register(any()) } returns DOI.of(doi)
@@ -46,15 +48,16 @@ internal class ComparisonVersionDoiPublisherUnitTest : MockkBaseTest {
 
         comparisonVersionArchiver(command, state).asClue {
             it.comparison shouldBe comparison
+            it.comparisonVersionId shouldBe comparisonVersionId
         }
 
         verify(exactly = 1) {
             doiService.register(withArg {
-                it.suffix shouldBe comparison.id.value
+                it.suffix shouldBe comparisonVersionId.value
                 it.title shouldBe comparison.title
                 it.subject shouldBe command.subject
                 it.description shouldBe command.description
-                it.url shouldBe URI.create("https://orkg.org/review/${comparison.id}")
+                it.url shouldBe URI.create("https://orkg.org/review/$comparisonVersionId")
                 it.creators shouldBe command.authors
                 it.resourceType shouldBe Classes.comparison.value
                 it.resourceTypeGeneral shouldBe "Dataset"
@@ -64,7 +67,7 @@ internal class ComparisonVersionDoiPublisherUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             singleStatementPropertyCreator.create(
                 contributorId = command.contributorId,
-                subjectId = comparison.id,
+                subjectId = comparisonVersionId,
                 predicateId = Predicates.hasDOI,
                 label = doi
             )

@@ -1,6 +1,5 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
-import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
 import io.kotest.core.spec.style.DescribeSpec
 import org.orkg.contenttypes.adapter.output.neo4j.configuration.ContentTypesNeo4jConfiguration
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
@@ -18,16 +17,10 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.testing.FixedClockConfig
-import org.orkg.testing.Neo4jContainerInitializer
+import org.orkg.testing.annotations.Neo4jContainerUnitTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
-import org.springframework.test.context.ContextConfiguration
 
-@EnableAutoConfiguration
-@DataNeo4jTest
-@ContextConfiguration(
+@Neo4jContainerUnitTest(
     classes = [
         SpringDataNeo4jRosettaStoneStatementAdapter::class,
         SpringDataNeo4jStatementAdapter::class,
@@ -39,12 +32,8 @@ import org.springframework.test.context.ContextConfiguration
         GraphNeo4jConfiguration::class,
         ContentTypesNeo4jConfiguration::class,
         FixedClockConfig::class
-    ],
-    initializers = [
-        Neo4jContainerInitializer::class
     ]
 )
-@ImportAutoConfiguration(MigrationsAutoConfiguration::class)
 internal class SpringDataNeo4jRosettaStoneStatementAdapterContractTest(
     @Autowired private val springDataNeo4jRosettaStoneStatementAdapter: RosettaStoneStatementRepository,
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,

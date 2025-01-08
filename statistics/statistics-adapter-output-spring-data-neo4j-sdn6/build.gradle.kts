@@ -12,11 +12,8 @@ testing {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib") // "downgrade" from api()
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
-                implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
                 implementation("io.kotest:kotest-framework-api")
-                implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-beans")
-                implementation("org.springframework:spring-test")
                 implementation("io.kotest:kotest-runner-junit5")
                 implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for SDN adapters, TODO: refactor?
                 implementation(project(":graph:graph-ports-output"))

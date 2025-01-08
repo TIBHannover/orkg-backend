@@ -13,7 +13,6 @@ testing {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib") // "downgrade" from api()
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-data-neo4j")
-                implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
                 implementation("io.kotest:kotest-framework-api")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-beans")

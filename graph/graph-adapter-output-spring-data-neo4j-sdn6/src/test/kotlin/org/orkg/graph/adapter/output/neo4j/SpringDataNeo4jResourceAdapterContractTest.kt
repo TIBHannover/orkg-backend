@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
@@ -16,29 +15,19 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.resourceRepositoryContract
-import org.orkg.testing.Neo4jContainerInitializer
+import org.orkg.testing.annotations.Neo4jContainerUnitTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
-import org.springframework.test.context.ContextConfiguration
 
-@EnableAutoConfiguration
-@DataNeo4jTest
-@ContextConfiguration(
+@Neo4jContainerUnitTest(
     classes = [
         SpringDataNeo4jResourceAdapter::class,
         SpringDataNeo4jClassAdapter::class,
         SpringDataNeo4jClassHierarchyAdapter::class,
         GraphNeo4jConfiguration::class
-    ],
-    initializers = [
-        Neo4jContainerInitializer::class
     ]
 )
-@ImportAutoConfiguration(MigrationsAutoConfiguration::class)
 internal class SpringDataNeo4jResourceAdapterContractTests(
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,

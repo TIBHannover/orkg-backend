@@ -50,7 +50,6 @@ testing {
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":graph:graph-ports-output")))
                 implementation(testFixtures(project(":testing:spring")))
-                implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.springframework.boot:spring-boot-test-autoconfigure")
                 implementation("org.springframework:spring-beans")

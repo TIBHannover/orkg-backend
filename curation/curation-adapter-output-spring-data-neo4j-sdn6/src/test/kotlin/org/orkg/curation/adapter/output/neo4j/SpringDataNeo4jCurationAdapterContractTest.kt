@@ -1,7 +1,9 @@
 package org.orkg.curation.adapter.output.neo4j
 
-import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
 import io.kotest.core.spec.style.DescribeSpec
+import org.orkg.curation.adapter.output.neo4j.configuration.CurationNeo4jConfiguration
+import org.orkg.curation.output.CurationRepository
+import org.orkg.curation.testing.fixtures.curationRepositoryContract
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jClassAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jLiteralAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jPredicateAdapter
@@ -13,21 +15,12 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
-import org.orkg.curation.adapter.output.neo4j.configuration.CurationNeo4jConfiguration
-import org.orkg.curation.output.CurationRepository
-import org.orkg.curation.testing.fixtures.curationRepositoryContract
-import org.orkg.testing.Neo4jContainerInitializer
+import org.orkg.testing.annotations.Neo4jContainerUnitTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration
-import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.test.context.ContextConfiguration
 
-@EnableAutoConfiguration
-@DataNeo4jTest
 @EnableCaching
-@ContextConfiguration(
+@Neo4jContainerUnitTest(
     classes = [
         SpringDataNeo4jCurationAdapter::class,
         SpringDataNeo4jStatementAdapter::class,
@@ -37,12 +30,8 @@ import org.springframework.test.context.ContextConfiguration
         SpringDataNeo4jClassAdapter::class,
         GraphNeo4jConfiguration::class,
         CurationNeo4jConfiguration::class
-    ],
-    initializers = [
-        Neo4jContainerInitializer::class
     ]
 )
-@ImportAutoConfiguration(MigrationsAutoConfiguration::class)
 internal class SpringDataNeo4jCurationAdapterContractTest(
     @Autowired private val springDataNeo4jCurationAdapter: CurationRepository,
     @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,

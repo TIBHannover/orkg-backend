@@ -118,3 +118,17 @@ You need to include it when you set up Neo4j in your environment manually.
 === REST API documentation
 
 The documentation can be found at {apidoc_url}.
+
+== Gradle Subprojects (a. k. a. Modules)
+
+You can create an overview of the Gradle subproject dependencies as https://mermaid.js.org/[Mermaid] diagram,
+which can be converted to SVG or PDF, like this:
+
+[source,shell]
+....
+./gradlew createModuleGraph
+mmdc -i modules.mermaid -e svg -o modules.svg -c mermaid-config.json
+....
+
+The configuration file increases the maximum number of nodes allowed for processing.
+If you run into issues, this number can be increased further.

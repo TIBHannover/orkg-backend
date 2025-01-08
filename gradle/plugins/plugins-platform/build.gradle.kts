@@ -24,6 +24,7 @@ dependencies.constraints {
     api("com.autonomousapps:dependency-analysis-gradle-plugin:2.5.0")
     api("com.osacky.doctor:doctor-plugin:0.10.0")
     api("com.github.ben-manes:gradle-versions-plugin:0.51.0")
+    api("dev.iurysouza:modulegraph:0.10.1")
 
     api("com.google.cloud.tools:jib-gradle-plugin:3.4.0")
     api("com.diffplug.spotless:spotless-plugin-gradle:6.2.1")

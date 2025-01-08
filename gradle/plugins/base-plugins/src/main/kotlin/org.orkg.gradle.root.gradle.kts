@@ -6,6 +6,7 @@ plugins {
     id("com.diffplug.spotless-changelog")
     id("com.github.ben-manes.versions")
     id("com.osacky.doctor")
+    id("dev.iurysouza.modulegraph")
 }
 
 doctor {
@@ -46,3 +47,37 @@ fun isSpringManaged(candidate: ModuleComponentIdentifier, currentVersion: String
         "org.neo4j.driver",
         "org.slf4j",
     )
+
+// Module Graph plugin configuration
+
+val modulesFile = "./modules.mermaid"
+
+moduleGraphConfig {
+    readmePath.set(modulesFile)
+    heading = ""
+}
+
+val convertModuleGraphCodeBlockToStandaloneFile by tasks.registering {
+    mustRunAfter(tasks.named("createModuleGraph"))
+    doLast {
+        val outputFile = File(modulesFile)
+        val content = outputFile.readText()
+        val asciidocContent =
+            content
+                // Remove Markdown code blocks
+                .replace("```mermaid", "")
+                .replace("```", "")
+                // Work-around for "graph" being a reserved word, which leads to parsing errors
+                .replace(":g", ":G")
+                // Remove emtpy lines at the top of the file
+                .replace("^\\s+".toRegex(), "")
+        outputFile.writeText(asciidocContent)
+    }
+}
+
+tasks.named("createModuleGraph") {
+    doFirst {
+        File(modulesFile).delete()
+    }
+    finalizedBy(convertModuleGraphCodeBlockToStandaloneFile)
+}

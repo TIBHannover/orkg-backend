@@ -37,7 +37,7 @@ class AbstractSmartReviewSectionValidator(
             is SmartReviewComparisonSectionDefinition -> {
                 validateWithCache(section.comparison, validIds) { comparisonId ->
                     resourceRepository.findById(comparisonId)
-                        .filter { Classes.comparison in it.classes }
+                        .filter { Classes.comparison in it.classes || Classes.comparisonPublished in it.classes }
                         .orElseThrow { ComparisonNotFound(comparisonId) }
                 }
             }

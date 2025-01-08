@@ -31,6 +31,21 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     }
 
     @Test
+    fun `Given a comparison section definition for a published comparison, when validating, it returns success`() {
+        val section = dummySmartReviewComparisonSectionDefinition()
+        val validIds = mutableSetOf<ThingId>()
+        val resource = createResource(section.comparison!!, classes = setOf(Classes.comparisonPublished))
+
+        every { resourceRepository.findById(section.comparison!!) } returns Optional.of(resource)
+
+        abstractSmartReviewSectionValidator.validate(section, validIds)
+
+        validIds shouldBe setOf(section.comparison)
+
+        verify(exactly = 1) { resourceRepository.findById(section.comparison!!) }
+    }
+
+    @Test
     fun `Given a comparison section definition, when validating, it does not validate the comparison id when it is not set`() {
         val section = dummySmartReviewComparisonSectionDefinition().copy(comparison = null)
         val validIds = mutableSetOf<ThingId>()

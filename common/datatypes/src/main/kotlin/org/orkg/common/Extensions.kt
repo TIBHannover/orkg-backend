@@ -233,8 +233,9 @@ private val YEAR_MONTH_DURATION_MATCHER =
 
 fun String.isValidYearMonthDuration(): Boolean = YEAR_MONTH_DURATION_MATCHER.test(this)
 
+private const val DU_TIME_FRAG = """(T((\d+H)(\d+M)?(\d+(\.\d+)?S)?|(\d+M)(\d+(\.\d+)?S)?|(\d+(\.\d+)?S)))"""
 private val DAY_TIME_DURATION_MATCHER =
-    Pattern.compile("""^-?P((\d+H)(\d+M)?(\d+(\.\d+)?S)?|(\d+M)(\d+(\.\d+)?S)?|(\d+(\.\d+)?S))$""").asMatchPredicate()
+    Pattern.compile("""^-?P((\d+D)$DU_TIME_FRAG?|$DU_TIME_FRAG$)""").asMatchPredicate()
 
 fun String.isValidDayTimeDuration(): Boolean = DAY_TIME_DURATION_MATCHER.test(this)
 

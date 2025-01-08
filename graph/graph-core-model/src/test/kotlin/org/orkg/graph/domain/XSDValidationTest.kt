@@ -577,38 +577,46 @@ internal class XSDValidationTest {
         @JvmStatic
         fun validDayTimeDuration(): Iterator<String> = iterator {
             val signs = listOf("", "-")
+            val ds = listOf(null, "0", "00", "2", "17", "25")
             val hs = listOf(null, "0", "00", "2", "17", "25")
             val ms = listOf(null, "0", "00", "2", "41", "65")
             val ss = listOf(null, "0", "00", "2", "41", "65")
             val fs = listOf(null, "0", "00", "2", "54", "78956")
 
             for (sign in signs) {
-                for (h in hs) {
-                    for (m in ms) {
-                        for (s in ss) {
-                            for (f in fs) {
-                                val duration = buildString {
-                                    append(sign)
-                                    append("P")
-                                    if (h != null) {
-                                        append(h)
-                                        append("H")
-                                    }
-                                    if (m != null) {
-                                        append(m)
-                                        append("M")
-                                    }
-                                    if (s != null) {
-                                        append(s)
-                                        if (f != null) {
-                                            append(".")
-                                            append(f)
+                for (d in ds) {
+                    for (h in hs) {
+                        for (m in ms) {
+                            for (s in ss) {
+                                for (f in fs) {
+                                    val duration = buildString {
+                                        append(sign)
+                                        append("P")
+                                        if (d != null) {
+                                            append(d)
+                                            append("D")
                                         }
-                                        append("S")
+                                        append("T")
+                                        if (h != null) {
+                                            append(h)
+                                            append("H")
+                                        }
+                                        if (m != null) {
+                                            append(m)
+                                            append("M")
+                                        }
+                                        if (s != null) {
+                                            append(s)
+                                            if (f != null) {
+                                                append(".")
+                                                append(f)
+                                            }
+                                            append("S")
+                                        }
                                     }
-                                }
-                                if (!duration.endsWith("P")) {
-                                    yield(duration)
+                                    if (!duration.endsWith("PT") && !duration.endsWith("DT")) {
+                                        yield(duration)
+                                    }
                                 }
                             }
                         }

@@ -6,10 +6,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added automatic research field association for legacy published smart reviews and literature lists generated.
+  (See: [!1145](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1145))
+- Added author name filter for generic content-type endpoint.
+  (Closes: [#599](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/599))
+- Added the following new metrics to the statistics endpoint (See: [!1154](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1154)):
+  - `rosetta-stone-template-count`: Number of rosetta stone templates in the graph.
+  - `rosetta-stone-statement-version-count`: Number of individual rosetta stone statement versions in the graph.
+  - `published-smart-review-version-count`: Number of individual published smart review versions in the graph.
+  - `published-literature-list-version-count`: Number of individual published literature list versions in the graph.
+  - `published-comparison-version-count`: Number of individual published comparison versions in the graph.
+- Added support for generating a graph of all Gradle subprojects.
+  (See: [!1150](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1150))
+### Fixed
+- Fixed roles of contributors not updating in certain scenarios.
+  (Closes: [#598](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/598))
+- Fixed unlisting of papers that have no contributions but rosetta stone statements.
+  (See: [!1158](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1158))
+- Fixed validation of xsd:dayTimeDuration literals.
+  (Closes: [#605](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/605))
+- Fixed DOI assignment for comparisons.
+  (Closes: [#603](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/603))
+- Fixed error 404 when updating a comparison smart review section with a published comparison.
+  (Closes: [#602](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/602))
+### Removed
+- Removed comparison migration task.
+  (See: [!1146](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1146))
 
 ## [0.74.0] - 2024-12-11
 ### Added
-- Add author id filter for generic content-type endpoint.
+- Added author id filter for generic content-type endpoint.
   (Closes: [#597](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/597))
 ### Fixed
 - Fixed performance issue for find all endpoints of content-types.

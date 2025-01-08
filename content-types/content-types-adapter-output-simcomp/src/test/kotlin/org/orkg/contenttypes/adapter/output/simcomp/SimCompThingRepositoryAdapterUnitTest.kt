@@ -194,8 +194,6 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
     @Test
     fun `Given a thing id, when fetching list contents but a connection error occurs, it throws an exception`() {
         val id = ThingId("R123")
-        // Mock HttpClient dsl
-        val response = mockk<HttpResponse<String>>()
         val exception = IOException()
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } throws exception
@@ -287,8 +285,6 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
             "statements" to listOf(createStatement())
         )
         val config = emptyMap<String, Any>()
-        // Mock HttpClient dsl
-        val response = mockk<HttpResponse<String>>()
         val exception = IOException()
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } throws exception
@@ -374,8 +370,6 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
         val type = ThingType.DRAFT_COMPARISON
         val data = createComparisonData()
         val config = createComparisonConfig()
-        // Mock HttpClient dsl
-        val response = mockk<HttpResponse<String>>()
         val exception = IOException()
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } throws exception

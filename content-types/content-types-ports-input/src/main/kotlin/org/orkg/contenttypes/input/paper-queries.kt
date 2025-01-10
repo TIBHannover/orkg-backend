@@ -8,6 +8,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Paper
 import org.orkg.contenttypes.domain.PaperWithStatementCount
+import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.PaperResourceWithPath
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -18,24 +19,28 @@ interface RetrievePaperUseCase {
     fun findById(id: ThingId): Optional<Paper>
     fun findAll(
         pageable: Pageable,
-        label: SearchString?,
-        doi: String?,
-        doiPrefix: String?,
-        visibility: VisibilityFilter?,
-        verified: Boolean?,
-        createdBy: ContributorId?,
-        createdAtStart: OffsetDateTime?,
-        createdAtEnd: OffsetDateTime?,
-        observatoryId: ObservatoryId?,
-        organizationId: OrganizationId?,
-        researchField: ThingId?,
-        includeSubfields: Boolean,
-        sustainableDevelopmentGoal: ThingId?,
-        mentionings: Set<ThingId>?
+        label: SearchString? = null,
+        doi: String? = null,
+        doiPrefix: String? = null,
+        visibility: VisibilityFilter? = null,
+        verified: Boolean? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+        researchField: ThingId? = null,
+        includeSubfields: Boolean = false,
+        sustainableDevelopmentGoal: ThingId? = null,
+        mentionings: Set<ThingId>? = emptySet()
     ): Page<Paper>
     fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId>
 
     fun countAllStatementsAboutPapers(pageable: Pageable): Page<PaperWithStatementCount>
+
+    fun existsByDOI(doi: String): Boolean
+
+    fun existsByTitle(label: ExactSearchString): Boolean
 }
 
 interface LegacyRetrievePaperUseCase {

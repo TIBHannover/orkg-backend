@@ -1,10 +1,10 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.OffsetDateTime
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
+import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -21,6 +21,7 @@ import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.PublishPaperUseCase
 import org.orkg.contenttypes.input.UpdatePaperUseCase
+import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -32,6 +33,8 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
+import org.springframework.http.ResponseEntity.notFound
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -39,6 +42,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
@@ -171,6 +175,16 @@ class PaperController(
             .toUri()
         return created(location).build()
     }
+
+    @RequestMapping(method = [RequestMethod.HEAD], params = ["doi"])
+    fun existsByDOI(@RequestParam("doi", required = false) doi: String): ResponseEntity<Nothing> =
+        if (service.existsByDOI(doi)) ok().build()
+        else notFound().build()
+
+    @RequestMapping(method = [RequestMethod.HEAD], params = ["title"])
+    fun existsByTitle(@RequestParam("title", required = false) title: String): ResponseEntity<Nothing> =
+        if (service.existsByTitle(ExactSearchString(title))) ok().build()
+        else notFound().build()
 
     data class CreatePaperRequest(
         @field:NotBlank

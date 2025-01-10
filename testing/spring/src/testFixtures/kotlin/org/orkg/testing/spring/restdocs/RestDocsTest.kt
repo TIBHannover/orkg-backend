@@ -149,6 +149,18 @@ abstract class RestDocsTest(val prefix: String) : MockkBaseTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .characterEncoding(Charsets.UTF_8.name())
 
+        fun head(urlTemplate: String, vararg uriValues: Any): MockHttpServletRequestBuilder =
+            MockMvcRequestBuilders.head(urlTemplate, *uriValues)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
+        fun documentedHeadRequestTo(urlTemplate: String, vararg uriValues: Any): MockHttpServletRequestBuilder =
+            RestDocumentationRequestBuilders.head(urlTemplate, *uriValues)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .characterEncoding(Charsets.UTF_8.name())
+
         fun patchMultipart(urlTemplate: String, vararg uriVariables: Any): MockMultipartHttpServletRequestBuilder =
             multipart(PATCH, urlTemplate, *uriVariables)
                 .characterEncoding(Charsets.UTF_8.name()) as MockMultipartHttpServletRequestBuilder

@@ -5,6 +5,7 @@ import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -66,6 +67,7 @@ import org.orkg.contenttypes.output.PaperPublishedRepository
 import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -230,6 +232,12 @@ class PaperService(
         )
         return steps.execute(command, PublishPaperState()).paperVersionId!!
     }
+
+    override fun existsByDOI(doi: String): Boolean =
+        statementRepository.findByDOI(doi, classes = setOf(Classes.paper, Classes.paperVersion)).isPresent
+
+    override fun existsByTitle(label: ExactSearchString): Boolean =
+        findAll(PageRequests.SINGLE, label = label).isEmpty.not()
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
         val statements = statementRepository.fetchAsBundle(

@@ -74,6 +74,7 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -1230,6 +1231,86 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andExpect(jsonPath("$.message").value(exception.message))
 
         verify(exactly = 1) { paperService.createContribution(any()) }
+    }
+
+    @Test
+    @DisplayName("Given a paper, when checking existence by doi and paper is found, then status is 200 OK")
+    fun existsByDoi() {
+        val doi = "10.456/8764"
+        every { paperService.existsByDOI(doi) } returns true
+
+        // TODO: For unknown reasons, head requests do not work with param builders.
+        // Tested on spring rest docs 3.0.3.
+        documentedHeadRequestTo("/api/papers?doi=$doi")
+            .accept(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpect(content().string(""))
+            .andDo(
+                documentationHandler.document(
+                    queryParameters(
+                        parameterWithName("doi").description("The DOI of the paper."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { paperService.existsByDOI(doi) }
+    }
+
+    @Test
+    fun `Given a paper, when checking existence by doi and paper is not found, then status is 404 NOT FOUND`() {
+        val doi = "10.456/8764"
+        every { paperService.existsByDOI(doi) } returns false
+
+        head("/api/papers")
+            .param("doi", doi)
+            .accept(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(content().string(""))
+
+        verify(exactly = 1) { paperService.existsByDOI(doi) }
+    }
+
+    @Test
+    @DisplayName("Given a paper, when checking existence by title and paper is found, then status is 200 OK")
+    fun existsByTitle() {
+        val title = ExactSearchString("example paper")
+        every { paperService.existsByTitle(any()) } returns true
+
+        // TODO: For unknown reasons, head requests do not work with param builders.
+        // Tested on spring rest docs 3.0.3.
+        documentedHeadRequestTo("/api/papers?title=${title.input}")
+            .accept(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpect(content().string(""))
+            .andDo(
+                documentationHandler.document(
+                    queryParameters(
+                        parameterWithName("title").description("An exact search term that must match the title of the paper."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { paperService.existsByTitle(withArg { it.input shouldBe title.input }) }
+    }
+
+    @Test
+    fun `Given a paper, when checking existence by title and paper is not found, then status is 404 NOT FOUND`() {
+        val title = ExactSearchString("example paper")
+        every { paperService.existsByTitle(any()) } returns false
+
+        head("/api/papers")
+            .param("title", title.input)
+            .accept(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(content().string(""))
+
+        verify(exactly = 1) { paperService.existsByTitle(withArg { it.input shouldBe title.input }) }
     }
 
     private fun createPaperRequest() =

@@ -64,3 +64,18 @@ The response will be `201 Created` when successful.
 The paper resource can be retrieved by following the URI in the `Location` header field.
 
 operation::papers-publish[snippets='request-fields,curl-request,http-response']
+
+[[papers-exist]]
+== Checking for Existing Papers
+
+A `HEAD` request provides information whether a paper exists in the knowledge graph or not.
+The response will be `200 OK` when successful.
+When the paper does not exist in the knowledge graph, the response will be `404 NOT FOUND`.
+
+=== Checking for Existing Papers by DOI
+
+operation::papers-exists-by-doi[snippets='curl-request,query-parameters,http-response']
+
+=== Checking for Existing Papers by Title
+
+operation::papers-exists-by-title[snippets='curl-request,query-parameters,http-response']

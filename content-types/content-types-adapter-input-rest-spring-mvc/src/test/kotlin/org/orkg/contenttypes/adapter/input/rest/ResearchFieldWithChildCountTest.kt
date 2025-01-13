@@ -4,7 +4,6 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.adapter.input.rest.ResearchFieldWithChildCountTest.FakeResearchFieldWithChildCountController
 import org.orkg.contenttypes.domain.ResearchFieldWithChildCount
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldWithChildCountRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.ResearchFieldWithChildCountRepresentation
 import org.orkg.graph.domain.Classes
@@ -48,7 +47,6 @@ internal class ResearchFieldWithChildCountTest : RestDocsTest("research-fields")
     internal class FakeResearchFieldWithChildCountController(
         override val statementService: StatementUseCases = mockk(),
         override val formattedLabelService: FormattedLabelUseCases = mockk(),
-        override val flags: FeatureFlagService = mockk()
     ) : ResearchFieldWithChildCountRepresentationAdapter {
         @GetMapping("/subfield")
         fun dummySubResearchField(): ResearchFieldWithChildCountRepresentation =

@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.RetrieveThingUseCase
 import org.orkg.graph.input.StatementUseCases
@@ -34,9 +33,6 @@ internal class ThingControllerUnitTest : RestDocsTest("things") {
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
-
-    @MockkBean
-    private lateinit var flags: FeatureFlagService
 
     @Autowired
     private lateinit var clock: Clock

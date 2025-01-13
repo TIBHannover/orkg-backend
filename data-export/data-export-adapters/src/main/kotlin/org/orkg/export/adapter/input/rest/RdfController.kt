@@ -1,7 +1,6 @@
 package org.orkg.export.adapter.input.rest
 
 import org.orkg.common.MediaTypeCapabilities
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.ThingRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
@@ -30,7 +29,6 @@ class RdfController(
     private val classRepository: ClassRepository,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter, PredicateRepresentationAdapter, ClassRepresentationAdapter {
     @GetMapping(DUMP_ENDPOINT, produces = ["application/n-triples"])
     fun dumpToRdf(uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<String> =

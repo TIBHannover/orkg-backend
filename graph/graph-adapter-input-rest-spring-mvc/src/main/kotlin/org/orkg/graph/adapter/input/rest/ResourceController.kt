@@ -11,7 +11,6 @@ import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.community.input.RetrieveContributorUseCase
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResourceContributor
@@ -54,7 +53,6 @@ class ResourceController(
     private val contributorService: RetrieveContributorUseCase,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter {
 
     @GetMapping("/{id}")

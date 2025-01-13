@@ -34,7 +34,6 @@ import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.SmartReviewVisualizationSectionCommand
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -68,7 +67,6 @@ const val SMART_REVIEW_SECTION_JSON_V1 = "application/vnd.orkg.smart-review-sect
 class SmartReviewController(
     override val formattedLabelService: FormattedLabelUseCases,
     override val statementService: StatementUseCases,
-    override val flags: FeatureFlagService,
     private val service: SmartReviewUseCases
 ) : SmartReviewRepresentationAdapter, ContentTypeRepresentationAdapter, StatementListRepresentationAdapter {
     @GetMapping("/{id}")

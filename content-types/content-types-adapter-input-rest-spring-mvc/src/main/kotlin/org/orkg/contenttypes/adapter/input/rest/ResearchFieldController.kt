@@ -6,7 +6,6 @@ import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.output.ComparisonRepository
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.PaperCountPerResearchProblemRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.PaperCountPerResearchProblemRepresentationAdapter
@@ -41,7 +40,6 @@ class ResearchFieldController(
     private val comparisonRepository: ComparisonRepository,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter, PaperCountPerResearchProblemRepresentationAdapter {
     /**
      * Fetches all the research problems and

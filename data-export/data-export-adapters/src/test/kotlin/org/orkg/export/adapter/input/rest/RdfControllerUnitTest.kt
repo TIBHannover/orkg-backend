@@ -13,7 +13,6 @@ import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.export.adapter.input.rest.RdfController.Companion.DUMP_ENDPOINT
 import org.orkg.export.adapter.input.rest.RdfController.Companion.HINTS_ENDPOINT
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -56,9 +55,6 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
-
-    @MockkBean
-    private lateinit var featureFlagService: FeatureFlagService
 
     @Test
     fun legacyRedirectToDump() {

@@ -5,7 +5,6 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.contenttypes.domain.pmap
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController
 class BulkStatementController(
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService
 ) : StatementRepresentationAdapter {
 
     @GetMapping("/subjects")

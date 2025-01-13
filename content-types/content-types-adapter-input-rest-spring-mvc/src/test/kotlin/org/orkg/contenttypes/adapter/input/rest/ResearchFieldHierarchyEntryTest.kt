@@ -6,7 +6,6 @@ import org.orkg.common.ThingId
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.adapter.input.rest.ResearchFieldHierarchyEntryTest.FakeResearchFieldHierarchyEntryController
 import org.orkg.contenttypes.domain.ResearchFieldHierarchyEntry
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResearchFieldHierarchyEntryRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.ResearchFieldHierarchyEntryRepresentation
 import org.orkg.graph.domain.Classes
@@ -51,7 +50,6 @@ internal class ResearchFieldHierarchyEntryTest : RestDocsTest("research-fields")
     internal class FakeResearchFieldHierarchyEntryController(
         override val statementService: StatementUseCases = mockk(),
         override val formattedLabelService: FormattedLabelUseCases = mockk(),
-        override val flags: FeatureFlagService = mockk()
     ) : ResearchFieldHierarchyEntryRepresentationAdapter {
         @GetMapping("/hierarchy")
         fun dummyResearchFieldHierarchyEntry(): ResearchFieldHierarchyEntryRepresentation =

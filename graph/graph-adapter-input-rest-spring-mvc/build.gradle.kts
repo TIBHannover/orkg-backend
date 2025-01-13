@@ -21,7 +21,6 @@ dependencies {
     api(project(":common:spring-webmvc"))
     api(project(":community:community-ports-input"))
     api(project(":content-types:content-types-core-model"))
-    api(project(":feature-flags:feature-flags-ports"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     implementation(project(":community:community-core-model"))

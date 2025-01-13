@@ -32,7 +32,6 @@ import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.PublishLiteratureListUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
@@ -69,7 +68,6 @@ class LiteratureListController(
     private val service: LiteratureListUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
     override val statementService: StatementUseCases,
-    override val flags: FeatureFlagService
 ) : LiteratureListRepresentationAdapter, ResourceRepresentationAdapter, PaperRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(

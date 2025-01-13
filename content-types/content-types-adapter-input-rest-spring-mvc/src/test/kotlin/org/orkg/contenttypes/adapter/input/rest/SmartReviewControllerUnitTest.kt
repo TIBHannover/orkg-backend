@@ -31,7 +31,6 @@ import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -76,9 +75,6 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
 
     @MockkBean
     private lateinit var statementService: StatementUseCases
-
-    @MockkBean
-    private lateinit var featureFlagService: FeatureFlagService
 
     @MockkBean
     private lateinit var contributionService: ContributionUseCases

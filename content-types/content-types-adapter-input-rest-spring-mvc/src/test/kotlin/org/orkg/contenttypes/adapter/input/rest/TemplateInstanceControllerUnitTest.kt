@@ -22,7 +22,6 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
@@ -63,9 +62,6 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
-
-    @MockkBean
-    private lateinit var flags: FeatureFlagService
 
     @Test
     @DisplayName("Given a template instance, when it is fetched by id and service succeeds, then status is 200 OK and template instance is returned")

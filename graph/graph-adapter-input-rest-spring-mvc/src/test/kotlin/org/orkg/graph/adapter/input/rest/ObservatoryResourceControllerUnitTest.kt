@@ -12,7 +12,6 @@ import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.community.domain.InvalidFilterConfig
 import org.orkg.community.input.RetrieveContributorUseCase
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.SearchFilter
@@ -51,9 +50,6 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
-
-    @MockkBean
-    private lateinit var flags: FeatureFlagService
 
     @Test
     fun `Given an observatory id, when no parameters are specified and service succeeds, then status is 200 OK and papers are returned`() {

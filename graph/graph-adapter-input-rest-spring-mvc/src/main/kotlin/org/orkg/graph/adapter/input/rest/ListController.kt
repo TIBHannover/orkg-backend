@@ -5,7 +5,6 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ListRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ThingRepresentationAdapter
 import org.orkg.graph.domain.ListNotFound
@@ -36,7 +35,6 @@ class ListController(
     private val service: ListUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService,
 ) : ListRepresentationAdapter, ThingRepresentationAdapter {
 
     @GetMapping("/{id}")

@@ -6,7 +6,6 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.InvalidFilterConfig
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.VisibilityFilter
@@ -29,7 +28,6 @@ class ObservatoryResourceController(
     private val objectMapper: ObjectMapper,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter {
 
     @GetMapping("/{id}/papers")

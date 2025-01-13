@@ -2,8 +2,8 @@ package org.orkg
 
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.configuration.FeatureFlags
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
@@ -27,12 +27,12 @@ class CacheWarmup(
     private val statementService: StatementUseCases,
     private val statsService: RetrieveLegacyStatisticsUseCase,
     private val researchFieldService: RetrieveResearchFieldUseCase,
-    private val flags: FeatureFlagService
+    private val flags: FeatureFlags,
 ) : ApplicationRunner {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
     override fun run(args: ApplicationArguments?) {
-        if (!flags.isCacheWarmupEnabled()) {
+        if (!flags.cacheWarmup) {
             logger.info("Skipping cache warmup")
             return
         }

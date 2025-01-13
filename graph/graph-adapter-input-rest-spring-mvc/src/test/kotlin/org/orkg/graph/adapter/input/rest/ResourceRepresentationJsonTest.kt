@@ -7,7 +7,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -30,7 +29,6 @@ internal class ResourceRepresentationJsonTest {
     private val resourceRepresentationAdapter: ResourceRepresentationAdapter = object : ResourceRepresentationAdapter {
         override val statementService: StatementUseCases = mockk()
         override val formattedLabelService: FormattedLabelUseCases = mockk()
-        override val flags: FeatureFlagService = mockk()
     }
 
     @Test

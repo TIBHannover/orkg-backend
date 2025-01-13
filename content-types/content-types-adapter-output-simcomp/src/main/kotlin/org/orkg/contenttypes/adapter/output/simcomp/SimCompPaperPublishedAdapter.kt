@@ -6,7 +6,6 @@ import org.orkg.contenttypes.adapter.output.simcomp.internal.ThingType
 import org.orkg.contenttypes.adapter.output.simcomp.mapping.PublishedContentTypeRepresentationAdapter
 import org.orkg.contenttypes.domain.PublishedContentType
 import org.orkg.contenttypes.output.PaperPublishedRepository
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.stereotype.Component
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component
 class SimCompPaperPublishedAdapter(
     override val formattedLabelService: FormattedLabelUseCases,
     override val statementService: StatementUseCases,
-    override val flags: FeatureFlagService,
     private val repository: SimCompThingRepository
 ) : PaperPublishedRepository, PublishedContentTypeRepresentationAdapter {
     override fun save(paper: PublishedContentType) {

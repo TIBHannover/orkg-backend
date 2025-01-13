@@ -12,7 +12,6 @@ import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -46,9 +45,6 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
-
-    @MockkBean
-    private lateinit var flags: FeatureFlagService
 
     @Test
     fun lookupBySubjects() {

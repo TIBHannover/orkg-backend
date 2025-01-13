@@ -21,7 +21,6 @@ dependencies {
     api(project(":graph:graph-adapter-input-rest-spring-mvc"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
-    api(project(":feature-flags:feature-flags-ports"))
     implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.springframework:spring-web")
     testFixturesApi(project(":common:identifiers"))

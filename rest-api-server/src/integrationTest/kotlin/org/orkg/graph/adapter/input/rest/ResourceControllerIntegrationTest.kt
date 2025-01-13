@@ -2,7 +2,6 @@ package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
-import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -11,7 +10,6 @@ import org.orkg.createClass
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -44,9 +42,6 @@ import org.springframework.transaction.annotation.Transactional
 @Import(MockUserDetailsService::class)
 @TestPropertySource(properties = ["orkg.features.formatted_labels=false"])
 internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
-
-    @Autowired
-    private lateinit var flags: FeatureFlagService
 
     @Autowired
     private lateinit var service: ResourceUseCases
@@ -291,11 +286,11 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
 
     @Test
     fun `fetch resource with the correct formatted label`() {
-        assumeTrue(flags.isFormattedLabelsEnabled())
         val value = "Wow!"
         val id = createTemplateAndTypedResource(value)
 
         get("/api/resources/{id}", id)
+            .accept("application/json;formatted-labels=V1")
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.formatted_label").value("xx${value}xx"))

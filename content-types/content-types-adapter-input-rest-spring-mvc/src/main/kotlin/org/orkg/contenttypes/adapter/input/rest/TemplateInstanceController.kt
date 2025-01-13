@@ -14,7 +14,6 @@ import org.orkg.contenttypes.adapter.input.rest.mapping.TemplateInstanceRepresen
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.SearchString
@@ -44,7 +43,6 @@ class TemplateInstanceController(
     private val service: TemplateInstanceUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService,
 ) : TemplateInstanceRepresentationAdapter {
 
     @GetMapping("/{id}")

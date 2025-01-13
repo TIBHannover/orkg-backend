@@ -83,10 +83,6 @@ include(
     ":media-storage:media-storage-ports-output",
 )
 include(
-    ":feature-flags:feature-flags-ports",
-    ":feature-flags:feature-flags-adapter-output-spring-properties",
-)
-include(
     "data-export:data-export-ports-input",
     "data-export:data-export-core",
     "data-export:data-export-adapters",

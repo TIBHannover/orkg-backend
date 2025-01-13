@@ -9,7 +9,6 @@ import org.orkg.contenttypes.adapter.output.simcomp.internal.ThingType
 import org.orkg.contenttypes.adapter.output.simcomp.mapping.PublishedContentTypeRepresentationAdapter
 import org.orkg.contenttypes.domain.PublishedContentType
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.cache.annotation.CacheConfig
@@ -23,7 +22,6 @@ const val THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE = "thing-id-to-published-smar
 class SimCompSmartReviewPublishedAdapter(
     override val formattedLabelService: FormattedLabelUseCases,
     override val statementService: StatementUseCases,
-    override val flags: FeatureFlagService,
     private val objectMapper: ObjectMapper,
     private val repository: SimCompThingRepository
 ) : SmartReviewPublishedRepository, PublishedContentTypeRepresentationAdapter {

@@ -14,7 +14,6 @@ import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.contenttypes.domain.ResearchFieldHierarchyEntry
 import org.orkg.contenttypes.domain.ResearchFieldWithChildCount
 import org.orkg.contenttypes.input.ResearchFieldHierarchyUseCases
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -43,9 +42,6 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
-
-    @MockkBean
-    private lateinit var flags: FeatureFlagService
 
     @MockkBean
     private lateinit var userRepository: RetrieveContributorUseCase

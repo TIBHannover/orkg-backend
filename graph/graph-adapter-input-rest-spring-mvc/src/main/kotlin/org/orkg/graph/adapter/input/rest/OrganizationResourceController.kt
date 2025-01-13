@@ -2,7 +2,6 @@ package org.orkg.graph.adapter.input.rest
 
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.OrganizationId
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
@@ -21,7 +20,6 @@ class OrganizationResourceController(
     private val resourceService: ResourceUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter {
     @GetMapping("/{id}/problems")
     fun findProblemsByOrganizationId(

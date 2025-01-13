@@ -8,7 +8,6 @@ import org.orkg.common.contributorId
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.contenttypes.input.RetrieveAuthorUseCase
 import org.orkg.contenttypes.input.RetrieveResearchProblemUseCase
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.FieldWithFreqRepresentation
 import org.orkg.graph.adapter.input.rest.PaperAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
@@ -45,7 +44,6 @@ class ProblemController(
     private val authorService: RetrieveAuthorUseCase,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService,
 ) : ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
 
     @GetMapping("/{problemId}/fields")

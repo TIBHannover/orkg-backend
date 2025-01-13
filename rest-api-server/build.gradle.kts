@@ -48,7 +48,6 @@ testing {
                 implementation(project(":community:community-ports-output")) // for CuratorRepository
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":community:community-core-model")))
-                implementation(project(":feature-flags:feature-flags-ports"))
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("com.ninja-squad:springmockk")
@@ -127,9 +126,6 @@ dependencies {
     runtimeOnly(project(":discussions:discussions-adapter-input-rest-spring-mvc"))
     runtimeOnly(project(":discussions:discussions-core-services"))
     runtimeOnly(project(":discussions:discussions-adapter-output-spring-data-jpa"))
-
-    implementation(project(":feature-flags:feature-flags-ports")) // for cache warmup
-    runtimeOnly(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
 
     runtimeOnly(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))

@@ -5,7 +5,6 @@ import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.input.RetrieveAuthorUseCase
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.ComparisonAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.mapping.AuthorRepresentationAdapter
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -31,7 +30,6 @@ class LegacyComparisonController(
     private val authorService: RetrieveAuthorUseCase,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService
 ) : AuthorRepresentationAdapter {
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)

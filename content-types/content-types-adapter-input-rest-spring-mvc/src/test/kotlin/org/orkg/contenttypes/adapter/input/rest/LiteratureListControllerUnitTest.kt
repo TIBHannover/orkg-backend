@@ -33,7 +33,6 @@ import org.orkg.contenttypes.input.CreateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
@@ -78,9 +77,6 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
-
-    @MockkBean
-    private lateinit var flags: FeatureFlagService
 
     @Test
     @DisplayName("Given a literature list, when it is fetched by id and service succeeds, then status is 200 OK and literature list is returned")

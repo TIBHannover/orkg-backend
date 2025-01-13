@@ -2,7 +2,6 @@ package org.orkg.graph.adapter.input.rest
 
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ThingRepresentationAdapter
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -20,7 +19,6 @@ class ThingController(
     private val service: RetrieveThingUseCase,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService
 ) : ThingRepresentationAdapter {
 
     @GetMapping("/{id}")

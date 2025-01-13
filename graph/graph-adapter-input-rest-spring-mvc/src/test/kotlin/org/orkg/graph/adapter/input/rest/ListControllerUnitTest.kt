@@ -15,7 +15,6 @@ import org.orkg.common.ThingId
 import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.ListElementNotFound
 import org.orkg.graph.domain.ListNotFound
@@ -58,9 +57,6 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
-
-    @MockkBean
-    private lateinit var flags: FeatureFlagService
 
     @Test
     @DisplayName("Given a list, when fetched by id and service succeeds, then status is 200 OK and list is returned")

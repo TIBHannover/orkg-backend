@@ -5,7 +5,6 @@ import org.orkg.common.ThingId
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase
 import org.orkg.contenttypes.input.LegacyPaperUseCases
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.PaperResourceWithPathRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.PaperResourceWithPathRepresentation
@@ -36,7 +35,6 @@ class LegacyPaperController(
     private val resourceService: ResourceUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService,
 ) : PaperResourceWithPathRepresentationAdapter, ResourceRepresentationAdapter {
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])

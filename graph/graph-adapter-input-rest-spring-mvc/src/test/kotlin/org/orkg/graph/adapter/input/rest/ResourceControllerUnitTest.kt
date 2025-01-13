@@ -22,7 +22,6 @@ import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.community.testing.fixtures.createContributor
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.InvalidClassCollection
@@ -71,9 +70,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
-
-    @MockkBean
-    private lateinit var flags: FeatureFlagService
 
     @Autowired
     private lateinit var clock: Clock

@@ -13,7 +13,6 @@ import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.output.ComparisonRepository
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
@@ -65,9 +64,6 @@ internal class ResearchFieldControllerUnitTest : RestDocsTest("research-fields")
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
-
-    @MockkBean
-    private lateinit var flags: FeatureFlagService
 
     @MockkBean
     private lateinit var comparisonRepository: ComparisonRepository

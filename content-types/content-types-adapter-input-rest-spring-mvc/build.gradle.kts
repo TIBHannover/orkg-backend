@@ -24,7 +24,6 @@ dependencies {
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-input"))
     api(project(":content-types:content-types-ports-output"))
-    api(project(":feature-flags:feature-flags-ports"))
     api(project(":graph:graph-adapter-input-rest-spring-mvc")) // for representation adapters, TODO: break dependency
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))

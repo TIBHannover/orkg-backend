@@ -21,7 +21,6 @@ import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.adapter.input.rest.testing.fixtures.statementResponseFields
 import org.orkg.graph.domain.Classes
@@ -69,9 +68,6 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
     @MockkBean
     private lateinit var formattedLabelService: FormattedLabelUseCases
-
-    @MockkBean
-    private lateinit var flags: FeatureFlagService
 
     @Autowired
     private lateinit var clock: Clock

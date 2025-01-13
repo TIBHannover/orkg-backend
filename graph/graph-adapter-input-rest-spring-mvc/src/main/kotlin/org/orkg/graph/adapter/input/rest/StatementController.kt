@@ -7,7 +7,6 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.BundleRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.BundleConfiguration
@@ -42,7 +41,6 @@ import org.springframework.web.util.UriComponentsBuilder
 class StatementController(
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService
 ) : StatementRepresentationAdapter, BundleRepresentationAdapter {
 
     @GetMapping

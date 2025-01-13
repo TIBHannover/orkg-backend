@@ -4,7 +4,6 @@ import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
-import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.CreateObjectUseCase
@@ -31,7 +30,6 @@ class ObjectController(
     private val objectService: CreateObjectUseCase,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-    override val flags: FeatureFlagService,
 ) : ResourceRepresentationAdapter {
 
     @RequireLogin

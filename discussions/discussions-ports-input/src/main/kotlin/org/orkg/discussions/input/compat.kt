@@ -1,3 +1,0 @@
-package org.orkg.discussions.input
-
-interface DiscussionUseCases : CreateDiscussionCommentUseCase, RetrieveDiscussionUseCase, DeleteDiscussionCommentUseCase

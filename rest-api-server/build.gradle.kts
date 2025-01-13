@@ -123,10 +123,6 @@ dependencies {
 
     runtimeOnly(project(":eventbus"))
 
-    runtimeOnly(project(":discussions:discussions-adapter-input-rest-spring-mvc"))
-    runtimeOnly(project(":discussions:discussions-core-services"))
-    runtimeOnly(project(":discussions:discussions-adapter-output-spring-data-jpa"))
-
     runtimeOnly(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
     runtimeOnly(project(":graph:graph-adapter-output-web"))

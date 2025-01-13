@@ -20,51 +20,83 @@ private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} $PAGE_PARAMS"
 
 interface Neo4jLegacyStatisticsRepository : Neo4jRepository<Neo4jResource, ThingId> {
 
-    @Query("""MATCH (n:ResearchField:Resource) WITH n OPTIONAL MATCH (n)-[:RELATED*0..3 {predicate_id: 'P36'}]->(r:ResearchField:Resource) OPTIONAL MATCH (r)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper:Resource) RETURN n.id AS fieldId, n.label AS field, COUNT(p) AS papers""")
+    @Query("""MATCH (n:ResearchField) WITH n OPTIONAL MATCH (n)-[:RELATED*0..3 {predicate_id: 'P36'}]->(r:ResearchField) OPTIONAL MATCH (r)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper) RETURN n.id AS fieldId, n.label AS field, COUNT(p) AS papers""")
     fun getResearchFieldsPapersCount(): Iterable<FieldsStats>
 
-    @Query("""MATCH (n:Paper:Resource {observatory_id: $id}) RETURN COUNT(n) As totalPapers""")
+    @Query("""MATCH (n:Paper {observatory_id: $id}) RETURN COUNT(n) As totalPapers""")
     fun getObservatoryPapersCount(id: ObservatoryId): Long
 
-    @Query("""MATCH (n:ComparisonPublished:LatestVersion:Resource {observatory_id: $id}) RETURN COUNT(n) As totalComparisons""")
+    @Query("""MATCH (n:ComparisonPublished:LatestVersion {observatory_id: $id}) RETURN COUNT(n) As totalComparisons""")
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
 
     @Query("""
-MATCH (n:Paper:Resource)
+MATCH (n:Paper)
 WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
 WITH n.observatory_id AS observatoryId, COUNT(n) AS papers
-OPTIONAL MATCH (c:ComparisonPublished:LatestVersion:Resource)
+OPTIONAL MATCH (c:ComparisonPublished:LatestVersion)
 WHERE c.observatory_id <> '00000000-0000-0000-0000-000000000000' AND c.observatory_id = observatoryId
 WITH observatoryId, COUNT(c) AS comparisons, papers
 WITH observatoryId, comparisons, papers, comparisons + papers AS total
 ORDER BY total DESC
 RETURN observatoryId, papers, comparisons, total $ORDER_BY_PAGE_PARAMS""",
     countQuery = """
-MATCH (n:Paper:Resource)
+MATCH (n:Paper)
 WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
 RETURN COUNT(DISTINCT(n.observatory_id))""")
     fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats>
 
     @Query("""
-MATCH (rsf:ResearchField:Resource {id: $id})
-OPTIONAL MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(rsf)
-OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:ComparisonPublished:LatestVersion)
-WITH rsf.id AS id, COUNT(DISTINCT ppr) AS papers, COUNT(DISTINCT cmp) AS comparisons
-RETURN id, papers, comparisons, (papers + comparisons) AS total""")
+MATCH (rsf:ResearchField {id: $id})
+CALL {
+    WITH rsf
+    MATCH (ppr:Paper)-[:RELATED {predicate_id: "P30"}]->(rsf)
+    RETURN COUNT(DISTINCT ppr) as papers
+}
+WITH rsf, papers
+CALL {
+    WITH rsf
+    MATCH (rsf)<-[:RELATED {predicate_id: "hasSubject"}]-(cmp:ComparisonPublished:LatestVersion)
+    RETURN COUNT(DISTINCT cmp) AS comparisons
+}
+WITH papers, comparisons
+RETURN $id AS id, papers, comparisons, (papers + comparisons) AS total""")
     fun findResearchFieldStatsById(id: ThingId): Optional<ResearchFieldStats>
 
     @Query("""
-MATCH (rsf:ResearchField:Resource)<-[:RELATED*0.. {predicate_id: "P36"}]-(:ResearchField:Resource {id: $id})
-OPTIONAL MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(rsf)
-OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:ComparisonPublished:LatestVersion)
-WITH $id AS id, COUNT(DISTINCT ppr) AS papers, COUNT(DISTINCT cmp) AS comparisons
-RETURN id, papers, comparisons, (papers + comparisons) AS total""")
+CALL {
+    MATCH (field:ResearchField {id: $id})
+    RETURN field AS rsf
+    UNION ALL
+    MATCH (field:ResearchField {id: $id})
+    CALL custom.subgraph(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
+    YIELD relationships
+    UNWIND relationships AS rel
+    WITH rel
+    WHERE rel.predicate_id = "P36"
+    RETURN endNode(rel) AS rsf
+}
+WITH COLLECT(rsf) AS rsfs
+CALL {
+    WITH rsfs
+    UNWIND rsfs AS rsf
+    MATCH (ppr:Paper)-[:RELATED {predicate_id: "P30"}]->(rsf)
+    RETURN COUNT(DISTINCT ppr) as papers
+}
+WITH rsfs, papers
+CALL {
+    WITH rsfs
+    UNWIND rsfs AS rsf
+    MATCH (rsf)<-[:RELATED {predicate_id: "hasSubject"}]-(cmp:ComparisonPublished:LatestVersion)
+    RETURN COUNT(DISTINCT cmp) AS comparisons
+}
+WITH papers, comparisons
+RETURN $id AS id, papers, comparisons, (papers + comparisons) AS total""")
     fun findResearchFieldStatsByIdIncludingSubfields(id: ThingId): Optional<ResearchFieldStats>
 
     @Query("""
-OPTIONAL MATCH (n:Paper:Resource {observatory_id: $id})
+OPTIONAL MATCH (n:Paper {observatory_id: $id})
 WITH n.observatory_id AS observatoryId, COUNT(n) AS papers
-OPTIONAL MATCH (c:ComparisonPublished:LatestVersion:Resource {observatory_id: $id})
+OPTIONAL MATCH (c:ComparisonPublished:LatestVersion {observatory_id: $id})
 WITH observatoryId, COUNT(c) AS comparisons, papers
 WITH observatoryId, comparisons, papers, comparisons + papers AS total
 ORDER BY total DESC
@@ -73,45 +105,45 @@ RETURN $id AS observatoryId, papers, comparisons, total""")
 
     @Query("""
 CALL {
-    MATCH (n:Paper:Resource)
+    MATCH (n:Paper)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN n.created_by AS id, COUNT(n) AS papers, 0 AS comparisons, 0 AS contributions, 0 AS visualizations, 0 AS problems
     UNION ALL
-    MATCH (n:ComparisonPublished:Resource)
+    MATCH (n:ComparisonPublished)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN n.created_by AS id, 0 AS papers, COUNT(n) AS comparisons, 0 AS contributions, 0 AS visualizations, 0 AS problems
     UNION ALL
-    MATCH (n:Contribution:Resource)
+    MATCH (n:Contribution)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN n.created_by AS id, 0 AS papers, 0 AS comparisons, COUNT(n) AS contributions, 0 AS visualizations, 0 AS problems
     UNION ALL
-    MATCH (n:Visualization:Resource)
+    MATCH (n:Visualization)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN n.created_by AS id, 0 AS papers, 0 AS comparisons, 0 AS contributions, COUNT(n) AS visualizations, 0 AS problems
     UNION ALL
-    MATCH (n:Problem:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    MATCH (n:Problem) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN n.created_by AS id, 0 AS papers, 0 AS comparisons, 0 AS contributions, 0 AS visualizations, COUNT(n) AS problems
 } WITH id, SUM(papers) AS papers, SUM(contributions) AS contributions, SUM(comparisons) AS comparisons, SUM(visualizations) AS visualizations, SUM(problems) AS problems
 RETURN id AS contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
 CALL {
-    MATCH (n:Paper:Resource)
+    MATCH (n:Paper)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN DISTINCT n.created_by AS id
     UNION ALL
-    MATCH (n:ComparisonPublished:Resource)
+    MATCH (n:ComparisonPublished)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN DISTINCT n.created_by AS id
     UNION ALL
-    MATCH (n:Contribution:Resource)
+    MATCH (n:Contribution)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN DISTINCT n.created_by AS id
     UNION ALL
-    MATCH (n:Visualization:Resource)
+    MATCH (n:Visualization)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN DISTINCT n.created_by AS id
     UNION ALL
-    MATCH (n:Problem:Resource)
+    MATCH (n:Problem)
     WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
     RETURN DISTINCT n.created_by AS id
 } WITH DISTINCT id
@@ -123,10 +155,10 @@ RETURN COUNT(id)""")
      */
     @Query("""
 CALL {
-    MATCH (field:ResearchField:Resource {id: $id})
+    MATCH (field:ResearchField {id: $id})
     RETURN field
     UNION ALL
-    MATCH (field:ResearchField:Resource {id: $id})
+    MATCH (field:ResearchField {id: $id})
     CALL custom.subgraph(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
     YIELD relationships
     UNWIND relationships AS rel
@@ -134,11 +166,11 @@ CALL {
     WHERE rel.predicate_id = "P36"
     RETURN endNode(rel) AS field
 } WITH field
-MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(field)
-OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
-OPTIONAL MATCH (cmp:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
-OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
-OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
+MATCH (ppr:Paper)-[:RELATED {predicate_id: "P30"}]->(field)
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution)
+OPTIONAL MATCH (cmp:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization)
+OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem)
 WITH [
     [ppr, [1, 0, 0, 0, 0]],
     [ctr, [0, 1, 0, 0, 0]],
@@ -153,10 +185,10 @@ WITH n[0].created_by AS contributor, SUM(n[1][0]) AS papers, SUM(n[1][1]) AS con
 RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $ORDER_BY_PAGE_PARAMS""",
     countQuery = """
 CALL {
-    MATCH (field:ResearchField:Resource {id: $id})
+    MATCH (field:ResearchField {id: $id})
     RETURN field
     UNION ALL
-    MATCH (field:ResearchField:Resource {id: $id})
+    MATCH (field:ResearchField {id: $id})
     CALL custom.subgraph(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
     YIELD relationships
     UNWIND relationships AS rel
@@ -164,11 +196,11 @@ CALL {
     WHERE rel.predicate_id = "P36"
     RETURN endNode(rel) AS field
 } WITH field
-MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(field)
-OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
-OPTIONAL MATCH (cmp:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
-OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
-OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
+MATCH (ppr:Paper)-[:RELATED {predicate_id: "P30"}]->(field)
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution)
+OPTIONAL MATCH (cmp:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization)
+OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem)
 WITH [ppr, ctr, cmp, vsl, prb] AS nodes
 UNWIND nodes AS n
 WITH DISTINCT n
@@ -181,11 +213,11 @@ RETURN COUNT(contributor)""")
      * This query fetches the contributor ID from only research fields and excludes sub research fields.
      */
     @Query("""
-MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(:ResearchField:Resource {id: $id})
-OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
-OPTIONAL MATCH (cmp:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
-OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
-OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
+MATCH (ppr:Paper)-[:RELATED {predicate_id: "P30"}]->(:ResearchField {id: $id})
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution)
+OPTIONAL MATCH (cmp:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization)
+OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem)
 WITH [
     [ppr, [1, 0, 0, 0, 0]],
     [ctr, [0, 1, 0, 0, 0]],
@@ -199,11 +231,11 @@ WHERE n[0] IS NOT NULL AND n[0].created_by <> "00000000-0000-0000-0000-000000000
 WITH n[0].created_by AS contributor, SUM(n[1][0]) AS papers, SUM(n[1][1]) AS contributions, SUM(n[1][2]) AS comparisons, SUM(n[1][3]) AS visualizations, SUM(n[1][4]) AS problems
 RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
-MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(r:ResearchField:Resource {id: $id})
-OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
-OPTIONAL MATCH (cmp:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
-OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
-OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
+MATCH (ppr:Paper)-[:RELATED {predicate_id: "P30"}]->(r:ResearchField {id: $id})
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution)
+OPTIONAL MATCH (cmp:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization)
+OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem)
 WITH [ppr, ctr, cmp, vsl, prb] AS nodes
 UNWIND nodes AS n
 WITH DISTINCT n
@@ -214,40 +246,39 @@ RETURN COUNT(contributor)""")
 
     @Query("""
 CALL {
-    MATCH (sub:Paper:Resource) WHERE NOT sub:PaperDeleted RETURN sub
+    MATCH (sub:Paper) RETURN sub
     UNION ALL
-    MATCH (sub:Contribution:Resource) WHERE NOT sub:ContributionDeleted RETURN sub
+    MATCH (sub:Contribution) RETURN sub
     UNION ALL
-    MATCH (sub:Problem:Resource) RETURN sub
+    MATCH (sub:Problem) RETURN sub
     UNION ALL
-    MATCH (sub:Visualization:Resource) RETURN sub
+    MATCH (sub:Visualization) RETURN sub
     UNION ALL
-    MATCH (sub:ComparisonPublished:Resource) RETURN sub
-} WITH sub
-ORDER BY sub.created_at DESC
+    MATCH (sub:ComparisonPublished) RETURN sub
+}
 RETURN sub $PAGE_PARAMS""",
         countQuery = """
 CALL {
-    MATCH (sub:Paper:Resource) WHERE NOT sub:PaperDeleted RETURN sub
+    MATCH (sub:Paper) RETURN sub
     UNION ALL
-    MATCH (sub:Contribution:Resource) WHERE NOT sub:ContributionDeleted RETURN sub
+    MATCH (sub:Contribution) RETURN sub
     UNION ALL
-    MATCH (sub:Problem:Resource) RETURN sub
+    MATCH (sub:Problem) RETURN sub
     UNION ALL
-    MATCH (sub:Visualization:Resource) RETURN sub
+    MATCH (sub:Visualization) RETURN sub
     UNION ALL
-    MATCH (sub:ComparisonPublished:Resource) RETURN sub
-} WITH sub
+    MATCH (sub:ComparisonPublished) RETURN sub
+}
 RETURN COUNT(sub)
 """)
     fun getChangeLog(pageable: Pageable): Page<Neo4jResource>
 
     @Query("""
 CALL {
-    MATCH (field:ResearchField:Resource {id: $id})
+    MATCH (field:ResearchField {id: $id})
     RETURN field
     UNION ALL
-    MATCH (field:ResearchField:Resource {id: $id})
+    MATCH (field:ResearchField {id: $id})
     CALL custom.subgraph(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
     YIELD relationships
     UNWIND relationships AS rel
@@ -255,22 +286,20 @@ CALL {
     WHERE rel.predicate_id = "P36"
     RETURN endNode(rel) AS field
 } WITH field
-MATCH (p:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(field)
-OPTIONAL MATCH (c:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution:Resource)<-[:RELATED {predicate_id:"P31"}]-(p)
-OPTIONAL MATCH (c)-[:RELATED {predicate_id: "hasVisualization"}]->(v:Visualization:Resource)
+MATCH (p:Paper)-[:RELATED {predicate_id: "P30"}]->(field)
+OPTIONAL MATCH (c:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution)<-[:RELATED {predicate_id:"P31"}]-(p)
+OPTIONAL MATCH (c)-[:RELATED {predicate_id: "hasVisualization"}]->(v:Visualization)
 WITH [p, c, v] AS nodes
 UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n IS NOT NULL
-WITH n
-ORDER BY n.created_at DESC
 RETURN n $PAGE_PARAMS""",
         countQuery = """
 CALL {
-    MATCH (field:ResearchField:Resource {id: $id})
+    MATCH (field:ResearchField {id: $id})
     RETURN field
     UNION ALL
-    MATCH (field:ResearchField:Resource {id: $id})
+    MATCH (field:ResearchField {id: $id})
     CALL custom.subgraph(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
     YIELD relationships
     UNWIND relationships AS rel
@@ -278,9 +307,9 @@ CALL {
     WHERE rel.predicate_id = "P36"
     RETURN endNode(rel) AS field
 } WITH field
-MATCH (p:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(field)
-OPTIONAL MATCH (c:ComparisonPublished:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution:Resource)<-[:RELATED {predicate_id:"P31"}]-(p)
-OPTIONAL MATCH (c)-[:RELATED {predicate_id: "hasVisualization"}]->(v:Visualization:Resource)
+MATCH (p:Paper)-[:RELATED {predicate_id: "P30"}]->(field)
+OPTIONAL MATCH (c:ComparisonPublished)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution)<-[:RELATED {predicate_id:"P31"}]-(p)
+OPTIONAL MATCH (c)-[:RELATED {predicate_id: "hasVisualization"}]->(v:Visualization)
 WITH [p, c, v] AS nodes
 UNWIND nodes AS n
 WITH DISTINCT n
@@ -288,8 +317,8 @@ WHERE n IS NOT NULL
 RETURN COUNT(n)""")
     fun getChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""MATCH (paper: Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem:Resource) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN id, researchProblem, papersCount $ORDER_BY_PAGE_PARAMS""",
-        countQuery = "MATCH (paper: Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem:Resource) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN count(researchProblem) as cnt")
+    @Query("""MATCH (paper: Paper)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN id, researchProblem, papersCount $ORDER_BY_PAGE_PARAMS""",
+        countQuery = "MATCH (paper: Paper)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN count(researchProblem) as cnt")
     fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
 
     @Query("""MATCH (n:Thing) WHERE NOT (n)--() RETURN COUNT(n) AS orphanedNodes""")

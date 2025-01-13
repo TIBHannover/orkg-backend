@@ -1,5 +1,6 @@
 package org.orkg.graph.output
 
+import java.time.LocalDate
 import java.util.*
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
@@ -21,17 +22,17 @@ interface LegacyStatisticsRepository {
     fun findObservatoryStatsById(id: ObservatoryId): Optional<ObservatoryStats>
     fun findResearchFieldStatsById(id: ThingId, includeSubfields: Boolean): Optional<ResearchFieldStats>
     fun getTopCurrentContributorIdsAndContributionsCount(
-        date: String,
+        date: LocalDate,
         pageable: Pageable
     ): Page<ContributorRecord>
     fun getTopCurContribIdsAndContribCountByResearchFieldId(
         id: ThingId,
-        date: String,
+        date: LocalDate,
         pageable: Pageable
     ): Page<ContributorRecord>
     fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
         id: ThingId,
-        date: String,
+        date: LocalDate,
         pageable: Pageable
     ): Page<ContributorRecord>
     fun getChangeLog(pageable: Pageable): Page<Resource>

@@ -12,8 +12,8 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.graph.input.RetrieveLegacyStatisticsUseCase
-import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.LegacyStatisticsRepository
+import org.orkg.graph.output.ResourceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -156,12 +156,12 @@ class LegacyStatisticsService(
             0
     }
 
-    private fun calculateStartDate(daysAgo: Long): String =
+    private fun calculateStartDate(daysAgo: Long): LocalDate =
         if (daysAgo > 0) {
             LocalDate.now(clock).minusDays(daysAgo)
         } else {
             // Setting the all-time date to 2010-01-01. This date value is set to retrieve all the contributions from
             // ORKG. It is assumed that no contributions pre-date the hard-coded date.
             LocalDate.of(2010, 1, 1)
-        }.toString()
+        }
 }

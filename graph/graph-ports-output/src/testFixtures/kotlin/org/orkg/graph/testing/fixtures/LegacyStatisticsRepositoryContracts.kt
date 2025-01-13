@@ -99,49 +99,41 @@ fun <
             createStatement(ppr3, hasResearchField, r3)
             createStatement(ppr4, hasResearchField, r3)
 
+            val hasSubject = fabricator.random<Predicate>().copy(id = Predicates.hasSubject)
+            val hasPublishedVersion = fabricator.random<Predicate>().copy(id = Predicates.hasPublishedVersion)
+
             val cmp1 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparison))
             val cmp2 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparison))
             val cmp3 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparison))
 
-            createStatement(cmp1, hasResearchField, r1)
-            createStatement(cmp3, hasResearchField, r3)
+            createStatement(cmp1, hasSubject, r1)
+            createStatement(cmp2, hasSubject, r2)
+            createStatement(cmp3, hasSubject, r3)
 
             val publishedCmp1 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished, Classes.latestVersion))
             val publishedCmp2 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished, Classes.latestVersion))
             val publishedCmp3 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished, Classes.latestVersion))
 
-            createStatement(publishedCmp1, hasResearchField, r1)
-            createStatement(publishedCmp3, hasResearchField, r3)
+            createStatement(publishedCmp1, hasSubject, r1)
+            createStatement(publishedCmp2, hasSubject, r1)
+            createStatement(publishedCmp2, hasSubject, r2)
+            createStatement(publishedCmp3, hasSubject, r3)
+
+            createStatement(cmp1, hasPublishedVersion, publishedCmp1)
+            createStatement(cmp2, hasPublishedVersion, publishedCmp2)
+            createStatement(cmp3, hasPublishedVersion, publishedCmp3)
 
             val oldCmp1 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished))
             val oldCmp2 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished))
             val oldCmp3 = fabricator.random<Resource>().copy(classes = setOf(Classes.comparisonPublished))
 
-            createStatement(oldCmp1, hasResearchField, r1)
-            createStatement(oldCmp3, hasResearchField, r3)
+            createStatement(oldCmp1, hasSubject, r1)
+            createStatement(oldCmp2, hasSubject, r2)
+            createStatement(oldCmp3, hasSubject, r3)
 
-            val ctb1 = fabricator.random<Resource>().copy(classes = setOf(Classes.contribution))
-            val ctb2 = fabricator.random<Resource>().copy(classes = setOf(Classes.contribution))
-            val ctb3 = fabricator.random<Resource>().copy(classes = setOf(Classes.contribution))
-
-            val hasContribution = fabricator.random<Predicate>().copy(id = Predicates.hasContribution)
-            val comparesContribution = fabricator.random<Predicate>().copy(id = Predicates.comparesContribution)
-
-            createStatement(publishedCmp1, comparesContribution, ctb1)
-            createStatement(oldCmp1, comparesContribution, ctb1)
-            createStatement(cmp1, comparesContribution, ctb1)
-            createStatement(ppr1, hasContribution, ctb1)
-
-            createStatement(publishedCmp2, comparesContribution, ctb2)
-            createStatement(oldCmp2, comparesContribution, ctb2)
-            createStatement(cmp2, comparesContribution, ctb2)
-            createStatement(ppr1, hasContribution, ctb2)
-            createStatement(ppr4, hasContribution, ctb2)
-
-            createStatement(publishedCmp3, comparesContribution, ctb3)
-            createStatement(oldCmp3, comparesContribution, ctb3)
-            createStatement(cmp3, comparesContribution, ctb3)
-            createStatement(ppr3, hasContribution, ctb3)
+            createStatement(cmp1, hasPublishedVersion, oldCmp1)
+            createStatement(cmp2, hasPublishedVersion, oldCmp2)
+            createStatement(cmp3, hasPublishedVersion, oldCmp3)
 
             val excludingSubfields = repository.findResearchFieldStatsById(r1.id, false)
             val includingSubfields = repository.findResearchFieldStatsById(r1.id, true)

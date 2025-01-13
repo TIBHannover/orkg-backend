@@ -38,9 +38,9 @@ interface RetrievePaperUseCase {
 
     fun countAllStatementsAboutPapers(pageable: Pageable): Page<PaperWithStatementCount>
 
-    fun existsByDOI(doi: String): Boolean
+    fun existsByDOI(doi: String): Optional<ThingId>
 
-    fun existsByTitle(label: ExactSearchString): Boolean
+    fun existsByTitle(label: ExactSearchString): Optional<ThingId>
 }
 
 interface LegacyRetrievePaperUseCase {

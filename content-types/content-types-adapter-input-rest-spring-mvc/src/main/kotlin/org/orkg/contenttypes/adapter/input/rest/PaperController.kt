@@ -177,14 +177,32 @@ class PaperController(
     }
 
     @RequestMapping(method = [RequestMethod.HEAD], params = ["doi"])
-    fun existsByDOI(@RequestParam("doi", required = false) doi: String): ResponseEntity<Nothing> =
-        if (service.existsByDOI(doi)) ok().build()
-        else notFound().build()
+    fun existsByDOI(
+        @RequestParam("doi", required = false) doi: String,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Nothing> =
+        service.existsByDOI(doi)
+            .map {
+                val location = uriComponentsBuilder.path("/api/papers/{id}")
+                    .buildAndExpand(it)
+                    .toUri()
+                ok().location(location).build<Nothing>()
+            }
+            .orElseGet { notFound().build() }
 
     @RequestMapping(method = [RequestMethod.HEAD], params = ["title"])
-    fun existsByTitle(@RequestParam("title", required = false) title: String): ResponseEntity<Nothing> =
-        if (service.existsByTitle(ExactSearchString(title))) ok().build()
-        else notFound().build()
+    fun existsByTitle(
+        @RequestParam("title", required = false) title: String,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Nothing> =
+        service.existsByTitle(ExactSearchString(title))
+            .map {
+                val location = uriComponentsBuilder.path("/api/papers/{id}")
+                    .buildAndExpand(it)
+                    .toUri()
+                ok().location(location).build<Nothing>()
+            }
+            .orElseGet { notFound().build() }
 
     data class CreatePaperRequest(
         @field:NotBlank

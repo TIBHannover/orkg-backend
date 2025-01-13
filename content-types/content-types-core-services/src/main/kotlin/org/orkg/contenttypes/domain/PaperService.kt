@@ -233,11 +233,13 @@ class PaperService(
         return steps.execute(command, PublishPaperState()).paperVersionId!!
     }
 
-    override fun existsByDOI(doi: String): Boolean =
-        statementRepository.findByDOI(doi, classes = setOf(Classes.paper, Classes.paperVersion)).isPresent
+    override fun existsByDOI(doi: String): Optional<ThingId> =
+        statementRepository.findByDOI(doi, classes = setOf(Classes.paper, Classes.paperVersion))
+            .map { it.id }
 
-    override fun existsByTitle(label: ExactSearchString): Boolean =
-        findAll(PageRequests.SINGLE, label = label).isEmpty.not()
+    override fun existsByTitle(label: ExactSearchString): Optional<ThingId> =
+        findAll(PageRequests.SINGLE, label = label).content.singleOrNull()
+            .let { Optional.ofNullable(it?.id) }
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
         val statements = statementRepository.fetchAsBundle(

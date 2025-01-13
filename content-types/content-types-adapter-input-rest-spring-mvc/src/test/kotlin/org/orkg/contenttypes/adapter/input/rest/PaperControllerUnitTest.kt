@@ -1237,7 +1237,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @DisplayName("Given a paper, when checking existence by doi and paper is found, then status is 200 OK")
     fun existsByDoi() {
         val doi = "10.456/8764"
-        every { paperService.existsByDOI(doi) } returns true
+        val id = ThingId("R123")
+        every { paperService.existsByDOI(doi) } returns Optional.of(id)
 
         // TODO: For unknown reasons, head requests do not work with param builders.
         // Tested on spring rest docs 3.0.3.
@@ -1246,8 +1247,12 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(content().string(""))
+            .andExpect(header().string("Location", endsWith("/api/papers/$id")))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the found paper can be fetched from.")
+                    ),
                     queryParameters(
                         parameterWithName("doi").description("The DOI of the paper."),
                     )
@@ -1261,7 +1266,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @Test
     fun `Given a paper, when checking existence by doi and paper is not found, then status is 404 NOT FOUND`() {
         val doi = "10.456/8764"
-        every { paperService.existsByDOI(doi) } returns false
+        every { paperService.existsByDOI(doi) } returns Optional.empty()
 
         head("/api/papers")
             .param("doi", doi)
@@ -1277,7 +1282,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @DisplayName("Given a paper, when checking existence by title and paper is found, then status is 200 OK")
     fun existsByTitle() {
         val title = ExactSearchString("example paper")
-        every { paperService.existsByTitle(any()) } returns true
+        val id = ThingId("R123")
+        every { paperService.existsByTitle(any()) } returns Optional.of(id)
 
         // TODO: For unknown reasons, head requests do not work with param builders.
         // Tested on spring rest docs 3.0.3.
@@ -1286,8 +1292,12 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .perform()
             .andExpect(status().isOk)
             .andExpect(content().string(""))
+            .andExpect(header().string("Location", endsWith("/api/papers/$id")))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the found paper can be fetched from.")
+                    ),
                     queryParameters(
                         parameterWithName("title").description("An exact search term that must match the title of the paper."),
                     )
@@ -1301,7 +1311,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @Test
     fun `Given a paper, when checking existence by title and paper is not found, then status is 404 NOT FOUND`() {
         val title = ExactSearchString("example paper")
-        every { paperService.existsByTitle(any()) } returns false
+        every { paperService.existsByTitle(any()) } returns Optional.empty()
 
         head("/api/papers")
             .param("title", title.input)

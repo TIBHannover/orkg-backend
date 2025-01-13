@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added a dedicated endpoint for checking the existence of papers by title or doi.
+  (See: [!1165](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1165))
+
+### Removed
+- Removed discussions feature.
+  (Closes: [#588](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/588))
 
 ## [0.75.0] - 2025-01-08
 ### Added

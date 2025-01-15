@@ -13,6 +13,8 @@ import org.orkg.contenttypes.input.ResourceTemplatePropertyDefinition
 import org.orkg.contenttypes.input.StringLiteralTemplatePropertyDefinition
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
 import org.orkg.graph.domain.ClassNotFound
+import org.orkg.graph.domain.Description
+import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Literals
@@ -27,7 +29,7 @@ class AbstractTemplatePropertyValidator(
     internal fun validate(property: TemplatePropertyDefinition) {
         Label.ofOrNull(property.label) ?: throw InvalidLabel()
         property.placeholder?.also { Label.ofOrNull(it) ?: throw InvalidLabel("placeholder") }
-        property.description?.also { Label.ofOrNull(it) ?: throw InvalidLabel("description") }
+        property.description?.also { Description.ofOrNull(it) ?: throw InvalidDescription("description") }
         property.minCount?.let { min ->
             if (min < 0) {
                 throw InvalidMinCount(min)

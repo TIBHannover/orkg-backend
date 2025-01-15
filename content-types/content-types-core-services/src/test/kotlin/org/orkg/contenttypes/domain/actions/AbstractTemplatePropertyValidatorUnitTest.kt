@@ -23,6 +23,7 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateStringLiteralTemp
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateUntypedTemplatePropertyCommand
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.PredicateNotFound
@@ -164,8 +165,8 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property definition, when description is invalid, it throws an exception`() {
-        val property = dummyCreateResourceTemplatePropertyCommand().copy(description = "\n")
-        assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }.asClue {
+        val property = dummyCreateResourceTemplatePropertyCommand().copy(description = " ")
+        assertThrows<InvalidDescription> { abstractTemplatePropertyValidator.validate(property) }.asClue {
             it.property shouldBe "description"
         }
     }

@@ -26,7 +26,7 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
-import org.orkg.graph.testing.fixtures.withCustomMappings
+import org.orkg.graph.testing.fixtures.withGraphMappings
 
 fun <
     S : StatementRepository,
@@ -61,10 +61,11 @@ fun <
         FabricatorConfig(
             collectionSizes = 12..12,
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
-        ).withStandardMappings()
+        )
+            .withStandardMappings()
+            .withGraphMappings()
+            .withRosettaStoneStatementMappings()
     )
-        .withCustomMappings()
-        .withRosettaStoneStatementMappings()
 
     val saveThing: (Thing) -> Unit = {
         when (it) {

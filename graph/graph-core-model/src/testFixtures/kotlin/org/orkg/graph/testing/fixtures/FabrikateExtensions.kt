@@ -1,110 +1,127 @@
 package org.orkg.graph.testing.fixtures
 
+import dev.forkhandles.fabrikate.Fabricator
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import dev.forkhandles.fabrikate.StringFabricator
+import dev.forkhandles.fabrikate.register
 import kotlin.math.absoluteValue
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.Literal
+import org.orkg.graph.domain.Predicate
+import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Thing
 
-fun Fabrikate.withCustomMappings(): Fabrikate {
-    // register fabricator for StatementId because of id constraints
-    config.register {
-        StatementId(random<Long>().absoluteValue)
+class StatementIdFabricator : Fabricator<StatementId> {
+    override fun invoke(fabrikate: Fabrikate): StatementId {
+        return StatementId(fabrikate.random<Long>().absoluteValue)
     }
-    // register fabricator for ThingId because of id constraints
-    config.register {
-        ThingId(random<Long>().absoluteValue.toString())
+}
+
+class ThingIdFabricator : Fabricator<ThingId> {
+    override fun invoke(fabrikate: Fabrikate): ThingId {
+        return ThingId(fabrikate.random<Long>().absoluteValue.toString())
     }
-    // register fabricator for ParsedIRI because of IRI constraints
-    config.register {
-        ParsedIRI("https://example.com/${StringFabricator(random = config.random, length = IntRange(10, 20))()}")
+}
+
+class ParsedIRIFabricator : Fabricator<ParsedIRI> {
+    private val stringFabricator = StringFabricator(length = IntRange(10, 20))
+
+    override fun invoke(fabrikate: Fabrikate): ParsedIRI {
+        return ParsedIRI("https://example.com/${stringFabricator(fabrikate)}")
     }
-    // register fabricator for Things because it's just an interface
-    config.register<Thing> {
-        createClass(
-            id = random(),
-            label = random(),
-            createdAt = random(),
-            uri = random(),
-            createdBy = random(),
-            // Do not create a random description for tests as it is saved via statements
-            // description = random(),
-            modifiable = true
-        )
+}
+
+class ThingFabricator : Fabricator<Thing> {
+    override fun invoke(fabrikate: Fabrikate): Thing {
         // TODO: generate predicates and resources too?
-    }
-    // register fabricator for Class because _class needs to be set correctly
-    config.register {
-        createClass(
-            id = random(),
-            label = random(),
-            createdAt = random(),
-            uri = random(),
-            createdBy = random(),
-            // Do not create a random description for tests as it is saved via statements
+        return createClass(
+            id = fabrikate.random(),
+            label = fabrikate.random(),
+            createdAt = fabrikate.random(),
+            uri = fabrikate.random(),
+            createdBy = fabrikate.random(),
+            // Do not create a random description for tests, as it needs to be saved via statements
             // description = random(),
             modifiable = true
         )
     }
-    // register fabricator for Predicate because _class needs to be set correctly
-    config.register {
-        createPredicate(
-            id = random(),
-            label = random(),
-            createdAt = random(),
-            createdBy = random(),
-            // Do not create a random description for tests as it is saved via statements
+}
+
+class ClassFabricator : Fabricator<Class> {
+    override fun invoke(fabrikate: Fabrikate): Class {
+        return createClass(
+            id = fabrikate.random(),
+            label = fabrikate.random(),
+            createdAt = fabrikate.random(),
+            uri = fabrikate.random(),
+            createdBy = fabrikate.random(),
+            // Do not create a random description for tests, as it needs to be saved via statements
             // description = random(),
             modifiable = true
         )
     }
-    // register fabricator for Literal because _class needs to be set correctly
-    config.register {
-        createLiteral(
-            id = random(),
-            label = random(),
-            datatype = random(),
-            createdAt = random(),
-            createdBy = random(),
+}
+
+class PredicateFabricator : Fabricator<Predicate> {
+    override fun invoke(fabrikate: Fabrikate): Predicate {
+        return createPredicate(
+            id = fabrikate.random(),
+            label = fabrikate.random(),
+            createdAt = fabrikate.random(),
+            createdBy = fabrikate.random(),
+            // Do not create a random description for tests, as it needs to be saved via statements
+            // description = random(),
             modifiable = true
         )
     }
-    // register fabricator for Resource because _class needs to be set correctly
-    config.register {
-        createResource(
-            id = random(),
-            label = random(),
-            createdAt = random(),
-            classes = random(),
-            createdBy = random(),
-            observatoryId = random(),
-            extractionMethod = random(),
-            organizationId = random(),
-            visibility = random(),
-            verified = random(),
+}
+
+class LiteralFabricator : Fabricator<Literal> {
+    override fun invoke(fabrikate: Fabrikate): Literal {
+        return createLiteral(
+            id = fabrikate.random(),
+            label = fabrikate.random(),
+            datatype = fabrikate.random(),
+            createdAt = fabrikate.random(),
+            createdBy = fabrikate.random(),
             modifiable = true
         )
     }
-    return this
 }
 
-/** Helper method to generate a simple number (as string) for use in IDs, so that they look a bit nicer. */
-private fun FabricatorConfig.simpleNumberString(maxLength: Int = 4): String =
-    List(random.nextInt(1, maxLength + 1)) { random.nextInt(1, 10) }.joinToString("", transform = Int::toString)
-
-/** Generate IDs that follow the literal ID convention, for use in documentation tests. */
-fun FabricatorConfig.withLiteralIds(): FabricatorConfig = apply {
-    register { ThingId("L${simpleNumberString()}") }
+class ResourceFabricator : Fabricator<Resource> {
+    override fun invoke(fabrikate: Fabrikate): Resource {
+        return createResource(
+            id = fabrikate.random(),
+            label = fabrikate.random(),
+            createdAt = fabrikate.random(),
+            classes = fabrikate.random(),
+            createdBy = fabrikate.random(),
+            observatoryId = fabrikate.random(),
+            extractionMethod = fabrikate.random(),
+            organizationId = fabrikate.random(),
+            visibility = fabrikate.random(),
+            verified = fabrikate.random(),
+            modifiable = true
+        )
+    }
 }
 
-// Helper method to work with current withCustomMappings() implementation.
-fun Fabrikate.withLiteralIds(): Fabrikate = apply {
-    config.withLiteralIds()
+fun FabricatorConfig.withGraphMappings(): FabricatorConfig = withMappings {
+    register(StatementIdFabricator())
+    register(ThingIdFabricator())
+    register(ParsedIRIFabricator())
+    register(ThingFabricator())
+    register(ClassFabricator())
+    register(PredicateFabricator())
+    register(LiteralFabricator())
+    register(ResourceFabricator())
 }
 
-inline fun <reified T : Any> Fabrikate.random(size: Int): List<T> {
-    return (0 until size).map { random() }
+inline fun <reified T : Any> Fabrikate.random(count: Int): List<T> {
+    return (0 until count).map { random() }
 }

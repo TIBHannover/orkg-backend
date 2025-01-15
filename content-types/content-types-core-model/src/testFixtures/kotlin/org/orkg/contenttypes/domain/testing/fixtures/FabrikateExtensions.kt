@@ -1,6 +1,9 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
+import dev.forkhandles.fabrikate.Fabricator
+import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
+import dev.forkhandles.fabrikate.register
 import org.orkg.contenttypes.domain.RosettaStoneStatement
 import org.orkg.contenttypes.domain.RosettaStoneStatementVersion
 import org.orkg.graph.domain.Class
@@ -8,43 +11,51 @@ import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Resource
 
-fun Fabrikate.withRosettaStoneStatementMappings() = apply {
-    config.register {
-        RosettaStoneStatementVersion(
-            id = random(),
-            formattedLabel = FormattedLabel.of(random()),
-            subjects = listOf(random<Resource>(), random<Predicate>(), random<Class>()),
+class RosettaStoneStatementVersionFabricator : Fabricator<RosettaStoneStatementVersion> {
+    override fun invoke(fabrikate: Fabrikate): RosettaStoneStatementVersion {
+        return RosettaStoneStatementVersion(
+            id = fabrikate.random(),
+            formattedLabel = FormattedLabel.of(fabrikate.random()),
+            subjects = listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
             objects = listOf(
-                listOf(random<Resource>(), random<Predicate>(), random<Class>()),
-                listOf(random<Resource>(), random<Predicate>(), random<Class>()),
-                listOf(random<Resource>(), random<Predicate>(), random<Class>())
+                listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
+                listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
+                listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>())
             ),
-            createdAt = random(),
-            createdBy = random(),
-            certainty = random(),
-            negated = random(),
-            observatories = listOf(random()),
-            organizations = listOf(random()),
-            extractionMethod = random(),
-            visibility = random(),
+            createdAt = fabrikate.random(),
+            createdBy = fabrikate.random(),
+            certainty = fabrikate.random(),
+            negated = fabrikate.random(),
+            observatories = listOf(fabrikate.random()),
+            organizations = listOf(fabrikate.random()),
+            extractionMethod = fabrikate.random(),
+            visibility = fabrikate.random(),
             unlistedBy = null,
             modifiable = true
         )
     }
-    config.register {
-        RosettaStoneStatement(
-            id = random(),
-            contextId = random(),
-            templateId = random(),
-            templateTargetClassId = random(),
-            label = random(),
-            versions = listOf(random<RosettaStoneStatementVersion>()),
-            observatories = listOf(random()),
-            organizations = listOf(random()),
-            extractionMethod = random(),
-            visibility = random(),
+}
+
+class RosettaStoneStatementFabricator : Fabricator<RosettaStoneStatement> {
+    override fun invoke(fabrikate: Fabrikate): RosettaStoneStatement {
+        return RosettaStoneStatement(
+            id = fabrikate.random(),
+            contextId = fabrikate.random(),
+            templateId = fabrikate.random(),
+            templateTargetClassId = fabrikate.random(),
+            label = fabrikate.random(),
+            versions = listOf(fabrikate.random<RosettaStoneStatementVersion>()),
+            observatories = listOf(fabrikate.random()),
+            organizations = listOf(fabrikate.random()),
+            extractionMethod = fabrikate.random(),
+            visibility = fabrikate.random(),
             unlistedBy = null,
             modifiable = true
         )
     }
+}
+
+fun FabricatorConfig.withRosettaStoneStatementMappings(): FabricatorConfig = withMappings {
+    register(RosettaStoneStatementVersionFabricator())
+    register(RosettaStoneStatementFabricator())
 }

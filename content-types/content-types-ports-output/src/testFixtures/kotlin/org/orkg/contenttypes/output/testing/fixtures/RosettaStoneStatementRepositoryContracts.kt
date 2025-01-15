@@ -35,7 +35,7 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
-import org.orkg.graph.testing.fixtures.withCustomMappings
+import org.orkg.graph.testing.fixtures.withGraphMappings
 import org.orkg.testing.MockUserId
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -67,10 +67,11 @@ fun <
         FabricatorConfig(
             collectionSizes = 5..5,
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
-        ).withStandardMappings()
+        )
+            .withStandardMappings()
+            .withGraphMappings()
+            .withRosettaStoneStatementMappings()
     )
-        .withCustomMappings()
-        .withRosettaStoneStatementMappings()
 
     val saveThing: (Thing) -> Unit = {
         when (it) {

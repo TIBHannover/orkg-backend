@@ -16,8 +16,7 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
-import org.orkg.graph.testing.fixtures.random
-import org.orkg.graph.testing.fixtures.withCustomMappings
+import org.orkg.graph.testing.fixtures.withGraphMappings
 import org.orkg.statistics.output.StatisticsRepository
 
 fun <
@@ -47,8 +46,10 @@ fun <
         FabricatorConfig(
             collectionSizes = 12..12,
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
-        ).withStandardMappings()
-    ).withCustomMappings()
+        )
+            .withStandardMappings()
+            .withGraphMappings()
+    )
 
     val saveThing: (Thing) -> Unit = {
         when (it) {

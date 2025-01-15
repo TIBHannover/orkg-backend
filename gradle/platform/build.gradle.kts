@@ -5,7 +5,7 @@ plugins {
 dependencies {
     // Extend existing platforms
     api(platform(kotlin("bom", "2.0.20")))
-    api(platform("dev.forkhandles:forkhandles-bom:2.0.0.0"))
+    api(platform("dev.forkhandles:forkhandles-bom:2.20.0.0"))
     api(platform("org.springframework.boot:spring-boot-dependencies:3.4.0"))
     api(platform("io.kotest:kotest-bom:5.9.1"))
     api(platform("org.eclipse.rdf4j:rdf4j-bom:5.0.3"))

@@ -7,10 +7,12 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import org.orkg.curation.output.CurationRepository
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicate
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.output.ClassRepository
@@ -18,9 +20,7 @@ import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
-import org.orkg.graph.testing.fixtures.withCustomMappings
-import org.orkg.curation.output.CurationRepository
-import org.orkg.graph.domain.Predicates
+import org.orkg.graph.testing.fixtures.withGraphMappings
 import org.springframework.data.domain.PageRequest
 
 fun <
@@ -50,8 +50,10 @@ fun <
         FabricatorConfig(
             collectionSizes = 12..12,
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
-        ).withStandardMappings()
-    ).withCustomMappings()
+        )
+            .withStandardMappings()
+            .withGraphMappings()
+    )
 
     val saveThing: (Thing) -> Unit = {
         when (it) {

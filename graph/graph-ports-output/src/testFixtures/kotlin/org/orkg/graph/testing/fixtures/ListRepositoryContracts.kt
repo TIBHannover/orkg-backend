@@ -43,8 +43,10 @@ fun <
         FabricatorConfig(
             collectionSizes = 12..12,
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
-        ).withStandardMappings()
-    ).withCustomMappings()
+        )
+            .withStandardMappings()
+            .withGraphMappings()
+    )
 
     describe("saving a list") {
         it("saves and loads all properties correctly") {

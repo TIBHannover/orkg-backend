@@ -454,6 +454,6 @@ internal class LegacyAuthControllerUnitTest : RestDocsTest("legacy-auth") {
         }
 
         @Bean
-        fun httpClient(): HttpClient = mockk()
+        fun httpClient(): HttpClient = mockk(relaxUnitFun = true)
     }
 }

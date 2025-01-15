@@ -230,6 +230,13 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
             .perform()
             .andExpect(status().isOk)
             .andExpectRosettaStoneStatement("$[*]")
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the rosetta stone statement version.")
+                    )
+                )
+            )
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { statementService.findByIdOrVersionId(statement.id) }
@@ -322,6 +329,9 @@ internal class RosettaStoneStatementControllerUnitTest : RestDocsTest("rosetta-s
             .andExpect(header().string("Location", endsWith("/api/rosetta-stone/statements/$newId")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the rosetta stone statement version.")
+                    ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the newly created rosetta stone statement can be fetched from.")
                     ),

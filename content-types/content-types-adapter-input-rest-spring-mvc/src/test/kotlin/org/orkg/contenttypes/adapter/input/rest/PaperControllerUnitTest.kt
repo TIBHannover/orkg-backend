@@ -307,6 +307,13 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the paper.")
+                    )
+                )
+            )
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { paperService.findAllContributorsByPaperId(id, any()) }
@@ -816,6 +823,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andExpect(header().string("Location", endsWith("/api/papers/$id")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the paper.")
+                    ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the updated paper can be fetched from.")
                     ),

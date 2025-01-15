@@ -137,6 +137,13 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectTemplateInstance("$.content[*]")
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the template to fetch the statements for."),
+                    )
+                )
+            )
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { service.findAll(id, pageable = any()) }
@@ -178,6 +185,9 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             .andExpectTemplateInstance("$.content[*]")
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the template to fetch the statements for."),
+                    ),
                     queryParameters(
                         parameterWithName("q").description("A search term that must be contained in the label. (optional)"),
                         parameterWithName("exact").description("Whether label matching is exact or fuzzy (optional, default: false)"),
@@ -205,7 +215,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
 
         every { service.update(any()) } just runs
 
-        documentedPutRequestTo("/api/templates/{id}/instances/{id}", id, instanceId)
+        documentedPutRequestTo("/api/templates/{id}/instances/{instanceId}", id, instanceId)
             .content(updateTemplateInstanceRequest())
             .accept(TEMPLATE_INSTANCE_JSON_V1)
             .contentType(TEMPLATE_INSTANCE_JSON_V1)
@@ -214,6 +224,10 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             .andExpect(header().string("Location", endsWith("/api/templates/$id/instances/$instanceId")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the template."),
+                        parameterWithName("instanceId").description("The identifier of the template instance."),
+                    ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the updated template instance can be fetched from.")
                     ),

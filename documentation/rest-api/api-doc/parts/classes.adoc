@@ -8,7 +8,7 @@ They can be attached to <<Resources,resources>> to indicate that the resource be
 
 A `GET` request provides information about a class.
 
-operation::classes-fetch[snippets='curl-request,http-response,response-fields']
+operation::classes-fetch[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[classes-list]]
 == Listing Classes
@@ -46,7 +46,7 @@ A `PATCH` request updates a class with a new given label and URI.
 Only fields provided in the response, and therefore non-null, will be updated.
 The response will be `200 OK` when successful.
 
-operation::classes-update[snippets='request-fields,curl-request,http-response']
+operation::classes-update[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[classes-replace]]
 === Updating Classes (PUT)
@@ -56,7 +56,7 @@ All fields will be updated in the process.
 The response will be `200 OK` when successful.
 The updated class is returned in the body for convenience.
 
-operation::classes-replace[snippets='request-fields,curl-request']
+operation::classes-replace[snippets='path-parameters,request-fields,curl-request']
 
 [[classes-import]]
 == Importing Classes

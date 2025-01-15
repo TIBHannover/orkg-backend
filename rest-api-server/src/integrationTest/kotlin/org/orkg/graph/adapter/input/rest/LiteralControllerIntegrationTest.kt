@@ -17,6 +17,8 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -125,6 +127,9 @@ internal class LiteralControllerIntegrationTest : RestDocsTest("literals") {
             .andExpect(jsonPath("$.datatype").value(update["datatype"] as String))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the literal.")
+                    ),
                     requestFields(ofCreateAndUpdateRequests()),
                     responseFields(literalResponseFields())
                 )

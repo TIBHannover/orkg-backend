@@ -9,7 +9,7 @@ One Observatory can be managed by many organizations.
 
 A `GET` request provides information about an observatory.
 
-operation::observatories-fetch[snippets='curl-request,http-response,response-fields']
+operation::observatories-fetch[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[observatories-list]]
 == Listing Observatories
@@ -39,7 +39,7 @@ The updated observatory (object) can be retrieved by following the URI in the `L
 
 NOTE: This endpoint can only be accessed by curators.
 
-operation::observatories-update[snippets='request-fields,curl-request,http-response']
+operation::observatories-update[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[observatories-list-papers]]
 == Listing Papers of Observatories
@@ -48,7 +48,7 @@ A `GET` request returns a <<sorting-and-pagination,paged>> list of paper <<resou
 
 TIP: This call features filter configs, check the chapter <<filter-config>> for more information on filter configs.
 
-operation::observatory-resources-get-paged-with-filter-config[snippets='curl-request,query-parameters']
+operation::observatory-resources-get-paged-with-filter-config[snippets='path-parameters,curl-request,query-parameters']
 
 NOTE: Sorting is supported for the following fields: `id`, `created_by`, `created_at`.
 It is also possible to sort by the matched value of each search filter.

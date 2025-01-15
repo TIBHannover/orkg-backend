@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -118,7 +120,7 @@ internal class LegacyComparisonControllerIntegrationTest : RestDocsTest("compari
         statementService.create(comparison, Predicates.comparesContribution, cont2)
         statementService.create(comparison, Predicates.comparesContribution, cont3)
 
-        documentedGetRequestTo("/api/comparisons/$comparison/authors")
+        documentedGetRequestTo("/api/comparisons/{id}/authors", comparison)
             .param("size", "2")
             .perform()
             .andExpect(status().isOk)
@@ -133,6 +135,9 @@ internal class LegacyComparisonControllerIntegrationTest : RestDocsTest("compari
             )
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the comparison.")
+                    ),
                     authorsOfComparisonResponseFields()
                 )
             )

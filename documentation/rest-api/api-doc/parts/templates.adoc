@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a template.
 
-operation::templates-get-single[snippets='curl-request,http-response,response-fields']
+operation::templates-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[templates-list]]
 == Listing Templates
@@ -43,4 +43,4 @@ The updated template (object) can be retrieved by following the URI in the `Loca
 
 NOTE: All fields at the top level in the request can be omitted or `null`, except for optional fields such as `formatted_label`, meaning that the corresponding fields should not be updated.
 
-operation::templates-update[snippets='request-fields,curl-request,http-response']
+operation::templates-update[snippets='path-parameters,request-fields,curl-request,http-response']

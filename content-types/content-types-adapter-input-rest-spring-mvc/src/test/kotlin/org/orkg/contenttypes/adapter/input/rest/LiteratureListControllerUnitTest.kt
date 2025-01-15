@@ -474,6 +474,9 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the literature list.")
+                    ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
                     ),

@@ -91,7 +91,9 @@ internal class ResearchFieldControllerUnitTest : RestDocsTest("research-fields")
             .andExpectResource("$.content[0]") // only test the first element, this should be fine
             .andDo(
                 documentationHandler.document(
-                    pathParameters(parameterWithName("id").description("The ID of the research field.")),
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the research field.")
+                    ),
                     queryParameters(
                         parameterWithName("classes").description("A list of classes to filter against. The classes must support research fields. Must be one of $supportedClasses."),
                         *legacyVisibilityFilterRequestParameters(),
@@ -152,6 +154,9 @@ internal class ResearchFieldControllerUnitTest : RestDocsTest("research-fields")
             .andExpectPage()
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the research field.")
+                    ),
                     responseFields(
                         subsectionWithPath("content").description("A (sorted) array of problems resources."),
                         *ignorePageableFieldsExceptContent(),
@@ -182,6 +187,9 @@ internal class ResearchFieldControllerUnitTest : RestDocsTest("research-fields")
             .andExpectPage()
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the research field.")
+                    ),
                     responseFields(
                         subsectionWithPath("content").description("A (sorted) array of paper resources."),
                         *ignorePageableFieldsExceptContent(),
@@ -220,6 +228,9 @@ internal class ResearchFieldControllerUnitTest : RestDocsTest("research-fields")
             .andExpectPage()
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the research field.")
+                    ),
                     responseFields(
                         subsectionWithPath("content").description("A (sorted) array of comparison resources."),
                         *ignorePageableFieldsExceptContent(),
@@ -261,6 +272,9 @@ internal class ResearchFieldControllerUnitTest : RestDocsTest("research-fields")
             .andExpectPage()
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the research field.")
+                    ),
                     responseFields(
                         subsectionWithPath("content").description("A (sorted) array of contributors."), // TODO: link to contributors
                         *ignorePageableFieldsExceptContent(),

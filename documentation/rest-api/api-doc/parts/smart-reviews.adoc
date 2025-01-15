@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a smart review.
 
-operation::smart-reviews-get-single[snippets='curl-request,http-response,response-fields']
+operation::smart-reviews-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[smart-reviews-list]]
 == Listing Smart Reviews
@@ -45,7 +45,7 @@ NOTE: All fields at the top level in the request can be omitted or `null`, meani
 
 WARNING: Author names will not be updated if a resource id is specified for a given author.
 
-operation::smart-reviews-update[snippets='request-fields,curl-request,http-response']
+operation::smart-reviews-update[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[smart-reviews-publish]]
 == Publishing Smart Reviews
@@ -57,14 +57,14 @@ Optionally, a DOI can be assigned to the published smart review resource.
 The response will be `201 Created` when successful.
 The published smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-publish[snippets='request-fields,curl-request,http-response']
+operation::smart-reviews-publish[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[smart-reviews-published-contents]]
 == Fetching Published Smart Review Contents
 
 A `GET` request returns contents of an already published smart review, at the state of publishing.
 
-operation::smart-reviews-find-published-content-by-id[snippets='curl-request']
+operation::smart-reviews-find-published-content-by-id[snippets='path-parameters,curl-request']
 
 Depending on the type of the requested content, the following representations are returned:
 

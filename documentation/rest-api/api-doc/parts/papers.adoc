@@ -11,14 +11,14 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a paper.
 
-operation::papers-get-single[snippets='curl-request,http-response,response-fields']
+operation::papers-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[papers-contributors]]
 == Fetching Contributors of Papers
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributor>> ids.
 
-operation::papers-get-contributors[snippets='curl-request']
+operation::papers-get-contributors[snippets='path-parameters,curl-request']
 
 [[papers-list]]
 == Listing Papers
@@ -52,7 +52,7 @@ NOTE: All fields at the top level in the request can be omitted or `null`, meani
 
 WARNING: Author names will not be updated if a resource id is specified for a given author.
 
-operation::papers-update[snippets='request-fields,curl-request,http-response']
+operation::papers-update[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[papers-publish]]
 == Publishing Papers
@@ -63,7 +63,7 @@ All contribution statements of the original paper are archived in a separate dat
 The response will be `201 Created` when successful.
 The paper resource can be retrieved by following the URI in the `Location` header field.
 
-operation::papers-publish[snippets='request-fields,curl-request,http-response']
+operation::papers-publish[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[papers-exist]]
 == Checking for Existing Papers

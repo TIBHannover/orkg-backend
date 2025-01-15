@@ -9,7 +9,7 @@ The elements of a list can only be modified using the dedicated list endpoints.
 
 A `GET` request provides information about a list.
 
-operation::lists-get-single[snippets='curl-request,http-response,response-fields']
+operation::lists-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[list-elements]]
 == Fetching List Elements
@@ -17,7 +17,7 @@ operation::lists-get-single[snippets='curl-request,http-response,response-fields
 A `GET` request returns a <<sorting-and-pagination,paged>> list of elements, in order, with their full representations (see <<resources,resources>>, <<classes,classes>>, <<predicates,predicates>>, <<literals,literals>>), that are part of the list.
 If no paging request parameters are provided, the default values will be used.
 
-operation::lists-get-elements[snippets='curl-request,http-response']
+operation::lists-get-elements[snippets='path-parameters,curl-request,http-response']
 
 [[lists-create]]
 == Creating Lists
@@ -36,4 +36,4 @@ operation::lists-create[snippets='request-fields,curl-request,http-response']
 A `PATCH` request updates a list with all the given parameters.
 The response will be `204 No Content` when successful.
 
-operation::lists-update[snippets='request-fields,curl-request,http-response']
+operation::lists-update[snippets='path-parameters,request-fields,curl-request,http-response']

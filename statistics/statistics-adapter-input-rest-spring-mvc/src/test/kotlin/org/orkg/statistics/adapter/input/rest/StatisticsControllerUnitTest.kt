@@ -16,6 +16,8 @@ import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -67,6 +69,9 @@ internal class StatisticsControllerUnitTest : RestDocsTest("statistics") {
             .andExpect(jsonPath("$.metric2.href").value(endsWith("/api/statistics/$group/metric2")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("group").description("The name of the group of metrics.")
+                    ),
                     responseFields(
                         fieldWithPath("*").description("The name of the metric."),
                         fieldWithPath("*.href").description("The URI of the metric, which can be used to fetch information about the metric and its current value.")
@@ -99,6 +104,10 @@ internal class StatisticsControllerUnitTest : RestDocsTest("statistics") {
             .andExpect(jsonPath("$.value").value(metric.value().toString()))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("group").description("The name of the group of metrics."),
+                        parameterWithName("name").description("The name of the metric.")
+                    ),
                     responseFields(
                         fieldWithPath("name").description("The name of the metric."),
                         fieldWithPath("description").description("The description of the metric."),

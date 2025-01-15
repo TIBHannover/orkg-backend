@@ -10,7 +10,7 @@ IDs always start with "P", followed by a number.
 
 A `GET` request provides information about a predicate.
 
-operation::predicates-fetch[snippets='curl-request,http-response,response-fields']
+operation::predicates-fetch[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[predicates-list]]
 == Listing Predicates
@@ -42,7 +42,7 @@ A `PUT` request updates a predicate with a new given label.
 The response will be `200 OK` when successful.
 The updated predicate is returned in the body for convenience.
 
-operation::predicates-edit[snippets='curl-request,http-response']
+operation::predicates-edit[snippets='path-parameters,curl-request,http-response']
 
 [[predicates-import]]
 == Importing Predicates

@@ -40,6 +40,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -770,6 +772,9 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpect(header().string("Location", endsWith("/api/observatories/$id")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the observatory.")
+                    ),
                     requestFields(
                         fieldWithPath("name").description("The new name of the observatory. (optional)"),
                         fieldWithPath("organizations").description("The new set of organizations that the observatory belongs to. (optional)"),

@@ -15,11 +15,11 @@ operation::statistics-find-all-groups[snippets='curl-request,http-response,respo
 
 A `GET` request provides a list of all available metrics of a given group.
 
-operation::statistics-find-all-metrics-by-group[snippets='curl-request,http-response,response-fields']
+operation::statistics-find-all-metrics-by-group[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[statistics-fetch-metric]]
 == Fetching Metrics
 
 A `GET` request provides information about a given metric within a group.
 
-operation::statistics-find-metric-by-group-and-name[snippets='curl-request,http-response,response-fields']
+operation::statistics-find-metric-by-group-and-name[snippets='path-parameters,curl-request,http-response,response-fields']

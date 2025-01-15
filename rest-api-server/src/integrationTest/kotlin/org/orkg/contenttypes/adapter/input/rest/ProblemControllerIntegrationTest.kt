@@ -29,6 +29,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -90,11 +91,15 @@ internal class ProblemControllerIntegrationTest : RestDocsTest("research-problem
 
         statementService.create(contributorId, contribution, predicate, problem)
 
-        documentedGetRequestTo("/api/problems/{id}/users", problem).param("size", "4")
+        documentedGetRequestTo("/api/problems/{id}/users", problem)
+            .param("size", "4")
             .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the research problem.")
+                    ),
                     queryParameters(
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
                         parameterWithName("size").description("Number of items to fetch per page (default: 10)").optional()
@@ -160,6 +165,9 @@ internal class ProblemControllerIntegrationTest : RestDocsTest("research-problem
             .andExpect(jsonPath("$.content[0].papers").value(2))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the research problem.")
+                    ),
                     authorsOfPaperResponseFields()
                 )
             )

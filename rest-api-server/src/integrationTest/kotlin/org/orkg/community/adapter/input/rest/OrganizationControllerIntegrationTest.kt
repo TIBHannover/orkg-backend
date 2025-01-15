@@ -24,6 +24,8 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -92,6 +94,9 @@ internal class OrganizationControllerIntegrationTest : RestDocsTest("organizatio
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the organization.")
+                    ),
                     responseFields(organizationResponseFields(OrganizationType))
                 )
             )
@@ -115,6 +120,9 @@ internal class OrganizationControllerIntegrationTest : RestDocsTest("organizatio
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the organization.")
+                    ),
                     ObservatoryControllerIntegrationTest.listOfObservatoriesResponseFields()
                 )
             )

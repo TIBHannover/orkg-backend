@@ -398,6 +398,9 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpectStatement()
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of statement.")
+                    ),
                     requestFields(
                         fieldWithPath("subject_id").description("The updated id of the subject entity of the statement. (optional)"),
                         fieldWithPath("predicate_id").description("The updated id of the predicate of the statement. (optional)"),

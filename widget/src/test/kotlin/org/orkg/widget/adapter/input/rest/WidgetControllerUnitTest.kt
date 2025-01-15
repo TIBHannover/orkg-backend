@@ -105,7 +105,7 @@ internal class WidgetControllerUnitTest : RestDocsTest("widget") {
             "title"
         )
 
-        documentedGetRequestTo("/api/widgets")
+        get("/api/widgets")
             .param("doi", EXAMPLE_DOI)
             .param("title", "some title")
             .perform()
@@ -126,7 +126,7 @@ internal class WidgetControllerUnitTest : RestDocsTest("widget") {
         // TODO: this is not ideal, as it re-implements service logic.
         every { resolveDOIUseCase.resolveDOI(null, null) } throws MissingParameter.requiresAtLeastOneOf("doi", "title")
 
-        documentedGetRequestTo("/api/widgets")
+        get("/api/widgets")
             .perform()
             .andExpect(status().isBadRequest)
             .andExpect(

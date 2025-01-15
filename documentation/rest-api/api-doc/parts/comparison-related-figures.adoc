@@ -11,14 +11,14 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a comparison related figure.
 
-operation::comparisons-related-figure-get-single[snippets='curl-request,http-response,response-fields']
+operation::comparisons-related-figure-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[comparisons-related-figure-list]]
 == Listing Comparison Related Figures
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-figure-fetch,comparison related figures>>.
 
-operation::comparisons-related-figure-get-paged[snippets='curl-request']
+operation::comparisons-related-figure-get-paged[snippets='path-parameters,curl-request']
 
 [[comparisons-related-figure-create]]
 == Creating Comparison Related Figures
@@ -38,7 +38,7 @@ The updated comparison related figure (object) can be retrieved by following the
 
 NOTE: Top level fields that were mandatory when creating the comparison related figure can be omitted or `null`, meaning that the corresponding fields should not be updated.
 
-operation::comparisons-update-comparison-related-figure[snippets='request-fields,curl-request,http-response']
+operation::comparisons-update-comparison-related-figure[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[comparisons-related-figure-delete]]
 == Deleting Comparison Related Figures

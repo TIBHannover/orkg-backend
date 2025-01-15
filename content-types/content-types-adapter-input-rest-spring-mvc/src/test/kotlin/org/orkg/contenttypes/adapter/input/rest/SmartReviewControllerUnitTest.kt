@@ -795,6 +795,9 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the smart review.")
+                    ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
                     ),

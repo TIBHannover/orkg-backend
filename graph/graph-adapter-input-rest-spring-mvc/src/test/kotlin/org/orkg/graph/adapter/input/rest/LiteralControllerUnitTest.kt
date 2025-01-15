@@ -85,7 +85,9 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             // Document the representation for later reference.
             .andDo(
                 documentationHandler.document(
-                    pathParameters(parameterWithName("id").description("The identifier of the literal to retrieve.")),
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the literal.")
+                    ),
                     responseFields(
                         // The order here determines the order in the generated table. More relevant items should be up.
                         fieldWithPath("id").description("The identifier of the literal."),

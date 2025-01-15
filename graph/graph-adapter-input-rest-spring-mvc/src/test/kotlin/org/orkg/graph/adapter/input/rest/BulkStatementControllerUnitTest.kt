@@ -83,10 +83,10 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
             .andExpectPage("$[*].statements")
             .andDo(
                 documentationHandler.document(
-                    queryParameters(parameterWithName("ids").description("The list of resource iIds to fetch on")),
+                    queryParameters(parameterWithName("ids").description("The list of resource ids to fetch.")),
                     responseFields(
-                        fieldWithPath("[].id").description("The subject id that was used to fetch the following statements"),
-                        subsectionWithPath("[].statements").description("Page of statements whose subject id matches the id from the search parameter"),
+                        fieldWithPath("[].id").description("The subject id that was used to fetch the following statements."),
+                        subsectionWithPath("[].statements").description("Page of statements whose subject id matches the id from the search parameter."),
                     )
                 )
             )
@@ -141,10 +141,10 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
             .andExpectPage("$[*].statements")
             .andDo(
                 documentationHandler.document(
-                    queryParameters(parameterWithName("ids").description("The list of object ids to fetch on")),
+                    queryParameters(parameterWithName("ids").description("The list of object ids to fetch.")),
                     responseFields(
-                        fieldWithPath("[].id").description("The object id that was used to fetch the following statements"),
-                        subsectionWithPath("[].statements").description("Page of statements whose object id matches the id from the search parameter"),
+                        fieldWithPath("[].id").description("The object id that was used to fetch the following statements."),
+                        subsectionWithPath("[].statements").description("Page of statements whose object id matches the id from the search parameter."),
                     )
                 )
             )

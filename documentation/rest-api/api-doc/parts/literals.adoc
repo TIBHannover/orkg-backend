@@ -8,7 +8,7 @@ They can appear in the object position in <<Statements,statements>>.
 
 A `GET` request provides information about a literal.
 
-operation::literals-get-single[snippets='curl-request,http-response,response-fields']
+operation::literals-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[literals-list]]
 == Listing Literals
@@ -40,4 +40,4 @@ A `PUT` request updates a literal with a new value through the label property.
 The response will be `200 OK` when successful.
 The created literal is returned in the body for convenience.
 
-operation::literals-edit[snippets='request-fields,curl-request,http-response']
+operation::literals-edit[snippets='path-parameters,request-fields,curl-request,http-response']

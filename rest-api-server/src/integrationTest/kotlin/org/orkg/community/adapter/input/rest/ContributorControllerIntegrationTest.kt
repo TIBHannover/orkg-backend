@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -31,11 +33,14 @@ internal class ContributorControllerIntegrationTest : RestDocsTest("contributors
         val contributor = createContributor()
         repository.save(contributor)
 
-        documentedGetRequestTo("/api/contributors/${contributor.id}")
+        documentedGetRequestTo("/api/contributors/{id}", contributor.id)
             .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the contributor.")
+                    ),
                     contributorListResponseFields()
                 )
             )

@@ -885,11 +885,11 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-resources/$id")))
             .andDo(
                 documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created comparison related resource can be fetched from.")
-                    ),
                     pathParameters(
                         parameterWithName("id").description("The comparison to attach the comparison related resource to.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created comparison related resource can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The label of the comparison related resource."),
@@ -941,11 +941,11 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-figures/$id")))
             .andDo(
                 documentationHandler.document(
-                    responseHeaders(
-                        headerWithName("Location").description("The uri path where the newly created comparison related figure can be fetched from.")
-                    ),
                     pathParameters(
                         parameterWithName("id").description("The comparison to attach the comparison related figure to.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created comparison related figure can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The label of the comparison related figure."),
@@ -995,6 +995,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpect(header().string("Location", endsWith("/api/comparisons/$id")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the comparison.")
+                    ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the updated comparison can be fetched from.")
                     ),

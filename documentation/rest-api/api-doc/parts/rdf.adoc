@@ -29,27 +29,21 @@ For a list of supported media types, see <<vocab-accept>> below.
 
 A `GET` request to get the description of an ORKG resource.
 
-// operation::vocab-controller-test-resource[snippets='curl-request,http-response']
-include::{snippets}/rdf-vocab-resolve-resource/curl-request.adoc[]
-include::{snippets}/rdf-vocab-resolve-resource/http-response.adoc[]
+operation::rdf-vocab-resolve-resource[snippets='path-parameters,curl-request,http-response']
 
 [[vocab-predicate]]
 === Resolve a predicate
 
 A `GET` request to get the description of an ORKG predicate.
 
-// operation::vocab-controller-test-predicate[snippets='curl-request,http-response']
-include::{snippets}/rdf-vocab-resolve-predicate/curl-request.adoc[]
-include::{snippets}/rdf-vocab-resolve-predicate/http-response.adoc[]
+operation::rdf-vocab-resolve-predicate[snippets='path-parameters,curl-request,http-response']
 
 [[vocab-class]]
 === Resolve a class
 
 A `GET` request to get the description of an ORKG class.
 
-// operation::vocab-controller-test-clazz[snippets='curl-request,http-response']
-include::{snippets}/rdf-vocab-resolve-class/curl-request.adoc[]
-include::{snippets}/rdf-vocab-resolve-class/http-response.adoc[]
+operation::rdf-vocab-resolve-class[snippets='path-parameters,curl-request,http-response']
 
 [[vocab-accept]]
 === Supported media types

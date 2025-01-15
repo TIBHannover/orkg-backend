@@ -9,7 +9,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
-import org.hamcrest.Matchers
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -244,7 +244,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", Matchers.endsWith("/api/visualizations/$id")))
+            .andExpect(header().string("Location", endsWith("/api/visualizations/$id")))
             .andDo(
                 documentationHandler.document(
                     responseHeaders(

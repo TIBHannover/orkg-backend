@@ -44,6 +44,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -297,6 +298,9 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             .andExpect(jsonPath("$.uri").value("https://example.org/some/new#URI"))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the class.")
+                    ),
                     requestFields(
                         fieldWithPath("label").description("The updated class label"),
                         fieldWithPath("uri").description("The updated class label")
@@ -338,6 +342,9 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the class.")
+                    ),
                     requestFields(
                         fieldWithPath("label").description("The updated class label (optional)"),
                         fieldWithPath("uri").description("The updated class label (optional)")

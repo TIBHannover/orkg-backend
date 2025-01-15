@@ -35,11 +35,11 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
@@ -50,6 +50,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -86,6 +87,9 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpectResource()
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the resource to retrieve."),
+                    ),
                     responseFields(
                         // The order here determines the order in the generated table. More relevant items should be up.
                         fieldWithPath("id").description("The identifier of the resource."),

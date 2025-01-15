@@ -30,6 +30,8 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.context.TestPropertySource
@@ -149,6 +151,9 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
             .andExpect(jsonPath("$.label").value(newLabel))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the resource.")
+                    ),
                     requestFields(
                         fieldWithPath("label").description("The updated resource label. (optional)").optional(),
                         fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
@@ -177,6 +182,9 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
             .andExpect(jsonPath("$.classes[0]").value(newClass.value))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the resource.")
+                    ),
                     requestFields(
                         fieldWithPath("label").type("String").description("The updated resource label. (optional)").optional(),
                         fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
@@ -233,6 +241,13 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
         documentedDeleteRequestTo("/api/resources/{id}", id)
             .perform()
             .andExpect(status().isNoContent)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the resource.")
+                    )
+                )
+            )
             .andDo(generateDefaultDocSnippets())
     }
 

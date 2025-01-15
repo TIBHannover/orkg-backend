@@ -11,7 +11,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a comparison.
 
-operation::comparisons-get-single[snippets='curl-request,http-response,response-fields']
+operation::comparisons-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[comparisons-list]]
 == Listing Comparisons
@@ -47,7 +47,7 @@ NOTE: All fields at the top level in the request can be omitted or `null`, meani
 
 WARNING: Author names will not be updated if a resource id is specified for a given author.
 
-operation::comparisons-update[snippets='request-fields,curl-request,http-response']
+operation::comparisons-update[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[comparisons-publish]]
 == Publishing Comparisons
@@ -59,4 +59,4 @@ Optionally, a DOI can be assigned to the comparison resource.
 The response will be `201 Created` when successful.
 The published comparison (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::comparisons-publish[snippets='request-fields,curl-request,http-response']
+operation::comparisons-publish[snippets='path-parameters,request-fields,curl-request,http-response']

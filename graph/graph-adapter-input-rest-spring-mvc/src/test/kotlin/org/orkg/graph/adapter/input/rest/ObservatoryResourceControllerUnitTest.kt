@@ -30,6 +30,7 @@ import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -181,6 +182,9 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
             .andExpectResource("$.content[*]")
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the observatory.")
+                    ),
                     queryParameters(
                         parameterWithName("filter_config").description("The filter config to use. (optional)"),
                         parameterWithName("visibility").description("Visibility of this resource. Can be one of \"listed\", \"featured\", \"unlisted\" or \"deleted\". (optional)")

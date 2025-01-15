@@ -13,11 +13,13 @@ import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.RetrieveThingUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectResource
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -48,6 +50,13 @@ internal class ThingControllerUnitTest : RestDocsTest("things") {
             .perform()
             .andExpect(status().isOk)
             .andExpectResource()
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the thing to retrieve.")
+                    )
+                )
+            )
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { thingService.findById(any()) }

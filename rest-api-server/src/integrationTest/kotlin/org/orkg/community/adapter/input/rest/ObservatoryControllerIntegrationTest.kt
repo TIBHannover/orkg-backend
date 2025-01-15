@@ -26,6 +26,8 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -110,6 +112,9 @@ internal class ObservatoryControllerIntegrationTest : RestDocsTest("observatorie
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the observatory.")
+                    ),
                     responseFields(observatoryResponseFields())
                 )
             )
@@ -139,6 +144,9 @@ internal class ObservatoryControllerIntegrationTest : RestDocsTest("observatorie
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the observatory.")
+                    ),
                     pageOfDetailedResourcesResponseFields()
                 )
             )
@@ -168,6 +176,9 @@ internal class ObservatoryControllerIntegrationTest : RestDocsTest("observatorie
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the observatory.")
+                    ),
                     pageOfDetailedResourcesResponseFields()
                 )
             )

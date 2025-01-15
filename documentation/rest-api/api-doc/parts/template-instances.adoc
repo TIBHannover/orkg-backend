@@ -9,7 +9,7 @@ NOTE: The following endpoints use content negotiation, meaning that the contents
 
 A `GET` request provides information about a template instance.
 
-operation::template-instances-get-single[snippets='curl-request,http-response,response-fields']
+operation::template-instances-get-single[snippets='path-parameters,curl-request,http-response,response-fields']
 
 [[template-instances-list]]
 == Listing Template Instances
@@ -30,4 +30,4 @@ A `PUT` request updates an existing template instance with all the given paramet
 The response will be `204 No Content` when successful.
 The updated template instance (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::template-instances-update[snippets='request-fields,curl-request,http-response']
+operation::template-instances-update[snippets='path-parameters,request-fields,curl-request,http-response']

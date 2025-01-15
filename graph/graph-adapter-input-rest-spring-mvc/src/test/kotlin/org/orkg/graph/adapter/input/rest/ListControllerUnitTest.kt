@@ -80,7 +80,9 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             // Document the representation for later reference.
             .andDo(
                 documentationHandler.document(
-                    pathParameters(parameterWithName("id").description("The identifier of the literal to retrieve.")),
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the list.")
+                    ),
                     responseFields(
                         // The order here determines the order in the generated table. More relevant items should be up.
                         fieldWithPath("id").description("The identifier of the list."),
@@ -234,6 +236,9 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             .andExpect(status().isNoContent)
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the list.")
+                    ),
                     requestFields(
                         fieldWithPath("label").description("The new label of the list. (optional)").optional(),
                         fieldWithPath("elements").description("The new ids of the elements of the list. (optional)").optional()
@@ -329,7 +334,9 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             // Document the representation for later reference.
             .andDo(
                 documentationHandler.document(
-                    pathParameters(parameterWithName("id").description("The identifier of the literal to retrieve."))
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the list.")
+                    )
                 )
             )
             .andDo(generateDefaultDocSnippets())

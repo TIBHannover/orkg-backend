@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -56,6 +58,9 @@ internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the class.")
+                    ),
                     responseFields(classResponseFields())
                 )
             )
@@ -71,7 +76,8 @@ internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
         service.createClass(id = id, label = label, uri = uri)
 
         // Act and Assert
-        documentedGetRequestTo("/api/classes").param("uri", uri.toString())
+        documentedGetRequestTo("/api/classes")
+            .param("uri", uri.toString())
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(id))
@@ -90,7 +96,8 @@ internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
         val id1 = service.createClass(label = "class1")
         val id2 = service.createClass(label = "class2")
 
-        documentedGetRequestTo("/api/classes").param("ids", "$id1", "$id2")
+        documentedGetRequestTo("/api/classes")
+            .param("ids", "$id1", "$id2")
             .perform()
             .andExpect(status().isOk)
             .andDo(

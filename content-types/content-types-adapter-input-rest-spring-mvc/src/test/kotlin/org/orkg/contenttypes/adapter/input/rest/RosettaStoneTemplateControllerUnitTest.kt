@@ -271,6 +271,9 @@ internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-st
             .andExpect(header().string("Location", endsWith("/api/rosetta-stone/templates/$id")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the rosetta stone template.")
+                    ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the updated rosetta stone template can be fetched from.")
                     ),

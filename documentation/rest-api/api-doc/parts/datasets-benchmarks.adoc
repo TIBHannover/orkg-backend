@@ -16,7 +16,7 @@ operation::benchmarks-fetch-research-fields-with-benchmarks[snippets='curl-reque
 
 A `GET` request lists benchmarks under a certain research field.
 
-operation::benchmarks-fetch-benchmark-summary-for-research-field[snippets='curl-request,http-response']
+operation::benchmarks-fetch-benchmark-summary-for-research-field[snippets='path-parameters,curl-request,http-response']
 
 
 [[benchmarks-summary]]
@@ -24,11 +24,11 @@ operation::benchmarks-fetch-benchmark-summary-for-research-field[snippets='curl-
 
 A `GET` request lists the datasets for a research problem (a.k.a. Benchmark Summary)
 
-operation::benchmarks-fetch-dataset-for-research-problem[snippets='curl-request,http-response']
+operation::benchmarks-fetch-dataset-for-research-problem[snippets='path-parameters,curl-request,http-response']
 
 [[benchmark-unpacked]]
 == Listing Benchmarks (Unpacked)
 
 A `GET` request lists summary for a dataset (a.k.a. Benchmark unpacked).
 
-operation::benchmarks-fetch-dataset-summary[snippets='curl-request,http-response']
+operation::benchmarks-fetch-dataset-summary[snippets='path-parameters,curl-request,http-response']

@@ -558,6 +558,9 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             .andExpect(header().string("Location", endsWith("/api/templates/$id")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the template.")
+                    ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the updated template can be fetched from.")
                     ),
@@ -600,6 +603,9 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             .andExpect(header().string("Location", endsWith("/api/templates/$templateId")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the template.")
+                    ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the updated template can be fetched from.")
                     ),
@@ -848,6 +854,10 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             .andExpect(header().string("Location", endsWith("/api/templates/$id")))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the template that the property belongs to."),
+                        parameterWithName("propertyId").description("The identifier of the template property.")
+                    ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the updated template can be fetched from.")
                     ),

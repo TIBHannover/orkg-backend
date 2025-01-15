@@ -29,6 +29,8 @@ import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -200,7 +202,7 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
-        documentedGetRequestTo("/api/benchmarks/summary/research-field/$fieldWithDataset")
+        documentedGetRequestTo("/api/benchmarks/summary/research-field/{id}", fieldWithDataset)
             .param("sort", "problem.id", "ASC")
             .perform()
             .andExpect(status().isOk)
@@ -219,6 +221,9 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the research field.")
+                    ),
                     benchmarkPageResponseFields()
                 )
             )
@@ -385,7 +390,7 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(paper, Predicates.hasContribution, cont1)
         statementService.create(paper, Predicates.hasContribution, cont2)
 
-        documentedGetRequestTo("/api/datasets/$dataset/problems")
+        documentedGetRequestTo("/api/datasets/{id}/problems", dataset)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
@@ -393,6 +398,9 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the dataset.")
+                    ),
                     researchProblemPageResponseFields()
                 )
             )
@@ -445,7 +453,7 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset1)
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
-        documentedGetRequestTo("/api/datasets/research-problem/$problem")
+        documentedGetRequestTo("/api/datasets/research-problem/{id}", problem)
             .param("sort", "totalModels,DESC")
             .perform()
             .andExpect(status().isOk)
@@ -460,6 +468,9 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the research problem.")
+                    ),
                     datasetListResponseFields()
                 )
             )
@@ -552,7 +563,7 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
-        documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary")
+        documentedGetRequestTo("/api/datasets/{id}/problem/{researchProblemId}/summary", dataset, problem1)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
@@ -560,6 +571,10 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
             .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the dataset."),
+                        parameterWithName("researchProblemId").description("The identifier of the research problem.")
+                    ),
                     datasetSummaryPageResponseFields()
                 )
             )
@@ -643,18 +658,12 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
-        documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary")
+        get("/api/datasets/{id}/problem/{researchProblemId}/summary", dataset, problem1)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
-            .andDo(
-                documentationHandler.document(
-                    datasetSummaryPageResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -731,18 +740,12 @@ internal class BenchmarkControllerIntegrationTest : RestDocsTest("benchmarks") {
         statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
-        documentedGetRequestTo("/api/datasets/$dataset/problem/$problem1/summary")
+        get("/api/datasets/{id}/problem/{researchProblemId}/summary", dataset, problem1)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
-            .andDo(
-                documentationHandler.document(
-                    datasetSummaryPageResponseFields()
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     private fun researchFieldResponseFields() =

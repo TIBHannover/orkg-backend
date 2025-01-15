@@ -19,6 +19,8 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -65,6 +67,9 @@ internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the predicate.")
+                    ),
                     responseFields(predicateResponseFields())
                 )
             )
@@ -77,7 +82,8 @@ internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
         service.createPredicate(label = "gave name to")
         service.createPredicate(label = "knows")
 
-        get("/api/predicates").param("q", "name")
+        get("/api/predicates")
+            .param("q", "name")
             .perform()
             .andExpect(status().isOk)
     }
@@ -108,6 +114,9 @@ internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
             .andExpect(jsonPath("$.label").value(newLabel))
             .andDo(
                 documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the predicate.")
+                    ),
                     requestFields(
                         fieldWithPath("label").description("The updated predicate label")
                     ),
@@ -133,6 +142,13 @@ internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
         documentedDeleteRequestTo("/api/predicates/{id}", id)
             .perform()
             .andExpect(status().isNoContent)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the predicate.")
+                    )
+                )
+            )
             .andDo(generateDefaultDocSnippets())
     }
 

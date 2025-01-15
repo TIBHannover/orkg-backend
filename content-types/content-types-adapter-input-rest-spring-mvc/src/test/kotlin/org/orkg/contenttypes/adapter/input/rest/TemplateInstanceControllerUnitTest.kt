@@ -66,13 +66,13 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
     @Test
     @DisplayName("Given a template instance, when it is fetched by id and service succeeds, then status is 200 OK and template instance is returned")
     fun getSingle() {
-        val templateId = ThingId("R132")
+        val id = ThingId("R132")
         val templateInstance = createTemplateInstance()
 
-        every { service.findById(templateId, templateInstance.root.id) } returns Optional.of(templateInstance)
+        every { service.findById(id, templateInstance.root.id) } returns Optional.of(templateInstance)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
 
-        documentedGetRequestTo("/api/templates/{templateId}/instances/{id}", templateId, templateInstance.root.id)
+        documentedGetRequestTo("/api/templates/{id}/instances/{instanceId}", id, templateInstance.root.id)
             .accept(TEMPLATE_INSTANCE_JSON_V1)
             .contentType(TEMPLATE_INSTANCE_JSON_V1)
             .perform()
@@ -81,8 +81,8 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("templateId").description("The identifier of the template to fetch the statements for."),
-                        parameterWithName("id").description("The identifier of the templated resource to retrieve.")
+                        parameterWithName("id").description("The identifier of the template to fetch the statements for."),
+                        parameterWithName("instanceId").description("The identifier of the templated resource to retrieve.")
                     ),
                     responseFields(
                         // The order here determines the order in the generated table. More relevant items should be up.
@@ -98,39 +98,39 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { service.findById(templateId, templateInstance.root.id) }
+        verify(exactly = 1) { service.findById(id, templateInstance.root.id) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 
     @Test
     fun `Given a template instance, when it is fetched by id and service reports missing resource, then status is 404 NOT FOUND`() {
-        val templateId = ThingId("R132")
-        val id = ThingId("Missing")
-        val exception = ResourceNotFound.withId(id)
+        val id = ThingId("R132")
+        val instanceId = ThingId("Missing")
+        val exception = ResourceNotFound.withId(instanceId)
 
-        every { service.findById(templateId, id) } returns Optional.empty()
+        every { service.findById(id, instanceId) } returns Optional.empty()
 
-        get("/api/templates/{templateId}/instances/{id}", templateId, id)
+        get("/api/templates/{id}/instances/{instanceId}", id, instanceId)
             .accept(TEMPLATE_INSTANCE_JSON_V1)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/templates/$templateId/instances/$id"))
+            .andExpect(jsonPath("$.path").value("/api/templates/$id/instances/$instanceId"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { service.findById(templateId, id) }
+        verify(exactly = 1) { service.findById(id, instanceId) }
     }
 
     @Test
     @DisplayName("Given several template instances, when they are fetched with no parameters, then status is 200 OK and template instances are returned")
     fun getPaged() {
-        val templateId = ThingId("R132")
+        val id = ThingId("R132")
         val templateInstance = createTemplateInstance()
 
-        every { service.findAll(templateId, pageable = any()) } returns pageOf(templateInstance)
+        every { service.findAll(id, pageable = any()) } returns pageOf(templateInstance)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
 
-        documentedGetRequestTo("/api/templates/{templateId}/instances", templateId)
+        documentedGetRequestTo("/api/templates/{id}/instances", id)
             .accept(TEMPLATE_INSTANCE_JSON_V1)
             .contentType(TEMPLATE_INSTANCE_JSON_V1)
             .perform()
@@ -139,17 +139,17 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             .andExpectTemplateInstance("$.content[*]")
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { service.findAll(templateId, pageable = any()) }
+        verify(exactly = 1) { service.findAll(id, pageable = any()) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 
     @Test
     @DisplayName("Given several template instances, when they are fetched with all possible filtering parameters, then status is 200 OK and template instances are returned")
     fun getPagedWithParameters() {
-        val templateId = ThingId("R132")
+        val id = ThingId("R132")
         val templateInstance = createTemplateInstance()
 
-        every { service.findAll(templateId, any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(templateInstance)
+        every { service.findAll(id, any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(templateInstance)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
 
         val label = "label"
@@ -161,7 +161,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val organizationId = OrganizationId(UUID.randomUUID())
 
-        documentedGetRequestTo("/api/templates/{templateId}/instances", templateId)
+        documentedGetRequestTo("/api/templates/{id}/instances", id)
             .param("q", label)
             .param("exact", exact.toString())
             .param("visibility", visibility.toString())
@@ -192,7 +192,7 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { service.findAll(templateId, any(), any(), any(), any(), any(), any(), any(), any(), any()) }
+        verify(exactly = 1) { service.findAll(id, any(), any(), any(), any(), any(), any(), any(), any(), any()) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
     }
 
@@ -200,18 +200,18 @@ internal class TemplateInstanceControllerUnitTest : RestDocsTest("template-insta
     @TestWithMockUser
     @DisplayName("Given a template instance update request, when service succeeds, it updates the template instance")
     fun update() {
-        val templateId = ThingId("R123")
-        val id = ThingId("R456")
+        val id = ThingId("R123")
+        val instanceId = ThingId("R456")
 
         every { service.update(any()) } just runs
 
-        documentedPutRequestTo("/api/templates/{templateId}/instances/{id}", templateId, id)
+        documentedPutRequestTo("/api/templates/{id}/instances/{id}", id, instanceId)
             .content(updateTemplateInstanceRequest())
             .accept(TEMPLATE_INSTANCE_JSON_V1)
             .contentType(TEMPLATE_INSTANCE_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/templates/$templateId/instances/$id")))
+            .andExpect(header().string("Location", endsWith("/api/templates/$id/instances/$instanceId")))
             .andDo(
                 documentationHandler.document(
                     responseHeaders(

@@ -308,23 +308,23 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     @TestWithMockUser
     @DisplayName("Given a list section create request, when service succeeds, it creates the list section")
     fun createListSection() {
-        val literatureListId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = LiteratureListController.LiteratureListListSectionRequest(
             entries = listOf(
                 Entry(ThingId("R123")),
                 Entry(ThingId("R456"))
             )
         )
-        every { literatureListService.createSection(any()) } returns id
+        every { literatureListService.createSection(any()) } returns sectionId
 
-        post("/api/literature-lists/{literatureListId}/sections", literatureListId)
+        post("/api/literature-lists/{id}/sections", id)
             .content(request)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
 
         verify(exactly = 1) {
             literatureListService.createSection(withArg {
@@ -338,8 +338,8 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     @TestWithMockUser
     @DisplayName("Given a list section create request, when service succeeds, it creates the list section at the specified index")
     fun createListSectionAtIndex() {
-        val literatureListId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val index = 5
         val request = LiteratureListController.LiteratureListListSectionRequest(
             entries = listOf(
@@ -347,19 +347,19 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                 Entry(ThingId("R456"))
             )
         )
-        every { literatureListService.createSection(any()) } returns id
+        every { literatureListService.createSection(any()) } returns sectionId
 
-        documentedPostRequestTo("/api/literature-lists/{literatureListId}/sections/{index}", literatureListId, index)
+        documentedPostRequestTo("/api/literature-lists/{id}/sections/{index}", id, index)
             .content(request)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("literatureListId").description("The id of the literature list to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the literature list to which the new section should be appended to."),
                         parameterWithName("index").description("The insertion index the of the section. Otherwise, the created list section will be appended at the end of the literature list. (optional)")
                     ),
                     responseHeaders(
@@ -386,22 +386,22 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     @TestWithMockUser
     @DisplayName("Given a text section create request, when service succeeds, it creates the text section")
     fun createTextSection() {
-        val literatureListId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = LiteratureListController.LiteratureListTextSectionRequest(
             heading = "heading",
             headingSize = 2,
             text = "text contents"
         )
-        every { literatureListService.createSection(any()) } returns id
+        every { literatureListService.createSection(any()) } returns sectionId
 
-        post("/api/literature-lists/{literatureListId}/sections", literatureListId)
+        post("/api/literature-lists/{id}/sections", id)
             .content(request)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
 
         verify(exactly = 1) {
             literatureListService.createSection(withArg {
@@ -415,27 +415,27 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     @TestWithMockUser
     @DisplayName("Given a text section create request, when service succeeds, it creates the text section at the specified index")
     fun createTextSectionAtIndex() {
-        val literatureListId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val index = 5
         val request = LiteratureListController.LiteratureListTextSectionRequest(
             heading = "heading",
             headingSize = 2,
             text = "text contents"
         )
-        every { literatureListService.createSection(any()) } returns id
+        every { literatureListService.createSection(any()) } returns sectionId
 
-        documentedPostRequestTo("/api/literature-lists/{literatureListId}/sections/{index}", literatureListId, index)
+        documentedPostRequestTo("/api/literature-lists/{id}/sections/{index}", id, index)
             .content(request)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("literatureListId").description("The id of the literature list to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the literature list to which the new section should be appended to."),
                         parameterWithName("index").description("The insertion index the of the section. Otherwise, the created text section will be appended at the end of the literature list. (optional)")
                     ),
                     responseHeaders(
@@ -497,24 +497,24 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     @TestWithMockUser
     @DisplayName("Given a list section update request, when service succeeds, it updates the list section")
     fun updateListSection() {
-        val literatureListId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = LiteratureListController.LiteratureListListSectionRequest(
             entries = listOf(Entry(ThingId("R123")), Entry(ThingId("R456")))
         )
         every { literatureListService.updateSection(any()) } just runs
 
-        documentedPutRequestTo("/api/literature-lists/{literatureListId}/sections/{sectionId}", literatureListId, id)
+        documentedPutRequestTo("/api/literature-lists/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("literatureListId").description("The id of the literature list the section belongs to."),
+                        parameterWithName("id").description("The id of the literature list the section belongs to."),
                         parameterWithName("sectionId").description("The id of the section.")
                     ),
                     responseHeaders(
@@ -536,18 +536,18 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     @TestWithMockUser
     @DisplayName("Given a published literature list, when fetching its contents, returns success")
     fun findPublishedContentById() {
-        val literatureListId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val contentId = ThingId("R123")
         every { literatureListService.findPublishedContentById(any(), any()) } returns Either.left(createPaper())
 
-        documentedGetRequestTo("/api/literature-lists/{literatureListId}/published-contents/{contentId}", literatureListId, id)
+        documentedGetRequestTo("/api/literature-lists/{id}/published-contents/{contentId}", id, contentId)
             .perform()
             .andExpect(status().isOk)
             .andExpectPaper()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("literatureListId").description("The id of the published literature list."),
+                        parameterWithName("id").description("The id of the published literature list."),
                         parameterWithName("contentId").description("The id of the resource to fetch.")
                     )
                 )
@@ -561,8 +561,8 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     @TestWithMockUser
     @DisplayName("Given a text section update request, when service succeeds, it updates the text section")
     fun updateTextSection() {
-        val literatureListId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = LiteratureListController.LiteratureListTextSectionRequest(
             heading = "updated heading",
             headingSize = 3,
@@ -570,17 +570,17 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
         )
         every { literatureListService.updateSection(any()) } just runs
 
-        documentedPutRequestTo("/api/literature-lists/{literatureListId}/sections/{sectionId}", literatureListId, id)
+        documentedPutRequestTo("/api/literature-lists/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("literatureListId").description("The id of the literature list the section belongs to."),
+                        parameterWithName("id").description("The id of the literature list the section belongs to."),
                         parameterWithName("sectionId").description("The id of the section.")
                     ),
                     responseHeaders(
@@ -602,22 +602,22 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
     @TestWithMockUser
     @DisplayName("Given a literature list section delete request, when service succeeds, it returns status 204 NO CONTENT")
     fun deleteSection() {
-        val literatureListId = ThingId("R3541")
+        val id = ThingId("R3541")
         val sectionId = ThingId("R123")
         val command = DeleteLiteratureListSectionUseCase.DeleteCommand(
-            literatureListId, sectionId, ContributorId(MockUserId.USER)
+            id, sectionId, ContributorId(MockUserId.USER)
         )
         every { literatureListService.deleteSection(command) } just runs
 
-        documentedDeleteRequestTo("/api/literature-lists/{literatureListId}/sections/{sectionId}", literatureListId, sectionId)
+        documentedDeleteRequestTo("/api/literature-lists/{id}/sections/{sectionId}", id, sectionId)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/literature-lists/$literatureListId")))
+            .andExpect(header().string("Location", endsWith("/api/literature-lists/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("literatureListId").description("The id of the literature list the section belongs to."),
+                        parameterWithName("id").description("The id of the literature list the section belongs to."),
                         parameterWithName("sectionId").description("The id of the section.")
                     )
                 )

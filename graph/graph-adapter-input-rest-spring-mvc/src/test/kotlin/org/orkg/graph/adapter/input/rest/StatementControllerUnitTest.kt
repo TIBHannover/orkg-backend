@@ -464,14 +464,14 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
     @Test
     fun `Given a thing id, when fetched as a bundle but thing does not exist, then status is 404 NOT FOUND`() {
-        val thingId = ThingId("DoesNotExist")
-        val exception = ThingNotFound(thingId)
+        val id = ThingId("DoesNotExist")
+        val exception = ThingNotFound(id)
 
         every {
-            statementService.fetchAsBundle(thingId, any(), false, Sort.unsorted())
+            statementService.fetchAsBundle(id, any(), false, Sort.unsorted())
         } throws exception
 
-        get("/api/statements/{thingId}/bundle", thingId)
+        get("/api/statements/{id}/bundle", id)
             .param("includeFirst", "false")
             .perform()
             .andExpect(status().isNotFound)
@@ -479,10 +479,10 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpect(jsonPath("$.message").value(exception.message))
             .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
             .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/statements/$thingId/bundle"))
+            .andExpect(jsonPath("$.path").value("/api/statements/$id/bundle"))
 
         verify(exactly = 1) {
-            statementService.fetchAsBundle(thingId, any(), false, Sort.unsorted())
+            statementService.fetchAsBundle(id, any(), false, Sort.unsorted())
         }
     }
 }

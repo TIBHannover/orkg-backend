@@ -349,7 +349,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             comparisonService.findRelatedResourceById(comparisonId, comparisonRelatedResource.id)
         } returns Optional.of(comparisonRelatedResource)
 
-        documentedGetRequestTo("/api/comparisons/{comparisonId}/related-resources/{id}", comparisonId, comparisonRelatedResource.id)
+        documentedGetRequestTo("/api/comparisons/{id}/related-resources/{comparisonRelatedResourceId}", comparisonId, comparisonRelatedResource.id)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isOk)
@@ -357,8 +357,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("comparisonId").description("The identifier of the comparison."),
-                        parameterWithName("id").description("The identifier of the comparison related resource to retrieve.")
+                        parameterWithName("id").description("The identifier of the comparison."),
+                        parameterWithName("comparisonRelatedResourceId").description("The identifier of the comparison related resource to retrieve.")
                     ),
                     responseFields(
                         // The order here determines the order in the generated table. More relevant items should be up.
@@ -388,7 +388,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             comparisonService.findRelatedResourceById(comparisonId, comparisonRelatedResourceId)
         } returns Optional.empty()
 
-        get("/api/comparisons/{comparisonId}/related-resources/{comparisonRelatedResourceId}", comparisonId, comparisonRelatedResourceId)
+        get("/api/comparisons/{id}/related-resources/{comparisonRelatedResourceId}", comparisonId, comparisonRelatedResourceId)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isNotFound)
@@ -407,7 +407,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
 
         every { comparisonService.findAllRelatedResources(comparisonId, any()) } returns pageOf(comparisonRelatedResource)
 
-        documentedGetRequestTo("/api/comparisons/{comparisonId}/related-resources", comparisonId)
+        documentedGetRequestTo("/api/comparisons/{id}/related-resources", comparisonId)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isOk)
@@ -416,7 +416,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("comparisonId").description("The identifier of the comparison."),
+                        parameterWithName("id").description("The identifier of the comparison."),
                     )
                 )
             )
@@ -435,7 +435,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             comparisonService.findRelatedFigureById(comparisonId, comparisonRelatedFigure.id)
         } returns Optional.of(comparisonRelatedFigure)
 
-        documentedGetRequestTo("/api/comparisons/{comparisonId}/related-figures/{id}", comparisonId, comparisonRelatedFigure.id)
+        documentedGetRequestTo("/api/comparisons/{id}/related-figures/{comparisonRelatedFigureId}", comparisonId, comparisonRelatedFigure.id)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isOk)
@@ -443,8 +443,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("comparisonId").description("The identifier of the comparison."),
-                        parameterWithName("id").description("The identifier of the comparison related figure to retrieve.")
+                        parameterWithName("id").description("The identifier of the comparison."),
+                        parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related figure to retrieve.")
                     ),
                     responseFields(
                         // The order here determines the order in the generated table. More relevant items should be up.
@@ -473,7 +473,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             comparisonService.findRelatedFigureById(comparisonId, comparisonRelatedFigureId)
         } returns Optional.empty()
 
-        get("/api/comparisons/{comparisonId}/related-figures/{comparisonRelatedFigureId}", comparisonId, comparisonRelatedFigureId)
+        get("/api/comparisons/{id}/related-figures/{comparisonRelatedFigureId}", comparisonId, comparisonRelatedFigureId)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isNotFound)
@@ -492,7 +492,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
 
         every { comparisonService.findAllRelatedFigures(comparisonId, any()) } returns pageOf(comparisonRelatedFigure)
 
-        documentedGetRequestTo("/api/comparisons/{comparisonId}/related-figures", comparisonId)
+        documentedGetRequestTo("/api/comparisons/{id}/related-figures", comparisonId)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isOk)
@@ -501,7 +501,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("comparisonId").description("The identifier of the comparison."),
+                        parameterWithName("id").description("The identifier of the comparison."),
                     )
                 )
             )
@@ -876,7 +876,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val comparisonId = ThingId("R100")
         every { comparisonService.createComparisonRelatedResource(any()) } returns id
 
-        documentedPostRequestTo("/api/comparisons/{comparisonId}/related-resources", comparisonId)
+        documentedPostRequestTo("/api/comparisons/{id}/related-resources", comparisonId)
             .content(createComparisonRelatedResourceRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
@@ -889,7 +889,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         headerWithName("Location").description("The uri path where the newly created comparison related resource can be fetched from.")
                     ),
                     pathParameters(
-                        parameterWithName("comparisonId").description("The comparison to attach the comparison related resource to.")
+                        parameterWithName("id").description("The comparison to attach the comparison related resource to.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The label of the comparison related resource."),
@@ -932,7 +932,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val comparisonId = ThingId("R100")
         every { comparisonService.createComparisonRelatedFigure(any()) } returns id
 
-        documentedPostRequestTo("/api/comparisons/{comparisonId}/related-figures", comparisonId)
+        documentedPostRequestTo("/api/comparisons/{id}/related-figures", comparisonId)
             .content(createComparisonRelatedFigureRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
@@ -945,7 +945,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         headerWithName("Location").description("The uri path where the newly created comparison related figure can be fetched from.")
                     ),
                     pathParameters(
-                        parameterWithName("comparisonId").description("The comparison to attach the comparison related figure to.")
+                        parameterWithName("id").description("The comparison to attach the comparison related figure to.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The label of the comparison related figure."),
@@ -1056,7 +1056,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val comparisonId = ThingId("R100")
         every { comparisonService.updateComparisonRelatedResource(any()) } just runs
 
-        documentedPutRequestTo("/api/comparisons/{comparisonId}/related-resources/{id}", comparisonId, id)
+        documentedPutRequestTo("/api/comparisons/{id}/related-resources/{comparisonRelatedFigureId}", comparisonId, id)
             .content(updateComparisonRelatedResourceRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
@@ -1069,8 +1069,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         headerWithName("Location").description("The uri path where the updated comparison related resource can be fetched from.")
                     ),
                     pathParameters(
-                        parameterWithName("comparisonId").description("The id of the comparison the comparison related resource belongs to."),
-                        parameterWithName("id").description("The identifier of the comparison related resource to update.")
+                        parameterWithName("id").description("The id of the comparison the comparison related resource belongs to."),
+                        parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related resource to update.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The label of the comparison related resource. (optional)"),
@@ -1093,7 +1093,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
         val comparisonId = ThingId("R100")
         every { comparisonService.updateComparisonRelatedFigure(any()) } just runs
 
-        documentedPutRequestTo("/api/comparisons/{comparisonId}/related-figures/{id}", comparisonId, id)
+        documentedPutRequestTo("/api/comparisons/{id}/related-figures/{comparisonRelatedFigureId}", comparisonId, id)
             .content(updateComparisonRelatedFigureRequest())
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
@@ -1106,8 +1106,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         headerWithName("Location").description("The uri path where the updated comparison related figure can be fetched from.")
                     ),
                     pathParameters(
-                        parameterWithName("comparisonId").description("The id of the comparison the comparison related figure belongs to."),
-                        parameterWithName("id").description("The identifier of the comparison related figure to update.")
+                        parameterWithName("id").description("The id of the comparison the comparison related figure belongs to."),
+                        parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related figure to update.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The label of the comparison related figure. (optional)"),
@@ -1136,7 +1136,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             )
         } just runs
 
-        documentedDeleteRequestTo("/api/comparisons/{comparisonId}/related-resources/{id}", comparisonId, comparisonRelatedResourceId)
+        documentedDeleteRequestTo("/api/comparisons/{id}/related-resources/{comparisonRelatedResourceId}", comparisonId, comparisonRelatedResourceId)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isNoContent)
@@ -1144,8 +1144,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("comparisonId").description("The identifier of the comparison."),
-                        parameterWithName("id").description("The identifier of the comparison related resource to delete.")
+                        parameterWithName("id").description("The identifier of the comparison."),
+                        parameterWithName("comparisonRelatedResourceId").description("The identifier of the comparison related resource to delete.")
                     )
                 )
             )
@@ -1175,7 +1175,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             )
         } just runs
 
-        documentedDeleteRequestTo("/api/comparisons/{comparisonId}/related-figures/{id}", comparisonId, comparisonRelatedFigureId)
+        documentedDeleteRequestTo("/api/comparisons/{id}/related-figures/{comparisonRelatedFigureId}", comparisonId, comparisonRelatedFigureId)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isNoContent)
@@ -1183,8 +1183,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("comparisonId").description("The identifier of the comparison."),
-                        parameterWithName("id").description("The identifier of the comparison related figure to delete.")
+                        parameterWithName("id").description("The identifier of the comparison."),
+                        parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related figure to delete.")
                     )
                 )
             )

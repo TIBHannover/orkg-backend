@@ -835,17 +835,17 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
         request: TemplatePropertyRequest,
         additionalRequestFieldDescriptors: List<FieldDescriptor> = emptyList()
     ) {
-        val templateId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val propertyId = ThingId("R123")
         every { templateService.updateTemplateProperty(any()) } just runs
 
-        documentedPutRequestTo("/api/templates/{templateId}/properties/{propertyId}", templateId, id)
+        documentedPutRequestTo("/api/templates/{id}/properties/{propertyId}", id, propertyId)
             .content(request)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/templates/$templateId")))
+            .andExpect(header().string("Location", endsWith("/api/templates/$id")))
             .andDo(
                 documentationHandler.document(
                     responseHeaders(

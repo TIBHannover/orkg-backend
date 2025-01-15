@@ -81,7 +81,8 @@ internal class LegacyStatsControllerUnitTest : RestDocsTest("stats") {
 
         every { statisticsService.findResearchFieldStatsById(id, false) } returns response
 
-        documentedGetRequestTo("/api/stats/research-fields/{id}?includeSubfields={includeSubfields}", id, false)
+        documentedGetRequestTo("/api/stats/research-fields/{id}", id)
+            .param("includeSubfields", "false")
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(id.value))

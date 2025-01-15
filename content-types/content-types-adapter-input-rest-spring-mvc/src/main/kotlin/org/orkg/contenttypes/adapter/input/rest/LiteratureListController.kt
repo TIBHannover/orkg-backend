@@ -107,14 +107,14 @@ class LiteratureListController(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).mapToLiteratureListRepresentation()
 
-    @GetMapping("/{literatureListId}/published-contents/{contentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/{id}/published-contents/{contentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findPublishedContentById(
-        @PathVariable literatureListId: ThingId,
+        @PathVariable id: ThingId,
         @PathVariable contentId: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
     ): ResponseEntity<Any> =
-        service.findPublishedContentById(literatureListId, contentId)
+        service.findPublishedContentById(id, contentId)
             .fold({ it.toPaperRepresentation() }, { Optional.of(it).mapToResourceRepresentation(capabilities).get() })
             .let(::ok)
 
@@ -170,36 +170,36 @@ class LiteratureListController(
     }
 
     @RequireLogin
-    @PutMapping("/{literatureListId}/sections/{sectionId}", consumes = [LITERATURE_LIST_SECTION_JSON_V1], produces = [LITERATURE_LIST_SECTION_JSON_V1])
+    @PutMapping("/{id}/sections/{sectionId}", consumes = [LITERATURE_LIST_SECTION_JSON_V1], produces = [LITERATURE_LIST_SECTION_JSON_V1])
     fun updateSection(
-        @PathVariable literatureListId: ThingId,
+        @PathVariable id: ThingId,
         @PathVariable sectionId: ThingId,
         @RequestBody @Valid request: LiteratureListSectionRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.updateSection(request.toUpdateCommand(sectionId, userId, literatureListId))
+        service.updateSection(request.toUpdateCommand(sectionId, userId, id))
         val location = uriComponentsBuilder
             .path("/api/literature-lists/{id}")
-            .buildAndExpand(literatureListId)
+            .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
     }
 
     @RequireLogin
-    @DeleteMapping("/{literatureListId}/sections/{sectionId}", produces = [LITERATURE_LIST_SECTION_JSON_V1])
+    @DeleteMapping("/{id}/sections/{sectionId}", produces = [LITERATURE_LIST_SECTION_JSON_V1])
     fun deleteSection(
-        @PathVariable literatureListId: ThingId,
+        @PathVariable id: ThingId,
         @PathVariable sectionId: ThingId,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.deleteSection(DeleteLiteratureListSectionUseCase.DeleteCommand(literatureListId, sectionId, userId))
+        service.deleteSection(DeleteLiteratureListSectionUseCase.DeleteCommand(id, sectionId, userId))
         val location = uriComponentsBuilder
             .path("/api/literature-lists/{id}")
-            .buildAndExpand(literatureListId)
+            .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
     }

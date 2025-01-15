@@ -46,52 +46,52 @@ class ObservatoryFilterController(
     @RequireLogin
     @PostMapping("/{id}/filters", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun create(
-        @PathVariable(name = "id") observatoryId: ObservatoryId,
+        @PathVariable(name = "id") id: ObservatoryId,
         @RequestBody @Valid request: CreateObservatoryFilterRequest,
         currentUser: Authentication,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<ObservatoryFilterRepresentation> {
         val contributorId = currentUser.contributorId()
-        authorizeUser(contributorId, observatoryId)
-        val id = service.create(request.toCreateCommand(observatoryId, contributorId))
+        authorizeUser(contributorId, id)
+        val filterId = service.create(request.toCreateCommand(id, contributorId))
         val location = uriComponentsBuilder
-            .path("/api/observatories/{observatoryId}/filters/{id}")
-            .buildAndExpand(observatoryId, id)
+            .path("/api/observatories/{id}/filters/{filterId}")
+            .buildAndExpand(id, filterId)
             .toUri()
         return created(location).build()
     }
 
     @RequireLogin
-    @PatchMapping("/{observatoryId}/filters/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PatchMapping("/{id}/filters/{filterId}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
-        @PathVariable(name = "observatoryId") observatoryId: ObservatoryId,
-        @PathVariable(name = "id") id: ObservatoryFilterId,
+        @PathVariable(name = "id") id: ObservatoryId,
+        @PathVariable(name = "filterId") filterId: ObservatoryFilterId,
         @RequestBody @Valid request: UpdateObservatoryFilterRequest,
         currentUser: Authentication,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
-        observatoryService.findById(observatoryId)
-            .orElseThrow { ObservatoryNotFound(observatoryId) }
-        authorizeUser(currentUser.contributorId(), observatoryId)
-        service.update(request.toUpdateCommand(id))
+        observatoryService.findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+        authorizeUser(currentUser.contributorId(), id)
+        service.update(request.toUpdateCommand(filterId))
         return noContent().build()
     }
 
-    @GetMapping("/{observatoryId}/filters/{id}")
+    @GetMapping("/{id}/filters/{filterId}")
     fun findById(
-        @PathVariable(name = "observatoryId") observatoryId: ObservatoryId,
-        @PathVariable(name = "id") id: ObservatoryFilterId
+        @PathVariable(name = "id") id: ObservatoryId,
+        @PathVariable(name = "filterId") filterId: ObservatoryFilterId
     ): ObservatoryFilterRepresentation {
-        observatoryService.findById(observatoryId)
-            .orElseThrow { ObservatoryNotFound(observatoryId) }
-        return service.findById(id)
+        observatoryService.findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+        return service.findById(filterId)
             .mapToObservatoryFilterRepresentation()
-            .orElseThrow { ObservatoryFilterNotFound(id) }
+            .orElseThrow { ObservatoryFilterNotFound(filterId) }
     }
 
-    @GetMapping("/{observatoryId}/filters")
+    @GetMapping("/{id}/filters")
     fun findAllByObservatoryId(
-        @PathVariable(name = "observatoryId") id: ObservatoryId,
+        @PathVariable(name = "id") id: ObservatoryId,
         pageable: Pageable
     ): Page<ObservatoryFilterRepresentation> {
         observatoryService.findById(id)
@@ -101,16 +101,16 @@ class ObservatoryFilterController(
     }
 
     @RequireLogin
-    @DeleteMapping("/{observatoryId}/filters/{id}")
+    @DeleteMapping("/{id}/filters/{filterId}")
     fun deleteById(
-        @PathVariable(name = "observatoryId") observatoryId: ObservatoryId,
-        @PathVariable(name = "id") id: ObservatoryFilterId,
+        @PathVariable(name = "id") id: ObservatoryId,
+        @PathVariable(name = "filterId") filterId: ObservatoryFilterId,
         currentUser: Authentication,
     ): ResponseEntity<Any> {
-        authorizeUser(currentUser.contributorId(), observatoryId)
-        observatoryService.findById(observatoryId)
-            .orElseThrow { ObservatoryNotFound(observatoryId) }
-        service.deleteById(id)
+        authorizeUser(currentUser.contributorId(), id)
+        observatoryService.findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+        service.deleteById(filterId)
         return noContent().build()
     }
 

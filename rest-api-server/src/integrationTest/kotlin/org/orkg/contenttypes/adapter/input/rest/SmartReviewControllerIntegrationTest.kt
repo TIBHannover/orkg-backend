@@ -441,9 +441,9 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
     @Test
     @TestWithMockUser
     fun createAndFetchAndUpdateComparisonSection() {
-        val smartReviewId = createSmartReview()
+        val id = createSmartReview()
 
-        post("/api/smart-reviews/$smartReviewId/sections")
+        post("/api/smart-reviews/$id/sections")
             .content(createComparisonSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -451,7 +451,7 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .perform()
             .andExpect(status().isCreated)
 
-        val smartReview = smartReviewService.findById(smartReviewId)
+        val smartReview = smartReviewService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         smartReview.sections.size shouldBe 7
@@ -461,9 +461,9 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             it.comparison shouldBe ResourceReference(ThingId("R6416"), "Some comparison", setOf(Classes.comparison))
         }
 
-        val smartReviewSectionId = smartReview.sections.last().id
+        val sectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
+        put("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(updateComparisonSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -471,11 +471,11 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedSmartReview = smartReviewService.findById(smartReviewId)
+        val updatedSmartReview = smartReviewService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewComparisonSection>().asClue {
-            it.id shouldBe smartReviewSectionId
+            it.id shouldBe sectionId
             it.heading shouldBe "updated comparison section heading"
             it.comparison shouldBe ResourceReference(ThingId("R26416"), "Some other comparison", setOf(Classes.comparison))
         }
@@ -504,9 +504,9 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             it.visualization shouldBe ResourceReference(ThingId("R215648"), "Some visualization", setOf(Classes.visualization))
         }
 
-        val smartReviewSectionId = smartReview.sections.last().id
+        val sectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
+        put("/api/smart-reviews/{id}/sections/{sectionId}", smartReviewId, sectionId)
             .content(updateVisualizationSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -518,7 +518,7 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewVisualizationSection>().asClue {
-            it.id shouldBe smartReviewSectionId
+            it.id shouldBe sectionId
             it.heading shouldBe "updated visualization section heading"
             it.visualization shouldBe ResourceReference(ThingId("R2215648"), "Some other visualization", setOf(Classes.visualization))
         }
@@ -527,9 +527,9 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
     @Test
     @TestWithMockUser
     fun createAndFetchAndUpdateResourceSection() {
-        val smartReviewId = createSmartReview()
+        val id = createSmartReview()
 
-        post("/api/smart-reviews/$smartReviewId/sections")
+        post("/api/smart-reviews/$id/sections")
             .content(createResourceSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -537,7 +537,7 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .perform()
             .andExpect(status().isCreated)
 
-        val smartReview = smartReviewService.findById(smartReviewId)
+        val smartReview = smartReviewService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         smartReview.sections.size shouldBe 7
@@ -547,9 +547,9 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             it.resource shouldBe ResourceReference(ThingId("R14565"), "Some dataset resource", setOf(Classes.dataset))
         }
 
-        val smartReviewSectionId = smartReview.sections.last().id
+        val sectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
+        put("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(updateResourceSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -557,11 +557,11 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedSmartReview = smartReviewService.findById(smartReviewId)
+        val updatedSmartReview = smartReviewService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewResourceSection>().asClue {
-            it.id shouldBe smartReviewSectionId
+            it.id shouldBe sectionId
             it.heading shouldBe "updated resource section heading"
             it.resource shouldBe ResourceReference(ThingId("R214565"), "Some other dataset resource", setOf(Classes.dataset))
         }
@@ -570,9 +570,9 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
     @Test
     @TestWithMockUser
     fun createAndFetchAndUpdatePredicateSection() {
-        val smartReviewId = createSmartReview()
+        val id = createSmartReview()
 
-        post("/api/smart-reviews/$smartReviewId/sections")
+        post("/api/smart-reviews/$id/sections")
             .content(createPredicateSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -580,7 +580,7 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .perform()
             .andExpect(status().isCreated)
 
-        val smartReview = smartReviewService.findById(smartReviewId)
+        val smartReview = smartReviewService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         smartReview.sections.size shouldBe 7
@@ -590,9 +590,9 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             it.predicate shouldBe PredicateReference(ThingId("R15696541"), "Some predicate")
         }
 
-        val smartReviewSectionId = smartReview.sections.last().id
+        val sectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
+        put("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(updatePredicateSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -600,11 +600,11 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedSmartReview = smartReviewService.findById(smartReviewId)
+        val updatedSmartReview = smartReviewService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewPredicateSection>().asClue {
-            it.id shouldBe smartReviewSectionId
+            it.id shouldBe sectionId
             it.heading shouldBe "updated predicate section heading"
             it.predicate shouldBe PredicateReference(ThingId("R215696541"), "Some other predicate")
         }
@@ -613,9 +613,9 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
     @Test
     @TestWithMockUser
     fun createAndFetchAndUpdateOntologySection() {
-        val smartReviewId = createSmartReview()
+        val id = createSmartReview()
 
-        post("/api/smart-reviews/$smartReviewId/sections")
+        post("/api/smart-reviews/$id/sections")
             .content(createOntologySectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -623,7 +623,7 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .perform()
             .andExpect(status().isCreated)
 
-        val smartReview = smartReviewService.findById(smartReviewId)
+        val smartReview = smartReviewService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         smartReview.sections.size shouldBe 7
@@ -637,9 +637,9 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             it.predicates shouldBe listOf(PredicateReference(ThingId("P1"), "Some ontology predicate"))
         }
 
-        val smartReviewSectionId = smartReview.sections.last().id
+        val sectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
+        put("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(updateOntologySectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -647,11 +647,11 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedSmartReview = smartReviewService.findById(smartReviewId)
+        val updatedSmartReview = smartReviewService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewOntologySection>().asClue {
-            it.id shouldBe smartReviewSectionId
+            it.id shouldBe sectionId
             it.heading shouldBe "updated ontology section heading"
             it.entities shouldBe listOf(
                 ResourceReference(ThingId("R21"), "Some other ontology resource", emptySet()),
@@ -664,9 +664,9 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
     @Test
     @TestWithMockUser
     fun createAndFetchAndUpdateTextSection() {
-        val smartReviewId = createSmartReview()
+        val id = createSmartReview()
 
-        post("/api/smart-reviews/$smartReviewId/sections")
+        post("/api/smart-reviews/$id/sections")
             .content(createTextSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -674,7 +674,7 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .perform()
             .andExpect(status().isCreated)
 
-        val smartReview = smartReviewService.findById(smartReviewId)
+        val smartReview = smartReviewService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         smartReview.sections.size shouldBe 7
@@ -685,9 +685,9 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             it.text shouldBe "Epilogue text section contents"
         }
 
-        val smartReviewSectionId = smartReview.sections.last().id
+        val sectionId = smartReview.sections.last().id
 
-        put("/api/smart-reviews/{smartReviewId}/sections/{smartReviewSectionId}", smartReviewId, smartReviewSectionId)
+        put("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(updateTextSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
@@ -695,11 +695,11 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedSmartReview = smartReviewService.findById(smartReviewId)
+        val updatedSmartReview = smartReviewService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewTextSection>().asClue {
-            it.id shouldBe smartReviewSectionId
+            it.id shouldBe sectionId
             it.heading shouldBe "updated text section heading"
             it.classes shouldBe setOf(Classes.introduction)
             it.text shouldBe "Introduction text section contents"

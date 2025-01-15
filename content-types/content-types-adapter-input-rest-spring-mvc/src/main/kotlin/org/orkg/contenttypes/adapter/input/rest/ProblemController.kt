@@ -46,17 +46,17 @@ class ProblemController(
     override val formattedLabelService: FormattedLabelUseCases,
 ) : ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
 
-    @GetMapping("/{problemId}/fields")
+    @GetMapping("/{id}/fields")
     fun getFieldPerProblem(
-        @PathVariable problemId: ThingId,
+        @PathVariable id: ThingId,
         capabilities: MediaTypeCapabilities
     ): List<FieldWithFreqRepresentation> =
-        service.findFieldsPerProblem(problemId)
+        service.findFieldsPerProblem(id)
             .mapToFieldWithFreqRepresentation(capabilities)
 
-    @GetMapping("/{problemId}")
+    @GetMapping("/{id}")
     fun getFieldPerProblemAndClasses(
-        @PathVariable problemId: ThingId,
+        @PathVariable id: ThingId,
         @RequestParam(value = "classes") classes: List<String>,
         @RequestParam("featured", required = false, defaultValue = "false")
         featured: Boolean,
@@ -67,7 +67,7 @@ class ProblemController(
         pageable: Pageable
     ): Page<DetailsPerProblem> =
         service.findAllEntitiesBasedOnClassByProblem(
-            problemId = problemId,
+            problemId = id,
             classes = classes,
             visibilityFilter = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             pageable = pageable
@@ -77,12 +77,12 @@ class ProblemController(
     fun getTopProblems(capabilities: MediaTypeCapabilities): Iterable<ResourceRepresentation> =
         service.findTopResearchProblems().mapToResourceRepresentation(capabilities)
 
-    @GetMapping("/{problemId}/users")
+    @GetMapping("/{id}/users")
     fun getContributorsPerProblem(
-        @PathVariable problemId: ThingId,
+        @PathVariable id: ThingId,
         pageable: Pageable
     ): ResponseEntity<Iterable<Any>> {
-        val contributors = service.findContributorsPerProblem(problemId, pageable).map {
+        val contributors = service.findContributorsPerProblem(id, pageable).map {
             val user = contributorService.findById(ContributorId(it.user)).get()
             object {
                 val user = user
@@ -92,13 +92,13 @@ class ProblemController(
         return ResponseEntity.ok(contributors)
     }
 
-    @GetMapping("/{problemId}/authors")
+    @GetMapping("/{id}/authors")
     fun getAuthorsPerProblem(
-        @PathVariable problemId: ThingId,
+        @PathVariable id: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
     ): Page<PaperAuthorRepresentation> =
-        authorService.findAuthorsPerProblem(problemId, pageable)
+        authorService.findAuthorsPerProblem(id, pageable)
             .mapToPaperAuthorRepresentation(capabilities)
 
     @PutMapping("/{id}/metadata/featured")

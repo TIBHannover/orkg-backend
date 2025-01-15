@@ -384,9 +384,9 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
     @Test
     @TestWithMockUser
     fun createAndFetchAndUpdateTextSection() {
-        val literatureListId = createLiteratureList()
+        val id = createLiteratureList()
 
-        post("/api/literature-lists/$literatureListId/sections")
+        post("/api/literature-lists/$id/sections")
             .content(createTextSectionJson)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
@@ -394,7 +394,7 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
             .perform()
             .andExpect(status().isCreated)
 
-        val literatureList = literatureListService.findById(literatureListId)
+        val literatureList = literatureListService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         literatureList.sections.size shouldBe 3
@@ -407,7 +407,7 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
 
         val literatureListSectionId = literatureList.sections.last().id
 
-        put("/api/literature-lists/{literatureListId}/sections/{literatureListSectionId}", literatureListId, literatureListSectionId)
+        put("/api/literature-lists/{id}/sections/{literatureListSectionId}", id, literatureListSectionId)
             .content(updateTextSectionJson)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
@@ -415,7 +415,7 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedLiteratureList = literatureListService.findById(literatureListId)
+        val updatedLiteratureList = literatureListService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedLiteratureList.sections.last().shouldBeInstanceOf<LiteratureListTextSection>().asClue {
@@ -429,9 +429,9 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
     @Test
     @TestWithMockUser
     fun createAndFetchAndUpdateListSection() {
-        val literatureListId = createLiteratureList()
+        val id = createLiteratureList()
 
-        post("/api/literature-lists/$literatureListId/sections")
+        post("/api/literature-lists/$id/sections")
             .content(createListSectionJson)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
@@ -439,7 +439,7 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
             .perform()
             .andExpect(status().isCreated)
 
-        val literatureList = literatureListService.findById(literatureListId)
+        val literatureList = literatureListService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         literatureList.sections.size shouldBe 3
@@ -463,7 +463,7 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
 
         val literatureListSectionId = literatureList.sections.last().id
 
-        put("/api/literature-lists/{literatureListId}/sections/{literatureListSectionId}", literatureListId, literatureListSectionId)
+        put("/api/literature-lists/{id}/sections/{literatureListSectionId}", id, literatureListSectionId)
             .content(updateListSectionJson)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
@@ -471,7 +471,7 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedLiteratureList = literatureListService.findById(literatureListId)
+        val updatedLiteratureList = literatureListService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedLiteratureList.sections.last().shouldBeInstanceOf<LiteratureListListSection>().asClue {

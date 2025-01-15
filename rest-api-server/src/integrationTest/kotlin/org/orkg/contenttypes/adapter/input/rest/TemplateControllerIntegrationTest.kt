@@ -384,9 +384,9 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
     @Test
     @TestWithMockUser
     fun createAndUpdateUntypedProperty() {
-        val templateId = createTemplate()
+        val id = createTemplate()
 
-        post("/api/templates/$templateId/properties")
+        post("/api/templates/$id/properties")
             .content(createUntypedTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -394,7 +394,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .perform()
             .andExpect(status().isCreated)
 
-        val template = templateService.findById(templateId)
+        val template = templateService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         template.properties.last().shouldBeInstanceOf<UntypedTemplateProperty>().asClue {
@@ -412,7 +412,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
 
         val propertyId = template.properties.first().id
 
-        put("/api/templates/{templateId}/properties/{propertyId}", templateId, propertyId)
+        put("/api/templates/{id}/properties/{propertyId}", id, propertyId)
             .content(updateUntypedTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -420,7 +420,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedTemplate = templateService.findById(templateId)
+        val updatedTemplate = templateService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedTemplate.properties.first().shouldBeInstanceOf<UntypedTemplateProperty>().asClue {
@@ -440,9 +440,9 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
     @Test
     @TestWithMockUser
     fun createAndUpdateStringLiteralProperty() {
-        val templateId = createTemplate()
+        val id = createTemplate()
 
-        post("/api/templates/$templateId/properties")
+        post("/api/templates/$id/properties")
             .content(createStringLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -450,7 +450,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .perform()
             .andExpect(status().isCreated)
 
-        val template = templateService.findById(templateId)
+        val template = templateService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         template.properties.last().shouldBeInstanceOf<StringLiteralTemplateProperty>().asClue {
@@ -470,7 +470,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
 
         val propertyId = template.properties.first().id
 
-        put("/api/templates/{templateId}/properties/{propertyId}", templateId, propertyId)
+        put("/api/templates/{id}/properties/{propertyId}", id, propertyId)
             .content(updateStringLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -478,7 +478,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedTemplate = templateService.findById(templateId)
+        val updatedTemplate = templateService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedTemplate.properties.first().shouldBeInstanceOf<StringLiteralTemplateProperty>().asClue {
@@ -500,9 +500,9 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
     @Test
     @TestWithMockUser
     fun createAndUpdateNumberLiteralProperty() {
-        val templateId = createTemplate()
+        val id = createTemplate()
 
-        post("/api/templates/$templateId/properties")
+        post("/api/templates/$id/properties")
             .content(createNumberLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -510,7 +510,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .perform()
             .andExpect(status().isCreated)
 
-        val template = templateService.findById(templateId)
+        val template = templateService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         template.properties.last().shouldBeInstanceOf<NumberLiteralTemplateProperty>().asClue {
@@ -531,7 +531,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
 
         val propertyId = template.properties.first().id
 
-        put("/api/templates/{templateId}/properties/{propertyId}", templateId, propertyId)
+        put("/api/templates/{id}/properties/{propertyId}", id, propertyId)
             .content(updateNumberLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -539,7 +539,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedTemplate = templateService.findById(templateId)
+        val updatedTemplate = templateService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedTemplate.properties.first().shouldBeInstanceOf<NumberLiteralTemplateProperty>().asClue {
@@ -562,9 +562,9 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
     @Test
     @TestWithMockUser
     fun createAndUpdateOtherLiteralProperty() {
-        val templateId = createTemplate()
+        val id = createTemplate()
 
-        post("/api/templates/$templateId/properties")
+        post("/api/templates/$id/properties")
             .content(createOtherLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -572,7 +572,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .perform()
             .andExpect(status().isCreated)
 
-        val template = templateService.findById(templateId)
+        val template = templateService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         template.properties.last().shouldBeInstanceOf<OtherLiteralTemplateProperty>().asClue {
@@ -591,7 +591,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
 
         val propertyId = template.properties.first().id
 
-        put("/api/templates/{templateId}/properties/{propertyId}", templateId, propertyId)
+        put("/api/templates/{id}/properties/{propertyId}", id, propertyId)
             .content(updateOtherLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -599,7 +599,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedTemplate = templateService.findById(templateId)
+        val updatedTemplate = templateService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedTemplate.properties.first().shouldBeInstanceOf<OtherLiteralTemplateProperty>().asClue {
@@ -620,9 +620,9 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
     @Test
     @TestWithMockUser
     fun createAndUpdateResourceProperty() {
-        val templateId = createTemplate()
+        val id = createTemplate()
 
-        post("/api/templates/$templateId/properties")
+        post("/api/templates/$id/properties")
             .content(createResourceTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -630,7 +630,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .perform()
             .andExpect(status().isCreated)
 
-        val template = templateService.findById(templateId)
+        val template = templateService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         template.properties.last().shouldBeInstanceOf<ResourceTemplateProperty>().asClue {
@@ -649,7 +649,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
 
         val propertyId = template.properties.first().id
 
-        put("/api/templates/{templateId}/properties/{propertyId}", templateId, propertyId)
+        put("/api/templates/{id}/properties/{propertyId}", id, propertyId)
             .content(updateResourceTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
@@ -657,7 +657,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .perform()
             .andExpect(status().isNoContent)
 
-        val updatedTemplate = templateService.findById(templateId)
+        val updatedTemplate = templateService.findById(id)
             .orElseThrow { throw IllegalStateException("Test did not initialize correctly! This is a bug!") }
 
         updatedTemplate.properties.first().shouldBeInstanceOf<ResourceTemplateProperty>().asClue {

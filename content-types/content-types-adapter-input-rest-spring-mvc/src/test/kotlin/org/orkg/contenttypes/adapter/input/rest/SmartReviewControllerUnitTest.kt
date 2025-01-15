@@ -297,21 +297,21 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a published smart review, when fetching its contents, returns success")
     fun findPublishedContentById() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
 
-        every { smartReviewService.findPublishedContentById(any(), any()) } returns Either.right(listOf(createStatement(subject = createResource(id))))
+        every { smartReviewService.findPublishedContentById(any(), any()) } returns Either.right(listOf(createStatement(subject = createResource(sectionId))))
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
 
-        documentedGetRequestTo("/api/smart-reviews/{smartReviewId}/published-contents/{contentId}", smartReviewId, id)
+        documentedGetRequestTo("/api/smart-reviews/{id}/published-contents/{contentId}", id, sectionId)
             .perform()
             .andExpect(status().isOk)
             .andExpectStatementList()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the published smart review."),
+                        parameterWithName("id").description("The id of the published smart review."),
                         parameterWithName("contentId").description("The id of the resource to fetch.")
                     ),
                     responseFields(
@@ -322,7 +322,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { smartReviewService.findPublishedContentById(smartReviewId, id) }
+        verify(exactly = 1) { smartReviewService.findPublishedContentById(id, sectionId) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { statementService.findAllDescriptions(any()) }
     }
@@ -367,19 +367,19 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a comparison section create request, when service succeeds, it creates the comparison section")
     fun createComparisonSection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = comparisonSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{id}/sections", id)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
             smartReviewService.createSection(withArg {
@@ -393,24 +393,24 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a comparison section create request, when service succeeds, it creates the comparison section at the specified index")
     fun createComparisonSectionAtIndex() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val index = 5
         val request = comparisonSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+        documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("index").description("The insertion index the of the section. Otherwise, the created comparison section will be appended at the end of the smart review. (optional)")
                     ),
                     responseHeaders(
@@ -436,19 +436,19 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a visualization section create request, when service succeeds, it creates the visualization section")
     fun createVisualizationSection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = visualizationSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{id}/sections", id)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
             smartReviewService.createSection(withArg {
@@ -462,24 +462,24 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a visualization section create request, when service succeeds, it creates the visualization section at the specified index")
     fun createVisualizationSectionAtIndex() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val index = 5
         val request = visualizationSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+        documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("index").description("The insertion index the of the section. Otherwise, the created visualization section will be appended at the end of the smart review. (optional)")
                     ),
                     responseHeaders(
@@ -505,19 +505,19 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a resource section create request, when service succeeds, it creates the resource section")
     fun createResourceSection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = resourceSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{id}/sections", id)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
             smartReviewService.createSection(withArg {
@@ -531,24 +531,24 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a resource section create request, when service succeeds, it creates the resource section at the specified index")
     fun createResourceSectionAtIndex() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val index = 5
         val request = resourceSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+        documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("index").description("The insertion index the of the section. Otherwise, the created resource section will be appended at the end of the smart review. (optional)")
                     ),
                     responseHeaders(
@@ -574,19 +574,19 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a predicate section create request, when service succeeds, it creates the predicate section")
     fun createPredicateSection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = predicateSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{id}/sections", id)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
             smartReviewService.createSection(withArg {
@@ -600,24 +600,24 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a predicate section create request, when service succeeds, it creates the predicate section at the specified index")
     fun createPredicateSectionAtIndex() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val index = 5
         val request = predicateSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+        documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("index").description("The insertion index the of the section. Otherwise, the created predicate section will be appended at the end of the smart review. (optional)")
                     ),
                     responseHeaders(
@@ -643,19 +643,19 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a ontology section create request, when service succeeds, it creates the ontology section")
     fun createOntologySection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = ontologySectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{id}/sections", id)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
             smartReviewService.createSection(withArg {
@@ -669,24 +669,24 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a ontology section create request, when service succeeds, it creates the ontology section at the specified index")
     fun createOntologySectionAtIndex() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val index = 5
         val request = ontologySectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+        documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("index").description("The insertion index the of the section. Otherwise, the created ontology section will be appended at the end of the smart review. (optional)")
                     ),
                     responseHeaders(
@@ -713,19 +713,19 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a text section create request, when service succeeds, it creates the text section")
     fun createTextSection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = textSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        post("/api/smart-reviews/{smartReviewId}/sections", smartReviewId)
+        post("/api/smart-reviews/{id}/sections", id)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
 
         verify(exactly = 1) {
             smartReviewService.createSection(withArg {
@@ -739,24 +739,24 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a text section create request, when service succeeds, it creates the text section at the specified index")
     fun createTextSectionAtIndex() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val index = 5
         val request = textSectionRequest()
 
-        every { smartReviewService.createSection(any()) } returns id
+        every { smartReviewService.createSection(any()) } returns sectionId
 
-        documentedPostRequestTo("/api/smart-reviews/{smartReviewId}/sections/{index}", smartReviewId, index)
+        documentedPostRequestTo("/api/smart-reviews/{id}/sections/{index}", id, index)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("index").description("The insertion index the of the section. Otherwise, the created text section will be appended at the end of the smart review. (optional)")
                     ),
                     responseHeaders(
@@ -819,23 +819,23 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a comparison section update request, when service succeeds, it updates the comparison section at the specified index")
     fun updateComparisonSection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = comparisonSectionRequest()
 
         every { smartReviewService.updateSection(any()) } just runs
 
-        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+        documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("sectionId").description("The id of the section.")
                     ),
                     responseHeaders(
@@ -858,23 +858,23 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a visualization section update request, when service succeeds, it updates the visualization section at the specified index")
     fun updateVisualizationSection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = visualizationSectionRequest()
 
         every { smartReviewService.updateSection(any()) } just runs
 
-        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+        documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("sectionId").description("The id of the section.")
                     ),
                     responseHeaders(
@@ -897,23 +897,23 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a resource section update request, when service succeeds, it updates the resource section at the specified index")
     fun updateResourceSection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = resourceSectionRequest()
 
         every { smartReviewService.updateSection(any()) } just runs
 
-        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+        documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("sectionId").description("The id of the section.")
                     ),
                     responseHeaders(
@@ -936,23 +936,23 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a predicate section update request, when service succeeds, it updates the predicate section at the specified index")
     fun updatePredicateSection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = predicateSectionRequest()
 
         every { smartReviewService.updateSection(any()) } just runs
 
-        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+        documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("sectionId").description("The id of the section.")
                     ),
                     responseHeaders(
@@ -975,23 +975,23 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a ontology section update request, when service succeeds, it updates the ontology section at the specified index")
     fun updateOntologySection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = ontologySectionRequest()
 
         every { smartReviewService.updateSection(any()) } just runs
 
-        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+        documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("sectionId").description("The id of the section.")
                     ),
                     responseHeaders(
@@ -1015,23 +1015,23 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a text section update request, when service succeeds, it updates the text section at the specified index")
     fun updateTextSection() {
-        val smartReviewId = ThingId("R3541")
-        val id = ThingId("R123")
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
         val request = textSectionRequest()
 
         every { smartReviewService.updateSection(any()) } just runs
 
-        documentedPutRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, id)
+        documentedPutRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .content(request)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review to which the new section should be appended to."),
+                        parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
                         parameterWithName("sectionId").description("The id of the section.")
                     ),
                     responseHeaders(
@@ -1056,22 +1056,22 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
     @TestWithMockUser
     @DisplayName("Given a smart review section delete request, when service succeeds, it returns status 204 NO CONTENT")
     fun deleteSection() {
-        val smartReviewId = ThingId("R3541")
+        val id = ThingId("R3541")
         val sectionId = ThingId("R123")
         val command = DeleteSmartReviewSectionUseCase.DeleteCommand(
-            smartReviewId, sectionId, ContributorId(MockUserId.USER)
+            id, sectionId, ContributorId(MockUserId.USER)
         )
         every { smartReviewService.deleteSection(command) } just runs
 
-        documentedDeleteRequestTo("/api/smart-reviews/{smartReviewId}/sections/{sectionId}", smartReviewId, sectionId)
+        documentedDeleteRequestTo("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
-            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$smartReviewId")))
+            .andExpect(header().string("Location", endsWith("/api/smart-reviews/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("smartReviewId").description("The id of the smart review the section belongs to."),
+                        parameterWithName("id").description("The id of the smart review the section belongs to."),
                         parameterWithName("sectionId").description("The id of the section.")
                     )
                 )

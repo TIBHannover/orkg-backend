@@ -107,14 +107,14 @@ class SmartReviewController(
             sustainableDevelopmentGoal = sustainableDevelopmentGoal
         ).mapToSmartReviewRepresentation()
 
-    @GetMapping("/{smartReviewId}/published-contents/{contentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/{id}/published-contents/{contentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findPublishedContentById(
-        @PathVariable smartReviewId: ThingId,
+        @PathVariable id: ThingId,
         @PathVariable contentId: ThingId,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities
     ): Any =
-        service.findPublishedContentById(smartReviewId, contentId)
+        service.findPublishedContentById(id, contentId)
             .fold({ it.toContentTypeRepresentation() }, { it.toStatementListRepresentation(capabilities) })
 
     @RequireLogin
@@ -169,36 +169,36 @@ class SmartReviewController(
     }
 
     @RequireLogin
-    @PutMapping("/{smartReviewId}/sections/{sectionId}", consumes = [SMART_REVIEW_SECTION_JSON_V1], produces = [SMART_REVIEW_SECTION_JSON_V1])
+    @PutMapping("/{id}/sections/{sectionId}", consumes = [SMART_REVIEW_SECTION_JSON_V1], produces = [SMART_REVIEW_SECTION_JSON_V1])
     fun updateSection(
-        @PathVariable smartReviewId: ThingId,
+        @PathVariable id: ThingId,
         @PathVariable sectionId: ThingId,
         @RequestBody @Valid request: SmartReviewSectionRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.updateSection(request.toUpdateCommand(sectionId, userId, smartReviewId))
+        service.updateSection(request.toUpdateCommand(sectionId, userId, id))
         val location = uriComponentsBuilder
             .path("/api/smart-reviews/{id}")
-            .buildAndExpand(smartReviewId)
+            .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
     }
 
     @RequireLogin
-    @DeleteMapping("/{smartReviewId}/sections/{sectionId}", produces = [SMART_REVIEW_SECTION_JSON_V1])
+    @DeleteMapping("/{id}/sections/{sectionId}", produces = [SMART_REVIEW_SECTION_JSON_V1])
     fun deleteSection(
-        @PathVariable smartReviewId: ThingId,
+        @PathVariable id: ThingId,
         @PathVariable sectionId: ThingId,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.deleteSection(DeleteSmartReviewSectionUseCase.DeleteCommand(smartReviewId, sectionId, userId))
+        service.deleteSection(DeleteSmartReviewSectionUseCase.DeleteCommand(id, sectionId, userId))
         val location = uriComponentsBuilder
             .path("/api/smart-reviews/{id}")
-            .buildAndExpand(smartReviewId)
+            .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
     }

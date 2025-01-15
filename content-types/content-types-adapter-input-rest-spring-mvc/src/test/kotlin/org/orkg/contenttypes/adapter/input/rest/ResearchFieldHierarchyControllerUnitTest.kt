@@ -87,7 +87,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
 
         every { service.findChildren(parentId, any()) } throws exception
 
-        get("/api/research-fields/{parentId}/children", parentId)
+        get("/api/research-fields/{id}/children", parentId)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -131,7 +131,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
 
         every { service.findParents(subfieldId, any()) } throws exception
 
-        get("/api/research-fields/{subfieldId}/parents", subfieldId)
+        get("/api/research-fields/{id}/parents", subfieldId)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -147,7 +147,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
 
         every { service.findParents(subfieldId, any()) } returns Page.empty()
 
-        get("/api/research-fields/{subfieldId}/parents", subfieldId)
+        get("/api/research-fields/{id}/parents", subfieldId)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -191,7 +191,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
 
         every { service.findRoots(subfieldId, any()) } throws exception
 
-        get("/api/research-fields/{subfieldId}/roots", subfieldId)
+        get("/api/research-fields/{id}/roots", subfieldId)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -207,7 +207,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
 
         every { service.findRoots(subfieldId, any()) } returns Page.empty()
 
-        get("/api/research-fields/{subfieldId}/roots", subfieldId)
+        get("/api/research-fields/{id}/roots", subfieldId)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -254,7 +254,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
 
         every { service.findResearchFieldHierarchy(subfieldId, any()) } throws exception
 
-        get("/api/research-fields/{subfieldId}/hierarchy", subfieldId)
+        get("/api/research-fields/{id}/hierarchy", subfieldId)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))

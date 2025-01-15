@@ -141,19 +141,19 @@ class TemplateController(
     }
 
     @RequireLogin
-    @PutMapping("/{templateId}/properties/{propertyId}", consumes = [TEMPLATE_PROPERTY_JSON_V1], produces = [TEMPLATE_PROPERTY_JSON_V1])
+    @PutMapping("/{id}/properties/{propertyId}", consumes = [TEMPLATE_PROPERTY_JSON_V1], produces = [TEMPLATE_PROPERTY_JSON_V1])
     fun updateTemplateProperty(
-        @PathVariable templateId: ThingId,
+        @PathVariable id: ThingId,
         @PathVariable propertyId: ThingId,
         @RequestBody @Valid request: TemplatePropertyRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.updateTemplateProperty(request.toUpdateCommand(propertyId, userId, templateId))
+        service.updateTemplateProperty(request.toUpdateCommand(propertyId, userId, id))
         val location = uriComponentsBuilder
             .path("/api/templates/{id}")
-            .buildAndExpand(templateId)
+            .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
     }

@@ -72,14 +72,14 @@ class StatementController(
             objectLabel = objectLabel
         ).mapToStatementRepresentation(capabilities)
 
-    @GetMapping("/{statementId}")
+    @GetMapping("/{id}")
     fun findById(
-        @PathVariable statementId: StatementId,
+        @PathVariable id: StatementId,
         capabilities: MediaTypeCapabilities
     ): StatementRepresentation =
-        statementService.findById(statementId)
+        statementService.findById(id)
             .mapToStatementRepresentation(capabilities)
-            .orElseThrow { StatementNotFound(statementId) }
+            .orElseThrow { StatementNotFound(id) }
 
     @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -130,9 +130,9 @@ class StatementController(
         return ResponseEntity.noContent().build()
     }
 
-    @GetMapping("/{thingId}/bundle")
+    @GetMapping("/{id}/bundle")
     fun fetchAsBundle(
-        @PathVariable thingId: ThingId,
+        @PathVariable id: ThingId,
         @RequestParam("minLevel", required = false) minLevel: Int?,
         @RequestParam("maxLevel", required = false) maxLevel: Int?,
         @RequestParam("blacklist", required = false, defaultValue = "") blacklist: List<ThingId>,
@@ -142,7 +142,7 @@ class StatementController(
         capabilities: MediaTypeCapabilities
     ): BundleRepresentation =
         statementService.fetchAsBundle(
-            thingId,
+            id,
             BundleConfiguration(
                 minLevel, maxLevel,
                 blacklist, whitelist

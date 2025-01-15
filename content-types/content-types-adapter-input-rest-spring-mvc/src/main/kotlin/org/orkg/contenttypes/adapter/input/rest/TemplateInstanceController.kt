@@ -38,26 +38,26 @@ import org.springframework.web.util.UriComponentsBuilder
 const val TEMPLATE_INSTANCE_JSON_V1 = "application/vnd.orkg.template-instance.v1+json"
 
 @RestController
-@RequestMapping("/api/templates/{templateId}/instances", produces = [TEMPLATE_INSTANCE_JSON_V1])
+@RequestMapping("/api/templates/{id}/instances", produces = [TEMPLATE_INSTANCE_JSON_V1])
 class TemplateInstanceController(
     private val service: TemplateInstanceUseCases,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
 ) : TemplateInstanceRepresentationAdapter {
 
-    @GetMapping("/{id}")
+    @GetMapping("/{instanceId}")
     fun findById(
-        @PathVariable templateId: ThingId,
         @PathVariable id: ThingId,
+        @PathVariable instanceId: ThingId,
         capabilities: MediaTypeCapabilities
     ): TemplateInstanceRepresentation =
-        service.findById(templateId, id)
+        service.findById(id, instanceId)
             .mapToTemplateInstanceRepresentation(capabilities)
-            .orElseThrow { ResourceNotFound.withId(id) }
+            .orElseThrow { ResourceNotFound.withId(instanceId) }
 
     @GetMapping
     fun findAll(
-        @PathVariable templateId: ThingId,
+        @PathVariable id: ThingId,
         @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
@@ -70,7 +70,7 @@ class TemplateInstanceController(
         capabilities: MediaTypeCapabilities
     ): Page<TemplateInstanceRepresentation> =
         service.findAll(
-            templateId = templateId,
+            templateId = id,
             pageable = pageable,
             label = string?.let { SearchString.of(string, exactMatch) },
             visibility = visibility,
@@ -82,19 +82,19 @@ class TemplateInstanceController(
         ).mapToTemplateInstanceRepresentation(capabilities)
 
     @RequireLogin
-    @PutMapping("/{id}", consumes = [TEMPLATE_INSTANCE_JSON_V1], produces = [TEMPLATE_INSTANCE_JSON_V1])
+    @PutMapping("/{instanceId}", consumes = [TEMPLATE_INSTANCE_JSON_V1], produces = [TEMPLATE_INSTANCE_JSON_V1])
     fun updateTemplateInstance(
         @PathVariable id: ThingId,
-        @PathVariable templateId: ThingId,
+        @PathVariable instanceId: ThingId,
         @RequestBody @Valid request: UpdateTemplateInstanceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.update(request.toUpdateCommand(userId, templateId, id))
+        service.update(request.toUpdateCommand(userId, id, instanceId))
         val location = uriComponentsBuilder
-            .path("/api/templates/{templateId}/instances/{id}")
-            .buildAndExpand(templateId, id)
+            .path("/api/templates/{id}/instances/{instanceId}")
+            .buildAndExpand(id, instanceId)
             .toUri()
         return noContent().location(location).build()
     }

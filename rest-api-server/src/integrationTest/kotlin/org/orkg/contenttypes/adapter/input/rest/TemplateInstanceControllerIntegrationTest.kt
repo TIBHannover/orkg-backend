@@ -195,12 +195,12 @@ internal class TemplateInstanceControllerIntegrationTest : RestDocsTest("templat
     @Test
     @TestWithMockUser
     fun update() {
-        val templateId = resourceService.findAll(
+        val id = resourceService.findAll(
             includeClasses = setOf(ThingId("NodeShape")),
             pageable = PageRequests.SINGLE
         ).single().id
 
-        put("/api/templates/{templateId}/instances/{id}", templateId, "R6458")
+        put("/api/templates/{id}/instances/{instanceId}", id, "R6458")
             .content(updateTemplateInstanceJson)
             .accept(TEMPLATE_INSTANCE_JSON_V1)
             .contentType(TEMPLATE_INSTANCE_JSON_V1)

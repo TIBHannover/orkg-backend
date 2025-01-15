@@ -77,14 +77,14 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { observatoryFilterUseCases.findById(filter.id) } returns Optional.of(filter)
 
-        documentedGetRequestTo("/api/observatories/{observatoryId}/filters/{filterId}", observatory.id, filter.id)
+        documentedGetRequestTo("/api/observatories/{id}/filters/{filterId}", observatory.id, filter.id)
             .perform()
             .andExpect(status().isOk)
             .andExpectObservatoryFilter()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("observatoryId").description("The identifier of the observatory that the filter belongs to."),
+                        parameterWithName("id").description("The identifier of the observatory that the filter belongs to."),
                         parameterWithName("filterId").description("The identifier of the filter to retrieve.")
                     ),
                     responseFields(
@@ -116,7 +116,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
 
         every { observatoryUseCases.findById(observatory.id) } returns Optional.empty()
 
-        get("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
+        get("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -135,7 +135,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { observatoryFilterUseCases.findById(id) } returns Optional.empty()
 
-        get("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
+        get("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -155,14 +155,14 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { observatoryFilterUseCases.findAllByObservatoryId(observatory.id, any()) } returns filters
 
-        documentedGetRequestTo("/api/observatories/{observatoryId}/filters", observatory.id)
+        documentedGetRequestTo("/api/observatories/{id}/filters", observatory.id)
             .perform()
             .andExpect(status().isOk)
             .andExpectObservatoryFilter("$.content[*]")
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("observatoryId").description("The identifier of the observatory that the filters belongs to.")
+                        parameterWithName("id").description("The identifier of the observatory that the filters belongs to.")
                     )
                 )
             )
@@ -187,13 +187,13 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { observatoryFilterUseCases.deleteById(id) } just runs
 
-        documentedDeleteRequestTo("/api/observatories/{observatoryId}/filters/{filterId}", observatory.id, id)
+        documentedDeleteRequestTo("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .perform()
             .andExpect(status().isNoContent)
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("observatoryId").description("The identifier of the observatory that the filters belongs to."),
+                        parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
                         parameterWithName("filterId").description("The identifier of the filter to delete.")
                     )
                 )
@@ -217,7 +217,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
 
         every { contributorService.findById(any()) } returns Optional.of(user)
 
-        delete("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
+        delete("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .perform()
             .andExpect(status().isForbidden)
 
@@ -238,7 +238,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
         every { observatoryUseCases.findById(observatory.id) } returns Optional.empty()
 
-        delete("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
+        delete("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
@@ -270,14 +270,14 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
         every { observatoryFilterUseCases.create(any()) } returns filter.id
 
-        documentedPostRequestTo("/api/observatories/{observatoryId}/filters", observatory.id)
+        documentedPostRequestTo("/api/observatories/{id}/filters", observatory.id)
             .content(command)
             .perform()
             .andExpect(status().isCreated)
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("observatoryId").description("The identifier of the observatory that the filters belongs to.")
+                        parameterWithName("id").description("The identifier of the observatory that the filters belongs to.")
                     ),
                     responseHeaders(
                         headerWithName("Location").description("The uri path where the newly created filter can be fetched from.")
@@ -442,14 +442,14 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
         every { observatoryFilterUseCases.update(any()) } just runs
 
-        documentedPatchRequestTo("/api/observatories/{observatoryId}/filters/{filterId}", observatory.id, id)
+        documentedPatchRequestTo("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .content(command)
             .perform()
             .andExpect(status().isNoContent)
             .andDo(
                 documentationHandler.document(
                     pathParameters(
-                        parameterWithName("observatoryId").description("The identifier of the observatory that the filters belongs to."),
+                        parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
                         parameterWithName("filterId").description("The identifier of the filter to update.")
                     ),
                     requestFields(
@@ -491,7 +491,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
         every { observatoryFilterUseCases.update(any()) } throws exception
 
-        patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
+        patch("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .content(command)
             .perform()
             .andExpect(status().isNotFound)
@@ -526,7 +526,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
         every { observatoryFilterUseCases.update(any()) } throws exception
 
-        patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
+        patch("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .content(command)
             .perform()
             .andExpect(status().isNotFound)
@@ -561,7 +561,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { contributorService.findById(any()) } returns Optional.of(user)
         every { observatoryFilterUseCases.update(any()) } throws exception
 
-        patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
+        patch("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .content(command)
             .perform()
             .andExpect(status().isNotFound)
@@ -595,7 +595,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every { contributorService.findById(any()) } returns Optional.of(user)
 
-        patch("/api/observatories/{observatoryId}/filters/{id}", observatory.id, id)
+        patch("/api/observatories/{id}/filters/{filterId}", observatory.id, id)
             .content(command)
             .perform()
             .andExpect(status().isForbidden)
@@ -623,7 +623,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
 
         every { observatoryUseCases.findById(observatoryId) } returns Optional.empty()
 
-        patch("/api/observatories/{observatoryId}/filters/{id}", observatoryId, id)
+        patch("/api/observatories/{id}/filters/{filterId}", observatoryId, id)
             .content(command)
             .perform()
             .andExpect(status().isNotFound)

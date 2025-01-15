@@ -23,9 +23,9 @@ import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -172,7 +172,7 @@ internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory
         } returns PageImpl(listOf(paperResource))
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
 
-        documentedGetRequestTo("/api/observatories/{id}/papers", id, encodedFilterConfig)
+        documentedGetRequestTo("/api/observatories/{id}/papers", id)
             .param("visibility", VisibilityFilter.FEATURED.name)
             .param("filter_config", encodedFilterConfig)
             .perform()

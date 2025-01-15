@@ -3,14 +3,13 @@ package org.orkg.common
 import org.junit.jupiter.api.Test
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
@@ -50,22 +49,7 @@ internal class PageDocTest : RestDocsTest("paged") {
                             )
                             .optional(),
                     ),
-                    responseFields(
-                        fieldWithPath("content").description("The result of the request as a (sorted) array."),
-                        subsectionWithPath("pageable").ignored(), // Pageable used in request. Not relevant in most cases.
-                        fieldWithPath("empty").description("Determines if the current page is empty."),
-                        fieldWithPath("first").description("Determines if the current page is the first one."),
-                        fieldWithPath("last").description("Determines if the current page is the last one."),
-                        fieldWithPath("number").description("The number of the current page."),
-                        fieldWithPath("numberOfElements").description("The number of elements currently on this page."),
-                        fieldWithPath("size").description("The size of the current page."),
-                        fieldWithPath("sort").description("The sorting parameters for this page."),
-                        fieldWithPath("sort.empty").description("Determines if the sort object is empty."),
-                        fieldWithPath("sort.sorted").description("Determines if the page is sorted. Inverse of `unsorted`."),
-                        fieldWithPath("sort.unsorted").description("Determines if the page is unsorted. Inverse of `sorted`."),
-                        fieldWithPath("totalElements").description("The total amounts of elements."),
-                        fieldWithPath("totalPages").description("The number of total pages."),
-                    )
+                    responseFields(pageableDetailedFieldParameters())
                 )
             )
             .andDo(generateDefaultDocSnippets())

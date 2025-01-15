@@ -9,6 +9,8 @@ plugins {
 dependencies {
     api(project(":common:identifiers"))
     implementation(project(":common:string-utils"))
+    api("com.fasterxml.jackson.core:jackson-annotations")
+    api("com.fasterxml.jackson.core:jackson-databind")
     api("org.neo4j.driver:neo4j-java-driver")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-core") // for AccessDeniedException, UserDetails
@@ -19,7 +21,6 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core")
     implementation("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
     implementation("org.slf4j:jcl-over-slf4j") // for org.apache.commons.logging.LogFactory in ResponseEntityExceptionHandler
-    implementation("com.fasterxml.jackson.core:jackson-databind")
     runtimeOnly("com.fasterxml.jackson.datatype:jackson-datatype-jsr310") // for timestamp serialization
 }
 

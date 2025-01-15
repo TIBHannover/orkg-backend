@@ -12,6 +12,8 @@ An example of a response of a paged list looks like this:
 
 include::{snippets}/paged-page/response-body.adoc[]
 
+include::{snippets}/paged-page/response-fields.adoc[]
+
 NOTE: The elements in `content` can be objects of arbitrary structure and are sorted according to the request parameters, if the endpoint supports it.
 
 By default, sorting is done by the `created_at` property (time-based).

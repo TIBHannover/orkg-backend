@@ -6,6 +6,8 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Duration
 import org.orkg.common.exceptions.ServiceUnavailable
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -25,3 +27,10 @@ fun <T> HttpClient.send(httpRequest: HttpRequest, serviceName: String, successCa
         throw ServiceUnavailable.create(serviceName, e)
     }
 }
+
+internal fun Pageable.toRepresentation(): PageableRepresentation =
+    if (isPaged) PagedPageableRepresentation(pageNumber, pageSize, sort.toRepresentation(), isPaged, isUnpaged, offset)
+    else UnpagedPageableRepresentation()
+
+internal fun Sort.toRepresentation(): SortRepresentation =
+    SortRepresentation(isEmpty, isSorted, isUnsorted)

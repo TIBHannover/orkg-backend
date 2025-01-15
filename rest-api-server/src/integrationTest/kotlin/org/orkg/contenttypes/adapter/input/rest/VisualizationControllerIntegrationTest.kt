@@ -148,9 +148,8 @@ internal class VisualizationControllerIntegrationTest : RestDocsTest("visualizat
     fun create() {
         post("/api/visualizations")
             .content(createVisualizationJson)
-            .accept("application/vnd.orkg.visualization.v2+json")
-            .contentType("application/vnd.orkg.visualization.v2+json")
-            .characterEncoding("utf-8")
+            .accept(VISUALIZATION_JSON_V2)
+            .contentType(VISUALIZATION_JSON_V2)
             .perform()
             .andExpect(status().isCreated)
     }

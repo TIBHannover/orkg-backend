@@ -179,7 +179,6 @@ internal class RosettaStoneTemplateControllerIntegrationTest : RestDocsTest("ros
         val rosettaStoneTemplate = get("/api/rosetta-stone/templates/{id}", id)
             .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .contentType(ROSETTA_STONE_TEMPLATE_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isOk)
             .andExpectRosettaStoneTemplate()
@@ -289,7 +288,6 @@ internal class RosettaStoneTemplateControllerIntegrationTest : RestDocsTest("ros
             .content(updateRosettaStoneTemplateJson)
             .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .contentType(ROSETTA_STONE_TEMPLATE_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -399,7 +397,6 @@ internal class RosettaStoneTemplateControllerIntegrationTest : RestDocsTest("ros
             .content(createRosettaStoneTemplateJson)
             .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .contentType(ROSETTA_STONE_TEMPLATE_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
             .andReturn()

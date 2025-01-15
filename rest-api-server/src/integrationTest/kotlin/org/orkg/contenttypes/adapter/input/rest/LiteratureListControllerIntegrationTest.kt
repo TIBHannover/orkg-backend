@@ -201,7 +201,6 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
         val literatureList = get("/api/literature-lists/{id}", id)
             .accept(LITERATURE_LIST_JSON_V1)
             .contentType(LITERATURE_LIST_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isOk)
             .andReturn()
@@ -292,7 +291,6 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
             .content(updateLiteratureListJson)
             .accept(LITERATURE_LIST_JSON_V1)
             .contentType(LITERATURE_LIST_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -390,7 +388,6 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
             .content(createTextSectionJson)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -411,7 +408,6 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
             .content(updateTextSectionJson)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -435,7 +431,6 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
             .content(createListSectionJson)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -467,7 +462,6 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
             .content(updateListSectionJson)
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -497,7 +491,6 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
         .content(createLiteratureListJson)
         .accept(LITERATURE_LIST_JSON_V1)
         .contentType(LITERATURE_LIST_JSON_V1)
-        .characterEncoding("utf-8")
         .perform()
         .andExpect(status().isCreated)
         .andReturn()

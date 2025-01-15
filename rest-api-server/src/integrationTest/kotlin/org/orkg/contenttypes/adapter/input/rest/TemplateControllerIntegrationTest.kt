@@ -183,7 +183,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(createTemplateJson)
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isOk)
             .andExpectTemplate()
@@ -285,7 +284,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(updateTemplateJson)
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -390,7 +388,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(createUntypedTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -416,7 +413,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(updateUntypedTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -446,7 +442,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(createStringLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -474,7 +469,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(updateStringLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -506,7 +500,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(createNumberLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -535,7 +528,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(updateNumberLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -568,7 +560,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(createOtherLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -595,7 +586,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(updateOtherLiteralTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -626,7 +616,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(createResourceTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -653,7 +642,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(updateResourceTemplatePropertyJson)
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -680,7 +668,6 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             .content(createTemplateJson)
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
             .andReturn()

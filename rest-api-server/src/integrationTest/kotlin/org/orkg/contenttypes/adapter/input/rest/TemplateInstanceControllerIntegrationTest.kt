@@ -204,7 +204,6 @@ internal class TemplateInstanceControllerIntegrationTest : RestDocsTest("templat
             .content(updateTemplateInstanceJson)
             .accept(TEMPLATE_INSTANCE_JSON_V1)
             .contentType(TEMPLATE_INSTANCE_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
     }

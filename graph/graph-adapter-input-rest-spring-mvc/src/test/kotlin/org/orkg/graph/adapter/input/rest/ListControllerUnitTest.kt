@@ -259,7 +259,6 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         patch("/api/lists/{id}", id)
             .contentType(APPLICATION_JSON)
-            .characterEncoding(Charsets.UTF_8.name())
             .content(request)
             .perform()
             .andExpect(status().isBadRequest)
@@ -288,7 +287,6 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
         patch("/api/lists/{id}", id)
             .contentType(APPLICATION_JSON)
-            .characterEncoding(Charsets.UTF_8.name())
             .content(request)
             .perform()
             .andExpect(status().isBadRequest)

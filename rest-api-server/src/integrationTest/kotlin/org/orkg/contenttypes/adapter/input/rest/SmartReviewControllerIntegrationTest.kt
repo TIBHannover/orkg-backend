@@ -220,7 +220,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
 
         val smartReview = get("/api/smart-reviews/{id}", id)
             .accept(SMART_REVIEW_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isOk)
             .andReturn()
@@ -332,7 +331,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(updateSmartReviewJson)
             .accept(SMART_REVIEW_JSON_V1)
             .contentType(SMART_REVIEW_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -447,7 +445,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(createComparisonSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -467,7 +464,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(updateComparisonSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -490,7 +486,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(createVisualizationSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -510,7 +505,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(updateVisualizationSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -533,7 +527,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(createResourceSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -553,7 +546,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(updateResourceSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -576,7 +568,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(createPredicateSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -596,7 +587,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(updatePredicateSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -619,7 +609,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(createOntologySectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -643,7 +632,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(updateOntologySectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -670,7 +658,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(createTextSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isCreated)
 
@@ -691,7 +678,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             .content(updateTextSectionJson)
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
-            .characterEncoding("utf-8")
             .perform()
             .andExpect(status().isNoContent)
 
@@ -710,7 +696,6 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
         .content(createSmartReviewJson)
         .accept(SMART_REVIEW_JSON_V1)
         .contentType(SMART_REVIEW_JSON_V1)
-        .characterEncoding("utf-8")
         .perform()
         .andExpect(status().isCreated)
         .andReturn()

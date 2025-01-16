@@ -14,7 +14,6 @@ class SecurityTestConfiguration {
     @Bean
     fun authProviderForTests(): AuthenticationProvider =
         DaoAuthenticationProvider().apply {
-            setUserDetailsService(MockUserDetailsService())
             setPasswordEncoder(PasswordEncoderFactories.createDelegatingPasswordEncoder())
         }
 

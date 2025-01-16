@@ -52,7 +52,6 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
-import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectRosettaStoneStatement
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
@@ -66,7 +65,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
 @Transactional
-@Import(value = [MockUserDetailsService::class, ContentTypeJacksonModule::class])
+@Import(ContentTypeJacksonModule::class)
 internal class RosettaStoneStatementControllerIntegrationTest : RestDocsTest("rosetta-stone-statements") {
 
     @Autowired

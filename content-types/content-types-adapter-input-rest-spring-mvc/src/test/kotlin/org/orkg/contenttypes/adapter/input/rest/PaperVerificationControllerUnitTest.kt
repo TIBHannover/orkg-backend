@@ -10,20 +10,16 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.MarkAsVerifiedUseCase
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.annotations.TestWithMockCurator
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [PaperVerificationCommandController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [PaperVerificationCommandController::class])
 internal class PaperVerificationControllerUnitTest : RestDocsTest("papers") {
-
-    @MockkBean
-    private lateinit var userDetailsService: UserDetailsService
 
     @MockkBean
     private lateinit var service: MarkAsVerifiedUseCase

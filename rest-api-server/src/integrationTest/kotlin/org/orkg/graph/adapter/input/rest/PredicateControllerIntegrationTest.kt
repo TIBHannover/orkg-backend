@@ -9,27 +9,23 @@ import org.orkg.createResource
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
 @Transactional
-@Import(MockUserDetailsService::class)
 internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
 
     @Autowired
@@ -100,7 +96,7 @@ internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
     }
 
     @Test
-    @WithMockUser
+    @TestWithMockUser
     fun edit() {
         val predicate = service.createPredicate(label = "knows")
 
@@ -127,7 +123,7 @@ internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
     }
 
     @Test
-    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun deletePredicateNotFound() {
         delete("/api/predicates/{id}", "NONEXISTENT")
             .perform()
@@ -135,9 +131,9 @@ internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
     }
 
     @Test
-    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun deletePredicateSuccess() {
-        val id = service.createPredicate(label = "bye bye", contributorId = ContributorId(MockUserId.ADMIN))
+        val id = service.createPredicate(label = "bye bye", contributorId = ContributorId(MockUserId.USER))
 
         documentedDeleteRequestTo("/api/predicates/{id}", id)
             .perform()
@@ -153,7 +149,7 @@ internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
     }
 
     @Test
-    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun deletePredicateForbidden() {
         val subject = resourceService.createResource(label = "subject")
         val `object` = resourceService.createResource(label = "child")

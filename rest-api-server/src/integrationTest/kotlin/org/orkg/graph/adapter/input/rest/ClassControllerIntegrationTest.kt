@@ -7,12 +7,10 @@ import org.junit.jupiter.api.Test
 import org.orkg.createClass
 import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.input.ClassUseCases
-import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
@@ -24,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
 @Transactional
-@Import(MockUserDetailsService::class)
 internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
 
     @Autowired

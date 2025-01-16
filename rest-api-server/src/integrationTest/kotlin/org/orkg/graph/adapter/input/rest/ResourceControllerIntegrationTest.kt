@@ -16,15 +16,14 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.annotations.TestWithMockAdmin
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.createdResponseHeaders
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
@@ -33,7 +32,6 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -41,7 +39,6 @@ import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
 @Transactional
-@Import(MockUserDetailsService::class)
 @TestPropertySource(properties = ["orkg.features.formatted_labels=false"])
 internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
 
@@ -226,7 +223,7 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
     }
 
     @Test
-    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockAdmin
     fun deleteResourceNotFound() {
         delete("/api/resources/{id}", "NONEXISTENT")
             .perform()
@@ -234,7 +231,7 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
     }
 
     @Test
-    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockAdmin
     fun deleteResourceSuccess() {
         val id = service.createResource(label = "bye bye", userId = ContributorId(MockUserId.ADMIN))
 
@@ -252,7 +249,7 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
     }
 
     @Test
-    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockAdmin
     fun deleteResourceForbidden() {
         val subject = service.createResource(label = "parent")
         val `object` = service.createResource(label = "son")

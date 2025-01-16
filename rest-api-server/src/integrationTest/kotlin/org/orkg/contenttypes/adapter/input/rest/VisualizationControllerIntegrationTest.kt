@@ -23,19 +23,16 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
 @Transactional
-@Import(MockUserDetailsService::class)
 internal class VisualizationControllerIntegrationTest : RestDocsTest("visualizations") {
 
     @Autowired
@@ -144,7 +141,7 @@ internal class VisualizationControllerIntegrationTest : RestDocsTest("visualizat
     }
 
     @Test
-    @WithUserDetails(userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun create() {
         post("/api/visualizations")
             .content(createVisualizationJson)

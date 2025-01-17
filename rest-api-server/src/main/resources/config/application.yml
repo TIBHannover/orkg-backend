@@ -12,9 +12,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8888/realms/orkg
-coffee-boots:
   cache:
-    basic-spec: maximumSize=5000,expireAfterAccess=10m,recordStats
+    type: caffeine
+    caffeine:
+      spec: maximumSize=5000,expireAfterAccess=10m,recordStats
 orkg:
   export:
     rdf:

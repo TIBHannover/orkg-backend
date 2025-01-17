@@ -207,8 +207,7 @@ dependencies {
     runtimeOnly("commons-fileupload:commons-fileupload")
     // Caching
     runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
-    runtimeOnly("com.github.ben-manes.caffeine:caffeine")
-    implementation("io.github.stepio.coffee-boots:coffee-boots")
+    implementation("com.github.ben-manes.caffeine:caffeine")
     // Data Faker
     implementation("net.datafaker:datafaker")
     // Monitoring

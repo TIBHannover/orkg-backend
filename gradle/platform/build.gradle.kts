@@ -37,7 +37,6 @@ dependencies {
     api("org.jbibtex:jbibtex:1.0.20")
     api("net.datafaker:datafaker:1.7.0")
     api("commons-fileupload:commons-fileupload:1.5")
-    api("io.github.stepio.coffee-boots:coffee-boots:3.0.0")
 
     // Declare constraints on all components that need alignment
     constraints {

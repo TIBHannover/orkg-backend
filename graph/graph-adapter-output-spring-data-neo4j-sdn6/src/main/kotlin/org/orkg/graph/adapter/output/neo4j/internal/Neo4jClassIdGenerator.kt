@@ -5,12 +5,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class Neo4jClassIdGenerator(
-    private val repository: Neo4jClassIdCounterRepository
-) : RepositoryBasedIdGenerator<ThingId, Neo4jClassIdCounter>() {
-
-    override fun createCounterNode() = Neo4jClassIdCounter()
-
+    repository: Neo4jIdCounterRepository
+) : RepositoryBasedIdGenerator<ThingId>("ClassId", repository) {
     override fun idFromLong(value: Long) = ThingId("C$value")
-
-    override fun repository() = repository
 }

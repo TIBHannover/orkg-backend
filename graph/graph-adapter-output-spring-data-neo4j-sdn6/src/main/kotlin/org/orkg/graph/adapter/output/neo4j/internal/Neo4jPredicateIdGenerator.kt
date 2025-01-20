@@ -5,12 +5,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class Neo4jPredicateIdGenerator(
-    private val repository: Neo4jPredicateIdCounterRepository
-) : RepositoryBasedIdGenerator<ThingId, Neo4jPredicateIdCounter>() {
-
-    override fun createCounterNode() = Neo4jPredicateIdCounter()
-
+    repository: Neo4jIdCounterRepository
+) : RepositoryBasedIdGenerator<ThingId>("PredicateId", repository) {
     override fun idFromLong(value: Long) = ThingId("P$value")
-
-    override fun repository() = repository
 }

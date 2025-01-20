@@ -1,24 +1,16 @@
 package org.orkg.graph.adapter.output.neo4j.internal
 
 // T should extend identity class?
-abstract class RepositoryBasedIdGenerator<T, C : Neo4jCounter> : IdentityGenerator<T> {
-    abstract fun createCounterNode(): C
-
+abstract class RepositoryBasedIdGenerator<T>(
+    private val id: String,
+    private val repository: Neo4jIdCounterRepository
+) : IdentityGenerator<T> {
     abstract fun idFromLong(value: Long): T
-
-    abstract fun repository(): Neo4jIdCounterRepository<C>
 
     private var currentBlock: Block? = null
 
-    private val node: C by lazy {
-        val nodes = repository().findAll()
-        require(nodes.size <= 1) {
-            "Multiple nodes of type _ResourceIdCounter found, but only one should be present."
-        }
-        if (nodes.isEmpty())
-            createInitialCounterNode()
-        else
-            nodes.first()
+    private val node: Neo4jIdCounter by lazy {
+        repository.findById(id).orElseGet { Neo4jIdCounter().apply { id = "Class" } }
     }
 
     @Synchronized
@@ -28,12 +20,10 @@ abstract class RepositoryBasedIdGenerator<T, C : Neo4jCounter> : IdentityGenerat
         return idFromLong(currentBlock!!.next())
     }
 
-    private fun createInitialCounterNode() = repository().save(createCounterNode())
-
     private fun nextBlock(): Block {
         val lower = node.counter
         node.counter = lower + 1_000L
-        val upper = repository().save(node).counter
+        val upper = repository.save(node).counter
         return Block(lower until upper)
     }
 }

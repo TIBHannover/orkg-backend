@@ -9,8 +9,8 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.StatementRepository
 
 class TemplateInstancePropertyValueUpdater(
@@ -20,7 +20,7 @@ class TemplateInstancePropertyValueUpdater(
 
     constructor(
         classService: ClassUseCases,
-        resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         literalService: LiteralUseCases,
         predicateService: PredicateUseCases,
@@ -29,7 +29,7 @@ class TemplateInstancePropertyValueUpdater(
     ) : this(
         SubgraphCreator(
             classService = classService,
-            resourceService = resourceService,
+            unsafeResourceUseCases = unsafeResourceUseCases,
             statementService = statementService,
             literalService = literalService,
             predicateService = predicateService,

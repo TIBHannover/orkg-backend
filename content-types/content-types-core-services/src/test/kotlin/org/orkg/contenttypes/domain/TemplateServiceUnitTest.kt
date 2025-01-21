@@ -27,6 +27,7 @@ import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
@@ -45,6 +46,7 @@ internal class TemplateServiceUnitTest : MockkBaseTest {
     private val classRepository: ClassRepository = mockk()
     private val predicateRepository: PredicateRepository = mockk()
     private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
@@ -57,6 +59,7 @@ internal class TemplateServiceUnitTest : MockkBaseTest {
         classRepository = classRepository,
         predicateRepository = predicateRepository,
         resourceService = resourceService,
+        unsafeResourceUseCases = unsafeResourceUseCases,
         literalService = literalService,
         statementService = statementService,
         observatoryRepository = observatoryRepository,

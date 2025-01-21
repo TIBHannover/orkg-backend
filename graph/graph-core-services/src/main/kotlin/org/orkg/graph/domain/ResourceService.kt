@@ -1,7 +1,6 @@
 package org.orkg.graph.domain
 
 import dev.forkhandles.values.ofOrNull
-import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import kotlin.collections.List
@@ -13,6 +12,7 @@ import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
@@ -31,7 +31,7 @@ class ResourceService(
     private val classRepository: ClassRepository,
     private val contributorRepository: ContributorRepository,
     private val thingRepository: ThingRepository,
-    private val clock: Clock,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
 ) : ResourceUseCases {
     @Transactional(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
@@ -40,23 +40,7 @@ class ResourceService(
         Label.ofOrNull(command.label) ?: throw InvalidLabel()
         validateClasses(command.classes)
         command.id?.also { id -> repository.findById(id).ifPresent { throw ResourceAlreadyExists(id) } }
-        return createUnsafe(command)
-    }
-
-    override fun createUnsafe(command: CreateResourceUseCase.CreateCommand): ThingId {
-        val resource = Resource(
-            id = command.id ?: repository.nextIdentity(),
-            label = command.label,
-            classes = command.classes,
-            extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
-            createdAt = OffsetDateTime.now(clock),
-            createdBy = command.contributorId ?: ContributorId.UNKNOWN,
-            observatoryId = command.observatoryId ?: ObservatoryId.UNKNOWN,
-            organizationId = command.organizationId ?: OrganizationId.UNKNOWN,
-            modifiable = command.modifiable
-        )
-        repository.save(resource)
-        return resource.id
+        return unsafeResourceUseCases.create(command)
     }
 
     override fun findAll(
@@ -169,7 +153,7 @@ class ResourceService(
             if (!contributor.isCurator) throw NeitherOwnerNorCurator(contributorId)
         }
 
-        repository.deleteById(resource.id)
+        unsafeResourceUseCases.delete(id, contributorId)
     }
 
     override fun removeAll() = repository.deleteAll()

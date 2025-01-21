@@ -19,16 +19,16 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
     private val abstractLiteratureListSectionCreator =
-        AbstractLiteratureListSectionCreator(statementService, resourceService, literalService)
+        AbstractLiteratureListSectionCreator(statementService, unsafeResourceUseCases, literalService)
 
     @Test
     fun `Given a list section definition, when creating a section entry with a description, it returns success`() {
@@ -43,7 +43,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         val descriptionId = ThingId("L1")
 
         every {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = "",
                     classes = setOf(Classes.listSection),
@@ -52,7 +52,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns sectionId
         every {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = "Entry",
                     classes = setOf(Classes.listSection),
@@ -89,7 +89,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         abstractLiteratureListSectionCreator.create(contributorId, section)
 
         verify(exactly = 1) {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = "",
                     classes = setOf(Classes.listSection),
@@ -98,7 +98,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = "Entry",
                     classes = setOf(Classes.listSection),
@@ -151,7 +151,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         val entryId = ThingId("R456")
 
         every {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = "",
                     classes = setOf(Classes.listSection),
@@ -160,7 +160,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns sectionId
         every {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = "Entry",
                     classes = setOf(Classes.listSection),
@@ -188,7 +188,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         abstractLiteratureListSectionCreator.create(contributorId, section)
 
         verify(exactly = 1) {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = "",
                     classes = setOf(Classes.listSection),
@@ -197,7 +197,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = "Entry",
                     classes = setOf(Classes.listSection),
@@ -232,7 +232,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         val textId = ThingId("R789")
 
         every {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = section.heading,
                     classes = setOf(Classes.textSection),
@@ -277,7 +277,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         abstractLiteratureListSectionCreator.create(contributorId, section)
 
         verify(exactly = 1) {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = section.heading,
                     classes = setOf(Classes.textSection),

@@ -11,6 +11,7 @@ import org.orkg.contenttypes.input.LiteratureListTextSectionDefinition
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class LiteratureListSectionUpdater(
     private val abstractLiteratureListSectionUpdater: AbstractLiteratureListSectionUpdater
@@ -18,8 +19,9 @@ class LiteratureListSectionUpdater(
     constructor(
         literalService: LiteralUseCases,
         resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
-    ) : this(AbstractLiteratureListSectionUpdater(literalService, resourceService, statementService))
+    ) : this(AbstractLiteratureListSectionUpdater(literalService, resourceService, unsafeResourceUseCases, statementService))
 
     override fun invoke(
         command: UpdateLiteratureListSectionCommand,

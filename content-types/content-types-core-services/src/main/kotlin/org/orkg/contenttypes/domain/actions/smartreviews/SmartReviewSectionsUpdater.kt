@@ -7,6 +7,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class SmartReviewSectionsUpdater(
     private val abstractSmartReviewSectionCreator: AbstractSmartReviewSectionCreator,
@@ -16,9 +17,10 @@ class SmartReviewSectionsUpdater(
     constructor(
         literalService: LiteralUseCases,
         resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases
     ) : this(
-        AbstractSmartReviewSectionCreator(statementService, resourceService, literalService),
+        AbstractSmartReviewSectionCreator(statementService, unsafeResourceUseCases, literalService),
         AbstractSmartReviewSectionDeleter(statementService, resourceService),
         StatementCollectionPropertyUpdater(literalService, statementService)
     )

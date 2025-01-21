@@ -54,6 +54,7 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
@@ -73,6 +74,7 @@ class RosettaStoneTemplateService(
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
     private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val classService: ClassUseCases,
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
@@ -115,12 +117,12 @@ class RosettaStoneTemplateService(
             RosettaStoneTemplatePropertiesCreateValidator(predicateRepository, classRepository),
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
-            RosettaStoneTemplateResourceCreator(resourceService),
+            RosettaStoneTemplateResourceCreator(unsafeResourceUseCases),
             RosettaStoneTemplateTargetClassCreator(classService, statementService, literalService),
             RosettaStoneTemplateDescriptionCreator(literalService, statementService),
             RosettaStoneTemplateFormattedLabelCreator(literalService, statementService),
             RosettaStoneTemplateClosedCreator(literalService, statementService),
-            RosettaStoneTemplatePropertiesCreator(resourceService, literalService, statementService)
+            RosettaStoneTemplatePropertiesCreator(unsafeResourceUseCases, literalService, statementService)
         )
         return steps.execute(command, CreateRosettaStoneTemplateState()).rosettaStoneTemplateId!!
     }
@@ -140,7 +142,7 @@ class RosettaStoneTemplateService(
             RosettaStoneTemplateDescriptionUpdater(literalService, statementService),
             RosettaStoneTemplateFormattedLabelUpdater(literalService, statementService),
             RosettaStoneTemplateExampleUsageUpdater(literalService, statementService),
-            RosettaStoneTemplatePropertiesUpdater(literalService, resourceService, statementService),
+            RosettaStoneTemplatePropertiesUpdater(literalService, resourceService, unsafeResourceUseCases, statementService),
         )
         steps.execute(command, UpdateRosettaStoneTemplateState())
     }

@@ -8,6 +8,7 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class AbstractTemplatePropertiesUpdater(
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator,
@@ -17,9 +18,10 @@ class AbstractTemplatePropertiesUpdater(
     constructor(
         literalService: LiteralUseCases,
         resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
     ) : this(
-        AbstractTemplatePropertyCreator(resourceService, literalService, statementService),
+        AbstractTemplatePropertyCreator(unsafeResourceUseCases, literalService, statementService),
         AbstractTemplatePropertyUpdater(literalService, resourceService, statementService),
         AbstractTemplatePropertyDeleter(resourceService, statementService)
     )

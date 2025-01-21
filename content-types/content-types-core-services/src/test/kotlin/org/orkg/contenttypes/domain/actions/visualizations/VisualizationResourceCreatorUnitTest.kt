@@ -12,12 +12,12 @@ import org.orkg.contenttypes.domain.actions.VisualizationState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateVisualizationCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 internal class VisualizationResourceCreatorUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val visualizationResourceCreator = VisualizationResourceCreator(resourceService)
+    private val visualizationResourceCreator = VisualizationResourceCreator(unsafeResourceUseCases)
 
     @Test
     fun `Given a visualization create command, it crates a new visualization resource`() {
@@ -34,7 +34,7 @@ internal class VisualizationResourceCreatorUnitTest : MockkBaseTest {
         )
         val id = ThingId("R123")
 
-        every { resourceService.createUnsafe(resourceCreateCommand) } returns id
+        every { unsafeResourceUseCases.create(resourceCreateCommand) } returns id
 
         val result = visualizationResourceCreator(command, state)
 
@@ -43,6 +43,6 @@ internal class VisualizationResourceCreatorUnitTest : MockkBaseTest {
             it.visualizationId shouldBe id
         }
 
-        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
     }
 }

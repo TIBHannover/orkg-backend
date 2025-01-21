@@ -9,15 +9,15 @@ import org.orkg.contenttypes.domain.ids
 import org.orkg.contenttypes.input.PublicationInfoDefinition
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
 class PaperVersionCreator(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
-    private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases
@@ -45,13 +45,13 @@ class PaperVersionCreator(
         )
         val steps = listOf(
             PaperAuthorCreateValidator(resourceRepository, statementRepository),
-            PaperSnapshotResourceCreator(resourceService),
+            PaperSnapshotResourceCreator(unsafeResourceUseCases),
             PaperIdentifierCreator(statementService, literalService),
             PaperSDGCreator(literalService, statementService),
             PaperMentioningsCreator(literalService, statementService),
-            PaperAuthorCreator(resourceService, statementService, literalService, listService),
+            PaperAuthorCreator(unsafeResourceUseCases, statementService, literalService, listService),
             PaperResearchFieldCreator(literalService, statementService),
-            PaperPublicationInfoCreator(resourceService, resourceRepository, statementService, literalService)
+            PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, statementService, literalService)
         )
         return state.copy(paperVersionId = steps.execute(createPaperCommand, CreatePaperState()).paperId!!)
     }

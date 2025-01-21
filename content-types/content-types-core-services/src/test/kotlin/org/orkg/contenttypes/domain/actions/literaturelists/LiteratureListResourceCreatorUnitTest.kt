@@ -12,12 +12,12 @@ import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 internal class LiteratureListResourceCreatorUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val literatureListResourceCreator = LiteratureListResourceCreator(resourceService)
+    private val literatureListResourceCreator = LiteratureListResourceCreator(unsafeResourceUseCases)
 
     @Test
     fun `Given a literature list create command, it crates a new literature list resource`() {
@@ -34,7 +34,7 @@ internal class LiteratureListResourceCreatorUnitTest : MockkBaseTest {
         )
         val id = ThingId("R123")
 
-        every { resourceService.createUnsafe(resourceCreateCommand) } returns id
+        every { unsafeResourceUseCases.create(resourceCreateCommand) } returns id
 
         val result = literatureListResourceCreator(command, state)
 
@@ -43,6 +43,6 @@ internal class LiteratureListResourceCreatorUnitTest : MockkBaseTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
     }
 }

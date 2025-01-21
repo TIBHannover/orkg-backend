@@ -12,12 +12,12 @@ import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 internal class PaperResourceCreatorUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val paperResourceCreator = PaperResourceCreator(resourceService)
+    private val paperResourceCreator = PaperResourceCreator(unsafeResourceUseCases)
 
     @Test
     fun `Given a paper create command, it crates a new paper resource`() {
@@ -34,7 +34,7 @@ internal class PaperResourceCreatorUnitTest : MockkBaseTest {
         )
         val id = ThingId("R123")
 
-        every { resourceService.createUnsafe(resourceCreateCommand) } returns id
+        every { unsafeResourceUseCases.create(resourceCreateCommand) } returns id
 
         val result = paperResourceCreator(command, state)
 
@@ -46,6 +46,6 @@ internal class PaperResourceCreatorUnitTest : MockkBaseTest {
             it.paperId shouldBe id
         }
 
-        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
     }
 }

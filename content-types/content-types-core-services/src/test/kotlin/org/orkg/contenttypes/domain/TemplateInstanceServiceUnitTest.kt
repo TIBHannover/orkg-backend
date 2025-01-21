@@ -23,8 +23,8 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
@@ -42,7 +42,7 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val thingRepository: ThingRepository = mockk()
     private val classService: ClassUseCases = mockk()
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val predicateService: PredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
@@ -56,7 +56,7 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
         statementService = statementService,
         thingRepository = thingRepository,
         classService = classService,
-        resourceService = resourceService,
+        unsafeResourceUseCases = unsafeResourceUseCases,
         literalService = literalService,
         predicateService = predicateService,
         listService = listService,

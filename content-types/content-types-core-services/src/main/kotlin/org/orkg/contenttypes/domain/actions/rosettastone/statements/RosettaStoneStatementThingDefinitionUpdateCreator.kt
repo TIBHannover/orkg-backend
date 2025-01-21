@@ -1,15 +1,15 @@
 package org.orkg.contenttypes.domain.actions.rosettastone.statements
 
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.SubgraphCreator
+import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction.State
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.StatementRepository
 
 class RosettaStoneStatementThingDefinitionUpdateCreator(
@@ -17,7 +17,7 @@ class RosettaStoneStatementThingDefinitionUpdateCreator(
 ) : UpdateRosettaStoneStatementAction {
     constructor(
         classService: ClassUseCases,
-        resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         literalService: LiteralUseCases,
         predicateService: PredicateUseCases,
@@ -26,7 +26,7 @@ class RosettaStoneStatementThingDefinitionUpdateCreator(
     ) : this(
         SubgraphCreator(
             classService,
-            resourceService,
+            unsafeResourceUseCases,
             statementService,
             literalService,
             predicateService,

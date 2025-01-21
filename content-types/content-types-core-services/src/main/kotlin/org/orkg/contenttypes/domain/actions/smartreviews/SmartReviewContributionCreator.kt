@@ -5,15 +5,15 @@ import org.orkg.contenttypes.domain.actions.smartreviews.CreateSmartReviewAction
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class SmartReviewContributionCreator(
-    private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val statementService: StatementUseCases
 ) : CreateSmartReviewAction {
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
-        val contributionId = resourceService.createUnsafe(
+        val contributionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 label = command.title,
                 classes = setOf(Classes.contribution, Classes.contributionSmartReview),

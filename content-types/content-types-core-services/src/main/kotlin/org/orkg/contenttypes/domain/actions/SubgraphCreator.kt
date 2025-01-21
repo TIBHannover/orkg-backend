@@ -17,14 +17,14 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateListUseCase
 import org.orkg.graph.output.StatementRepository
 
 class SubgraphCreator(
     private val classService: ClassUseCases,
-    private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
@@ -85,7 +85,7 @@ class SubgraphCreator(
     ) {
         thingDefinitions.resources.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
-                lookup[it.key] = resourceService.createUnsafe(
+                lookup[it.key] = unsafeResourceUseCases.create(
                     CreateResourceUseCase.CreateCommand(
                         label = it.value.label,
                         classes = it.value.classes,

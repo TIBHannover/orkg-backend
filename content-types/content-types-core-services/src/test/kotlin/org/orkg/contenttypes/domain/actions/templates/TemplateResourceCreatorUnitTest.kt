@@ -12,12 +12,12 @@ import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 internal class TemplateResourceCreatorUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val templateResourceCreator = TemplateResourceCreator(resourceService)
+    private val templateResourceCreator = TemplateResourceCreator(unsafeResourceUseCases)
 
     @Test
     fun `Given a template create command, it crates a new template resource`() {
@@ -34,7 +34,7 @@ internal class TemplateResourceCreatorUnitTest : MockkBaseTest {
         )
         val id = ThingId("Template")
 
-        every { resourceService.createUnsafe(resourceCreateCommand) } returns id
+        every { unsafeResourceUseCases.create(resourceCreateCommand) } returns id
 
         val result = templateResourceCreator(command, state)
 
@@ -42,6 +42,6 @@ internal class TemplateResourceCreatorUnitTest : MockkBaseTest {
             it.templateId shouldBe id
         }
 
-        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
     }
 }

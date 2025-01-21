@@ -9,15 +9,15 @@ import org.orkg.contenttypes.domain.ids
 import org.orkg.contenttypes.output.ComparisonPublishedRepository
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 
 class ComparisonVersionCreator(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
-    private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
@@ -43,9 +43,9 @@ class ComparisonVersionCreator(
         )
         val steps = listOf(
             ComparisonAuthorCreateValidator(resourceRepository, statementRepository),
-            ComparisonVersionResourceCreator(resourceService),
+            ComparisonVersionResourceCreator(unsafeResourceUseCases),
             ComparisonDescriptionCreator(literalService, statementService),
-            ComparisonAuthorCreator(resourceService, statementService, literalService, listService),
+            ComparisonAuthorCreator(unsafeResourceUseCases, statementService, literalService, listService),
             ComparisonSDGCreator(literalService, statementService),
             ComparisonResearchFieldCreator(literalService, statementService),
             ComparisonReferencesCreator(literalService, statementService),

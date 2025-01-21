@@ -19,16 +19,16 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
 
     private val abstractTemplatePropertyCreator =
-        AbstractTemplatePropertyCreator(resourceService, literalService, statementService)
+        AbstractTemplatePropertyCreator(unsafeResourceUseCases, literalService, statementService)
 
     @Test
     fun `Given an untyped template property definition, when creating, it returns success`() {
@@ -495,7 +495,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         orderLiteralId: ThingId,
     ) {
         every {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = property.label,
                     classes = setOf(Classes.propertyShape),
@@ -619,7 +619,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         orderLiteralId: ThingId,
     ) {
         verify(exactly = 1) {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = property.label,
                     classes = setOf(Classes.propertyShape),

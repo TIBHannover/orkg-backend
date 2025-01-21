@@ -33,8 +33,8 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateListUseCase
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -46,7 +46,7 @@ import org.orkg.testing.pageOf
 internal class SubgraphCreatorUnitTest : MockkBaseTest {
     private val statementRepository: StatementRepository = mockk()
     private val classService: ClassUseCases = mockk()
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val predicateService: PredicateUseCases = mockk()
@@ -54,7 +54,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
 
     private val subgraphCreator = SubgraphCreator(
         classService = classService,
-        resourceService = resourceService,
+        unsafeResourceUseCases = unsafeResourceUseCases,
         statementService = statementService,
         literalService = literalService,
         predicateService = predicateService,
@@ -77,7 +77,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,
@@ -96,7 +96,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,
@@ -516,7 +516,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val literal = ThingId("L1")
 
         every {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,
@@ -564,7 +564,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = resourceDefinition.label,
                     classes = resourceDefinition.classes,

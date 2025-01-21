@@ -16,6 +16,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class AbstractLiteratureListSectionUpdater(
@@ -27,11 +28,12 @@ class AbstractLiteratureListSectionUpdater(
     constructor(
         literalService: LiteralUseCases,
         resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
     ) : this(
         statementService,
         resourceService,
-        AbstractLiteratureListSectionCreator(statementService, resourceService, literalService),
+        AbstractLiteratureListSectionCreator(statementService, unsafeResourceUseCases, literalService),
         SingleStatementPropertyUpdater(literalService, statementService)
     )
 

@@ -13,11 +13,11 @@ import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 abstract class AuthorCreator(
-    protected val resourceService: ResourceUseCases,
+    protected val unsafeResourceUseCases: UnsafeResourceUseCases,
     protected val statementService: StatementUseCases,
     protected val literalService: LiteralUseCases,
     protected val listService: ListUseCases
@@ -62,7 +62,7 @@ abstract class AuthorCreator(
         )
 
     private fun createResourceAuthor(author: Author, contributorId: ContributorId): ThingId {
-        val authorId = resourceService.createUnsafe(
+        val authorId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 label = author.name,
                 classes = setOf(Classes.author),

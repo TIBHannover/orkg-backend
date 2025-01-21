@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.domain
 
 import dev.forkhandles.values.ofOrNull
-import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.orkg.common.ContributorId
@@ -84,6 +83,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -103,6 +103,7 @@ class ComparisonService(
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
     private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
@@ -112,7 +113,6 @@ class ComparisonService(
     private val comparisonRepository: ComparisonRepository,
     private val comparisonTableRepository: ComparisonTableRepository,
     private val comparisonPublishedRepository: ComparisonPublishedRepository,
-    private val clock: Clock = Clock.systemDefaultZone(),
     @Value("\${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/"
 ) : ComparisonUseCases, RetrieveComparisonContributionsUseCase {
@@ -204,9 +204,9 @@ class ComparisonService(
             OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }),
             ComparisonAuthorCreateValidator(resourceRepository, statementRepository),
-            ComparisonResourceCreator(resourceService),
+            ComparisonResourceCreator(unsafeResourceUseCases),
             ComparisonDescriptionCreator(literalService, statementService),
-            ComparisonAuthorCreator(resourceService, statementService, literalService, listService),
+            ComparisonAuthorCreator(unsafeResourceUseCases, statementService, literalService, listService),
             ComparisonSDGCreator(literalService, statementService),
             ComparisonResearchFieldCreator(literalService, statementService),
             ComparisonReferencesCreator(literalService, statementService),
@@ -222,7 +222,7 @@ class ComparisonService(
         resourceRepository.findById(command.comparisonId)
             .filter { Classes.comparison in it.classes }
             .orElseThrow { ComparisonNotFound(command.comparisonId) }
-        val resourceId = resourceService.createUnsafe(
+        val resourceId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = command.label,
@@ -282,7 +282,7 @@ class ComparisonService(
         resourceRepository.findById(command.comparisonId)
             .filter { Classes.comparison in it.classes }
             .orElseThrow { ComparisonNotFound(command.comparisonId) }
-        val figureId = resourceService.createUnsafe(
+        val figureId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = command.label,
@@ -340,7 +340,7 @@ class ComparisonService(
             ComparisonResourceUpdater(resourceService),
             ComparisonDescriptionUpdater(literalService, statementService),
             ComparisonResearchFieldUpdater(literalService, statementService),
-            ComparisonAuthorUpdater(resourceService, statementService, literalService, listService, listRepository),
+            ComparisonAuthorUpdater(unsafeResourceUseCases, statementService, literalService, listService, listRepository),
             ComparisonSDGUpdater(literalService, statementService),
             ComparisonContributionUpdater(literalService, statementService),
             ComparisonReferencesUpdater(literalService, statementService),
@@ -389,7 +389,7 @@ class ComparisonService(
     override fun publish(command: PublishComparisonCommand): ThingId {
         val steps = listOf<Action<PublishComparisonCommand, PublishComparisonState>>(
             ComparisonPublishableValidator(this, comparisonTableRepository),
-            ComparisonVersionCreator(resourceRepository, statementRepository, resourceService, statementService, literalService, listService, comparisonPublishedRepository),
+            ComparisonVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, statementService, literalService, listService, comparisonPublishedRepository),
             ComparisonVersionHistoryUpdater(statementService, resourceService),
             ComparisonVersionDoiPublisher(statementService, literalService, comparisonRepository, doiService, comparisonPublishBaseUri)
         )

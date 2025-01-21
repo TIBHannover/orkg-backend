@@ -12,12 +12,12 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ResourceRepository
 
 abstract class PublicationInfoCreator(
-    protected val resourceService: ResourceUseCases,
+    protected val unsafeResourceUseCases: UnsafeResourceUseCases,
     protected val resourceRepository: ResourceRepository,
     protected val statementService: StatementUseCases,
     protected val literalService: LiteralUseCases
@@ -86,7 +86,7 @@ abstract class PublicationInfoCreator(
             includeClasses = setOf(Classes.venue),
             label = SearchString.of(publishedIn, exactMatch = true),
             pageable = PageRequests.SINGLE
-        ).content.singleOrNull()?.id ?: resourceService.createUnsafe(
+        ).content.singleOrNull()?.id ?: unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 label = publishedIn,
                 classes = setOf(Classes.venue),

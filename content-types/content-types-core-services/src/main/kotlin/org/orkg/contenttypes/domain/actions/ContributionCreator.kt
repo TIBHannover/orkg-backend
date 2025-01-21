@@ -14,29 +14,29 @@ import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.StatementRepository
 
 class ContributionCreator(
-    private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val statementService: StatementUseCases,
     private val subgraphCreator: SubgraphCreator
 ) {
     constructor(
         classService: ClassUseCases,
-        resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         literalService: LiteralUseCases,
         predicateService: PredicateUseCases,
         statementRepository: StatementRepository,
         listService: ListUseCases,
     ) : this(
-        resourceService = resourceService,
+        unsafeResourceUseCases = unsafeResourceUseCases,
         statementService = statementService,
         subgraphCreator = SubgraphCreator(
             classService = classService,
-            resourceService = resourceService,
+            unsafeResourceUseCases = unsafeResourceUseCases,
             statementService = statementService,
             literalService = literalService,
             predicateService = predicateService,
@@ -56,7 +56,7 @@ class ContributionCreator(
     ): List<ThingId> {
         val contributionLookup = mutableMapOf<String, ThingId>()
         val contributions = contributionDefinitions.mapIndexed { index, contribution ->
-            val contributionId = resourceService.createUnsafe(
+            val contributionId = unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = contribution.label,
                     classes = contribution.classes + Classes.contribution,

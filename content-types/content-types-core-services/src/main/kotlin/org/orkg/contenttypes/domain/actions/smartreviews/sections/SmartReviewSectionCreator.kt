@@ -7,8 +7,8 @@ import org.orkg.contenttypes.domain.actions.smartreviews.sections.CreateSmartRev
 import org.orkg.contenttypes.input.SmartReviewSectionDefinition
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class SmartReviewSectionCreator(
     private val statementService: StatementUseCases,
@@ -17,11 +17,11 @@ class SmartReviewSectionCreator(
 ) : CreateSmartReviewSectionAction {
     constructor(
         literalService: LiteralUseCases,
-        resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases
     ) : this(
         statementService,
-        AbstractSmartReviewSectionCreator(statementService, resourceService, literalService),
+        AbstractSmartReviewSectionCreator(statementService, unsafeResourceUseCases, literalService),
         StatementCollectionPropertyUpdater(literalService, statementService)
     )
 

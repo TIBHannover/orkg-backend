@@ -27,8 +27,8 @@ import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.Page
@@ -44,7 +44,7 @@ class VisualizationService(
     private val statementRepository: StatementRepository,
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
-    private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val listService: ListUseCases,
@@ -86,9 +86,9 @@ class VisualizationService(
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
             VisualizationAuthorValidator(resourceRepository, statementRepository),
-            VisualizationResourceCreator(resourceService),
+            VisualizationResourceCreator(unsafeResourceUseCases),
             VisualizationDescriptionCreator(literalService, statementService),
-            VisualizationAuthorCreator(resourceService, statementService, literalService, listService)
+            VisualizationAuthorCreator(unsafeResourceUseCases, statementService, literalService, listService)
         )
         return steps.execute(command, VisualizationState()).visualizationId!!
     }

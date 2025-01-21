@@ -4,8 +4,8 @@ import org.orkg.contenttypes.domain.actions.CreateLiteratureListCommand
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class LiteratureListSectionsCreator(
     private val statementService: StatementUseCases,
@@ -13,9 +13,9 @@ class LiteratureListSectionsCreator(
 ) : CreateLiteratureListAction {
     constructor(
         literalService: LiteralUseCases,
-        resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases
-    ) : this(statementService, AbstractLiteratureListSectionCreator(statementService, resourceService, literalService))
+    ) : this(statementService, AbstractLiteratureListSectionCreator(statementService, unsafeResourceUseCases, literalService))
 
     override fun invoke(
         command: CreateLiteratureListCommand,

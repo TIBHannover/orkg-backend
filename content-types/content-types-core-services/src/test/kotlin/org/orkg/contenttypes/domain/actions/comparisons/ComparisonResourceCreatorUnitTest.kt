@@ -12,12 +12,12 @@ import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 internal class ComparisonResourceCreatorUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val comparisonResourceCreator = ComparisonResourceCreator(resourceService)
+    private val comparisonResourceCreator = ComparisonResourceCreator(unsafeResourceUseCases)
 
     @Test
     fun `Given a comparison create command, it crates a new comparison resource`() {
@@ -34,7 +34,7 @@ internal class ComparisonResourceCreatorUnitTest : MockkBaseTest {
         )
         val id = ThingId("R123")
 
-        every { resourceService.createUnsafe(resourceCreateCommand) } returns id
+        every { unsafeResourceUseCases.create(resourceCreateCommand) } returns id
 
         val result = comparisonResourceCreator(command, state)
 
@@ -43,6 +43,6 @@ internal class ComparisonResourceCreatorUnitTest : MockkBaseTest {
             it.comparisonId shouldBe id
         }
 
-        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
     }
 }

@@ -12,12 +12,12 @@ import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 internal class SmartReviewResourceCreatorUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val smartReviewResourceCreator = SmartReviewResourceCreator(resourceService)
+    private val smartReviewResourceCreator = SmartReviewResourceCreator(unsafeResourceUseCases)
 
     @Test
     fun `Given a smart review create command, it crates a new smart review resource`() {
@@ -34,7 +34,7 @@ internal class SmartReviewResourceCreatorUnitTest : MockkBaseTest {
         )
         val id = ThingId("R123")
 
-        every { resourceService.createUnsafe(resourceCreateCommand) } returns id
+        every { unsafeResourceUseCases.create(resourceCreateCommand) } returns id
 
         val result = smartReviewResourceCreator(command, state)
 
@@ -43,6 +43,6 @@ internal class SmartReviewResourceCreatorUnitTest : MockkBaseTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
     }
 }

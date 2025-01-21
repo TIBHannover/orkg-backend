@@ -5,20 +5,20 @@ import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ListRepository
 
 class PaperAuthorUpdater(
     private val authorUpdater: AuthorUpdater
 ) : UpdatePaperAction {
     constructor(
-        resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
         literalService: LiteralUseCases,
         listService: ListUseCases,
         listRepository: ListRepository
-    ) : this(AuthorUpdater(resourceService, statementService, literalService, listService, listRepository))
+    ) : this(AuthorUpdater(unsafeResourceUseCases, statementService, literalService, listService, listRepository))
 
     override operator fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
         if (command.authors != null && command.authors != state.paper!!.authors) {

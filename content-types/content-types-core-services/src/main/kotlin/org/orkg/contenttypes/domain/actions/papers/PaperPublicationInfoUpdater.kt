@@ -11,16 +11,16 @@ import org.orkg.contenttypes.domain.wherePredicate
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ResourceRepository
 
 class PaperPublicationInfoUpdater(
-    resourceService: ResourceUseCases,
+    unsafeResourceUseCases: UnsafeResourceUseCases,
     resourceRepository: ResourceRepository,
     statementService: StatementUseCases,
     literalService: LiteralUseCases
-) : PublicationInfoCreator(resourceService, resourceRepository, statementService, literalService), UpdatePaperAction {
+) : PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, statementService, literalService), UpdatePaperAction {
     override fun invoke(command: UpdatePaperCommand, state: UpdatePaperState): UpdatePaperState {
         if (command.publicationInfo != null) {
             if (state.paper?.publicationInfo?.publishedMonth != command.publicationInfo!!.publishedMonth) {

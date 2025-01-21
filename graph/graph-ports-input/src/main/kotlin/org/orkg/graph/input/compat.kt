@@ -13,9 +13,10 @@ interface PredicateUseCases : CreatePredicateUseCase, DeletePredicateUseCase,
     UpdatePredicateUseCase,
     RetrievePredicateUseCase
 
-interface ResourceUseCases : CreateResourceUseCase, RetrieveResourceUseCase,
-    UpdateResourceUseCase,
-    DeleteResourceUseCase, OtherResourceUseCases
+interface UnsafeResourceUseCases : CreateResourceUseCase, UpdateResourceUseCase, DeleteResourceUseCase
+
+interface ResourceUseCases : CreateResourceUseCase, UpdateResourceUseCase, DeleteResourceUseCase, RetrieveResourceUseCase,
+    OtherResourceUseCases
 
 interface StatementUseCases : CreateStatementUseCase,
     RetrieveStatementUseCase, UpdateStatementUseCase,

@@ -15,12 +15,12 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class AbstractSmartReviewSectionCreator(
     private val statementService: StatementUseCases,
-    private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val literalService: LiteralUseCases,
     private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator = StatementCollectionPropertyCreator(literalService, statementService)
 ) {
@@ -41,7 +41,7 @@ class AbstractSmartReviewSectionCreator(
         contributorId: ContributorId,
         section: SmartReviewComparisonSectionDefinition
     ): ThingId {
-        val sectionId = resourceService.createUnsafe(
+        val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 label = section.heading,
                 classes = setOf(Classes.comparisonSection),
@@ -63,7 +63,7 @@ class AbstractSmartReviewSectionCreator(
         contributorId: ContributorId,
         section: SmartReviewVisualizationSectionDefinition
     ): ThingId {
-        val sectionId = resourceService.createUnsafe(
+        val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 label = section.heading,
                 classes = setOf(Classes.visualizationSection),
@@ -85,7 +85,7 @@ class AbstractSmartReviewSectionCreator(
         contributorId: ContributorId,
         section: SmartReviewResourceSectionDefinition
     ): ThingId {
-        val sectionId = resourceService.createUnsafe(
+        val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 label = section.heading,
                 classes = setOf(Classes.resourceSection),
@@ -107,7 +107,7 @@ class AbstractSmartReviewSectionCreator(
         contributorId: ContributorId,
         section: SmartReviewPredicateSectionDefinition
     ): ThingId {
-        val sectionId = resourceService.createUnsafe(
+        val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 label = section.heading,
                 classes = setOf(Classes.propertySection),
@@ -129,7 +129,7 @@ class AbstractSmartReviewSectionCreator(
         contributorId: ContributorId,
         section: SmartReviewOntologySectionDefinition
     ): ThingId {
-        val sectionId = resourceService.createUnsafe(
+        val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 label = section.heading,
                 classes = setOf(Classes.ontologySection),
@@ -155,7 +155,7 @@ class AbstractSmartReviewSectionCreator(
         contributorId: ContributorId,
         section: SmartReviewTextSectionDefinition
     ): ThingId {
-        val sectionId = resourceService.createUnsafe(
+        val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 label = section.heading,
                 classes = setOfNotNull(Classes.section, section.`class`),

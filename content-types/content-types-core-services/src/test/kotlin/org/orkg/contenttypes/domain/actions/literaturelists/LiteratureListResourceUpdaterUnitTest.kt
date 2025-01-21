@@ -13,13 +13,13 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val literatureListResourceUpdater = LiteratureListResourceUpdater(resourceService)
+    private val literatureListResourceUpdater = LiteratureListResourceUpdater(unsafeResourceUseCases)
 
     @Test
     fun `Given a literature list update command, it updates the literature list resource`() {
@@ -34,7 +34,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
             extractionMethod = command.extractionMethod!!
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = literatureListResourceUpdater(command, state)
 
@@ -44,7 +44,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -60,7 +60,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
             extractionMethod = command.extractionMethod
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = literatureListResourceUpdater(command, state)
 
@@ -68,7 +68,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
             it.literatureList shouldBe state.literatureList
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -84,7 +84,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
             extractionMethod = command.extractionMethod
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = literatureListResourceUpdater(command, state)
 
@@ -92,7 +92,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
             it.literatureList shouldBe state.literatureList
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -108,7 +108,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
             extractionMethod = command.extractionMethod
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = literatureListResourceUpdater(command, state)
 
@@ -116,7 +116,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
             it.literatureList shouldBe state.literatureList
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -132,7 +132,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
             extractionMethod = command.extractionMethod
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = literatureListResourceUpdater(command, state)
 
@@ -140,6 +140,6 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
             it.literatureList shouldBe state.literatureList
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 }

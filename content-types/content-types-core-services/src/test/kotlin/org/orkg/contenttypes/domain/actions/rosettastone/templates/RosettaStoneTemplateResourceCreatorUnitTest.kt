@@ -12,12 +12,12 @@ import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneTemplateCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 internal class RosettaStoneTemplateResourceCreatorUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val rosettaStoneTemplateResourceCreator = RosettaStoneTemplateResourceCreator(resourceService)
+    private val rosettaStoneTemplateResourceCreator = RosettaStoneTemplateResourceCreator(unsafeResourceUseCases)
 
     @Test
     fun `Given a rosetta stone template create command, it crates a new rosetta stone template resource`() {
@@ -33,7 +33,7 @@ internal class RosettaStoneTemplateResourceCreatorUnitTest : MockkBaseTest {
         )
         val id = ThingId("RosettaStoneTemplate")
 
-        every { resourceService.createUnsafe(resourceCreateCommand) } returns id
+        every { unsafeResourceUseCases.create(resourceCreateCommand) } returns id
 
         val result = rosettaStoneTemplateResourceCreator(command, state)
 
@@ -41,6 +41,6 @@ internal class RosettaStoneTemplateResourceCreatorUnitTest : MockkBaseTest {
             it.rosettaStoneTemplateId shouldBe id
         }
 
-        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
     }
 }

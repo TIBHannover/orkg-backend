@@ -5,15 +5,15 @@ import org.orkg.contenttypes.domain.actions.CreateVisualizationCommand
 import org.orkg.contenttypes.domain.actions.visualizations.VisualizationAction.State
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class VisualizationAuthorCreator(
-    resourceService: ResourceUseCases,
+    unsafeResourceUseCases: UnsafeResourceUseCases,
     statementService: StatementUseCases,
     literalService: LiteralUseCases,
     listService: ListUseCases
-) : AuthorCreator(resourceService, statementService, literalService, listService), VisualizationAction {
+) : AuthorCreator(unsafeResourceUseCases, statementService, literalService, listService), VisualizationAction {
     override operator fun invoke(command: CreateVisualizationCommand, state: State): State {
         create(command.contributorId, state.authors, state.visualizationId!!)
         return state

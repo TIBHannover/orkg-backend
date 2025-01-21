@@ -24,8 +24,8 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.pageOf
@@ -33,12 +33,12 @@ import org.springframework.data.domain.Page
 
 internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
     private val paperPublicationInfoCreator = PaperPublicationInfoCreator(
-        resourceService = resourceService,
+        unsafeResourceUseCases = unsafeResourceUseCases,
         resourceRepository = resourceRepository,
         statementService = statementService,
         literalService = literalService
@@ -285,7 +285,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
                 pageable = PageRequests.SINGLE
             )
         } returns Page.empty()
-        every { resourceService.createUnsafe(resourceCreateCommand) } returns venueId
+        every { unsafeResourceUseCases.create(resourceCreateCommand) } returns venueId
         every {
             statementService.add(
                 userId = command.contributorId,
@@ -315,7 +315,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
                 pageable = PageRequests.SINGLE
             )
         }
-        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
             statementService.add(
                 userId = command.contributorId,

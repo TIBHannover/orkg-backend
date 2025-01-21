@@ -9,7 +9,6 @@ import org.orkg.graph.domain.ExtractionMethod
 
 interface CreateResourceUseCase {
     fun create(command: CreateCommand): ThingId
-    fun createUnsafe(command: CreateCommand): ThingId
 
     data class CreateCommand(
         val id: ThingId? = null,

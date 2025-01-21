@@ -41,6 +41,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -59,6 +60,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
     private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
@@ -76,6 +78,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         observatoryRepository = observatoryRepository,
         organizationRepository = organizationRepository,
         resourceService = resourceService,
+        unsafeResourceUseCases = unsafeResourceUseCases,
         statementService = statementService,
         literalService = literalService,
         listService = listService,
@@ -85,7 +88,6 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         comparisonRepository = comparisonRepository,
         comparisonTableRepository = comparisonTableRepository,
         comparisonPublishedRepository = comparisonPublishedRepository,
-        clock = fixedClock,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
     )
 
@@ -622,7 +624,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
 
         every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.label,
@@ -691,7 +693,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { resourceRepository.findById(command.comparisonId) }
         verify(exactly = 1) {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.label,
@@ -804,7 +806,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
 
         every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.label,
@@ -857,7 +859,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { resourceRepository.findById(command.comparisonId) }
         verify(exactly = 1) {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.label,

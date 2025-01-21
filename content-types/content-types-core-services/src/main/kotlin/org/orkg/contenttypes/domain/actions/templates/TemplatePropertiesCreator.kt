@@ -4,17 +4,17 @@ import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class TemplatePropertiesCreator(
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator
 ) : CreateTemplateAction {
     constructor(
-        resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         literalService: LiteralUseCases,
         statementService: StatementUseCases
-    ) : this(AbstractTemplatePropertyCreator(resourceService, literalService, statementService))
+    ) : this(AbstractTemplatePropertyCreator(unsafeResourceUseCases, literalService, statementService))
 
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         command.properties.forEachIndexed { index, property ->

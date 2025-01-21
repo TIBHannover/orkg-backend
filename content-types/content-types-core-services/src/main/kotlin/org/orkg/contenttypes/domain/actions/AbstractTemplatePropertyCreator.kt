@@ -13,11 +13,11 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class AbstractTemplatePropertyCreator(
-    private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases
 ) {
@@ -27,7 +27,7 @@ class AbstractTemplatePropertyCreator(
         order: Int,
         property: TemplatePropertyDefinition
     ): ThingId {
-        val propertyId = resourceService.createUnsafe(
+        val propertyId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 label = property.label,
                 classes = setOf(Classes.propertyShape),

@@ -81,6 +81,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
@@ -104,6 +105,7 @@ class SmartReviewService(
     private val predicateRepository: PredicateRepository,
     private val thingRepository: ThingRepository,
     private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases,
     private val listService: ListUseCases,
@@ -185,13 +187,13 @@ class SmartReviewService(
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             SmartReviewSectionsCreateValidator(resourceRepository, predicateRepository, thingRepository),
-            SmartReviewResourceCreator(resourceService),
-            SmartReviewContributionCreator(resourceService, statementService),
+            SmartReviewResourceCreator(unsafeResourceUseCases),
+            SmartReviewContributionCreator(unsafeResourceUseCases, statementService),
             SmartReviewReferencesCreator(literalService, statementService),
             SmartReviewResearchFieldCreator(literalService, statementService),
-            SmartReviewAuthorCreator(resourceService, statementService, literalService, listService),
+            SmartReviewAuthorCreator(unsafeResourceUseCases, statementService, literalService, listService),
             SmartReviewSDGCreator(literalService, statementService),
-            SmartReviewSectionsCreator(literalService, resourceService, statementService)
+            SmartReviewSectionsCreator(literalService, unsafeResourceUseCases, statementService)
         )
         return steps.execute(command, CreateSmartReviewState()).smartReviewId!!
     }
@@ -201,7 +203,7 @@ class SmartReviewService(
             SmartReviewSectionExistenceCreateValidator(statementRepository),
             SmartReviewSectionIndexValidator(statementRepository),
             SmartReviewSectionCreateValidator(resourceRepository, predicateRepository, thingRepository),
-            SmartReviewSectionCreator(literalService, resourceService, statementService)
+            SmartReviewSectionCreator(literalService, unsafeResourceUseCases, statementService)
         )
         return steps.execute(command, CreateSmartReviewSectionState()).smartReviewSectionId!!
     }
@@ -221,9 +223,9 @@ class SmartReviewService(
             SmartReviewResourceUpdater(resourceService),
             SmartReviewReferencesUpdater(literalService, statementService),
             SmartReviewResearchFieldUpdater(literalService, statementService),
-            SmartReviewAuthorUpdater(resourceService, statementService, literalService, listService, listRepository),
+            SmartReviewAuthorUpdater(unsafeResourceUseCases, statementService, literalService, listService, listRepository),
             SmartReviewSDGUpdater(literalService, statementService),
-            SmartReviewSectionsUpdater(literalService, resourceService, statementService)
+            SmartReviewSectionsUpdater(literalService, resourceService, unsafeResourceUseCases, statementService)
         )
         steps.execute(command, UpdateSmartReviewState())
     }
@@ -250,7 +252,7 @@ class SmartReviewService(
             SmartReviewPublishableValidator(this),
             DescriptionValidator("changelog") { it.changelog },
             DescriptionValidator { it.description?.takeIf { _ -> it.assignDOI } },
-            SmartReviewVersionCreator(resourceRepository, statementRepository, resourceService, statementService, literalService, listService),
+            SmartReviewVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, statementService, literalService, listService),
             SmartReviewChangelogCreator(literalService, statementService),
             SmartReviewVersionArchiver(statementService, smartReviewPublishedRepository),
             SmartReviewVersionHistoryUpdater(statementService),

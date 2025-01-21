@@ -17,16 +17,16 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 internal class ContributionCreatorUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val subgraphCreator: SubgraphCreator = mockk()
 
     private val contributionCreator = ContributionCreator(
-        resourceService = resourceService,
+        unsafeResourceUseCases = unsafeResourceUseCases,
         statementService = statementService,
         subgraphCreator = subgraphCreator
     )
@@ -45,7 +45,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
         val contributionId = ThingId("R456")
 
         every {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution),
@@ -86,7 +86,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
         result shouldBe listOf(contributionId)
 
         verify(exactly = 1) {
-            resourceService.createUnsafe(
+            unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution),

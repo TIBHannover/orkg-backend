@@ -7,6 +7,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class LiteratureListSectionsUpdater(
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator,
@@ -16,9 +17,10 @@ class LiteratureListSectionsUpdater(
     constructor(
         literalService: LiteralUseCases,
         resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases
     ) : this(
-        AbstractLiteratureListSectionCreator(statementService, resourceService, literalService),
+        AbstractLiteratureListSectionCreator(statementService, unsafeResourceUseCases, literalService),
         AbstractLiteratureListSectionDeleter(statementService, resourceService),
         StatementCollectionPropertyUpdater(literalService, statementService)
     )

@@ -20,18 +20,18 @@ import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
 
 internal class AuthorCreatorUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
 
     private val authorCreator =
-        object : AuthorCreator(resourceService, statementService, literalService, listService) {}
+        object : AuthorCreator(unsafeResourceUseCases, statementService, literalService, listService) {}
 
     @Test
     fun `Given a list of authors, when linking an existing author to the subject resource, it returns success`() {
@@ -211,7 +211,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         val homepageLiteralId = ThingId("L13254")
         val authorListId = ThingId("R1456")
 
-        every { resourceService.createUnsafe(resourceCreateCommand) } returns authorId
+        every { unsafeResourceUseCases.create(resourceCreateCommand) } returns authorId
         every {
             literalService.create(
                 CreateCommand(
@@ -265,7 +265,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
 
         authorCreator.create(contributorId, listOf(author), subjectId)
 
-        verify(exactly = 1) { resourceService.createUnsafe(resourceCreateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
             literalService.create(
                 CreateCommand(

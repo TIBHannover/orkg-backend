@@ -7,7 +7,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.time.OffsetDateTime
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -16,10 +15,10 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
@@ -37,6 +36,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     private val classRepository: ClassRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
     private val service = ResourceService(
         repository,
@@ -44,7 +44,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         classRepository,
         contributorRepository,
         thingRepository,
-        fixedClock,
+        unsafeResourceUseCases,
     )
 
     @Test
@@ -63,59 +63,27 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(id) } returns Optional.empty()
         every { classRepository.existsAll(command.classes) } returns true
-        every { repository.save(any()) } just runs
+        every { unsafeResourceUseCases.create(command) } returns id
 
         service.create(command) shouldBe id
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) { classRepository.existsAll(command.classes) }
-        verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe command.id
-                it.label shouldBe command.label
-                it.createdAt shouldBe OffsetDateTime.now(fixedClock)
-                it.classes shouldBe command.classes
-                it.createdBy shouldBe command.contributorId
-                it.observatoryId shouldBe command.observatoryId
-                it.extractionMethod shouldBe command.extractionMethod
-                it.organizationId shouldBe command.organizationId
-                it.visibility shouldBe Visibility.DEFAULT
-                it.verified shouldBe null
-                it.unlistedBy shouldBe null
-                it.modifiable shouldBe command.modifiable
-            })
-        }
+        verify(exactly = 1) { unsafeResourceUseCases.create(command) }
     }
 
     @Test
-    fun `given a resource create command, when inputs are minimal, it get a new id form the repository and creates a new resource with default values`() {
+    fun `given a resource create command, when inputs are minimal, it creates a new resource`() {
         val id = ThingId("R123")
         val command = CreateResourceUseCase.CreateCommand(
             label = "label"
         )
 
-        every { repository.nextIdentity() } returns id
-        every { repository.save(any()) } just runs
+        every { unsafeResourceUseCases.create(command) } returns id
 
         service.create(command) shouldBe id
 
-        verify(exactly = 1) { repository.nextIdentity() }
-        verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe id
-                it.label shouldBe command.label
-                it.createdAt shouldBe OffsetDateTime.now(fixedClock)
-                it.classes shouldBe command.classes
-                it.createdBy shouldBe ContributorId.UNKNOWN
-                it.observatoryId shouldBe ObservatoryId.UNKNOWN
-                it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
-                it.organizationId shouldBe OrganizationId.UNKNOWN
-                it.visibility shouldBe Visibility.DEFAULT
-                it.verified shouldBe null
-                it.unlistedBy shouldBe null
-                it.modifiable shouldBe command.modifiable
-            })
-        }
+        verify(exactly = 1) { unsafeResourceUseCases.create(command) }
     }
 
     @Test
@@ -152,73 +120,6 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         assertThrows<InvalidClassCollection> { service.create(command) }
 
         verify(exactly = 1) { classRepository.existsAll(command.classes) }
-    }
-
-    @Test
-    fun `given a resource create command, when using unsafe creation method, it creates a new resource`() {
-        val id = ThingId("R123")
-        val command = CreateResourceUseCase.CreateCommand(
-            id = id,
-            label = "label",
-            classes = setOf(Classes.paper),
-            extractionMethod = ExtractionMethod.MANUAL,
-            contributorId = ContributorId(MockUserId.USER),
-            observatoryId = ObservatoryId("1255bbe4-1850-4033-ba10-c80d4b370e3e"),
-            organizationId = OrganizationId("56a4b65e-de56-0d4b-255b-255b372b65ef"),
-            modifiable = false
-        )
-
-        every { repository.save(any()) } just runs
-
-        service.createUnsafe(command) shouldBe id
-
-        verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe command.id
-                it.label shouldBe command.label
-                it.createdAt shouldBe OffsetDateTime.now(fixedClock)
-                it.classes shouldBe command.classes
-                it.createdBy shouldBe command.contributorId
-                it.observatoryId shouldBe command.observatoryId
-                it.extractionMethod shouldBe command.extractionMethod
-                it.organizationId shouldBe command.organizationId
-                it.visibility shouldBe Visibility.DEFAULT
-                it.verified shouldBe null
-                it.unlistedBy shouldBe null
-                it.modifiable shouldBe command.modifiable
-            })
-        }
-    }
-
-    @Test
-    fun `given a resource create command, when using unsafe creation method with minimal inputs, it assigns a new id and creates a new resource`() {
-        val id = ThingId("R123")
-        val command = CreateResourceUseCase.CreateCommand(
-            label = "label"
-        )
-
-        every { repository.nextIdentity() } returns id
-        every { repository.save(any()) } just runs
-
-        service.createUnsafe(command) shouldBe id
-
-        verify(exactly = 1) { repository.nextIdentity() }
-        verify(exactly = 1) {
-            repository.save(withArg {
-                it.id shouldBe id
-                it.label shouldBe command.label
-                it.createdAt shouldBe OffsetDateTime.now(fixedClock)
-                it.classes shouldBe command.classes
-                it.createdBy shouldBe ContributorId.UNKNOWN
-                it.observatoryId shouldBe ObservatoryId.UNKNOWN
-                it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
-                it.organizationId shouldBe OrganizationId.UNKNOWN
-                it.visibility shouldBe Visibility.DEFAULT
-                it.verified shouldBe null
-                it.unlistedBy shouldBe null
-                it.modifiable shouldBe command.modifiable
-            })
-        }
     }
 
     @Test
@@ -302,13 +203,13 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
         every { thingRepository.isUsedAsObject(mockResource.id) } returns false
-        every { repository.deleteById(mockResource.id) } returns Unit
+        every { unsafeResourceUseCases.delete(mockResource.id, theOwningContributorId) } returns Unit
 
         service.delete(mockResource.id, theOwningContributorId)
 
         verify(exactly = 1) { repository.findById(mockResource.id) }
         verify(exactly = 1) { thingRepository.isUsedAsObject(mockResource.id) }
-        verify(exactly = 1) { repository.deleteById(mockResource.id) }
+        verify(exactly = 1) { unsafeResourceUseCases.delete(mockResource.id, theOwningContributorId) }
     }
 
     @Test
@@ -320,13 +221,13 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         every { repository.findById(mockResource.id) } returns Optional.of(mockResource)
         every { thingRepository.isUsedAsObject(mockResource.id) } returns false
         every { contributorRepository.findById(aCurator.id) } returns Optional.of(aCurator)
-        every { repository.deleteById(mockResource.id) } returns Unit
+        every { unsafeResourceUseCases.delete(mockResource.id, aCurator.id) } returns Unit
 
         service.delete(mockResource.id, aCurator.id)
 
         verify(exactly = 1) { repository.findById(mockResource.id) }
         verify(exactly = 1) { thingRepository.isUsedAsObject(mockResource.id) }
-        verify(exactly = 1) { repository.deleteById(mockResource.id) }
+        verify(exactly = 1) { unsafeResourceUseCases.delete(mockResource.id, aCurator.id) }
         verify(exactly = 1) { contributorRepository.findById(aCurator.id) }
     }
 
@@ -348,7 +249,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { repository.findById(mockResource.id) }
         verify(exactly = 1) { thingRepository.isUsedAsObject(mockResource.id) }
         verify(exactly = 1) { contributorRepository.findById(loggedInUserId) }
-        verify(exactly = 0) { repository.deleteById(mockResource.id) }
+        verify(exactly = 0) { unsafeResourceUseCases.delete(mockResource.id, loggedInUserId) }
     }
 
     @Test

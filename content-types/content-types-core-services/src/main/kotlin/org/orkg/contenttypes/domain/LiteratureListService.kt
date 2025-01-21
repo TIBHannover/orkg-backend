@@ -72,6 +72,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -89,6 +90,7 @@ class LiteratureListService(
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
     private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases,
     private val listService: ListUseCases,
@@ -156,11 +158,11 @@ class LiteratureListService(
             OrganizationValidator(organizationRepository, { it.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             LiteratureListSectionsCreateValidator(resourceRepository),
-            LiteratureListResourceCreator(resourceService),
+            LiteratureListResourceCreator(unsafeResourceUseCases),
             LiteratureListResearchFieldCreator(literalService, statementService),
-            LiteratureListAuthorCreator(resourceService, statementService, literalService, listService),
+            LiteratureListAuthorCreator(unsafeResourceUseCases, statementService, literalService, listService),
             LiteratureListSDGCreator(literalService, statementService),
-            LiteratureListSectionsCreator(literalService, resourceService, statementService)
+            LiteratureListSectionsCreator(literalService, unsafeResourceUseCases, statementService)
         )
         return steps.execute(command, CreateLiteratureListState()).literatureListId!!
     }
@@ -170,7 +172,7 @@ class LiteratureListService(
             LiteratureListSectionExistenceCreateValidator(resourceRepository),
             LiteratureListSectionIndexValidator(statementRepository),
             LiteratureListSectionCreateValidator(resourceRepository),
-            LiteratureListSectionCreator(literalService, resourceService, statementService)
+            LiteratureListSectionCreator(literalService, unsafeResourceUseCases, statementService)
         )
         return steps.execute(command, CreateLiteratureListSectionState()).literatureListSectionId!!
     }
@@ -179,7 +181,7 @@ class LiteratureListService(
         val steps = listOf(
             LiteratureListSectionExistenceUpdateValidator(this, resourceRepository),
             LiteratureListSectionUpdateValidator(resourceRepository),
-            LiteratureListSectionUpdater(literalService, resourceService, statementService)
+            LiteratureListSectionUpdater(literalService, resourceService, unsafeResourceUseCases, statementService)
         )
         steps.execute(command, UpdateLiteratureListSectionState())
     }
@@ -203,11 +205,11 @@ class LiteratureListService(
             OrganizationValidator(organizationRepository, { it.organizations }, { it.literatureList!!.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.literatureList!!.observatories }),
             LiteratureListSectionsUpdateValidator(resourceRepository),
-            LiteratureListResourceUpdater(resourceService),
+            LiteratureListResourceUpdater(unsafeResourceUseCases),
             LiteratureListResearchFieldUpdater(literalService, statementService),
-            LiteratureListAuthorUpdater(resourceService, statementService, literalService, listService, listRepository),
+            LiteratureListAuthorUpdater(unsafeResourceUseCases, statementService, literalService, listService, listRepository),
             LiteratureListSDGUpdater(literalService, statementService),
-            LiteratureListSectionsUpdater(literalService, resourceService, statementService)
+            LiteratureListSectionsUpdater(literalService, resourceService, unsafeResourceUseCases, statementService)
         )
         steps.execute(command, UpdateLiteratureListState())
     }
@@ -216,7 +218,7 @@ class LiteratureListService(
         val steps = listOf(
             LiteratureListPublishableValidator(this),
             DescriptionValidator("changelog") { it.changelog },
-            LiteratureListVersionCreator(resourceRepository, statementRepository, resourceService, statementService, literalService, listService),
+            LiteratureListVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, statementService, literalService, listService),
             LiteratureListChangelogCreator(literalService, statementService),
             LiteratureListVersionArchiver(statementService, literatureListPublishedRepository),
             LiteratureListVersionHistoryUpdater(statementService)

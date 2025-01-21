@@ -8,6 +8,7 @@ import java.time.Clock
 import java.time.OffsetDateTime
 import org.neo4j.driver.exceptions.Neo4jException
 import org.orkg.common.toSnakeCase
+import org.springframework.data.mapping.PropertyReferenceException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -175,6 +176,21 @@ class ExceptionHandler(private val clock: Clock) : ResponseEntityExceptionHandle
     ): ResponseEntity<Any> {
         logger.error(ex.internalMessage)
         return handleLoggedMessageException(ex, request)
+    }
+
+    @ExceptionHandler(PropertyReferenceException::class)
+    fun handlePropertyReferenceException(
+        ex: PropertyReferenceException,
+        request: WebRequest
+    ): ResponseEntity<Any> {
+        val payload = MessageErrorResponse(
+            status = BAD_REQUEST.value(),
+            error = BAD_REQUEST.reasonPhrase,
+            path = request.requestURI,
+            message = """Unknown property "${ex.propertyName}".""",
+            timestamp = OffsetDateTime.now(clock),
+        )
+        return ResponseEntity(payload, BAD_REQUEST)
     }
 
     @ExceptionHandler(SimpleMessageException::class)

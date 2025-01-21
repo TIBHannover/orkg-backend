@@ -8,6 +8,8 @@ import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
+import org.springframework.data.mapping.PropertyReferenceException
+import org.springframework.data.util.TypeInformation
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -159,6 +161,21 @@ internal class ExceptionHandlerUnitTest : RestDocsTest("errors") {
     }
 
     @Test
+    fun propertyReferenceException() {
+        val property = "unknown"
+
+        get("/errors/property-reference-exception")
+            .param("property", property)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status", `is`(400)))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.message", `is`("""Unknown property "$property".""")))
+            .andExpect(jsonPath("$.path", `is`("/errors/property-reference-exception")))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
     fun malformedMediaTypeCapability() {
         val name = "formatted-label"
         val value = "true"
@@ -215,6 +232,10 @@ internal class ExceptionHandlerUnitTest : RestDocsTest("errors") {
 
         @GetMapping("/errors/service-unavailable")
         fun serviceUnavailable(): Nothing = throw ServiceUnavailable.create("TEST", 500, "irrelevant")
+
+        @GetMapping("/errors/property-reference-exception")
+        fun propertyReferenceException(@RequestParam property: String): Nothing =
+            throw PropertyReferenceException(property, TypeInformation.OBJECT, emptyList())
 
         @GetMapping("/errors/malformed-media-type-capability")
         fun malformedMediaTypeCapability(@RequestParam name: String, @RequestParam value: String): Nothing =

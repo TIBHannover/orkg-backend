@@ -15,7 +15,6 @@ import org.orkg.graph.domain.TrendingResearchProblems
 import org.orkg.graph.output.LegacyStatisticsRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
@@ -74,11 +73,11 @@ class SpringDataNeo4JLegacyStatisticsAdapter(
         )
 
     override fun getChangeLog(pageable: Pageable): Page<Resource> =
-        neo4jRepository.getChangeLog(pageable.withDefaultSort { Sort.by("n.created_at").descending() })
+        neo4jRepository.getChangeLog(pageable.withSort(sortByNCreatedAtDesc))
             .map(Neo4jResource::toResource)
 
     override fun getChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<Resource> =
-        neo4jRepository.getChangeLogByResearchField(id, pageable.withDefaultSort { Sort.by("n.created_at").descending() })
+        neo4jRepository.getChangeLogByResearchField(id, pageable.withSort(sortByNCreatedAtDesc))
             .map(Neo4jResource::toResource)
 
     override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> =

@@ -256,7 +256,7 @@ CALL {
     UNION ALL
     MATCH (sub:ComparisonPublished) RETURN sub
 }
-RETURN sub $PAGE_PARAMS""",
+RETURN sub $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
 CALL {
     MATCH (sub:Paper) RETURN sub
@@ -293,7 +293,7 @@ WITH [p, c, v] AS nodes
 UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n IS NOT NULL
-RETURN n $PAGE_PARAMS""",
+RETURN n $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
 CALL {
     MATCH (field:ResearchField {id: $id})

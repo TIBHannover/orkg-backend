@@ -60,6 +60,8 @@ val reservedLabels = setOf(
 
 val reservedLabelsAsStrings = reservedLabels.map { it.value }
 
+val sortByNCreatedAtDesc: Sort = Sort.by("n.created_at").descending()
+
 data class StatementMapper(
     val predicateRepository: PredicateRepository,
     val subject: String = "sub",
@@ -275,6 +277,9 @@ fun matchDistinct(
 
 inline fun Pageable.withDefaultSort(sort: () -> Sort): Pageable =
     if (this.sort.isSorted) this else PageRequest.of(pageNumber, pageSize, sort())
+
+fun Pageable.withSort(sort: Sort): Pageable =
+    PageRequest.of(pageNumber, pageSize, sort)
 
 inline fun Sort.orElseGet(sort: () -> Sort): Sort =
     if (isSorted) this else sort()

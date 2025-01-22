@@ -33,7 +33,7 @@ operation::observatories-create[snippets='request-fields,curl-request,http-respo
 == Updating Observatories
 
 A `PATCH` request updates an existing observatory with the given parameters.
-Only fields provided in the response, and therefore non-null, will be updated.
+Only fields provided in the request, and therefore non-null, will be updated.
 The response will be `204 No Content` when successful.
 The updated observatory (object) can be retrieved by following the URI in the `Location` header field.
 

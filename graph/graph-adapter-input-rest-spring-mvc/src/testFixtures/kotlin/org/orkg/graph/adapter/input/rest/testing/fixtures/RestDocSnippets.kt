@@ -1,6 +1,8 @@
 package org.orkg.graph.adapter.input.rest.testing.fixtures
 
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
+import org.orkg.testing.spring.restdocs.deprecated
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -14,8 +16,6 @@ fun classResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown."),
     fieldWithPath("description").type("String").description("The description of the class, if exists.").optional(),
     fieldWithPath("_class").optional().ignored(),
-    fieldWithPath("featured").description("Featured Value").optional().ignored(),
-    fieldWithPath("unlisted").description("Unlisted Value").optional().ignored(),
     fieldWithPath("modifiable").description("Whether this class can be modified."),
 )
 
@@ -25,8 +25,9 @@ fun resourceResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("formatted_label").type("String").description("The formatted label of the resource. See <<content-negotiation,Content Negotiation>> for information on how to obtain this value.").ignored(),
     fieldWithPath("classes").description("The set of classes of which this resources is an instance of."),
     fieldWithPath("shared").description("The number of statements that have this resource in their object position."),
-    fieldWithPath("featured").description("Determine if the resource is featured. Defaults to `false`."),
-    fieldWithPath("unlisted").description("Determine if the resource is unlisted. Defaults to `false`."),
+    fieldWithPath("featured").description("Determine if the resource is featured. Defaults to `false`.").deprecated("visibility"),
+    fieldWithPath("unlisted").description("Determine if the resource is unlisted. Defaults to `false`.").deprecated("visibility"),
+    fieldWithPath("visibility").description("""Determines the visibility of the resource. Can be one of $allowedVisibilityValues."""),
     fieldWithPath("verified").description("Determine if the resource is verified. Defaults to `false`."),
     fieldWithPath("extraction_method").description("Determines how the resource was created. Can be one of $allowedExtractionMethodValues."),
     fieldWithPath("observatory_id").description("The UUID of the observatory to which this resource belongs."),

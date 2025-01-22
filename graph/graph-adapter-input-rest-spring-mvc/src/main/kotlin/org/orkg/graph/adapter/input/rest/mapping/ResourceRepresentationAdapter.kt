@@ -56,6 +56,7 @@ interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {
             createdBy = createdBy,
             featured = visibility == Visibility.FEATURED,
             unlisted = visibility == Visibility.UNLISTED,
+            visibility = visibility,
             verified = verified ?: false,
             unlistedBy = unlistedBy,
             modifiable = modifiable,

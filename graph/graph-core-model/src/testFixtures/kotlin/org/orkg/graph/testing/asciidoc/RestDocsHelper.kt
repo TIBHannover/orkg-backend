@@ -1,12 +1,16 @@
 package org.orkg.graph.testing.asciidoc
 
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 
 val allowedExtractionMethodValues =
     ExtractionMethod.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+
+val allowedVisibilityValues =
+    Visibility.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
 
 private val allowedValues =
     VisibilityFilter.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")

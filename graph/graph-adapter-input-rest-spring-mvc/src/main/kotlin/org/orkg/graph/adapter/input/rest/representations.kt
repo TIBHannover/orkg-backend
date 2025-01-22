@@ -13,6 +13,7 @@ import org.orkg.contenttypes.domain.ComparisonAuthorInfo
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.domain.Visibility
 
 typealias PathRepresentation = List<List<ThingRepresentation>>
 
@@ -38,9 +39,12 @@ interface ResourceProvenanceMetadata : ProvenanceMetadata {
 
 interface ContentTypeFlags {
     // TODO: split into separate representations, content types only
+    @Deprecated(message = "Superseded by visibility field")
     val featured: Boolean
+    @Deprecated(message = "Superseded by visibility field")
     val unlisted: Boolean
     val verified: Boolean
+    val visibility: Visibility
     @get:JsonInclude(Include.NON_NULL)
     @get:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?
@@ -92,8 +96,11 @@ data class ResourceRepresentation(
     override val organizationId: OrganizationId,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
+    @Deprecated("Superseded by visibility field")
     override val featured: Boolean,
+    @Deprecated("Superseded by visibility field")
     override val unlisted: Boolean,
+    override val visibility: Visibility,
     override val verified: Boolean,
     override val unlistedBy: ContributorId?,
     @get:JsonProperty("formatted_label")
@@ -142,8 +149,11 @@ data class PaperResourceWithPathRepresentation(
     override val organizationId: OrganizationId,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
+    @Deprecated("Superseded by visibility field")
     override val featured: Boolean,
+    @Deprecated("Superseded by visibility field")
     override val unlisted: Boolean,
+    override val visibility: Visibility,
     override val verified: Boolean,
     override val unlistedBy: ContributorId?,
     @get:JsonProperty("formatted_label")

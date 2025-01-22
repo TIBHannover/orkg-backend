@@ -45,6 +45,7 @@ interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapte
             createdBy = paper.createdBy,
             featured = paper.visibility == Visibility.FEATURED,
             unlisted = paper.visibility == Visibility.UNLISTED,
+            visibility = paper.visibility,
             verified = paper.verified ?: false,
             unlistedBy = paper.unlistedBy,
             formattedLabel = formattedLabels[this@toPaperResourceWithPathRepresentation.paper.id],

@@ -10,12 +10,16 @@ import org.orkg.createClass
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
+import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockAdmin
@@ -31,7 +35,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -56,6 +59,10 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
 
     @Autowired
     private lateinit var literalService: LiteralUseCases
+
+    @Autowired
+    @Suppress("unused")
+    private lateinit var unsafeResourceUseCases: UnsafeResourceUseCases
 
     @BeforeEach
     fun setup() {
@@ -134,36 +141,27 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
     }
 
     @Test
-    @WithMockUser
+    @TestWithMockUser
     fun edit() {
         val oldClass = classService.createClass(label = "class")
         val resource = service.createResource(classes = setOf(oldClass.value), label = "foo")
         val newLabel = "bar"
-        val update = mapOf("label" to newLabel, "classes" to setOf(oldClass))
+        val update = mapOf(
+            "label" to newLabel,
+            "classes" to setOf(oldClass),
+            "extraction_method" to ExtractionMethod.UNKNOWN,
+            "visibility" to Visibility.DEFAULT
+        )
 
-        documentedPutRequestTo("/api/resources/{id}", resource)
+        put("/api/resources/{id}", resource)
             .content(update)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the resource.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").description("The updated resource label. (optional)").optional(),
-                        fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""").optional()
-                    ),
-                    responseFields(resourceResponseFields())
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
-    @WithMockUser
+    @TestWithMockUser
     fun editResourceClass() {
         val oldClass = classService.createClass(label = "class")
         val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
@@ -171,30 +169,16 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
         val newClass = classService.createClass("clazz")
         val update = mapOf("classes" to listOf(newClass))
 
-        documentedPutRequestTo("/api/resources/{id}", resource)
+        put("/api/resources/{id}", resource)
             .content(update)
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value("test"))
             .andExpect(jsonPath("$.classes[0]").value(newClass.value))
-            .andDo(
-                documentationHandler.document(
-                    pathParameters(
-                        parameterWithName("id").description("The identifier of the resource.")
-                    ),
-                    requestFields(
-                        fieldWithPath("label").type("String").description("The updated resource label. (optional)").optional(),
-                        fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
-                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""").optional()
-                    ),
-                    responseFields(resourceResponseFields())
-                )
-            )
-            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
-    @WithMockUser
+    @TestWithMockUser
     fun editResourceClassesIsEmpty() {
         val oldClass = classService.createClass(label = "class")
         val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
@@ -209,7 +193,7 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
     }
 
     @Test
-    @WithMockUser
+    @TestWithMockUser
     fun editResourceClassesAreInvalid() {
         val oldClass = classService.createClass(label = "class")
         val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
@@ -361,27 +345,6 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
     }
 
     companion object RestDoc {
-        fun resourceResponseFields() = listOf(
-            fieldWithPath("id").description("The resource ID"),
-            fieldWithPath("label").description("The resource label"),
-            fieldWithPath("created_at").description("The resource creation datetime"),
-            fieldWithPath("created_by").description("The ID of the user that created the resource. All zeros if unknown."),
-            fieldWithPath("classes").description("The list of classes the resource belongs to"),
-            fieldWithPath("observatory_id").description("The ID of the observatory that maintains this resource."),
-            fieldWithPath("extraction_method").description("""Method to extract this resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC"."""),
-            fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
-            fieldWithPath("shared").description("The number of times this resource is shared").optional(),
-            fieldWithPath("_class").description("Class").optional(),
-            fieldWithPath("verified").description("Determines if the resource was verified by a curator.").optional()
-                .ignored(),
-            fieldWithPath("visibility").description("""Visibility of this resource. Either of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED".""")
-                .optional().ignored(),
-            fieldWithPath("featured").description("Featured Value").optional().ignored(),
-            fieldWithPath("unlisted").description("Unlisted Value").optional().ignored(),
-            fieldWithPath("modifiable").description("Whether this resource can be modified.").optional().ignored(),
-            fieldWithPath("formatted_label").type("String").description("The formatted label of the resource. See <<content-negotiation,Content Negotiation>> for information on how to obtain this value.").optional()
-        )
-
         fun pageOfDetailedResourcesResponseFields(): ResponseFieldsSnippet {
             return responseFields(pageableDetailedFieldParameters())
                 .andWithPrefix(

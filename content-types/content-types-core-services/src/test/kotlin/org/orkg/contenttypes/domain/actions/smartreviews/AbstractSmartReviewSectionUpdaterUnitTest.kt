@@ -30,16 +30,16 @@ import org.orkg.contenttypes.input.testing.fixtures.toSmartReviewTextSectionDefi
 import org.orkg.contenttypes.input.testing.fixtures.toSmartReviewVisualizationSectionDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater = mockk()
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater = mockk()
 
     private val abstractSmartReviewSectionUpdater = AbstractSmartReviewSectionUpdater(
-        resourceService, singleStatementPropertyUpdater, statementCollectionPropertyUpdater
+        unsafeResourceUseCases, singleStatementPropertyUpdater, statementCollectionPropertyUpdater
     )
 
     @Test
@@ -59,14 +59,15 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val newSection = oldSection.toSmartReviewComparisonSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
-        every { resourceService.update(any()) } just runs
+        every { unsafeResourceUseCases.update(any()) } just runs
 
         abstractSmartReviewSectionUpdater.updateComparisonSection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )
@@ -122,14 +123,15 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val newSection = oldSection.toSmartReviewVisualizationSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
-        every { resourceService.update(any()) } just runs
+        every { unsafeResourceUseCases.update(any()) } just runs
 
         abstractSmartReviewSectionUpdater.updateVisualizationSection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )
@@ -185,14 +187,15 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val newSection = oldSection.toSmartReviewResourceSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
-        every { resourceService.update(any()) } just runs
+        every { unsafeResourceUseCases.update(any()) } just runs
 
         abstractSmartReviewSectionUpdater.updateResourceSection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )
@@ -248,14 +251,15 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val newSection = oldSection.toSmartReviewPredicateSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
-        every { resourceService.update(any()) } just runs
+        every { unsafeResourceUseCases.update(any()) } just runs
 
         abstractSmartReviewSectionUpdater.updatePredicateSection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )
@@ -311,14 +315,15 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val newSection = oldSection.toSmartReviewOntologySectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
-        every { resourceService.update(any()) } just runs
+        every { unsafeResourceUseCases.update(any()) } just runs
 
         abstractSmartReviewSectionUpdater.updateOntologySection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )
@@ -406,14 +411,15 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val newSection = oldSection.toSmartReviewTextSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
-        every { resourceService.update(any()) } just runs
+        every { unsafeResourceUseCases.update(any()) } just runs
 
         abstractSmartReviewSectionUpdater.updateTextSection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading,
                     classes = oldSection.classes + Classes.section
                 )
@@ -428,14 +434,15 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val newSection = oldSection.toSmartReviewTextSectionDefinition().copy(`class` = Classes.epilogue)
         val statements = oldSection.toGroupedStatements()
 
-        every { resourceService.update(any()) } just runs
+        every { unsafeResourceUseCases.update(any()) } just runs
 
         abstractSmartReviewSectionUpdater.updateTextSection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = oldSection.heading,
                     classes = setOfNotNull(newSection.`class`, Classes.section)
                 )

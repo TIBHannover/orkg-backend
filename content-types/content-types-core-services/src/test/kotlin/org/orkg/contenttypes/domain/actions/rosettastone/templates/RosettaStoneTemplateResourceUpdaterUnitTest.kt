@@ -13,13 +13,13 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val rosettaStoneTemplateResourceUpdater = RosettaStoneTemplateResourceUpdater(resourceService)
+    private val rosettaStoneTemplateResourceUpdater = RosettaStoneTemplateResourceUpdater(unsafeResourceUseCases)
 
     @Test
     fun `Given a rosetta stone template update command, it updates the rosetta stone template resource`() {
@@ -28,12 +28,13 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.templateId,
+            contributorId = command.contributorId,
             label = command.label,
             observatoryId = command.observatories!!.single(),
             organizationId = command.organizations!!.single()
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = rosettaStoneTemplateResourceUpdater(command, state)
 
@@ -43,7 +44,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
             it.isUsedInRosettaStoneStatement shouldBe state.isUsedInRosettaStoneStatement
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -53,12 +54,13 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.templateId,
+            contributorId = command.contributorId,
             label = command.label,
             observatoryId = ObservatoryId.UNKNOWN,
             organizationId = command.organizations!!.single()
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = rosettaStoneTemplateResourceUpdater(command, state)
 
@@ -66,7 +68,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
             it.rosettaStoneTemplate shouldBe state.rosettaStoneTemplate
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -76,12 +78,13 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.templateId,
+            contributorId = command.contributorId,
             label = command.label,
             observatoryId = null,
             organizationId = command.organizations!!.single()
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = rosettaStoneTemplateResourceUpdater(command, state)
 
@@ -89,7 +92,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
             it.rosettaStoneTemplate shouldBe state.rosettaStoneTemplate
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -99,12 +102,13 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.templateId,
+            contributorId = command.contributorId,
             label = command.label,
             observatoryId = command.observatories!!.single(),
             organizationId = OrganizationId.UNKNOWN
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = rosettaStoneTemplateResourceUpdater(command, state)
 
@@ -112,7 +116,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
             it.rosettaStoneTemplate shouldBe state.rosettaStoneTemplate
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -122,12 +126,13 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.templateId,
+            contributorId = command.contributorId,
             label = command.label,
             observatoryId = command.observatories!!.single(),
             organizationId = null
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = rosettaStoneTemplateResourceUpdater(command, state)
 
@@ -135,6 +140,6 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
             it.rosettaStoneTemplate shouldBe state.rosettaStoneTemplate
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 }

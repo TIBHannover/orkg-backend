@@ -9,11 +9,15 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.domain.ContributorNotFound
+import org.orkg.community.domain.ObservatoryNotFound
+import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.output.ContributorRepository
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
-import org.orkg.graph.input.UpdateResourceUseCase
+import org.orkg.graph.input.UpdateResourceUseCase.UpdateCommand
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -32,6 +36,8 @@ class ResourceService(
     private val contributorRepository: ContributorRepository,
     private val thingRepository: ThingRepository,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
+    private val observatoryRepository: ObservatoryRepository,
+    private val organizationRepository: OrganizationRepository
 ) : ResourceUseCases {
     @Transactional(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
@@ -117,25 +123,44 @@ class ResourceService(
             .map { statementRepository.findAllContributorsByResourceId(id, pageable) }
             .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun update(command: UpdateResourceUseCase.UpdateCommand) {
-        // already checked by service
-        var found = repository.findById(command.id).get()
-
-        if (!found.modifiable) {
-            throw ResourceNotModifiable(found.id)
+    override fun update(command: UpdateCommand) {
+        if (!command.hasNoContents()) {
+            val resource = repository.findById(command.id)
+                .orElseThrow { ResourceNotFound.withId(command.id) }
+            if (!resource.modifiable) {
+                throw ResourceNotModifiable(command.id)
+            }
+            command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
+            command.classes?.also { validateClasses(it) }
+            command.observatoryId?.let { observatoryId ->
+                if (observatoryId != resource.observatoryId && !observatoryRepository.existsById(observatoryId)) {
+                    throw ObservatoryNotFound(observatoryId)
+                }
+            }
+            command.organizationId?.let { organizationId ->
+                if (organizationId != resource.organizationId && organizationRepository.findById(organizationId).isEmpty) {
+                    throw OrganizationNotFound(organizationId)
+                }
+            }
+            val contributor by lazy {
+                contributorRepository.findById(command.contributorId)
+                    .orElseThrow { ContributorNotFound(command.contributorId) }
+            }
+            if (command.visibility != null && command.visibility != resource.visibility) {
+                if (!resource.isOwnedBy(command.contributorId) || !isAllowedVisibilityChangeByOwner(command.visibility!!, resource.visibility)) {
+                    if (!contributor.isCurator) {
+                        throw NeitherOwnerNorCurator.cannotChangeVisibility(resource.id)
+                    }
+                }
+            }
+            if (command.verified != null && command.verified != resource.verified && !contributor.isCurator) {
+                throw NotACurator.cannotChangeVerifiedStatus(contributor.id)
+            }
+            val updated = resource.apply(command)
+            if (updated != resource) {
+                repository.save(updated)
+            }
         }
-
-        // update all the properties
-        if (command.label != null) found = found.copy(label = Label.ofOrNull(command.label!!)?.value ?: throw InvalidLabel())
-        command.classes?.let {
-            found = found.copy(classes = validateClasses(it))
-        }
-        if (command.observatoryId != null) found = found.copy(observatoryId = command.observatoryId!!)
-        if (command.organizationId != null) found = found.copy(organizationId = command.organizationId!!)
-        if (command.extractionMethod != null) found = found.copy(extractionMethod = command.extractionMethod!!)
-        if (command.modifiable != null) found = found.copy(modifiable = command.modifiable!!)
-
-        repository.save(found)
     }
 
     override fun delete(id: ThingId, contributorId: ContributorId) {
@@ -241,4 +266,8 @@ class ResourceService(
         }
         return classes
     }
+
+    private fun isAllowedVisibilityChangeByOwner(source: Visibility, target: Visibility) =
+        source == Visibility.DELETED && target == Visibility.DEFAULT || // allow restoring deleted resources
+            target == Visibility.DELETED // allow deletion of resources from any state
 }

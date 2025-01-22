@@ -15,15 +15,15 @@ import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.input.testing.fixtures.dummyPublishComparisonCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val comparisonVersionHistoryUpdater = ComparisonVersionHistoryUpdater(statementService, resourceService)
+    private val comparisonVersionHistoryUpdater = ComparisonVersionHistoryUpdater(statementService, unsafeResourceUseCases)
 
     @Test
     fun `Given a comparison publish command, it crates a new previous version statement and updates the previous version comparison class labels`() {
@@ -40,7 +40,7 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
                 `object` = comparisonVersionId
             )
         } just runs
-        every { resourceService.update(any()) } just runs
+        every { unsafeResourceUseCases.update(any()) } just runs
 
         comparisonVersionHistoryUpdater(command, state).asClue {
             it.comparison shouldBe comparison
@@ -56,9 +56,10 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = comparison.versions.published.first().id,
+                    contributorId = command.contributorId,
                     classes = setOf(Classes.comparisonPublished)
                 )
             )

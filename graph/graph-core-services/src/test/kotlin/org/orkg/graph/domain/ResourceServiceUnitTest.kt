@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -15,8 +16,13 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.community.domain.ObservatoryNotFound
+import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.community.output.ContributorRepository
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.community.testing.fixtures.createContributor
+import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -37,6 +43,8 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     private val contributorRepository: ContributorRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
+    private val observatoryRepository: ObservatoryRepository = mockk()
+    private val organizationRepository: OrganizationRepository = mockk()
 
     private val service = ResourceService(
         repository,
@@ -45,6 +53,8 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         contributorRepository,
         thingRepository,
         unsafeResourceUseCases,
+        observatoryRepository,
+        organizationRepository
     )
 
     @Test
@@ -267,118 +277,318 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a resource update command, when it contains a reserved class, it throws an exception`() {
-        val resource = createResource()
-        val classes = setOf(Classes.list)
+    fun `Given a resource update command, when updating no properties, it does nothing`() {
+        val id = ThingId("R123")
+        val contributorId = ContributorId(MockUserId.USER)
 
-        every { repository.findById(resource.id) } returns Optional.of(resource)
-
-        assertThrows<ReservedClass> {
-            service.update(
-                UpdateResourceUseCase.UpdateCommand(
-                    id = resource.id,
-                    classes = classes
-                )
-            )
-        }
-
-        verify(exactly = 1) { repository.findById(resource.id) }
-    }
-
-    @Test
-    fun `Given a resource update command, when updating all properties, it returns success`() {
-        val resource = createResource()
-        val label = "updated label"
-        val classes = setOf(Classes.paper)
-        val observatoryId = ObservatoryId(UUID.randomUUID())
-        val organizationId = OrganizationId(UUID.randomUUID())
-        val extractionMethod = ExtractionMethod.AUTOMATIC
-        val modifiable = false
-
-        every { repository.findById(resource.id) } returns Optional.of(resource)
-        every { classRepository.existsAll(classes) } returns true
-        every { repository.save(any()) } just runs
-
-        service.update(
-            UpdateResourceUseCase.UpdateCommand(
-                resource.id, label, classes, observatoryId, organizationId, extractionMethod, modifiable
-            )
-        )
-
-        verify(exactly = 1) { repository.findById(resource.id) }
-        verify(exactly = 1) { classRepository.existsAll(classes) }
-        verify(exactly = 1) {
-            repository.save(withArg {
-                it.label shouldBe label
-                it.classes shouldBe classes
-                it.observatoryId shouldBe observatoryId
-                it.organizationId shouldBe organizationId
-                it.extractionMethod shouldBe extractionMethod
-                it.modifiable shouldBe modifiable
-            })
-        }
-    }
-
-    @Test
-    fun `Given a resource update command, when updating no properties, it returns success`() {
-        val resource = createResource()
-
-        every { repository.findById(resource.id) } returns Optional.of(resource)
-        every { repository.save(any()) } just runs
-
-        service.update(UpdateResourceUseCase.UpdateCommand(resource.id))
-
-        verify(exactly = 1) { repository.findById(resource.id) }
-        verify(exactly = 1) {
-            repository.save(withArg {
-                it.label shouldBe resource.label
-                it.classes shouldBe resource.classes
-                it.observatoryId shouldBe resource.observatoryId
-                it.organizationId shouldBe resource.organizationId
-                it.extractionMethod shouldBe resource.extractionMethod
-                it.modifiable shouldBe resource.modifiable
-            })
-        }
-    }
-
-    @Test
-    fun `Given a resource update command, when updating an unmodifiable resource, it throws an exception`() {
-        val resource = createResource(modifiable = false)
-        val label = "updated label"
-        val classes = setOf(Classes.paper)
-        val observatoryId = ObservatoryId(UUID.randomUUID())
-        val organizationId = OrganizationId(UUID.randomUUID())
-        val extractionMethod = ExtractionMethod.AUTOMATIC
-        val modifiable = false
-
-        every { repository.findById(resource.id) } returns Optional.of(resource)
-
-        shouldThrow<ResourceNotModifiable> {
-            service.update(
-                UpdateResourceUseCase.UpdateCommand(
-                    resource.id, label, classes, observatoryId, organizationId, extractionMethod, modifiable
-                )
-            )
-        }.message shouldBe """Resource "${resource.id}" is not modifiable."""
-
-        verify(exactly = 1) { repository.findById(resource.id) }
+        service.update(UpdateResourceUseCase.UpdateCommand(id, contributorId))
     }
 
     @Test
     fun `Given a resource update command, when it contains an invalid label, it throws an exception`() {
         val resource = createResource()
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "\n"
+        )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
 
-        assertThrows<InvalidLabel> {
-            service.update(
-                UpdateResourceUseCase.UpdateCommand(
-                    id = resource.id,
-                    label = "\n"
-                )
-            )
+        shouldThrow<InvalidLabel> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+    }
+
+    @Test
+    fun `Given a resource update command, when it contains a reserved class, it throws an exception`() {
+        val resource = createResource()
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.USER),
+            classes = setOf(Classes.list)
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+
+        shouldThrow<ReservedClass> { service.update(command) }.asClue {
+            it.message shouldBe """Class "${Classes.list}" is reserved and therefor cannot be set."""
         }
 
         verify(exactly = 1) { repository.findById(resource.id) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating an unmodifiable resource, it throws an exception`() {
+        val resource = createResource(modifiable = false)
+        val command = UpdateResourceUseCase.UpdateCommand(resource.id, ContributorId(MockUserId.USER), label = "new label")
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+
+        shouldThrow<ResourceNotModifiable> { service.update(command) }.asClue {
+            it.message shouldBe """Resource "${resource.id}" is not modifiable."""
+        }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating the visibility to deleted as a curator, it returns success`() {
+        val resource = createResource(createdBy = ContributorId(MockUserId.USER))
+        val curatorId = ContributorId(MockUserId.CURATOR)
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = curatorId,
+            visibility = Visibility.DELETED
+        )
+        val curator = createContributor(curatorId, isCurator = true)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { contributorRepository.findById(curatorId) } returns Optional.of(curator)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { contributorRepository.findById(curatorId) }
+        verify(exactly = 1) { repository.save(withArg { it.visibility shouldBe Visibility.DELETED }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating the visibility to deleted as the owner, it returns success`() {
+        val resource = createResource(createdBy = ContributorId(MockUserId.USER))
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = resource.createdBy,
+            visibility = Visibility.DELETED
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.visibility shouldBe Visibility.DELETED }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating the visibility to deleted as some user, it throws an exception`() {
+        val resource = createResource(createdBy = ContributorId(MockUserId.USER))
+        val contributorId = ContributorId("89b13df4-22ae-4685-bed0-4bb1f1873c78")
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = contributorId,
+            visibility = Visibility.DELETED
+        )
+        val someUser = createContributor(contributorId, isCurator = false)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { contributorRepository.findById(contributorId) } returns Optional.of(someUser)
+
+        shouldThrow<NeitherOwnerNorCurator> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { contributorRepository.findById(contributorId) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating the visibility to featured as a curator, it returns success`() {
+        val resource = createResource(createdBy = ContributorId(MockUserId.USER))
+        val curatorId = ContributorId(MockUserId.CURATOR)
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = curatorId,
+            visibility = Visibility.FEATURED
+        )
+        val curator = createContributor(curatorId, isCurator = true)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { contributorRepository.findById(curatorId) } returns Optional.of(curator)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { contributorRepository.findById(curatorId) }
+        verify(exactly = 1) { repository.save(withArg { it.visibility shouldBe Visibility.FEATURED }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating the visibility to featured as the owner, it throws an exception`() {
+        val resource = createResource(createdBy = ContributorId(MockUserId.USER))
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = resource.createdBy,
+            visibility = Visibility.FEATURED
+        )
+        val owner = createContributor(resource.createdBy)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { contributorRepository.findById(command.contributorId) } returns Optional.of(owner)
+
+        shouldThrow<NeitherOwnerNorCurator> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { contributorRepository.findById(command.contributorId) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating the visibility to featured as some user, it throws an exception`() {
+        val resource = createResource(createdBy = ContributorId(MockUserId.USER))
+        val contributorId = ContributorId("89b13df4-22ae-4685-bed0-4bb1f1873c78")
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = contributorId,
+            visibility = Visibility.FEATURED
+        )
+        val someUser = createContributor(contributorId, isCurator = false)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { contributorRepository.findById(contributorId) } returns Optional.of(someUser)
+
+        shouldThrow<NeitherOwnerNorCurator> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { contributorRepository.findById(contributorId) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating the verified flag as a user, it throws an exception`() {
+        val resource = createResource(createdBy = ContributorId(MockUserId.USER))
+        val contributorId = ContributorId(MockUserId.USER)
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = contributorId,
+            verified = true
+        )
+        val someUser = createContributor(contributorId, isCurator = false)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { contributorRepository.findById(contributorId) } returns Optional.of(someUser)
+
+        shouldThrow<NotACurator> { service.update(command) }.asClue {
+            it.message shouldBe """Cannot change verified status: Contributor <$contributorId> is not a curator."""
+        }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { contributorRepository.findById(contributorId) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating the verified flag as a curator, it returns success`() {
+        val resource = createResource(createdBy = ContributorId(MockUserId.USER))
+        val curatorId = ContributorId(MockUserId.CURATOR)
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = curatorId,
+            verified = true
+        )
+        val curator = createContributor(curatorId, isCurator = true)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { contributorRepository.findById(curatorId) } returns Optional.of(curator)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { contributorRepository.findById(curatorId) }
+        verify(exactly = 1) { repository.save(withArg { it.verified shouldBe true }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when observatory does not exist, it throws an exception`() {
+        val resource = createResource()
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.USER),
+            observatoryId = ObservatoryId("04c4d2f9-82e0-47c3-b0ef-79c1f515a940")
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { observatoryRepository.existsById(command.observatoryId!!) } returns false
+
+        shouldThrow<ObservatoryNotFound> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { observatoryRepository.existsById(command.observatoryId!!) }
+    }
+
+    @Test
+    fun `Given a resource update command, when organization does not exist, it throws an exception`() {
+        val resource = createResource()
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.USER),
+            organizationId = OrganizationId("04c4d2f9-82e0-47c3-b0ef-79c1f515a940")
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { organizationRepository.findById(command.organizationId!!) } returns Optional.empty()
+
+        shouldThrow<OrganizationNotFound> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { organizationRepository.findById(command.organizationId!!) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating all properties, it returns success`() {
+        val resource = createResource()
+        val contributorId = ContributorId(MockUserId.USER)
+        val contributor = createContributor(contributorId, isCurator = true)
+        val label = "updated label"
+        val classes = setOf(Classes.paper)
+        val observatoryId = ObservatoryId(UUID.randomUUID())
+        val organizationId = OrganizationId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.AUTOMATIC
+        val modifiable = false
+        val visibility = Visibility.FEATURED
+        val verified = true
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { classRepository.existsAll(classes) } returns true
+        every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
+        every { observatoryRepository.existsById(observatoryId) } returns true
+        every { organizationRepository.findById(organizationId) } returns Optional.of(createOrganization(organizationId))
+        every { repository.save(any()) } just runs
+
+        service.update(
+            UpdateResourceUseCase.UpdateCommand(
+                id = resource.id,
+                contributorId = contributorId,
+                label = label,
+                classes = classes,
+                observatoryId = observatoryId,
+                organizationId = organizationId,
+                extractionMethod = extractionMethod,
+                modifiable = modifiable,
+                visibility = visibility,
+                verified = verified,
+            )
+        )
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { classRepository.existsAll(classes) }
+        verify(exactly = 1) { contributorRepository.findById(contributorId) }
+        verify(exactly = 1) { observatoryRepository.existsById(observatoryId) }
+        verify(exactly = 1) { organizationRepository.findById(organizationId) }
+        verify(exactly = 1) {
+            repository.save(withArg {
+                it.id shouldBe resource.id
+                it.label shouldBe label
+                it.createdAt shouldBe resource.createdAt
+                it.classes shouldBe classes
+                it.createdBy shouldBe resource.createdBy
+                it.observatoryId shouldBe observatoryId
+                it.extractionMethod shouldBe extractionMethod
+                it.organizationId shouldBe organizationId
+                it.visibility shouldBe visibility
+                it.verified shouldBe verified
+                it.unlistedBy shouldBe resource.unlistedBy
+                it.modifiable shouldBe modifiable
+            })
+        }
     }
 }

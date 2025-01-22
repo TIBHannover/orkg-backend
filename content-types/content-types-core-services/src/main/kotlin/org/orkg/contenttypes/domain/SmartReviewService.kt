@@ -220,7 +220,7 @@ class SmartReviewService(
             OrganizationValidator(organizationRepository, { it.organizations }, { it.smartReview!!.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.smartReview!!.observatories }),
             SmartReviewSectionsUpdateValidator(resourceRepository, predicateRepository, thingRepository),
-            SmartReviewResourceUpdater(resourceService),
+            SmartReviewResourceUpdater(unsafeResourceUseCases),
             SmartReviewReferencesUpdater(literalService, statementService),
             SmartReviewResearchFieldUpdater(literalService, statementService),
             SmartReviewAuthorUpdater(unsafeResourceUseCases, statementService, literalService, listService, listRepository),
@@ -234,7 +234,7 @@ class SmartReviewService(
         val steps = listOf<Action<UpdateSmartReviewSectionCommand, UpdateSmartReviewSectionState>>(
             SmartReviewSectionExistenceUpdateValidator(this, resourceRepository),
             SmartReviewSectionUpdateValidator(resourceRepository, predicateRepository, thingRepository),
-            SmartReviewSectionUpdater(literalService, resourceService, statementService)
+            SmartReviewSectionUpdater(literalService, unsafeResourceUseCases, statementService)
         )
         steps.execute(command, UpdateSmartReviewSectionState())
     }

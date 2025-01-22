@@ -20,21 +20,21 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class AbstractSmartReviewSectionUpdater(
-    private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater,
     private val statementCollectionPropertyUpdater: StatementCollectionPropertyUpdater
 ) {
     constructor(
         literalService: LiteralUseCases,
-        resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
     ) : this(
-        resourceService,
+        unsafeResourceUseCases,
         SingleStatementPropertyUpdater(literalService, statementService),
         StatementCollectionPropertyUpdater(literalService, statementService)
     )
@@ -46,9 +46,10 @@ class AbstractSmartReviewSectionUpdater(
         statements: Map<ThingId, List<GeneralStatement>>
     ) {
         if (newSection.heading != oldSection.heading) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )
@@ -71,9 +72,10 @@ class AbstractSmartReviewSectionUpdater(
         statements: Map<ThingId, List<GeneralStatement>>
     ) {
         if (newSection.heading != oldSection.heading) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )
@@ -96,9 +98,10 @@ class AbstractSmartReviewSectionUpdater(
         statements: Map<ThingId, List<GeneralStatement>>
     ) {
         if (newSection.heading != oldSection.heading) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )
@@ -121,9 +124,10 @@ class AbstractSmartReviewSectionUpdater(
         statements: Map<ThingId, List<GeneralStatement>>
     ) {
         if (newSection.heading != oldSection.heading) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )
@@ -146,9 +150,10 @@ class AbstractSmartReviewSectionUpdater(
         statements: Map<ThingId, List<GeneralStatement>>
     ) {
         if (newSection.heading != oldSection.heading) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )
@@ -180,9 +185,10 @@ class AbstractSmartReviewSectionUpdater(
         statements: Map<ThingId, List<GeneralStatement>>
     ) {
         if (newSection.heading != oldSection.heading || newSection.`class` !in oldSection.classes) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading,
                     classes = oldSection.classes.filterNot { it in SmartReviewTextSection.types } union setOfNotNull(newSection.`class`, Classes.section)
                 )

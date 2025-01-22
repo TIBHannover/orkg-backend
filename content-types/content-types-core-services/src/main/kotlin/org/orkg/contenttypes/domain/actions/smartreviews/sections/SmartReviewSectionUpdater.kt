@@ -17,17 +17,17 @@ import org.orkg.contenttypes.input.SmartReviewSectionDefinition
 import org.orkg.contenttypes.input.SmartReviewTextSectionDefinition
 import org.orkg.contenttypes.input.SmartReviewVisualizationSectionDefinition
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 
 class SmartReviewSectionUpdater(
     private val abstractSmartReviewSectionUpdater: AbstractSmartReviewSectionUpdater
 ) : UpdateSmartReviewSectionAction {
     constructor(
         literalService: LiteralUseCases,
-        resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
-    ) : this(AbstractSmartReviewSectionUpdater(literalService, resourceService, statementService))
+    ) : this(AbstractSmartReviewSectionUpdater(literalService, unsafeResourceUseCases, statementService))
 
     override fun invoke(command: UpdateSmartReviewSectionCommand, state: State): State {
         val section = state.smartReview!!.sections.single { it.id == command.smartReviewSectionId }

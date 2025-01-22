@@ -11,7 +11,7 @@ import org.orkg.createList
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
-import org.orkg.graph.adapter.input.rest.ResourceControllerIntegrationTest.RestDoc.resourceResponseFields
+import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.LiteralService
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases

@@ -22,7 +22,7 @@ class AbstractTemplatePropertiesUpdater(
         statementService: StatementUseCases,
     ) : this(
         AbstractTemplatePropertyCreator(unsafeResourceUseCases, literalService, statementService),
-        AbstractTemplatePropertyUpdater(literalService, resourceService, statementService),
+        AbstractTemplatePropertyUpdater(literalService, unsafeResourceUseCases, statementService),
         AbstractTemplatePropertyDeleter(resourceService, statementService)
     )
 

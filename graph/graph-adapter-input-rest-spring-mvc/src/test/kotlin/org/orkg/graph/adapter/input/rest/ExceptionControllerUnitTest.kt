@@ -32,8 +32,8 @@ import org.orkg.graph.domain.StatementNotModifiable
 import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
@@ -291,7 +291,7 @@ internal class ExceptionControllerUnitTest : RestDocsTest("exceptions") {
             .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
             .andExpect(jsonPath("$.error", `is`("Forbidden")))
             .andExpect(jsonPath("$.path").value("/neither-owner-nor-creator-visibility"))
-            .andExpect(jsonPath("$.message").value("""Insufficient permissions to change visibility of entity "$id". User must be a curator or the owner of the entity."""))
+            .andExpect(jsonPath("$.message").value("""Insufficient permissions to change visibility of entity "$id"."""))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
@@ -428,6 +428,21 @@ internal class ExceptionControllerUnitTest : RestDocsTest("exceptions") {
     }
 
     @Test
+    fun notACuratorCannotChangeVerifiedStatus() {
+        val contributorId = "62bfeea3-4210-436d-b953-effa5a07ed64"
+
+        get("/not-a-curator-cannot-change-verified-status")
+            .param("contributorId", contributorId)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.error", `is`("Forbidden")))
+            .andExpect(jsonPath("$.path").value("/not-a-curator-cannot-change-verified-status"))
+            .andExpect(jsonPath("$.message").value("""Cannot change verified status: Contributor <$contributorId> is not a curator."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
     fun invalidLiteralLabelTooLong() {
         get("/invalid-literal-label-too-long")
             .perform()
@@ -540,7 +555,7 @@ internal class ExceptionControllerUnitTest : RestDocsTest("exceptions") {
 
         @GetMapping("/neither-owner-nor-creator-visibility")
         fun neitherOwnerNorCuratorVisibility(@RequestParam id: ThingId) {
-            throw NeitherOwnerNorCurator.changeVisibility(id)
+            throw NeitherOwnerNorCurator.cannotChangeVisibility(id)
         }
 
         @GetMapping("/invalid-statement-is-list-element")
@@ -586,6 +601,11 @@ internal class ExceptionControllerUnitTest : RestDocsTest("exceptions") {
         @GetMapping("/not-a-curator")
         fun notACurator(@RequestParam contributorId: ContributorId) {
             throw NotACurator(contributorId)
+        }
+
+        @GetMapping("/not-a-curator-cannot-change-verified-status")
+        fun notACuratorCannotChangeVerifiedStatus(@RequestParam contributorId: ContributorId) {
+            throw NotACurator.cannotChangeVerifiedStatus(contributorId)
         }
 
         @GetMapping("/invalid-literal-label-too-long")

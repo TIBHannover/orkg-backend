@@ -166,7 +166,7 @@ class TemplateService(
             TemplatePropertiesValidator(predicateRepository, classRepository, { it.properties }, { it.template!!.properties }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.template!!.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.template!!.observatories }),
-            TemplateResourceUpdater(resourceService),
+            TemplateResourceUpdater(unsafeResourceUseCases),
             TemplateTargetClassUpdater(literalService, statementService),
             TemplateRelationsUpdater(literalService, statementService),
             TemplateDescriptionUpdater(literalService, statementService),
@@ -182,7 +182,7 @@ class TemplateService(
             TemplatePropertyExistenceUpdateValidator(this, resourceRepository),
             TemplatePropertyTemplateUpdateValidator(),
             TemplatePropertyValidator(predicateRepository, classRepository, { it }, { it.templateProperty }),
-            TemplatePropertyUpdater(literalService, resourceService, statementService)
+            TemplatePropertyUpdater(literalService, unsafeResourceUseCases, statementService)
         )
         steps.execute(command, UpdateTemplatePropertyState())
     }

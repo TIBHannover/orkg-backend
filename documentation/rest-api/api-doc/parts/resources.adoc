@@ -42,7 +42,16 @@ A `PUT` request updates a resource with a new given label.
 The response will be `200 OK` when successful.
 The created resource is returned in the body for convenience.
 
-operation::resources-edit[snippets='path-parameters,request-fields,curl-request,http-response']
+[NOTE]
+====
+1. If the resource doesn't exist, the return status will be `404 NOT FOUND`.
+2. If the resource is not modifiable, the return status will be `403 FORBIDDEN`.
+3. If the target visibility is `FEATURED` or `UNLISTED` and the performing user is not a curator, the return status will be `403 FORBIDDEN`.
+4. If the target visibility is `DELETED` the performing user is not the owner of the resource and not a curator, the return status will be `403 FORBIDDEN`.
+5. If the target visibility is `DEFAULT` and the original visibility is `DELETED` and the performing user is not the owner of the resource and not a curator, the return status will be `403 FORBIDDEN`.
+====
+
+operation::resources-update[snippets='path-parameters,request-fields,curl-request,http-response']
 
 [[resources-delete]]
 == Deleting Resources

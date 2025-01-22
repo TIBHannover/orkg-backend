@@ -16,6 +16,8 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.community.output.ContributorRepository
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.ResourceService
 import org.orkg.graph.domain.SearchString
@@ -67,6 +69,12 @@ internal class CorsIntegrationTest : RestDocsTest("cors") {
 
     @MockkBean
     private lateinit var unsafeResourceUseCases: UnsafeResourceUseCases
+
+    @MockkBean
+    private lateinit var observatoryRepository: ObservatoryRepository
+
+    @MockkBean
+    private lateinit var organizationRepository: OrganizationRepository
 
     @DisplayName("CORS Pre-flight requests should pass with `200 OK`")
     @ParameterizedTest(name = "to endpoint {0} requesting method {1}")
@@ -127,6 +135,8 @@ internal class CorsIntegrationTest : RestDocsTest("cors") {
             contributorRepository,
             thingRepository,
             unsafeResourceUseCases,
+            observatoryRepository,
+            organizationRepository,
         ) {
             override fun findAll(
                 pageable: Pageable,

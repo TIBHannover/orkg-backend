@@ -138,7 +138,7 @@ class RosettaStoneTemplateService(
             RosettaStoneTemplatePropertiesUpdateValidator(predicateRepository, classRepository),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.rosettaStoneTemplate!!.organizations }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.rosettaStoneTemplate!!.observatories }),
-            RosettaStoneTemplateResourceUpdater(resourceService),
+            RosettaStoneTemplateResourceUpdater(unsafeResourceUseCases),
             RosettaStoneTemplateDescriptionUpdater(literalService, statementService),
             RosettaStoneTemplateFormattedLabelUpdater(literalService, statementService),
             RosettaStoneTemplateExampleUsageUpdater(literalService, statementService),

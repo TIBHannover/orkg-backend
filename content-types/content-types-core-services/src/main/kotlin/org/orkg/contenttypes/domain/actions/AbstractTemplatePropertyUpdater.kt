@@ -18,20 +18,20 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class AbstractTemplatePropertyUpdater(
     private val statementService: StatementUseCases,
-    private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
 ) {
     constructor(
         literalService: LiteralUseCases,
-        resourceService: ResourceUseCases,
+        unsafeResourceUseCases: UnsafeResourceUseCases,
         statementService: StatementUseCases,
-    ) : this(statementService, resourceService, SingleStatementPropertyUpdater(literalService, statementService))
+    ) : this(statementService, unsafeResourceUseCases, SingleStatementPropertyUpdater(literalService, statementService))
 
     internal fun update(
         statements: List<GeneralStatement>,
@@ -41,9 +41,10 @@ class AbstractTemplatePropertyUpdater(
         oldProperty: TemplateProperty
     ) {
         if (newProperty.label != oldProperty.label) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldProperty.id,
+                    contributorId = contributorId,
                     label = newProperty.label
                 )
             )

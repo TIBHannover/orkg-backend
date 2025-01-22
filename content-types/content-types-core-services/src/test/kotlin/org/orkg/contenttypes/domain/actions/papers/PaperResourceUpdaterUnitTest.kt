@@ -13,13 +13,13 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val paperResourceUpdater = PaperResourceUpdater(resourceService)
+    private val paperResourceUpdater = PaperResourceUpdater(unsafeResourceUseCases)
 
     @Test
     fun `Given a paper update command, it updates the paper resource`() {
@@ -28,12 +28,13 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.paperId,
+            contributorId = command.contributorId,
             label = command.title,
             observatoryId = command.observatories!!.single(),
             organizationId = command.organizations!!.single()
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = paperResourceUpdater(command, state)
 
@@ -42,7 +43,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -52,12 +53,13 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.paperId,
+            contributorId = command.contributorId,
             label = command.title,
             observatoryId = ObservatoryId.UNKNOWN,
             organizationId = command.organizations!!.single()
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = paperResourceUpdater(command, state)
 
@@ -65,7 +67,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             it.paper shouldBe state.paper
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -75,12 +77,13 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.paperId,
+            contributorId = command.contributorId,
             label = command.title,
             observatoryId = null,
             organizationId = command.organizations!!.single()
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = paperResourceUpdater(command, state)
 
@@ -88,7 +91,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             it.paper shouldBe state.paper
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -98,12 +101,13 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.paperId,
+            contributorId = command.contributorId,
             label = command.title,
             observatoryId = command.observatories!!.single(),
             organizationId = OrganizationId.UNKNOWN
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = paperResourceUpdater(command, state)
 
@@ -111,7 +115,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             it.paper shouldBe state.paper
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -121,12 +125,13 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.paperId,
+            contributorId = command.contributorId,
             label = command.title,
             observatoryId = command.observatories!!.single(),
             organizationId = null
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = paperResourceUpdater(command, state)
 
@@ -134,6 +139,6 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             it.paper shouldBe state.paper
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 }

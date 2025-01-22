@@ -8,7 +8,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
-import org.orkg.graph.input.UpdateResourceUseCase
+import org.orkg.graph.input.UpdateResourceUseCase.UpdateCommand
 import org.orkg.graph.output.ResourceRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -35,18 +35,15 @@ class UnsafeResourceService(
         return resource.id
     }
 
-    override fun update(command: UpdateResourceUseCase.UpdateCommand) {
-        var found = repository.findById(command.id).get()
-
-        // update all the properties
-        if (command.label != null) found = found.copy(label = command.label!!)
-        if (command.classes != null) found = found.copy(classes = command.classes!!)
-        if (command.observatoryId != null) found = found.copy(observatoryId = command.observatoryId!!)
-        if (command.organizationId != null) found = found.copy(organizationId = command.organizationId!!)
-        if (command.extractionMethod != null) found = found.copy(extractionMethod = command.extractionMethod!!)
-        if (command.modifiable != null) found = found.copy(modifiable = command.modifiable!!)
-
-        repository.save(found)
+    override fun update(command: UpdateCommand) {
+        if (!command.hasNoContents()) {
+            val resource = repository.findById(command.id)
+                .orElseThrow { ResourceNotFound.withId(command.id) }
+            val updated = resource.apply(command)
+            if (updated != resource) {
+                repository.save(updated)
+            }
+        }
     }
 
     override fun delete(id: ThingId, contributorId: ContributorId) {

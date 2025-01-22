@@ -4,6 +4,8 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import java.time.Clock
 import java.time.OffsetDateTime
@@ -22,6 +24,7 @@ import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.community.testing.fixtures.createContributor
+import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.InvalidClassCollection
@@ -33,7 +36,6 @@ import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
-import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
@@ -42,12 +44,12 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
@@ -90,24 +92,7 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                     pathParameters(
                         parameterWithName("id").description("The identifier of the resource to retrieve."),
                     ),
-                    responseFields(
-                        // The order here determines the order in the generated table. More relevant items should be up.
-                        fieldWithPath("id").description("The identifier of the resource."),
-                        fieldWithPath("label").description("The label of the resource. It is intended to be read by humans and should be used for displaying the resource."),
-                        fieldWithPath("formatted_label").type("String").description("The formatted label of the resource. See <<content-negotiation,Content Negotiation>> for information on how to obtain this value.").ignored(),
-                        fieldWithPath("classes").description("The set of classes of which this resources is an instance of."),
-                        fieldWithPath("shared").description("The number of statements that have this resource in their object position."),
-                        fieldWithPath("featured").description("Determine if the resource is featured. Defaults to `false`."),
-                        fieldWithPath("unlisted").description("Determine if the resource is unlisted. Defaults to `false`."),
-                        fieldWithPath("verified").description("Determine if the resource is verified. Defaults to `false`."),
-                        fieldWithPath("extraction_method").description("Determines how the resource was created. Can be one of $allowedExtractionMethodValues."),
-                        fieldWithPath("observatory_id").description("The UUID of the observatory to which this resource belongs."),
-                        fieldWithPath("organization_id").description("The UUID of the organization to which this resource belongs."),
-                        timestampFieldWithPath("created_at", "the resource was created"),
-                        fieldWithPath("created_by").description("The UUID of the user or service who created this resource."),
-                        fieldWithPath("modifiable").description("Whether this resource can be modified."),
-                        fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value `resource`."),
-                    )
+                    responseFields(resourceResponseFields())
                 )
             )
             .andDo(generateDefaultDocSnippets())
@@ -228,33 +213,6 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
     }
 
     @Test
-    @TestWithMockUser
-    fun `When updating a resource, and service reports invalid class collection, then status is 400 BAD REQUEST`() {
-        val resource = createResource()
-        val command = UpdateResourceUseCase.UpdateCommand(
-            id = resource.id,
-            classes = setOf(Classes.list)
-        )
-        val exception = InvalidClassCollection(command.classes!!)
-
-        every { resourceService.findById(any()) } returns Optional.of(resource)
-        every { resourceService.update(command) } throws exception
-
-        put("/api/resources/{id}", resource.id)
-            .content(command)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value(exception.message))
-            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
-            .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.path").value("/api/resources/${resource.id}"))
-
-        verify(exactly = 1) { resourceService.findById(any()) }
-        verify(exactly = 1) { resourceService.update(command) }
-    }
-
-    @Test
     @DisplayName("Given several resources, when filtering by no parameters, then status is 200 OK and resources are returned")
     fun getPaged() {
         every { resourceService.findAll(any()) } returns pageOf(createResource())
@@ -360,5 +318,81 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .andExpect(jsonPath("$.path").value("/api/resources"))
 
         verify(exactly = 1) { resourceService.findAll(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
+    @DisplayName("Given a resource update command, when service succeeds, it returns status 200 OK")
+    fun update() {
+        val resource = createResource(classes = setOf(Classes.data), label = "foo")
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = resource.label,
+            classes = resource.classes,
+            extractionMethod = resource.extractionMethod,
+            visibility = resource.visibility
+        )
+        val request = mapOf(
+            "label" to resource.label,
+            "classes" to resource.classes,
+            "extraction_method" to resource.extractionMethod,
+            "visibility" to resource.visibility
+        )
+
+        every { resourceService.update(command) } just runs
+        every { resourceService.findById(any()) } returns Optional.of(resource)
+        every { statementService.countIncomingStatements(resource.id) } returns 0
+
+        documentedPutRequestTo("/api/resources/{id}", resource.id)
+            .content(request)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectResource()
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the resource.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The updated resource label. (optional)").optional(),
+                        fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
+                        fieldWithPath("extraction_method").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""").optional(),
+                        fieldWithPath("visibility").description("""Visibility of the resource. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED". (optional)""").optional(),
+                    ),
+                    responseFields(resourceResponseFields())
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { resourceService.update(command) }
+        verify(exactly = 1) { resourceService.findById(any()) }
+        verify(exactly = 1) { statementService.countIncomingStatements(resource.id) }
+    }
+
+    @Test
+    @TestWithMockUser
+    fun `When updating a resource, and service reports invalid class collection, then status is 400 BAD REQUEST`() {
+        val id = ThingId("R213")
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            classes = setOf(Classes.list)
+        )
+        val exception = InvalidClassCollection(command.classes!!)
+
+        every { resourceService.update(command) } throws exception
+
+        put("/api/resources/{id}", id)
+            .content(command)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/resources/$id"))
+
+        verify(exactly = 1) { resourceService.update(command) }
     }
 }

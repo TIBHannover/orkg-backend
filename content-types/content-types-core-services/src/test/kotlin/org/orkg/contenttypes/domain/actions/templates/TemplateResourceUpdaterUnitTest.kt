@@ -13,13 +13,13 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
-import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
-    private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val templateResourceUpdater = TemplateResourceUpdater(resourceService)
+    private val templateResourceUpdater = TemplateResourceUpdater(unsafeResourceUseCases)
 
     @Test
     fun `Given a template update command, it updates the template resource`() {
@@ -28,13 +28,14 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.templateId,
+            contributorId = command.contributorId,
             label = command.label,
             observatoryId = command.observatories!!.single(),
             organizationId = command.organizations!!.single(),
             extractionMethod = command.extractionMethod
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = templateResourceUpdater(command, state)
 
@@ -42,7 +43,7 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
             it.template shouldBe state.template
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -52,13 +53,14 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.templateId,
+            contributorId = command.contributorId,
             label = command.label,
             observatoryId = ObservatoryId.UNKNOWN,
             organizationId = command.organizations!!.single(),
             extractionMethod = command.extractionMethod
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = templateResourceUpdater(command, state)
 
@@ -66,7 +68,7 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
             it.template shouldBe state.template
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -76,13 +78,14 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.templateId,
+            contributorId = command.contributorId,
             label = command.label,
             observatoryId = null,
             organizationId = command.organizations!!.single(),
             extractionMethod = command.extractionMethod
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = templateResourceUpdater(command, state)
 
@@ -90,7 +93,7 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
             it.template shouldBe state.template
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -100,13 +103,14 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.templateId,
+            contributorId = command.contributorId,
             label = command.label,
             observatoryId = command.observatories!!.single(),
             organizationId = OrganizationId.UNKNOWN,
             extractionMethod = command.extractionMethod
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = templateResourceUpdater(command, state)
 
@@ -114,7 +118,7 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
             it.template shouldBe state.template
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 
     @Test
@@ -124,13 +128,14 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.templateId,
+            contributorId = command.contributorId,
             label = command.label,
             observatoryId = command.observatories!!.single(),
             organizationId = null,
             extractionMethod = command.extractionMethod
         )
 
-        every { resourceService.update(resourceUpdateCommand) } just runs
+        every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
 
         val result = templateResourceUpdater(command, state)
 
@@ -138,6 +143,6 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
             it.template shouldBe state.template
         }
 
-        verify(exactly = 1) { resourceService.update(resourceUpdateCommand) }
+        verify(exactly = 1) { unsafeResourceUseCases.update(resourceUpdateCommand) }
     }
 }

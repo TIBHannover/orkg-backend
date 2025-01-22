@@ -22,6 +22,7 @@ import org.orkg.graph.input.UpdateResourceUseCase
 class AbstractLiteratureListSectionUpdater(
     private val statementService: StatementUseCases,
     private val resourceService: ResourceUseCases,
+    private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator,
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater
 ) {
@@ -33,6 +34,7 @@ class AbstractLiteratureListSectionUpdater(
     ) : this(
         statementService,
         resourceService,
+        unsafeResourceUseCases,
         AbstractLiteratureListSectionCreator(statementService, unsafeResourceUseCases, literalService),
         SingleStatementPropertyUpdater(literalService, statementService)
     )
@@ -134,9 +136,10 @@ class AbstractLiteratureListSectionUpdater(
         statements: Map<ThingId, List<GeneralStatement>>
     ) {
         if (newSection.heading != oldSection.heading) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )

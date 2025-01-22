@@ -1,5 +1,7 @@
 package org.orkg.graph.adapter.input.rest.testing.fixtures
 
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
+import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
@@ -15,6 +17,24 @@ fun classResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("featured").description("Featured Value").optional().ignored(),
     fieldWithPath("unlisted").description("Unlisted Value").optional().ignored(),
     fieldWithPath("modifiable").description("Whether this class can be modified."),
+)
+
+fun resourceResponseFields(): List<FieldDescriptor> = listOf(
+    fieldWithPath("id").description("The identifier of the resource."),
+    fieldWithPath("label").description("The label of the resource. It is intended to be read by humans and should be used for displaying the resource."),
+    fieldWithPath("formatted_label").type("String").description("The formatted label of the resource. See <<content-negotiation,Content Negotiation>> for information on how to obtain this value.").ignored(),
+    fieldWithPath("classes").description("The set of classes of which this resources is an instance of."),
+    fieldWithPath("shared").description("The number of statements that have this resource in their object position."),
+    fieldWithPath("featured").description("Determine if the resource is featured. Defaults to `false`."),
+    fieldWithPath("unlisted").description("Determine if the resource is unlisted. Defaults to `false`."),
+    fieldWithPath("verified").description("Determine if the resource is verified. Defaults to `false`."),
+    fieldWithPath("extraction_method").description("Determines how the resource was created. Can be one of $allowedExtractionMethodValues."),
+    fieldWithPath("observatory_id").description("The UUID of the observatory to which this resource belongs."),
+    fieldWithPath("organization_id").description("The UUID of the organization to which this resource belongs."),
+    timestampFieldWithPath("created_at", "the resource was created"),
+    fieldWithPath("created_by").description("The UUID of the user or service who created this resource."),
+    fieldWithPath("modifiable").description("Whether this resource can be modified."),
+    fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value `resource`."),
 )
 
 fun statementResponseFields(): List<FieldDescriptor> = listOf(

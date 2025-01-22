@@ -26,6 +26,8 @@ dependencies {
     implementation(project(":community:community-core-model"))
 
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
+    testFixturesImplementation(testFixtures(project(":testing:spring")))
+    testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
 }
 
 testing {

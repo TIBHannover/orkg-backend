@@ -16,6 +16,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -30,8 +31,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.http.ResponseEntity.notFound
-import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -121,43 +120,35 @@ class ResourceController(
     fun update(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateResourceRequest,
-        capabilities: MediaTypeCapabilities
-    ): ResponseEntity<ResourceRepresentation> {
-        val found = service.findById(id)
-
-        if (!found.isPresent)
-            return notFound().build()
-
-        service.update(
-            UpdateResourceUseCase.UpdateCommand(
-                id = id,
-                label = request.label,
-                classes = request.classes,
-                extractionMethod = request.extractionMethod
-            )
-        )
-        return ok(service.findById(id).mapToResourceRepresentation(capabilities).get())
+        capabilities: MediaTypeCapabilities,
+        currentUser: Authentication?
+    ): ResourceRepresentation {
+        service.update(request.toUpdateCommand(id, currentUser.contributorId()))
+        return service.findById(id).mapToResourceRepresentation(capabilities).get()
     }
 
-    @RequestMapping("/{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @RequireCuratorRole
+    @Deprecated("To be removed", replaceWith = ReplaceWith("update"))
+    @RequireLogin
+    @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun updateWithObservatory(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateResourceObservatoryRequest,
-        capabilities: MediaTypeCapabilities
-    ): ResponseEntity<ResourceRepresentation> {
-        val found = service.findById(id)
-        if (!found.isPresent)
-            return notFound().build()
-        service.update(
-            UpdateResourceUseCase.UpdateCommand(
-                id = id,
-                organizationId = request.organizationId,
-                observatoryId = request.observatoryId,
-            )
-        )
-        return ok(service.findById(id).mapToResourceRepresentation(capabilities).get())
-    }
+        capabilities: MediaTypeCapabilities,
+        currentUser: Authentication?,
+    ): ResourceRepresentation = update(
+        id = id,
+        request = UpdateResourceRequest(
+            id = id,
+            label = null,
+            classes = null,
+            organizationId = request.organizationId,
+            observatoryId = request.observatoryId,
+            extractionMethod = null,
+            visibility = null
+        ),
+        capabilities = capabilities,
+        currentUser = currentUser
+    )
 
     @GetMapping("/{id}/contributors")
     fun findContributorsById(@PathVariable id: ThingId, pageable: Pageable): Page<ContributorId> =
@@ -232,9 +223,26 @@ data class UpdateResourceRequest(
     val id: ThingId?,
     val label: String?,
     val classes: Set<ThingId>?,
+    @JsonProperty("observatory_id")
+    val observatoryId: ObservatoryId?,
+    @JsonProperty("organization_id")
+    val organizationId: OrganizationId?,
     @JsonProperty("extraction_method")
-    val extractionMethod: ExtractionMethod?
-)
+    val extractionMethod: ExtractionMethod?,
+    val visibility: Visibility?,
+) {
+    fun toUpdateCommand(id: ThingId, contributorId: ContributorId): UpdateResourceUseCase.UpdateCommand =
+        UpdateResourceUseCase.UpdateCommand(
+            id = id,
+            contributorId = contributorId,
+            label = label,
+            classes = classes,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            extractionMethod = extractionMethod,
+            visibility = visibility
+        )
+}
 
 data class UpdateResourceObservatoryRequest(
     @JsonProperty("observatory_id")

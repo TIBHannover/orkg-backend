@@ -220,16 +220,31 @@ class NeitherOwnerNorCurator private constructor(
     )
 
     companion object {
-        fun changeVisibility(id: ThingId): NeitherOwnerNorCurator =
+        fun cannotChangeVisibility(id: ThingId): NeitherOwnerNorCurator =
             NeitherOwnerNorCurator(
                 status = HttpStatus.FORBIDDEN,
-                message = """Insufficient permissions to change visibility of entity "$id". User must be a curator or the owner of the entity."""
+                message = """Insufficient permissions to change visibility of entity "$id"."""
             )
     }
 }
 
-class NotACurator(contributorId: ContributorId) :
-    SimpleMessageException(HttpStatus.FORBIDDEN, "Contributor <$contributorId> is not a curator.")
+class NotACurator private constructor(
+    override val status: HttpStatus,
+    override val message: String,
+) : SimpleMessageException(status, message) {
+    constructor(contributorId: ContributorId) : this(
+        status = HttpStatus.FORBIDDEN,
+        message = "Contributor <$contributorId> is not a curator."
+    )
+
+    companion object {
+        fun cannotChangeVerifiedStatus(contributorId: ContributorId): NotACurator =
+            NotACurator(
+                status = HttpStatus.FORBIDDEN,
+                message = """Cannot change verified status: Contributor <$contributorId> is not a curator."""
+            )
+    }
+}
 
 /**
  * Exception indicating that a property was blank when it was not supposed to be.

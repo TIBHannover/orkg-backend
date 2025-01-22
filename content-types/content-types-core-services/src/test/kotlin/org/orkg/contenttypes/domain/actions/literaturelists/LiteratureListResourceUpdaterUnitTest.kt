@@ -28,6 +28,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.literatureListId,
+            contributorId = command.contributorId,
             label = command.title,
             observatoryId = command.observatories!!.single(),
             organizationId = command.organizations!!.single(),
@@ -54,6 +55,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.literatureListId,
+            contributorId = command.contributorId,
             label = command.title,
             observatoryId = ObservatoryId.UNKNOWN,
             organizationId = command.organizations!!.single(),
@@ -78,6 +80,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.literatureListId,
+            contributorId = command.contributorId,
             label = command.title,
             observatoryId = null,
             organizationId = command.organizations!!.single(),
@@ -102,6 +105,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.literatureListId,
+            contributorId = command.contributorId,
             label = command.title,
             observatoryId = command.observatories!!.single(),
             organizationId = OrganizationId.UNKNOWN,
@@ -126,6 +130,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
             id = command.literatureListId,
+            contributorId = command.contributorId,
             label = command.title,
             observatoryId = command.observatories!!.single(),
             organizationId = null,

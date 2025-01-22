@@ -337,7 +337,7 @@ class ComparisonService(
             OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }),
             ComparisonAuthorUpdateValidator(resourceRepository, statementRepository),
-            ComparisonResourceUpdater(resourceService),
+            ComparisonResourceUpdater(unsafeResourceUseCases),
             ComparisonDescriptionUpdater(literalService, statementService),
             ComparisonResearchFieldUpdater(literalService, statementService),
             ComparisonAuthorUpdater(unsafeResourceUseCases, statementService, literalService, listService, listRepository),
@@ -390,7 +390,7 @@ class ComparisonService(
         val steps = listOf<Action<PublishComparisonCommand, PublishComparisonState>>(
             ComparisonPublishableValidator(this, comparisonTableRepository),
             ComparisonVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, statementService, literalService, listService, comparisonPublishedRepository),
-            ComparisonVersionHistoryUpdater(statementService, resourceService),
+            ComparisonVersionHistoryUpdater(statementService, unsafeResourceUseCases),
             ComparisonVersionDoiPublisher(statementService, literalService, comparisonRepository, doiService, comparisonPublishBaseUri)
         )
         return steps.execute(command, PublishComparisonState()).comparisonVersionId!!

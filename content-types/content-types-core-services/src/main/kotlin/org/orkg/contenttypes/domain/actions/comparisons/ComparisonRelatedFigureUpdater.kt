@@ -47,6 +47,7 @@ class ComparisonRelatedFigureUpdater(
             resourceService.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = comparisonRelatedFigure.id,
+                    contributorId = command.contributorId,
                     label = command.label
                 )
             )

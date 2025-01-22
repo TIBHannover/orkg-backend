@@ -47,6 +47,7 @@ class ComparisonRelatedResourceUpdater(
             resourceService.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = comparisonRelatedResource.id,
+                    contributorId = command.contributorId,
                     label = command.label
                 )
             )

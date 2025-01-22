@@ -4,13 +4,13 @@ import org.orkg.contenttypes.domain.actions.PublishComparisonCommand
 import org.orkg.contenttypes.domain.actions.comparisons.PublishComparisonAction.State
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 class ComparisonVersionHistoryUpdater(
     private val statementService: StatementUseCases,
-    private val resourceService: ResourceUseCases
+    private val unsafeResourceUseCases: UnsafeResourceUseCases
 ) : PublishComparisonAction {
     override fun invoke(command: PublishComparisonCommand, state: State): State {
         statementService.add(
@@ -20,9 +20,10 @@ class ComparisonVersionHistoryUpdater(
             `object` = state.comparisonVersionId!!
         )
         state.comparison.versions.published.firstOrNull()?.let { latestVersion ->
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = latestVersion.id,
+                    contributorId = command.contributorId,
                     classes = setOf(Classes.comparisonPublished)
                 )
             )

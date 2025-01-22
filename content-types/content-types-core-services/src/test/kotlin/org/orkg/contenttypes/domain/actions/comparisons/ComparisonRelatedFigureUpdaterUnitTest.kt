@@ -123,6 +123,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         )
         val updateFigureCommand = UpdateResourceUseCase.UpdateCommand(
             id = comparisonRelatedFigure.id,
+            contributorId = command.contributorId,
             label = command.label
         )
         val comparison = createResource(classes = setOf(Classes.comparison))

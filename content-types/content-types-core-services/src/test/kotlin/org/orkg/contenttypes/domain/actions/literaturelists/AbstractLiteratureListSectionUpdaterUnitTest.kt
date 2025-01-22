@@ -26,16 +26,22 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
 internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val resourceService: ResourceUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val abstractLiteratureListSectionCreator: AbstractLiteratureListSectionCreator = mockk()
     private val singleStatementPropertyUpdater: SingleStatementPropertyUpdater = mockk()
 
     private val abstractLiteratureListSectionUpdater = AbstractLiteratureListSectionUpdater(
-        statementService, resourceService, abstractLiteratureListSectionCreator, singleStatementPropertyUpdater
+        statementService = statementService,
+        resourceService = resourceService,
+        unsafeResourceUseCases = unsafeResourceUseCases,
+        abstractLiteratureListSectionCreator = abstractLiteratureListSectionCreator,
+        singleStatementPropertyUpdater = singleStatementPropertyUpdater
     )
 
     @Test
@@ -274,14 +280,15 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val newSection = oldSection.toLiteratureListTextSectionDefinition().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
 
-        every { resourceService.update(any()) } just runs
+        every { unsafeResourceUseCases.update(any()) } just runs
 
         abstractLiteratureListSectionUpdater.updateTextSection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
+                    contributorId = contributorId,
                     label = newSection.heading
                 )
             )

@@ -39,9 +39,10 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
         )
 
         every {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldProperty.id,
+                    contributorId = contributorId,
                     label = newProperty.label
                 )
             )
@@ -50,9 +51,10 @@ internal class AbstractTemplatePropertyUpdaterResourcePropertyUnitTest : Abstrac
         abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 4, newProperty, oldProperty)
 
         verify(exactly = 1) {
-            resourceService.update(
+            unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldProperty.id,
+                    contributorId = contributorId,
                     label = newProperty.label
                 )
             )

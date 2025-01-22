@@ -213,7 +213,7 @@ class PaperService(
             PaperTitleUpdateValidator(resourceService),
             PaperIdentifierUpdateValidator(statementRepository),
             PaperAuthorUpdateValidator(resourceRepository, statementRepository),
-            PaperResourceUpdater(resourceService),
+            PaperResourceUpdater(unsafeResourceUseCases),
             PaperIdentifierUpdater(statementService, literalService),
             PaperAuthorUpdater(unsafeResourceUseCases, statementService, literalService, listService, listRepository),
             PaperResearchFieldUpdater(literalService, statementService),

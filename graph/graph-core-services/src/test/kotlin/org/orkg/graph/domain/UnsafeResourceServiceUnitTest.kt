@@ -97,19 +97,31 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
     @Test
     fun `Given a resource update command, when updating all properties, it returns success`() {
         val resource = createResource()
+        val contributorId = ContributorId(MockUserId.USER)
         val label = "updated label"
         val classes = setOf(Classes.paper)
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val organizationId = OrganizationId(UUID.randomUUID())
         val extractionMethod = ExtractionMethod.AUTOMATIC
         val modifiable = false
+        val visibility = Visibility.FEATURED
+        val verified = true
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
         every { repository.save(any()) } just runs
 
         service.update(
             UpdateResourceUseCase.UpdateCommand(
-                resource.id, label, classes, observatoryId, organizationId, extractionMethod, modifiable
+                id = resource.id,
+                contributorId = contributorId,
+                label = label,
+                classes = classes,
+                observatoryId = observatoryId,
+                organizationId = organizationId,
+                extractionMethod = extractionMethod,
+                modifiable = modifiable,
+                visibility = visibility,
+                verified = verified
             )
         )
 
@@ -122,30 +134,97 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
                 it.organizationId shouldBe organizationId
                 it.extractionMethod shouldBe extractionMethod
                 it.modifiable shouldBe modifiable
+                it.visibility shouldBe visibility
+                it.verified shouldBe verified
             })
         }
     }
 
     @Test
-    fun `Given a resource update command, when updating no properties, it returns success`() {
+    fun `Given a resource update command, when updating no properties, it does nothing`() {
+        val id = ThingId("R123")
+        val contributorId = ContributorId(MockUserId.USER)
+
+        service.update(UpdateResourceUseCase.UpdateCommand(id, contributorId))
+    }
+
+    @Test
+    fun `Given a resource update command, when updating with a reserved class, it updates the resource`() {
         val resource = createResource()
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.USER),
+            classes = setOf(Classes.list)
+        )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
         every { repository.save(any()) } just runs
 
-        service.update(UpdateResourceUseCase.UpdateCommand(resource.id))
+        service.update(command)
 
         verify(exactly = 1) { repository.findById(resource.id) }
-        verify(exactly = 1) {
-            repository.save(withArg {
-                it.label shouldBe resource.label
-                it.classes shouldBe resource.classes
-                it.observatoryId shouldBe resource.observatoryId
-                it.organizationId shouldBe resource.organizationId
-                it.extractionMethod shouldBe resource.extractionMethod
-                it.modifiable shouldBe resource.modifiable
-            })
-        }
+        verify(exactly = 1) { repository.save(withArg { it.classes shouldBe setOf(Classes.list) }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating with an invalid label, it updates the resource`() {
+        val resource = createResource()
+        val label = "a".repeat(MAX_LABEL_LENGTH + 1)
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = label
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.label shouldBe label }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when resource is unmodifiable resource, it updates the resource`() {
+        val resource = createResource(modifiable = false)
+        val command = UpdateResourceUseCase.UpdateCommand(resource.id, ContributorId(MockUserId.USER), label = "new label")
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.label shouldBe "new label" }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating with a visibility that requires a curator role, it updates the resource`() {
+        val resource = createResource()
+        val command = UpdateResourceUseCase.UpdateCommand(resource.id, ContributorId(MockUserId.USER), visibility = Visibility.FEATURED)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.visibility shouldBe Visibility.FEATURED }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when updating the verified flag without being a curator, it updates the resource`() {
+        val resource = createResource()
+        val command = UpdateResourceUseCase.UpdateCommand(resource.id, ContributorId(MockUserId.USER), verified = true)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.verified shouldBe true }) }
     }
 
     @Test

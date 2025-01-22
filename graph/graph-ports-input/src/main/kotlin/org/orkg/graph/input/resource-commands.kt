@@ -6,6 +6,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Visibility
 
 interface CreateResourceUseCase {
     fun create(command: CreateCommand): ThingId
@@ -27,12 +28,15 @@ interface UpdateResourceUseCase {
 
     data class UpdateCommand(
         val id: ThingId,
+        val contributorId: ContributorId,
         val label: String? = null,
         val classes: Set<ThingId>? = null,
         val observatoryId: ObservatoryId? = null,
         val organizationId: OrganizationId? = null,
         val extractionMethod: ExtractionMethod? = null,
-        val modifiable: Boolean? = null
+        val modifiable: Boolean? = null,
+        val visibility: Visibility? = null,
+        val verified: Boolean? = null,
     )
 }
 

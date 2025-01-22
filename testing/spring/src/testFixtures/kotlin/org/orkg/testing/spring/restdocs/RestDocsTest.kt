@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
@@ -164,5 +165,7 @@ abstract class RestDocsTest(val prefix: String) : MockkBaseTest {
         fun patchMultipart(urlTemplate: String, vararg uriVariables: Any): MockMultipartHttpServletRequestBuilder =
             multipart(PATCH, urlTemplate, *uriVariables)
                 .characterEncoding(Charsets.UTF_8.name()) as MockMultipartHttpServletRequestBuilder
+
+        fun ResultActions.andPrint(): ResultActions = andDo(MockMvcResultHandlers.print())
     }
 }

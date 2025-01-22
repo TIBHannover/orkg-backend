@@ -58,9 +58,15 @@ operation::statements-update[snippets='path-parameters,request-fields,curl-reque
 
 [[statements-delete]]
 == Deleting Statement
-Delete a statement by providing the ID of the statement via a `DELETE` call:
-
+A `DELETE` request deletes a statement from the graph.
+It does not delete its subject or object, except for literal objects.
 The response will be `204 No Content` when successful.
+
+[NOTE]
+====
+1. If the statement is not modifiable, the return status will be `403 FORBIDDEN`.
+2. If the statement is a <<lists,list>> element statement, the return status will be `403 FORBIDDEN`.
+====
 
 operation::statements-delete-by-id_is-no-content[snippets='path-parameters,curl-request,http-response']
 

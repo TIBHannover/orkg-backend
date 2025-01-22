@@ -44,6 +44,22 @@ The updated predicate is returned in the body for convenience.
 
 operation::predicates-edit[snippets='path-parameters,curl-request,http-response']
 
+[[predicates-delete]]
+== Deleting Predicates
+
+A `DELETE` request with the id of the predicate to delete.
+The response will be `204 NO CONTENT` when successful.
+
+[NOTE]
+====
+1. If the predicate doesn't exist, the return status will be `404 NOT FOUND`.
+2. If the predicate is not modifiable, the return status will be `403 FORBIDDEN`.
+3. If the predicate is used in a statement (excluding subject position), the return status will be `403 FORBIDDEN`.
+4. If the performing user is not the creator of the predicate and does not have the curator role, the return status will be `403 FORBIDDEN`.
+====
+
+operation::predicates-delete-predicate-success[snippets='path-parameters,curl-request,http-response']
+
 [[predicates-import]]
 == Importing Predicates
 

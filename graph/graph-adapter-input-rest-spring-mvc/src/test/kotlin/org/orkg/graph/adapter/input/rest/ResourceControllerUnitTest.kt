@@ -331,13 +331,17 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             label = resource.label,
             classes = resource.classes,
             extractionMethod = resource.extractionMethod,
-            visibility = resource.visibility
+            visibility = resource.visibility,
+            observatoryId = resource.observatoryId,
+            organizationId = resource.organizationId,
         )
         val request = mapOf(
             "label" to resource.label,
             "classes" to resource.classes,
             "extraction_method" to resource.extractionMethod,
-            "visibility" to resource.visibility
+            "visibility" to resource.visibility,
+            "observatory_id" to resource.observatoryId,
+            "organization_id" to resource.organizationId
         )
 
         every { resourceService.update(command) } just runs
@@ -359,6 +363,8 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
                         fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
                         fieldWithPath("extraction_method").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""").optional(),
                         fieldWithPath("visibility").description("""Visibility of the resource. Can be one of "DEFAULT", "FEATURED", "UNLISTED" or "DELETED". (optional)""").optional(),
+                        fieldWithPath("organization_id").description("The updated ID of the organization the resource belongs to. (optional)").optional(),
+                        fieldWithPath("observatory_id").description("The updated ID of the observatory the resource belongs to. (optional)").optional(),
                     ),
                     responseFields(resourceResponseFields())
                 )

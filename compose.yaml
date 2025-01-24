@@ -11,6 +11,7 @@ services:
       SPRING_NEO4J_URI: 'bolt://neo4j:7687'
       SPRING_PROFILES_ACTIVE: development
       #ORKG_SIMCOMP_HOST: 'http://simcomp:4321' # defaults to https://orkg.org/simcomp
+      ORKG_RANKING_PAPERS_LOG_FILE: /home/cnb/logs/paper-ranking.log
       JDK_JAVA_OPTIONS: >-
         -Dcom.sun.management.jmxremote
         -Dcom.sun.management.jmxremote.port=9090

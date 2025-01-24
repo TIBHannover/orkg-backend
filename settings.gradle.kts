@@ -67,14 +67,6 @@ include(
     "identity-management:idm-adapter-input-rest-spring-security-legacy",
 )
 include(
-    ":discussions:discussions-adapter-input-rest-spring-mvc",
-    ":discussions:discussions-adapter-output-spring-data-jpa",
-    ":discussions:discussions-core-model",
-    ":discussions:discussions-core-services",
-    ":discussions:discussions-ports-input",
-    ":discussions:discussions-ports-output",
-)
-include(
     ":media-storage:media-storage-adapter-input-serialization",
     ":media-storage:media-storage-adapter-output-spring-data-jpa",
     ":media-storage:media-storage-core-model",

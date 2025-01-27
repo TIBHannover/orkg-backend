@@ -33,3 +33,16 @@ The response body consists of the following fields:
 // FIXME: implement missing test
 operation::organization-controller-test-add[snippets='response-fields']
 ////
+
+[[organizations-edit]]
+== Updating Organizations
+:operation-request-part-properties-fields-title: Request fields for properties part
+
+A `PATCH` request updates an existing organization with the given parameters.
+Only fields provided in the request, and therefore non-null, will be updated.
+The response will be `204 No Content` when successful.
+The updated organization (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: This endpoint can only be accessed by curators.
+
+operation::organizations-update[snippets='path-parameters,request-parts,request-part-properties-fields,curl-request,http-response']

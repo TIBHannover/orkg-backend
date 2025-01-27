@@ -125,6 +125,7 @@ class OrganizationController(
         @RequestPart("properties", required = false) @Valid request: UpdateOrganizationRequest?,
         @RequestPart("logo", required = false) logo: MultipartFile?,
         currentUser: Authentication?,
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<Any> {
         val contributorId = currentUser.contributorId()
         service.update(
@@ -146,7 +147,11 @@ class OrganizationController(
                 )
             }
         ))
-        return noContent().build()
+        val location = uriComponentsBuilder
+            .path("/api/organizations/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
     }
 
     @RequestMapping("/{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])

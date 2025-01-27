@@ -4,6 +4,8 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import java.util.*
+import org.hamcrest.Matchers.endsWith
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.OrganizationId
 import org.orkg.common.exceptions.ExceptionHandler
@@ -14,6 +16,7 @@ import org.orkg.community.domain.OrganizationType
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.community.testing.asciidoc.allowedOrganizationTypeValues
 import org.orkg.community.testing.fixtures.createOrganization
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.mediastorage.domain.ImageId
@@ -23,15 +26,24 @@ import org.orkg.mediastorage.input.ImageUseCases
 import org.orkg.mediastorage.testing.fixtures.loadImage
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockMultipartFile
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.partWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import org.springframework.restdocs.request.RequestDocumentation.requestParts
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -231,8 +243,9 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
     @Test
     @TestWithMockCurator
-    fun `Given an organization is updated, when payload contains json and logo, then status is 204 NO CONTENT`() {
-        val id = OrganizationId(UUID.randomUUID())
+    @DisplayName("Given an organization is updated, when payload contains json and logo, then status is 204 NO CONTENT")
+    fun update() {
+        val id = OrganizationId("2224e276-5f32-483a-9f7a-441fe6ae7856")
         val image = loadRawImage(testImage)
         val body = mapOf(
             "name" to "Organization",
@@ -242,11 +255,33 @@ internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        patchMultipart("/api/organizations/{id}", id)
+        documentedPatchMultipart("/api/organizations/{id}", id)
             .json("properties", body)
             .file(MockMultipartFile("logo", "image.png", image.mimeType.toString(), image.data.bytes))
             .perform()
             .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/organizations/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated organization can be fetched from.")
+                    ),
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the organization.")
+                    ),
+                    requestParts(
+                        partWithName("properties").description("The updated properties of the organization. (optional)"),
+                        partWithName("logo").description("The updated logo of the organization. (optional)")
+                    ),
+                    requestPartFields(
+                        "properties",
+                        fieldWithPath("name").description("The updated name of the organization. (optional)"),
+                        fieldWithPath("url").description("The updated URL of the organization. (optional)"),
+                        fieldWithPath("type").description("The updated type of the organization. One of $allowedOrganizationTypeValues. (optional)"),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }

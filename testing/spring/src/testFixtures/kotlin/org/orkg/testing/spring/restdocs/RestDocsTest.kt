@@ -14,6 +14,7 @@ import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
+import org.springframework.restdocs.generate.RestDocumentationGenerator
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler
@@ -165,6 +166,10 @@ abstract class RestDocsTest(val prefix: String) : MockkBaseTest {
         fun patchMultipart(urlTemplate: String, vararg uriVariables: Any): MockMultipartHttpServletRequestBuilder =
             multipart(PATCH, urlTemplate, *uriVariables)
                 .characterEncoding(Charsets.UTF_8.name()) as MockMultipartHttpServletRequestBuilder
+
+        fun documentedPatchMultipart(urlTemplate: String, vararg uriVariables: Any): MockMultipartHttpServletRequestBuilder =
+            patchMultipart(urlTemplate, *uriVariables)
+                .requestAttr(RestDocumentationGenerator.ATTRIBUTE_NAME_URL_TEMPLATE, urlTemplate) as MockMultipartHttpServletRequestBuilder
 
         fun ResultActions.andPrint(): ResultActions = andDo(MockMvcResultHandlers.print())
     }

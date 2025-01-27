@@ -46,4 +46,9 @@ By default, sorting is done by the `created_at` property (time-based).
 | obj.label      | The label of the object
 | obj.created_at | The creation timestamp of the object
 | obj.created_by | The id of the curator who originally created the object of the statement
+2+^| *For sorting observatories*
+| id             | The observatory id
+| name           | The name of the observatory
+| description    | The description of the observatory
+| display_id     | The display id (slug) of the observatory
 |==============================================================================================

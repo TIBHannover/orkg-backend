@@ -33,7 +33,7 @@ The resource can be retrieved by following the URI in the `Location` header fiel
 
 NOTE: The created resource is returned in the body for convenience. This might be subject to change.
 
-operation::resources-add[snippets='request-fields,curl-request,http-response,response-fields']
+operation::resources-add[snippets='request-fields,curl-request,response-headers,http-response,response-fields']
 
 [[resources-edit]]
 == Updating Resources
@@ -51,7 +51,7 @@ The created resource is returned in the body for convenience.
 5. If the target visibility is `DEFAULT` and the original visibility is `DELETED` and the performing user is not the owner of the resource and not a curator, the return status will be `403 FORBIDDEN`.
 ====
 
-operation::resources-update[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::resources-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[resources-delete]]
 == Deleting Resources
@@ -80,7 +80,7 @@ The {orkg} REST API provides two endpoints for importing resources from external
 A `POST` request imports a resource from an external ontology by a given URI.
 The response will be `201 Created` when successful, even when the resource was already imported previously.
 
-operation::import-import-resource-by-uri[snippets='request-fields,curl-request,http-response']
+operation::import-import-resource-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[resources-import-by-short-form]]
 === Importing Resources by Short Form
@@ -88,4 +88,4 @@ operation::import-import-resource-by-uri[snippets='request-fields,curl-request,h
 A `POST` request imports a resource from an external ontology by a given short form id.
 The response will be `201 Created` when successful, even when the resource was already imported.
 
-operation::import-import-resource-by-short-form[snippets='request-fields,curl-request,http-response']
+operation::import-import-resource-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']

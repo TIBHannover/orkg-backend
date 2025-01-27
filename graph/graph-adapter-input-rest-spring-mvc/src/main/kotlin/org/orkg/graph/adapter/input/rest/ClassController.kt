@@ -1,7 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
-import java.time.OffsetDateTime
 import jakarta.validation.Valid
+import java.time.OffsetDateTime
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
@@ -99,20 +99,30 @@ class ClassController(
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun replace(
         @PathVariable id: ThingId,
-        @RequestBody request: ReplaceClassRequest
-    ): ClassRepresentation {
+        @RequestBody request: ReplaceClassRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<ClassRepresentation> {
         service.replace(UpdateClassUseCase.ReplaceCommand(id, request.label, request.uri))
-        return service.findById(id).mapToClassRepresentation().get()
+        val location = uriComponentsBuilder
+            .path("/api/classes/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return ok().location(location).body(service.findById(id).mapToClassRepresentation().get())
     }
 
     @RequireLogin
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
-        @Valid @RequestBody request: UpdateClassRequest
+        @Valid @RequestBody request: UpdateClassRequest,
+        uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         service.update(UpdateClassUseCase.UpdateCommand(id, request.label, request.uri))
-        return ok().build()
+        val location = uriComponentsBuilder
+            .path("/api/classes/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return ok().location(location).build()
     }
 
     data class CreateClassRequest(

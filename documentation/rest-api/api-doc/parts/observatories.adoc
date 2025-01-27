@@ -27,7 +27,7 @@ The observatory can be retrieved by following the URI in the `Location` header f
 
 NOTE: The response body contains the created observatory for convenience. This might be subject to change.
 
-operation::observatories-create[snippets='request-fields,curl-request,http-response']
+operation::observatories-create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[observatories-edit]]
 == Updating Observatories
@@ -39,7 +39,7 @@ The updated observatory (object) can be retrieved by following the URI in the `L
 
 NOTE: This endpoint can only be accessed by curators.
 
-operation::observatories-update[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::observatories-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[observatories-list-papers]]
 == Listing Papers of Observatories

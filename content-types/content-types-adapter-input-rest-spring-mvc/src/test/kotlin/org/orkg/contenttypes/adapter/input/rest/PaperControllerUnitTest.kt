@@ -362,6 +362,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                     pathParameters(
                         parameterWithName("id").description("The identifier of the paper to publish.")
                     ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the published paper can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("subject").description("The subject of the paper."),
                         fieldWithPath("description").description("The description of the paper."),

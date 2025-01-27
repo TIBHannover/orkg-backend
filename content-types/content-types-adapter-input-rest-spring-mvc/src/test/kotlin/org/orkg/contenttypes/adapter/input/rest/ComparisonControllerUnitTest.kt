@@ -538,6 +538,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     pathParameters(
                         parameterWithName("id").description("The identifier of the comparison to publish.")
                     ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the published created comparison can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("subject").description("The subject of the comparison."),
                         fieldWithPath("description").description("The description of the comparison."),
@@ -1149,6 +1152,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     pathParameters(
                         parameterWithName("id").description("The identifier of the comparison."),
                         parameterWithName("comparisonRelatedResourceId").description("The identifier of the comparison related resource to delete.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated comparison can be fetched from.")
                     )
                 )
             )
@@ -1188,6 +1194,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                     pathParameters(
                         parameterWithName("id").description("The identifier of the comparison."),
                         parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related figure to delete.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated comparison can be fetched from.")
                     )
                 )
             )

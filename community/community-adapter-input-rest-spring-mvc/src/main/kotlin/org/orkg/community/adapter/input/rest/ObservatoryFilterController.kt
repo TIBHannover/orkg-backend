@@ -74,7 +74,11 @@ class ObservatoryFilterController(
             .orElseThrow { ObservatoryNotFound(id) }
         authorizeUser(currentUser.contributorId(), id)
         service.update(request.toUpdateCommand(filterId))
-        return noContent().build()
+        val location = uriComponentsBuilder
+            .path("/api/observatories/{id}/filters/{filterId}")
+            .buildAndExpand(id, filterId)
+            .toUri()
+        return noContent().location(location).build()
     }
 
     @GetMapping("/{id}/filters/{filterId}")

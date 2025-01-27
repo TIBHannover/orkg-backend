@@ -17,6 +17,8 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.test.context.ContextConfiguration
@@ -49,6 +51,9 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
             .andExpect(header().string("Location", endsWith("/api/resources/$id")))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the imported resource can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
                         fieldWithPath("uri").description("The uri of the resource to import."),
@@ -85,6 +90,9 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
             .andExpect(header().string("Location", endsWith("/api/resources/$id")))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the imported resource can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
                         fieldWithPath("short_form").description("The short form id of the resource to import."),
@@ -121,6 +129,9 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
             .andExpect(header().string("Location", endsWith("/api/predicates/$id")))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the imported predicate can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
                         fieldWithPath("uri").description("The uri of the predicate to import."),
@@ -157,6 +168,9 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
             .andExpect(header().string("Location", endsWith("/api/predicates/$id")))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the imported predicate can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
                         fieldWithPath("short_form").description("The short form id of the resource to import."),
@@ -193,6 +207,9 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the imported class can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
                         fieldWithPath("uri").description("The uri of the class to import."),
@@ -229,6 +246,9 @@ internal class ImportControllerUnitTest : RestDocsTest("import") {
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the imported class can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
                         fieldWithPath("short_form").description("The short form id of the resource to import."),

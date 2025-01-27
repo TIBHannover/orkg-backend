@@ -622,6 +622,9 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                     pathParameters(
                         parameterWithName("id").description("The id of the literature list the section belongs to."),
                         parameterWithName("sectionId").description("The id of the section.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated literature list can be fetched from.")
                     )
                 )
             )
@@ -654,6 +657,9 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the literature list to publish.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the published literature list can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("changelog").description("The description of changes that have been made since the previous version."),

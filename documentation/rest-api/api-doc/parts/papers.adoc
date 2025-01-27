@@ -39,7 +39,7 @@ A `POST` request creates a new paper with all the given parameters.
 The response will be `201 Created` when successful.
 The paper (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::papers-create[snippets='request-fields,curl-request,http-response']
+operation::papers-create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[papers-edit]]
 == Updating Papers
@@ -52,7 +52,7 @@ NOTE: All fields at the top level in the request can be omitted or `null`, meani
 
 WARNING: Author names will not be updated if a resource id is specified for a given author.
 
-operation::papers-update[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::papers-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[papers-publish]]
 == Publishing Papers
@@ -63,7 +63,7 @@ All contribution statements of the original paper are archived in a separate dat
 The response will be `201 Created` when successful.
 The paper resource can be retrieved by following the URI in the `Location` header field.
 
-operation::papers-publish[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::papers-publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[papers-exist]]
 == Checking for Existing Papers
@@ -75,8 +75,8 @@ The found paper can be retrieved by following the URI in the `Location` header f
 
 === Checking for Existing Papers by DOI
 
-operation::papers-exists-by-doi[snippets='curl-request,query-parameters,http-response']
+operation::papers-exists-by-doi[snippets='query-parameters,curl-request,response-headers,http-response']
 
 === Checking for Existing Papers by Title
 
-operation::papers-exists-by-title[snippets='curl-request,query-parameters,http-response']
+operation::papers-exists-by-title[snippets='query-parameters,curl-request,response-headers,http-response']

@@ -32,7 +32,7 @@ The class can be retrieved by following the URI in the `Location` header field.
 
 NOTE: The created class is returned in the body for convenience. This might be subject to change.
 
-operation::classes-create[snippets='request-fields,curl-request,http-response']
+operation::classes-create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[classes-edit]]
 == Updating Classes
@@ -46,7 +46,7 @@ A `PATCH` request updates a class with a new given label and URI.
 Only fields provided in the request, and therefore non-null, will be updated.
 The response will be `200 OK` when successful.
 
-operation::classes-update[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::classes-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[classes-replace]]
 === Updating Classes (PUT)
@@ -56,7 +56,7 @@ All fields will be updated in the process.
 The response will be `200 OK` when successful.
 The updated class is returned in the body for convenience.
 
-operation::classes-replace[snippets='path-parameters,request-fields,curl-request']
+operation::classes-replace[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[class-hierarchies]]
 include::class-hierarchies.adoc[leveloffset=+1]
@@ -72,7 +72,7 @@ The {orkg} REST API provides two endpoints for importing classes from external o
 A `POST` request imports a class from an external ontology by a given URI.
 The response will be `201 Created` when successful, even when the class was already imported.
 
-operation::import-import-class-by-uri[snippets='request-fields,curl-request,http-response']
+operation::import-import-class-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[classes-import-by-short-form]]
 === Importing Classes by Short Form
@@ -80,4 +80,4 @@ operation::import-import-class-by-uri[snippets='request-fields,curl-request,http
 A `POST` request imports a class from an external ontology by a given short form id.
 The response will be `201 Created` when successful, even when the class was already imported.
 
-operation::import-import-class-by-short-form[snippets='request-fields,curl-request,http-response']
+operation::import-import-class-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']

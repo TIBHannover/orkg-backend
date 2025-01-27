@@ -37,6 +37,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -722,6 +724,9 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
             .andExpectObservatory()
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created observatory can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("name").description("The name of the observatory. Alternatively, the legacy field `observatory_name` can be used for equivalent behavior."),
                         fieldWithPath("organization_id").description("The id of the organization that the observatory belongs to."),
@@ -774,6 +779,9 @@ internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the observatory.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created observatory can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("name").description("The new name of the observatory. (optional)"),

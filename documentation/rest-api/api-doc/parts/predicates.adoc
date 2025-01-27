@@ -33,7 +33,7 @@ The predicate can be retrieved by following the URI in the `Location` header fie
 
 NOTE: The response body contains the created predicate for convenience. This might be subject to change.
 
-operation::predicates-create[snippets='request-fields,curl-request,http-response']
+operation::predicates-create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[predicates-edit]]
 == Updating Predicates
@@ -42,7 +42,7 @@ A `PUT` request updates a predicate with a new given label.
 The response will be `200 OK` when successful.
 The updated predicate is returned in the body for convenience.
 
-operation::predicates-edit[snippets='path-parameters,curl-request,http-response']
+operation::predicates-edit[snippets='path-parameters,curl-request,response-headers,http-response']
 
 [[predicates-delete]]
 == Deleting Predicates
@@ -70,7 +70,7 @@ The {orkg} REST API provides two endpoints for importing predicates from externa
 
 A `POST` request imports a predicate from an external ontology by a given URI.
 
-operation::import-import-predicate-by-uri[snippets='request-fields,curl-request,http-response']
+operation::import-import-predicate-by-uri[snippets='request-fields,curl-request,response-headers,http-response']
 The response will be `201 Created` when successful, even when the predicate was already imported previously.
 
 [[predicates-import-by-short-form]]
@@ -79,4 +79,4 @@ The response will be `201 Created` when successful, even when the predicate was 
 A `POST` request imports a predicate from an external ontology by a given short form id.
 The response will be `201 Created` when successful, even when the predicate was already imported previously.
 
-operation::import-import-predicate-by-short-form[snippets='request-fields,curl-request,http-response']
+operation::import-import-predicate-by-short-form[snippets='request-fields,curl-request,response-headers,http-response']

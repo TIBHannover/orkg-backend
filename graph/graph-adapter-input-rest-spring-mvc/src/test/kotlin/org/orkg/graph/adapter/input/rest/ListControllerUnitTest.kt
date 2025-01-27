@@ -26,14 +26,16 @@ import org.orkg.graph.testing.fixtures.createList
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectPage
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -145,6 +147,9 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             .andExpect(header().string("Location", endsWith("/api/lists/$id")))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created list can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("label").description("The label of the list."),
                         fieldWithPath("elements").description("The ids of the elements of the list.")
@@ -234,10 +239,14 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
             .content(request)
             .perform()
             .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/lists/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the list.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated list can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The new label of the list. (optional)").optional(),

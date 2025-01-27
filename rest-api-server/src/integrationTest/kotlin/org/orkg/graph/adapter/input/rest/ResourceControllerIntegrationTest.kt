@@ -25,10 +25,11 @@ import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockAdmin
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.createdResponseHeaders
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -99,14 +100,18 @@ internal class ResourceControllerIntegrationTest : RestDocsTest("resources") {
             .content(resource)
             .perform()
             .andExpect(status().isCreated)
+//            TODO: Needs to be converted into a unit test in order to test location header path
+//            .andExpect(header().string("Location", endsWith("api/resources/$id")))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the created resource can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("label").description("The resource label."),
                         fieldWithPath("classes").type("Array").description("The classes of the resource. (optional)").optional(),
                         fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional()
                     ),
-                    createdResponseHeaders(),
                     responseFields(resourceResponseFields())
                 )
             )

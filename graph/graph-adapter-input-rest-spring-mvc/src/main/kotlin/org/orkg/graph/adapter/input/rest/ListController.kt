@@ -69,10 +69,14 @@ class ListController(
     fun update(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?
     ): ResponseEntity<Any> {
         service.update(request.toUpdateCommand(id, currentUser.contributorId()))
-        return noContent().build()
+        val location = uriComponentsBuilder.path("/api/lists/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
     }
 
     data class CreateListRequest(

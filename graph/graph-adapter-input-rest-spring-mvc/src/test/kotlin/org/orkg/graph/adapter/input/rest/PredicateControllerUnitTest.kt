@@ -36,6 +36,8 @@ import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -98,6 +100,9 @@ internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
             .andExpectPredicate()
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created predicate can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("id").type("String").description("The id of the predicate. (optional)").optional(),
                         fieldWithPath("label").description("The label of the predicate.")

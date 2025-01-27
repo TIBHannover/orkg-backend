@@ -38,16 +38,18 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
-import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
+import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Sort
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -234,6 +236,9 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpectStatement()
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created statement can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("id").description("The statement id. (optional)"),
                         fieldWithPath("subject_id").description("The id of the subject of the statement."),
@@ -395,11 +400,15 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .content(request)
             .perform()
             .andExpect(status().isOk)
+            .andExpect(header().string("Location", endsWith("/api/statements/$id")))
             .andExpectStatement()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of statement.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated statement can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("subject_id").description("The updated id of the subject entity of the statement. (optional)"),

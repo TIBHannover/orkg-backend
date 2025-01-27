@@ -11,6 +11,7 @@ import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
+import org.hamcrest.CoreMatchers.endsWith
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -48,6 +49,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -55,6 +58,7 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -352,11 +356,15 @@ internal class ResourceControllerUnitTest : RestDocsTest("resources") {
             .content(request)
             .perform()
             .andExpect(status().isOk)
+            .andExpect(header().string("Location", endsWith("/api/resources/${resource.id}")))
             .andExpectResource()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the resource.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The updated resource label. (optional)").optional(),

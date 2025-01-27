@@ -6,6 +6,7 @@ import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
 import java.util.*
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -44,6 +45,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -274,6 +276,7 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
             .content(command)
             .perform()
             .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/observatories/${observatory.id}/filters/${filter.id}")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -446,11 +449,15 @@ internal class ObservatoryFilterControllerUnitTest : RestDocsTest("observatory-f
             .content(command)
             .perform()
             .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/observatories/${observatory.id}/filters/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
                         parameterWithName("filterId").description("The identifier of the filter to update.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated filter can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The new label of the filter. (optional)").optional(),

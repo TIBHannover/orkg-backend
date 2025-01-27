@@ -31,7 +31,7 @@ The resource can be retrieved by following the URI in the `Location` header fiel
 
 NOTE: The created literal is returned in the body for convenience. This might be subject to change.
 
-operation::literals-add[snippets='request-fields,curl-request,http-response']
+operation::literals-add[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[literals-edit]]
 == Updating Literals
@@ -40,4 +40,4 @@ A `PUT` request updates a literal with a new value through the label property.
 The response will be `200 OK` when successful.
 The created literal is returned in the body for convenience.
 
-operation::literals-edit[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::literals-edit[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']

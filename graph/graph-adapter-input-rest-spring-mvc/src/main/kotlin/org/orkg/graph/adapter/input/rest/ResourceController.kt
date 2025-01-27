@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -120,11 +121,16 @@ class ResourceController(
     fun update(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateResourceRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
         capabilities: MediaTypeCapabilities,
         currentUser: Authentication?
-    ): ResourceRepresentation {
+    ): ResponseEntity<ResourceRepresentation> {
         service.update(request.toUpdateCommand(id, currentUser.contributorId()))
-        return service.findById(id).mapToResourceRepresentation(capabilities).get()
+        val location = uriComponentsBuilder
+            .path("/api/resources/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return ok().location(location).body(service.findById(id).mapToResourceRepresentation(capabilities).get())
     }
 
     @Deprecated("To be removed", replaceWith = ReplaceWith("update"))
@@ -133,9 +139,10 @@ class ResourceController(
     fun updateWithObservatory(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateResourceObservatoryRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
         capabilities: MediaTypeCapabilities,
         currentUser: Authentication?,
-    ): ResourceRepresentation = update(
+    ): ResponseEntity<ResourceRepresentation> = update(
         id = id,
         request = UpdateResourceRequest(
             id = id,
@@ -146,6 +153,7 @@ class ResourceController(
             extractionMethod = null,
             visibility = null
         ),
+        uriComponentsBuilder = uriComponentsBuilder,
         capabilities = capabilities,
         currentUser = currentUser
     )

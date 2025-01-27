@@ -19,6 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -84,7 +85,8 @@ class PredicateController(
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
-        @RequestBody predicate: ReplacePredicateRequest
+        @RequestBody predicate: ReplacePredicateRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
     ): ResponseEntity<PredicateRepresentation> {
         val found = service.findById(id)
 
@@ -92,7 +94,11 @@ class PredicateController(
 
         service.update(id, ReplaceCommand(label = predicate.label, description = predicate.description))
 
-        return ResponseEntity.ok(findById(id))
+        val location = uriComponentsBuilder
+            .path("/api/predicates/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return ok().location(location).body(service.findById(id).mapToPredicateRepresentation().get())
     }
 
     @DeleteMapping("/{id}")

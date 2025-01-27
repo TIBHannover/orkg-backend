@@ -1041,7 +1041,6 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                         headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
                     ),
                     requestFields(
-
                         fieldWithPath("heading").description("The updated heading of the text section."),
                         fieldWithPath("text").description("The updated text contents of the text section."),
                         fieldWithPath("class").description("The updated id of the class that indicates the type of the text section. An absent value indicates no type."),
@@ -1076,6 +1075,9 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                     pathParameters(
                         parameterWithName("id").description("The id of the smart review the section belongs to."),
                         parameterWithName("sectionId").description("The id of the section.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated smart review can be fetched from.")
                     )
                 )
             )
@@ -1112,6 +1114,9 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the smart review to publish.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the published smart review can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("changelog").description("The description of changes that have been made since the previous version."),

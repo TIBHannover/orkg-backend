@@ -40,6 +40,8 @@ import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -224,7 +226,7 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             )
         } returns pageOf()
 
-        post("/api/classes")
+        documentedPostRequestTo("/api/classes")
             .content(request)
             .perform()
             .andExpect(status().isCreated)
@@ -235,6 +237,9 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             .andExpect(jsonPath("$.uri").value(uri.toString()))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created class can be fetched from.")
+                    ),
                     requestFields(
                         fieldWithPath("id").description("The class id (optional)"),
                         fieldWithPath("label").description("The class label"),
@@ -294,12 +299,16 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             .content(body)
             .perform()
             .andExpect(status().isOk)
+            .andExpect(header().string("Location", endsWith("/api/classes/$id")))
             .andExpect(jsonPath("$.label").value("new label"))
             .andExpect(jsonPath("$.uri").value("https://example.org/some/new#URI"))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the class.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated class can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The updated class label"),
@@ -340,10 +349,14 @@ internal class ClassControllerUnitTest : RestDocsTest("classes") {
             .content(body)
             .perform()
             .andExpect(status().isOk)
+            .andExpect(header().string("Location", endsWith("/api/classes/$id")))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the class.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated class can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The updated class label (optional)"),

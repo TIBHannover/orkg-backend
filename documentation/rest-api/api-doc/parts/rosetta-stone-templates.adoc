@@ -36,7 +36,7 @@ NOTE: The first property of a rosetta stone template defines the subject positio
       All other properties define an object position, which must have a path of `hasObjectPosition`.
       At least one property is required to create a new rosetta stone template.
 
-operation::rosetta-stone-templates-create[snippets='request-fields,curl-request,http-response']
+operation::rosetta-stone-templates-create[snippets='request-fields,curl-request,response-headers,http-response']
 
 [[rosetta-stone-templates-edit]]
 == Updating Rosetta Stone Templates
@@ -48,7 +48,7 @@ The updated rosetta stone template (object) can be retrieved by following the UR
 NOTE: Only rosetta stone templates that have not been used to create a rosetta stone statement can be fully updated.
       Otherwise, it is only possible to add new object positions and to insert a section for that specific object position properties into the formatted label.
 
-operation::rosetta-stone-templates-update[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::rosetta-stone-templates-update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[rosetta-stone-templates-delete]]
 == Deleting Rosetta Stone Templates

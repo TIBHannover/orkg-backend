@@ -24,6 +24,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -108,8 +109,9 @@ class StatementController(
     fun update(
         @PathVariable id: StatementId,
         @RequestBody request: UpdateStatementRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
         capabilities: MediaTypeCapabilities
-    ): StatementRepresentation {
+    ): ResponseEntity<StatementRepresentation> {
         statementService.update(
             UpdateStatementUseCase.UpdateCommand(
                 statementId = id,
@@ -118,7 +120,11 @@ class StatementController(
                 objectId = request.objectId
             )
         )
-        return statementService.findById(id).mapToStatementRepresentation(capabilities).get()
+        val location = uriComponentsBuilder
+            .path("/api/statements/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return ok().location(location).body(statementService.findById(id).mapToStatementRepresentation(capabilities).get())
     }
 
     @RequireLogin

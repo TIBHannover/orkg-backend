@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -15,11 +16,14 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -107,11 +111,15 @@ internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
             .content(resource)
             .perform()
             .andExpect(status().isOk)
+            .andExpect(header().string("Location", endsWith("api/predicates/$predicate")))
             .andExpect(jsonPath("$.label").value(newLabel))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the predicate.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated predicate can be fetched from.")
                     ),
                     requestFields(
                         fieldWithPath("label").description("The updated predicate label")

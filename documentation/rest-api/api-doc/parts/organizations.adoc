@@ -45,4 +45,4 @@ The updated organization (object) can be retrieved by following the URI in the `
 
 NOTE: This endpoint can only be accessed by curators.
 
-operation::organizations-update[snippets='path-parameters,request-parts,request-part-properties-fields,curl-request,http-response']
+operation::organizations-update[snippets='path-parameters,request-parts,request-part-properties-fields,curl-request,response-headers,http-response']

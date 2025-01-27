@@ -20,6 +20,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -78,7 +79,6 @@ class LiteralController(
             .path("/api/literals/{id}")
             .buildAndExpand(id)
             .toUri()
-
         return created(location).body(service.findById(id).mapToLiteralRepresentation().get())
     }
 
@@ -86,8 +86,9 @@ class LiteralController(
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
-        @RequestBody @Valid request: LiteralUpdateRequest
-    ): LiteralRepresentation {
+        @RequestBody @Valid request: LiteralUpdateRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+    ): ResponseEntity<LiteralRepresentation> {
         var literal = service.findById(id).orElseThrow { LiteralNotFound(id) }
 
         if (request.label != null) {
@@ -99,7 +100,11 @@ class LiteralController(
             literal = literal.copy(datatype = request.datatype)
         }
         service.update(literal)
-        return findById(literal.id)
+        val location = uriComponentsBuilder
+            .path("/api/literals/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return ok().location(location).body(service.findById(id).mapToLiteralRepresentation().get())
     }
 
     data class LiteralCreateRequest(

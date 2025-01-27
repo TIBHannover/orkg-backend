@@ -16,7 +16,7 @@ A `POST` request creates a new comparison section and adds it to the specified s
 The response will be `201 Created` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-create-comparison-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-create-comparison-section-at-index[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-edit-comparison-section]]
 === Updating Comparison Sections
@@ -25,7 +25,7 @@ A `PUT` request updates an existing comparison section with all the given parame
 The response will be `204 No Content` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-update-comparison-section[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-update-comparison-section[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-visualization-sections]]
 == Visualization Sections
@@ -37,7 +37,7 @@ A `POST` request creates a new visualization section and adds it to the specifie
 The response will be `201 Created` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-create-visualization-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-create-visualization-section-at-index[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-edit-visualization-section]]
 === Updating Visualization Sections
@@ -46,7 +46,7 @@ A `PUT` request updates an existing visualization section with all the given par
 The response will be `204 No Content` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-update-visualization-section[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-update-visualization-section[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-resource-sections]]
 == Resource Sections
@@ -58,7 +58,7 @@ A `POST` request creates a new resource section and adds it to the specified sma
 The response will be `201 Created` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-create-resource-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-create-resource-section-at-index[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-edit-resource-section]]
 === Updating Resource Sections
@@ -67,7 +67,7 @@ A `PUT` request updates an existing resource section with all the given paramete
 The response will be `204 No Content` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-update-resource-section[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-update-resource-section[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-predicate-sections]]
 == Predicate Sections
@@ -79,7 +79,7 @@ A `POST` request creates a new predicate section and adds it to the specified sm
 The response will be `201 Created` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-create-predicate-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-create-predicate-section-at-index[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-edit-predicate-section]]
 === Updating Predicate Sections
@@ -88,7 +88,7 @@ A `PUT` request updates an existing predicate section with all the given paramet
 The response will be `204 No Content` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-update-predicate-section[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-update-predicate-section[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-ontology-sections]]
 == Ontology Sections
@@ -100,7 +100,7 @@ A `POST` request creates a new ontology section and adds it to the specified sma
 The response will be `201 Created` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-create-ontology-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-create-ontology-section-at-index[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-edit-ontology-section]]
 === Updating Ontology Sections
@@ -109,7 +109,7 @@ A `PUT` request updates an existing ontology section with all the given paramete
 The response will be `204 No Content` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-update-ontology-section[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-update-ontology-section[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-text-sections]]
 == Text Sections
@@ -121,7 +121,7 @@ A `POST` request creates a new text section and adds it to the specified smart r
 The response will be `201 Created` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-create-text-section-at-index[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-create-text-section-at-index[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-edit-text-section]]
 === Updating Text Sections
@@ -130,7 +130,7 @@ A `PUT` request updates an existing text section with all the given parameters.
 The response will be `204 No Content` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-update-text-section[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::smart-reviews-update-text-section[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[smart-review-sections-delete]]
 == Deleting Smart Review Section
@@ -139,4 +139,4 @@ A `DELETE` request deletes a smart review section by ID.
 The response will be `204 No Content` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::smart-reviews-delete-section[snippets='path-parameters,curl-request,http-response']
+operation::smart-reviews-delete-section[snippets='path-parameters,curl-request,response-headers,http-response']

@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -9,14 +10,16 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
-import org.orkg.testing.spring.restdocs.createdResponseHeaders
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -94,12 +97,16 @@ internal class LiteralControllerIntegrationTest : RestDocsTest("literals") {
             .content(input)
             .perform()
             .andExpect(status().isCreated)
+//            TODO: Needs to be converted into a unit test in order to test location header path
+//            .andExpect(header().string("Location", endsWith("api/literals/$id")))
             .andExpect(jsonPath("$.label").value(input["label"] as String))
             .andExpect(jsonPath("$.datatype").value(input["datatype"] as String))
             .andDo(
                 documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created literal can be fetched from.")
+                    ),
                     requestFields(ofCreateAndUpdateRequests()),
-                    createdResponseHeaders(),
                     responseFields(literalResponseFields())
                 )
             )
@@ -109,23 +116,27 @@ internal class LiteralControllerIntegrationTest : RestDocsTest("literals") {
     @Test
     @TestWithMockUser
     fun edit() {
-        val resource = service.createLiteral(
+        val literalId = service.createLiteral(
             label = "foo",
             datatype = "dt:old"
         )
 
         val update = mapOf("label" to "bar", "datatype" to "dt:new")
 
-        documentedPutRequestTo("/api/literals/{id}", resource)
+        documentedPutRequestTo("/api/literals/{id}", literalId)
             .content(update)
             .perform()
             .andExpect(status().isOk)
+            .andExpect(header().string("Location", endsWith("api/literals/$literalId")))
             .andExpect(jsonPath("$.label").value(update["label"] as String))
             .andExpect(jsonPath("$.datatype").value(update["datatype"] as String))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
                         parameterWithName("id").description("The identifier of the literal.")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated literal can be fetched from.")
                     ),
                     requestFields(ofCreateAndUpdateRequests()),
                     responseFields(literalResponseFields())

@@ -27,7 +27,7 @@ A `POST` request creates a new comparison related resource with all the given pa
 The response will be `201 Created` when successful.
 The comparison related resource (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::comparisons-create-comparison-related-resource-test[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::comparisons-create-comparison-related-resource-test[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[comparisons-related-resource-edit]]
 == Updating Comparison Related Resources
@@ -38,7 +38,7 @@ The updated comparison related resource (object) can be retrieved by following t
 
 NOTE: Top level fields that were mandatory when creating the comparison related resource can be omitted or `null`, meaning that the corresponding fields should not be updated.
 
-operation::comparisons-update-comparison-related-resource[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::comparisons-update-comparison-related-resource[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
 
 [[comparisons-related-resource-delete]]
 == Deleting Comparison Related Resources
@@ -47,4 +47,4 @@ A `DELETE` request deletes a comparison related resource by ID.
 The response will be `204 No Content` when successful.
 The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
 
-operation::comparisons-related-resource-delete[snippets='path-parameters,curl-request,http-response']
+operation::comparisons-related-resource-delete[snippets='path-parameters,curl-request,response-headers,http-response']

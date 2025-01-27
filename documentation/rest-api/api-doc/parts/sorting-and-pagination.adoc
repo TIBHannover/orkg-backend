@@ -58,4 +58,9 @@ By default, sorting is done by the `created_at` property (time-based).
 | name           | The name of the observatory
 | description    | The description of the observatory
 | display_id     | The display id (slug) of the observatory
+2+^| *For sorting conference series*
+| id             | The conference series id
+| organizationId | The id of the organization the conference series belongs to
+| homepage	     | The homepage of the conference series
+| display_id     | The display id (slug) of the conference series
 |==============================================================================================

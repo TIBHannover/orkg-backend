@@ -58,6 +58,9 @@ The updated class is returned in the body for convenience.
 
 operation::classes-replace[snippets='path-parameters,request-fields,curl-request']
 
+[[class-hierarchies]]
+include::class-hierarchies.adoc[leveloffset=+1]
+
 [[classes-import]]
 == Importing Classes
 

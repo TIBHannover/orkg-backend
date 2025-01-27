@@ -1,0 +1,136 @@
+= Class Hierarchies
+
+This section covers class hierarchies.
+A class can only at most one parent class.
+
+[[class-hierarchies-list-children]]
+== Listing Child Classes
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of all child <<classes,classes>> for a given parent <<classes,class>>.
+
+[NOTE]
+====
+1. If the class does not exist, the return status will be `404 NOT FOUND`.
+====
+
+operation::class-hierarchies-find-children[snippets='path-parameters,curl-request,response-fields,http-response']
+
+[[class-hierarchies-fetch-parents]]
+== Fetching Parent Classes
+
+A `GET` request returns the parent <<classes,class>> for a given <<classes,class>>.
+
+[NOTE]
+====
+1. If the class does not exist, the return status will be `404 NOT FOUND`.
+2. If the class does not have a parent class, the return status will be `204 NO CONTENT`.
+====
+
+operation::class-hierarchies-find-parent-relation[snippets='path-parameters,curl-request']
+
+[[class-hierarchies-list-roots]]
+== Listing Root Classes
+
+A `GET` request returns <<sorting-and-pagination,paged>> list of root <<classes,classes>> for a given <<classes,class>>.
+
+[NOTE]
+====
+1. If the class does not exist, the return status will be `404 NOT FOUND`.
+2. If the class does not have a root class, the return status will be `204 NO CONTENT`.
+====
+
+operation::class-hierarchies-find-root[snippets='path-parameters,curl-request']
+
+[[class-hierarchies-list-all-roots]]
+== Listing all Root Classes
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of all root <<classes,classes>>.
+
+[NOTE]
+====
+1. If the class does not exist, the return status will be `404 NOT FOUND`.
+====
+
+operation::class-hierarchies-find-all-roots[snippets='curl-request']
+
+[[class-hierarchies-list-hierarchies]]
+== Listing Class Hierarchies
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of all paths from each root <<classes,class>> to the given <<classes,class>>.
+
+[NOTE]
+====
+1. If the class does not exist, the return status will be `404 NOT FOUND`.
+====
+
+operation::class-hierarchies-find-hierarchy[snippets='path-parameters,curl-request,response-fields,http-response']
+
+[[class-hierarchies-create-child-relations]]
+== Creating Child Class Relations
+
+A `POST` request creates child <<classes,class>> relations for a given parent <<classes,class>>.
+
+[NOTE]
+====
+1. If the performing user is not a curator, the return status will be `403 FORBIDDEN`.
+2. If the class does not exist, the return status will be `404 NOT FOUND`.
+3. If one child class is the same as the parent class, the return status will be `400 BAD REQUEST`.
+4. If one child class already has a parent class, the return status will be `400 BAD REQUEST`.
+====
+
+operation::class-hierarchies-create-child-relations[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+
+[[class-hierarchies-edit-child-relations]]
+== Updating Child Class Relations
+
+A `PATCH` request updates child <<classes,class>> relations for a given parent <<classes,class>>.
+
+[NOTE]
+====
+1. If the performing user is not a curator, the return status will be `403 FORBIDDEN`.
+2. If the class does not exist, the return status will be `404 NOT FOUND`.
+3. If one child class is the same as the parent class, the return status will be `400 BAD REQUEST`.
+4. If one child class already has a parent class, the return status will be `400 BAD REQUEST`.
+====
+
+operation::class-hierarchies-update-child-relations[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+
+[[class-hierarchies-create-parent-relations]]
+== Creating Parent Class Relations
+
+A `POST` request creates a parent <<classes,class>> relation for a given child <<classes,class>>.
+
+[NOTE]
+====
+1. If the performing user is not a curator, the return status will be `403 FORBIDDEN`.
+2. If the class does not exist, the return status will be `404 NOT FOUND`.
+3. If the child class and the parent class are the same, the return status will be `400 BAD REQUEST`.
+4. If the child class already has a parent class, the return status will be `400 BAD REQUEST`.
+====
+
+operation::class-hierarchies-create-parent-relation[snippets='path-parameters,request-fields,curl-request,response-headers,http-response']
+
+[[class-hierarchies-delete-child-relations]]
+== Deleting Parent Class Relations
+
+A `DELETE` removes a parent <<classes,class>> relation for a given child <<classes,class>>.
+
+[NOTE]
+====
+1. If the performing user is not a curator, the return status will be `403 FORBIDDEN`.
+2. If the class does not exist, the return status will be `404 NOT FOUND`.
+====
+
+operation::class-hierarchies-delete-parent-relation[snippets='path-parameters,curl-request,http-response']
+
+[[class-hierarchies-count-instances]]
+== Counting Class Instances
+
+A `GET` request returns the count of all instances the <<classes,class>> and its child <<classes,classes>> have in the graph.
+
+[NOTE]
+====
+1. If the class does not exist, the return status will be `404 NOT FOUND`.
+====
+
+operation::class-hierarchies-count-class-instances[snippets='path-parameters,curl-request,response-fields,http-response']

@@ -13,7 +13,6 @@ import org.keycloak.OAuth2Constants.GRANT_TYPE
 import org.keycloak.OAuth2Constants.PASSWORD
 import org.keycloak.OAuth2Constants.USERNAME
 import org.keycloak.representations.idm.UserRepresentation
-import org.orkg.auth.client.OrkgApiClient
 import org.orkg.testing.KEYCLOAK_CLIENT_ID
 import org.orkg.testing.KEYCLOAK_REALM
 import org.orkg.testing.KeycloakTestContainersBaseTest
@@ -45,7 +44,7 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
     fun `obtain access token for regular user`() {
         assert(container.isRunning)
 
-        val tokenEndpoint = given().`when`().get(container.wellKnownUrl("master"))
+        val masterRealmTokenEndpoint = given().`when`().get(container.wellKnownUrl("master"))
             .then().statusCode(200)
             .extract().path<String>("token_endpoint")
 
@@ -56,7 +55,7 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
             .formParam(GRANT_TYPE, PASSWORD)
             .formParam(USERNAME, container.adminUsername)
             .formParam(PASSWORD, container.adminPassword)
-            .`when`().post(tokenEndpoint)
+            .`when`().post(masterRealmTokenEndpoint)
             .then().statusCode(200)
             .extract().path<String>("access_token")
 
@@ -100,12 +99,25 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
             .`when`().put(userId)
             .then().statusCode(204)
 
-        val client = OrkgApiClient(KEYCLOAK_REALM, KEYCLOAK_CLIENT_ID, container.host, container.httpPort)
-        val tokens = client.tokensFor(username = "user", password = "Pa\$\$w0rd")
-        assertThat(tokens.accessToken).isNotNull()
+        val orkgRealmTokenEndpoint = given().`when`().get(container.wellKnownUrl("orkg"))
+            .then().statusCode(200)
+            .extract().path<String>("token_endpoint")
+
+        val accessToken = given()
+            .log().ifValidationFails()
+            .contentType(ContentType.URLENC.withCharset(Charsets.UTF_8))
+            .formParam("client_id", KEYCLOAK_CLIENT_ID)
+            .formParam("grant_type", "password")
+            .formParam("username", "user")
+            .formParam("password", "Pa\$\$w0rd")
+            .`when`().post(orkgRealmTokenEndpoint)
+            .then().statusCode(200)
+            .extract().path<String>("access_token")
+
+        assertThat(accessToken).isNotNull()
 
         // Decode token
-        val (_, tokenPayload) = tokens.accessToken!!
+        val (_, tokenPayload) = accessToken
             .split(".")
             .take(2)
             .map { String(Base64.getDecoder().decode(it)) }

@@ -57,7 +57,6 @@ testing {
                 implementation("io.rest-assured:rest-assured")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.springframework.data:spring-data-commons")
-                implementation("org.springframework:spring-core")
                 implementation("org.springframework:spring-web")
                 implementation("org.assertj:assertj-core")
                 implementation("com.github.dasniko:testcontainers-keycloak")

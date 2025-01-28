@@ -25,6 +25,7 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
+    api(project(":statistics:statistics-core-model"))
     implementation("dev.forkhandles:values4k")
 }
 

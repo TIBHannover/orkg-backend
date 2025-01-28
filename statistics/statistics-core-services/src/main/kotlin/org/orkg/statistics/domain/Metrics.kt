@@ -130,27 +130,11 @@ class Metrics {
     //
 
     @Bean
-    fun paperCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
-        name = "paper-count",
-        description = "Number of papers in the graph.",
-        group = "content-types",
-        supplier = { statisticsRepository.countNodes("Paper") }
-    )
-
-    @Bean
     fun contributionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "contribution-count",
         description = "Number of contributions in the graph.",
         group = "content-types",
         supplier = { statisticsRepository.countNodes("Contribution") }
-    )
-
-    @Bean
-    fun comparisonCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
-        name = "comparison-count",
-        description = "Number of comparisons in the graph.",
-        group = "content-types",
-        supplier = { statisticsRepository.countNodes("Comparison") }
     )
 
     @Bean
@@ -162,22 +146,6 @@ class Metrics {
     )
 
     @Bean
-    fun visualizationCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
-        name = "visualization-count",
-        description = "Number of visualizations in the graph.",
-        group = "content-types",
-        supplier = { statisticsRepository.countNodes("Visualization") }
-    )
-
-    @Bean
-    fun literatureListCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
-        name = "literature-list-count",
-        description = "Number of literature lists in the graph.",
-        group = "content-types",
-        supplier = { statisticsRepository.countNodes("LiteratureList") }
-    )
-
-    @Bean
     fun publishedLiteratureListVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "published-literature-list-version-count",
         description = "Number of individual published literature list versions in the graph.",
@@ -186,27 +154,11 @@ class Metrics {
     )
 
     @Bean
-    fun smartReviewCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
-        name = "smart-review-count",
-        description = "Number of smart reviews in the graph.",
-        group = "content-types",
-        supplier = { statisticsRepository.countNodes("SmartReview") }
-    )
-
-    @Bean
     fun publishedSmartReviewVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
         name = "published-smart-review-version-count",
         description = "Number of individual published smart review versions in the graph.",
         group = "content-types",
         supplier = { statisticsRepository.countNodes("SmartReviewPublished") }
-    )
-
-    @Bean
-    fun templateCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
-        name = "template-count",
-        description = "Number of templates in the graph.",
-        group = "content-types",
-        supplier = { statisticsRepository.countNodes("NodeShape") }
     )
 
     @Bean

@@ -1,18 +1,10 @@
 package org.orkg.testing.spring.restdocs
 
 import java.time.OffsetDateTime
-import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
-import org.springframework.restdocs.headers.ResponseHeadersSnippet
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.snippet.AbstractDescriptor
-
-fun createdResponseHeaders(): ResponseHeadersSnippet =
-    responseHeaders(
-        headerWithName("Location").description("Location to the created statement")
-    )
 
 fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(
     fieldWithPath("content").description("The result of the request as a (sorted) array."),

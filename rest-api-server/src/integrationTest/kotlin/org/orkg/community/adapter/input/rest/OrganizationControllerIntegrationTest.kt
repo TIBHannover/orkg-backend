@@ -16,7 +16,7 @@ import org.orkg.createResource
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath

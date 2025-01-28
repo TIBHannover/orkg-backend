@@ -15,7 +15,7 @@ import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectClass
 import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status

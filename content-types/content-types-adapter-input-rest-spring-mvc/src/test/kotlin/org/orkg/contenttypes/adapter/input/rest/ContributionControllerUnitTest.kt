@@ -16,7 +16,7 @@ import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectContribution
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus

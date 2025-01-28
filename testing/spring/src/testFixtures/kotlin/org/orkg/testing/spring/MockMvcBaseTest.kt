@@ -1,4 +1,4 @@
-package org.orkg.testing.spring.restdocs
+package org.orkg.testing.spring
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.fasterxml.jackson.databind.ObjectMapper

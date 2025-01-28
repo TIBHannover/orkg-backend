@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath

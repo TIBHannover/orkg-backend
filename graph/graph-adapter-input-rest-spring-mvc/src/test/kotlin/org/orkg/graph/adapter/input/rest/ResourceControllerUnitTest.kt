@@ -44,7 +44,7 @@ import org.orkg.testing.andExpectResource
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl

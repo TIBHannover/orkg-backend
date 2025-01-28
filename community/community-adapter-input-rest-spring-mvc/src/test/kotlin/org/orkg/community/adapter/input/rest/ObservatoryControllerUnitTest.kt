@@ -32,7 +32,7 @@ import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectObservatory
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest

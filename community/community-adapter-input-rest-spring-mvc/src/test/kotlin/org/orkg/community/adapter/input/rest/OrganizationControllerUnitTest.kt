@@ -29,7 +29,7 @@ import org.orkg.mediastorage.testing.fixtures.testImage
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockMultipartFile

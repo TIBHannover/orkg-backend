@@ -24,7 +24,7 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResearchFieldHierarchyEntry
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName

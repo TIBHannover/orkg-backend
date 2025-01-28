@@ -30,7 +30,7 @@ import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.ignorePageableFieldsExceptContent
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import

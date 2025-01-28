@@ -24,7 +24,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest

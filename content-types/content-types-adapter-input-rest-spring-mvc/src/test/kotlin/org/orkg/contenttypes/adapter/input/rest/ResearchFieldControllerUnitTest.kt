@@ -27,7 +27,7 @@ import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.ignorePageableFieldsExceptContent
 import org.orkg.testing.toAsciidoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest

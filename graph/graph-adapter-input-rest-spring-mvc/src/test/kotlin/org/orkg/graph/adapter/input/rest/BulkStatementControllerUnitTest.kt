@@ -24,7 +24,7 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectStatement
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.MockMvcBaseTest
+import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath

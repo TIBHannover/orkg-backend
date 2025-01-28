@@ -596,7 +596,8 @@ private const val updatePaperJson = """{
   "organizations": [
     "edc18168-c4ee-4cb8-a98a-136f748e912e"
   ],
-  "visibility": "DELETED"
+  "visibility": "DELETED",
+  "verified": false
 }"""
 
 private const val createContributionJson = """{

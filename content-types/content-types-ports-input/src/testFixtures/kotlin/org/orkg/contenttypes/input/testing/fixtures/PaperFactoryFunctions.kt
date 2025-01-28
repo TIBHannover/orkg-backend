@@ -163,7 +163,8 @@ fun dummyUpdatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
     ),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
-    visibility = Visibility.DEFAULT
+    visibility = Visibility.DEFAULT,
+    verified = false
 )
 
 fun dummyPublishPaperCommand() = PublishPaperUseCase.PublishCommand(

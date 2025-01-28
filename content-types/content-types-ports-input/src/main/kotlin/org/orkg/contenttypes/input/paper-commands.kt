@@ -55,7 +55,8 @@ interface UpdatePaperUseCase {
         val mentionings: Set<ThingId>?,
         val observatories: List<ObservatoryId>?,
         val organizations: List<OrganizationId>?,
-        val visibility: Visibility?
+        val visibility: Visibility?,
+        val verified: Boolean?,
     )
 }
 

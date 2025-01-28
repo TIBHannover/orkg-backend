@@ -317,7 +317,8 @@ class PaperController(
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
-        val visibility: Visibility?
+        val visibility: Visibility?,
+        val verified: Boolean?,
     ) {
         fun toUpdateCommand(paperId: ThingId, contributorId: ContributorId): UpdatePaperUseCase.UpdateCommand =
             UpdatePaperUseCase.UpdateCommand(
@@ -332,7 +333,8 @@ class PaperController(
                 mentionings = mentionings,
                 observatories = observatories,
                 organizations = organizations,
-                visibility = visibility
+                visibility = visibility,
+                verified = verified
             )
     }
 

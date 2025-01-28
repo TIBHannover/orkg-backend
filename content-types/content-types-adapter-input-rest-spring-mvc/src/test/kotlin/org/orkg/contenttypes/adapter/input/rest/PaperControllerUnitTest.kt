@@ -846,7 +846,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                         fieldWithPath("mentionings").description("The updated set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)"),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. (optional)").optional(),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. (optional)").optional(),
-                        fieldWithPath("visibility").description("The updated visibility of the paper. Can be one of $allowedVisibilityValues. (optional)").optional()
+                        fieldWithPath("visibility").description("The updated visibility of the paper. Can be one of $allowedVisibilityValues. (optional)").optional(),
+                        fieldWithPath("verified").description("The updated verification status of the paper. (optional)").optional()
                     ).and(authorListFields("paper"))
                         .and(paperIdentifierFields())
                 )
@@ -1521,7 +1522,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             organizations = listOf(
                 OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
             ),
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
+            verified = true
         )
 
     private fun createContributionRequest() =

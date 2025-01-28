@@ -25,6 +25,7 @@ import org.orkg.contenttypes.domain.actions.ResourceValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
+import org.orkg.contenttypes.domain.actions.VerifiedValidator
 import org.orkg.contenttypes.domain.actions.VisibilityValidator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsCreator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsValidator
@@ -209,6 +210,7 @@ class PaperService(
             PaperModifiableValidator(),
             PublicationInfoValidator { it.publicationInfo },
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.paper!! }, { it.visibility }),
+            VerifiedValidator(contributorRepository, { it.contributorId }, { it.paper!!.verified }, { it.verified }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.paper!!.researchFields.ids }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.paper!!.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.paper!!.organizations }),

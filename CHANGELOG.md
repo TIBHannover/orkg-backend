@@ -6,6 +6,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added `page` field to paginated responses, deprecating all other pagination fields.
+  (See: [!1167](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1167))
+- Added path parameter documentation to all endpoints.
+  (See: [!1170](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1170))
+- The resource fields `visbility`, `observatory_id` and `organbization_id` can now be updated using the resource update endpoint.
+  (See: [!1177](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1177))
+- The `visbility` field is now exposed for resources, deprecating the `unlisted` and `featured` fields.
+  (See: [!1178](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1178))
+- Added documentation for deleting predicates.
+  (See: [!1173](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1173))
+- Added documentation for updating organization.
+  (See: [!1179](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1179))
+- Added documentation for class hierarchies.
+  (See: [!1184](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1184))
+- Added documentation for available sorting keys of organizations, observatories and conference series.
+- Added documentation for class hierarchies.
+  (See: [!1184](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1184))
+- Added documentation for all response headers.
+  (See: [!1181](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1181))
+- Added support for updating the visibility via content-type endpoints. This includes comparisons, papers, smart reviews, literature lists and templates.
+  (See: [!1186](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1186))
+- Added support filtering parameters on metrics.
+  (See: [!1188](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1188))
+- The `verified` field is now updatable using the paper content-type endpoint.
+  (See: [!1189](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1189))
+### Changed
+- The following endpoints now return a location header, deprecating all response body contents whose response contains a location header
+  (See: [!1181](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1181)):
+    - `PATH /api/observatories/{id}/filters/{filterId}`
+    - `PUT/PATCH /api/classes/{id}`
+    - `PATCH /api/lists/{id}`
+    - `PUT /api/literals/{id}`
+    - `PUT /api/predicates/{id}`
+    - `PUT /api/statements/{id}`
+### Fixed
+- Fixed template property descriptions not accepting line breaks.
+- Fixed cache configuration.
+  (See: [!1172](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1172))
+- Fixed status 500 when querying jpa endpoints with unknown sorting parameters.
+  (Closes: [#608](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/608))
+- Fixed observatories and organizations not being validated when updating a resource.
+  (See: [!1177](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1177))
 
 ## [0.76.0] - 2025-01-13
 ### Added

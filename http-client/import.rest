@@ -1,4 +1,4 @@
-### Import class by URI
+### Import class by URI from WikiData
 POST {{server_url}}/api/import/classes
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
@@ -6,4 +6,14 @@ Authorization: Bearer {{access_token}}
 {
     "ontology": "wikidata",
     "uri": "https://www.wikidata.org/entity/Q131740"
+}
+
+### Import class by URI from OLS
+POST {{server_url}}/api/import/classes
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "ontology": "bfo",
+    "uri": "http://purl.obolibrary.org/obo/BFO_0000024"
 }

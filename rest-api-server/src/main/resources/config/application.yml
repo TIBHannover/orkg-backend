@@ -66,7 +66,7 @@ orkg:
       host: "https://secure.geonames.org"
       username: "demo"
     ols:
-      host: "https://service.tib.eu/ts4tib/api"
+      host: "https://api.terminology.tib.eu/api/v2"
     wikidata:
       host: "https://www.wikidata.org"
   keycloak:

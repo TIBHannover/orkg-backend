@@ -16,6 +16,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpResponse
 import java.util.stream.Stream
 import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -38,7 +39,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
-    fun <T> `Given an ontology id and user input, when ols returns success, it returns the external object`(
+    fun <T : Any> `Given an ontology id and user input, when ols returns success, it returns the external object`(
         entityType: String,
         userInput: T,
         ontologyId: String,
@@ -59,16 +60,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             httpClient.send(withArg {
-                it.uri() shouldBe if (userInput is ParsedIRI) {
-                    // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
-                    UriComponentsBuilder.fromUriString(olsHostUrl)
-                        .path("/ontologies/$ontologyId/$entityType")
-                        .queryParam("iri", userInput.toString())
-                        .build()
-                        .toUri()
-                } else {
-                    URI.create("$olsHostUrl/ontologies/$ontologyId/$entityType?short_form=$userInput")
-                }
+                it.uri() shouldBe userInput.toUri(ontologyId, entityType)
                 it.headers().map() shouldContainAll mapOf(
                     "Accept" to listOf("application/json")
                 )
@@ -81,7 +73,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
     @ParameterizedTest
     @MethodSource("validInputs")
     @Suppress("UNUSED_PARAMETER")
-    fun <T> `Given an ontology id and user input, when ols returns status not found, it returns null`(
+    fun <T : Any> `Given an ontology id and user input, when ols returns status not found, it returns null`(
         entityType: String,
         userInput: T,
         ontologyId: String,
@@ -99,16 +91,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             httpClient.send(withArg {
-                it.uri() shouldBe if (userInput is ParsedIRI) {
-                    // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
-                    UriComponentsBuilder.fromUriString(olsHostUrl)
-                        .path("/ontologies/$ontologyId/$entityType")
-                        .queryParam("iri", userInput.toString())
-                        .build()
-                        .toUri()
-                } else {
-                    URI.create("$olsHostUrl/ontologies/$ontologyId/$entityType?short_form=$userInput")
-                }
+                it.uri() shouldBe userInput.toUri(ontologyId, entityType)
                 it.headers().map() shouldContainAll mapOf(
                     "Accept" to listOf("application/json")
                 )
@@ -119,7 +102,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
 
     @ParameterizedTest
     @MethodSource("validInputs")
-    fun <T> `Given an ontology id and user input, when ols service is not available, it throws an exception`(
+    fun <T : Any> `Given an ontology id and user input, when ols service is not available, it throws an exception`(
         entityType: String,
         userInput: T,
         ontologyId: String,
@@ -139,16 +122,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             httpClient.send(withArg {
-                it.uri() shouldBe if (userInput is ParsedIRI) {
-                    // using UriComponentsBuilder because of different escaping implementations between UriComponentsBuilder and URLEncoder
-                    UriComponentsBuilder.fromUriString(olsHostUrl)
-                        .path("/ontologies/$ontologyId/$entityType")
-                        .queryParam("iri", userInput.toString())
-                        .build()
-                        .toUri()
-                } else {
-                    URI.create("$olsHostUrl/ontologies/$ontologyId/$entityType?short_form=$userInput")
-                }
+                it.uri() shouldBe userInput.toUri(ontologyId, entityType)
                 it.headers().map() shouldContainAll mapOf(
                     "Accept" to listOf("application/json")
                 )
@@ -168,6 +142,31 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
         val result = methodInvoker(repository, ontologyId, userInput)
         result shouldBe null
     }
+
+    private fun <T : Any> T.toUri(ontologyId: String, entityType: String): URI =
+        if (this is ParsedIRI) {
+            UriComponentsBuilder.fromUriString(olsHostUrl)
+                .path("/ontologies/$ontologyId/$entityType")
+                .queryParam("iri", toString())
+                .queryParam("exactMatch", true)
+                .queryParam("lang", "en")
+                .queryParam("includeObsoleteEntities", false)
+                .queryParam("page", 0)
+                .queryParam("size", 1)
+                .build()
+                .toUri()
+        } else {
+            UriComponentsBuilder.fromUriString(olsHostUrl)
+                .path("/ontologies/$ontologyId/$entityType")
+                .queryParam("shortForm", this)
+                .queryParam("exactMatch", true)
+                .queryParam("lang", "en")
+                .queryParam("includeObsoleteEntities", false)
+                .queryParam("page", 0)
+                .queryParam("size", 1)
+                .build()
+                .toUri()
+        }
 
     companion object {
         @JvmStatic
@@ -197,7 +196,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 )
             ),
             Arguments.of(
-                "terms",
+                "classes",
                 "Collection",
                 "skos",
                 OLSServiceAdapter::findClassByShortForm,
@@ -209,7 +208,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 )
             ),
             Arguments.of(
-                "terms",
+                "classes",
                 ParsedIRI("https://sws.geonames.org/2950159"),
                 "skos",
                 OLSServiceAdapter::findClassByURI,
@@ -259,194 +258,552 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
 }
 
 private const val olsIndividualSuccessResponseJson = """{
-  "_embedded" : {
-    "individuals" : [ {
-      "iri" : "http://rs.tdwg.org/abcd/terms/AbsenceObservation",
-      "label" : "AbsenceObservation",
-      "description" : [ "A record describing an output of an observation process with indication of the absence of an observation" ],
-      "annotation" : {
-        "comment" : [ "A record describing an output of an observation process with indication of the absence of an observation" ],
-        "isDefinedBy" : [ "http://rs.tdwg.org/abcd/terms/" ],
-        "issued" : [ "2019-01-31" ],
-        "modified" : [ "2019-01-31" ],
-        "status" : [ "recommended" ]
-      },
-      "type" : [ {
-        "iri" : "http://rs.tdwg.org/abcd/terms/RecordBasis",
-        "label" : "Record Basis",
-        "description" : [ "A standard designator for the nature of the object of the record." ],
-        "annotation" : {
-          "comment" : [ "A standard designator for the nature of the object of the record." ],
-          "exactMatch" : [ "http://rs.tdwg.org/dwc/terms/basisOfRecord" ],
-          "isDefinedBy" : [ "http://rs.tdwg.org/abcd/terms/" ],
-          "issued" : [ "2019-01-31" ],
-          "modified" : [ "2019-01-31" ],
-          "status" : [ "recommended" ],
-          "termGroup" : [ "http://rs.tdwg.org/abcd/terms/Unit" ]
-        },
-        "synonyms" : null,
-        "ontology_name" : "abcd",
-        "ontology_prefix" : "ABCD",
-        "ontology_iri" : "http://rs.tdwg.org/abcd/terms/",
-        "is_obsolete" : false,
-        "term_replaced_by" : null,
-        "is_defining_ontology" : false,
-        "has_children" : false,
-        "is_root" : true,
-        "short_form" : "RecordBasis",
-        "obo_id" : null,
-        "in_subset" : null,
-        "obo_definition_citation" : null,
-        "obo_xref" : null,
-        "obo_synonym" : null,
-        "is_preferred_root" : false
-      } ],
-      "synonyms" : null,
-      "ontology_name" : "abcd",
-      "ontology_prefix" : "ABCD",
-      "ontology_iri" : "http://rs.tdwg.org/abcd/terms/",
-      "is_obsolete" : false,
-      "is_defining_ontology" : false,
-      "short_form" : "AbsenceObservation",
-      "obo_id" : null,
-      "_links" : {
-        "self" : {
-          "href" : "https://service.tib.eu:443/ts4tib/api/ontologies/abcd/individuals/http%253A%252F%252Frs.tdwg.org%252Fabcd%252Fterms%252FAbsenceObservation"
-        },
-        "types" : {
-          "href" : "https://service.tib.eu:443/ts4tib/api/ontologies/abcd/individuals/http%253A%252F%252Frs.tdwg.org%252Fabcd%252Fterms%252FAbsenceObservation/types"
-        },
-        "alltypes" : {
-          "href" : "https://service.tib.eu:443/ts4tib/api/ontologies/abcd/individuals/http%253A%252F%252Frs.tdwg.org%252Fabcd%252Fterms%252FAbsenceObservation/alltypes"
-        },
-        "jstree" : {
-          "href" : "https://service.tib.eu:443/ts4tib/api/ontologies/abcd/individuals/http%253A%252F%252Frs.tdwg.org%252Fabcd%252Fterms%252FAbsenceObservation/jstree"
-        }
-      }
-    } ]
-  },
-  "_links" : {
-    "self" : {
-      "href" : "https://service.tib.eu/ts4tib/api/ontologies/abcd/individuals?iri=http://rs.tdwg.org/abcd/terms/AbsenceObservation"
-    }
-  },
-  "page" : {
-    "size" : 0,
-    "totalElements" : 1,
-    "totalPages" : 1,
-    "number" : 0
-  }
-}"""
-
-private const val olsTermSuccessResponseJson = """{
-  "_embedded": {
-    "terms": [
-      {
-        "iri": "http://www.w3.org/2004/02/skos/core#Collection",
-        "label": "Collection",
-        "description": [
-          "A meaningful collection of concepts."
-        ],
-        "annotation": {
-          "isDefinedBy": [
-            "http://www.w3.org/2004/02/skos/core"
+  "page": 0,
+  "numElements": 1,
+  "totalPages": 1,
+  "totalElements": 1,
+  "elements": [
+    {
+      "appearsIn": [
+        "abcd"
+      ],
+      "curie": "AbsenceObservation",
+      "definedBy": [
+        "abcd"
+      ],
+      "definition": [
+        "A record describing an output of an observation process with indication of the absence of an observation",
+        "A record describing an output of an observation process with indication of the absence of an observation"
+      ],
+      "definitionProperty": [
+        "http://www.w3.org/2000/01/rdf-schema#comment",
+        "http://www.w3.org/2004/02/skos/core#definition"
+      ],
+      "directAncestor": [
+        "http://rs.tdwg.org/abcd/terms/RecordBasis"
+      ],
+      "directParent": [
+        "http://rs.tdwg.org/abcd/terms/RecordBasis"
+      ],
+      "hasDirectChildren": false,
+      "hasDirectParents": true,
+      "hasHierarchicalChildren": false,
+      "hasHierarchicalParents": false,
+      "imported": false,
+      "iri": "http://rs.tdwg.org/abcd/terms/AbsenceObservation",
+      "isDefiningOntology": true,
+      "isObsolete": false,
+      "label": [
+        "AbsenceObservation"
+      ],
+      "linkedEntities": {
+        "http://www.w3.org/2004/02/skos/core#definition": {
+          "definedBy": [
+            "stw",
+            "skos"
           ],
-          "scope note": [
-            "Labelled collections can be used where you would like a set of concepts to be displayed under a 'node label' in the hierarchy."
+          "numAppearsIn": 31,
+          "hasLocalDefinition": true,
+          "label": [
+            "definition"
+          ],
+          "curie": "definition",
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
           ]
         },
-        "synonyms": null,
-        "ontology_name": "skos",
-        "ontology_prefix": "SKOS",
-        "ontology_iri": "http://www.w3.org/2004/02/skos/core",
-        "is_obsolete": false,
-        "term_replaced_by": null,
-        "is_defining_ontology": true,
-        "has_children": true,
-        "is_root": true,
-        "short_form": "Collection",
-        "obo_id": null,
-        "in_subset": null,
-        "obo_definition_citation": null,
-        "obo_xref": null,
-        "obo_synonym": null,
-        "is_preferred_root": false,
-        "_links": {
-          "self": {
-            "href": "https://example.org/ols/api/ontologies/skos/terms/http%253A%252F%252Fwww.w3.org%252F2004%252F02%252Fskos%252Fcore%2523Collection"
-          },
-          "children": {
-            "href": "https://example.org/ols/api/ontologies/skos/terms/http%253A%252F%252Fwww.w3.org%252F2004%252F02%252Fskos%252Fcore%2523Collection/children"
-          },
-          "descendants": {
-            "href": "https://example.org/ols/api/ontologies/skos/terms/http%253A%252F%252Fwww.w3.org%252F2004%252F02%252Fskos%252Fcore%2523Collection/descendants"
-          },
-          "hierarchicalChildren": {
-            "href": "https://example.org/ols/api/ontologies/skos/terms/http%253A%252F%252Fwww.w3.org%252F2004%252F02%252Fskos%252Fcore%2523Collection/hierarchicalChildren"
-          },
-          "hierarchicalDescendants": {
-            "href": "https://example.org/ols/api/ontologies/skos/terms/http%253A%252F%252Fwww.w3.org%252F2004%252F02%252Fskos%252Fcore%2523Collection/hierarchicalDescendants"
-          },
-          "graph": {
-            "href": "https://example.org/ols/api/ontologies/skos/terms/http%253A%252F%252Fwww.w3.org%252F2004%252F02%252Fskos%252Fcore%2523Collection/graph"
-          }
+        "http://www.w3.org/2000/01/rdf-schema#comment": {
+          "definedBy": [
+            "prov"
+          ],
+          "numAppearsIn": 53,
+          "hasLocalDefinition": false,
+          "label": [
+            "comment"
+          ],
+          "curie": "comment",
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ]
+        },
+        "http://purl.org/dc/terms/modified": {
+          "definedBy": [
+            "dcterms"
+          ],
+          "numAppearsIn": 43,
+          "hasLocalDefinition": true,
+          "label": [
+            "Date Modified"
+          ],
+          "curie": "dcterms:/modified",
+          "type": [
+            "dataProperty",
+            "property",
+            "entity"
+          ]
+        },
+        "http://rs.tdwg.org/dwc/terms/attributes/status": {
+          "numAppearsIn": 2,
+          "hasLocalDefinition": true,
+          "label": [
+            "status"
+          ],
+          "curie": "status",
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ]
+        },
+        "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": {
+          "numAppearsIn": 25,
+          "hasLocalDefinition": false,
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ],
+          "label": [
+            "isDefinedBy"
+          ],
+          "curie": "isDefinedBy"
+        },
+        "http://purl.org/dc/terms/issued": {
+          "definedBy": [
+            "dcterms"
+          ],
+          "numAppearsIn": 35,
+          "hasLocalDefinition": true,
+          "label": [
+            "Date Issued"
+          ],
+          "curie": "dcterms:/issued",
+          "type": [
+            "dataProperty",
+            "property",
+            "entity"
+          ]
+        },
+        "http://rs.tdwg.org/abcd/terms/RecordBasis": {
+          "definedBy": [
+            "abcd"
+          ],
+          "numAppearsIn": 1,
+          "hasLocalDefinition": true,
+          "label": [
+            "Record Basis"
+          ],
+          "curie": "RecordBasis",
+          "type": [
+            "class",
+            "entity"
+          ]
         }
-      }
-    ]
-  },
-  "_links": {
-    "self": {
-      "href": "https://service.tib.eu/ts4tib/api/ontologies/skos/terms?short_form=Collection"
+      },
+      "numDescendants": 0,
+      "numHierarchicalDescendants": 0,
+      "ontologyId": "abcd",
+      "ontologyIri": "http://rs.tdwg.org/abcd/terms/",
+      "ontologyPreferredPrefix": "abcd",
+      "searchableAnnotationValues": [
+        false
+      ],
+      "shortForm": "AbsenceObservation",
+      "type": [
+        "individual",
+        "entity"
+      ],
+      "http://purl.org/dc/terms/issued": "2019-01-31",
+      "http://purl.org/dc/terms/modified": "2019-01-31",
+      "http://rs.tdwg.org/dwc/terms/attributes/status": "recommended",
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+        "http://www.w3.org/2002/07/owl#NamedIndividual",
+        "http://rs.tdwg.org/abcd/terms/RecordBasis"
+      ],
+      "http://www.w3.org/2000/01/rdf-schema#comment": "A record describing an output of an observation process with indication of the absence of an observation",
+      "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": "http://rs.tdwg.org/abcd/terms/",
+      "http://www.w3.org/2004/02/skos/core#definition": "A record describing an output of an observation process with indication of the absence of an observation"
     }
-  },
-  "page": {
-    "size": 0,
-    "totalElements": 1,
-    "totalPages": 1,
-    "number": 0
-  }
+  ],
+  "facetFieldsToCounts": {}
+}"""
+
+@Language("JSON")
+private const val olsTermSuccessResponseJson = """{
+  "page": 0,
+  "numElements": 1,
+  "totalPages": 1,
+  "totalElements": 1,
+  "elements": [
+    {
+      "appearsIn": [
+        "cf",
+        "meth",
+        "afo",
+        "skos",
+        "stw",
+        "linsearch",
+        "modsci",
+        "skosxl"
+      ],
+      "curie": "Collection",
+      "definedBy": [
+        "stw",
+        "skos"
+      ],
+      "definition": [
+        "A meaningful collection of concepts."
+      ],
+      "definitionProperty": "http://www.w3.org/2004/02/skos/core#definition",
+      "hasDirectChildren": true,
+      "hasDirectParents": false,
+      "hasHierarchicalChildren": true,
+      "hasHierarchicalParents": false,
+      "imported": false,
+      "iri": "http://www.w3.org/2004/02/skos/core#Collection",
+      "isDefiningOntology": true,
+      "isObsolete": false,
+      "isPreferredRoot": false,
+      "label": [
+        "Collection"
+      ],
+      "linkedEntities": {
+        "http://www.w3.org/2004/02/skos/core#definition": {
+          "definedBy": [
+            "stw",
+            "skos"
+          ],
+          "numAppearsIn": 31,
+          "hasLocalDefinition": true,
+          "label": [
+            "definition"
+          ],
+          "curie": "definition",
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ]
+        },
+        "http://www.w3.org/2004/02/skos/core#Concept": {
+          "definedBy": [
+            "stw",
+            "skos"
+          ],
+          "numAppearsIn": 14,
+          "hasLocalDefinition": true,
+          "label": [
+            "Concept"
+          ],
+          "curie": "Concept",
+          "type": [
+            "class",
+            "entity"
+          ]
+        },
+        "http://www.w3.org/2004/02/skos/core#scopeNote": {
+          "definedBy": [
+            "stw",
+            "skos"
+          ],
+          "numAppearsIn": 18,
+          "hasLocalDefinition": true,
+          "label": [
+            "scope note"
+          ],
+          "curie": "scopeNote",
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ]
+        },
+        "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": {
+          "numAppearsIn": 25,
+          "hasLocalDefinition": false,
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ],
+          "label": [
+            "isDefinedBy"
+          ],
+          "curie": "isDefinedBy"
+        },
+        "http://www.w3.org/2004/02/skos/core#ConceptScheme": {
+          "definedBy": [
+            "stw",
+            "skos"
+          ],
+          "numAppearsIn": 11,
+          "hasLocalDefinition": true,
+          "label": [
+            "Concept Scheme"
+          ],
+          "curie": "ConceptScheme",
+          "type": [
+            "class",
+            "entity"
+          ]
+        },
+        "http://www.w3.org/2000/01/rdf-schema#label": {
+          "definedBy": [
+            "prov"
+          ],
+          "numAppearsIn": 53,
+          "hasLocalDefinition": false,
+          "label": [
+            "label"
+          ],
+          "curie": "label",
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ]
+        }
+      },
+      "numDescendants": 1,
+      "numHierarchicalDescendants": 1,
+      "ontologyId": "skos",
+      "ontologyIri": "http://www.w3.org/2004/02/skos/core",
+      "ontologyPreferredPrefix": "SKOS",
+      "searchableAnnotationValues": [
+        "A meaningful collection of concepts.",
+        "Labelled collections can be used where you would like a set of concepts to be displayed under a 'node label' in the hierarchy.",
+        false
+      ],
+      "shortForm": "Collection",
+      "type": [
+        "class",
+        "entity"
+      ],
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": "http://www.w3.org/2004/02/skos/core",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Collection",
+      "http://www.w3.org/2002/07/owl#disjointWith": [
+        "http://www.w3.org/2004/02/skos/core#Concept",
+        "http://www.w3.org/2004/02/skos/core#ConceptScheme"
+      ],
+      "http://www.w3.org/2004/02/skos/core#definition": "A meaningful collection of concepts.",
+      "http://www.w3.org/2004/02/skos/core#scopeNote": "Labelled collections can be used where you would like a set of concepts to be displayed under a 'node label' in the hierarchy."
+    }
+  ],
+  "facetFieldsToCounts": {}
 }"""
 
 private const val olsPropertySuccessResponseJson = """{
-  "_embedded" : {
-    "properties" : [ {
-      "annotation" : {
-        "comment" : [ "Property to connect an instance of a class to a Country." ],
-        "isDefinedBy" : [ "http://rs.tdwg.org/abcd/terms/" ],
-        "issued" : [ "2019-01-31" ],
-        "modified" : [ "2019-01-31" ],
-        "status" : [ "recommended" ]
-      },
-      "synonyms" : null,
-      "iri" : "http://rs.tdwg.org/abcd/terms/hasCountry",
-      "label" : "has Country",
-      "synonym" : null,
-      "description" : [ "Property to connect an instance of a class to a Country." ],
-      "ontology_name" : "abcd",
-      "ontology_prefix" : "ABCD",
-      "ontology_iri" : "http://rs.tdwg.org/abcd/terms/",
-      "is_obsolete" : false,
-      "is_defining_ontology" : false,
-      "has_children" : false,
-      "is_root" : true,
-      "short_form" : "hasCountry",
-      "obo_id" : null,
-      "_links" : {
-        "self" : {
-          "href" : "https://service.tib.eu:443/ts4tib/api/ontologies/abcd/properties/http%253A%252F%252Frs.tdwg.org%252Fabcd%252Fterms%252FhasCountry"
+  "page": 0,
+  "numElements": 1,
+  "totalPages": 1,
+  "totalElements": 1,
+  "elements": [
+    {
+      "appearsIn": [
+        "abcd"
+      ],
+      "curie": "hasCountry",
+      "definedBy": [
+        "abcd"
+      ],
+      "definition": [
+        "Property to connect an instance of a class to a Country.",
+        "Property to connect an instance of a class to a Country."
+      ],
+      "definitionProperty": [
+        "http://www.w3.org/2000/01/rdf-schema#comment",
+        "http://www.w3.org/2004/02/skos/core#definition"
+      ],
+      "hasDirectChildren": false,
+      "hasDirectParents": false,
+      "hasHierarchicalChildren": false,
+      "hasHierarchicalParents": false,
+      "imported": false,
+      "iri": "http://rs.tdwg.org/abcd/terms/hasCountry",
+      "isDefiningOntology": true,
+      "isObsolete": false,
+      "isPreferredRoot": false,
+      "label": [
+        "has Country"
+      ],
+      "linkedEntities": {
+        "http://www.w3.org/2004/02/skos/core#definition": {
+          "definedBy": [
+            "stw",
+            "skos"
+          ],
+          "numAppearsIn": 31,
+          "hasLocalDefinition": true,
+          "label": [
+            "definition"
+          ],
+          "curie": "definition",
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ]
+        },
+        "http://rs.tdwg.org/dwc/terms/attributes/status": {
+          "numAppearsIn": 2,
+          "hasLocalDefinition": true,
+          "label": [
+            "status"
+          ],
+          "curie": "status",
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ]
+        },
+        "http://www.w3.org/2000/01/rdf-schema#range": {
+          "numAppearsIn": 1,
+          "hasLocalDefinition": false,
+          "type": [
+            "property",
+            "entity"
+          ],
+          "label": [
+            "range"
+          ],
+          "curie": "range"
+        },
+        "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": {
+          "numAppearsIn": 25,
+          "hasLocalDefinition": false,
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ],
+          "label": [
+            "isDefinedBy"
+          ],
+          "curie": "isDefinedBy"
+        },
+        "http://rs.tdwg.org/abcd/terms/Country": {
+          "definedBy": [
+            "abcd"
+          ],
+          "numAppearsIn": 1,
+          "hasLocalDefinition": true,
+          "label": [
+            "Country"
+          ],
+          "curie": "Country",
+          "type": [
+            "class",
+            "entity"
+          ]
+        },
+        "http://www.w3.org/2000/01/rdf-schema#comment": {
+          "definedBy": [
+            "prov"
+          ],
+          "numAppearsIn": 53,
+          "hasLocalDefinition": false,
+          "label": [
+            "comment"
+          ],
+          "curie": "comment",
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ]
+        },
+        "http://purl.org/dc/terms/modified": {
+          "definedBy": [
+            "dcterms"
+          ],
+          "numAppearsIn": 43,
+          "hasLocalDefinition": true,
+          "label": [
+            "Date Modified"
+          ],
+          "curie": "dcterms:/modified",
+          "type": [
+            "dataProperty",
+            "property",
+            "entity"
+          ]
+        },
+        "http://www.w3.org/2000/01/rdf-schema#domain": {
+          "numAppearsIn": 1,
+          "hasLocalDefinition": false,
+          "type": [
+            "property",
+            "entity"
+          ],
+          "label": [
+            "domain"
+          ],
+          "curie": "domain"
+        },
+        "http://purl.org/dc/terms/issued": {
+          "definedBy": [
+            "dcterms"
+          ],
+          "numAppearsIn": 35,
+          "hasLocalDefinition": true,
+          "label": [
+            "Date Issued"
+          ],
+          "curie": "dcterms:/issued",
+          "type": [
+            "dataProperty",
+            "property",
+            "entity"
+          ]
+        },
+        "http://www.w3.org/2000/01/rdf-schema#label": {
+          "definedBy": [
+            "prov"
+          ],
+          "numAppearsIn": 53,
+          "hasLocalDefinition": false,
+          "label": [
+            "label"
+          ],
+          "curie": "label",
+          "type": [
+            "property",
+            "annotationProperty",
+            "entity"
+          ]
         }
-      }
-    } ]
-  },
-  "_links" : {
-    "self" : {
-      "href" : "https://service.tib.eu/ts4tib/api/ontologies/abcd/properties?iri=http://rs.tdwg.org/abcd/terms/hasCountry"
+      },
+      "numDescendants": 0,
+      "numHierarchicalDescendants": 0,
+      "ontologyId": "abcd",
+      "ontologyIri": "http://rs.tdwg.org/abcd/terms/",
+      "ontologyPreferredPrefix": "abcd",
+      "searchableAnnotationValues": [
+        false
+      ],
+      "shortForm": "hasCountry",
+      "type": [
+        "property",
+        "objectProperty",
+        "entity"
+      ],
+      "http://purl.org/dc/terms/issued": "2019-01-31",
+      "http://purl.org/dc/terms/modified": "2019-01-31",
+      "http://rs.tdwg.org/dwc/terms/attributes/status": "recommended",
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Property to connect an instance of a class to a Country.",
+      "http://www.w3.org/2000/01/rdf-schema#domain": "http://www.w3.org/2002/07/owl#Thing",
+      "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": "http://rs.tdwg.org/abcd/terms/",
+      "http://www.w3.org/2000/01/rdf-schema#label": "has Country",
+      "http://www.w3.org/2000/01/rdf-schema#range": "http://rs.tdwg.org/abcd/terms/Country",
+      "http://www.w3.org/2004/02/skos/core#definition": "Property to connect an instance of a class to a Country."
     }
-  },
-  "page" : {
-    "size" : 0,
-    "totalElements" : 1,
-    "totalPages" : 1,
-    "number" : 0
-  }
+  ],
+  "facetFieldsToCounts": {}
 }"""

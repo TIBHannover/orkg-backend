@@ -26,48 +26,56 @@ class OLSServiceAdapter(
     private val pattern = Pattern.compile("[a-zA-Z0-9_]+")
 
     override fun findClassByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
-        fetchByShortForm(ontologyId, "terms", shortForm)
+        fetchByShortForm(ontologyId, Type.CLASS, shortForm)
 
     override fun findClassByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
-        fetchByURI(ontologyId, "terms", uri)
+        fetchByURI(ontologyId, Type.CLASS, uri)
 
     override fun findResourceByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
-        fetchByShortForm(ontologyId, "individuals", shortForm)
+        fetchByShortForm(ontologyId, Type.RESOURCE, shortForm)
 
     override fun findResourceByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
-        fetchByURI(ontologyId, "individuals", uri)
+        fetchByURI(ontologyId, Type.RESOURCE, uri)
 
     override fun findPredicateByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
-        fetchByShortForm(ontologyId, "properties", shortForm)
+        fetchByShortForm(ontologyId, Type.PREDICATE, shortForm)
 
     override fun findPredicateByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
-        fetchByURI(ontologyId, "properties", uri)
+        fetchByURI(ontologyId, Type.PREDICATE, uri)
 
-    private fun fetchByURI(ontologyId: String, type: String, uri: ParsedIRI): ExternalThing? {
+    private fun fetchByURI(ontologyId: String, type: Type, uri: ParsedIRI): ExternalThing? {
         if (!supportsOntology(ontologyId)) return null
         return fetch(
-            type = type,
-            uri = UriComponentsBuilder.fromUriString(host)
-                .path("/ontologies/$ontologyId/$type")
+            UriComponentsBuilder.fromUriString(host)
+                .path("/ontologies/$ontologyId/${type.endpointPath}")
                 .queryParam("iri", uri.toString())
+                .queryParam("exactMatch", true)
+                .queryParam("lang", "en")
+                .queryParam("includeObsoleteEntities", false)
+                .queryParam("page", 0)
+                .queryParam("size", 1)
                 .build()
                 .toUri()
         )
     }
 
-    private fun fetchByShortForm(ontologyId: String, type: String, shortForm: String): ExternalThing? {
+    private fun fetchByShortForm(ontologyId: String, type: Type, shortForm: String): ExternalThing? {
         if (!supportsOntology(ontologyId)) return null
         return fetch(
-            type = type,
-            uri = UriComponentsBuilder.fromUriString(host)
-                .path("/ontologies/$ontologyId/$type")
-                .queryParam("short_form", shortForm)
+            UriComponentsBuilder.fromUriString(host)
+                .path("/ontologies/$ontologyId/${type.endpointPath}")
+                .queryParam("shortForm", shortForm)
+                .queryParam("exactMatch", true)
+                .queryParam("lang", "en")
+                .queryParam("includeObsoleteEntities", false)
+                .queryParam("page", 0)
+                .queryParam("size", 1)
                 .build()
                 .toUri()
         )
     }
 
-    private fun fetch(type: String, uri: URI): ExternalThing? {
+    private fun fetch(uri: URI): ExternalThing? {
         val request = HttpRequest.newBuilder()
             .uri(uri)
             .header("Accept", MediaType.APPLICATION_JSON_VALUE)
@@ -75,12 +83,13 @@ class OLSServiceAdapter(
             .build()
         return httpClient.send(request, "OntologyLookupService") { response ->
             val tree = objectMapper.readTree(response)
-            val item = tree.path("_embedded").path(type).toList().singleOrNull()
+            val item = tree.path("elements").toList().singleOrNull()
                 ?: return@send null
             ExternalThing(
                 uri = ParsedIRI(item.path("iri").asText()),
-                label = item.path("label").asText(),
-                description = item.path("description").toList()
+                label = item.path("label").toList()
+                    .firstOrNull()?.asText() ?: return@send null,
+                description = item.path("definition").toList()
                     .firstOrNull()?.asText()
                     .takeIf { !it.isNullOrBlank() },
             )
@@ -91,4 +100,10 @@ class OLSServiceAdapter(
         pattern.matcher(ontologyId).matches()
 
     override fun supportsMultipleOntologies(): Boolean = true
+
+    private enum class Type(val endpointPath: String) {
+        CLASS("classes"),
+        PREDICATE("properties"),
+        RESOURCE("individuals")
+    }
 }

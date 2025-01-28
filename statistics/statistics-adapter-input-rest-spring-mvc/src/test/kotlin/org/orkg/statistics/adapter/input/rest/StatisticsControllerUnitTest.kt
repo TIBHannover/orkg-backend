@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.statistics.domain.ParameterSpec
 import org.orkg.statistics.domain.SimpleMetric
 import org.orkg.statistics.input.RetrieveStatisticsUseCase
 import org.orkg.statistics.testing.fixtures.createMetrics
@@ -16,6 +17,7 @@ import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.ContextConfiguration
@@ -86,22 +88,30 @@ internal class StatisticsControllerUnitTest : RestDocsTest("statistics") {
     @Test
     @DisplayName("Given a metric, when fetched, then status is 200 OK and metric is returned")
     fun findMetricByGroupAndName() {
+        val intParameterSpec = ParameterSpec(
+            name = "parameter1",
+            description = "Description of the parameter.",
+            type = Int::class,
+            parser = { it.toInt() }
+        )
         val metric = SimpleMetric(
             name = "metric1",
             description = "Description of the metric.",
             group = "group1",
+            parameterSpecs = mapOf("filter" to intParameterSpec),
             supplier = { 1 }
         )
 
         every { service.findMetricByGroupAndName(metric.group, metric.name) } returns metric
 
         documentedGetRequestTo("/api/statistics/{group}/{name}", metric.group, metric.name)
+            .param("filter", "5")
             .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.name").value(metric.name))
             .andExpect(jsonPath("$.description").value(metric.description))
             .andExpect(jsonPath("$.group").value(metric.group))
-            .andExpect(jsonPath("$.value").value(metric.value().toString()))
+            .andExpect(jsonPath("$.value").value(metric.value(emptyMap()).toString()))
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -112,7 +122,12 @@ internal class StatisticsControllerUnitTest : RestDocsTest("statistics") {
                         fieldWithPath("name").description("The name of the metric."),
                         fieldWithPath("description").description("The description of the metric."),
                         fieldWithPath("group").description("The group of the metric."),
-                        fieldWithPath("value").description("The value of the metric.")
+                        fieldWithPath("value").description("The value of the metric."),
+                        subsectionWithPath("parameters[]").description("A list of optional query parameters."),
+                        fieldWithPath("parameters[].id").description("The id of the parameter, which doubles as the query parameter name."),
+                        fieldWithPath("parameters[].name").description("The name of the parameter."),
+                        fieldWithPath("parameters[].description").description("The description of the parameter."),
+                        fieldWithPath("parameters[].type").description("The type of the parameter."),
                     )
                 )
             )

@@ -6,6 +6,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -38,6 +39,11 @@ class StatisticsController(private val service: RetrieveStatisticsUseCase) : Met
         }
 
     @GetMapping("/{group}/{name}")
-    fun findMetricByGroupAndName(@PathVariable group: String, @PathVariable name: String): MetricRepresentation =
-        service.findMetricByGroupAndName(group, name).toMetricRepresentation()
+    fun findMetricByGroupAndName(
+        @PathVariable group: String,
+        @PathVariable name: String,
+        @RequestParam parameters: Map<String, String>
+    ): MetricRepresentation =
+        service.findMetricByGroupAndName(group, name)
+            .let { metric -> metric.toMetricRepresentation(metric.value(parameters)) }
 }

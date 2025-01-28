@@ -221,6 +221,21 @@ internal class ExceptionHandlerUnitTest : RestDocsTest("errors") {
             .andExpect(header().string("Accept", "application/json, application/xml"))
     }
 
+    @Test
+    fun unknownParameter() {
+        val parameter = "formatted-label"
+
+        get("/errors/unknown-parameter")
+            .param("parameter", parameter)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/errors/unknown-parameter"))
+            .andExpect(jsonPath("$.message").value("""Unknown parameter "$parameter"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class TestController {
@@ -246,6 +261,10 @@ internal class ExceptionHandlerUnitTest : RestDocsTest("errors") {
 
         @PostMapping("/errors/http-media-type-not-supported", consumes = ["application/json", "application/xml"])
         fun httpMediaTypeNotSupported(@RequestBody body: String): Nothing = throw NotImplementedError()
+
+        @GetMapping("/errors/unknown-parameter")
+        fun unknownParameter(@RequestParam parameter: String): Nothing =
+            throw UnknownParameter(parameter)
 
         @Suppress("ArrayInDataClass")
         data class JsonRequest(

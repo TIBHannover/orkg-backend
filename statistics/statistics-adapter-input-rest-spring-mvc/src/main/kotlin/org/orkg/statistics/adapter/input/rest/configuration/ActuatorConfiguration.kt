@@ -11,7 +11,7 @@ class ActuatorConfiguration {
     @Bean
     fun registerMetrics(registry: MeterRegistry, metrics: List<Metric>): List<Gauge> =
         metrics.map { metric ->
-            Gauge.builder("""orkg-statistics-${metric.group}-${metric.name}""", metric::value)
+            Gauge.builder("""orkg-statistics-${metric.group}-${metric.name}""") { metric.value(emptyMap()) }
                 .description(metric.description)
                 .register(registry)
         }

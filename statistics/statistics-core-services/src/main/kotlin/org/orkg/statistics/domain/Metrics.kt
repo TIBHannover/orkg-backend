@@ -258,7 +258,7 @@ class Metrics {
         name = "contributors-count",
         description = "Number of contributors.",
         group = "community",
-        supplier = contributorRepository::countActiveUsers
+        supplier = { contributorRepository.countActiveUsers() }
     )
 
     @Bean
@@ -266,7 +266,7 @@ class Metrics {
         name = "organization-count",
         description = "Number of organizations.",
         group = "community",
-        supplier = organizationRepository::count
+        supplier = { organizationRepository.count() }
     )
 
     @Bean
@@ -274,6 +274,6 @@ class Metrics {
         name = "observatory-count",
         description = "Number of observatories.",
         group = "community",
-        supplier = observatoryRepository::count
+        supplier = { observatoryRepository.count() }
     )
 }

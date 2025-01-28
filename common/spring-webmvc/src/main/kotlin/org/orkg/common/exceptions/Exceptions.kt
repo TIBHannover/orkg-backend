@@ -49,6 +49,9 @@ class TooManyParameters private constructor(
     }
 }
 
+class UnknownParameter(parameter: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Unknown parameter "$parameter".""")
+
 class UnknownSortingProperty(property: String) : SimpleMessageException(HttpStatus.BAD_REQUEST, """Unknown sorting property "$property".""")
 
 private fun formatParameters(vararg parameters: String) =

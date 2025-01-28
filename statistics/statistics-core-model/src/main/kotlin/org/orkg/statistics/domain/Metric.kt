@@ -4,8 +4,9 @@ interface Metric {
     val name: String
     val description: String
     val group: String
+    val parameterSpecs: Map<String, ParameterSpec<*>>
 
-    fun value(): Number
+    fun value(parameters: Map<String, String>): Number
 
     companion object {
         const val DEFAULT_GROUP = "generic"

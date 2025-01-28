@@ -35,9 +35,11 @@ import org.orkg.contenttypes.input.LiteratureListUseCases
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectLiteratureList
 import org.orkg.testing.andExpectPage
@@ -488,6 +490,7 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the literature list belongs to. (optional)").optional(),
                         fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
                         subsectionWithPath("sections").description("The list of updated sections of the literature list (optional). See <<literature-list-sections,literature list sections>> for more information."),
+                        fieldWithPath("visibility").description("The updated visibility of the literature list. Can be one of $allowedVisibilityValues. (optional)").optional(),
                     ).and(authorListFields("literature list"))
                 )
             )
@@ -782,7 +785,8 @@ internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists
             sections = listOf(
                 textSectionRequest(),
                 listSectionRequest()
-            )
+            ),
+            visibility = Visibility.FEATURED
         )
 
     private fun textSectionRequest() =

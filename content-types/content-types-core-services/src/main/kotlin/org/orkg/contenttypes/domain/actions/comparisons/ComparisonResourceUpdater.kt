@@ -18,7 +18,8 @@ class ComparisonResourceUpdater(
                 label = command.title,
                 observatoryId = command.observatories?.ifEmpty { listOf(ObservatoryId.UNKNOWN) }?.singleOrNull(),
                 organizationId = command.organizations?.ifEmpty { listOf(OrganizationId.UNKNOWN) }?.singleOrNull(),
-                extractionMethod = command.extractionMethod
+                extractionMethod = command.extractionMethod,
+                visibility = command.visibility
             )
         )
         return state

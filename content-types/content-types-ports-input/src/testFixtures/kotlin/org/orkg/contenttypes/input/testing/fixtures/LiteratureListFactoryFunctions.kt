@@ -21,6 +21,7 @@ import org.orkg.contenttypes.input.PublishLiteratureListUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Visibility
 
 fun dummyCreateLiteratureListCommand() = CreateLiteratureListUseCase.CreateCommand(
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
@@ -92,7 +93,8 @@ fun dummyUpdateLiteratureListCommand() = UpdateLiteratureListUseCase.UpdateComma
     sections = listOf(
         dummyLiteratureListTextSectionDefinition(),
         dummyLiteratureListListSectionDefinition()
-    )
+    ),
+    visibility = Visibility.DEFAULT
 )
 
 fun dummyCreateLiteratureListListSectionCommand() = CreateLiteratureListSectionUseCase.CreateListSectionCommand(

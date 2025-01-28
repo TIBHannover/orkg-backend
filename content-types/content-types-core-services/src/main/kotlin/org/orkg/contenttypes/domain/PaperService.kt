@@ -7,6 +7,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.Action
@@ -24,6 +25,7 @@ import org.orkg.contenttypes.domain.actions.ResourceValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
+import org.orkg.contenttypes.domain.actions.VisibilityValidator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsCreator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionContentsValidator
 import org.orkg.contenttypes.domain.actions.contributions.ContributionPaperValidator
@@ -107,6 +109,7 @@ class PaperService(
     private val doiService: DoiService,
     private val paperRepository: PaperRepository,
     private val classRepository: ClassRepository,
+    private val contributorRepository: ContributorRepository,
     private val paperPublishedRepository: PaperPublishedRepository,
     @Value("\${orkg.publishing.base-url.paper}")
     private val paperPublishBaseUri: String = "http://localhost/paper/"
@@ -205,6 +208,7 @@ class PaperService(
             PaperExistenceValidator(this, resourceRepository),
             PaperModifiableValidator(),
             PublicationInfoValidator { it.publicationInfo },
+            VisibilityValidator(contributorRepository, { it.contributorId }, { it.paper!! }, { it.visibility }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.paper!!.researchFields.ids }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.paper!!.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.paper!!.organizations }),

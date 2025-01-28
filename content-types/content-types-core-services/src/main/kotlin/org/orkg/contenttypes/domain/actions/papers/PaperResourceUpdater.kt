@@ -17,7 +17,8 @@ class PaperResourceUpdater(
                 contributorId = command.contributorId,
                 label = command.title,
                 observatoryId = command.observatories?.ifEmpty { listOf(ObservatoryId.UNKNOWN) }?.singleOrNull(),
-                organizationId = command.organizations?.ifEmpty { listOf(OrganizationId.UNKNOWN) }?.singleOrNull()
+                organizationId = command.organizations?.ifEmpty { listOf(OrganizationId.UNKNOWN) }?.singleOrNull(),
+                visibility = command.visibility
             )
         )
         return state

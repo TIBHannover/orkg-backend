@@ -24,6 +24,7 @@ import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -315,7 +316,8 @@ class PaperController(
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
-        val organizations: List<OrganizationId>?
+        val organizations: List<OrganizationId>?,
+        val visibility: Visibility?
     ) {
         fun toUpdateCommand(paperId: ThingId, contributorId: ContributorId): UpdatePaperUseCase.UpdateCommand =
             UpdatePaperUseCase.UpdateCommand(
@@ -329,7 +331,8 @@ class PaperController(
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals,
                 mentionings = mentionings,
                 observatories = observatories,
-                organizations = organizations
+                organizations = organizations,
+                visibility = visibility
             )
     }
 

@@ -8,6 +8,7 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ComparisonConfig
 import org.orkg.contenttypes.domain.ComparisonData
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Visibility
 
 interface CreateComparisonUseCase {
     fun create(command: CreateCommand): ThingId
@@ -69,7 +70,8 @@ interface UpdateComparisonUseCase {
         val observatories: List<ObservatoryId>?,
         val organizations: List<OrganizationId>?,
         val isAnonymized: Boolean?,
-        val extractionMethod: ExtractionMethod?
+        val extractionMethod: ExtractionMethod?,
+        val visibility: Visibility?
     )
 
     data class UpdateComparisonRelatedResourceCommand(

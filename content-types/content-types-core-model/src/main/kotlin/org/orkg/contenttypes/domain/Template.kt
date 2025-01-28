@@ -18,7 +18,7 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
 
 data class Template(
-    val id: ThingId,
+    override val id: ThingId,
     val label: String,
     val description: String?,
     val formattedLabel: FormattedLabel?,
@@ -26,13 +26,13 @@ data class Template(
     val relations: TemplateRelations,
     val properties: List<TemplateProperty>,
     val isClosed: Boolean,
-    val createdBy: ContributorId,
-    val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    override val createdAt: OffsetDateTime,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
-    val extractionMethod: ExtractionMethod,
-    val visibility: Visibility,
-    val unlistedBy: ContributorId? = null
+    override val extractionMethod: ExtractionMethod,
+    override val visibility: Visibility,
+    override val unlistedBy: ContributorId? = null
 ) : ContentType {
     companion object {
         fun from(resource: Resource, statements: Map<ThingId, List<GeneralStatement>>): Template {

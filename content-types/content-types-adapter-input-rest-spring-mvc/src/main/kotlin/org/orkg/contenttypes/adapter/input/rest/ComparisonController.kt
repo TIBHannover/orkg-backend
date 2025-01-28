@@ -26,6 +26,7 @@ import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -355,7 +356,8 @@ class ComparisonController(
         @JsonProperty("is_anonymized")
         val isAnonymized: Boolean?,
         @JsonProperty("extraction_method")
-        val extractionMethod: ExtractionMethod?
+        val extractionMethod: ExtractionMethod?,
+        val visibility: Visibility?
     ) {
         fun toUpdateCommand(comparisonId: ThingId, contributorId: ContributorId): UpdateComparisonUseCase.UpdateCommand =
             UpdateComparisonUseCase.UpdateCommand(
@@ -373,7 +375,8 @@ class ComparisonController(
                 observatories = observatories,
                 organizations = organizations,
                 isAnonymized = isAnonymized,
-                extractionMethod = extractionMethod
+                extractionMethod = extractionMethod,
+                visibility = visibility
             )
     }
 

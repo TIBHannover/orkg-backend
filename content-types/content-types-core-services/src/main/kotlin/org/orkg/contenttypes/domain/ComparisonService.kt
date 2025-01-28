@@ -9,6 +9,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ConferenceSeriesRepository
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.Action
@@ -25,6 +26,7 @@ import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.contenttypes.domain.actions.UpdateComparisonState
+import org.orkg.contenttypes.domain.actions.VisibilityValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorCreateValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorUpdateValidator
@@ -110,6 +112,7 @@ class ComparisonService(
     private val listRepository: ListRepository,
     private val doiService: DoiService,
     private val conferenceSeriesRepository: ConferenceSeriesRepository,
+    private val contributorRepository: ContributorRepository,
     private val comparisonRepository: ComparisonRepository,
     private val comparisonTableRepository: ComparisonTableRepository,
     private val comparisonPublishedRepository: ComparisonPublishedRepository,
@@ -331,6 +334,7 @@ class ComparisonService(
             LabelCollectionValidator("references") { it.references },
             ComparisonExistenceValidator(this),
             ComparisonModifiableValidator(),
+            VisibilityValidator(contributorRepository, { it.contributorId }, { it.comparison!! }, { it.visibility }),
             ComparisonContributionValidator(resourceRepository) { it.contributions },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),

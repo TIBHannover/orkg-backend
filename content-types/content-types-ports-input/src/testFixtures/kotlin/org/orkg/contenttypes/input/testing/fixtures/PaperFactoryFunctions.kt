@@ -17,6 +17,7 @@ import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Visibility
 
 fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
     contributorId = ContributorId("9d791767-245b-46e1-b260-2c00fb34efda"),
@@ -161,7 +162,8 @@ fun dummyUpdatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
         ThingId("R357")
     ),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
-    organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc"))
+    organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
+    visibility = Visibility.DEFAULT
 )
 
 fun dummyPublishPaperCommand() = PublishPaperUseCase.PublishCommand(

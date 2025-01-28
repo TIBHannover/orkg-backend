@@ -7,6 +7,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
@@ -21,6 +22,7 @@ import org.orkg.contenttypes.domain.actions.UpdateTemplateCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyState
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
+import org.orkg.contenttypes.domain.actions.VisibilityValidator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.templates.TemplateClosedCreator
 import org.orkg.contenttypes.domain.actions.templates.TemplateClosedUpdater
@@ -81,7 +83,8 @@ class TemplateService(
     private val statementService: StatementUseCases,
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
-    private val templateRepository: TemplateRepository
+    private val templateRepository: TemplateRepository,
+    private val contributorRepository: ContributorRepository,
 ) : TemplateUseCases {
     override fun findById(id: ThingId): Optional<Template> =
         statementRepository.findAll(
@@ -161,6 +164,7 @@ class TemplateService(
             LabelValidator { it.label },
             DescriptionValidator { it.description },
             LabelValidator("formatted_label") { it.formattedLabel?.value },
+            VisibilityValidator(contributorRepository, { it.contributorId }, { it.template!! }, { it.visibility }),
             TemplateTargetClassValidator(classRepository, statementRepository, { it.targetClass }, { it.template!!.targetClass.id }),
             TemplateRelationsUpdateValidator(resourceRepository, predicateRepository),
             TemplatePropertiesValidator(predicateRepository, classRepository, { it.properties }, { it.template!!.properties }),

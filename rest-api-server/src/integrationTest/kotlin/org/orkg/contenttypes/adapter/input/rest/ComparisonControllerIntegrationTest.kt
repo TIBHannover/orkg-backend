@@ -475,7 +475,7 @@ internal class ComparisonControllerIntegrationTest : RestDocsTest("comparisons")
             it.observatories shouldBe listOf(ObservatoryId("33d0776f-59ad-465f-a22c-cd794694edc6"))
             it.organizations shouldBe listOf(OrganizationId("dc9a860c-1a1b-4977-bd6a-9dc21de46df6"))
             it.isAnonymized shouldBe true
-            it.visibility shouldBe Visibility.DEFAULT
+            it.visibility shouldBe Visibility.DELETED
             it.extractionMethod shouldBe ExtractionMethod.AUTOMATIC
             it.createdBy shouldBe ContributorId(MockUserId.USER)
             it.versions shouldBe VersionInfo(
@@ -710,5 +710,6 @@ private const val updateComparisonJson = """{
     "dc9a860c-1a1b-4977-bd6a-9dc21de46df6"
   ],
   "is_anonymized": true,
-  "extraction_method": "AUTOMATIC"
+  "extraction_method": "AUTOMATIC",
+  "visibility": "DELETED"
 }"""

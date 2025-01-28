@@ -8,6 +8,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.Action
@@ -30,6 +31,7 @@ import org.orkg.contenttypes.domain.actions.UpdateSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
+import org.orkg.contenttypes.domain.actions.VisibilityValidator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreateValidator
 import org.orkg.contenttypes.domain.actions.smartreviews.SmartReviewAuthorCreator
@@ -110,6 +112,7 @@ class SmartReviewService(
     private val statementService: StatementUseCases,
     private val listService: ListUseCases,
     private val listRepository: ListRepository,
+    private val contributorRepository: ContributorRepository,
     private val doiService: DoiService,
     @Value("\${orkg.publishing.base-url.smart-review}")
     private val smartReviewPublishBaseUri: String = "http://localhost/review/"
@@ -214,6 +217,7 @@ class SmartReviewService(
             SmartReviewModifiableValidator(),
             LabelValidator("title") { it.title },
             BibTeXReferencesValidator({ it.references }),
+            VisibilityValidator(contributorRepository, { it.contributorId }, { it.smartReview!! }, { it.visibility }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.smartReview!!.researchFields.ids }),
             SmartReviewAuthorUpdateValidator(resourceRepository, statementRepository),
             SDGValidator({ it.sustainableDevelopmentGoals }, { it.smartReview!!.sustainableDevelopmentGoals.ids }),

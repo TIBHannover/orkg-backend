@@ -23,6 +23,7 @@ import org.orkg.contenttypes.input.UpdateTemplateUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -219,7 +220,8 @@ class TemplateController(
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
         @JsonProperty("extraction_method")
-        val extractionMethod: ExtractionMethod?
+        val extractionMethod: ExtractionMethod?,
+        val visibility: Visibility?
     ) {
         fun toUpdateCommand(templateId: ThingId, contributorId: ContributorId): UpdateTemplateUseCase.UpdateCommand =
             UpdateTemplateUseCase.UpdateCommand(
@@ -234,7 +236,8 @@ class TemplateController(
                 isClosed = isClosed,
                 observatories = observatories,
                 organizations = organizations,
-                extractionMethod = extractionMethod
+                extractionMethod = extractionMethod,
+                visibility = visibility
             )
     }
 

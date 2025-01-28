@@ -27,6 +27,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Visibility
 
 fun dummyCreateTemplateCommand() = CreateTemplateUseCase.CreateCommand(
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
@@ -76,7 +77,8 @@ fun dummyUpdateTemplateCommand() = UpdateTemplateUseCase.UpdateCommand(
     isClosed = true,
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
-    extractionMethod = ExtractionMethod.MANUAL
+    extractionMethod = ExtractionMethod.MANUAL,
+    visibility = Visibility.DEFAULT
 )
 
 fun dummyCreateUntypedTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateUntypedPropertyCommand(

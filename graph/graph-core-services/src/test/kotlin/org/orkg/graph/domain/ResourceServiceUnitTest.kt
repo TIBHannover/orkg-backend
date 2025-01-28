@@ -534,6 +534,73 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a resource update command, when visibility is changed to unlisted, it sets the unlisted by metadata`() {
+        val resource = createResource()
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.CURATOR),
+            visibility = Visibility.UNLISTED
+        )
+        val curator = createContributor(command.contributorId, isCurator = true)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { contributorRepository.findById(curator.id) } returns Optional.of(curator)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { contributorRepository.findById(curator.id) }
+        verify(exactly = 1) { repository.save(withArg { it.unlistedBy shouldBe command.contributorId }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when visibility is changed from unlisted to something else, it clears the unlisted by metadata`() {
+        val resource = createResource(
+            visibility = Visibility.UNLISTED,
+            unlistedBy = ContributorId(MockUserId.USER)
+        )
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.CURATOR),
+            visibility = Visibility.DEFAULT
+        )
+        val curator = createContributor(command.contributorId, isCurator = true)
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { contributorRepository.findById(curator.id) } returns Optional.of(curator)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { contributorRepository.findById(curator.id) }
+        verify(exactly = 1) { repository.save(withArg { it.unlistedBy shouldBe null }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when visibility is changed from unlisted to unlisted, it keeps the unlisted by metadata`() {
+        val resource = createResource(
+            visibility = Visibility.UNLISTED,
+            unlistedBy = ContributorId(MockUserId.ADMIN)
+        )
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.CURATOR),
+            label = "some change",
+            visibility = Visibility.UNLISTED
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.unlistedBy shouldBe resource.unlistedBy }) }
+    }
+
+    @Test
     fun `Given a resource update command, when updating all properties, it returns success`() {
         val resource = createResource()
         val contributorId = ContributorId(MockUserId.USER)

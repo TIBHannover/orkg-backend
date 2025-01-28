@@ -8,6 +8,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListCommand
@@ -28,6 +29,7 @@ import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
+import org.orkg.contenttypes.domain.actions.VisibilityValidator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorCreateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListAuthorCreator
@@ -94,7 +96,8 @@ class LiteratureListService(
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases,
     private val listService: ListUseCases,
-    private val listRepository: ListRepository
+    private val listRepository: ListRepository,
+    private val contributorRepository: ContributorRepository,
 ) : LiteratureListUseCases {
     override fun findById(id: ThingId): Optional<LiteratureList> =
         resourceRepository.findById(id)
@@ -199,6 +202,7 @@ class LiteratureListService(
             LiteratureListExistenceValidator(this, resourceRepository),
             LiteratureListModifiableValidator(),
             LabelValidator("title") { it.title },
+            VisibilityValidator(contributorRepository, { it.contributorId }, { it.literatureList!! }, { it.visibility }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.literatureList!!.researchFields.ids }),
             LiteratureListAuthorUpdateValidator(resourceRepository, statementRepository),
             SDGValidator({ it.sustainableDevelopmentGoals }, { it.literatureList!!.sustainableDevelopmentGoals.ids }),

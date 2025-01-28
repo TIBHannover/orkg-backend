@@ -32,7 +32,8 @@ internal class ComparisonResourceUpdaterUnitTest : MockkBaseTest {
             label = command.title,
             observatoryId = command.observatories!!.single(),
             organizationId = command.organizations!!.single(),
-            extractionMethod = command.extractionMethod
+            extractionMethod = command.extractionMethod,
+            visibility = command.visibility,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -57,7 +58,8 @@ internal class ComparisonResourceUpdaterUnitTest : MockkBaseTest {
             label = command.title,
             observatoryId = ObservatoryId.UNKNOWN,
             organizationId = command.organizations!!.single(),
-            extractionMethod = command.extractionMethod
+            extractionMethod = command.extractionMethod,
+            visibility = command.visibility,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -82,7 +84,8 @@ internal class ComparisonResourceUpdaterUnitTest : MockkBaseTest {
             label = command.title,
             observatoryId = null,
             organizationId = command.organizations!!.single(),
-            extractionMethod = command.extractionMethod
+            extractionMethod = command.extractionMethod,
+            visibility = command.visibility,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -107,7 +110,8 @@ internal class ComparisonResourceUpdaterUnitTest : MockkBaseTest {
             label = command.title,
             observatoryId = command.observatories!!.single(),
             organizationId = OrganizationId.UNKNOWN,
-            extractionMethod = command.extractionMethod
+            extractionMethod = command.extractionMethod,
+            visibility = command.visibility,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -132,7 +136,8 @@ internal class ComparisonResourceUpdaterUnitTest : MockkBaseTest {
             label = command.title,
             observatoryId = command.observatories!!.single(),
             organizationId = null,
-            extractionMethod = command.extractionMethod
+            extractionMethod = command.extractionMethod,
+            visibility = command.visibility,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs

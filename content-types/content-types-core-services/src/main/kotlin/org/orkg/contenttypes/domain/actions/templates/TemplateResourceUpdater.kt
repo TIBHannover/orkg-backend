@@ -18,7 +18,8 @@ class TemplateResourceUpdater(
                 label = command.label,
                 observatoryId = command.observatories?.ifEmpty { listOf(ObservatoryId.UNKNOWN) }?.singleOrNull(),
                 organizationId = command.organizations?.ifEmpty { listOf(OrganizationId.UNKNOWN) }?.singleOrNull(),
-                extractionMethod = command.extractionMethod
+                extractionMethod = command.extractionMethod,
+                visibility = command.visibility
             )
         )
         return state

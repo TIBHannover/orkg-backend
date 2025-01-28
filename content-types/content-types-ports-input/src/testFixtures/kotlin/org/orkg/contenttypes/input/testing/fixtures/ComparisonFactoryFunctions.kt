@@ -13,6 +13,7 @@ import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Visibility
 
 fun dummyCreateComparisonCommand() = CreateComparisonUseCase.CreateCommand(
     contributorId = ContributorId("0b3d7108-ea98-448f-85ef-e67a63a8b32b"),
@@ -88,7 +89,8 @@ fun dummyUpdateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     isAnonymized = false,
-    extractionMethod = ExtractionMethod.UNKNOWN
+    extractionMethod = ExtractionMethod.UNKNOWN,
+    visibility = Visibility.DEFAULT
 )
 
 fun dummyPublishComparisonCommand() = PublishComparisonUseCase.PublishCommand(

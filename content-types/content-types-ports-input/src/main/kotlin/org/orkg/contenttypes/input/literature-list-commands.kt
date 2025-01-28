@@ -9,6 +9,7 @@ import org.orkg.contenttypes.domain.LiteratureListListSection
 import org.orkg.contenttypes.domain.LiteratureListSection
 import org.orkg.contenttypes.domain.LiteratureListTextSection
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Visibility
 
 interface CreateLiteratureListUseCase {
     fun create(command: CreateCommand): ThingId
@@ -65,7 +66,8 @@ interface UpdateLiteratureListUseCase {
         val observatories: List<ObservatoryId>?,
         val organizations: List<OrganizationId>?,
         val extractionMethod: ExtractionMethod?,
-        val sections: List<LiteratureListSectionDefinition>?
+        val sections: List<LiteratureListSectionDefinition>?,
+        val visibility: Visibility?,
     )
 }
 

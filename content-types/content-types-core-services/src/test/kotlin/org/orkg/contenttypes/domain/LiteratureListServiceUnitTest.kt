@@ -19,6 +19,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.output.LiteratureListPublishedRepository
@@ -56,6 +57,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val listRepository: ListRepository = mockk()
+    private val contributorRepository: ContributorRepository = mockk()
 
     private val service = LiteratureListService(
         resourceRepository,
@@ -69,7 +71,8 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         literalService,
         statementService,
         listService,
-        listRepository
+        listRepository,
+        contributorRepository
     )
 
     @Test

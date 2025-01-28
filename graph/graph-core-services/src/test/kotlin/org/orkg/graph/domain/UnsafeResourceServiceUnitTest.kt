@@ -228,6 +228,67 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a resource update command, when visibility is changed to unlisted, it sets the unlisted by metadata`() {
+        val resource = createResource()
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.CURATOR),
+            visibility = Visibility.UNLISTED
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.unlistedBy shouldBe command.contributorId }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when visibility is changed from unlisted to something else, it clears the unlisted by metadata`() {
+        val resource = createResource(
+            visibility = Visibility.UNLISTED,
+            unlistedBy = ContributorId(MockUserId.USER)
+        )
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.CURATOR),
+            visibility = Visibility.DEFAULT
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.unlistedBy shouldBe null }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when visibility is changed from unlisted to unlisted, it keeps the unlisted by metadata`() {
+        val resource = createResource(
+            visibility = Visibility.UNLISTED,
+            unlistedBy = ContributorId(MockUserId.ADMIN)
+        )
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.CURATOR),
+            label = "some change",
+            visibility = Visibility.UNLISTED
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.unlistedBy shouldBe resource.unlistedBy }) }
+    }
+
+    @Test
     fun `Given a resource, when deleting, it deletes the resource from the repository`() {
         val id = ThingId("R2145")
         val couldBeAnyone = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")

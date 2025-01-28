@@ -383,7 +383,7 @@ internal class SmartReviewControllerIntegrationTest : RestDocsTest("smart-review
             it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
-            it.visibility shouldBe Visibility.DEFAULT
+            it.visibility shouldBe Visibility.DELETED
             it.unlistedBy shouldBe null
             it.published shouldBe false
             it.sections[0].shouldBeInstanceOf<SmartReviewComparisonSection>().asClue { section ->
@@ -845,7 +845,8 @@ private const val updateSmartReviewJson = """{
   "references": [
     "@misc{R615465, title = {updated reference 1}}",
     "@misc{R154146, title = {updated reference 2}}"
-  ]
+  ],
+  "visibility": "DELETED"
 }"""
 
 private const val createComparisonSectionJson = """{

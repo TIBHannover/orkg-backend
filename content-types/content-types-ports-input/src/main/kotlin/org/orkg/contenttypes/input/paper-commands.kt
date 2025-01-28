@@ -7,6 +7,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.CreateObjectUseCase
 
 interface CreatePaperUseCase {
@@ -53,7 +54,8 @@ interface UpdatePaperUseCase {
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val mentionings: Set<ThingId>?,
         val observatories: List<ObservatoryId>?,
-        val organizations: List<OrganizationId>?
+        val organizations: List<OrganizationId>?,
+        val visibility: Visibility?
     )
 }
 

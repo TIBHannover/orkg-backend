@@ -14,6 +14,7 @@ import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase.CreateCommand
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Visibility
 
 interface CreateSmartReviewUseCase {
     fun create(command: CreateCommand): ThingId
@@ -106,7 +107,8 @@ interface UpdateSmartReviewUseCase {
         val organizations: List<OrganizationId>?,
         val extractionMethod: ExtractionMethod?,
         val sections: List<SmartReviewSectionDefinition>?,
-        val references: List<String>?
+        val references: List<String>?,
+        val visibility: Visibility?
     )
 }
 

@@ -34,9 +34,11 @@ import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
@@ -810,6 +812,7 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
                         fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional, default: "UNKNOWN")""").optional(),
                         subsectionWithPath("sections").description("The list of updated sections of the smart review (optional). See <<smart-review-sections,smart review sections>> for more information."),
                         fieldWithPath("references[]").description("The list of updated bibtex references of the smart review."),
+                        fieldWithPath("visibility").description("The updated visibility of the smart review. Can be one of $allowedVisibilityValues. (optional)").optional(),
                     ).and(authorListFields("smart review"))
                 )
             )
@@ -1259,7 +1262,8 @@ internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
             references = listOf(
                 "updated reference 1",
                 "updated reference 2"
-            )
+            ),
+            visibility = Visibility.FEATURED
         )
 
     private fun comparisonSectionRequest() =

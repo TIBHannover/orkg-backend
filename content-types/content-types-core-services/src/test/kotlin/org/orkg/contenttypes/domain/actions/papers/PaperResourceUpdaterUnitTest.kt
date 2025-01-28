@@ -31,7 +31,8 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             contributorId = command.contributorId,
             label = command.title,
             observatoryId = command.observatories!!.single(),
-            organizationId = command.organizations!!.single()
+            organizationId = command.organizations!!.single(),
+            visibility = command.visibility,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -56,7 +57,8 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             contributorId = command.contributorId,
             label = command.title,
             observatoryId = ObservatoryId.UNKNOWN,
-            organizationId = command.organizations!!.single()
+            organizationId = command.organizations!!.single(),
+            visibility = command.visibility,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -80,7 +82,8 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             contributorId = command.contributorId,
             label = command.title,
             observatoryId = null,
-            organizationId = command.organizations!!.single()
+            organizationId = command.organizations!!.single(),
+            visibility = command.visibility,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -104,7 +107,8 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             contributorId = command.contributorId,
             label = command.title,
             observatoryId = command.observatories!!.single(),
-            organizationId = OrganizationId.UNKNOWN
+            organizationId = OrganizationId.UNKNOWN,
+            visibility = command.visibility,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -128,7 +132,8 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
             contributorId = command.contributorId,
             label = command.title,
             observatoryId = command.observatories!!.single(),
-            organizationId = null
+            organizationId = null,
+            visibility = command.visibility,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs

@@ -15,6 +15,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.output.DoiService
@@ -61,6 +62,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
     private val paperRepository: PaperRepository = mockk()
     private val classRepository: ClassRepository = mockk()
     private val listRepository: ListRepository = mockk()
+    private val contributorRepository: ContributorRepository = mockk()
     private val paperPublishedRepository: PaperPublishedRepository = mockk()
 
     private val service = PaperService(
@@ -80,6 +82,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
         doiService = doiService,
         paperRepository = paperRepository,
         classRepository = classRepository,
+        contributorRepository = contributorRepository,
         paperPublishedRepository = paperPublishedRepository,
         paperPublishBaseUri = "https://orkg.org/paper/"
     )

@@ -45,7 +45,9 @@ import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResearchFieldNotFound
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparison
 import org.orkg.testing.andExpectComparisonRelatedFigure
@@ -1045,7 +1047,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the comparison belongs to. (optional)"),
                         fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to. (optional)"),
                         fieldWithPath("is_anonymized").description("Whether or not the comparison should be displayed as anonymous. (optional)"),
-                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)""")
+                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "UNKNOWN", "MANUAL" or "AUTOMATIC". (optional)"""),
+                        fieldWithPath("visibility").description("The updated visibility of the comparison. Can be one of $allowedVisibilityValues. (optional)").optional()
                     ).and(authorListFields("comparison"))
                 )
             )
@@ -1310,7 +1313,8 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
             organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
             isAnonymized = false,
-            extractionMethod = ExtractionMethod.UNKNOWN
+            extractionMethod = ExtractionMethod.UNKNOWN,
+            visibility = Visibility.FEATURED
         )
 
     private fun createComparisonRelatedResourceRequest() =

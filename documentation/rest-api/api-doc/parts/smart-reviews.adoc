@@ -41,7 +41,11 @@ A `PUT` request updates an existing smart review with all the given parameters.
 The response will be `204 No Content` when successful.
 The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
 
-NOTE: All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
+[NOTE]
+====
+1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
+2. Then same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a smart review.
+====
 
 WARNING: Author names will not be updated if a resource id is specified for a given author.
 

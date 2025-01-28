@@ -342,7 +342,7 @@ internal class LiteratureListControllerIntegrationTest : RestDocsTest("literatur
             it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
-            it.visibility shouldBe Visibility.DEFAULT
+            it.visibility shouldBe Visibility.DELETED
             it.unlistedBy shouldBe null
             it.published shouldBe false
             it.sections[0].shouldBeInstanceOf<LiteratureListTextSection>().asClue { section ->
@@ -618,7 +618,8 @@ private const val updateLiteratureListJson = """{
         }
       ]
     }
-  ]
+  ],
+  "visibility": "DELETED"
 }"""
 
 private const val createTextSectionJson = """{

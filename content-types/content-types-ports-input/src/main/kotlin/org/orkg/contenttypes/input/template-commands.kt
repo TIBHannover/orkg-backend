@@ -13,6 +13,7 @@ import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.domain.UntypedTemplateProperty
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.Visibility
 
 interface CreateTemplateUseCase {
     fun create(command: CreateCommand): ThingId
@@ -118,7 +119,8 @@ interface UpdateTemplateUseCase {
         val isClosed: Boolean?,
         val observatories: List<ObservatoryId>?,
         val organizations: List<OrganizationId>?,
-        val extractionMethod: ExtractionMethod?
+        val extractionMethod: ExtractionMethod?,
+        val visibility: Visibility?
     )
 }
 

@@ -19,6 +19,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.output.DoiService
@@ -62,6 +63,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val listRepository: ListRepository = mockk()
+    private val contributorRepository: ContributorRepository = mockk()
     private val doiService: DoiService = mockk()
 
     private val service = SmartReviewService(
@@ -80,6 +82,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
         statementService = statementService,
         listService = listService,
         listRepository = listRepository,
+        contributorRepository = contributorRepository,
         doiService = doiService,
         smartReviewPublishBaseUri = "https://orkg.org/review/"
     )

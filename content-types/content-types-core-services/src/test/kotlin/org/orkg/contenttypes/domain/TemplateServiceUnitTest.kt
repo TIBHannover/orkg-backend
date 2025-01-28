@@ -15,6 +15,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.output.TemplateRepository
@@ -52,6 +53,7 @@ internal class TemplateServiceUnitTest : MockkBaseTest {
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
     private val templateRepository: TemplateRepository = mockk()
+    private val contributorRepository: ContributorRepository = mockk()
 
     private val service = TemplateService(
         resourceRepository = resourceRepository,
@@ -64,7 +66,8 @@ internal class TemplateServiceUnitTest : MockkBaseTest {
         statementService = statementService,
         observatoryRepository = observatoryRepository,
         organizationRepository = organizationRepository,
-        templateRepository = templateRepository
+        templateRepository = templateRepository,
+        contributorRepository = contributorRepository,
     )
 
     @Test

@@ -51,7 +51,9 @@ import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ThingNotFound
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPaper
@@ -843,7 +845,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         fieldWithPath("sdgs").description("The set of ids of sustainable development goals the paper will be assigned to. (optional)"),
                         fieldWithPath("mentionings").description("The updated set of ids of resources that are mentioned in the paper and should be used for extended search. (optional)"),
                         fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. (optional)").optional(),
-                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. (optional)").optional()
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. (optional)").optional(),
+                        fieldWithPath("visibility").description("The updated visibility of the paper. Can be one of $allowedVisibilityValues. (optional)").optional()
                     ).and(authorListFields("paper"))
                         .and(paperIdentifierFields())
                 )
@@ -1517,7 +1520,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             ),
             organizations = listOf(
                 OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
-            )
+            ),
+            visibility = Visibility.FEATURED
         )
 
     private fun createContributionRequest() =

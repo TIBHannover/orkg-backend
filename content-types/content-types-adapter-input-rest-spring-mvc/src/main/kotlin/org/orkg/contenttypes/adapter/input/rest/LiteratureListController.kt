@@ -35,6 +35,7 @@ import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -271,7 +272,8 @@ class LiteratureListController(
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod?,
         @field:Valid
-        val sections: List<LiteratureListSectionRequest>?
+        val sections: List<LiteratureListSectionRequest>?,
+        val visibility: Visibility?,
     ) {
         fun toUpdateCommand(literatureListId: ThingId, contributorId: ContributorId): UpdateLiteratureListUseCase.UpdateCommand =
             UpdateLiteratureListUseCase.UpdateCommand(
@@ -284,7 +286,8 @@ class LiteratureListController(
                 observatories = observatories,
                 organizations = organizations,
                 extractionMethod = extractionMethod,
-                sections = sections?.map { it.toLiteratureListSectionDefinition() }
+                sections = sections?.map { it.toLiteratureListSectionDefinition() },
+                visibility = visibility,
             )
     }
 

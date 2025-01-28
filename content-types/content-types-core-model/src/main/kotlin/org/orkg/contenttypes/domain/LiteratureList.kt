@@ -13,7 +13,7 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
 
 data class LiteratureList(
-    val id: ThingId,
+    override val id: ThingId,
     val title: String,
     val researchFields: List<ObjectIdAndLabel>,
     val authors: List<Author>,
@@ -21,11 +21,11 @@ data class LiteratureList(
     val sustainableDevelopmentGoals: Set<ObjectIdAndLabel>,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
-    val extractionMethod: ExtractionMethod,
-    val createdAt: OffsetDateTime,
-    val createdBy: ContributorId,
-    val visibility: Visibility,
-    val unlistedBy: ContributorId? = null,
+    override val extractionMethod: ExtractionMethod,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    override val visibility: Visibility,
+    override val unlistedBy: ContributorId? = null,
     val published: Boolean,
     val sections: List<LiteratureListSection>,
     val acknowledgements: Map<ContributorId, Double>

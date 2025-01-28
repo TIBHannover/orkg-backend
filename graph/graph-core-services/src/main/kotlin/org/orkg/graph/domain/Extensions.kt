@@ -16,4 +16,9 @@ fun Resource.apply(command: UpdateResourceUseCase.UpdateCommand): Resource =
         modifiable = command.modifiable ?: modifiable,
         visibility = command.visibility ?: visibility,
         verified = command.verified ?: verified,
+        unlistedBy = when {
+            command.visibility == Visibility.UNLISTED && visibility != Visibility.UNLISTED -> command.contributorId
+            command.visibility != Visibility.UNLISTED && visibility == Visibility.UNLISTED -> null
+            else -> unlistedBy
+        }
     )

@@ -12,7 +12,7 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Visibility
 
 data class Paper(
-    val id: ThingId,
+    override val id: ThingId,
     val title: String,
     val researchFields: List<ObjectIdAndLabel>,
     val identifiers: Map<String, List<String>>,
@@ -23,13 +23,13 @@ data class Paper(
     val mentionings: Set<ResourceReference>,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
-    val extractionMethod: ExtractionMethod,
-    val createdAt: OffsetDateTime,
-    val createdBy: ContributorId,
+    override val extractionMethod: ExtractionMethod,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
     val verified: Boolean,
-    val visibility: Visibility,
+    override val visibility: Visibility,
     val modifiable: Boolean,
-    val unlistedBy: ContributorId? = null
+    override val unlistedBy: ContributorId? = null
 ) : ContentType {
     companion object {
         fun from(resource: Resource, statements: Map<ThingId, List<GeneralStatement>>): Paper {

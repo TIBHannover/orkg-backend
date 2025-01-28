@@ -371,7 +371,7 @@ internal class TemplateControllerIntegrationTest : RestDocsTest("templates") {
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
             it.extractionMethod shouldBe ExtractionMethod.MANUAL
-            it.visibility shouldBe Visibility.DEFAULT
+            it.visibility shouldBe Visibility.DELETED
             it.unlistedBy shouldBe null
         }
     }
@@ -810,7 +810,8 @@ private const val updateTemplateJson = """{
   "organizations": [
     "edc18168-c4ee-4cb8-a98a-136f748e912e"
   ],
-  "extraction_method": "MANUAL"
+  "extraction_method": "MANUAL",
+  "visibility": "DELETED"
 }"""
 
 private const val createUntypedTemplatePropertyJson = """{

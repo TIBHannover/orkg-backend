@@ -19,6 +19,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ConferenceSeriesRepository
+import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonConfig
@@ -67,6 +68,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val listRepository: ListRepository = mockk()
     private val doiService: DoiService = mockk()
     private val conferenceSeriesRepository: ConferenceSeriesRepository = mockk()
+    private val contributorRepository: ContributorRepository = mockk()
     private val comparisonRepository: ComparisonRepository = mockk()
     private val comparisonTableRepository: ComparisonTableRepository = mockk()
     private val comparisonPublishedRepository: ComparisonPublishedRepository = mockk()
@@ -85,6 +87,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         listRepository = listRepository,
         doiService = doiService,
         conferenceSeriesRepository = conferenceSeriesRepository,
+        contributorRepository = contributorRepository,
         comparisonRepository = comparisonRepository,
         comparisonTableRepository = comparisonTableRepository,
         comparisonPublishedRepository = comparisonPublishedRepository,

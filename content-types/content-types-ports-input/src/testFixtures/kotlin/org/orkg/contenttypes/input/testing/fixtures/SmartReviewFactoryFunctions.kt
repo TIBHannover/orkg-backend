@@ -29,6 +29,7 @@ import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Visibility
 
 fun dummyCreateSmartReviewCommand() = CreateSmartReviewUseCase.CreateCommand(
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
@@ -116,7 +117,8 @@ fun dummyUpdateSmartReviewCommand() = UpdateSmartReviewUseCase.UpdateCommand(
     references = listOf(
         "@misc{R123456,title = {Fancy title of a super important paper}",
         "@misc{R456789,title = {Another super important paper}"
-    )
+    ),
+    visibility = Visibility.DEFAULT
 )
 
 fun dummyCreateSmartReviewComparisonSectionCommand() =

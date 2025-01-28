@@ -373,7 +373,7 @@ internal class PaperControllerIntegrationTest : RestDocsTest("papers") {
             it.createdAt shouldNotBe null
             it.createdBy shouldBe ContributorId(MockUserId.USER)
             it.verified shouldBe false
-            it.visibility shouldBe Visibility.DEFAULT
+            it.visibility shouldBe Visibility.DELETED
             it.modifiable shouldBe true
             it.unlistedBy shouldBe null
         }
@@ -595,7 +595,8 @@ private const val updatePaperJson = """{
   ],
   "organizations": [
     "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ]
+  ],
+  "visibility": "DELETED"
 }"""
 
 private const val createContributionJson = """{

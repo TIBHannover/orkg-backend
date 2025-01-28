@@ -36,6 +36,7 @@ import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -275,7 +276,8 @@ class SmartReviewController(
         @field:Valid
         val sections: List<SmartReviewSectionRequest>?,
         @field:Valid
-        val references: List<@NotBlank String>?
+        val references: List<@NotBlank String>?,
+        val visibility: Visibility?
     ) {
         fun toUpdateCommand(smartReviewId: ThingId, contributorId: ContributorId): UpdateSmartReviewUseCase.UpdateCommand =
             UpdateSmartReviewUseCase.UpdateCommand(
@@ -289,7 +291,8 @@ class SmartReviewController(
                 organizations = organizations,
                 extractionMethod = extractionMethod,
                 sections = sections?.map { it.toSmartReviewSectionDefinition() },
-                references = references
+                references = references,
+                visibility = visibility
             )
     }
 

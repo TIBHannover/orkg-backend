@@ -24,7 +24,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -50,7 +50,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 ])
 @ContextConfiguration(classes = [LegacyAuthController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LegacyAuthController::class])
-internal class LegacyAuthControllerUnitTest : RestDocsTest("legacy-auth") {
+internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
 
     @Autowired
     private lateinit var httpClient: HttpClient

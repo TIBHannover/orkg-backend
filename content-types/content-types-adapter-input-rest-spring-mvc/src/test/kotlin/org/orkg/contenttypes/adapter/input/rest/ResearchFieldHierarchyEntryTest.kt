@@ -14,7 +14,7 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectResearchFieldHierarchyEntry
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
 @ContextConfiguration(classes = [FakeResearchFieldHierarchyEntryController::class, CommonJacksonModule::class, FixedClockConfig::class])
-internal class ResearchFieldHierarchyEntryTest : RestDocsTest("research-fields") {
+internal class ResearchFieldHierarchyEntryTest : MockMvcBaseTest("research-fields") {
     @Test
     fun researchFieldHierarchyEntry() {
         documentedGetRequestTo("/hierarchy")

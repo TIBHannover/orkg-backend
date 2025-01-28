@@ -22,7 +22,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders
@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [VocabController::class, RdfConfiguration::class, ExceptionHandler::class, RDFService::class, FixedClockConfig::class])
 @WebMvcTest(VocabController::class)
-internal class VocabControllerUnitTest : RestDocsTest("rdf-vocab") {
+internal class VocabControllerUnitTest : MockMvcBaseTest("rdf-vocab") {
 
     @MockkBean
     private lateinit var classRepository: ClassRepository

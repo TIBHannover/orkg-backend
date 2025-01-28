@@ -2,7 +2,7 @@ package org.orkg.common
 
 import org.junit.jupiter.api.Test
 import org.orkg.testing.andExpectPage
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
 @ContextConfiguration(classes = [PageDocTest.FakePageController::class])
-internal class PageDocTest : RestDocsTest("paged") {
+internal class PageDocTest : MockMvcBaseTest("paged") {
     @Test
     fun page() {
         documentedGetRequestTo("/page")

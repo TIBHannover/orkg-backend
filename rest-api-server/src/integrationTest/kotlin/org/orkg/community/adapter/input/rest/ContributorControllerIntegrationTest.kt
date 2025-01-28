@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @Transactional
-internal class ContributorControllerIntegrationTest : RestDocsTest("contributors") {
+internal class ContributorControllerIntegrationTest : MockMvcBaseTest("contributors") {
 
     @Autowired
     private lateinit var repository: ContributorRepository

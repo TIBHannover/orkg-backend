@@ -9,7 +9,7 @@ import org.orkg.statistics.domain.GroupNotFound
 import org.orkg.statistics.domain.MetricNotFound
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.context.annotation.Import
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
 @Import(SecurityTestConfiguration::class)
 @WebMvcTest
 @ContextConfiguration(classes = [FakeExceptionController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class StatisticsControllerExceptionUnitTest : RestDocsTest("statistics") {
+internal class StatisticsControllerExceptionUnitTest : MockMvcBaseTest("statistics") {
 
     @Test
     fun groupNotFound() {

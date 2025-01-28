@@ -29,7 +29,7 @@ import org.orkg.mediastorage.testing.fixtures.testImage
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockMultipartFile
@@ -49,7 +49,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [OrganizationController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [OrganizationController::class])
-internal class OrganizationControllerUnitTest : RestDocsTest("organizations") {
+internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations") {
 
     @MockkBean
     private lateinit var organizationService: OrganizationUseCases

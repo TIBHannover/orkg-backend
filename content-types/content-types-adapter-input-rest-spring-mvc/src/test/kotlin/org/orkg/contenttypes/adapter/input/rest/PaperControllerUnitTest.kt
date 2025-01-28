@@ -60,7 +60,7 @@ import org.orkg.testing.andExpectPaper
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -83,7 +83,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [PaperController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [PaperController::class])
-internal class PaperControllerUnitTest : RestDocsTest("papers") {
+internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
 
     @MockkBean
     private lateinit var paperService: PaperUseCases

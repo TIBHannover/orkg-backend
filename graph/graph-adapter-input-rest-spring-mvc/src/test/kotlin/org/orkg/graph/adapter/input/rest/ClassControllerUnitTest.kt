@@ -37,7 +37,7 @@ import org.orkg.testing.andExpectClass
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -55,7 +55,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ClassController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ClassController::class])
-internal class ClassControllerUnitTest : RestDocsTest("classes") {
+internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
 
     @MockkBean
     private lateinit var classService: ClassUseCases

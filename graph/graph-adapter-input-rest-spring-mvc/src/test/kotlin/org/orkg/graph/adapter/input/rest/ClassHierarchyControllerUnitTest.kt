@@ -30,7 +30,7 @@ import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.ignorePageableFieldsExceptContent
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
@@ -52,7 +52,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @Import(SecurityTestConfiguration::class)
 @ContextConfiguration(classes = [ClassHierarchyController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ClassHierarchyController::class])
-internal class ClassHierarchyControllerUnitTest : RestDocsTest("class-hierarchies") {
+internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarchies") {
 
     @MockkBean
     private lateinit var classService: ClassUseCases

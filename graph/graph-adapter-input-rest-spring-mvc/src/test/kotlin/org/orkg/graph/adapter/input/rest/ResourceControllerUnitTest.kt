@@ -44,7 +44,7 @@ import org.orkg.testing.andExpectResource
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -64,7 +64,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ResourceController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ResourceController::class])
-internal class ResourceControllerUnitTest : RestDocsTest("resources") {
+internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
 
     @MockkBean
     private lateinit var resourceService: ResourceUseCases

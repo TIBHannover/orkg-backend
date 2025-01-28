@@ -35,7 +35,7 @@ import org.orkg.testing.andExpectTemplate
 import org.orkg.testing.andExpectVisualization
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
@@ -45,7 +45,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ContentTypeController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ContentTypeController::class])
-internal class ContentTypeControllerUnitTest : RestDocsTest("content-types") {
+internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") {
 
     @MockkBean
     private lateinit var contentTypeService: ContentTypeUseCases

@@ -28,7 +28,7 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestComponent
@@ -50,7 +50,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @SpringBootTest
 @Import(CorsIntegrationTest.FakeController::class)
 @Suppress("HttpUrlsUsage")
-internal class CorsIntegrationTest : RestDocsTest("cors") {
+internal class CorsIntegrationTest : MockMvcBaseTest("cors") {
 
     @Autowired
     private lateinit var repository: ResourceRepository

@@ -38,7 +38,7 @@ import org.springframework.web.context.WebApplicationContext
 @Import(SecurityTestConfiguration::class, SpringJacksonConfiguration::class)
 @ExtendWith(RestDocumentationExtension::class)
 @TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
-abstract class RestDocsTest(val prefix: String) : MockkBaseTest {
+abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
 
     @Autowired
     protected lateinit var objectMapper: ObjectMapper

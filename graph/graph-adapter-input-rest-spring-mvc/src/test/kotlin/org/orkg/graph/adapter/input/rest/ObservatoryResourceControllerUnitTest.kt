@@ -26,7 +26,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -38,7 +38,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ObservatoryResourceController::class, ExceptionHandler::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ObservatoryResourceController::class])
-internal class ObservatoryResourceControllerUnitTest : RestDocsTest("observatory-resources") {
+internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observatory-resources") {
 
     @MockkBean
     private lateinit var resourceService: ResourceUseCases

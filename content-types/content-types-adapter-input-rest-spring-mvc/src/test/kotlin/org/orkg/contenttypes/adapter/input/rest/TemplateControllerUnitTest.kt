@@ -68,7 +68,7 @@ import org.orkg.testing.andExpectTemplate
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
@@ -97,7 +97,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     ]
 )
 @WebMvcTest(controllers = [TemplateController::class])
-internal class TemplateControllerUnitTest : RestDocsTest("templates") {
+internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
 
     @MockkBean
     private lateinit var templateService: TemplateUseCases

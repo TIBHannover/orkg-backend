@@ -19,7 +19,7 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.ContextConfiguration
@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [DOIController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [DOIController::class])
-internal class DOIControllerUnitTest : RestDocsTest("dois") {
+internal class DOIControllerUnitTest : MockMvcBaseTest("dois") {
 
     @MockkBean
     private lateinit var doiService: DoiService

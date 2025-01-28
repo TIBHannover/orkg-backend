@@ -9,7 +9,7 @@ import org.orkg.contenttypes.adapter.input.rest.LiteratureListControllerExceptio
 import org.orkg.contenttypes.domain.LiteratureListAlreadyPublished
 import org.orkg.contenttypes.domain.PublishedLiteratureListContentNotFound
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.http.HttpStatus
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
 @ContextConfiguration(classes = [FakeExceptionController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class LiteratureListControllerExceptionUnitTest : RestDocsTest("literature-lists") {
+internal class LiteratureListControllerExceptionUnitTest : MockMvcBaseTest("literature-lists") {
 
     @Test
     fun publishedLiteratureListContentNotFound() {

@@ -8,7 +8,7 @@ import org.orkg.createClass
 import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.pageableDetailedFieldParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
 @Transactional
-internal class ClassControllerIntegrationTest : RestDocsTest("classes") {
+internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
 
     @Autowired
     private lateinit var service: ClassUseCases

@@ -27,7 +27,7 @@ import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResource
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.ignorePageableFieldsExceptContent
 import org.orkg.testing.toAsciidoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -52,7 +52,7 @@ val supportedClasses = setOf(
 
 @ContextConfiguration(classes = [ResearchFieldController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [ResearchFieldController::class])
-internal class ResearchFieldControllerUnitTest : RestDocsTest("research-fields") {
+internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-fields") {
     @MockkBean
     private lateinit var useCases: RetrieveResearchFieldUseCase
 

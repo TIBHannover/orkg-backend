@@ -12,14 +12,14 @@ import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.input.MarkAsVerifiedUseCase
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [PaperVerificationCommandController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [PaperVerificationCommandController::class])
-internal class PaperVerificationControllerUnitTest : RestDocsTest("papers") {
+internal class PaperVerificationControllerUnitTest : MockMvcBaseTest("papers") {
 
     @MockkBean
     private lateinit var service: MarkAsVerifiedUseCase

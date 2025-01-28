@@ -16,7 +16,7 @@ import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectContribution
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
@@ -31,7 +31,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [ContributionController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ContributionController::class])
-internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
+internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions") {
 
     @MockkBean
     private lateinit var contributionService: ContributionUseCases

@@ -12,7 +12,7 @@ import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.MockUserId
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -23,7 +23,7 @@ private const val ISO_8601_PATTERN = """^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d
 
 @ContextConfiguration(classes = [ContributorController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ContributorController::class])
-internal class ContributorControllerUnitTest : RestDocsTest("contributors") {
+internal class ContributorControllerUnitTest : MockMvcBaseTest("contributors") {
 
     @MockkBean
     private lateinit var retrieveContributor: RetrieveContributorUseCase

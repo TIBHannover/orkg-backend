@@ -24,7 +24,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [RdfController::class, ExceptionHandler::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [RdfController::class])
-internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
+internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
 
     @MockkBean
     private lateinit var resourceRepository: ResourceRepository

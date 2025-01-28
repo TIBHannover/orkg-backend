@@ -45,7 +45,7 @@ import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectRosettaStoneTemplate
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -53,7 +53,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
 @Transactional
-internal class RosettaStoneTemplateControllerIntegrationTest : RestDocsTest("rosetta-stone-templates") {
+internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("rosetta-stone-templates") {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

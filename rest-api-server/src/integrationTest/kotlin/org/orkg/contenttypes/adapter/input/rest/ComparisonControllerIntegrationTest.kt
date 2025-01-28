@@ -51,7 +51,7 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
@@ -61,7 +61,7 @@ import org.springframework.transaction.annotation.Transactional
 @Neo4jContainerIntegrationTest
 @Transactional
 @Import(InMemorySimCompThingRepositoryAdapter::class)
-internal class ComparisonControllerIntegrationTest : RestDocsTest("comparisons") {
+internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparisons") {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

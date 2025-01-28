@@ -5,7 +5,7 @@ import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.configuration.CommonSpringConfig
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.data.mapping.PropertyReferenceException
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
 @ContextConfiguration(classes = [ExceptionHandler::class, ExceptionHandlerUnitTest.TestController::class, CommonSpringConfig::class, FixedClockConfig::class])
-internal class ExceptionHandlerUnitTest : RestDocsTest("errors") {
+internal class ExceptionHandlerUnitTest : MockMvcBaseTest("errors") {
     @Test
     fun simpleMessageException() {
         documentedGetRequestTo("/errors/simple")

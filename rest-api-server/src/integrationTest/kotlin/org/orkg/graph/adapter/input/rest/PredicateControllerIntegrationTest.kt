@@ -13,7 +13,7 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
 @Transactional
-internal class PredicateControllerIntegrationTest : RestDocsTest("predicates") {
+internal class PredicateControllerIntegrationTest : MockMvcBaseTest("predicates") {
 
     @Autowired
     private lateinit var service: PredicateUseCases

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.visibilityFilterRequestParameter
 import org.orkg.graph.testing.asciidoc.legacyVisibilityFilterRequestParameters
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @ContextConfiguration(classes = [VisibilityParametersDocTest.VisibilityRequestParametersDummyController::class])
 @WebMvcTest(controllers = [VisibilityParametersDocTest.VisibilityRequestParametersDummyController::class])
-internal class VisibilityParametersDocTest : RestDocsTest("visibility") {
+internal class VisibilityParametersDocTest : MockMvcBaseTest("visibility") {
     @Test
     fun legacyRequestParams() {
         documentedGetRequestTo("/test/visibility/legacy")

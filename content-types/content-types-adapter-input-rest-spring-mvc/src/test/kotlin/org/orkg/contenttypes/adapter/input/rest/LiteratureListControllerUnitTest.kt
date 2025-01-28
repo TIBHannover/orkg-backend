@@ -47,7 +47,7 @@ import org.orkg.testing.andExpectPaper
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -66,7 +66,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [LiteratureListController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, WebMvcConfiguration::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LiteratureListController::class])
-internal class LiteratureListControllerUnitTest : RestDocsTest("literature-lists") {
+internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-lists") {
 
     @MockkBean
     private lateinit var literatureListService: LiteratureListUseCases

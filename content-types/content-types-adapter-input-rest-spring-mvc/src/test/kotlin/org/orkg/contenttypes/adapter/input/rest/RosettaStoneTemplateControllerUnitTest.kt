@@ -36,7 +36,7 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectRosettaStoneTemplate
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -65,7 +65,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     ]
 )
 @WebMvcTest(controllers = [RosettaStoneTemplateController::class])
-internal class RosettaStoneTemplateControllerUnitTest : RestDocsTest("rosetta-stone-templates") {
+internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta-stone-templates") {
 
     @MockkBean
     private lateinit var templateService: RosettaStoneTemplateUseCases

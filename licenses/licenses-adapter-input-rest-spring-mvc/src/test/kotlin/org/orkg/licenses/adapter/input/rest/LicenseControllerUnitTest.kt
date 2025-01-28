@@ -13,7 +13,7 @@ import org.orkg.licenses.domain.LicenseNotFound
 import org.orkg.licenses.domain.UnsupportedURI
 import org.orkg.licenses.input.RetrieveLicenseInformationUseCase
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [LicenseInformationController::class, ExceptionHandler::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [LicenseInformationController::class])
-internal class LicenseControllerUnitTest : RestDocsTest("licenses") {
+internal class LicenseControllerUnitTest : MockMvcBaseTest("licenses") {
 
     @MockkBean
     private lateinit var licenseService: RetrieveLicenseInformationUseCase

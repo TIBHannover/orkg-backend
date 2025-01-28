@@ -48,7 +48,7 @@ import org.orkg.testing.andExpectStatementList
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -67,7 +67,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [SmartReviewController::class, ExceptionHandler::class, CommonJacksonModule::class, ContentTypeJacksonModule::class, FixedClockConfig::class, WebMvcConfiguration::class])
 @WebMvcTest(controllers = [SmartReviewController::class])
-internal class SmartReviewControllerUnitTest : RestDocsTest("smart-reviews") {
+internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") {
 
     @MockkBean
     private lateinit var smartReviewService: SmartReviewUseCases

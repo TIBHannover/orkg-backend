@@ -7,7 +7,7 @@ import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.SearchFilter.Operator
 import org.orkg.graph.domain.SearchFilter.Value
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
 @ContextConfiguration(classes = [FilterConfigDocTest.FakeController::class, FixedClockConfig::class, CommonJacksonModule::class])
-internal class FilterConfigDocTest : RestDocsTest("filter-configs") {
+internal class FilterConfigDocTest : MockMvcBaseTest("filter-configs") {
     @Test
     fun getSingle() {
         documentedGetRequestTo("/filter-config")

@@ -32,7 +32,7 @@ import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.andExpectObservatory
 import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -52,7 +52,7 @@ import orkg.orkg.community.testing.fixtures.observatoryResponseFields
 
 @ContextConfiguration(classes = [ObservatoryController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [ObservatoryController::class])
-internal class ObservatoryControllerUnitTest : RestDocsTest("observatories") {
+internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") {
 
     @MockkBean
     private lateinit var observatoryUseCases: ObservatoryUseCases

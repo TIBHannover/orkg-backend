@@ -13,7 +13,7 @@ import org.orkg.statistics.domain.SimpleMetric
 import org.orkg.statistics.input.RetrieveStatisticsUseCase
 import org.orkg.statistics.testing.fixtures.createMetrics
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ContextConfiguration(classes = [StatisticsController::class, ExceptionHandler::class, CommonJacksonModule::class, FixedClockConfig::class])
 @WebMvcTest(controllers = [StatisticsController::class])
-internal class StatisticsControllerUnitTest : RestDocsTest("statistics") {
+internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
 
     @MockkBean
     private lateinit var service: RetrieveStatisticsUseCase

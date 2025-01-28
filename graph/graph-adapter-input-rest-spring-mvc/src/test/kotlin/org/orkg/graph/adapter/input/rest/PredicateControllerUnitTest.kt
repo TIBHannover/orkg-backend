@@ -31,7 +31,7 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -58,7 +58,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
     ]
 )
 @WebMvcTest(controllers = [PredicateController::class])
-internal class PredicateControllerUnitTest : RestDocsTest("predicates") {
+internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
 
     @MockkBean
     private lateinit var predicateService: PredicateUseCases

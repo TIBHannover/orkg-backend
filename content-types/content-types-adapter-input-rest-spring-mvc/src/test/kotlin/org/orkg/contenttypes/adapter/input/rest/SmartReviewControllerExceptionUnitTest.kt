@@ -13,7 +13,7 @@ import org.orkg.contenttypes.domain.SmartReviewAlreadyPublished
 import org.orkg.contenttypes.domain.SmartReviewSectionTypeMismatch
 import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.http.HttpStatus
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
 @ContextConfiguration(classes = [FakeExceptionController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class SmartReviewControllerExceptionUnitTest : RestDocsTest("smart-reviews") {
+internal class SmartReviewControllerExceptionUnitTest : MockMvcBaseTest("smart-reviews") {
 
     @Test
     fun publishedSmartReviewContentNotFound() {

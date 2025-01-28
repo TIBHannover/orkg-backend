@@ -34,7 +34,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.spring.restdocs.RestDocsTest
+import org.orkg.testing.spring.restdocs.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Neo4jContainerIntegrationTest
 @Transactional
-internal class TemplateInstanceControllerIntegrationTest : RestDocsTest("template-instances") {
+internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("template-instances") {
 
     @Autowired
     private lateinit var contributorService: ContributorUseCases

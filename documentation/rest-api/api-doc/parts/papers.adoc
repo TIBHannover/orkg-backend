@@ -51,7 +51,7 @@ The updated paper (object) can be retrieved by following the URI in the `Locatio
 [NOTE]
 ====
 1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
-2. Then same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a paper.
+2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a paper.
 3. If the verified status is being modified and the performing user is not a curator, the return status will be `403 FORBIDDEN`.
 ====
 

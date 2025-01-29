@@ -15,7 +15,7 @@ import org.orkg.contenttypes.domain.actions.PublishComparisonState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
-import org.orkg.contenttypes.input.testing.fixtures.dummyPublishComparisonCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishComparisonCommand
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
@@ -37,7 +37,7 @@ internal class ComparisonVersionDoiPublisherUnitTest : MockkBaseTest {
     fun `Given a comparison publish command, when a new doi should be assigned, it registers a new doi and creates a hasDOI statement`() {
         val comparison = createComparison()
         val comparisonVersionId = ThingId("R45214")
-        val command = dummyPublishComparisonCommand().copy(id = comparison.id)
+        val command = publishComparisonCommand().copy(id = comparison.id)
         val state = PublishComparisonState(comparison, comparisonVersionId)
         val doi = "10.1000/$comparisonVersionId"
         val relatedDOIs = listOf("10.1000/a", "10.1000/b")
@@ -80,7 +80,7 @@ internal class ComparisonVersionDoiPublisherUnitTest : MockkBaseTest {
     @Test
     fun `Given a comparison publish command, when no doi should be assigned, it does nothing`() {
         val comparison = createComparison()
-        val command = dummyPublishComparisonCommand().copy(id = comparison.id, assignDOI = false)
+        val command = publishComparisonCommand().copy(id = comparison.id, assignDOI = false)
         val state = PublishComparisonState(comparison)
 
         comparisonVersionArchiver(command, state).asClue {

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
+import org.orkg.contenttypes.input.testing.fixtures.createComparisonCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
@@ -23,7 +23,7 @@ internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a subject resource, when linking contributions, it returns success`() {
         val comparisonId = ThingId("R12")
-        val command = dummyCreateComparisonCommand()
+        val command = createComparisonCommand()
         val state = CreateComparisonState(
             comparisonId = comparisonId
         )

@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.LiteratureListUseCases
-import org.orkg.contenttypes.input.testing.fixtures.dummyPublishLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishLiteratureListCommand
 
 internal class LiteratureListPublishableValidatorUnitTest : MockkBaseTest {
     private val literatureListService: LiteratureListUseCases = mockk()
@@ -24,7 +24,7 @@ internal class LiteratureListPublishableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list publish command, when literature list is unpublished, it returns success`() {
         val literatureList = createLiteratureList()
-        val command = dummyPublishLiteratureListCommand().copy(id = literatureList.id)
+        val command = publishLiteratureListCommand().copy(id = literatureList.id)
         val state = PublishLiteratureListState()
 
         every { literatureListService.findById(literatureList.id) } returns Optional.of(literatureList)
@@ -40,7 +40,7 @@ internal class LiteratureListPublishableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list publish command, when literature list is published, it throws an exception`() {
         val literatureList = createLiteratureList().copy(published = true)
-        val command = dummyPublishLiteratureListCommand().copy(id = literatureList.id)
+        val command = publishLiteratureListCommand().copy(id = literatureList.id)
         val state = PublishLiteratureListState()
 
         every { literatureListService.findById(literatureList.id) } returns Optional.of(literatureList)
@@ -52,7 +52,7 @@ internal class LiteratureListPublishableValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list publish command, when literature list does not exist, it throws an exception`() {
-        val command = dummyPublishLiteratureListCommand()
+        val command = publishLiteratureListCommand()
         val state = PublishLiteratureListState()
 
         every { literatureListService.findById(command.id) } returns Optional.empty()

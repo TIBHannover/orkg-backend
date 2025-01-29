@@ -17,7 +17,7 @@ import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreatePaperUseCase
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.output.ThingRepository
@@ -32,7 +32,7 @@ internal class PaperContributionValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when validating its contributions, it returns success`() {
-        val command = dummyCreatePaperCommand()
+        val command = createPaperCommand()
         val resource = createResource(id = ThingId("R3003"))
         val state = CreatePaperState(
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),
@@ -92,7 +92,7 @@ internal class PaperContributionValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when class of contribution does not exist, it throws an exception`() {
-        val command = dummyCreatePaperCommand()
+        val command = createPaperCommand()
         val resource = createResource(id = ThingId("R3003"))
         val state = CreatePaperState(
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),
@@ -115,7 +115,7 @@ internal class PaperContributionValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when class of contribution is not a class, it throws an exception`() {
-        val command = dummyCreatePaperCommand()
+        val command = createPaperCommand()
         val resource = createResource(id = ThingId("R3003"))
         val state = CreatePaperState(
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),
@@ -138,7 +138,7 @@ internal class PaperContributionValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when contribution does not contain any statements, it throws an exception`() {
-        val command = dummyCreatePaperCommand().copy(
+        val command = createPaperCommand().copy(
             contents = CreatePaperUseCase.CreateCommand.PaperContents(
                 contributions = listOf(
                     ContributionDefinition(

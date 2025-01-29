@@ -19,7 +19,7 @@ import org.orkg.contenttypes.input.ListDefinition
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
@@ -313,7 +313,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given template instance contents, when label of list is invalid, it throws an exception`() {
-        val contents = dummyUpdateTemplateInstanceCommand().copy(
+        val contents = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
             literals = emptyMap(),
             predicates = emptyMap(),
@@ -337,7 +337,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given thing definitions, when specified class uri is not absolute, it throws an exception`() {
         val uri = ParsedIRI("invalid")
-        val contents = dummyUpdateTemplateInstanceCommand().copy(
+        val contents = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
             literals = emptyMap(),
             predicates = emptyMap(),
@@ -362,7 +362,7 @@ internal class ThingDefinitionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given thing definitions, when specified class uri already exists, it throws an exception`() {
         val uri = ParsedIRI("https://orkg.org/class/C1")
-        val contents = dummyUpdateTemplateInstanceCommand().copy(
+        val contents = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
             literals = emptyMap(),
             predicates = emptyMap(),

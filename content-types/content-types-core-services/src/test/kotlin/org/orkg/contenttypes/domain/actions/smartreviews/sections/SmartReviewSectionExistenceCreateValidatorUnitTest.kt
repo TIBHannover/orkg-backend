@@ -17,12 +17,12 @@ import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.domain.SmartReviewNotModifiable
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewComparisonSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewOntologySectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewPredicateSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewResourceSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewTextSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewVisualizationSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewComparisonSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewOntologySectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewPredicateSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewResourceSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewTextSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewVisualizationSectionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.StatementRepository
@@ -136,12 +136,12 @@ internal class SmartReviewSectionExistenceCreateValidatorUnitTest : MockkBaseTes
     companion object {
         @JvmStatic
         fun createSmartReviewSectionCommands(): Stream<Arguments> = Stream.of(
-            Arguments.of(dummyCreateSmartReviewComparisonSectionCommand()),
-            Arguments.of(dummyCreateSmartReviewVisualizationSectionCommand()),
-            Arguments.of(dummyCreateSmartReviewResourceSectionCommand()),
-            Arguments.of(dummyCreateSmartReviewPredicateSectionCommand()),
-            Arguments.of(dummyCreateSmartReviewOntologySectionCommand()),
-            Arguments.of(dummyCreateSmartReviewTextSectionCommand())
+            Arguments.of(createSmartReviewComparisonSectionCommand()),
+            Arguments.of(createSmartReviewVisualizationSectionCommand()),
+            Arguments.of(createSmartReviewResourceSectionCommand()),
+            Arguments.of(createSmartReviewPredicateSectionCommand()),
+            Arguments.of(createSmartReviewOntologySectionCommand()),
+            Arguments.of(createSmartReviewTextSectionCommand())
         )
     }
 }

@@ -12,7 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
-import org.orkg.contenttypes.input.testing.fixtures.dummyPublishLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishLiteratureListCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
@@ -24,7 +24,7 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list publish command, it crates a new previous version statement`() {
         val literatureList = createLiteratureList()
-        val command = dummyPublishLiteratureListCommand().copy(id = literatureList.id)
+        val command = publishLiteratureListCommand().copy(id = literatureList.id)
         val literatureListVersionId = ThingId("R165")
         val state = PublishLiteratureListState(literatureList, literatureListVersionId)
 

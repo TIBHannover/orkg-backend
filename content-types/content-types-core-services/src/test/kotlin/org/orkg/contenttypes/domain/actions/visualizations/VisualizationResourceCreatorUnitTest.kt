@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.VisualizationState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateVisualizationCommand
+import org.orkg.contenttypes.input.testing.fixtures.createVisualizationCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -21,7 +21,7 @@ internal class VisualizationResourceCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a visualization create command, it crates a new visualization resource`() {
-        val command = dummyCreateVisualizationCommand()
+        val command = createVisualizationCommand()
         val state = VisualizationState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(

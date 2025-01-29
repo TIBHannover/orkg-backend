@@ -13,7 +13,7 @@ import org.orkg.contenttypes.domain.RosettaStoneTemplateNotFound
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.RosettaStoneTemplateUseCases
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneStatementCommand
+import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneStatementCommand
 
 internal class RosettaStoneStatementTemplateCreateValidatorUnitTest : MockkBaseTest {
     private val rosettaStoneTemplateService: RosettaStoneTemplateUseCases = mockk()
@@ -23,7 +23,7 @@ internal class RosettaStoneStatementTemplateCreateValidatorUnitTest : MockkBaseT
     @Test
     fun `Given a rosetta stone statement create command, when validating the rosetta stone template, it returns success`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyCreateRosettaStoneStatementCommand()
+        val command = createRosettaStoneStatementCommand()
         val state = CreateRosettaStoneStatementState()
 
         every { rosettaStoneTemplateService.findById(command.templateId) } returns Optional.of(rosettaStoneTemplate)
@@ -37,7 +37,7 @@ internal class RosettaStoneStatementTemplateCreateValidatorUnitTest : MockkBaseT
 
     @Test
     fun `Given a rosetta stone statement create command, when rosetta stone template is missing, it throws an exception`() {
-        val command = dummyCreateRosettaStoneStatementCommand()
+        val command = createRosettaStoneStatementCommand()
         val state = CreateRosettaStoneStatementState()
 
         every { rosettaStoneTemplateService.findById(command.templateId) } returns Optional.empty()

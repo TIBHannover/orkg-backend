@@ -9,7 +9,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.PaperAlreadyExists
 import org.orkg.contenttypes.domain.actions.CreatePaperState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.StatementRepository
@@ -27,7 +27,7 @@ internal class PaperIdentifierCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when validating its identifiers, it returns success`() {
-        val command = dummyCreatePaperCommand()
+        val command = createPaperCommand()
         val state = CreatePaperState()
         val doi = command.identifiers["doi"]!!.first()
 
@@ -56,7 +56,7 @@ internal class PaperIdentifierCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when paper with identifier already exists, it throws an exception`() {
-        val command = dummyCreatePaperCommand()
+        val command = createPaperCommand()
         val state = CreatePaperState()
         val doi = command.identifiers["doi"]!!.first()
 

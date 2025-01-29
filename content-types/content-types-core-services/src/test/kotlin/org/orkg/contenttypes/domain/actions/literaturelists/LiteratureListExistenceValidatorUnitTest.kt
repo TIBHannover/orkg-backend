@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
 internal class LiteratureListExistenceValidatorUnitTest : MockkBaseTest {
@@ -21,7 +21,7 @@ internal class LiteratureListExistenceValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list update command, when checking for literature list existence, it returns success`() {
         val literatureList = createLiteratureList()
-        val command = dummyUpdateLiteratureListCommand().copy(literatureListId = literatureList.id)
+        val command = updateLiteratureListCommand().copy(literatureListId = literatureList.id)
         val state = UpdateLiteratureListState()
         val statements = listOf(createStatement()).groupBy { it.subject.id }
 

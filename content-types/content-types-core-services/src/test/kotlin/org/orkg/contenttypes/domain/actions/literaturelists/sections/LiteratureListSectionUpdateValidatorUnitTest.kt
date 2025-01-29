@@ -15,8 +15,8 @@ import org.orkg.contenttypes.domain.actions.UpdateLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionValidator
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListListSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListTextSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListListSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListTextSectionCommand
 
 internal class LiteratureListSectionUpdateValidatorUnitTest : MockkBaseTest {
     private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator = mockk()
@@ -25,7 +25,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list section update command, when section is not related to the literature list, it throws an exception`() {
-        val command = dummyUpdateLiteratureListTextSectionCommand()
+        val command = updateLiteratureListTextSectionCommand()
         val state = UpdateLiteratureListSectionState(literatureList = createLiteratureList())
 
         assertThrows<UnrelatedLiteratureListSection> { literatureListSectionUpdateValidator(command, state) }
@@ -35,7 +35,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a text section update command, when validation succeeds, it returns success`() {
         val literatureList = createLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
-        val command = dummyUpdateLiteratureListTextSectionCommand().copy(literatureListSectionId = literatureList.sections.first().id)
+        val command = updateLiteratureListTextSectionCommand().copy(literatureListSectionId = literatureList.sections.first().id)
 
         every { abstractLiteratureListSectionValidator.validate(any(), any()) } just runs
 
@@ -53,7 +53,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a text section update command, when types mismatch, it throws an exception`() {
         val literatureList = createLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
-        val command = dummyUpdateLiteratureListTextSectionCommand().copy(literatureListSectionId = literatureList.sections.last().id)
+        val command = updateLiteratureListTextSectionCommand().copy(literatureListSectionId = literatureList.sections.last().id)
 
         assertThrows<LiteratureListSectionTypeMismatch> { literatureListSectionUpdateValidator(command, state) }
     }
@@ -62,7 +62,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a list section update command, when validation succeeds, it returns success`() {
         val literatureList = createLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
-        val command = dummyUpdateLiteratureListListSectionCommand().copy(literatureListSectionId = literatureList.sections.last().id)
+        val command = updateLiteratureListListSectionCommand().copy(literatureListSectionId = literatureList.sections.last().id)
 
         every { abstractLiteratureListSectionValidator.validate(any(), any()) } just runs
 
@@ -80,7 +80,7 @@ internal class LiteratureListSectionUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a list section update command, when types mismatch, it throws an exception`() {
         val literatureList = createLiteratureList()
         val state = UpdateLiteratureListSectionState(literatureList = literatureList)
-        val command = dummyUpdateLiteratureListListSectionCommand().copy(literatureListSectionId = literatureList.sections.first().id)
+        val command = updateLiteratureListListSectionCommand().copy(literatureListSectionId = literatureList.sections.first().id)
 
         assertThrows<LiteratureListSectionTypeMismatch> { literatureListSectionUpdateValidator(command, state) }
     }

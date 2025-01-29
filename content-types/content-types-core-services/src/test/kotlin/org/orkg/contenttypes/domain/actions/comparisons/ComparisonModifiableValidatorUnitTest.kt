@@ -7,14 +7,14 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.ComparisonNotModifiable
 import org.orkg.contenttypes.domain.actions.UpdateComparisonState
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateComparisonCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateComparisonCommand
 
 internal class ComparisonModifiableValidatorUnitTest {
     private val comparisonModifiableValidator = ComparisonModifiableValidator()
 
     @Test
     fun `Given a comparison update command, when comparison is not published, it returns success`() {
-        val command = dummyUpdateComparisonCommand()
+        val command = updateComparisonCommand()
         val state = UpdateComparisonState(
             comparison = createComparison().copy(published = false)
         )
@@ -29,7 +29,7 @@ internal class ComparisonModifiableValidatorUnitTest {
 
     @Test
     fun `Given a comparison update command, when comparison is published, it throws an exception`() {
-        val command = dummyUpdateComparisonCommand()
+        val command = updateComparisonCommand()
         val state = UpdateComparisonState(
             comparison = createComparison().copy(published = true)
         )

@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.domain.actions.PublishSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.SmartReviewUseCases
-import org.orkg.contenttypes.input.testing.fixtures.dummyPublishSmartReviewCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishSmartReviewCommand
 
 internal class SmartReviewPublishableValidatorUnitTest : MockkBaseTest {
     private val smartReviewService: SmartReviewUseCases = mockk()
@@ -24,7 +24,7 @@ internal class SmartReviewPublishableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review publish command, when smart review is unpublished, it returns success`() {
         val smartReview = createSmartReview()
-        val command = dummyPublishSmartReviewCommand().copy(smartReviewId = smartReview.id)
+        val command = publishSmartReviewCommand().copy(smartReviewId = smartReview.id)
         val state = PublishSmartReviewState()
 
         every { smartReviewService.findById(smartReview.id) } returns Optional.of(smartReview)
@@ -40,7 +40,7 @@ internal class SmartReviewPublishableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review publish command, when smart review is published, it throws an exception`() {
         val smartReview = createSmartReview().copy(published = true)
-        val command = dummyPublishSmartReviewCommand().copy(smartReviewId = smartReview.id)
+        val command = publishSmartReviewCommand().copy(smartReviewId = smartReview.id)
         val state = PublishSmartReviewState()
 
         every { smartReviewService.findById(smartReview.id) } returns Optional.of(smartReview)
@@ -52,7 +52,7 @@ internal class SmartReviewPublishableValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review publish command, when smart review does not exist, it throws an exception`() {
-        val command = dummyPublishSmartReviewCommand()
+        val command = publishSmartReviewCommand()
         val state = PublishSmartReviewState()
 
         every { smartReviewService.findById(command.smartReviewId) } returns Optional.empty()

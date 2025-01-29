@@ -13,7 +13,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -28,7 +28,7 @@ internal class SmartReviewReferencesUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review update command, when references are not set, it does nothing`() {
         val smartReview = createSmartReview()
-        val command = dummyUpdateSmartReviewCommand().copy(references = null)
+        val command = updateSmartReviewCommand().copy(references = null)
         val state = UpdateSmartReviewState(smartReview = smartReview)
 
         val result = smartReviewReferencesUpdater(command, state)
@@ -49,7 +49,7 @@ internal class SmartReviewReferencesUpdaterUnitTest : MockkBaseTest {
             )
         )
         val contributionId = ThingId("R2457")
-        val command = dummyUpdateSmartReviewCommand()
+        val command = updateSmartReviewCommand()
         val state = UpdateSmartReviewState(
             smartReview = smartReview,
             statements = listOf(
@@ -74,7 +74,7 @@ internal class SmartReviewReferencesUpdaterUnitTest : MockkBaseTest {
     fun `Given a smart review update command, when references have changed, it updates the reference statements`() {
         val smartReview = createSmartReview()
         val contributionId = ThingId("R2457")
-        val command = dummyUpdateSmartReviewCommand()
+        val command = updateSmartReviewCommand()
         val state = UpdateSmartReviewState(
             smartReview = smartReview,
             statements = listOf(

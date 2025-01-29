@@ -16,8 +16,7 @@ import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperService
 import org.orkg.contenttypes.domain.actions.PublishPaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.testing.fixtures.createPaperPublishCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyPublishPaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishPaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -32,7 +31,7 @@ internal class PaperPublishableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a paper publish command, when checking for paper existence, it returns success`() {
         val paper = createPaper()
-        val command = createPaperPublishCommand().copy(id = paper.id)
+        val command = publishPaperCommand().copy(id = paper.id)
         val state = PublishPaperState()
         val root = createResource(
             id = paper.id,
@@ -61,7 +60,7 @@ internal class PaperPublishableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a paper publish command, when checking for paper existence and paper is not found, it throws an exception`() {
         val paper = createPaper()
-        val command = dummyPublishPaperCommand().copy(id = paper.id)
+        val command = publishPaperCommand().copy(id = paper.id)
         val state = PublishPaperState()
 
         every { resourceRepository.findById(paper.id) } returns Optional.empty()

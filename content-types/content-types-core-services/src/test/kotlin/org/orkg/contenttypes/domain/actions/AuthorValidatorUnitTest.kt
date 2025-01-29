@@ -15,7 +15,7 @@ import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.identifiers.InvalidIdentifier
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ResourceRepository
@@ -35,7 +35,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a list of authors, when validating, it returns success`() {
-        val authors = dummyCreatePaperCommand().authors
+        val authors = createPaperCommand().authors
 
         val author1 = createResource(id = ThingId("R123"), classes = setOf(Classes.author))
         val author2 = createResource(id = ThingId("R456"), classes = setOf(Classes.author))
@@ -115,7 +115,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a list of authors, when author does not exist, it throws an exception`() {
-        val authors = dummyCreatePaperCommand().authors
+        val authors = createPaperCommand().authors
 
         every { resourceRepository.findById(any()) } returns Optional.empty()
 
@@ -126,7 +126,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a list of authors, when author is not an author resource, it throws an exception`() {
-        val authors = dummyCreatePaperCommand().authors
+        val authors = createPaperCommand().authors
 
         every { resourceRepository.findById(any()) } returns Optional.of(createResource())
 

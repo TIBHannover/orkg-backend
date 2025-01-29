@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.OntologyEntityNotFound
-import org.orkg.contenttypes.input.testing.fixtures.dummySmartReviewOntologySectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.smartReviewOntologySectionDefinition
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.PredicateNotFound
@@ -17,7 +17,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given an ontology section definition, when validating, it returns success`() {
-        val section = dummySmartReviewOntologySectionDefinition().copy(predicates = listOf(ThingId("P2")))
+        val section = smartReviewOntologySectionDefinition().copy(predicates = listOf(ThingId("P2")))
         val validIds = mutableSetOf<ThingId>()
         val predicate = createPredicate(section.predicates.single())
 
@@ -34,7 +34,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
 
     @Test
     fun `Given an ontology section definition, when validating, it does query the thing repository when entity list is empty`() {
-        val section = dummySmartReviewOntologySectionDefinition().copy(entities = emptyList())
+        val section = smartReviewOntologySectionDefinition().copy(entities = emptyList())
         val validIds = mutableSetOf<ThingId>()
         val predicate = createPredicate(section.predicates.single())
 
@@ -49,7 +49,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
 
     @Test
     fun `Given an ontology section definition, when validating, it does query the predicate repository when predicate list is empty`() {
-        val section = dummySmartReviewOntologySectionDefinition().copy(predicates = emptyList())
+        val section = smartReviewOntologySectionDefinition().copy(predicates = emptyList())
         val validIds = mutableSetOf<ThingId>()
 
         every { thingRepository.existsAll(section.entities.toSet()) } returns true
@@ -63,7 +63,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
 
     @Test
     fun `Given an ontology section definition, when validating, it does not check already valid ids`() {
-        val section = dummySmartReviewOntologySectionDefinition()
+        val section = smartReviewOntologySectionDefinition()
         val validIds = mutableSetOf(ThingId("P1"))
 
         every { thingRepository.existsAll(setOf(ThingId("R1"))) } returns true
@@ -77,7 +77,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
 
     @Test
     fun `Given an ontology section definition, when heading is invalid, it throws an exception`() {
-        val section = dummySmartReviewOntologySectionDefinition().copy(
+        val section = smartReviewOntologySectionDefinition().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
         val validIds = mutableSetOf<ThingId>()
@@ -87,7 +87,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
 
     @Test
     fun `Given an ontology section definition, when entity does not exist, it throws an exception`() {
-        val section = dummySmartReviewOntologySectionDefinition()
+        val section = smartReviewOntologySectionDefinition()
         val validIds = mutableSetOf<ThingId>()
 
         every { thingRepository.existsAll(any()) } returns false
@@ -99,7 +99,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
 
     @Test
     fun `Given an ontology section definition, when predicate does not exist, it throws an exception`() {
-        val section = dummySmartReviewOntologySectionDefinition().copy(predicates = listOf(ThingId("P2")))
+        val section = smartReviewOntologySectionDefinition().copy(predicates = listOf(ThingId("P2")))
         val validIds = mutableSetOf<ThingId>()
 
         every { thingRepository.existsAll(any()) } returns true

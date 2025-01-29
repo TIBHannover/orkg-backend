@@ -13,7 +13,7 @@ import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValidator
 import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateUntypedTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateUntypedTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
 
 internal class TemplatePropertyValidatorUnitTest : MockkBaseTest {
@@ -28,7 +28,7 @@ internal class TemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property update command, when previous template property is not defined, it validates the new template property`() {
-        val command = dummyUpdateUntypedTemplatePropertyCommand()
+        val command = updateUntypedTemplatePropertyCommand()
         val state = null
 
         every { abstractTemplatePropertyValidator.validate(command) } just runs
@@ -40,7 +40,7 @@ internal class TemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property update command, when new template property is different to existing template property, it is validated`() {
-        val command = dummyUpdateUntypedTemplatePropertyCommand()
+        val command = updateUntypedTemplatePropertyCommand()
         val state = createStringLiteralTemplateProperty()
 
         every { abstractTemplatePropertyValidator.validate(command) } just runs

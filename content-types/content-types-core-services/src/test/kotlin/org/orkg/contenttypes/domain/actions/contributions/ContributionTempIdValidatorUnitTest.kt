@@ -4,14 +4,14 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.ContributionState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateContributionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createContributionCommand
 
 internal class ContributionTempIdValidatorUnitTest {
     private val contributionTempIdValidator = ContributionTempIdValidator()
 
     @Test
     fun `Given a contribution create command, when validating its temp ids, it returns success`() {
-        val command = dummyCreateContributionCommand()
+        val command = createContributionCommand()
         val state = ContributionState()
 
         val result = contributionTempIdValidator(command, state)

@@ -15,7 +15,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneStatementCommand
+import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneStatementCommand
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ThingRepository
@@ -33,7 +33,7 @@ internal class RosettaStoneStatementCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a rosetta stone statement create command, when creating a new rosetta stone statement, it returns success`() {
-        val command = dummyCreateRosettaStoneStatementCommand()
+        val command = createRosettaStoneStatementCommand()
         val state = CreateRosettaStoneStatementState(
             rosettaStoneTemplate = createRosettaStoneTemplate(),
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4", "#temp5"),

@@ -12,7 +12,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperNotModifiable
 import org.orkg.contenttypes.domain.actions.ContributionState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateContributionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createContributionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -30,7 +30,7 @@ internal class ContributionPaperValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a contribution create command, when searching for existing papers, it returns success`() {
-        val command = dummyCreateContributionCommand()
+        val command = createContributionCommand()
         val state = ContributionState()
         val paper = createResource(id = command.paperId, classes = setOf(Classes.paper))
 
@@ -50,7 +50,7 @@ internal class ContributionPaperValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a contribution create command, when paper does not exist, it throws an exception`() {
-        val command = dummyCreateContributionCommand()
+        val command = createContributionCommand()
         val state = ContributionState()
 
         every { resourceRepository.findPaperById(command.paperId) } returns Optional.empty()
@@ -62,7 +62,7 @@ internal class ContributionPaperValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a contribution create command, when paper is not modifiable, it throws an exception`() {
-        val command = dummyCreateContributionCommand()
+        val command = createContributionCommand()
         val state = ContributionState()
         val paper = createResource(id = command.paperId, classes = setOf(Classes.paper), modifiable = false)
 

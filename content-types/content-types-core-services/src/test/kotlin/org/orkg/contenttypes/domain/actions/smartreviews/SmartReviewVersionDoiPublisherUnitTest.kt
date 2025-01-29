@@ -15,7 +15,7 @@ import org.orkg.contenttypes.domain.actions.PublishSmartReviewState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
-import org.orkg.contenttypes.input.testing.fixtures.dummyPublishSmartReviewCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishSmartReviewCommand
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Predicates
 
@@ -32,7 +32,7 @@ internal class SmartReviewVersionDoiPublisherUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review publish command, when a new doi should be assigned, it registers a new doi creates a hasDOI statement`() {
         val smartReview = createSmartReview()
-        val command = dummyPublishSmartReviewCommand().copy(smartReviewId = smartReview.id)
+        val command = publishSmartReviewCommand().copy(smartReviewId = smartReview.id)
         val smartReviewVersionId = ThingId("R321")
         val state = PublishSmartReviewState(
             smartReview = smartReview,
@@ -74,7 +74,7 @@ internal class SmartReviewVersionDoiPublisherUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review publish command, when no doi should be assigned, it does nothing`() {
         val smartReview = createSmartReview()
-        val command = dummyPublishSmartReviewCommand().copy(smartReviewId = smartReview.id, assignDOI = false)
+        val command = publishSmartReviewCommand().copy(smartReviewId = smartReview.id, assignDOI = false)
         val smartReviewVersionId = ThingId("R321")
         val state = PublishSmartReviewState(
             smartReview = smartReview,

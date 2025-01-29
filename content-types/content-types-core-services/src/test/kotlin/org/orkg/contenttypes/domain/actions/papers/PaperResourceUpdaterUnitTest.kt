@@ -12,7 +12,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
@@ -23,7 +23,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, it updates the paper resource`() {
-        val command = dummyUpdatePaperCommand()
+        val command = updatePaperCommand()
         val state = UpdatePaperState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -49,7 +49,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when observatories are empty, it removes the associated observatory`() {
-        val command = dummyUpdatePaperCommand().copy(observatories = emptyList())
+        val command = updatePaperCommand().copy(observatories = emptyList())
         val state = UpdatePaperState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -74,7 +74,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when observatories are not set, it does not update the associated observatory`() {
-        val command = dummyUpdatePaperCommand().copy(observatories = null)
+        val command = updatePaperCommand().copy(observatories = null)
         val state = UpdatePaperState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -99,7 +99,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when organizations are empty, it removes the associated organizations`() {
-        val command = dummyUpdatePaperCommand().copy(organizations = emptyList())
+        val command = updatePaperCommand().copy(organizations = emptyList())
         val state = UpdatePaperState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -124,7 +124,7 @@ internal class PaperResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when organizations are not set, it does not update the associated organizations`() {
-        val command = dummyUpdatePaperCommand().copy(organizations = null)
+        val command = updatePaperCommand().copy(organizations = null)
         val state = UpdatePaperState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(

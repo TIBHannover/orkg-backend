@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.VisualizationNotFound
-import org.orkg.contenttypes.input.testing.fixtures.dummySmartReviewVisualizationSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.smartReviewVisualizationSectionDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
@@ -17,7 +17,7 @@ import org.orkg.graph.testing.fixtures.createResource
 internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given a visualization section definition, when validating, it returns success`() {
-        val section = dummySmartReviewVisualizationSectionDefinition()
+        val section = smartReviewVisualizationSectionDefinition()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.visualization!!, classes = setOf(Classes.visualization))
 
@@ -32,7 +32,7 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
 
     @Test
     fun `Given a visualization section definition, when validating, it does not validate the visualization id when it is not set`() {
-        val section = dummySmartReviewVisualizationSectionDefinition().copy(visualization = null)
+        val section = smartReviewVisualizationSectionDefinition().copy(visualization = null)
         val validIds = mutableSetOf<ThingId>()
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
@@ -42,7 +42,7 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
 
     @Test
     fun `Given a visualization section definition, when validating, it does not check already valid ids`() {
-        val section = dummySmartReviewVisualizationSectionDefinition()
+        val section = smartReviewVisualizationSectionDefinition()
         val validIds = mutableSetOf(section.visualization!!)
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
@@ -52,7 +52,7 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
 
     @Test
     fun `Given a visualization section definition, when heading is invalid, it throws an exception`() {
-        val section = dummySmartReviewVisualizationSectionDefinition().copy(
+        val section = smartReviewVisualizationSectionDefinition().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
         val validIds = mutableSetOf<ThingId>()
@@ -62,7 +62,7 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
 
     @Test
     fun `Given a visualization section definition, when resource is not a visualization, it throws an exception`() {
-        val section = dummySmartReviewVisualizationSectionDefinition()
+        val section = smartReviewVisualizationSectionDefinition()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.visualization!!, classes = setOf(Classes.comparison))
 
@@ -75,7 +75,7 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
 
     @Test
     fun `Given a visualization section definition, when visualization does not exist, it throws an exception`() {
-        val section = dummySmartReviewVisualizationSectionDefinition()
+        val section = smartReviewVisualizationSectionDefinition()
         val validIds = mutableSetOf<ThingId>()
 
         every { resourceRepository.findById(section.visualization!!) } returns Optional.empty()

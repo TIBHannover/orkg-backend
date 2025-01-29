@@ -13,7 +13,7 @@ import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.TemplateUseCases
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 
 internal class TemplateInstanceTemplateValidatorUnitTest : MockkBaseTest {
     private val templateService: TemplateUseCases = mockk()
@@ -22,7 +22,7 @@ internal class TemplateInstanceTemplateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template instance update command, when validating its template, it returns success`() {
-        val command = dummyUpdateTemplateInstanceCommand()
+        val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState()
         val template = createTemplate()
 
@@ -45,7 +45,7 @@ internal class TemplateInstanceTemplateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template instance update command, when template is not found, it throws an exception`() {
-        val command = dummyUpdateTemplateInstanceCommand()
+        val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
             template = createTemplate()
         )

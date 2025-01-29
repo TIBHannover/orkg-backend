@@ -20,7 +20,7 @@ import org.orkg.contenttypes.input.ListDefinition
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.PredicateDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneStatementCommand
+import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneStatementCommand
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -140,7 +140,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             label = "Some class",
             uri = ParsedIRI("https://example.org")
         )
-        val contents = dummyCreateRosettaStoneStatementCommand().copy(
+        val contents = createRosettaStoneStatementCommand().copy(
             resources = emptyMap(),
             literals = emptyMap(),
             predicates = emptyMap(),
@@ -186,7 +186,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             label = "Some class",
             uri = ParsedIRI("https://example.org")
         )
-        val contents = dummyCreateRosettaStoneStatementCommand().copy(
+        val contents = createRosettaStoneStatementCommand().copy(
             resources = emptyMap(),
             literals = emptyMap(),
             predicates = emptyMap(),

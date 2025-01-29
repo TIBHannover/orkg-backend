@@ -10,7 +10,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertiesUpdater
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateRosettaStoneTemplateCommand
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
@@ -22,7 +22,7 @@ internal class RosettaStoneTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a template update command, when properties are not set, it does nothing`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
+        val command = updateRosettaStoneTemplateCommand().copy(
             properties = null
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate)
@@ -33,7 +33,7 @@ internal class RosettaStoneTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a template update command, when properties are set, it validates each property`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand()
+        val command = updateRosettaStoneTemplateCommand()
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
             statements = listOf(createStatement(subject = createResource(rosettaStoneTemplate.id))).groupBy { it.subject.id }

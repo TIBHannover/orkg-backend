@@ -17,7 +17,7 @@ import org.orkg.contenttypes.domain.ComparisonTable
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.contenttypes.domain.actions.UpdateComparisonState
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateComparisonCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateComparisonCommand
 import org.orkg.contenttypes.output.ComparisonTableRepository
 
 internal class ComparisonTableUpdaterUnitTest : MockkBaseTest {
@@ -28,7 +28,7 @@ internal class ComparisonTableUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a comparison update command, when comparison config and data are unchanged, does nothing`() {
         val comparison = createComparison()
-        val command = dummyUpdateComparisonCommand().copy(
+        val command = updateComparisonCommand().copy(
             comparisonId = comparison.id,
             config = comparison.config,
             data = comparison.data
@@ -69,7 +69,7 @@ internal class ComparisonTableUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a comparison update command, when comparison config and data is not set, does nothing`() {
         val comparison = createComparison()
-        val command = dummyUpdateComparisonCommand().copy(
+        val command = updateComparisonCommand().copy(
             comparisonId = comparison.id,
             config = null,
             data = null
@@ -85,23 +85,23 @@ internal class ComparisonTableUpdaterUnitTest : MockkBaseTest {
     companion object {
         @JvmStatic
         fun validUpdateCommands(): Stream<Arguments> = Stream.of(
-            dummyUpdateComparisonCommand().let { command ->
+            updateComparisonCommand().let { command ->
                 command.copy(
                     data = command.data!!.copy(predicates = emptyList())
                 )
             },
-            dummyUpdateComparisonCommand().let { command ->
+            updateComparisonCommand().let { command ->
                 command.copy(
                     config = command.config!!.copy(contributions = emptyList())
                 )
            },
-            dummyUpdateComparisonCommand().let { command ->
+            updateComparisonCommand().let { command ->
                 command.copy(
                     config = null,
                     data = command.data!!.copy(predicates = emptyList())
                 )
             },
-            dummyUpdateComparisonCommand().let { command ->
+            updateComparisonCommand().let { command ->
                 command.copy(
                     config = command.config!!.copy(contributions = emptyList()),
                     data = null

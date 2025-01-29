@@ -16,7 +16,7 @@ import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createStatement
 
@@ -29,7 +29,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a template update command, when updating with empty relations, it does nothing`() {
         val template = createTemplate()
-        val command = dummyUpdateTemplateCommand().copy(
+        val command = updateTemplateCommand().copy(
             relations = null
         )
         val state = UpdateTemplateState(
@@ -57,7 +57,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
             predicate = ObjectIdAndLabel(ThingId("P456"), "irrelevant")
         )
         val template = createTemplate().copy(relations = relations)
-        val command = dummyUpdateTemplateCommand()
+        val command = updateTemplateCommand()
         val statements = listOf(createStatement())
         val state = UpdateTemplateState(
             template = template,

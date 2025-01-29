@@ -13,8 +13,8 @@ import org.orkg.contenttypes.domain.testing.fixtures.createOtherLiteralTemplateP
 import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateOtherLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createOtherLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateResourceTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
@@ -118,7 +118,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     fun `Given a template update command, when a property is added, it creates a new property`() {
         val template = createTemplate()
         val contributorId = ContributorId(MockUserId.USER)
-        val properties = template.properties.map { it.toTemplatePropertyDefinition() } + dummyCreateOtherLiteralTemplatePropertyCommand()
+        val properties = template.properties.map { it.toTemplatePropertyDefinition() } + createOtherLiteralTemplatePropertyCommand()
 
         every {
             abstractTemplatePropertyCreator.create(
@@ -153,7 +153,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             properties = listOf(createOtherLiteralTemplateProperty())
         )
         val contributorId = ContributorId(MockUserId.USER)
-        val properties = listOf(dummyUpdateResourceTemplatePropertyCommand(), template.properties.single().toTemplatePropertyDefinition())
+        val properties = listOf(updateResourceTemplatePropertyCommand(), template.properties.single().toTemplatePropertyDefinition())
         val statements = template.properties.associate { it.id to listOf(createStatement(subject = createResource(it.id))) }
 
         every {
@@ -205,7 +205,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     fun `Given a template update command, when a property is replaced, it deletes the old property and creates a new one`() {
         val template = createTemplate()
         val contributorId = ContributorId(MockUserId.USER)
-        val properties = template.properties.dropLast(1).map { it.toTemplatePropertyDefinition() } + dummyUpdateResourceTemplatePropertyCommand()
+        val properties = template.properties.dropLast(1).map { it.toTemplatePropertyDefinition() } + updateResourceTemplatePropertyCommand()
 
         every {
             abstractTemplatePropertyCreator.create(

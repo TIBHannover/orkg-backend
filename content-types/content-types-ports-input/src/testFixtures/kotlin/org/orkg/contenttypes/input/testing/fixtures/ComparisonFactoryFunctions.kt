@@ -15,7 +15,7 @@ import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
 
-fun dummyCreateComparisonCommand() = CreateComparisonUseCase.CreateCommand(
+fun createComparisonCommand() = CreateComparisonUseCase.CreateCommand(
     contributorId = ContributorId("0b3d7108-ea98-448f-85ef-e67a63a8b32b"),
     title = "test",
     description = "comparison description",
@@ -53,7 +53,7 @@ fun dummyCreateComparisonCommand() = CreateComparisonUseCase.CreateCommand(
     extractionMethod = ExtractionMethod.UNKNOWN
 )
 
-fun dummyUpdateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
+fun updateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
     comparisonId = ThingId("R16453"),
     contributorId = ContributorId("0b3d7108-ea98-448f-85ef-e67a63a8b32b"),
     title = "test",
@@ -93,7 +93,7 @@ fun dummyUpdateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
     visibility = Visibility.DEFAULT
 )
 
-fun dummyPublishComparisonCommand() = PublishComparisonUseCase.PublishCommand(
+fun publishComparisonCommand() = PublishComparisonUseCase.PublishCommand(
     id = ThingId("R16453"),
     contributorId = ContributorId(UUID.randomUUID()),
     subject = "Research Field 1",

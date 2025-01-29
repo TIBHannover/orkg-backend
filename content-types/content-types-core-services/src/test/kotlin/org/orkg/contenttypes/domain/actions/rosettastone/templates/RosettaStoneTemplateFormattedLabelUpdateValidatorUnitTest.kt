@@ -15,11 +15,11 @@ import org.orkg.contenttypes.domain.RosettaStoneTemplateLabelUpdateRequiresNewTe
 import org.orkg.contenttypes.domain.TooManyNewRosettaStoneTemplateLabelSections
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceObjectPositionTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateStringLiteralObjectPositionTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSubjectPositionTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateUntypedObjectPositionTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createResourceObjectPositionTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createStringLiteralObjectPositionTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSubjectPositionTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createUntypedObjectPositionTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateRosettaStoneTemplateCommand
 import org.orkg.graph.domain.FormattedLabel
 
 internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
@@ -28,7 +28,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @Test
     fun `Given a rosetta stone template update command, when validating the formatted label, it returns success`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand()
+        val command = updateRosettaStoneTemplateCommand()
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
         val result = rosettaStoneTemplateFormattedLabelUpdateValidator(command, state)
@@ -43,7 +43,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @Test
     fun `Given a rosetta stone template update command, when formatted label did not change, it does nothing`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
+        val command = updateRosettaStoneTemplateCommand().copy(
             formattedLabel = rosettaStoneTemplate.formattedLabel
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
@@ -60,7 +60,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @Test
     fun `Given a rosetta stone template update command, when formatted label is not set, it does nothing`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(formattedLabel = null)
+        val command = updateRosettaStoneTemplateCommand().copy(formattedLabel = null)
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
         val result = rosettaStoneTemplateFormattedLabelUpdateValidator(command, state)
@@ -75,7 +75,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @Test
     fun `Given a rosetta stone template update command, when formatted label placeholder is missing, it throws an exception`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
+        val command = updateRosettaStoneTemplateCommand().copy(
             formattedLabel = FormattedLabel.of("placeholder missing")
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
@@ -88,9 +88,9 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @Test
     fun `Given a rosetta stone template update command, when formatted label placeholder is missing and template property does not have a placeholder, it throws an exception`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
+        val command = updateRosettaStoneTemplateCommand().copy(
             formattedLabel = FormattedLabel.of("placeholder missing"),
-            properties = listOf(dummyCreateResourceObjectPositionTemplatePropertyCommand().copy(placeholder = null))
+            properties = listOf(createResourceObjectPositionTemplatePropertyCommand().copy(placeholder = null))
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
@@ -104,12 +104,12 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
         val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
             formattedLabel = FormattedLabel.of("[{0}] travels [to {1}]")
         )
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
+        val command = updateRosettaStoneTemplateCommand().copy(
             formattedLabel = FormattedLabel.of("[{0}] travels [to {1}][by {2}]"),
             properties = listOf(
-                dummyCreateSubjectPositionTemplatePropertyCommand(),
-                dummyCreateStringLiteralObjectPositionTemplatePropertyCommand(),
-                dummyCreateResourceObjectPositionTemplatePropertyCommand()
+                createSubjectPositionTemplatePropertyCommand(),
+                createStringLiteralObjectPositionTemplatePropertyCommand(),
+                createResourceObjectPositionTemplatePropertyCommand()
             )
         )
         val state = UpdateRosettaStoneTemplateState(
@@ -129,7 +129,7 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @Test
     fun `Given a rosetta stone template update command, when template is used in a rosetta stone statement and properties did not change, it throws an exception`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(properties = null)
+        val command = updateRosettaStoneTemplateCommand().copy(properties = null)
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
             isUsedInRosettaStoneStatement = true
@@ -143,10 +143,10 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @Test
     fun `Given a rosetta stone template update command, when template is used in a rosetta stone statement and property count did not change, it throws an exception`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
+        val command = updateRosettaStoneTemplateCommand().copy(
             properties = listOf(
-                dummyCreateSubjectPositionTemplatePropertyCommand(),
-                dummyCreateUntypedObjectPositionTemplatePropertyCommand(),
+                createSubjectPositionTemplatePropertyCommand(),
+                createUntypedObjectPositionTemplatePropertyCommand(),
             )
         )
         val state = UpdateRosettaStoneTemplateState(
@@ -165,12 +165,12 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
         val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
             formattedLabel = FormattedLabel.of("Entity [{0}] travels [to {1}] by car")
         )
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
+        val command = updateRosettaStoneTemplateCommand().copy(
             formattedLabel = FormattedLabel.of("[{0}][to {1}][on {2}]"),
             properties = listOf(
-                dummyCreateSubjectPositionTemplatePropertyCommand(),
-                dummyCreateStringLiteralObjectPositionTemplatePropertyCommand(),
-                dummyCreateResourceObjectPositionTemplatePropertyCommand()
+                createSubjectPositionTemplatePropertyCommand(),
+                createStringLiteralObjectPositionTemplatePropertyCommand(),
+                createResourceObjectPositionTemplatePropertyCommand()
             )
         )
         val state = UpdateRosettaStoneTemplateState(
@@ -190,12 +190,12 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
         val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
             formattedLabel = FormattedLabel.of("Entity [{0}] travels [to {1}] by car")
         )
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
+        val command = updateRosettaStoneTemplateCommand().copy(
             formattedLabel = FormattedLabel.of(newFormattedLabelPattern),
             properties = listOf(
-                dummyCreateSubjectPositionTemplatePropertyCommand(),
-                dummyCreateStringLiteralObjectPositionTemplatePropertyCommand(),
-                dummyCreateResourceObjectPositionTemplatePropertyCommand()
+                createSubjectPositionTemplatePropertyCommand(),
+                createStringLiteralObjectPositionTemplatePropertyCommand(),
+                createResourceObjectPositionTemplatePropertyCommand()
             )
         )
         val state = UpdateRosettaStoneTemplateState(
@@ -214,12 +214,12 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
         val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
             formattedLabel = FormattedLabel.of("Entity [{0}] travels [to {1}]")
         )
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
+        val command = updateRosettaStoneTemplateCommand().copy(
             formattedLabel = FormattedLabel.of("Entity [{0}] travels [to {1}][on {2}] by car"),
             properties = listOf(
-                dummyCreateSubjectPositionTemplatePropertyCommand(),
-                dummyCreateStringLiteralObjectPositionTemplatePropertyCommand(),
-                dummyCreateResourceObjectPositionTemplatePropertyCommand()
+                createSubjectPositionTemplatePropertyCommand(),
+                createStringLiteralObjectPositionTemplatePropertyCommand(),
+                createResourceObjectPositionTemplatePropertyCommand()
             )
         )
         val state = UpdateRosettaStoneTemplateState(
@@ -238,12 +238,12 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
         val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
             formattedLabel = FormattedLabel.of("Entity [{0}] travels [to {1}]")
         )
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
+        val command = updateRosettaStoneTemplateCommand().copy(
             formattedLabel = FormattedLabel.of("Entity [{0}] travels [to {1}]{2}"),
             properties = listOf(
-                dummyCreateSubjectPositionTemplatePropertyCommand(),
-                dummyCreateStringLiteralObjectPositionTemplatePropertyCommand(),
-                dummyCreateResourceObjectPositionTemplatePropertyCommand()
+                createSubjectPositionTemplatePropertyCommand(),
+                createStringLiteralObjectPositionTemplatePropertyCommand(),
+                createResourceObjectPositionTemplatePropertyCommand()
             )
         )
         val state = UpdateRosettaStoneTemplateState(
@@ -259,9 +259,9 @@ internal class RosettaStoneTemplateFormattedLabelUpdateValidatorUnitTest {
     @Test
     fun `Given a rosetta stone template update command, when formatted label is not set and rosetta stone template properties have changed, it throws an exception`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(
+        val command = updateRosettaStoneTemplateCommand().copy(
             formattedLabel = null,
-            properties = listOf(dummyCreateResourceObjectPositionTemplatePropertyCommand())
+            properties = listOf(createResourceObjectPositionTemplatePropertyCommand())
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,

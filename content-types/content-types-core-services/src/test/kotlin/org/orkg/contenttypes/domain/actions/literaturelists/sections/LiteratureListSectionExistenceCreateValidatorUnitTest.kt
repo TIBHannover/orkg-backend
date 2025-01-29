@@ -16,8 +16,8 @@ import org.orkg.contenttypes.domain.LiteratureListNotFound
 import org.orkg.contenttypes.domain.LiteratureListNotModifiable
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListListSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListTextSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListListSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListTextSectionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -73,8 +73,8 @@ internal class LiteratureListSectionExistenceCreateValidatorUnitTest : MockkBase
     companion object {
         @JvmStatic
         fun createLiteratureListSectionCommands(): Stream<Arguments> = Stream.of(
-            Arguments.of(dummyCreateLiteratureListListSectionCommand()),
-            Arguments.of(dummyCreateLiteratureListTextSectionCommand())
+            Arguments.of(createLiteratureListListSectionCommand()),
+            Arguments.of(createLiteratureListTextSectionCommand())
         )
     }
 }

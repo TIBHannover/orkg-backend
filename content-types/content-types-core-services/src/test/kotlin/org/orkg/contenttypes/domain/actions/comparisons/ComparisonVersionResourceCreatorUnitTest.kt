@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
+import org.orkg.contenttypes.input.testing.fixtures.createComparisonCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -21,7 +21,7 @@ internal class ComparisonVersionResourceCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list create command, it crates a new literature list version resource`() {
-        val command = dummyCreateComparisonCommand()
+        val command = createComparisonCommand()
         val state = CreateComparisonState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(

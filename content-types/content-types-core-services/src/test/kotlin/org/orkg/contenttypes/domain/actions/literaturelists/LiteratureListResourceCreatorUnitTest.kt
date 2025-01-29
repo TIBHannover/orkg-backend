@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -21,7 +21,7 @@ internal class LiteratureListResourceCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list create command, it crates a new literature list resource`() {
-        val command = dummyCreateLiteratureListCommand()
+        val command = createLiteratureListCommand()
         val state = CreateLiteratureListState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(

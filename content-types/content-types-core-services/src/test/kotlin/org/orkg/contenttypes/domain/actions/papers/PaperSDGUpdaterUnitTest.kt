@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -28,7 +28,7 @@ internal class PaperSDGUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a paper update command, when SDGs are not set, it does nothing`() {
         val paper = createPaper()
-        val command = dummyUpdatePaperCommand().copy(sustainableDevelopmentGoals = null)
+        val command = updatePaperCommand().copy(sustainableDevelopmentGoals = null)
         val state = UpdatePaperState(paper)
 
         val result = paperSDGUpdater(command, state)
@@ -48,7 +48,7 @@ internal class PaperSDGUpdaterUnitTest : MockkBaseTest {
                 ObjectIdAndLabel(ThingId("SDG_4"), "Quality Education")
             )
         )
-        val command = dummyUpdatePaperCommand()
+        val command = updatePaperCommand()
         val state = UpdatePaperState(paper)
 
         val result = paperSDGUpdater(command, state)
@@ -63,7 +63,7 @@ internal class PaperSDGUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a paper update command, when SDGs have changed, it updates the SDG statements`() {
         val paper = createPaper()
-        val command = dummyUpdatePaperCommand()
+        val command = updatePaperCommand()
         val statements = listOf(
             createStatement(
                 subject = createResource(command.paperId),

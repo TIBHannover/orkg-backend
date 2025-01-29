@@ -16,11 +16,11 @@ import org.orkg.contenttypes.domain.InvalidDatatype
 import org.orkg.contenttypes.domain.InvalidMaxCount
 import org.orkg.contenttypes.domain.InvalidMinCount
 import org.orkg.contenttypes.domain.InvalidRegexPattern
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateNumberLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateOtherLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateStringLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateUntypedTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createNumberLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createOtherLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createStringLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createUntypedTemplatePropertyCommand
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidDescription
@@ -40,7 +40,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given an untyped template property definition, when validating, it returns success`() {
-        val property = dummyCreateUntypedTemplatePropertyCommand()
+        val property = createUntypedTemplatePropertyCommand()
 
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
 
@@ -51,7 +51,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literal template property definition, when validating, it returns success`() {
-        val property = dummyCreateOtherLiteralTemplatePropertyCommand()
+        val property = createOtherLiteralTemplatePropertyCommand()
 
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.datatype) } returns Optional.of(createClass(property.datatype))
@@ -64,7 +64,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a resource template property definition, when validating, it returns success`() {
-        val property = dummyCreateResourceTemplatePropertyCommand()
+        val property = createResourceTemplatePropertyCommand()
 
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.`class`) } returns Optional.of(createClass(property.`class`))
@@ -77,7 +77,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property definition, when min count is invalid, it throws an exception`() {
-        val property = dummyCreateOtherLiteralTemplatePropertyCommand().copy(minCount = -1)
+        val property = createOtherLiteralTemplatePropertyCommand().copy(minCount = -1)
         val exception = InvalidMinCount(property.minCount!!)
 
         assertThrows<InvalidMinCount> { abstractTemplatePropertyValidator.validate(property) } shouldBe exception
@@ -85,7 +85,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property definition, when max count is invalid, it throws an exception`() {
-        val property = dummyCreateOtherLiteralTemplatePropertyCommand().copy(maxCount = -1)
+        val property = createOtherLiteralTemplatePropertyCommand().copy(maxCount = -1)
         val exception = InvalidMaxCount(property.maxCount!!)
 
         assertThrows<InvalidMaxCount> { abstractTemplatePropertyValidator.validate(property) } shouldBe exception
@@ -93,7 +93,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property definition, when max count is lower than min count, it throws an exception`() {
-        val property = dummyCreateOtherLiteralTemplatePropertyCommand().copy(minCount = 2, maxCount = 1)
+        val property = createOtherLiteralTemplatePropertyCommand().copy(minCount = 2, maxCount = 1)
         val exception = InvalidCardinality(property.minCount!!, property.maxCount!!)
 
         assertThrows<InvalidCardinality> { abstractTemplatePropertyValidator.validate(property) } shouldBe exception
@@ -101,7 +101,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property definition, when max count is zero and min count is more than zero, it returns success`() {
-        val property = dummyCreateUntypedTemplatePropertyCommand().copy(minCount = 1, maxCount = 0)
+        val property = createUntypedTemplatePropertyCommand().copy(minCount = 1, maxCount = 0)
 
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
 
@@ -112,7 +112,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property definition, when path predicate does not exist, it throws an exception`() {
-        val property = dummyCreateOtherLiteralTemplatePropertyCommand()
+        val property = createOtherLiteralTemplatePropertyCommand()
 
         every { predicateRepository.findById(property.path) } returns Optional.empty()
 
@@ -123,7 +123,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literal template property definition, when datatype does not exist, it throws an exception`() {
-        val property = dummyCreateOtherLiteralTemplatePropertyCommand()
+        val property = createOtherLiteralTemplatePropertyCommand()
 
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.datatype) } returns Optional.empty()
@@ -136,7 +136,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a resource template property definition, when class does not exist, it throws an exception`() {
-        val property = dummyCreateResourceTemplatePropertyCommand()
+        val property = createResourceTemplatePropertyCommand()
 
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.`class`) } returns Optional.empty()
@@ -149,7 +149,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property definition, when label is invalid, it throws an exception`() {
-        val property = dummyCreateResourceTemplatePropertyCommand().copy(label = "\n")
+        val property = createResourceTemplatePropertyCommand().copy(label = "\n")
         assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }.asClue {
             it.property shouldBe "label"
         }
@@ -157,7 +157,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property definition, when placeholder is invalid, it throws an exception`() {
-        val property = dummyCreateResourceTemplatePropertyCommand().copy(placeholder = "\n")
+        val property = createResourceTemplatePropertyCommand().copy(placeholder = "\n")
         assertThrows<InvalidLabel> { abstractTemplatePropertyValidator.validate(property) }.asClue {
             it.property shouldBe "placeholder"
         }
@@ -165,7 +165,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template property definition, when description is invalid, it throws an exception`() {
-        val property = dummyCreateResourceTemplatePropertyCommand().copy(description = " ")
+        val property = createResourceTemplatePropertyCommand().copy(description = " ")
         assertThrows<InvalidDescription> { abstractTemplatePropertyValidator.validate(property) }.asClue {
             it.property shouldBe "description"
         }
@@ -173,7 +173,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a string template property definition, when datatype does not match xsd string, it throws an exception`() {
-        val property = dummyCreateStringLiteralTemplatePropertyCommand().copy(datatype = Classes.integer)
+        val property = createStringLiteralTemplatePropertyCommand().copy(datatype = Classes.integer)
         val exception = InvalidDatatype(property.datatype, Classes.string)
 
         assertThrows<InvalidDatatype> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message
@@ -181,7 +181,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a string template property definition, when regex pattern is invalid, it throws an exception`() {
-        val property = dummyCreateStringLiteralTemplatePropertyCommand().copy(pattern = "\\")
+        val property = createStringLiteralTemplatePropertyCommand().copy(pattern = "\\")
         val exception = InvalidRegexPattern(property.pattern!!, RuntimeException())
 
         assertThrows<InvalidRegexPattern> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message
@@ -189,7 +189,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a string template property definition, when regex pattern is valid, it returns success`() {
-        val property = dummyCreateStringLiteralTemplatePropertyCommand()
+        val property = createStringLiteralTemplatePropertyCommand()
 
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.datatype) } returns Optional.of(createClass(property.datatype))
@@ -202,7 +202,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a string template property definition, when regex pattern is null, it returns success`() {
-        val property = dummyCreateStringLiteralTemplatePropertyCommand().copy(pattern = null)
+        val property = createStringLiteralTemplatePropertyCommand().copy(pattern = null)
 
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.datatype) } returns Optional.of(createClass(property.datatype))
@@ -215,7 +215,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a number template property definition, when datatype does not match xsd integer, decimal or float, it throws an exception`() {
-        val property = dummyCreateNumberLiteralTemplatePropertyCommand().copy(datatype = Classes.string)
+        val property = createNumberLiteralTemplatePropertyCommand().copy(datatype = Classes.string)
         val exception = InvalidDatatype(
             property.datatype, *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray()
         )
@@ -225,7 +225,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a number template property definition, when bounds are valid, it returns success`() {
-        val property = dummyCreateNumberLiteralTemplatePropertyCommand()
+        val property = createNumberLiteralTemplatePropertyCommand()
 
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.datatype) } returns Optional.of(createClass(property.datatype))
@@ -238,7 +238,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a number template property definition, when min bound is null, it returns success`() {
-        val property = dummyCreateNumberLiteralTemplatePropertyCommand().copy(minInclusive = null)
+        val property = createNumberLiteralTemplatePropertyCommand().copy(minInclusive = null)
 
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.datatype) } returns Optional.of(createClass(property.datatype))
@@ -251,7 +251,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a number template property definition, when max bound is null, it returns success`() {
-        val property = dummyCreateNumberLiteralTemplatePropertyCommand().copy(minInclusive = null)
+        val property = createNumberLiteralTemplatePropertyCommand().copy(minInclusive = null)
 
         every { predicateRepository.findById(property.path) } returns Optional.of(createPredicate(property.path))
         every { classRepository.findById(property.datatype) } returns Optional.of(createClass(property.datatype))
@@ -264,7 +264,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a number template property definition, when min bound is higher than max bound, it throws an exception`() {
-        val property = dummyCreateNumberLiteralTemplatePropertyCommand().copy(minInclusive = RealNumber(5), maxInclusive = RealNumber(2))
+        val property = createNumberLiteralTemplatePropertyCommand().copy(minInclusive = RealNumber(5), maxInclusive = RealNumber(2))
         val exception = InvalidBounds(5, 2)
 
         assertThrows<InvalidBounds> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message

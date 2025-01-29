@@ -12,7 +12,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateCommand
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
@@ -23,7 +23,7 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, it updates the template resource`() {
-        val command = dummyUpdateTemplateCommand()
+        val command = updateTemplateCommand()
         val state = UpdateTemplateState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -49,7 +49,7 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when observatories are empty, it removes the associated observatory`() {
-        val command = dummyUpdateTemplateCommand().copy(observatories = emptyList())
+        val command = updateTemplateCommand().copy(observatories = emptyList())
         val state = UpdateTemplateState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -75,7 +75,7 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when observatories are not set, it does not update the associated observatory`() {
-        val command = dummyUpdateTemplateCommand().copy(observatories = null)
+        val command = updateTemplateCommand().copy(observatories = null)
         val state = UpdateTemplateState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -101,7 +101,7 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when organizations are empty, it removes the associated organizations`() {
-        val command = dummyUpdateTemplateCommand().copy(organizations = emptyList())
+        val command = updateTemplateCommand().copy(organizations = emptyList())
         val state = UpdateTemplateState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -127,7 +127,7 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when organizations are not set, it does not update the associated organizations`() {
-        val command = dummyUpdateTemplateCommand().copy(organizations = null)
+        val command = updateTemplateCommand().copy(organizations = null)
         val state = UpdateTemplateState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(

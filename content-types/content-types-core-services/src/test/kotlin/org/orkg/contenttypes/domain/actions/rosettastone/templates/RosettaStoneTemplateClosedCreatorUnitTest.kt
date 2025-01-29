@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneTemplateCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
@@ -26,7 +26,7 @@ internal class RosettaStoneTemplateClosedCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a rosetta stone template create command, then it creates a new closed statement`() {
-        val command = dummyCreateRosettaStoneTemplateCommand()
+        val command = createRosettaStoneTemplateCommand()
         val rosettaStoneTemplateId = ThingId("R123")
         val state = CreateRosettaStoneTemplateState(
             rosettaStoneTemplateId = rosettaStoneTemplateId

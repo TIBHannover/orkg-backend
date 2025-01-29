@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
@@ -24,7 +24,7 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list create command, when sections are empty, it does nothing`() {
         val literatureListId = ThingId("R123")
-        val command = dummyCreateLiteratureListCommand().copy(
+        val command = createLiteratureListCommand().copy(
             sections = emptyList()
         )
         val state = CreateLiteratureListState(
@@ -37,7 +37,7 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list create command, when sections are not empty, it creates each section and links it to the literature list`() {
         val literatureListId = ThingId("R123")
-        val command = dummyCreateLiteratureListCommand()
+        val command = createLiteratureListCommand()
         val state = CreateLiteratureListState(
             literatureListId = literatureListId
         )

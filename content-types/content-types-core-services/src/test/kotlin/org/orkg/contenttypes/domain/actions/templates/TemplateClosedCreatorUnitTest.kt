@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
@@ -26,7 +26,7 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, when closed is true, it creates a new statement`() {
-        val command = dummyCreateTemplateCommand()
+        val command = createTemplateCommand()
         val templateId = ThingId("R123")
         val state = CreateTemplateState(
             templateId = templateId
@@ -78,7 +78,7 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, when closed is false, it does not create a statement`() {
-        val command = dummyCreateTemplateCommand().copy(
+        val command = createTemplateCommand().copy(
             isClosed = false
         )
         val templateId = ThingId("R123")

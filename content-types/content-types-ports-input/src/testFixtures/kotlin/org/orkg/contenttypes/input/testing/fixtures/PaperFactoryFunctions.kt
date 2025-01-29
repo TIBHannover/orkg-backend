@@ -19,7 +19,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 
-fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
+fun createPaperCommand() = CreatePaperUseCase.CreateCommand(
     contributorId = ContributorId("9d791767-245b-46e1-b260-2c00fb34efda"),
     title = "test",
     researchFields = listOf(ThingId("R12")),
@@ -119,7 +119,7 @@ fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
     extractionMethod = ExtractionMethod.MANUAL
 )
 
-fun dummyUpdatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
+fun updatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
     paperId = ThingId("R001"),
     contributorId = ContributorId("9d791767-245b-46e1-b260-2c00fb34efda"),
     title = "test",
@@ -167,7 +167,7 @@ fun dummyUpdatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
     verified = false
 )
 
-fun dummyPublishPaperCommand() = PublishPaperUseCase.PublishCommand(
+fun publishPaperCommand() = PublishPaperUseCase.PublishCommand(
     id = ThingId("R123"),
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     subject = "subject of the paper",

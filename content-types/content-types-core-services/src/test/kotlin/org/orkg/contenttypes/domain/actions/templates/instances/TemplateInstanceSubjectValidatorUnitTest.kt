@@ -13,7 +13,7 @@ import org.orkg.contenttypes.domain.TemplateInstanceService
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -26,7 +26,7 @@ internal class TemplateInstanceSubjectValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template instance update command, when validating its subject, it returns success`() {
-        val command = dummyUpdateTemplateInstanceCommand()
+        val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
             template = createTemplate()
         )
@@ -54,7 +54,7 @@ internal class TemplateInstanceSubjectValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template instance update command, when subject resource is not found, it throws an exception`() {
-        val command = dummyUpdateTemplateInstanceCommand()
+        val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
             template = createTemplate()
         )

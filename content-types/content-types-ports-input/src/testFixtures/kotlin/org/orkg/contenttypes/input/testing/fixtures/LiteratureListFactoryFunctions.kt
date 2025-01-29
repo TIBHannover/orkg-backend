@@ -23,7 +23,7 @@ import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
 
-fun dummyCreateLiteratureListCommand() = CreateLiteratureListUseCase.CreateCommand(
+fun createLiteratureListCommand() = CreateLiteratureListUseCase.CreateCommand(
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     title = "Updated dummy LiteratureList Label",
     researchFields = listOf(ThingId("R12")),
@@ -54,12 +54,12 @@ fun dummyCreateLiteratureListCommand() = CreateLiteratureListUseCase.CreateComma
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     extractionMethod = ExtractionMethod.MANUAL,
     sections = listOf(
-        dummyLiteratureListTextSectionDefinition(),
-        dummyLiteratureListListSectionDefinition()
+        literatureListTextSectionDefinition(),
+        literatureListListSectionDefinition()
     )
 )
 
-fun dummyUpdateLiteratureListCommand() = UpdateLiteratureListUseCase.UpdateCommand(
+fun updateLiteratureListCommand() = UpdateLiteratureListUseCase.UpdateCommand(
     literatureListId = ThingId("R123"),
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     title = "Updated dummy LiteratureList Label",
@@ -91,13 +91,13 @@ fun dummyUpdateLiteratureListCommand() = UpdateLiteratureListUseCase.UpdateComma
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     extractionMethod = ExtractionMethod.MANUAL,
     sections = listOf(
-        dummyLiteratureListTextSectionDefinition(),
-        dummyLiteratureListListSectionDefinition()
+        literatureListTextSectionDefinition(),
+        literatureListListSectionDefinition()
     ),
     visibility = Visibility.DEFAULT
 )
 
-fun dummyCreateLiteratureListListSectionCommand() = CreateLiteratureListSectionUseCase.CreateListSectionCommand(
+fun createLiteratureListListSectionCommand() = CreateLiteratureListSectionUseCase.CreateListSectionCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
     index = null,
@@ -107,7 +107,7 @@ fun dummyCreateLiteratureListListSectionCommand() = CreateLiteratureListSectionU
     )
 )
 
-fun dummyCreateLiteratureListTextSectionCommand() = CreateLiteratureListSectionUseCase.CreateTextSectionCommand(
+fun createLiteratureListTextSectionCommand() = CreateLiteratureListSectionUseCase.CreateTextSectionCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
     index = null,
@@ -116,7 +116,7 @@ fun dummyCreateLiteratureListTextSectionCommand() = CreateLiteratureListSectionU
     text = "updated text section contents"
 )
 
-fun dummyUpdateLiteratureListListSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateListSectionCommand(
+fun updateLiteratureListListSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateListSectionCommand(
     literatureListSectionId = ThingId("R456"),
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
@@ -126,7 +126,7 @@ fun dummyUpdateLiteratureListListSectionCommand() = UpdateLiteratureListSectionU
     )
 )
 
-fun dummyUpdateLiteratureListTextSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand(
+fun updateLiteratureListTextSectionCommand() = UpdateLiteratureListSectionUseCase.UpdateTextSectionCommand(
     literatureListSectionId = ThingId("R456"),
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
@@ -135,7 +135,7 @@ fun dummyUpdateLiteratureListTextSectionCommand() = UpdateLiteratureListSectionU
     text = "updated text section contents"
 )
 
-fun dummyLiteratureListListSectionDefinition(): LiteratureListListSectionCommand =
+fun literatureListListSectionDefinition(): LiteratureListListSectionCommand =
     LiteratureListListSectionCommand(
         entries = listOf(
             Entry(ThingId("R2315"), "dummy description"),
@@ -143,14 +143,14 @@ fun dummyLiteratureListListSectionDefinition(): LiteratureListListSectionCommand
         )
     )
 
-fun dummyLiteratureListTextSectionDefinition(): LiteratureListTextSectionCommand =
+fun literatureListTextSectionDefinition(): LiteratureListTextSectionCommand =
     LiteratureListTextSectionCommand(
         heading = "Updated Heading",
         headingSize = 3,
         text = "updated text section contents"
     )
 
-fun dummyDeleteLiteratureListSectionCommand() = DeleteLiteratureListSectionUseCase.DeleteCommand(
+fun deleteLiteratureListSectionCommand() = DeleteLiteratureListSectionUseCase.DeleteCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     literatureListId = ThingId("R123"),
     sectionId = ThingId("R456")
@@ -171,7 +171,7 @@ fun LiteratureListTextSection.toLiteratureListTextSectionDefinition(): Literatur
 fun LiteratureListListSection.Entry.toDefinitionEntry(): Entry =
     Entry(value.id, description)
 
-fun dummyPublishLiteratureListCommand() = PublishLiteratureListUseCase.PublishCommand(
+fun publishLiteratureListCommand() = PublishLiteratureListUseCase.PublishCommand(
     id = ThingId("R123"),
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     changelog = "new release"

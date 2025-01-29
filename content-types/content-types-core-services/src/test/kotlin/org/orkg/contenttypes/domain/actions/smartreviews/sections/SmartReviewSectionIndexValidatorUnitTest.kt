@@ -10,7 +10,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewVisualizationSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewVisualizationSectionCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createStatement
@@ -24,7 +24,7 @@ internal class SmartReviewSectionIndexValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review section create command, when index is not specified, it does not load any statements`() {
-        val command = dummyCreateSmartReviewVisualizationSectionCommand()
+        val command = createSmartReviewVisualizationSectionCommand()
         val state = CreateSmartReviewSectionState(contributionId = ThingId("R54563"))
 
         val result = smartReviewSectionIndexValidator(command, state)
@@ -38,7 +38,7 @@ internal class SmartReviewSectionIndexValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review section create command, when index is specified and valid, it fetches and saves all hasSection statements to the state`() {
-        val command = dummyCreateSmartReviewVisualizationSectionCommand().copy(index = 7)
+        val command = createSmartReviewVisualizationSectionCommand().copy(index = 7)
         val state = CreateSmartReviewSectionState(contributionId = ThingId("R54563"))
         val statements = listOf(createStatement())
 

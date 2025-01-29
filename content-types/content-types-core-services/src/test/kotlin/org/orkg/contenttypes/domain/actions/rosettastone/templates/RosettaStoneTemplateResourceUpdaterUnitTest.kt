@@ -12,7 +12,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateRosettaStoneTemplateCommand
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
@@ -23,7 +23,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a rosetta stone template update command, it updates the rosetta stone template resource`() {
-        val command = dummyUpdateRosettaStoneTemplateCommand()
+        val command = updateRosettaStoneTemplateCommand()
         val state = UpdateRosettaStoneTemplateState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -49,7 +49,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a rosetta stone template, when observatories are empty, it removes the associated observatory`() {
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(observatories = emptyList())
+        val command = updateRosettaStoneTemplateCommand().copy(observatories = emptyList())
         val state = UpdateRosettaStoneTemplateState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -73,7 +73,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a rosetta stone template, when observatories are not set, it does not update the associated observatory`() {
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(observatories = null)
+        val command = updateRosettaStoneTemplateCommand().copy(observatories = null)
         val state = UpdateRosettaStoneTemplateState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -97,7 +97,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a rosetta stone template, when organizations are empty, it removes the associated organizations`() {
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(organizations = emptyList())
+        val command = updateRosettaStoneTemplateCommand().copy(organizations = emptyList())
         val state = UpdateRosettaStoneTemplateState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -121,7 +121,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a rosetta stone template, when organizations are not set, it does not update the associated organizations`() {
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(organizations = null)
+        val command = updateRosettaStoneTemplateCommand().copy(organizations = null)
         val state = UpdateRosettaStoneTemplateState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(

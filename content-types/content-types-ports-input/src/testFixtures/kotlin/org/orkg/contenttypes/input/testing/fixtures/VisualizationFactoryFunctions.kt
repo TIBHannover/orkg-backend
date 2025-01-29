@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
 import org.orkg.graph.domain.ExtractionMethod
 
-fun dummyCreateVisualizationCommand() = CreateVisualizationUseCase.CreateCommand(
+fun createVisualizationCommand() = CreateVisualizationUseCase.CreateCommand(
     contributorId = ContributorId("0b3d7108-ea98-448f-85ef-e67a63a8b32b"),
     title = "test",
     description = "visualization description",

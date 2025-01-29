@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
@@ -25,7 +25,7 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, when formatted label is not null, it creates a new statement`() {
-        val command = dummyCreateTemplateCommand()
+        val command = createTemplateCommand()
         val templateId = ThingId("R123")
         val state = CreateTemplateState(
             templateId = templateId
@@ -75,7 +75,7 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, when formatted label is null, it does not create a statement`() {
-        val command = dummyCreateTemplateCommand().copy(
+        val command = createTemplateCommand().copy(
             formattedLabel = null
         )
         val templateId = ThingId("R123")

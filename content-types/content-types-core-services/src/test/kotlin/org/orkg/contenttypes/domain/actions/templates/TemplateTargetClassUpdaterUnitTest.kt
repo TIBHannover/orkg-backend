@@ -13,7 +13,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createStatement
 
@@ -24,7 +24,7 @@ internal class TemplateTargetClassUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when new target class has changed, it updates the target class statement`() {
-        val command = dummyUpdateTemplateCommand()
+        val command = updateTemplateCommand()
         val state = UpdateTemplateState(
             template = createTemplate(),
             statements = mapOf(command.templateId to listOf(createStatement()))
@@ -51,7 +51,7 @@ internal class TemplateTargetClassUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when target class did not change, id does nothing`() {
-        val command = dummyUpdateTemplateCommand().copy(targetClass = ThingId("targetClass"))
+        val command = updateTemplateCommand().copy(targetClass = ThingId("targetClass"))
         val state = UpdateTemplateState(template = createTemplate())
 
         val result = templateTargetClassUpdater(command, state)
@@ -63,7 +63,7 @@ internal class TemplateTargetClassUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when new target class is not set, id does nothing`() {
-        val command = dummyUpdateTemplateCommand().copy(targetClass = null)
+        val command = updateTemplateCommand().copy(targetClass = null)
         val state = UpdateTemplateState(template = createTemplate())
 
         val result = templateTargetClassUpdater(command, state)

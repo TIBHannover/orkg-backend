@@ -16,11 +16,11 @@ import org.orkg.contenttypes.domain.testing.fixtures.createResourceTemplatePrope
 import org.orkg.contenttypes.domain.testing.fixtures.createStringLiteralTemplateProperty
 import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProperty
 import org.orkg.contenttypes.input.TemplatePropertyDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateNumberLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateOtherLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateResourceTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateStringLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateUntypedTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateNumberLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateOtherLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateStringLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateUntypedTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.toTemplatePropertyDefinition
 
 internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
@@ -36,11 +36,11 @@ internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template update command, when no previous template properties exist, it validates each template property`() {
         val command = listOf(
-            dummyUpdateUntypedTemplatePropertyCommand(),
-            dummyUpdateStringLiteralTemplatePropertyCommand(),
-            dummyUpdateNumberLiteralTemplatePropertyCommand(),
-            dummyUpdateOtherLiteralTemplatePropertyCommand(),
-            dummyUpdateResourceTemplatePropertyCommand()
+            updateUntypedTemplatePropertyCommand(),
+            updateStringLiteralTemplatePropertyCommand(),
+            updateNumberLiteralTemplatePropertyCommand(),
+            updateOtherLiteralTemplatePropertyCommand(),
+            updateResourceTemplatePropertyCommand()
         )
         val state = emptyList<TemplateProperty>()
 
@@ -58,11 +58,11 @@ internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template update command, when new template properties are different, it validates each template property`() {
         val command = listOf(
-            dummyUpdateUntypedTemplatePropertyCommand(),
-            dummyUpdateStringLiteralTemplatePropertyCommand(),
-            dummyUpdateNumberLiteralTemplatePropertyCommand(),
-            dummyUpdateOtherLiteralTemplatePropertyCommand(),
-            dummyUpdateResourceTemplatePropertyCommand()
+            updateUntypedTemplatePropertyCommand(),
+            updateStringLiteralTemplatePropertyCommand(),
+            updateNumberLiteralTemplatePropertyCommand(),
+            updateOtherLiteralTemplatePropertyCommand(),
+            updateResourceTemplatePropertyCommand()
         )
         val state = listOf(
             createUntypedTemplateProperty(),

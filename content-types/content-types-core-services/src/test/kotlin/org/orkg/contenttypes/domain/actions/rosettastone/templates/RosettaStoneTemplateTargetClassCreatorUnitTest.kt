@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
@@ -28,7 +28,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a rosetta stone template create command, it crates a new target class and links it to the root resource and creates a new example usage statement`() {
-        val command = dummyCreateRosettaStoneTemplateCommand()
+        val command = createRosettaStoneTemplateCommand()
         val state = CreateRosettaStoneTemplateState(
             rosettaStoneTemplateId = ThingId("R45665")
         )

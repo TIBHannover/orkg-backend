@@ -12,7 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.PublishComparisonState
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
-import org.orkg.contenttypes.input.testing.fixtures.dummyPublishComparisonCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishComparisonCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
@@ -28,7 +28,7 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a comparison publish command, it crates a new previous version statement and updates the previous version comparison class labels`() {
         val comparison = createComparison()
-        val command = dummyPublishComparisonCommand().copy(id = comparison.id)
+        val command = publishComparisonCommand().copy(id = comparison.id)
         val comparisonVersionId = ThingId("R165")
         val state = PublishComparisonState(comparison, comparisonVersionId)
 
@@ -71,7 +71,7 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
         val comparison = createComparison().let {
             it.copy(versions = it.versions.copy(it.versions.head, emptyList()))
         }
-        val command = dummyPublishComparisonCommand().copy(id = comparison.id)
+        val command = publishComparisonCommand().copy(id = comparison.id)
         val comparisonVersionId = ThingId("R165")
         val state = PublishComparisonState(comparison, comparisonVersionId)
 

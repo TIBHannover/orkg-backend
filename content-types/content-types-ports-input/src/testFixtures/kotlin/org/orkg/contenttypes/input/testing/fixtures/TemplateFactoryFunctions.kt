@@ -29,7 +29,7 @@ import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 
-fun dummyCreateTemplateCommand() = CreateTemplateUseCase.CreateCommand(
+fun createTemplateCommand() = CreateTemplateUseCase.CreateCommand(
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     label = "Dummy Template Label",
     description = "Some description about the template",
@@ -37,11 +37,11 @@ fun dummyCreateTemplateCommand() = CreateTemplateUseCase.CreateCommand(
     targetClass = ThingId("targetClass"),
     relations = createTemplateRelations(),
     properties = listOf(
-        dummyCreateUntypedTemplatePropertyCommand(),
-        dummyCreateStringLiteralTemplatePropertyCommand(),
-        dummyCreateNumberLiteralTemplatePropertyCommand(),
-        dummyCreateOtherLiteralTemplatePropertyCommand(),
-        dummyCreateResourceTemplatePropertyCommand()
+        createUntypedTemplatePropertyCommand(),
+        createStringLiteralTemplatePropertyCommand(),
+        createNumberLiteralTemplatePropertyCommand(),
+        createOtherLiteralTemplatePropertyCommand(),
+        createResourceTemplatePropertyCommand()
     ),
     isClosed = true,
     observatories = listOf(
@@ -55,7 +55,7 @@ fun dummyCreateTemplateCommand() = CreateTemplateUseCase.CreateCommand(
     extractionMethod = ExtractionMethod.MANUAL
 )
 
-fun dummyUpdateTemplateCommand() = UpdateTemplateUseCase.UpdateCommand(
+fun updateTemplateCommand() = UpdateTemplateUseCase.UpdateCommand(
     templateId = ThingId("R123"),
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     label = "Updated dummy Template Label",
@@ -68,11 +68,11 @@ fun dummyUpdateTemplateCommand() = UpdateTemplateUseCase.UpdateCommand(
         predicate = ThingId("P23")
     ),
     properties = listOf(
-        dummyUpdateUntypedTemplatePropertyCommand(),
-        dummyUpdateStringLiteralTemplatePropertyCommand(),
-        dummyUpdateNumberLiteralTemplatePropertyCommand(),
-        dummyUpdateOtherLiteralTemplatePropertyCommand(),
-        dummyUpdateResourceTemplatePropertyCommand()
+        updateUntypedTemplatePropertyCommand(),
+        updateStringLiteralTemplatePropertyCommand(),
+        updateNumberLiteralTemplatePropertyCommand(),
+        updateOtherLiteralTemplatePropertyCommand(),
+        updateResourceTemplatePropertyCommand()
     ),
     isClosed = true,
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
@@ -81,7 +81,7 @@ fun dummyUpdateTemplateCommand() = UpdateTemplateUseCase.UpdateCommand(
     visibility = Visibility.DEFAULT
 )
 
-fun dummyCreateUntypedTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateUntypedPropertyCommand(
+fun createUntypedTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateUntypedPropertyCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     templateId = ThingId("R123"),
     label = "property label",
@@ -92,7 +92,7 @@ fun dummyCreateUntypedTemplatePropertyCommand() = CreateTemplatePropertyUseCase.
     path = Predicates.field
 )
 
-fun dummyCreateStringLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateStringLiteralPropertyCommand(
+fun createStringLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateStringLiteralPropertyCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     templateId = ThingId("R123"),
     label = "literal property label",
@@ -105,7 +105,7 @@ fun dummyCreateStringLiteralTemplatePropertyCommand() = CreateTemplatePropertyUs
     datatype = Classes.string,
 )
 
-fun dummyCreateNumberLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateNumberLiteralPropertyCommand(
+fun createNumberLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateNumberLiteralPropertyCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     templateId = ThingId("R123"),
     label = "number literal property label",
@@ -119,7 +119,7 @@ fun dummyCreateNumberLiteralTemplatePropertyCommand() = CreateTemplatePropertyUs
     datatype = Classes.integer,
 )
 
-fun dummyCreateOtherLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateOtherLiteralPropertyCommand(
+fun createOtherLiteralTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateOtherLiteralPropertyCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     templateId = ThingId("R123"),
     label = "literal property label",
@@ -131,7 +131,7 @@ fun dummyCreateOtherLiteralTemplatePropertyCommand() = CreateTemplatePropertyUse
     datatype = ThingId("C25"),
 )
 
-fun dummyCreateResourceTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateResourcePropertyCommand(
+fun createResourceTemplatePropertyCommand() = CreateTemplatePropertyUseCase.CreateResourcePropertyCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     templateId = ThingId("R123"),
     label = "resource property label",
@@ -143,7 +143,7 @@ fun dummyCreateResourceTemplatePropertyCommand() = CreateTemplatePropertyUseCase
     `class` = ThingId("C28")
 )
 
-fun dummyUpdateUntypedTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand(
+fun updateUntypedTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand(
     templatePropertyId = ThingId("R23"),
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     templateId = ThingId("R123"),
@@ -155,7 +155,7 @@ fun dummyUpdateUntypedTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.
     path = Predicates.description
 )
 
-fun dummyUpdateStringLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateStringLiteralPropertyCommand(
+fun updateStringLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateStringLiteralPropertyCommand(
     templatePropertyId = ThingId("R24"),
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     templateId = ThingId("R123"),
@@ -169,7 +169,7 @@ fun dummyUpdateStringLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUs
     datatype = Classes.string,
 )
 
-fun dummyUpdateNumberLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateNumberLiteralPropertyCommand(
+fun updateNumberLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateNumberLiteralPropertyCommand(
     templatePropertyId = ThingId("R25"),
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     templateId = ThingId("R123"),
@@ -184,7 +184,7 @@ fun dummyUpdateNumberLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUs
     datatype = Classes.decimal,
 )
 
-fun dummyUpdateOtherLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateOtherLiteralPropertyCommand(
+fun updateOtherLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateOtherLiteralPropertyCommand(
     templatePropertyId = ThingId("R26"),
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     templateId = ThingId("R123"),
@@ -197,7 +197,7 @@ fun dummyUpdateOtherLiteralTemplatePropertyCommand() = UpdateTemplatePropertyUse
     datatype = Classes.string,
 )
 
-fun dummyUpdateResourceTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateResourcePropertyCommand(
+fun updateResourceTemplatePropertyCommand() = UpdateTemplatePropertyUseCase.UpdateResourcePropertyCommand(
     templatePropertyId = ThingId("R27"),
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     templateId = ThingId("R123"),

@@ -13,7 +13,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.SubgraphCreator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
@@ -26,7 +26,7 @@ internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template instance update command, when updating the properties, it returns success`() {
-        val command = dummyUpdateTemplateInstanceCommand()
+        val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
             statementsToAdd = setOf(BakedStatement("R123", "P123", "L123"))
         )
@@ -67,7 +67,7 @@ internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template instance update command, when deleting outdated properties, it returns success`() {
-        val command = dummyUpdateTemplateInstanceCommand()
+        val command = updateTemplateInstanceCommand()
         val statementToRemove = createStatement()
         val state = UpdateTemplateInstanceState(
             statementsToRemove = setOf(BakedStatement(

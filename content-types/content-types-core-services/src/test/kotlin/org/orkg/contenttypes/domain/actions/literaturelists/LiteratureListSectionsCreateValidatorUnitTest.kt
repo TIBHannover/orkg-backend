@@ -10,7 +10,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListCommand
 
 internal class LiteratureListSectionsCreateValidatorUnitTest : MockkBaseTest {
     private val abstractLiteratureListSectionValidator: AbstractLiteratureListSectionValidator = mockk()
@@ -19,7 +19,7 @@ internal class LiteratureListSectionsCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list create command, when no literature list sections are defined, it does nothing`() {
-        val command = dummyCreateLiteratureListCommand().copy(sections = emptyList())
+        val command = createLiteratureListCommand().copy(sections = emptyList())
         val state = CreateLiteratureListState()
 
         literatureListSectionsCreateValidator(command, state).asClue {
@@ -30,7 +30,7 @@ internal class LiteratureListSectionsCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list create command, when validating literature list sections, it returns success`() {
-        val command = dummyCreateLiteratureListCommand()
+        val command = createLiteratureListCommand()
         val state = CreateLiteratureListState()
 
         every { abstractLiteratureListSectionValidator.validate(any(), any()) } just runs

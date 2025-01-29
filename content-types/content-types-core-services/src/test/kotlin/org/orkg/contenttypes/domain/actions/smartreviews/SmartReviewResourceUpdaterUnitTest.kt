@@ -12,7 +12,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewCommand
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
@@ -23,7 +23,7 @@ internal class SmartReviewResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review update command, it updates the smart review resource`() {
-        val command = dummyUpdateSmartReviewCommand()
+        val command = updateSmartReviewCommand()
         val state = UpdateSmartReviewState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -51,7 +51,7 @@ internal class SmartReviewResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review update command, when observatories are empty, it removes the associated observatory`() {
-        val command = dummyUpdateSmartReviewCommand().copy(observatories = emptyList())
+        val command = updateSmartReviewCommand().copy(observatories = emptyList())
         val state = UpdateSmartReviewState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -77,7 +77,7 @@ internal class SmartReviewResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review update command, when observatories are not set, it does not update the associated observatory`() {
-        val command = dummyUpdateSmartReviewCommand().copy(observatories = null)
+        val command = updateSmartReviewCommand().copy(observatories = null)
         val state = UpdateSmartReviewState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -103,7 +103,7 @@ internal class SmartReviewResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review update command, when organizations are empty, it removes the associated organizations`() {
-        val command = dummyUpdateSmartReviewCommand().copy(organizations = emptyList())
+        val command = updateSmartReviewCommand().copy(organizations = emptyList())
         val state = UpdateSmartReviewState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -129,7 +129,7 @@ internal class SmartReviewResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review update command, when organizations are not set, it does not update the associated organizations`() {
-        val command = dummyUpdateSmartReviewCommand().copy(organizations = null)
+        val command = updateSmartReviewCommand().copy(organizations = null)
         val state = UpdateSmartReviewState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(

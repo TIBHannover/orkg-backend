@@ -11,7 +11,7 @@ import org.orkg.common.Either
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.ThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
 
@@ -23,7 +23,7 @@ internal class TemplateInstanceThingDefinitionValidatorUnitTest : MockkBaseTest 
 
     @Test
     fun `Given a template instance update command, when validating its thing definitions, it returns success`() {
-        val command = dummyUpdateTemplateInstanceCommand()
+        val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState()
 
         val validatedIds = mapOf<String, Either<String, Thing>>(

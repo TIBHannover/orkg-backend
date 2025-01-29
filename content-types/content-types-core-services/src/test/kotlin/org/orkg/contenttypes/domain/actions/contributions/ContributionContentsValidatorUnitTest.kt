@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.input.ContributionDefinition
 import org.orkg.contenttypes.input.CreateContributionUseCase
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateContributionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createContributionCommand
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ThingNotFound
@@ -34,7 +34,7 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a contribution create command, when validating, it returns success`() {
-        val command = dummyCreateContributionCommand()
+        val command = createContributionCommand()
         val resource = createResource(id = ThingId("R3003"))
         val state = ContributionState(
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),
@@ -91,7 +91,7 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a contribution create command, when class of contribution does not exist, it throws an exception`() {
-        val command = dummyCreateContributionCommand()
+        val command = createContributionCommand()
         val resource = createResource(id = ThingId("R3003"))
         val state = ContributionState(
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),
@@ -114,7 +114,7 @@ internal class ContributionContentsValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a contribution create command, when class of contribution is not a class, it throws an exception`() {
-        val command = dummyCreateContributionCommand()
+        val command = createContributionCommand()
         val resource = createResource(id = ThingId("R3003"))
         val state = ContributionState(
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),

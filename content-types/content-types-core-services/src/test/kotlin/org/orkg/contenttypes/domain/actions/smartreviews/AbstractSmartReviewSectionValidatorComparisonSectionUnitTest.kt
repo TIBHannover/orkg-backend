@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ComparisonNotFound
-import org.orkg.contenttypes.input.testing.fixtures.dummySmartReviewComparisonSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.smartReviewComparisonSectionDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
@@ -17,7 +17,7 @@ import org.orkg.graph.testing.fixtures.createResource
 internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given a comparison section definition, when validating, it returns success`() {
-        val section = dummySmartReviewComparisonSectionDefinition()
+        val section = smartReviewComparisonSectionDefinition()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.comparison!!, classes = setOf(Classes.comparison))
 
@@ -32,7 +32,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
 
     @Test
     fun `Given a comparison section definition for a published comparison, when validating, it returns success`() {
-        val section = dummySmartReviewComparisonSectionDefinition()
+        val section = smartReviewComparisonSectionDefinition()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.comparison!!, classes = setOf(Classes.comparisonPublished))
 
@@ -47,7 +47,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
 
     @Test
     fun `Given a comparison section definition, when validating, it does not validate the comparison id when it is not set`() {
-        val section = dummySmartReviewComparisonSectionDefinition().copy(comparison = null)
+        val section = smartReviewComparisonSectionDefinition().copy(comparison = null)
         val validIds = mutableSetOf<ThingId>()
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
@@ -57,7 +57,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
 
     @Test
     fun `Given a comparison section definition, when validating, it does not check already valid ids`() {
-        val section = dummySmartReviewComparisonSectionDefinition()
+        val section = smartReviewComparisonSectionDefinition()
         val validIds = mutableSetOf(section.comparison!!)
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
@@ -67,7 +67,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
 
     @Test
     fun `Given a comparison section definition, when heading is invalid, it throws an exception`() {
-        val section = dummySmartReviewComparisonSectionDefinition().copy(
+        val section = smartReviewComparisonSectionDefinition().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
         val validIds = mutableSetOf<ThingId>()
@@ -77,7 +77,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
 
     @Test
     fun `Given a comparison section definition, when resource is not a comparison, it throws an exception`() {
-        val section = dummySmartReviewComparisonSectionDefinition()
+        val section = smartReviewComparisonSectionDefinition()
         val validIds = mutableSetOf<ThingId>()
         val resource = createResource(section.comparison!!, classes = setOf(Classes.visualization))
 
@@ -90,7 +90,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
 
     @Test
     fun `Given a comparison section definition, when comparison does not exist, it throws an exception`() {
-        val section = dummySmartReviewComparisonSectionDefinition()
+        val section = smartReviewComparisonSectionDefinition()
         val validIds = mutableSetOf<ThingId>()
 
         every { resourceRepository.findById(section.comparison!!) } returns Optional.empty()

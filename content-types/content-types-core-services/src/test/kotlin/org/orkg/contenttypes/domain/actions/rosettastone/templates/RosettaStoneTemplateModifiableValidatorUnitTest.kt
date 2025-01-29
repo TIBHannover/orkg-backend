@@ -13,7 +13,7 @@ import org.orkg.contenttypes.domain.RosettaStoneTemplateNotModifiable
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.testing.pageOf
 
@@ -26,7 +26,7 @@ internal class RosettaStoneTemplateModifiableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a rosetta stone template update command, when rosetta stone template is modifiable and template is used in a rosetta stone statement, it returns success`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(templateId = rosettaStoneTemplate.id)
+        val command = updateRosettaStoneTemplateCommand().copy(templateId = rosettaStoneTemplate.id)
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
         every {
@@ -55,7 +55,7 @@ internal class RosettaStoneTemplateModifiableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a rosetta stone template update command, when rosetta stone template is modifiable and template is not used in a rosetta stone statement, it returns success`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(templateId = rosettaStoneTemplate.id)
+        val command = updateRosettaStoneTemplateCommand().copy(templateId = rosettaStoneTemplate.id)
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
         every {
@@ -82,7 +82,7 @@ internal class RosettaStoneTemplateModifiableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a rosetta stone template update command, when rosetta stone template is not modifiable, it throws an exception`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate().copy(modifiable = false)
-        val command = dummyUpdateRosettaStoneTemplateCommand().copy(templateId = rosettaStoneTemplate.id)
+        val command = updateRosettaStoneTemplateCommand().copy(templateId = rosettaStoneTemplate.id)
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
         shouldThrow<RosettaStoneTemplateNotModifiable> { rosettaStoneTemplateModifiableValidator(command, state) }

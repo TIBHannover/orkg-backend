@@ -10,7 +10,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewCommand
 
 internal class SmartReviewSectionsCreateValidatorUnitTest : MockkBaseTest {
     private val abstractSmartReviewSectionValidator: AbstractSmartReviewSectionValidator = mockk()
@@ -19,7 +19,7 @@ internal class SmartReviewSectionsCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review create command, when no smart review sections are defined, it does nothing`() {
-        val command = dummyCreateSmartReviewCommand().copy(sections = emptyList())
+        val command = createSmartReviewCommand().copy(sections = emptyList())
         val state = CreateSmartReviewState()
 
         smartReviewSectionsCreateValidator(command, state).asClue {
@@ -30,7 +30,7 @@ internal class SmartReviewSectionsCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review create command, when validating smart review sections, it returns success`() {
-        val command = dummyCreateSmartReviewCommand()
+        val command = createSmartReviewCommand()
         val state = CreateSmartReviewState()
 
         every { abstractSmartReviewSectionValidator.validate(any(), any()) } just runs

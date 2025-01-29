@@ -16,7 +16,7 @@ import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.TemplateService
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -31,7 +31,7 @@ internal class TemplateExistenceValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template update command, when checking for template existence, it returns success`() {
         val template = createTemplate()
-        val command = dummyUpdateTemplateCommand().copy(templateId = template.id)
+        val command = updateTemplateCommand().copy(templateId = template.id)
         val state = UpdateTemplateState()
         val root = createResource(
             id = template.id,
@@ -59,7 +59,7 @@ internal class TemplateExistenceValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template update command, when checking for template existence and template is not found, it throws an exception`() {
         val template = createTemplate()
-        val command = dummyUpdateTemplateCommand().copy(templateId = template.id)
+        val command = updateTemplateCommand().copy(templateId = template.id)
         val state = UpdateTemplateState()
 
         every { resourceRepository.findById(template.id) } returns Optional.empty()

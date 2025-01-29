@@ -12,7 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.PublishPaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.testing.fixtures.createPaperPublishCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishPaperCommand
 import org.orkg.contenttypes.output.PaperPublishedRepository
 import org.orkg.graph.domain.Bundle
 import org.orkg.graph.domain.BundleConfiguration
@@ -31,7 +31,7 @@ internal class PaperVersionArchiverUnitTest : MockkBaseTest {
     @Test
     fun `Given a paper publish command, it archives all paper contribution statements`() {
         val paper = createPaper()
-        val command = createPaperPublishCommand().copy(id = paper.id)
+        val command = publishPaperCommand().copy(id = paper.id)
         val statements = listOf(createStatement()).groupBy { it.subject.id }
         val paperVersionId = ThingId("R321")
         val state = PublishPaperState(

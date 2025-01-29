@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -29,7 +29,7 @@ internal class PaperMentioningsUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a paper update command, when mentionings are not set, it does nothing`() {
         val paper = createPaper()
-        val command = dummyUpdatePaperCommand().copy(mentionings = null)
+        val command = updatePaperCommand().copy(mentionings = null)
         val state = UpdatePaperState(paper)
 
         val result = paperMentioningsUpdater(command, state)
@@ -57,7 +57,7 @@ internal class PaperMentioningsUpdaterUnitTest : MockkBaseTest {
                 )
             )
         )
-        val command = dummyUpdatePaperCommand()
+        val command = updatePaperCommand()
         val state = UpdatePaperState(paper)
 
         val result = paperMentioningsUpdater(command, state)
@@ -72,7 +72,7 @@ internal class PaperMentioningsUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a paper update command, when mentionings have changed, it updates the mentions statements`() {
         val paper = createPaper()
-        val command = dummyUpdatePaperCommand()
+        val command = updatePaperCommand()
         val statements = listOf(
             createStatement(
                 subject = createResource(command.paperId),

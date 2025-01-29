@@ -12,7 +12,7 @@ import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 
-fun dummyUpdateTemplateInstanceCommand() = UpdateTemplateInstanceUseCase.UpdateCommand(
+fun updateTemplateInstanceCommand() = UpdateTemplateInstanceUseCase.UpdateCommand(
     subject = ThingId("R123"),
     templateId = ThingId("R456"),
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),

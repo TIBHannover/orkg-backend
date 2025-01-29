@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreatePaperState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
@@ -24,7 +24,7 @@ internal class PaperIdentifierCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, it crates new paper identifiers`() {
-        val command = dummyCreatePaperCommand()
+        val command = createPaperCommand()
         val paperId = ThingId("R123")
         val state = CreatePaperState(paperId = paperId)
 
@@ -64,7 +64,7 @@ internal class PaperIdentifierCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when an unknown identifier is specified, it does not create the identifier`() {
-        val command = dummyCreatePaperCommand().copy(
+        val command = createPaperCommand().copy(
             identifiers = mapOf("unknown" to listOf("value"))
         )
         val paperId = ThingId("R123")

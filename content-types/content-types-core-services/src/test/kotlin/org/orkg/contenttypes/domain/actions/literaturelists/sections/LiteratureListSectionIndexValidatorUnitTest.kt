@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListSectionState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteratureListTextSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListTextSectionCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createStatement
@@ -23,7 +23,7 @@ internal class LiteratureListSectionIndexValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list section create command, when index is not specified, it does not load any statements`() {
-        val command = dummyCreateLiteratureListTextSectionCommand()
+        val command = createLiteratureListTextSectionCommand()
         val state = CreateLiteratureListSectionState()
 
         val result = literatureListSectionIndexValidator(command, state)
@@ -36,7 +36,7 @@ internal class LiteratureListSectionIndexValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list section create command, when index is specified and valid, it fetches and saves all hasSection statements to the state`() {
-        val command = dummyCreateLiteratureListTextSectionCommand().copy(index = 7)
+        val command = createLiteratureListTextSectionCommand().copy(index = 7)
         val state = CreateLiteratureListSectionState()
         val statements = listOf(createStatement())
 

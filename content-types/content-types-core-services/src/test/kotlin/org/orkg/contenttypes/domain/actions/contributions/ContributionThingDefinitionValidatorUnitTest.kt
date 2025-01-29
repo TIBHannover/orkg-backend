@@ -15,7 +15,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
 import org.orkg.contenttypes.input.ContributionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateContributionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createContributionCommand
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ClassRepository
@@ -31,7 +31,7 @@ internal class ContributionThingDefinitionValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a contribution create command, when validating its thing definitions, it returns success`() {
-        val command = dummyCreateContributionCommand()
+        val command = createContributionCommand()
         val state = ContributionState()
 
         val `class` = createClass(ThingId("R2000"))

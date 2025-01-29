@@ -13,7 +13,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.CreatePaperUseCase
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
@@ -27,7 +27,7 @@ internal class PaperThingDefinitionValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when validating its thing definitions, it returns success`() {
-        val command = dummyCreatePaperCommand()
+        val command = createPaperCommand()
         val state = CreatePaperState()
 
         val `class` = createClass(ThingId("R2000"))
@@ -49,7 +49,7 @@ internal class PaperThingDefinitionValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when no things are defined, it returns success`() {
-        val command = dummyCreatePaperCommand().let {
+        val command = createPaperCommand().let {
             it.copy(
                 contents = CreatePaperUseCase.CreateCommand.PaperContents(
                     resources = emptyMap(),

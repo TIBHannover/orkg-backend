@@ -19,12 +19,12 @@ import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionValidator
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewComparisonSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewOntologySectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewPredicateSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewResourceSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewTextSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewVisualizationSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewComparisonSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewOntologySectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewPredicateSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewResourceSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewTextSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewVisualizationSectionCommand
 
 internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
     private val abstractSmartReviewSectionValidator: AbstractSmartReviewSectionValidator = mockk()
@@ -33,7 +33,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review section update command, when section is not related to the smart review, it throws an exception`() {
-        val command = dummyUpdateSmartReviewComparisonSectionCommand()
+        val command = updateSmartReviewComparisonSectionCommand()
         val state = UpdateSmartReviewSectionState(smartReview = createSmartReview())
 
         assertThrows<UnrelatedSmartReviewSection> { smartReviewSectionUpdateValidator(command, state) }
@@ -44,7 +44,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewComparisonSection>().first()
-        val command = dummyUpdateSmartReviewComparisonSectionCommand().copy(smartReviewSectionId = section.id)
+        val command = updateSmartReviewComparisonSectionCommand().copy(smartReviewSectionId = section.id)
 
         every { abstractSmartReviewSectionValidator.validate(any(), any()) } just runs
 
@@ -59,7 +59,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a comparison section update command, when types mismatch, it throws an exception`() {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
-        val command = dummyUpdateSmartReviewComparisonSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
+        val command = updateSmartReviewComparisonSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
 
         assertThrows<SmartReviewSectionTypeMismatch> { smartReviewSectionUpdateValidator(command, state) }
     }
@@ -69,7 +69,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewVisualizationSection>().first()
-        val command = dummyUpdateSmartReviewVisualizationSectionCommand().copy(smartReviewSectionId = section.id)
+        val command = updateSmartReviewVisualizationSectionCommand().copy(smartReviewSectionId = section.id)
 
         every { abstractSmartReviewSectionValidator.validate(any(), any()) } just runs
 
@@ -84,7 +84,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a visualization section update command, when types mismatch, it throws an exception`() {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
-        val command = dummyUpdateSmartReviewVisualizationSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
+        val command = updateSmartReviewVisualizationSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
 
         assertThrows<SmartReviewSectionTypeMismatch> { smartReviewSectionUpdateValidator(command, state) }
     }
@@ -94,7 +94,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewResourceSection>().first()
-        val command = dummyUpdateSmartReviewResourceSectionCommand().copy(smartReviewSectionId = section.id)
+        val command = updateSmartReviewResourceSectionCommand().copy(smartReviewSectionId = section.id)
 
         every { abstractSmartReviewSectionValidator.validate(any(), any()) } just runs
 
@@ -109,7 +109,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a resource section update command, when types mismatch, it throws an exception`() {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
-        val command = dummyUpdateSmartReviewResourceSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
+        val command = updateSmartReviewResourceSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
 
         assertThrows<SmartReviewSectionTypeMismatch> { smartReviewSectionUpdateValidator(command, state) }
     }
@@ -119,7 +119,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewPredicateSection>().first()
-        val command = dummyUpdateSmartReviewPredicateSectionCommand().copy(smartReviewSectionId = section.id)
+        val command = updateSmartReviewPredicateSectionCommand().copy(smartReviewSectionId = section.id)
 
         every { abstractSmartReviewSectionValidator.validate(any(), any()) } just runs
 
@@ -134,7 +134,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a predicate section update command, when types mismatch, it throws an exception`() {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
-        val command = dummyUpdateSmartReviewPredicateSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
+        val command = updateSmartReviewPredicateSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
 
         assertThrows<SmartReviewSectionTypeMismatch> { smartReviewSectionUpdateValidator(command, state) }
     }
@@ -144,7 +144,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewOntologySection>().first()
-        val command = dummyUpdateSmartReviewOntologySectionCommand().copy(smartReviewSectionId = section.id)
+        val command = updateSmartReviewOntologySectionCommand().copy(smartReviewSectionId = section.id)
         val validIds = (section.entities.mapNotNull { it.id } union section.predicates.map { it.id }).toMutableSet()
 
         every { abstractSmartReviewSectionValidator.validate(any(), any()) } just runs
@@ -160,7 +160,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a ontology section update command, when types mismatch, it throws an exception`() {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
-        val command = dummyUpdateSmartReviewOntologySectionCommand().copy(smartReviewSectionId = smartReview.sections.first().id)
+        val command = updateSmartReviewOntologySectionCommand().copy(smartReviewSectionId = smartReview.sections.first().id)
 
         assertThrows<SmartReviewSectionTypeMismatch> { smartReviewSectionUpdateValidator(command, state) }
     }
@@ -170,7 +170,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
         val section = smartReview.sections.filterIsInstance<SmartReviewTextSection>().first()
-        val command = dummyUpdateSmartReviewTextSectionCommand().copy(smartReviewSectionId = section.id)
+        val command = updateSmartReviewTextSectionCommand().copy(smartReviewSectionId = section.id)
 
         every { abstractSmartReviewSectionValidator.validate(any(), any()) } just runs
 
@@ -185,7 +185,7 @@ internal class SmartReviewSectionUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a text section update command, when types mismatch, it throws an exception`() {
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewSectionState(smartReview = smartReview)
-        val command = dummyUpdateSmartReviewTextSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
+        val command = updateSmartReviewTextSectionCommand().copy(smartReviewSectionId = smartReview.sections.last().id)
 
         assertThrows<SmartReviewSectionTypeMismatch> { smartReviewSectionUpdateValidator(command, state) }
     }

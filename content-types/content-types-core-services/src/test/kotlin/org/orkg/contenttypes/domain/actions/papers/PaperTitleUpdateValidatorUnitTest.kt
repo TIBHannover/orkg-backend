@@ -12,7 +12,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.PaperAlreadyExists
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
@@ -26,7 +26,7 @@ internal class PaperTitleUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when searching for existing papers, it returns success`() {
-        val command = dummyUpdatePaperCommand()
+        val command = updatePaperCommand()
         val state = UpdatePaperState(paper = createPaper())
 
         every { resourceService.findAllPapersByTitle(command.title) } returns listOf(
@@ -45,7 +45,7 @@ internal class PaperTitleUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when searching for existing papers, and title matches, it throws an exception`() {
-        val command = dummyUpdatePaperCommand()
+        val command = updatePaperCommand()
         val state = UpdatePaperState(paper = createPaper())
         val expected = PaperAlreadyExists.withTitle(command.title!!)
 
@@ -61,7 +61,7 @@ internal class PaperTitleUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when paper label is invalid, it throws an exception`() {
-        val command = dummyUpdatePaperCommand().copy(title = "\n")
+        val command = updatePaperCommand().copy(title = "\n")
         val state = UpdatePaperState(paper = createPaper())
 
         assertThrows<InvalidLabel> { paperTitleUpdateValidator(command, state) }.asClue {
@@ -72,7 +72,7 @@ internal class PaperTitleUpdateValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a paper update command, when new title is identical to existing title, it does nothing`() {
         val title = "paper title"
-        val command = dummyUpdatePaperCommand().copy(title = title)
+        val command = updatePaperCommand().copy(title = title)
         val state = UpdatePaperState(paper = createPaper().copy(title = title))
 
         paperTitleUpdateValidator(command, state)
@@ -80,7 +80,7 @@ internal class PaperTitleUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when there is no new title set, it does nothing`() {
-        val command = dummyUpdatePaperCommand().copy(title = null)
+        val command = updatePaperCommand().copy(title = null)
         val state = UpdatePaperState(paper = createPaper())
 
         paperTitleUpdateValidator(command, state)

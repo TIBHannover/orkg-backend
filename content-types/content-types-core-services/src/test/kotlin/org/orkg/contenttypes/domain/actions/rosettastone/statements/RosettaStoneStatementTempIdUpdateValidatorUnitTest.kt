@@ -4,14 +4,14 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneStatementCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateRosettaStoneStatementCommand
 
 internal class RosettaStoneStatementTempIdUpdateValidatorUnitTest {
     private val rosettaStoneStatementTempIdUpdateValidator = RosettaStoneStatementTempIdUpdateValidator()
 
     @Test
     fun `Given a rosetta stone statement update command, when validating its temp ids, it returns success`() {
-        val command = dummyUpdateRosettaStoneStatementCommand()
+        val command = updateRosettaStoneStatementCommand()
         val state = UpdateRosettaStoneStatementState()
 
         val result = rosettaStoneStatementTempIdUpdateValidator(command, state)
@@ -26,7 +26,7 @@ internal class RosettaStoneStatementTempIdUpdateValidatorUnitTest {
 
     @Test
     fun `Given a rosetta stone statement update command, when it has no new thing definitions, it returns success`() {
-        val command = dummyUpdateRosettaStoneStatementCommand().copy(
+        val command = updateRosettaStoneStatementCommand().copy(
             resources = emptyMap(),
             predicates = emptyMap(),
             literals = emptyMap(),

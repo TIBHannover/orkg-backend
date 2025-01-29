@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -28,7 +28,7 @@ internal class LiteratureListResearchFieldUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list update command, when research fields are not set, it does nothing`() {
         val literatureList = createLiteratureList()
-        val command = dummyUpdateLiteratureListCommand().copy(researchFields = null)
+        val command = updateLiteratureListCommand().copy(researchFields = null)
         val state = UpdateLiteratureListState(literatureList = literatureList)
 
         val result = literatureListResearchFieldUpdater(command, state)
@@ -45,7 +45,7 @@ internal class LiteratureListResearchFieldUpdaterUnitTest : MockkBaseTest {
         val literatureList = createLiteratureList().copy(
             researchFields = listOf(ObjectIdAndLabel(ThingId("R12"), "Science"))
         )
-        val command = dummyUpdateLiteratureListCommand()
+        val command = updateLiteratureListCommand()
         val state = UpdateLiteratureListState(literatureList = literatureList)
 
         val result = literatureListResearchFieldUpdater(command, state)
@@ -60,7 +60,7 @@ internal class LiteratureListResearchFieldUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list update command, when research fields have changed, it updates the research field statements`() {
         val literatureList = createLiteratureList()
-        val command = dummyUpdateLiteratureListCommand()
+        val command = updateLiteratureListCommand()
         val state = UpdateLiteratureListState(
             literatureList = literatureList,
             statements = listOf(

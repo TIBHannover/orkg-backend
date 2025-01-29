@@ -16,7 +16,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.PublicationInfoDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.Literals
@@ -47,7 +47,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a paper create command, when linking empty publication info, it returns success`() {
         val paperId = ThingId("R123")
-        val command = dummyCreatePaperCommand().copy(
+        val command = createPaperCommand().copy(
             publicationInfo = null
         )
         val state = CreatePaperState(
@@ -69,7 +69,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
     fun `Given a paper create command, when linking publication month, it returns success`() {
         val paperId = ThingId("R123")
         val month = 5
-        val command = dummyCreatePaperCommand().copy(
+        val command = createPaperCommand().copy(
             publicationInfo = PublicationInfoDefinition(
                 publishedMonth = month,
                 publishedYear = null,
@@ -133,7 +133,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
     fun `Given a paper create command, when linking publication year, it returns success`() {
         val paperId = ThingId("R123")
         val year = 5L
-        val command = dummyCreatePaperCommand().copy(
+        val command = createPaperCommand().copy(
             publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = year,
@@ -197,7 +197,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
     fun `Given a paper create command, when linking existing publication venue, it returns success`() {
         val paperId = ThingId("R123")
         val venue = "Conference"
-        val command = dummyCreatePaperCommand().copy(
+        val command = createPaperCommand().copy(
             publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
@@ -260,7 +260,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
     fun `Given a paper create command, when linking non-existing publication venue, it returns success`() {
         val paperId = ThingId("R123")
         val venue = "Conference"
-        val command = dummyCreatePaperCommand().copy(
+        val command = createPaperCommand().copy(
             publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,
@@ -330,7 +330,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
     fun `Given a paper create command, when linking publication url, it returns success`() {
         val paperId = ThingId("R123")
         val url = ParsedIRI("https://orkg.org")
-        val command = dummyCreatePaperCommand().copy(
+        val command = createPaperCommand().copy(
             publicationInfo = PublicationInfoDefinition(
                 publishedMonth = null,
                 publishedYear = null,

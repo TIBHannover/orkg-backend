@@ -10,7 +10,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 
 internal class TemplatePropertiesCreatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator = mockk()
@@ -19,7 +19,7 @@ internal class TemplatePropertiesCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a create template command, when creating template properties, it returns success`() {
-        val command = dummyCreateTemplateCommand()
+        val command = createTemplateCommand()
         val state = CreateTemplateState(
             templateId = ThingId("R123")
         )

@@ -12,7 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneTemplateCommand
 import org.orkg.graph.domain.Predicates
 
 internal class RosettaStoneTemplateDescriptionCreatorUnitTest : MockkBaseTest {
@@ -22,7 +22,7 @@ internal class RosettaStoneTemplateDescriptionCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a rosetta template create command, then it creates a description statement`() {
-        val command = dummyCreateRosettaStoneTemplateCommand()
+        val command = createRosettaStoneTemplateCommand()
         val rosettaStoneTemplateId = ThingId("R123")
         val state = CreateRosettaStoneTemplateState(
             rosettaStoneTemplateId = rosettaStoneTemplateId

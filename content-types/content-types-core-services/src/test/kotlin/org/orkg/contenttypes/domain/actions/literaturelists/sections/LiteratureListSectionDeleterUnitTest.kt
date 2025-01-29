@@ -13,7 +13,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.DeleteLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionDeleter
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
-import org.orkg.contenttypes.input.testing.fixtures.dummyDeleteLiteratureListSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.deleteLiteratureListSectionCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -27,7 +27,7 @@ internal class LiteratureListSectionDeleterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list section delete command, when section belongs to literature list, it deletes the section`() {
         val literatureList = createLiteratureList()
-        val command = dummyDeleteLiteratureListSectionCommand().copy(sectionId = literatureList.sections.last().id)
+        val command = deleteLiteratureListSectionCommand().copy(sectionId = literatureList.sections.last().id)
         val statements = listOf(
             createStatement(
                 subject = createResource(command.literatureListId),
@@ -74,7 +74,7 @@ internal class LiteratureListSectionDeleterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list section delete command, when section does not belong to literature list, it does nothing`() {
         val literatureList = createLiteratureList()
-        val command = dummyDeleteLiteratureListSectionCommand().copy(sectionId = ThingId("R123"))
+        val command = deleteLiteratureListSectionCommand().copy(sectionId = ThingId("R123"))
         val statements = listOf(
             createStatement(
                 subject = createResource(command.literatureListId),

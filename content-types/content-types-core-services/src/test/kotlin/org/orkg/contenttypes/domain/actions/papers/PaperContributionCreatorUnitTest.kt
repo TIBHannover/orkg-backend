@@ -12,7 +12,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.ContributionCreator
 import org.orkg.contenttypes.domain.actions.CreatePaperState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.testing.fixtures.createResource
 
 internal class PaperContributionCreatorUnitTest : MockkBaseTest {
@@ -22,7 +22,7 @@ internal class PaperContributionCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when creating its contents, it returns success`() {
-        val command = dummyCreatePaperCommand()
+        val command = createPaperCommand()
         val state = CreatePaperState(
             tempIds = setOf("#temp1"),
             validatedIds = mapOf(

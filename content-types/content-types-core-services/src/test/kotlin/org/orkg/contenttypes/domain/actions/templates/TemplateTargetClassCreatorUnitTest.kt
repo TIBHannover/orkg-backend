@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
@@ -22,7 +22,7 @@ internal class TemplateTargetClassCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, it creates a new statement for the target class`() {
-        val command = dummyCreateTemplateCommand()
+        val command = createTemplateCommand()
         val state = CreateTemplateState(
             templateId = ThingId("R45665")
         )

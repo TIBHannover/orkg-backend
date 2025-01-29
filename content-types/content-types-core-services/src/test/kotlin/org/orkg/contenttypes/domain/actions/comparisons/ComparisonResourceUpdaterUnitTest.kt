@@ -12,7 +12,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateComparisonState
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateComparisonCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateComparisonCommand
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
@@ -23,7 +23,7 @@ internal class ComparisonResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a comparison update command, it updates the comparison resource`() {
-        val command = dummyUpdateComparisonCommand()
+        val command = updateComparisonCommand()
         val state = UpdateComparisonState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -49,7 +49,7 @@ internal class ComparisonResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a comparison update command, when observatories are empty, it removes the associated observatory`() {
-        val command = dummyUpdateComparisonCommand().copy(observatories = emptyList())
+        val command = updateComparisonCommand().copy(observatories = emptyList())
         val state = UpdateComparisonState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -75,7 +75,7 @@ internal class ComparisonResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a comparison update command, when observatories are not set, it does not update the associated observatory`() {
-        val command = dummyUpdateComparisonCommand().copy(observatories = null)
+        val command = updateComparisonCommand().copy(observatories = null)
         val state = UpdateComparisonState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -101,7 +101,7 @@ internal class ComparisonResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a comparison update command, when organizations are empty, it removes the associated organizations`() {
-        val command = dummyUpdateComparisonCommand().copy(organizations = emptyList())
+        val command = updateComparisonCommand().copy(organizations = emptyList())
         val state = UpdateComparisonState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -127,7 +127,7 @@ internal class ComparisonResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a comparison update command, when organizations are not set, it does not update the associated organizations`() {
-        val command = dummyUpdateComparisonCommand().copy(organizations = null)
+        val command = updateComparisonCommand().copy(organizations = null)
         val state = UpdateComparisonState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(

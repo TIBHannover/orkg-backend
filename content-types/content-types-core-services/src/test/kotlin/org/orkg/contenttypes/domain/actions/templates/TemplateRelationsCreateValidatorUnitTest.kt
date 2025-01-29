@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.ResearchFieldNotFound
@@ -28,7 +28,7 @@ internal class TemplateRelationsCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, when validating its relations, it returns success`() {
-        val command = dummyCreateTemplateCommand()
+        val command = createTemplateCommand()
         val state = CreateTemplateState()
 
         every {
@@ -54,7 +54,7 @@ internal class TemplateRelationsCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, when related research field is missing, it throws an exception`() {
-        val command = dummyCreateTemplateCommand()
+        val command = createTemplateCommand()
         val state = CreateTemplateState()
 
         every {
@@ -68,7 +68,7 @@ internal class TemplateRelationsCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, when related research problem is missing, it throws an exception`() {
-        val command = dummyCreateTemplateCommand()
+        val command = createTemplateCommand()
         val state = CreateTemplateState()
 
         every {
@@ -86,7 +86,7 @@ internal class TemplateRelationsCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, when related predicate is missing, it throws an exception`() {
-        val command = dummyCreateTemplateCommand()
+        val command = createTemplateCommand()
         val state = CreateTemplateState()
 
         every {

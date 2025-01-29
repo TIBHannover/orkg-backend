@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateResourceUseCase
@@ -26,7 +26,7 @@ internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review create command, it crates a new smart review contribution resource`() {
-        val command = dummyCreateSmartReviewCommand()
+        val command = createSmartReviewCommand()
         val state = CreateSmartReviewState(
             smartReviewId = ThingId("R123")
         )

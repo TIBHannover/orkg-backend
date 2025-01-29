@@ -5,14 +5,14 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 
 internal class TemplateInstanceTempIdValidatorUnitTest : MockkBaseTest {
     private val templateInstanceTempIdValidator = TemplateInstanceTempIdValidator()
 
     @Test
     fun `Given a template instance update command, when validating its temp ids, it returns success`() {
-        val command = dummyUpdateTemplateInstanceCommand()
+        val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState()
 
         val result = templateInstanceTempIdValidator(command, state)
@@ -30,7 +30,7 @@ internal class TemplateInstanceTempIdValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template instance update command, when it has no new thing definitions, it returns success`() {
-        val command = dummyUpdateTemplateInstanceCommand().copy(
+        val command = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
             predicates = emptyMap(),
             literals = emptyMap(),

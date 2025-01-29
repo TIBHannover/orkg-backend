@@ -12,7 +12,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 
-fun dummyCreateContributionCommand() = CreateContributionUseCase.CreateCommand(
+fun createContributionCommand() = CreateContributionUseCase.CreateCommand(
     contributorId = ContributorId(UUID.fromString("5342d678-c54a-45ec-bc79-977c79dfff7d")),
     paperId = ThingId("R123"),
     extractionMethod = ExtractionMethod.MANUAL,

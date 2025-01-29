@@ -10,7 +10,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertiesUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateCommand
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
@@ -22,7 +22,7 @@ internal class TemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a template update command, when properties are not set, it does nothing`() {
         val template = createTemplate()
-        val command = dummyUpdateTemplateCommand().copy(
+        val command = updateTemplateCommand().copy(
             properties = null
         )
         val state = UpdateTemplateState(template)
@@ -33,7 +33,7 @@ internal class TemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a template update command, when properties are set, it validates each property`() {
         val template = createTemplate()
-        val command = dummyUpdateTemplateCommand()
+        val command = updateTemplateCommand()
         val state = UpdateTemplateState(
             template = template,
             statements = listOf(createStatement(subject = createResource(template.id))).groupBy { it.subject.id }

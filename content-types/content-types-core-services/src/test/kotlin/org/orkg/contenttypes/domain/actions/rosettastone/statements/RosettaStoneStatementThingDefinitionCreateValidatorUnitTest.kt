@@ -10,7 +10,7 @@ import org.orkg.common.Either
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.actions.ThingDefinitionValidator
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneStatementCommand
+import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneStatementCommand
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
 
@@ -21,7 +21,7 @@ internal class RosettaStoneStatementThingDefinitionCreateValidatorUnitTest : Moc
 
     @Test
     fun `Given a rosetta stone statement create command, when validating its thing definitions, it returns success`() {
-        val command = dummyCreateRosettaStoneStatementCommand()
+        val command = createRosettaStoneStatementCommand()
         val state = CreateRosettaStoneStatementState()
 
         val validatedIds = mapOf<String, Either<String, Thing>>(

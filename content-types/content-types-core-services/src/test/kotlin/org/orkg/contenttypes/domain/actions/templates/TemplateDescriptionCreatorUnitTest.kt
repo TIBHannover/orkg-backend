@@ -12,7 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 import org.orkg.graph.domain.Predicates
 
 internal class TemplateDescriptionCreatorUnitTest : MockkBaseTest {
@@ -22,7 +22,7 @@ internal class TemplateDescriptionCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, when description is not null, it creates a new statement`() {
-        val command = dummyCreateTemplateCommand()
+        val command = createTemplateCommand()
         val templateId = ThingId("R123")
         val state = CreateTemplateState(
             templateId = templateId
@@ -55,7 +55,7 @@ internal class TemplateDescriptionCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, when description is null, it does not create a statement`() {
-        val command = dummyCreateTemplateCommand().copy(
+        val command = createTemplateCommand().copy(
             description = null
         )
         val templateId = ThingId("R123")

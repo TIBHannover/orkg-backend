@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreatePaperState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -21,7 +21,7 @@ internal class PaperSnapshotResourceCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, it crates a new paper version resource`() {
-        val command = dummyCreatePaperCommand()
+        val command = createPaperCommand()
         val state = CreatePaperState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(

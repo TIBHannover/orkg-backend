@@ -12,7 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
-import org.orkg.contenttypes.input.testing.fixtures.dummyPublishLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishLiteratureListCommand
 import org.orkg.contenttypes.output.LiteratureListPublishedRepository
 import org.orkg.graph.domain.Bundle
 import org.orkg.graph.domain.BundleConfiguration
@@ -30,7 +30,7 @@ internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list publish command, it archives all statements about the literature list`() {
         val literatureList = createLiteratureList()
-        val command = dummyPublishLiteratureListCommand().copy(id = literatureList.id)
+        val command = publishLiteratureListCommand().copy(id = literatureList.id)
         val literatureListVersionId = ThingId("R321")
         val state = PublishLiteratureListState(
             literatureList = literatureList,

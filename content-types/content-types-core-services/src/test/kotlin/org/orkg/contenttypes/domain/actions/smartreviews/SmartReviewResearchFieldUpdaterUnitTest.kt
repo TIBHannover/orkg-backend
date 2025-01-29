@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -28,7 +28,7 @@ internal class SmartReviewResearchFieldUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review update command, when research fields are not set, it does nothing`() {
         val smartReview = createSmartReview()
-        val command = dummyUpdateSmartReviewCommand().copy(researchFields = null)
+        val command = updateSmartReviewCommand().copy(researchFields = null)
         val state = UpdateSmartReviewState(smartReview = smartReview)
 
         val result = smartReviewResearchFieldUpdater(command, state)
@@ -45,7 +45,7 @@ internal class SmartReviewResearchFieldUpdaterUnitTest : MockkBaseTest {
         val smartReview = createSmartReview().copy(
             researchFields = listOf(ObjectIdAndLabel(ThingId("R12"), "Science"))
         )
-        val command = dummyUpdateSmartReviewCommand()
+        val command = updateSmartReviewCommand()
         val state = UpdateSmartReviewState(smartReview = smartReview)
 
         val result = smartReviewResearchFieldUpdater(command, state)
@@ -60,7 +60,7 @@ internal class SmartReviewResearchFieldUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review update command, when research fields have changed, it updates the research field statements`() {
         val smartReview = createSmartReview()
-        val command = dummyUpdateSmartReviewCommand()
+        val command = updateSmartReviewCommand()
         val state = UpdateSmartReviewState(
             smartReview = smartReview,
             statements = listOf(

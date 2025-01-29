@@ -12,7 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.input.TemplateRelationsDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
@@ -24,7 +24,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template create command, when a related research field is set, it creates a new statement`() {
         val researchFieldId = ThingId("R41536")
-        val command = dummyCreateTemplateCommand().copy(
+        val command = createTemplateCommand().copy(
             relations = TemplateRelationsDefinition(
                 researchFields = listOf(researchFieldId),
                 researchProblems = emptyList(),
@@ -63,7 +63,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template create command, when a related research problem is set, it creates a new statement`() {
         val researchProblemId = ThingId("R1456")
-        val command = dummyCreateTemplateCommand().copy(
+        val command = createTemplateCommand().copy(
             relations = TemplateRelationsDefinition(
                 researchFields = emptyList(),
                 researchProblems = listOf(researchProblemId),
@@ -102,7 +102,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template create command, when a related predicate is set, it creates a new statement`() {
         val predicateId = ThingId("R145236")
-        val command = dummyCreateTemplateCommand().copy(
+        val command = createTemplateCommand().copy(
             relations = TemplateRelationsDefinition(
                 researchFields = emptyList(),
                 researchProblems = emptyList(),
@@ -140,7 +140,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, when relations are empty, then no new statements are created`() {
-        val command = dummyCreateTemplateCommand().copy(
+        val command = createTemplateCommand().copy(
             relations = TemplateRelationsDefinition(
                 researchFields = emptyList(),
                 researchProblems = emptyList(),

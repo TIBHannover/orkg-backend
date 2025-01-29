@@ -13,7 +13,7 @@ import org.orkg.contenttypes.domain.Identifiers
 import org.orkg.contenttypes.domain.actions.IdentifierUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
 internal class PaperIdentifierUpdaterUnitTest : MockkBaseTest {
@@ -23,7 +23,7 @@ internal class PaperIdentifierUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, it updates paper identifier`() {
-        val command = dummyUpdatePaperCommand()
+        val command = updatePaperCommand()
         val paper = createPaper()
         val state = UpdatePaperState(
             paper = paper,
@@ -63,7 +63,7 @@ internal class PaperIdentifierUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when no new identifiers are set, it does nothing`() {
-        val command = dummyUpdatePaperCommand().copy(identifiers = null)
+        val command = updatePaperCommand().copy(identifiers = null)
         val state = UpdatePaperState(paper = createPaper())
 
         paperIdentifierUpdater(command, state)

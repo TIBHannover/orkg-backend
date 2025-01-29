@@ -12,7 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewCommand
 
 internal class SmartReviewSectionsUpdateValidatorUnitTest : MockkBaseTest {
     private val abstractSmartReviewSectionValidator: AbstractSmartReviewSectionValidator = mockk()
@@ -21,7 +21,7 @@ internal class SmartReviewSectionsUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review update command, when no smart review sections are defined, it does nothing`() {
-        val command = dummyUpdateSmartReviewCommand().copy(sections = null)
+        val command = updateSmartReviewCommand().copy(sections = null)
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewState(smartReview = smartReview)
 
@@ -34,7 +34,7 @@ internal class SmartReviewSectionsUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a smart review update command, when validating smart review sections, it returns success`() {
-        val command = dummyUpdateSmartReviewCommand()
+        val command = updateSmartReviewCommand()
         val smartReview = createSmartReview()
         val state = UpdateSmartReviewState(smartReview = smartReview)
         val validIds = mutableSetOf(ThingId("R1"), ThingId("P1"), ThingId("R6416"), ThingId("R215648"))

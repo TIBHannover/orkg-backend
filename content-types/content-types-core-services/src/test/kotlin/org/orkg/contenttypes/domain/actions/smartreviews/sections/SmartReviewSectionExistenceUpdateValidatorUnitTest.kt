@@ -10,7 +10,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewExistenceValidator
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateSmartReviewComparisonSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateSmartReviewComparisonSectionCommand
 import org.orkg.graph.testing.fixtures.createStatement
 
 internal class SmartReviewSectionExistenceUpdateValidatorUnitTest : MockkBaseTest {
@@ -22,7 +22,7 @@ internal class SmartReviewSectionExistenceUpdateValidatorUnitTest : MockkBaseTes
     @Test
     fun `Given a smart review section update command, when checking for smart review existence, it returns success`() {
         val smartReview = createSmartReview()
-        val command = dummyUpdateSmartReviewComparisonSectionCommand().copy(smartReviewId = smartReview.id)
+        val command = updateSmartReviewComparisonSectionCommand().copy(smartReviewId = smartReview.id)
         val state = UpdateSmartReviewSectionState()
         val statements = listOf(createStatement()).groupBy { it.subject.id }
 

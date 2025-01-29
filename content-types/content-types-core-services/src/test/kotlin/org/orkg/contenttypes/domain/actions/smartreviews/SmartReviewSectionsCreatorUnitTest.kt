@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
@@ -24,7 +24,7 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review create command, when sections are empty, it does nothing`() {
         val contributionId = ThingId("R123")
-        val command = dummyCreateSmartReviewCommand().copy(
+        val command = createSmartReviewCommand().copy(
             sections = emptyList()
         )
         val state = CreateSmartReviewState(contributionId = contributionId)
@@ -35,7 +35,7 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review create command, when sections are not empty, it creates each section and links it to the smart review`() {
         val contributionId = ThingId("R123")
-        val command = dummyCreateSmartReviewCommand()
+        val command = createSmartReviewCommand()
         val state = CreateSmartReviewState(contributionId = contributionId)
 
         command.sections.forEachIndexed { index, section ->

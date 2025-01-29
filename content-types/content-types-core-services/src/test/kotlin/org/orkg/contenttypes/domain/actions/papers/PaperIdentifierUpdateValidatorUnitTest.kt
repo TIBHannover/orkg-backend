@@ -10,7 +10,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.PaperAlreadyExists
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.StatementRepository
@@ -28,7 +28,7 @@ internal class PaperIdentifierUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when validating its identifiers, it returns success`() {
-        val command = dummyUpdatePaperCommand()
+        val command = updatePaperCommand()
         val state = UpdatePaperState(paper = createPaper())
         val doi = command.identifiers!!["doi"]!!.first()
 
@@ -57,7 +57,7 @@ internal class PaperIdentifierUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when paper with identifier already exists, it throws an exception`() {
-        val command = dummyUpdatePaperCommand()
+        val command = updatePaperCommand()
         val state = UpdatePaperState(paper = createPaper())
         val doi = command.identifiers!!["doi"]!!.first()
 
@@ -96,7 +96,7 @@ internal class PaperIdentifierUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when new identifiers are identical to old identifiers, it does nothing`() {
-        val command = dummyUpdatePaperCommand()
+        val command = updatePaperCommand()
         val state = UpdatePaperState(paper = createPaper().copy(identifiers = command.identifiers!!))
 
         paperIdentifierUpdateValidator(command, state)
@@ -104,7 +104,7 @@ internal class PaperIdentifierUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper update command, when no new identifiers are set, it does nothing`() {
-        val command = dummyUpdatePaperCommand().copy(identifiers = null)
+        val command = updatePaperCommand().copy(identifiers = null)
         val state = UpdatePaperState(paper = createPaper())
 
         paperIdentifierUpdateValidator(command, state)

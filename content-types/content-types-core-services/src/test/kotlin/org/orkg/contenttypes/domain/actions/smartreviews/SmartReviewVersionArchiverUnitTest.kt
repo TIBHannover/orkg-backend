@@ -12,7 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.PublishSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
-import org.orkg.contenttypes.input.testing.fixtures.dummyPublishSmartReviewCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishSmartReviewCommand
 import org.orkg.contenttypes.output.SmartReviewPublishedRepository
 import org.orkg.graph.domain.Bundle
 import org.orkg.graph.domain.BundleConfiguration
@@ -30,7 +30,7 @@ internal class SmartReviewVersionArchiverUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review publish command, it archives all statements about the smart review`() {
         val smartReview = createSmartReview()
-        val command = dummyPublishSmartReviewCommand().copy(smartReviewId = smartReview.id)
+        val command = publishSmartReviewCommand().copy(smartReviewId = smartReview.id)
         val smartReviewVersionId = ThingId("R321")
         val state = PublishSmartReviewState(
             smartReview = smartReview,

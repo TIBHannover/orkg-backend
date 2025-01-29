@@ -12,7 +12,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListCommand
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 
@@ -23,7 +23,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list update command, it updates the literature list resource`() {
-        val command = dummyUpdateLiteratureListCommand()
+        val command = updateLiteratureListCommand()
         val state = UpdateLiteratureListState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -51,7 +51,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list update command, when observatories are empty, it removes the associated observatory`() {
-        val command = dummyUpdateLiteratureListCommand().copy(observatories = emptyList())
+        val command = updateLiteratureListCommand().copy(observatories = emptyList())
         val state = UpdateLiteratureListState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -77,7 +77,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list update command, when observatories are not set, it does not update the associated observatory`() {
-        val command = dummyUpdateLiteratureListCommand().copy(observatories = null)
+        val command = updateLiteratureListCommand().copy(observatories = null)
         val state = UpdateLiteratureListState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -103,7 +103,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list update command, when organizations are empty, it removes the associated organizations`() {
-        val command = dummyUpdateLiteratureListCommand().copy(organizations = emptyList())
+        val command = updateLiteratureListCommand().copy(organizations = emptyList())
         val state = UpdateLiteratureListState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(
@@ -129,7 +129,7 @@ internal class LiteratureListResourceUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a literature list update command, when organizations are not set, it does not update the associated organizations`() {
-        val command = dummyUpdateLiteratureListCommand().copy(organizations = null)
+        val command = updateLiteratureListCommand().copy(organizations = null)
         val state = UpdateLiteratureListState()
 
         val resourceUpdateCommand = UpdateResourceUseCase.UpdateCommand(

@@ -16,7 +16,7 @@ import org.orkg.contenttypes.input.UpdateRosettaStoneStatementUseCase
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 
-fun dummyCreateRosettaStoneStatementCommand() = CreateRosettaStoneStatementUseCase.CreateCommand(
+fun createRosettaStoneStatementCommand() = CreateRosettaStoneStatementUseCase.CreateCommand(
     templateId = ThingId("R456"),
     contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
     context = ThingId("R789"),
@@ -63,7 +63,7 @@ fun dummyCreateRosettaStoneStatementCommand() = CreateRosettaStoneStatementUseCa
     extractionMethod = ExtractionMethod.MANUAL
 )
 
-fun dummyUpdateRosettaStoneStatementCommand() = UpdateRosettaStoneStatementUseCase.UpdateCommand(
+fun updateRosettaStoneStatementCommand() = UpdateRosettaStoneStatementUseCase.UpdateCommand(
     id = ThingId("R123"),
     contributorId = ContributorId("460d4019-57c8-4d30-9087-e7e5129e1c24"),
     subjects = listOf("R258", "R369", "#temp1"),

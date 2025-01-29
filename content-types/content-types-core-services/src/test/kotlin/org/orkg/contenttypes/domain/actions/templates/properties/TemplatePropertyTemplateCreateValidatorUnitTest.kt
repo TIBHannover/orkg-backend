@@ -15,11 +15,11 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateNumberLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateOtherLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateStringLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateUntypedTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createNumberLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createOtherLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createStringLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.createUntypedTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -133,11 +133,11 @@ internal class TemplatePropertyTemplateCreateValidatorUnitTest : MockkBaseTest {
     companion object {
         @JvmStatic
         fun createTemplatePropertyCommands(): Stream<Arguments> = Stream.of(
-            Arguments.of(dummyCreateUntypedTemplatePropertyCommand()),
-            Arguments.of(dummyCreateStringLiteralTemplatePropertyCommand()),
-            Arguments.of(dummyCreateNumberLiteralTemplatePropertyCommand()),
-            Arguments.of(dummyCreateOtherLiteralTemplatePropertyCommand()),
-            Arguments.of(dummyCreateResourceTemplatePropertyCommand())
+            Arguments.of(createUntypedTemplatePropertyCommand()),
+            Arguments.of(createStringLiteralTemplatePropertyCommand()),
+            Arguments.of(createNumberLiteralTemplatePropertyCommand()),
+            Arguments.of(createOtherLiteralTemplatePropertyCommand()),
+            Arguments.of(createResourceTemplatePropertyCommand())
         )
     }
 }

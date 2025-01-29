@@ -11,8 +11,8 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
-import org.orkg.contenttypes.input.testing.fixtures.dummyLiteratureListTextSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.literatureListTextSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListCommand
 import org.orkg.contenttypes.input.testing.fixtures.toLiteratureListSectionDefinition
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -31,7 +31,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list update command, when sections are not set, it does nothing`() {
         val literatureList = createLiteratureList()
-        val command = dummyUpdateLiteratureListCommand().copy(
+        val command = updateLiteratureListCommand().copy(
             sections = null
         )
         val state = UpdateLiteratureListState(
@@ -44,7 +44,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list update command, when sections are unchanged, it does nothing`() {
         val literatureList = createLiteratureList()
-        val command = dummyUpdateLiteratureListCommand().copy(
+        val command = updateLiteratureListCommand().copy(
             sections = literatureList.sections.map { it.toLiteratureListSectionDefinition() }
         )
         val state = UpdateLiteratureListState(
@@ -57,7 +57,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list update command, when a section is removed, it deletes the old section`() {
         val literatureList = createLiteratureList()
-        val command = dummyUpdateLiteratureListCommand().copy(
+        val command = updateLiteratureListCommand().copy(
             sections = literatureList.sections.dropLast(1).map { it.toLiteratureListSectionDefinition() }
         )
         val state = UpdateLiteratureListState(
@@ -110,8 +110,8 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list update command, when a section is added, it creates a new section`() {
         val literatureList = createLiteratureList()
-        val newSection = dummyLiteratureListTextSectionDefinition().copy(text = "new section")
-        val command = dummyUpdateLiteratureListCommand().copy(
+        val newSection = literatureListTextSectionDefinition().copy(text = "new section")
+        val command = updateLiteratureListCommand().copy(
             sections = literatureList.sections.map { it.toLiteratureListSectionDefinition() } + newSection
         )
         val state = UpdateLiteratureListState(
@@ -153,8 +153,8 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list update command, when a section is replaced, it deletes the old section and creates a new one`() {
         val literatureList = createLiteratureList()
-        val newSection = dummyLiteratureListTextSectionDefinition().copy(text = "new section")
-        val command = dummyUpdateLiteratureListCommand().copy(
+        val newSection = literatureListTextSectionDefinition().copy(text = "new section")
+        val command = updateLiteratureListCommand().copy(
             sections = literatureList.sections.dropLast(1).map { it.toLiteratureListSectionDefinition() } + newSection
         )
         val state = UpdateLiteratureListState(

@@ -5,14 +5,14 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.LiteratureListNotModifiable
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListCommand
 
 internal class LiteratureListModifiableValidatorUnitTest {
     private val literatureListModifiableValidator = LiteratureListModifiableValidator()
 
     @Test
     fun `Given a literature list update command, when literature list is unpublished, it returns success`() {
-        val command = dummyUpdateLiteratureListCommand()
+        val command = updateLiteratureListCommand()
         val state = UpdateLiteratureListState(literatureList = createLiteratureList())
 
         literatureListModifiableValidator(command, state)
@@ -20,7 +20,7 @@ internal class LiteratureListModifiableValidatorUnitTest {
 
     @Test
     fun `Given a literature list update command, when literature list is published, it throws an exception`() {
-        val command = dummyUpdateLiteratureListCommand()
+        val command = updateLiteratureListCommand()
         val state = UpdateLiteratureListState(literatureList = createLiteratureList().copy(published = true))
 
         assertThrows<LiteratureListNotModifiable> { literatureListModifiableValidator(command, state) }

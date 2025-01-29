@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateLiteratureListCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateLiteratureListCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -28,7 +28,7 @@ internal class LiteratureListSDGUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list update command, when SDGs are not set, it does nothing`() {
         val literatureList = createLiteratureList()
-        val command = dummyUpdateLiteratureListCommand().copy(sustainableDevelopmentGoals = null)
+        val command = updateLiteratureListCommand().copy(sustainableDevelopmentGoals = null)
         val state = UpdateLiteratureListState(literatureList = literatureList)
 
         val result = literatureListSDGUpdater(command, state)
@@ -45,7 +45,7 @@ internal class LiteratureListSDGUpdaterUnitTest : MockkBaseTest {
         val literatureList = createLiteratureList().copy(
             sustainableDevelopmentGoals = setOf(ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"))
         )
-        val command = dummyUpdateLiteratureListCommand()
+        val command = updateLiteratureListCommand()
         val state = UpdateLiteratureListState(literatureList = literatureList)
 
         val result = literatureListSDGUpdater(command, state)
@@ -60,7 +60,7 @@ internal class LiteratureListSDGUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list update command, when SDGs have changed, it updates the SDG statements`() {
         val literatureList = createLiteratureList()
-        val command = dummyUpdateLiteratureListCommand()
+        val command = updateLiteratureListCommand()
         val statements = listOf(
             createStatement(
                 subject = createResource(command.literatureListId),

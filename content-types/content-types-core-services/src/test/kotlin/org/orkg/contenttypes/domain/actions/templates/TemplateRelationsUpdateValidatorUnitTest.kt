@@ -15,7 +15,7 @@ import org.orkg.contenttypes.domain.TemplateRelations
 import org.orkg.contenttypes.domain.actions.UpdateTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.TemplateRelationsDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.ResearchFieldNotFound
@@ -33,7 +33,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when validating its relations, it returns success`() {
-        val command = dummyUpdateTemplateCommand()
+        val command = updateTemplateCommand()
         val state = UpdateTemplateState(template = createTemplate())
 
         every {
@@ -59,7 +59,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when relations are null, it returns success`() {
-        val command = dummyUpdateTemplateCommand().copy(relations = null)
+        val command = updateTemplateCommand().copy(relations = null)
         val state = UpdateTemplateState(template = createTemplate())
 
         val result = templateRelationsUpdateValidator(command, state)
@@ -71,7 +71,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when relations are empty, it returns success`() {
-        val command = dummyUpdateTemplateCommand().copy(
+        val command = updateTemplateCommand().copy(
             relations = TemplateRelationsDefinition()
         )
         val state = UpdateTemplateState(template = createTemplate())
@@ -85,7 +85,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when related research field is missing, it throws an exception`() {
-        val command = dummyUpdateTemplateCommand().copy(
+        val command = updateTemplateCommand().copy(
             relations = TemplateRelationsDefinition(
                 researchFields = listOf(ThingId("R24"))
             )
@@ -103,7 +103,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when related research problem is missing, it throws an exception`() {
-        val command = dummyUpdateTemplateCommand().copy(
+        val command = updateTemplateCommand().copy(
             relations = TemplateRelationsDefinition(
                 researchProblems = listOf(ThingId("R29"))
             )
@@ -121,7 +121,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when related predicate is missing, it throws an exception`() {
-        val command = dummyUpdateTemplateCommand().copy(
+        val command = updateTemplateCommand().copy(
             relations = TemplateRelationsDefinition(
                 researchFields = emptyList(),
                 researchProblems = emptyList(),
@@ -141,7 +141,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when validating its relations, it only checks for previously unknown research fields`() {
-        val command = dummyUpdateTemplateCommand().copy(
+        val command = updateTemplateCommand().copy(
             relations = TemplateRelationsDefinition(
                 researchFields = listOf(ThingId("R123"), ThingId("R789"))
             )
@@ -170,7 +170,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when validating its relations, it only checks for previously unknown research problems`() {
-        val command = dummyUpdateTemplateCommand().copy(
+        val command = updateTemplateCommand().copy(
             relations = TemplateRelationsDefinition(
                 researchProblems = listOf(ThingId("R123"), ThingId("R789"))
             )
@@ -199,7 +199,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template update command, when validating its relations, it only checks for previously unknown predicates`() {
-        val command = dummyUpdateTemplateCommand().copy(
+        val command = updateTemplateCommand().copy(
             relations = TemplateRelationsDefinition(
                 predicate = ThingId("R123")
             )

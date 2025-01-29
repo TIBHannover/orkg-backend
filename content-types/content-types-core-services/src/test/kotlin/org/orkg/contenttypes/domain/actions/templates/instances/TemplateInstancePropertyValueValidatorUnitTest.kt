@@ -20,7 +20,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.LiteralDefinition
 import org.orkg.contenttypes.input.ResourceDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateTemplateInstanceCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ClassRepository
@@ -41,7 +41,7 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template instance update command, when validating its properties, it returns success`() {
-        val command = dummyUpdateTemplateInstanceCommand().copy(
+        val command = updateTemplateInstanceCommand().copy(
             statements = mapOf(
                 Predicates.field to listOf("#temp1", "R1"),
                 Predicates.description to listOf("L123"),
@@ -132,7 +132,7 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template instance update command, when provided property is not defined by template, it throws an exception`() {
-        val command = dummyUpdateTemplateInstanceCommand().copy(
+        val command = updateTemplateInstanceCommand().copy(
             statements = mapOf(
                 ThingId("Unknown") to listOf("L123")
             ),

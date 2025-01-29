@@ -18,7 +18,7 @@ import org.orkg.contenttypes.domain.actions.PublishComparisonState
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonTable
 import org.orkg.contenttypes.input.ComparisonUseCases
-import org.orkg.contenttypes.input.testing.fixtures.dummyPublishComparisonCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishComparisonCommand
 import org.orkg.contenttypes.output.ComparisonTableRepository
 
 internal class ComparisonPublishableValidatorUnitTest : MockkBaseTest {
@@ -32,7 +32,7 @@ internal class ComparisonPublishableValidatorUnitTest : MockkBaseTest {
     fun `Given a comparison publish command, when comparison is unpublished, it returns success`() {
         val comparison = createComparison()
         val table = createComparisonTable()
-        val command = dummyPublishComparisonCommand().copy(id = comparison.id)
+        val command = publishComparisonCommand().copy(id = comparison.id)
         val state = PublishComparisonState()
 
         every { comparisonService.findById(comparison.id) } returns Optional.of(comparison)
@@ -48,7 +48,7 @@ internal class ComparisonPublishableValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a comparison publish command, when comparison does not exist, it throws an exception`() {
-        val command = dummyPublishComparisonCommand()
+        val command = publishComparisonCommand()
         val state = PublishComparisonState()
 
         every { comparisonService.findById(command.id) } returns Optional.empty()
@@ -61,7 +61,7 @@ internal class ComparisonPublishableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a comparison publish command, when comparison is already published, it throws an exception`() {
         val comparison = createComparison().copy(published = true)
-        val command = dummyPublishComparisonCommand().copy(id = comparison.id)
+        val command = publishComparisonCommand().copy(id = comparison.id)
         val state = PublishComparisonState()
 
         every { comparisonService.findById(comparison.id) } returns Optional.of(comparison)
@@ -74,7 +74,7 @@ internal class ComparisonPublishableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a comparison publish command, when comparison table does not exist, it throws an exception`() {
         val comparison = createComparison()
-        val command = dummyPublishComparisonCommand().copy(id = comparison.id)
+        val command = publishComparisonCommand().copy(id = comparison.id)
         val state = PublishComparisonState()
 
         every { comparisonService.findById(command.id) } returns Optional.of(comparison)
@@ -91,7 +91,7 @@ internal class ComparisonPublishableValidatorUnitTest : MockkBaseTest {
         val comparison = createComparison().copy(
             contributions = listOf(ObjectIdAndLabel(ThingId("R123456"), "Contribution 1"))
         )
-        val command = dummyPublishComparisonCommand().copy(id = comparison.id)
+        val command = publishComparisonCommand().copy(id = comparison.id)
         val state = PublishComparisonState()
 
         every { comparisonService.findById(command.id) } returns Optional.of(comparison)

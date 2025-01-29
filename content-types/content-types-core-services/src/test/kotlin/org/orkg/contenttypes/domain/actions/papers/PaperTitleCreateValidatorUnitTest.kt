@@ -10,7 +10,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.PaperAlreadyExists
 import org.orkg.contenttypes.domain.actions.CreatePaperState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.testing.fixtures.createResource
@@ -24,7 +24,7 @@ internal class PaperTitleCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when searching for existing papers, it returns success`() {
-        val command = dummyCreatePaperCommand()
+        val command = createPaperCommand()
         val state = CreatePaperState()
 
         every { resourceService.findAllPapersByTitle(command.title) } returns emptyList()
@@ -44,7 +44,7 @@ internal class PaperTitleCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when searching for existing papers, and title matches, it throws an exception`() {
-        val command = dummyCreatePaperCommand()
+        val command = createPaperCommand()
         val state = CreatePaperState()
         val paper = createResource(label = command.title)
         val expected = PaperAlreadyExists.withTitle(paper.label)
@@ -58,7 +58,7 @@ internal class PaperTitleCreateValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a paper create command, when paper label is invalid, it throws an exception`() {
-        val command = dummyCreatePaperCommand().copy(title = "\n")
+        val command = createPaperCommand().copy(title = "\n")
         val state = CreatePaperState()
 
         assertThrows<InvalidLabel> { paperTitleCreateValidator(command, state) }.asClue {

@@ -13,7 +13,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
+import org.orkg.contenttypes.input.testing.fixtures.createComparisonCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -30,7 +30,7 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a comparison publish command, it updates the publication metadata`() {
         val comparisonId = ThingId("R123")
-        val command = dummyCreateComparisonCommand()
+        val command = createComparisonCommand()
         val state = CreateComparisonState(comparisonId = comparisonId)
         val now = OffsetDateTime.now(fixedClock)
         val publicationYearLiteralId = ThingId("L123")

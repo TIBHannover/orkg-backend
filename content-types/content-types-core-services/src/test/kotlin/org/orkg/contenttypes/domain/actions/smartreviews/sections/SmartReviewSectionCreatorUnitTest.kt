@@ -19,12 +19,12 @@ import org.orkg.contenttypes.domain.actions.CreateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionCreator
 import org.orkg.contenttypes.input.SmartReviewSectionDefinition
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewComparisonSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewOntologySectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewPredicateSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewResourceSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewTextSectionCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateSmartReviewVisualizationSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewComparisonSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewOntologySectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewPredicateSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewResourceSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewTextSectionCommand
+import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewVisualizationSectionCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -88,7 +88,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
     fun `Given a smart review section create command, when index is specified, it creates a new section and links it to the existing smart review contribution at the specified index`() {
         val sectionId = ThingId("R456")
         val contributionId = ThingId("R789")
-        val command = dummyCreateSmartReviewVisualizationSectionCommand().copy(index = 1)
+        val command = createSmartReviewVisualizationSectionCommand().copy(index = 1)
         val statements = listOf(
             createStatement(
                 subject = createResource(contributionId),
@@ -149,7 +149,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
     fun `Given a smart review section create command, when index is specified but higher than existing sections count, it creates a new section and appends it to the existing smart review contribution`() {
         val sectionId = ThingId("R456")
         val contributionId = ThingId("R789")
-        val command = dummyCreateSmartReviewVisualizationSectionCommand().copy(index = 15)
+        val command = createSmartReviewVisualizationSectionCommand().copy(index = 15)
         val statements = listOf(
             createStatement(
                 subject = createResource(contributionId),
@@ -209,12 +209,12 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
     companion object {
         @JvmStatic
         fun createSmartReviewSectionCommands(): Stream<Arguments> = Stream.of(
-            Arguments.of(dummyCreateSmartReviewComparisonSectionCommand()),
-            Arguments.of(dummyCreateSmartReviewVisualizationSectionCommand()),
-            Arguments.of(dummyCreateSmartReviewResourceSectionCommand()),
-            Arguments.of(dummyCreateSmartReviewPredicateSectionCommand()),
-            Arguments.of(dummyCreateSmartReviewOntologySectionCommand()),
-            Arguments.of(dummyCreateSmartReviewTextSectionCommand())
+            Arguments.of(createSmartReviewComparisonSectionCommand()),
+            Arguments.of(createSmartReviewVisualizationSectionCommand()),
+            Arguments.of(createSmartReviewResourceSectionCommand()),
+            Arguments.of(createSmartReviewPredicateSectionCommand()),
+            Arguments.of(createSmartReviewOntologySectionCommand()),
+            Arguments.of(createSmartReviewTextSectionCommand())
         )
     }
 }

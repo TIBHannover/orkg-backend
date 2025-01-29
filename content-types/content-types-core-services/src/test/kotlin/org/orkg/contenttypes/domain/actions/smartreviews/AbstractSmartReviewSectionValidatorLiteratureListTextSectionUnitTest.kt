@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.InvalidSmartReviewTextSectionType
-import org.orkg.contenttypes.input.testing.fixtures.dummySmartReviewTextSectionDefinition
+import org.orkg.contenttypes.input.testing.fixtures.smartReviewTextSectionDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
@@ -14,7 +14,7 @@ import org.orkg.graph.domain.MAX_LABEL_LENGTH
 internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given a text section definition, when validating, it returns success`() {
-        val section = dummySmartReviewTextSectionDefinition()
+        val section = smartReviewTextSectionDefinition()
         val validIds = mutableSetOf<ThingId>()
 
         abstractSmartReviewSectionValidator.validate(section, validIds)
@@ -24,7 +24,7 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
 
     @Test
     fun `Given a text section definition, when heading is invalid, it throws an exception`() {
-        val section = dummySmartReviewTextSectionDefinition().copy(
+        val section = smartReviewTextSectionDefinition().copy(
             heading = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
         val validIds = mutableSetOf<ThingId>()
@@ -34,7 +34,7 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
 
     @Test
     fun `Given a text section definition, when text is invalid, it throws an exception`() {
-        val section = dummySmartReviewTextSectionDefinition().copy(
+        val section = smartReviewTextSectionDefinition().copy(
             text = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
         val validIds = mutableSetOf<ThingId>()
@@ -44,7 +44,7 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
 
     @Test
     fun `Given a text section definition, when type is invalid, it throws an exception`() {
-        val section = dummySmartReviewTextSectionDefinition().copy(
+        val section = smartReviewTextSectionDefinition().copy(
             `class` = Classes.comparison
         )
         val validIds = mutableSetOf<ThingId>()

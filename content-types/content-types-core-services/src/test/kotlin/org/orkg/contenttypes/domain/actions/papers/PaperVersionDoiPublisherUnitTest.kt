@@ -15,7 +15,7 @@ import org.orkg.contenttypes.domain.actions.PublishPaperState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
-import org.orkg.contenttypes.input.testing.fixtures.dummyPublishPaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.publishPaperCommand
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -33,7 +33,7 @@ internal class PaperVersionDoiPublisherUnitTest : MockkBaseTest {
     @Test
     fun `Given a paper publish command, it registers a new doi creates a hasDOI statement`() {
         val paper = createPaper()
-        val command = dummyPublishPaperCommand().copy(id = paper.id)
+        val command = publishPaperCommand().copy(id = paper.id)
         val paperVersionId = ThingId("R321")
         val state = PublishPaperState(
             paper = paper,

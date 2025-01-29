@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -21,7 +21,7 @@ internal class TemplateResourceCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a template create command, it crates a new template resource`() {
-        val command = dummyCreateTemplateCommand()
+        val command = createTemplateCommand()
         val state = CreateTemplateState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(

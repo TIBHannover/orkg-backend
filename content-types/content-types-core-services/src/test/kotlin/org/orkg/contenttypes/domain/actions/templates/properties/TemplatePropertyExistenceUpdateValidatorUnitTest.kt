@@ -20,11 +20,11 @@ import org.orkg.contenttypes.domain.TemplateService
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateNumberLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateOtherLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateResourceTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateStringLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateUntypedTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateNumberLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateOtherLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateStringLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateUntypedTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
@@ -79,11 +79,11 @@ internal class TemplatePropertyExistenceUpdateValidatorUnitTest : MockkBaseTest 
     companion object {
         @JvmStatic
         fun updateTemplatePropertyCommands(): Stream<Arguments> = Stream.of(
-            Arguments.of(dummyUpdateUntypedTemplatePropertyCommand()),
-            Arguments.of(dummyUpdateStringLiteralTemplatePropertyCommand()),
-            Arguments.of(dummyUpdateNumberLiteralTemplatePropertyCommand()),
-            Arguments.of(dummyUpdateOtherLiteralTemplatePropertyCommand()),
-            Arguments.of(dummyUpdateResourceTemplatePropertyCommand())
+            Arguments.of(updateUntypedTemplatePropertyCommand()),
+            Arguments.of(updateStringLiteralTemplatePropertyCommand()),
+            Arguments.of(updateNumberLiteralTemplatePropertyCommand()),
+            Arguments.of(updateOtherLiteralTemplatePropertyCommand()),
+            Arguments.of(updateResourceTemplatePropertyCommand())
         )
     }
 }

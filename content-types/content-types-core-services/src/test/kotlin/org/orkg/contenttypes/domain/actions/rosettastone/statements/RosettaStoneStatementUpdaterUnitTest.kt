@@ -17,7 +17,7 @@ import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneStatement
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
-import org.orkg.contenttypes.input.testing.fixtures.dummyUpdateRosettaStoneStatementCommand
+import org.orkg.contenttypes.input.testing.fixtures.updateRosettaStoneStatementCommand
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ThingRepository
@@ -35,7 +35,7 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a rosetta stone statement update command, when updating a rosetta stone statement, it returns success`() {
-        val command = dummyUpdateRosettaStoneStatementCommand()
+        val command = updateRosettaStoneStatementCommand()
         val originalStatement = createRosettaStoneStatement()
         val r258 = createResource(ThingId("R258"))
         val r369 = createResource(ThingId("R369"))

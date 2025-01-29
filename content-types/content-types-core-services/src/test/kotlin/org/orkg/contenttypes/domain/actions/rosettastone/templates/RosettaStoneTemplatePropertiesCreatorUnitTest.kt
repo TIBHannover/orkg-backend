@@ -10,7 +10,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
-import org.orkg.contenttypes.input.testing.fixtures.dummyCreateRosettaStoneTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneTemplateCommand
 
 internal class RosettaStoneTemplatePropertiesCreatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator = mockk()
@@ -19,7 +19,7 @@ internal class RosettaStoneTemplatePropertiesCreatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a rosetta stone create template command, when creating template properties, it returns success`() {
-        val command = dummyCreateRosettaStoneTemplateCommand()
+        val command = createRosettaStoneTemplateCommand()
         val state = CreateRosettaStoneTemplateState(
             rosettaStoneTemplateId = ThingId("R123")
         )

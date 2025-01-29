@@ -246,30 +246,30 @@ RETURN COUNT(contributor)""")
 
     @Query("""
 CALL {
-    MATCH (sub:Paper) RETURN sub
+    MATCH (n:Paper) RETURN n
     UNION ALL
-    MATCH (sub:Contribution) RETURN sub
+    MATCH (n:Contribution) RETURN n
     UNION ALL
-    MATCH (sub:Problem) RETURN sub
+    MATCH (n:Problem) RETURN n
     UNION ALL
-    MATCH (sub:Visualization) RETURN sub
+    MATCH (n:Visualization) RETURN n
     UNION ALL
-    MATCH (sub:ComparisonPublished) RETURN sub
+    MATCH (n:ComparisonPublished) RETURN n
 }
-RETURN sub $ORDER_BY_PAGE_PARAMS""",
+RETURN n $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
 CALL {
-    MATCH (sub:Paper) RETURN sub
+    MATCH (n:Paper) RETURN n
     UNION ALL
-    MATCH (sub:Contribution) RETURN sub
+    MATCH (n:Contribution) RETURN n
     UNION ALL
-    MATCH (sub:Problem) RETURN sub
+    MATCH (n:Problem) RETURN n
     UNION ALL
-    MATCH (sub:Visualization) RETURN sub
+    MATCH (n:Visualization) RETURN n
     UNION ALL
-    MATCH (sub:ComparisonPublished) RETURN sub
+    MATCH (n:ComparisonPublished) RETURN n
 }
-RETURN COUNT(sub)
+RETURN COUNT(n)
 """)
     fun getChangeLog(pageable: Pageable): Page<Neo4jResource>
 

@@ -14,6 +14,7 @@ import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -174,8 +175,8 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
     fun getPapersPerField() {
         val id = ThingId("RF1234")
         val fieldResource = createResource(id, classes = setOf(Classes.researchField), label = "Fancy research")
-        val paper1 = createPaperResource(ThingId("P1"), title = "Some interesting title")
-        val paper2 = createPaperResource(ThingId("P2"), title = "Even more interesting title")
+        val paper1 = createPaperResource(Predicates.yields, title = "Some interesting title")
+        val paper2 = createPaperResource(Predicates.employs, title = "Even more interesting title")
 
         every { resourceService.findById(fieldResource.id) } returns Optional.of(fieldResource)
         every { statementService.countIncomingStatements(setOf(paper1.id, paper2.id)) } returns mapOf(paper1.id to 12, paper2.id to 13)

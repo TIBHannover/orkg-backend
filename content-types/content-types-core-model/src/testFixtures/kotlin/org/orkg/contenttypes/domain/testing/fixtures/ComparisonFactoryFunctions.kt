@@ -25,6 +25,7 @@ import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.domain.PublishedComparison
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 
 fun createComparison() = Comparison(
@@ -240,7 +241,7 @@ fun createComparisonData(): ComparisonData =
                         id = "R192326",
                         label = "Covid-19 Pandemic Ontology Development",
                         classes = listOf(Classes.problem),
-                        path = listOf(ThingId("R187004"), ThingId("P32")),
+                        path = listOf(ThingId("R187004"), Predicates.hasResearchProblem),
                         pathLabels = listOf("Contribution 1", "research problem"),
                         `class` = "resource"
                     )

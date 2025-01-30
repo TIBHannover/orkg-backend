@@ -11,6 +11,7 @@ import kotlinx.coroutines.withContext
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkDescribeSpec
 import org.orkg.export.testing.fixtures.verifyThatDirectoryExistsAndIsEmpty
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.pageOf
@@ -33,8 +34,8 @@ internal class ExportPredicateIdToLabelServiceIntegrationTest : MockkDescribeSpe
         val targetFile = targetDir.resolve("test-export.json")
         targetFile.exists() shouldBe false
 
-        val predicate1 = createPredicate(id = ThingId("P1"), label = "label1")
-        val predicate2 = createPredicate(id = ThingId("P2"), label = "label2")
+        val predicate1 = createPredicate(id = Predicates.yields, label = "label1")
+        val predicate2 = createPredicate(id = Predicates.employs, label = "label2")
 
         every { predicateRepository.findAll(any()) } returns pageOf(predicate1, predicate2)
 

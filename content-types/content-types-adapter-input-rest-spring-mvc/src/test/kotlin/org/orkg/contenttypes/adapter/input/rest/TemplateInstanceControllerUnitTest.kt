@@ -23,6 +23,7 @@ import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -259,8 +260,8 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
     private fun updateTemplateInstanceRequest() =
         TemplateInstanceController.UpdateTemplateInstanceRequest(
             statements = mapOf(
-                ThingId("P27") to listOf("#temp1", "#temp2", "#temp3"),
-                ThingId("P24") to listOf("#temp4", "#temp5", "R123")
+                Predicates.hasAuthor to listOf("#temp1", "#temp2", "#temp3"),
+                Predicates.field to listOf("#temp4", "#temp5", "R123")
             ),
             resources = mapOf(
                 "#temp1" to ResourceDefinitionDTO(

@@ -12,12 +12,13 @@ import org.orkg.contenttypes.input.testing.fixtures.smartReviewOntologySectionDe
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.PredicateNotFound
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createPredicate
 
 internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : AbstractSmartReviewSectionValidatorUnitTest() {
     @Test
     fun `Given an ontology section definition, when validating, it returns success`() {
-        val section = smartReviewOntologySectionDefinition().copy(predicates = listOf(ThingId("P2")))
+        val section = smartReviewOntologySectionDefinition().copy(predicates = listOf(Predicates.employs))
         val validIds = mutableSetOf<ThingId>()
         val predicate = createPredicate(section.predicates.single())
 
@@ -99,7 +100,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
 
     @Test
     fun `Given an ontology section definition, when predicate does not exist, it throws an exception`() {
-        val section = smartReviewOntologySectionDefinition().copy(predicates = listOf(ThingId("P2")))
+        val section = smartReviewOntologySectionDefinition().copy(predicates = listOf(Predicates.employs))
         val validIds = mutableSetOf<ThingId>()
 
         every { thingRepository.existsAll(any()) } returns true

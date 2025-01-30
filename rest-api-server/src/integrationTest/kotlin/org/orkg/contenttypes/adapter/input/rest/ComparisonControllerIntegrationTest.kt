@@ -328,7 +328,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                                 id = "R192326",
                                 label = "Covid-19 Pandemic Ontology Development",
                                 classes = listOf(Classes.problem),
-                                path = listOf(ThingId("R187004"), ThingId("P32")),
+                                path = listOf(ThingId("R187004"), Predicates.hasResearchProblem),
                                 pathLabels = listOf("Contribution 1", "research problem"),
                                 `class` = "resource"
                             )
@@ -460,7 +460,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                                 id = "R192326",
                                 label = "Covid-19 Pandemic Ontology Development",
                                 classes = listOf(Classes.problem),
-                                path = listOf(ThingId("R187004"), ThingId("P32")),
+                                path = listOf(ThingId("R187004"), Predicates.hasResearchProblem),
                                 pathLabels = listOf("Contribution 1", "research problem"),
                                 `class` = "resource"
                             )

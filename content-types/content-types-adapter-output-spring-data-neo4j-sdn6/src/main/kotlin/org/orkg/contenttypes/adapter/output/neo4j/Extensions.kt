@@ -29,16 +29,17 @@ import org.orkg.graph.adapter.output.neo4j.matchDistinct
 import org.orkg.graph.adapter.output.neo4j.toResource
 import org.orkg.graph.adapter.output.neo4j.toThing
 import org.orkg.graph.adapter.output.neo4j.toThingId
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
 
 private const val RELATED = "RELATED"
 private val reservedRosettaStoneStatementLabels = setOf(
-    ThingId("Thing"),
-    ThingId("Resource"),
-    ThingId("RosettaStoneStatement"),
-    ThingId("LatestVersion")
+    Classes.thing,
+    Classes.resource,
+    Classes.rosettaStoneStatement,
+    Classes.latestVersion
 )
 
 data class RosettaStoneStatementMapper(

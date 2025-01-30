@@ -438,15 +438,15 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             it.id shouldNotBe null
             it.entries shouldBe listOf(
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(ThingId("Dataset"))),
+                    ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset)),
                     "example description"
                 ),
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(ThingId("Software"))),
+                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
                     null
                 ),
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3003"), "Some resource", setOf(ThingId("Paper"))),
+                    ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
                     null
                 )
             )
@@ -468,15 +468,15 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             it.id shouldBe literatureListSectionId
             it.entries shouldBe listOf(
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3003"), "Some resource", setOf(ThingId("Paper"))),
+                    ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
                     null
                 ),
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(ThingId("Software"))),
+                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
                     "new description"
                 ),
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(ThingId("Dataset"))),
+                    ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset)),
                     "updated example description"
                 )
             )

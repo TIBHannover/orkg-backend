@@ -156,7 +156,7 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
                         maxCount = 2,
                         pattern = """https?\:\/\/.*""",
                         path = Predicates.hasURL,
-                        datatype = ThingId("String"),
+                        datatype = Classes.string,
                     )
                 ),
                 isClosed = true,
@@ -193,7 +193,7 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
     @TestWithMockUser
     fun update() {
         val id = resourceService.findAll(
-            includeClasses = setOf(ThingId("NodeShape")),
+            includeClasses = setOf(Classes.nodeShape),
             pageable = PageRequests.SINGLE
         ).single().id
 

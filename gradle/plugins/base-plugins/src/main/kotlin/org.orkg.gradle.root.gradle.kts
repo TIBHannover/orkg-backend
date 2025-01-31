@@ -34,19 +34,24 @@ fun isNonStable(version: String): Boolean {
     return isStable.not()
 }
 
-fun isSpringManaged(candidate: ModuleComponentIdentifier, currentVersion: String): Boolean =
-    candidate.version != currentVersion && candidate.group in setOf(
-        "com.fasterxml.jackson.core",
-        "com.fasterxml.jackson.datatype",
-        "com.fasterxml.jackson.module",
-        "jakarta.persistence",
-        "jakarta.validation",
-        "org.apache.tomcat.embed",
-        "org.hamcrest",
-        "org.liquibase",
-        "org.neo4j.driver",
-        "org.slf4j",
-    )
+fun isSpringManaged(
+    candidate: ModuleComponentIdentifier,
+    currentVersion: String,
+): Boolean =
+    candidate.version != currentVersion &&
+        candidate.group in
+        setOf(
+            "com.fasterxml.jackson.core",
+            "com.fasterxml.jackson.datatype",
+            "com.fasterxml.jackson.module",
+            "jakarta.persistence",
+            "jakarta.validation",
+            "org.apache.tomcat.embed",
+            "org.hamcrest",
+            "org.liquibase",
+            "org.neo4j.driver",
+            "org.slf4j",
+        )
 
 // Module Graph plugin configuration
 
@@ -61,16 +66,19 @@ val convertModuleGraphCodeBlockToStandaloneFile by tasks.registering {
     mustRunAfter(tasks.named("createModuleGraph"))
     doLast {
         val outputFile = File(modulesFile)
-        val content = outputFile.readText()
+        val content = outputFile.readText().lineSequence()
         val asciidocContent =
             content
                 // Remove Markdown code blocks
-                .replace("```mermaid", "")
-                .replace("```", "")
+                .filterNot { it.startsWith("```mermaid") }
+                .filterNot { it.startsWith("```") }
+                // Filter root module, because it connects to everything and gives no information
+                .filterNot { it.contains(": --> :") }
                 // Work-around for "graph" being a reserved word, which leads to parsing errors
-                .replace(":g", ":G")
+                .map { it.replace(":g", ":G") }
                 // Remove emtpy lines at the top of the file
-                .replace("^\\s+".toRegex(), "")
+                .filter { it.isNotBlank() }
+                .joinToString("\n")
         outputFile.writeText(asciidocContent)
     }
 }

@@ -4,11 +4,11 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.name
-import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.noCondition
+import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.neo4j.cypherdsl.core.Node
@@ -62,8 +62,65 @@ class SpringDataNeo4jLiteratureListAdapter(
         researchField: ThingId?,
         includeSubfields: Boolean,
         published: Boolean?,
+        sustainableDevelopmentGoal: ThingId?,
+    ): Page<Resource> =
+        buildFindAllQuery(
+            sort = pageable.sort.orElseGet { Sort.by("created_at") },
+            label = label,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            published = published,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
+        ).fetch(pageable, false)
+
+    override fun count(
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
+        published: Boolean?,
+        sustainableDevelopmentGoal: ThingId?,
+    ): Long =
+        buildFindAllQuery(
+            sort = Sort.unsorted(),
+            label = label,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            published = published,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
+        ).count()
+
+    private fun buildFindAllQuery(
+        sort: Sort,
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
+        published: Boolean?,
         sustainableDevelopmentGoal: ThingId?
-    ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
+    ) = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
         .withCommonQuery {
             val patterns: (Node) -> Collection<RelationshipPattern> = { node ->
                 listOfNotNull(
@@ -126,7 +183,6 @@ class SpringDataNeo4jLiteratureListAdapter(
             val node = name("node")
             val score = if (label != null && label is FuzzySearchString) name("score") else null
             val variables = listOfNotNull(node, score)
-            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery
                 .with(variables) // "with" is required because cypher dsl reorders "orderBy" and "where" clauses sometimes, decreasing performance
                 .where(
@@ -155,5 +211,4 @@ class SpringDataNeo4jLiteratureListAdapter(
         }
         .countOver("node")
         .mappedBy(ResourceMapper("node"))
-        .fetch(pageable, false)
 }

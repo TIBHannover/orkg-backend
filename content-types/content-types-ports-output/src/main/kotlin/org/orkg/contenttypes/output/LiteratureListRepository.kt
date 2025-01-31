@@ -26,4 +26,17 @@ interface LiteratureListRepository {
         published: Boolean? = null,
         sustainableDevelopmentGoal: ThingId? = null
     ): Page<Resource>
+    fun count(
+        label: SearchString? = null,
+        visibility: VisibilityFilter? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+        researchField: ThingId? = null,
+        includeSubfields: Boolean = false,
+        published: Boolean? = null,
+        sustainableDevelopmentGoal: ThingId? = null
+    ): Long
 }

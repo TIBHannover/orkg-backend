@@ -187,24 +187,26 @@ object PagedQueryBuilder {
     interface ExposesPagedWithParametersAndFetchAs : ExposesPagedWithParameters, ExposesPagedFetchAs
 
     interface ExposesPagedMappedBy<T> {
-        fun mappedBy(mappingFunction: (TypeSystem, Record) -> T): ExposesPagedFetch<T>
+        fun mappedBy(mappingFunction: (TypeSystem, Record) -> T): ExposesPagedFetchAndCount<T>
 
-        fun mappedBy(mappingFunction: BiFunction<TypeSystem, Record, T>): ExposesPagedFetch<T> =
+        fun mappedBy(mappingFunction: BiFunction<TypeSystem, Record, T>): ExposesPagedFetchAndCount<T> =
             mappedBy(mappingFunction::apply)
     }
 
-    interface ExposesPagedFetch<T> {
+    interface ExposesPagedFetchAndCount<T> {
         fun fetch(pageable: Pageable, appendSort: Boolean = true): Page<T>
+
+        fun count(): Long
     }
 
-    interface ExposesPagedMappedByAndFetch<T : Any> : ExposesPagedMappedBy<T>, ExposesPagedFetch<T>
+    interface ExposesPagedMappedByAndFetch<T : Any> : ExposesPagedMappedBy<T>, ExposesPagedFetchAndCount<T>
 
     inline fun <reified T : Any> ExposesPagedFetchAs.fetchAs(): ExposesPagedMappedByAndFetch<T> = fetchAs(T::class)
 
-    inline fun <reified T : Any> ExposesPagedFetchAs.mappedBy(noinline mappingFunction: (TypeSystem, Record) -> T): ExposesPagedFetch<T> =
+    inline fun <reified T : Any> ExposesPagedFetchAs.mappedBy(noinline mappingFunction: (TypeSystem, Record) -> T): ExposesPagedFetchAndCount<T> =
         fetchAs(T::class).mappedBy(mappingFunction)
 
-    inline fun <reified T : Any> ExposesPagedFetchAs.mappedBy(mappingFunction: BiFunction<TypeSystem, Record, T>): ExposesPagedFetch<T> =
+    inline fun <reified T : Any> ExposesPagedFetchAs.mappedBy(mappingFunction: BiFunction<TypeSystem, Record, T>): ExposesPagedFetchAndCount<T> =
         fetchAs(T::class).mappedBy(mappingFunction)
 
     fun <T : ExposesReturning> ExposesPagedWithCountQuery<T>.countOver(variable: String): ExposesPagedWithParametersAndFetchAs =
@@ -284,7 +286,7 @@ class PagedQueryBuilderImpl {
     ) : PagedQueryBuilder.ExposesPagedMappedByAndFetch<R> {
         override fun mappedBy(
             mappingFunction: (TypeSystem, Record) -> R
-        ): PagedQueryBuilder.ExposesPagedFetch<R> =
+        ): PagedQueryBuilder.ExposesPagedFetchAndCount<R> =
             PagedMappedByAndFetchBuilder(
                 neo4jClient, queryCache, commonQuery, query, countQuery, parameters, targetClass, mappingFunction
             )
@@ -302,6 +304,10 @@ class PagedQueryBuilderImpl {
                 .let { if (mappingFunction != null) it.mappedBy(mappingFunction) else it }
                 .all()
                 .toList()
+            return PageImpl(content, pageable, count())
+        }
+
+        override fun count(): Long {
             val countQuery = queryCache.getOrPut(commonQuery to countQuery) {
                 countQuery(commonQuery())
                     .build()
@@ -311,7 +317,7 @@ class PagedQueryBuilderImpl {
                 .fetchAs(Long::class.java)
                 .one()
                 .orElse(0)
-            return PageImpl(content, pageable, count)
+            return count
         }
     }
 }

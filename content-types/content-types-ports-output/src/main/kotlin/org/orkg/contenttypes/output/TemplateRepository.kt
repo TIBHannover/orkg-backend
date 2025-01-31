@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable
 
 interface TemplateRepository {
     fun findAll(
+        pageable: Pageable,
         label: SearchString? = null,
         visibility: VisibilityFilter? = null,
         createdBy: ContributorId? = null,
@@ -23,7 +24,19 @@ interface TemplateRepository {
         researchField: ThingId? = null,
         includeSubfields: Boolean = false,
         researchProblem: ThingId? = null,
-        targetClassId: ThingId? = null,
-        pageable: Pageable
+        targetClassId: ThingId? = null
     ): Page<Resource>
+    fun count(
+        label: SearchString? = null,
+        visibility: VisibilityFilter? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+        researchField: ThingId? = null,
+        includeSubfields: Boolean = false,
+        researchProblem: ThingId? = null,
+        targetClassId: ThingId? = null
+    ): Long
 }

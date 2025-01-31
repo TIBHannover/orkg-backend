@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable
 
 interface VisualizationRepository {
     fun findAll(
+        pageable: Pageable,
         label: SearchString? = null,
         visibility: VisibilityFilter? = null,
         createdBy: ContributorId? = null,
@@ -21,7 +22,17 @@ interface VisualizationRepository {
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
         researchField: ThingId? = null,
-        includeSubfields: Boolean = false,
-        pageable: Pageable
+        includeSubfields: Boolean = false
     ): Page<Resource>
+    fun count(
+        label: SearchString? = null,
+        visibility: VisibilityFilter? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+        researchField: ThingId? = null,
+        includeSubfields: Boolean = false
+    ): Long
 }

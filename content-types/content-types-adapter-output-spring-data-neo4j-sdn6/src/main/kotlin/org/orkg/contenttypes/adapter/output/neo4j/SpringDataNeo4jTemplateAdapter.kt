@@ -4,11 +4,11 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
+import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.name
-import org.neo4j.cypherdsl.core.Cypher.node
-import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.noCondition
+import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.neo4j.cypherdsl.core.Node
@@ -52,6 +52,7 @@ class SpringDataNeo4jTemplateAdapter(
     private val neo4jClient: Neo4jClient
 ) : TemplateRepository {
     override fun findAll(
+        pageable: Pageable,
         label: SearchString?,
         visibility: VisibilityFilter?,
         createdBy: ContributorId?,
@@ -63,8 +64,64 @@ class SpringDataNeo4jTemplateAdapter(
         includeSubfields: Boolean,
         researchProblem: ThingId?,
         targetClassId: ThingId?,
-        pageable: Pageable
-    ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
+    ): Page<Resource> =
+        buildFindAllQuery(
+            sort = pageable.sort.orElseGet { Sort.by("created_at") },
+            label = label,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            researchProblem = researchProblem,
+            targetClassId = targetClassId
+        ).fetch(pageable, false)
+
+    override fun count(
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
+        researchProblem: ThingId?,
+        targetClassId: ThingId?,
+    ): Long =
+        buildFindAllQuery(
+            sort = Sort.unsorted(),
+            label = label,
+            visibility = visibility,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            researchProblem = researchProblem,
+            targetClassId = targetClassId
+        ).count()
+
+    private fun buildFindAllQuery(
+        sort: Sort,
+        label: SearchString?,
+        visibility: VisibilityFilter?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
+        researchProblem: ThingId?,
+        targetClassId: ThingId?,
+    ) = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
         .withCommonQuery {
             val patterns: (Node) -> Collection<PatternElement> = { node ->
                 listOfNotNull(
@@ -133,7 +190,6 @@ class SpringDataNeo4jTemplateAdapter(
             val node = name("node")
             val score = if (label != null && label is FuzzySearchString) name("score") else null
             val variables = listOfNotNull(node, score)
-            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery
                 .with(variables) // "with" is required because cypher dsl reorders "orderBy" and "where" clauses sometimes, decreasing performance
                 .where(
@@ -162,5 +218,4 @@ class SpringDataNeo4jTemplateAdapter(
         }
         .countOver("node")
         .mappedBy(ResourceMapper("node"))
-        .fetch(pageable, false)
 }

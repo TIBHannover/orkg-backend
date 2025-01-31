@@ -80,7 +80,75 @@ class SpringDataNeo4jPaperAdapter(
         includeSubfields: Boolean,
         sustainableDevelopmentGoal: ThingId?,
         mentionings: Set<ThingId>?
-    ): Page<Resource> = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
+    ): Page<Resource> =
+        buildFindAllQuery(
+            sort = pageable.sort.orElseGet { Sort.by("created_at") },
+            label = label,
+            doi = doi,
+            doiPrefix = doiPrefix,
+            visibility = visibility,
+            verified = verified,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
+            mentionings = mentionings
+        ).fetch(pageable, false)
+
+    override fun count(
+        label: SearchString?,
+        doi: String?,
+        doiPrefix: String?,
+        visibility: VisibilityFilter?,
+        verified: Boolean?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
+        sustainableDevelopmentGoal: ThingId?,
+        mentionings: Set<ThingId>?
+    ): Long =
+        buildFindAllQuery(
+            label = label,
+            doi = doi,
+            doiPrefix = doiPrefix,
+            visibility = visibility,
+            verified = verified,
+            createdBy = createdBy,
+            createdAtStart = createdAtStart,
+            createdAtEnd = createdAtEnd,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            researchField = researchField,
+            includeSubfields = includeSubfields,
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
+            mentionings = mentionings
+        ).count()
+
+    private fun buildFindAllQuery(
+        sort: Sort = Sort.unsorted(),
+        label: SearchString?,
+        doi: String?,
+        doiPrefix: String?,
+        visibility: VisibilityFilter?,
+        verified: Boolean?,
+        createdBy: ContributorId?,
+        createdAtStart: OffsetDateTime?,
+        createdAtEnd: OffsetDateTime?,
+        observatoryId: ObservatoryId?,
+        organizationId: OrganizationId?,
+        researchField: ThingId?,
+        includeSubfields: Boolean,
+        sustainableDevelopmentGoal: ThingId?,
+        mentionings: Set<ThingId>?
+    ) = CypherQueryBuilder(neo4jClient, QueryCache.Uncached)
         .withCommonQuery {
             val node = node("Paper").named("node")
             val nodes = name("nodes")
@@ -168,7 +236,6 @@ class SpringDataNeo4jPaperAdapter(
             val node = name("node")
             val score = if (label != null && label is FuzzySearchString) name("score") else null
             val variables = listOfNotNull(node, score)
-            val sort = pageable.sort.orElseGet { Sort.by("created_at") }
             commonQuery
                 .with(variables) // "with" is required because cypher dsl reorders "orderBy" and "where" clauses sometimes, decreasing performance
                 .where(
@@ -197,7 +264,6 @@ class SpringDataNeo4jPaperAdapter(
         }
         .countDistinctOver("node")
         .mappedBy(ResourceMapper("node"))
-        .fetch(pageable, false)
 }
 
 fun Neo4jPaperWithPath.toPaperResourceWithPath() =

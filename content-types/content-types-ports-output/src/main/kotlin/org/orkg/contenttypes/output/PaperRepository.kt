@@ -31,4 +31,20 @@ interface PaperRepository {
         sustainableDevelopmentGoal: ThingId? = null,
         mentionings: Set<ThingId>? = null
     ): Page<Resource>
+    fun count(
+        label: SearchString? = null,
+        doi: String? = null,
+        doiPrefix: String? = null,
+        visibility: VisibilityFilter? = null,
+        verified: Boolean? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+        researchField: ThingId? = null,
+        includeSubfields: Boolean = false,
+        sustainableDevelopmentGoal: ThingId? = null,
+        mentionings: Set<ThingId>? = null
+    ): Long
 }

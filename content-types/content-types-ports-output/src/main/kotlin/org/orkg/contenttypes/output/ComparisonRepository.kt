@@ -33,4 +33,19 @@ interface ComparisonRepository {
     fun findVersionHistoryForPublishedComparison(id: ThingId): VersionInfo
     fun findAllDOIsRelatedToComparison(id: ThingId): Iterable<String>
     fun findAllCurrentAndListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource>
+    fun count(
+        label: SearchString? = null,
+        doi: String? = null,
+        visibility: VisibilityFilter? = null,
+        createdBy: ContributorId? = null,
+        createdAtStart: OffsetDateTime? = null,
+        createdAtEnd: OffsetDateTime? = null,
+        observatoryId: ObservatoryId? = null,
+        organizationId: OrganizationId? = null,
+        researchField: ThingId? = null,
+        includeSubfields: Boolean = false,
+        published: Boolean? = null,
+        sustainableDevelopmentGoal: ThingId? = null,
+        researchProblem: ThingId? = null
+    ): Long
 }

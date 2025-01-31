@@ -1,7 +1,6 @@
 package org.orkg.contenttypes.domain
 
 import org.orkg.common.ObservatoryId
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.LiteratureListRepository
@@ -56,12 +55,11 @@ class ContentTypeMetrics {
         group = "content-types",
         parameterSpecs = sharedContentTypeParameters,
         supplier = { parameters ->
-            paperRepository.findAll(
-                pageable = PageRequests.SINGLE,
+            paperRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
                 observatoryId = parameters[observatoryIdParameter]
-            ).totalElements
+            )
         }
     )
 
@@ -76,13 +74,12 @@ class ContentTypeMetrics {
         group = "content-types",
         parameterSpecs = sharedContentTypeParameters,
         supplier = { parameters ->
-            comparisonRepository.findAll(
-                pageable = PageRequests.SINGLE,
+            comparisonRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
                 observatoryId = parameters[observatoryIdParameter],
                 published = false
-            ).totalElements
+            )
         }
     )
 
@@ -97,12 +94,11 @@ class ContentTypeMetrics {
         group = "content-types",
         parameterSpecs = sharedContentTypeParameters,
         supplier = { parameters ->
-            visualizationRepository.findAll(
-                pageable = PageRequests.SINGLE,
+            visualizationRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
                 observatoryId = parameters[observatoryIdParameter]
-            ).totalElements
+            )
         }
     )
 
@@ -117,13 +113,12 @@ class ContentTypeMetrics {
         group = "content-types",
         parameterSpecs = sharedContentTypeParameters,
         supplier = { parameters ->
-            literatureListRepository.findAll(
-                pageable = PageRequests.SINGLE,
+            literatureListRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
                 observatoryId = parameters[observatoryIdParameter],
                 published = false
-            ).totalElements
+            )
         }
     )
 
@@ -138,13 +133,12 @@ class ContentTypeMetrics {
         group = "content-types",
         parameterSpecs = sharedContentTypeParameters,
         supplier = { parameters ->
-            smartReviewRepository.findAll(
-                pageable = PageRequests.SINGLE,
+            smartReviewRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
                 observatoryId = parameters[observatoryIdParameter],
                 published = false
-            ).totalElements
+            )
         }
     )
 
@@ -159,12 +153,11 @@ class ContentTypeMetrics {
         group = "content-types",
         parameterSpecs = sharedContentTypeParameters,
         supplier = { parameters ->
-            templateRepository.findAll(
-                pageable = PageRequests.SINGLE,
+            templateRepository.count(
                 researchField = parameters[researchFieldParameter],
                 includeSubfields = parameters[includeSubfieldsParameter] ?: false,
                 observatoryId = parameters[observatoryIdParameter]
-            ).totalElements
+            )
         }
     )
 }

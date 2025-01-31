@@ -1,15 +1,31 @@
 image: azul/zulu-openjdk-debian:21
 
-# Enable Docker-in-Docker (DinD) for TestContainers and Docker image builds.
-services:
-  - docker:dind
-
 variables:
   DOCKER_HOST: "tcp://docker:2375"
   # Improve performance by using overlayfs
   DOCKER_DRIVER: overlay2
   # Disable Gradle daemon during build
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+default:
+  cache:
+    # Dedicated cache the Gradle wrapper
+    - key:
+        files:
+          - gradle/wrapper/gradle-wrapper.properties
+        prefix: gradle-wrapper
+      paths:
+        - .gradle-user-home/wrapper/
+    # Regular Gradle cache, for all things Gradle needs. Uses the cache from the default branch if none was found.
+    - key: gradle-$CI_COMMIT_REF_SLUG
+      fallback_keys:
+        - gradle-$CI_DEFAULT_BRANCH
+      paths:
+        - .gradle-user-home/caches/
+        # Prevent the welcome message to be shown every time
+        - .gradle-user-home/notifications/
+        # Save build artifacts to cache; follows official Gradle.gitlab-ci.yml template
+        - "**/build/"
 
 .gradle_build_job:
   before_script:
@@ -18,32 +34,27 @@ variables:
     # Remove files that might be problematic (recommended by Travis CI)
     - rm -f  ${GRADLE_USER_HOME}/caches/modules-2/modules-2.lock
 
-# Ideas taken from https://docs.gitlab.com/ee/ci/caching/ as well as
-#   https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Gradle.gitlab-ci.yml and
-#   https://blog.jdriven.com/2021/11/reuse-gradle-build-cache-on-gitlab/
-cache: &gradle_cache_settings
-  key:
-    files:
-      # Only have a single version of the wrapper, and invalidate the cache when the Gradle wrapper version changes.
-      - gradle/wrapper/gradle-wrapper.properties
-    prefix: wrapper
-  paths:
-    - .gradle-user-home/caches/             # Gradle Build Cache directories
-    - .gradle-user-home/notifications/      # Prevent welcome message to be shown every time
-    - .gradle-user-home/wrapper/            # Gradle Wrapper binaries
-  policy: pull-push
-
 stages:
   - build
   - package
   - verify
   - deploy
 
+compile:
+  stage: build
+  extends: .gradle_build_job
+  script:
+    - ./gradlew --build-cache compileAll buildHealth
+  needs: []
+  rules:
+    - when: always
+
 build:
   stage: build
   extends: .gradle_build_job
-  cache:
-    <<: *gradle_cache_settings
+  # Enable Docker-in-Docker (DinD) for TestContainers and Docker image builds.
+  services:
+    - docker:dind
   script:
     - ./gradlew --build-cache build
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
@@ -54,70 +65,71 @@ build:
       - rest-api-server/build/libs/rest-api-server-*.jar
     reports:
       junit: rest-api-server/build/test-results/**/TEST-*.xml
-  needs: []
+  needs:
+    - job: compile
+      artifacts: false
+  rules:
+    - when: always
 
 # Template job for building all documentation. These jobs rely on the Gradle build cache
 # because Spring RestDoc snippets are generated from the test, and we do not want to re-run those.
-.build-documentation:
+# Results from these tasks are not written back to the cache, because the jobs are leaf nodes, and to save some time.
+.build_documentation:
   stage: deploy
   extends: .gradle_build_job
   needs:
     - job: build
-      artifacts: true
-  cache:
-    <<: *gradle_cache_settings
-  services: []    # Disable Docker-in-Docker
+      artifacts: false
   script:
     - apt update && apt install --assume-yes graphviz
     - ./gradlew --build-cache :documentation:asciidoctor
+
+# Attempt to build the documentation, although we do not deploy it to GitLab Pages.
+# This ensures that everything works as expected and prevents surprises when merging.
+dummy_doc_build:
+  extends: .build_documentation
+  rules:
+    - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+
+# Deploy documentation to GitLab Pages.
+pages:
+  resource_group: gitlab-pages
+  extends: .build_documentation
+  after_script:
     - mkdir -p public
     - cp -r documentation/build/docs/asciidoc/* public/
   artifacts:
     paths:
       - public
-
-# Attempt to build the documentation, although we do not deploy it to GitLab Pages.
-# This ensures that everything works as expected and prevents surprises when merging.
-dummy-doc-build:
-  extends: .build-documentation
-  except:
-    - master
-
-# Deploy documentation to GitLab Pages.
-pages:
-  resource_group: gitlab-pages
-  extends: .build-documentation
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
 
 # Template for building Docker images.
-.docker-build-instructions: &docker-build-instructions
+.docker_build_instructions:
   stage: package
   extends: .gradle_build_job
-  cache:
-    <<: *gradle_cache_settings
-    policy: pull
   needs:
-    - build
+    - job: build
+      artifacts: false
   script:
     # Turn a list of whitespace-separated tags into a comma-separated list, as GitLab gets confused with commas and variable substitutions.
     - docker_tags=$(echo "$IMAGE_TAGS" | sed 's/ \+/,/g')
     # Build using Jib (pushed automatically)
     - ./gradlew --build-cache jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$docker_tags -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
 
-docker-build-master:
+docker_build_master:
+  extends: .docker_build_instructions
   variables:
     IMAGE_TAGS: latest master
-  <<: *docker-build-instructions
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
 
-docker-build:
-  extends: .docker-build-instructions
+docker_build:
+  extends: .docker_build_instructions
   variables:
     IMAGE_TAGS: $CI_COMMIT_REF_NAME release
-  except:
-    - master
+  rules:
+    - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
 
 # (Security) Scanning templates
 include:
@@ -125,16 +137,18 @@ include:
   - template: Security/Secret-Detection.gitlab-ci.yml
   # Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See below.
   #- template: Dependency-Scanning.gitlab-ci.yml
+  - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'  # Prevents duplicate pipelines
 
 container_scanning:
   stage: verify
   variables:
     CS_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  cache: []
   needs:
-    - job: docker-build
+    - job: docker_build
       optional: true
       artifacts: false
-    - job: docker-build-master
+    - job: docker_build_master
       optional: true
       artifacts: false
 
@@ -145,6 +159,7 @@ container_scanning:
 
 secret_detection:
   stage: verify
+  cache: []
   needs: []
   variables:
     SECRET_DETECTION_EXCLUDED_PATHS: '.gradle'
@@ -163,7 +178,9 @@ deployment_trigger:incubating:
   variables:
     GIT_STRATEGY: none
   needs:
-    - docker-build-master
+    - docker_build_master
+    - secret_detection
+    - container_scanning
 
 deployment_trigger:release:
   stage: deploy
@@ -179,4 +196,6 @@ deployment_trigger:release:
   variables:
     GIT_STRATEGY: none
   needs:
-    - docker-build
+    - docker_build
+    - secret_detection
+    - container_scanning

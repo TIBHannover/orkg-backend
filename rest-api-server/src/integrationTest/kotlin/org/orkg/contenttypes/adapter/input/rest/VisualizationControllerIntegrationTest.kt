@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -144,48 +145,10 @@ internal class VisualizationControllerIntegrationTest : MockMvcBaseTest("visuali
     @TestWithMockUser
     fun create() {
         post("/api/visualizations")
-            .content(createVisualizationJson)
+            .content(requestJson("orkg/createVisualization"))
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
             .andExpect(status().isCreated)
     }
 }
-
-private const val createVisualizationJson = """{
-  "title": "example visualization",
-  "description": "visualization description",
-  "authors": [
-    {
-      "name": "Author with id",
-      "id": "R123"
-    },
-    {
-      "name": "Author with orcid",
-      "identifiers": {
-        "orcid": ["0000-1111-2222-3333"]
-      }
-    },
-    {
-      "name": "Author with id and orcid",
-      "id": "R456",
-      "identifiers": {
-        "orcid": ["1111-2222-3333-4444"]
-      }
-    },
-    {
-      "name": "Author with homepage",
-      "homepage": "https://example.org/author"
-    },
-    {
-      "name": "Author that just has a name"
-    }
-  ],
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "extraction_method": "MANUAL"
-}"""

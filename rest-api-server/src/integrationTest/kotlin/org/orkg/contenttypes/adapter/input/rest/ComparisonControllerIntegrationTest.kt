@@ -16,6 +16,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -217,7 +218,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
     @TestWithMockUser
     fun createAndFetchAndUpdate() {
         val id = post("/api/comparisons")
-            .content(createComparisonJson)
+            .content(requestJson("orkg/createComparison"))
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -355,7 +356,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
         }
 
         put("/api/comparisons/{id}", id)
-            .content(updateComparisonJson)
+            .content(requestJson("orkg/updateComparison"))
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
@@ -487,229 +488,3 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
         }
     }
 }
-
-private const val createComparisonJson = """{
-  "title": "example comparison",
-  "description": "comparison description",
-  "research_fields": [
-    "R12"
-  ],
-  "authors": [
-    {
-      "name": "Author with id",
-      "id": "R123"
-    },
-    {
-      "name": "Author with orcid",
-      "identifiers": {
-        "orcid": ["0000-1111-2222-3333"]
-      }
-    },
-    {
-      "name": "Author with id and orcid",
-      "id": "R456",
-      "identifiers": {
-        "orcid": ["1111-2222-3333-4444"]
-      }
-    },
-    {
-      "name": "Author with homepage",
-      "homepage": "https://example.org/author"
-    },
-    {
-      "name": "Author that just has a name"
-    }
-  ],
-  "sdgs": ["SDG_1", "SDG_2"],
-  "contributions": [
-    "R6541", "R5364", "R9786", "R3120"
-  ],
-  "config": {
-    "contributions": [
-      "R456789",
-      "R987654"
-    ],
-    "predicates": [],
-    "transpose": false,
-    "type": "MERGE"
-  },
-  "data": {
-    "contributions": [
-      {
-        "active": true,
-        "id": "R456789",
-        "label": "Contribution 1",
-        "paper_id": "R456",
-        "paper_label": "Paper 1",
-        "paper_year": 2024
-      },
-      {
-        "active": true,
-        "id": "R987654",
-        "label": "Contribution 1",
-        "paper_id": "R789",
-        "paper_label": "Paper 2",
-        "paper_year": 2022
-      }
-    ],
-    "data": {
-      "P32": [
-        [
-          {
-            "_class": "resource",
-            "classes": ["Problem"],
-            "id": "R192326",
-            "label": "Covid-19 Pandemic Ontology Development",
-            "path": [
-              "R187004",
-              "P32"
-            ],
-            "path_labels": [
-              "Contribution 1",
-              "research problem"
-            ]
-          }
-        ]
-      ]
-    },
-    "predicates": [
-      {
-        "active": true,
-        "id": "P32",
-        "label": "research problem",
-        "n_contributions": 2,
-        "similar_predicates": ["P15"]
-      }
-    ]
-  },
-  "references": [
-    "https://orkg.org/resources/R1000",
-    "paper citation"
-  ],
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "is_anonymized": false,
-  "extraction_method": "MANUAL"
-}"""
-
-private const val updateComparisonJson = """{
-  "title": "updated comparison",
-  "description": "updated comparison description",
-  "research_fields": [
-    "R13"
-  ],
-  "authors": [
-    {
-      "name": "Other author with id",
-      "id": "R124"
-    },
-    {
-      "name": "Author with orcid",
-      "identifiers": {
-        "orcid": ["0000-1111-2222-3333"]
-      }
-    },
-    {
-      "name": "Author with id and orcid",
-      "id": "R456",
-      "identifiers": {
-        "orcid": ["1111-2222-3333-4444"]
-      }
-    },
-    {
-      "name": "Author with homepage",
-      "homepage": "https://example.org/author"
-    },
-    {
-      "name": "Author that just has a name"
-    }
-  ],
-  "sdgs": ["SDG_3", "SDG_2"],
-  "contributions": [
-    "R6541", "R5364", "R3120", "R7864"
-  ],
-  "config": {
-    "contributions": [
-      "R456790",
-      "R987654",
-      "R1546864"
-    ],
-    "predicates": [],
-    "transpose": false,
-    "type": "PATH"
-  },
-  "data": {
-    "contributions": [
-      {
-        "active": true,
-        "id": "R456790",
-        "label": "Contribution 2",
-        "paper_id": "R456",
-        "paper_label": "Paper 1",
-        "paper_year": 2024
-      },
-      {
-        "active": true,
-        "id": "R987654",
-        "label": "Contribution 1",
-        "paper_id": "R789",
-        "paper_label": "Paper 2",
-        "paper_year": 2022
-      },
-      {
-        "active": true,
-        "id": "R1546864",
-        "label": "Contribution 1",
-        "paper_id": "R258",
-        "paper_label": "Paper 3",
-        "paper_year": 2023
-      }
-    ],
-    "data": {
-      "P32": [
-        [
-          {
-            "_class": "resource",
-            "classes": ["Problem"],
-            "id": "R192326",
-            "label": "Covid-19 Pandemic Ontology Development",
-            "path": [
-              "R187004",
-              "P32"
-            ],
-            "path_labels": [
-              "Contribution 1",
-              "research problem"
-            ]
-          }
-        ]
-      ]
-    },
-    "predicates": [
-      {
-        "active": true,
-        "id": "P32",
-        "label": "research problem",
-        "n_contributions": 2,
-        "similar_predicates": ["P15"]
-      }
-    ]
-  },
-  "references": [
-    "other paper citation",
-    "paper citation"
-  ],
-  "observatories": [
-    "33d0776f-59ad-465f-a22c-cd794694edc6"
-  ],
-  "organizations": [
-    "dc9a860c-1a1b-4977-bd6a-9dc21de46df6"
-  ],
-  "is_anonymized": true,
-  "extraction_method": "AUTOMATIC",
-  "visibility": "DELETED"
-}"""

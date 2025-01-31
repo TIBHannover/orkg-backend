@@ -1,0 +1,70 @@
+{
+    "label": "updated rosetta stone template",
+    "description": "updated rosetta stone template description",
+    "formatted_label": "updated {0} {1} {2} {3} {4} {5}",
+    "example_usage": "updated example statement usage",
+    "properties": [
+        {
+            "label": "updated subject position",
+            "placeholder": "updated subject",
+            "description": "updated subject",
+            "min_count": 2,
+            "max_count": 5,
+            "path": "hasSubjectPosition",
+            "class": "C28"
+        },
+        {
+            "label": "updated property label",
+            "placeholder": "updated property placeholder",
+            "description": "updated property description",
+            "min_count": 2,
+            "max_count": 3,
+            "path": "hasObjectPosition"
+        },
+        {
+            "label": "updated string literal property label",
+            "placeholder": "updated string literal property placeholder",
+            "description": "updated string literal property description",
+            "min_count": 2,
+            "max_count": 3,
+            "pattern": "\\w+",
+            "path": "hasObjectPosition",
+            "datatype": "String"
+        },
+        {
+            "label": "updated number literal property label",
+            "placeholder": "updated number literal property placeholder",
+            "description": "updated number literal property description",
+            "min_count": 2,
+            "max_count": 3,
+            "min_inclusive": 0,
+            "max_inclusive": 11,
+            "path": "hasObjectPosition",
+            "datatype": "Integer"
+        },
+        {
+            "label": "updated literal property label",
+            "placeholder": "updated literal property placeholder",
+            "description": "updated literal property description",
+            "min_count": 2,
+            "max_count": 3,
+            "path": "hasObjectPosition",
+            "datatype": "C25"
+        },
+        {
+            "label": "updated resource property label",
+            "placeholder": "updated resource property placeholder",
+            "description": "updated resource property description",
+            "min_count": 4,
+            "max_count": 5,
+            "path": "hasObjectPosition",
+            "class": "C28"
+        }
+    ],
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ]
+}

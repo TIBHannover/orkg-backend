@@ -14,6 +14,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -177,7 +178,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         val id = createTemplate()
 
         val template = get("/api/templates/{id}", id)
-            .content(createTemplateJson)
+            .content(requestJson("orkg/createTemplate"))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -278,7 +279,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         }
 
         put("/api/templates/{id}", id)
-            .content(updateTemplateJson)
+            .content(requestJson("orkg/updateTemplate"))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -382,7 +383,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         val id = createTemplate()
 
         post("/api/templates/$id/properties")
-            .content(createUntypedTemplatePropertyJson)
+            .content(requestJson("orkg/createUntypedTemplateProperty"))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -407,7 +408,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         val propertyId = template.properties.first().id
 
         put("/api/templates/{id}/properties/{propertyId}", id, propertyId)
-            .content(updateUntypedTemplatePropertyJson)
+            .content(requestJson("orkg/updateUntypedTemplateProperty"))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -436,7 +437,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         val id = createTemplate()
 
         post("/api/templates/$id/properties")
-            .content(createStringLiteralTemplatePropertyJson)
+            .content(requestJson("orkg/createStringLiteralTemplateProperty"))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -463,7 +464,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         val propertyId = template.properties.first().id
 
         put("/api/templates/{id}/properties/{propertyId}", id, propertyId)
-            .content(updateStringLiteralTemplatePropertyJson)
+            .content(requestJson("orkg/updateStringLiteralTemplateProperty"))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -494,7 +495,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         val id = createTemplate()
 
         post("/api/templates/$id/properties")
-            .content(createNumberLiteralTemplatePropertyJson)
+            .content(requestJson("orkg/createNumberLiteralTemplateProperty"))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -522,7 +523,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         val propertyId = template.properties.first().id
 
         put("/api/templates/{id}/properties/{propertyId}", id, propertyId)
-            .content(updateNumberLiteralTemplatePropertyJson)
+            .content(requestJson("orkg/updateNumberLiteralTemplateProperty"))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -554,7 +555,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         val id = createTemplate()
 
         post("/api/templates/$id/properties")
-            .content(createOtherLiteralTemplatePropertyJson)
+            .content(requestJson("orkg/createOtherLiteralTemplateProperty"))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -580,7 +581,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         val propertyId = template.properties.first().id
 
         put("/api/templates/{id}/properties/{propertyId}", id, propertyId)
-            .content(updateOtherLiteralTemplatePropertyJson)
+            .content(requestJson("orkg/updateOtherLiteralTemplateProperty"))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -610,7 +611,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         val id = createTemplate()
 
         post("/api/templates/$id/properties")
-            .content(createResourceTemplatePropertyJson)
+            .content(requestJson("orkg/createResourceTemplateProperty"))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -636,7 +637,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         val propertyId = template.properties.first().id
 
         put("/api/templates/{id}/properties/{propertyId}", id, propertyId)
-            .content(updateResourceTemplatePropertyJson)
+            .content(requestJson("orkg/updateResourceTemplateProperty"))
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
@@ -662,7 +663,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
 
     private fun createTemplate(): ThingId =
         post("/api/templates")
-            .content(createTemplateJson)
+            .content(requestJson("orkg/createTemplate"))
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
@@ -674,246 +675,3 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             .substringAfterLast("/")
             .let(::ThingId)
 }
-
-private const val createTemplateJson = """{
-  "label": "example template",
-  "description": "template description",
-  "formatted_label": "{P32}",
-  "target_class": "C123",
-  "relations": {
-    "research_fields": ["R12"],
-    "research_problems": ["R15"],
-    "predicate": "P32"
-  },
-  "properties": [
-    {
-      "label": "property label",
-      "placeholder": "property placeholder",
-      "description": "property description",
-      "min_count": 1,
-      "max_count": 2,
-      "path": "P24"
-    },
-    {
-      "label": "string literal property label",
-      "placeholder": "string literal property placeholder",
-      "description": "string literal property description",
-      "min_count": 1,
-      "max_count": 2,
-      "pattern": "\\d+",
-      "path": "P24",
-      "datatype": "String"
-    },
-    {
-      "label": "number literal property label",
-      "placeholder": "number literal property placeholder",
-      "description": "number literal property description",
-      "min_count": 1,
-      "max_count": 2,
-      "min_inclusive": -1,
-      "max_inclusive": 10,
-      "path": "P24",
-      "datatype": "Integer"
-    },
-    {
-      "label": "literal property label",
-      "placeholder": "literal property placeholder",
-      "description": "literal property description",
-      "min_count": 1,
-      "max_count": 2,
-      "path": "P24",
-      "datatype": "C25"
-    },
-    {
-      "label": "resource property label",
-      "placeholder": "resource property placeholder",
-      "description": "resource property description",
-      "min_count": 3,
-      "max_count": 4,
-      "path": "P27",
-      "class": "C28"
-    }
-  ],
-  "is_closed": false,
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "extraction_method": "AUTOMATIC"
-}"""
-
-private const val updateTemplateJson = """{
-  "label": "updated example template",
-  "description": "updated template description",
-  "formatted_label": "{P34}",
-  "target_class": "C456",
-  "relations": {
-    "research_fields": ["R13"],
-    "research_problems": ["R16"],
-    "predicate": "P31"
-  },
-  "properties": [
-    {
-      "label": "updated property label",
-      "placeholder": null,
-      "description": null,
-      "min_count": 4,
-      "max_count": 7,
-      "path": "P24"
-    },
-    {
-      "label": "updated resource property label",
-      "placeholder": "updated resource property placeholder",
-      "description": "updated resource property description",
-      "min_count": 3,
-      "max_count": 4,
-      "path": "P27",
-      "class": "C28"
-    },
-    {
-      "label": "updated string literal property label",
-      "placeholder": "updated string literal property placeholder",
-      "description": "updated string literal property description",
-      "min_count": 1,
-      "max_count": 2,
-      "pattern": "\\w+",
-      "path": "P24",
-      "datatype": "String"
-    },
-    {
-      "label": "updated literal property label",
-      "placeholder": "updated literal property placeholder",
-      "description": "updated literal property description",
-      "min_count": 1,
-      "max_count": 2,
-      "path": "P24",
-      "datatype": "C25"
-    },
-    {
-      "label": "updated number literal property label",
-      "placeholder": "updated number literal property placeholder",
-      "description": "updated number literal property description",
-      "min_count": 1,
-      "max_count": 2,
-      "min_inclusive": -5,
-      "max_inclusive": 15.5,
-      "path": "P24",
-      "datatype": "Decimal"
-    }
-  ],
-  "is_closed": false,
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "extraction_method": "MANUAL",
-  "visibility": "DELETED"
-}"""
-
-private const val createUntypedTemplatePropertyJson = """{
-  "label": "property label",
-  "placeholder": "property placeholder",
-  "description": "property description",
-  "min_count": 1,
-  "max_count": 2,
-  "path": "P24"
-}"""
-
-private const val createStringLiteralTemplatePropertyJson = """{
-  "label": "string literal property label",
-  "placeholder": "string literal property placeholder",
-  "description": "string literal property description",
-  "min_count": 1,
-  "max_count": 2,
-  "pattern": "\\d+",
-  "path": "P24",
-  "datatype": "String"
-}"""
-
-private const val createNumberLiteralTemplatePropertyJson = """{
-  "label": "number literal property label",
-  "placeholder": "number literal property placeholder",
-  "description": "number literal property description",
-  "min_count": 1,
-  "max_count": 2,
-  "min_inclusive": -1,
-  "max_inclusive": 10,
-  "path": "P24",
-  "datatype": "Integer"
-}"""
-
-private const val createOtherLiteralTemplatePropertyJson = """{
-  "label": "literal property label",
-  "placeholder": "literal property placeholder",
-  "description": "literal property description",
-  "min_count": 1,
-  "max_count": 2,
-  "path": "P24",
-  "datatype": "C25"
-}"""
-
-private const val createResourceTemplatePropertyJson = """{
-  "label": "resource property label",
-  "placeholder": "resource property placeholder",
-  "description": "resource property description",
-  "min_count": 3,
-  "max_count": 4,
-  "path": "P27",
-  "class": "C28"
-}"""
-
-private const val updateUntypedTemplatePropertyJson = """{
-  "label": "updated property label",
-  "placeholder": null,
-  "description": null,
-  "min_count": 4,
-  "max_count": 7,
-  "path": "P24"
-}"""
-
-private const val updateStringLiteralTemplatePropertyJson = """{
-  "label": "updated string literal property label",
-  "placeholder": "updated string literal property placeholder",
-  "description": "updated string literal property description",
-  "min_count": 1,
-  "max_count": 2,
-  "pattern": "\\w+",
-  "path": "P24",
-  "datatype": "String"
-}"""
-
-private const val updateNumberLiteralTemplatePropertyJson = """{
-  "label": "updated number literal property label",
-  "placeholder": "updated number literal property placeholder",
-  "description": "updated number literal property description",
-  "min_count": 1,
-  "max_count": 2,
-  "min_inclusive": -5,
-  "max_inclusive": 15.5,
-  "path": "P24",
-  "datatype": "Decimal"
-}"""
-
-private const val updateOtherLiteralTemplatePropertyJson = """{
-  "label": "updated literal property label",
-  "placeholder": "updated literal property placeholder",
-  "description": "updated literal property description",
-  "min_count": 1,
-  "max_count": 2,
-  "path": "description",
-  "datatype": "C27"
-}"""
-
-private const val updateResourceTemplatePropertyJson = """{
-  "label": "updated resource property label",
-  "placeholder": "updated resource property placeholder",
-  "description": "updated resource property description",
-  "min_count": 2,
-  "max_count": 5,
-  "path": "P27",
-  "class": "C28"
-}"""

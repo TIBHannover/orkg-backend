@@ -16,6 +16,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -279,7 +280,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
         }
 
         val updatedId = post("/api/rosetta-stone/statements/{id}", id)
-            .content(updateRosettaStoneStatementJson)
+            .content(requestJson("orkg/updateRosettaStoneStatement"))
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .contentType(ROSETTA_STONE_STATEMENT_JSON_V1)
             .perform()
@@ -595,7 +596,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
 
     private fun createRosettaStoneStatement(templateId: ThingId): ThingId =
         post("/api/rosetta-stone/statements")
-            .content(createRosettaStoneStatementJson.replace("\$templateId", templateId.value))
+            .content(requestJson("orkg/createRosettaStoneStatement").replace("\$templateId", templateId.value))
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .contentType(ROSETTA_STONE_STATEMENT_JSON_V1)
             .perform()
@@ -607,121 +608,3 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
             .substringAfterLast("/")
             .let(::ThingId)
 }
-
-private const val createRosettaStoneStatementJson = """{
-  "template_id": "${'$'}templateId",
-  "context": "R789",
-  "subjects": ["R258", "R369", "#temp1"],
-  "objects": [
-    ["R174", "#temp2", "#temp3"],
-    ["L123", "#temp4"],
-    ["L456", "#temp5"],
-    ["L789", "#temp6"],
-    ["R258", "R369", "#temp7"]
-  ],
-  "certainty": "HIGH",
-  "negated": false,
-  "resources": {
-    "#temp1": {
-      "label": "Subject Resource",
-      "classes": ["C28"]
-    }
-  },
-  "predicates": {
-    "#temp2": {
-      "label": "hasResult",
-      "description": "has result"
-    }
-  },
-  "classes": {
-    "#temp3": {
-      "label": "new class",
-      "uri": null
-    }
-  },
-  "literals": {
-    "#temp4": {
-      "label": "0123456789",
-      "data_type": "xsd:string"
-    },
-    "#temp5": {
-      "label": "1",
-      "data_type": "xsd:integer"
-    },
-    "#temp6": {
-      "label": "some literal value",
-      "data_type": "http://orkg.org/orkg/class/C25"
-    }
-  },
-  "lists": {
-    "#temp7": {
-      "label": "list",
-      "elements": ["#temp1", "C123"]
-    }
-  },
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "extraction_method": "MANUAL"
-}"""
-
-private const val updateRosettaStoneStatementJson = """{
-  "subjects": ["R369", "R258", "#temp1"],
-  "objects": [
-    ["#temp2", "R174", "#temp3"],
-    ["#temp4", "L123"],
-    ["#temp5", "L456"],
-    ["#temp6", "L789"],
-    ["R369", "R258", "#temp7"]
-  ],
-  "certainty": "MODERATE",
-  "negated": false,
-  "resources": {
-    "#temp1": {
-      "label": "Updated Subject Resource",
-      "classes": ["C28"]
-    }
-  },
-  "predicates": {
-    "#temp2": {
-      "label": "hasResult",
-      "description": "has result too"
-    }
-  },
-  "classes": {
-    "#temp3": {
-      "label": "updated new class",
-      "uri": null
-    }
-  },
-  "literals": {
-    "#temp4": {
-      "label": "9876543210",
-      "data_type": "xsd:string"
-    },
-    "#temp5": {
-      "label": "4",
-      "data_type": "xsd:integer"
-    },
-    "#temp6": {
-      "label": "some updated literal value",
-      "data_type": "http://orkg.org/orkg/class/C25"
-    }
-  },
-  "lists": {
-    "#temp7": {
-      "label": "list",
-      "elements": ["C123", "#temp1"]
-    }
-  },
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "extraction_method": "AUTOMATIC"
-}"""

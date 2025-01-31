@@ -8,6 +8,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.common.testing.fixtures.MockkDescribeSpec
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.input.ComparisonUseCases
@@ -47,84 +48,13 @@ internal class ExportComparisonServiceIntegrationTest : MockkDescribeSpec({
             service.export(targetFile.absolutePath)
         }
 
+        val responseJsonL = requestJson("datacite/registerComparisonDoi").toJsonL()
+
         it("writes the correct result") {
             targetFile.exists() shouldBe true
-            targetFile.readText() shouldBe (dummyComparisonDataCiteJson.toJsonL() + dummyComparisonDataCiteJson.toJsonL())
+            targetFile.readText() shouldBe (responseJsonL + responseJsonL)
             verify(exactly = 1) { comparisonService.findAllCurrentAndListedAndUnpublishedComparisons(any()) }
             verify(exactly = 2) { comparisonRepository.findAllDOIsRelatedToComparison(comparison.id) }
         }
     }
 })
-
-private const val dummyComparisonDataCiteJson = """
-{
-  "data": {
-    "attributes": {
-      "creators": [
-        {
-          "name": "Josiah Stinkney Carberry",
-          "nameIdentifiers": [
-            {
-              "schemeUri": "https://orcid.org",
-              "nameIdentifier": "https://orcid.org/0000-0002-1825-0097",
-              "nameIdentifierScheme": "ORCID"
-            }
-          ],
-          "nameType": "Personal"
-        },
-        {
-          "name": "Author 2",
-          "nameIdentifiers": [
-            
-          ],
-          "nameType": "Personal"
-        }
-      ],
-      "titles": [
-        {
-          "title": "Dummy Comparison Title",
-          "lang": "en"
-        }
-      ],
-      "publicationYear": 2023,
-      "subjects": [
-        {
-          "subject": "Research Field 1",
-          "lang": "en"
-        },
-        {
-          "subject": "Research Field 2",
-          "lang": "en"
-        }
-      ],
-      "types": {
-        "resourceType": "Comparison",
-        "resourceTypeGeneral": "Dataset"
-      },
-      "relatedIdentifiers": [
-        {
-          "relatedIdentifier": "https://doi.org/test/doi",
-          "relatedIdentifierType": "DOI",
-          "relationType": "IsVariantFormOf"
-        }
-      ],
-      "rightsList": [
-        {
-          "rights": "Creative Commons Attribution-ShareAlike 4.0 International License.",
-          "rightsUri": "https://creativecommons.org/licenses/by-sa/4.0/"
-        }
-      ],
-      "descriptions": [
-        {
-          "description": "Some description about the contents",
-          "descriptionType": "Abstract"
-        }
-      ],
-      "url": "https://orkg.org/comparison/R8186",
-      "language": "en",
-      "publisher": "Open Research Knowledge Graph"
-    },
-    "type": "dois"
-  }
-}
-"""

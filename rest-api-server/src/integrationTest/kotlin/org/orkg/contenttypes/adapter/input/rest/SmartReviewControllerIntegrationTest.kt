@@ -13,6 +13,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -324,7 +325,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         }
 
         put("/api/smart-reviews/{id}", id)
-            .content(updateSmartReviewJson)
+            .content(requestJson("orkg/updateSmartReview"))
             .accept(SMART_REVIEW_JSON_V1)
             .contentType(SMART_REVIEW_JSON_V1)
             .perform()
@@ -438,7 +439,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val id = createSmartReview()
 
         post("/api/smart-reviews/$id/sections")
-            .content(createComparisonSectionJson)
+            .content(requestJson("orkg/createSmartReviewComparisonSection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -457,7 +458,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val sectionId = smartReview.sections.last().id
 
         put("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
-            .content(updateComparisonSectionJson)
+            .content(requestJson("orkg/updateSmartReviewComparisonSection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -479,7 +480,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val smartReviewId = createSmartReview()
 
         post("/api/smart-reviews/$smartReviewId/sections")
-            .content(createVisualizationSectionJson)
+            .content(requestJson("orkg/createSmartReviewVisualizationSection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -498,7 +499,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val sectionId = smartReview.sections.last().id
 
         put("/api/smart-reviews/{id}/sections/{sectionId}", smartReviewId, sectionId)
-            .content(updateVisualizationSectionJson)
+            .content(requestJson("orkg/updateSmartReviewVisualizationSection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -520,7 +521,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val id = createSmartReview()
 
         post("/api/smart-reviews/$id/sections")
-            .content(createResourceSectionJson)
+            .content(requestJson("orkg/createSmartReviewResourceSection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -539,7 +540,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val sectionId = smartReview.sections.last().id
 
         put("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
-            .content(updateResourceSectionJson)
+            .content(requestJson("orkg/updateSmartReviewResourceSection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -561,7 +562,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val id = createSmartReview()
 
         post("/api/smart-reviews/$id/sections")
-            .content(createPredicateSectionJson)
+            .content(requestJson("orkg/createSmartReviewPredicateSection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -580,7 +581,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val sectionId = smartReview.sections.last().id
 
         put("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
-            .content(updatePredicateSectionJson)
+            .content(requestJson("orkg/updateSmartReviewPredicateSection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -602,7 +603,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val id = createSmartReview()
 
         post("/api/smart-reviews/$id/sections")
-            .content(createOntologySectionJson)
+            .content(requestJson("orkg/createSmartReviewOntologySection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -625,7 +626,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val sectionId = smartReview.sections.last().id
 
         put("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
-            .content(updateOntologySectionJson)
+            .content(requestJson("orkg/updateSmartReviewOntologySection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -651,7 +652,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val id = createSmartReview()
 
         post("/api/smart-reviews/$id/sections")
-            .content(createTextSectionJson)
+            .content(requestJson("orkg/createSmartReviewTextSection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -671,7 +672,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         val sectionId = smartReview.sections.last().id
 
         put("/api/smart-reviews/{id}/sections/{sectionId}", id, sectionId)
-            .content(updateTextSectionJson)
+            .content(requestJson("orkg/updateSmartReviewTextSection"))
             .accept(SMART_REVIEW_SECTION_JSON_V1)
             .contentType(SMART_REVIEW_SECTION_JSON_V1)
             .perform()
@@ -689,7 +690,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
     }
 
     private fun createSmartReview() = post("/api/smart-reviews")
-        .content(createSmartReviewJson)
+        .content(requestJson("orkg/createSmartReview"))
         .accept(SMART_REVIEW_JSON_V1)
         .contentType(SMART_REVIEW_JSON_V1)
         .perform()
@@ -701,214 +702,3 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         .substringAfterLast("/")
         .let(::ThingId)
 }
-
-private const val createSmartReviewJson = """{
-  "title": "example smart review",
-  "research_fields": [
-    "R12"
-  ],
-  "authors": [
-    {
-      "name": "Author with id",
-      "id": "R123"
-    },
-    {
-      "name": "Author with orcid",
-      "identifiers": {
-        "orcid": ["0000-1111-2222-3333"]
-      }
-    },
-    {
-      "name": "Author with id and orcid",
-      "id": "R456",
-      "identifiers": {
-        "orcid": ["1111-2222-3333-4444"]
-      }
-    },
-    {
-      "name": "Author with homepage",
-      "homepage": "https://example.org/author"
-    },
-    {
-      "name": "Author that just has a name"
-    }
-  ],
-  "sdgs": ["SDG_1", "SDG_2"],
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "extraction_method": "MANUAL",
-  "sections": [
-    {
-      "heading": "comparison section heading",
-      "comparison": "R6416"
-    },
-    {
-      "heading": "visualization section heading",
-      "visualization": "R215648"
-    },
-    {
-      "heading": "resource section heading",
-      "resource": "R14565"
-    },
-    {
-      "heading": "predicate section heading",
-      "predicate": "R15696541"
-    },
-    {
-      "heading": "ontology section heading",
-      "entities": ["R1", "P1"],
-      "predicates": ["P1"]
-    },
-    {
-      "heading": "Heading",
-      "class": "Introduction",
-      "text": "text section contents"
-    }
-  ],
-  "references": [
-    "@misc{R615465, title = {reference 1}}",
-    "@misc{R154146, title = {reference 2}}"
-  ]
-}"""
-
-private const val updateSmartReviewJson = """{
-  "title": "updated smart review title",
-  "research_fields": [
-    "R194"
-  ],
-  "authors": [
-    {
-      "name": "Author with id",
-      "id": "R123"
-    },
-    {
-      "name": "Author with orcid",
-      "identifiers": {
-        "orcid": ["0000-1111-2222-3333"]
-      }
-    },
-    {
-      "name": "Author with id and orcid",
-      "id": "R456",
-      "identifiers": {
-        "orcid": ["4444-3333-2222-1111"]
-      }
-    },
-    {
-      "name": "Author with homepage",
-      "homepage": "https://example.org/author"
-    },
-    {
-      "name": "Another author that just has a name"
-    }
-  ],
-  "sdgs": ["SDG_3", "SDG_4"],
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "extraction_method": "UNKNOWN",
-  "sections": [
-    {
-      "heading": "updated comparison section heading",
-      "comparison": "R26416"
-    },
-    {
-      "heading": "updated visualization section heading",
-      "visualization": "R2215648"
-    },
-    {
-      "heading": "updated resource section heading",
-      "resource": "R214565"
-    },
-    {
-      "heading": "updated predicate section heading",
-      "predicate": "R215696541"
-    },
-    {
-      "heading": "updated ontology section heading",
-      "entities": ["R21", "P1"],
-      "predicates": ["P21"]
-    },
-    {
-      "heading": "updated text section heading",
-      "class": "Introduction",
-      "text": "Introduction text section contents"
-    }
-  ],
-  "references": [
-    "@misc{R615465, title = {updated reference 1}}",
-    "@misc{R154146, title = {updated reference 2}}"
-  ],
-  "visibility": "DELETED"
-}"""
-
-private const val createComparisonSectionJson = """{
-  "heading": "new comparison section heading",
-  "comparison": "R6416"
-}"""
-
-private const val createVisualizationSectionJson = """{
-  "heading": "new visualization section heading",
-  "visualization": "R215648"
-}"""
-
-private const val createResourceSectionJson = """{
-  "heading": "new resource section heading",
-  "resource": "R14565"
-}"""
-
-private const val createPredicateSectionJson = """{
-  "heading": "new predicate section heading",
-  "predicate": "R15696541"
-}"""
-
-private const val createOntologySectionJson = """{
-  "heading": "new ontology section heading",
-  "entities": ["R1", "P1"],
-  "predicates": ["P1"]
-}"""
-
-private const val createTextSectionJson = """{
-  "heading": "new text section heading",
-  "class": "Epilogue",
-  "text": "Epilogue text section contents"
-}"""
-
-private const val updateComparisonSectionJson = """{
-  "heading": "updated comparison section heading",
-  "comparison": "R26416"
-}"""
-
-private const val updateVisualizationSectionJson = """{
-  "heading": "updated visualization section heading",
-  "visualization": "R2215648"
-}"""
-
-private const val updateResourceSectionJson = """{
-  "heading": "updated resource section heading",
-  "resource": "R214565"
-}"""
-
-private const val updatePredicateSectionJson = """{
-  "heading": "updated predicate section heading",
-  "predicate": "R215696541"
-}"""
-
-private const val updateOntologySectionJson = """{
-  "heading": "updated ontology section heading",
-  "entities": ["R21", "P1"],
-  "predicates": ["P21"]
-}"""
-
-private const val updateTextSectionJson = """{
-  "heading": "updated text section heading",
-  "class": "Introduction",
-  "text": "Introduction text section contents"
-}"""

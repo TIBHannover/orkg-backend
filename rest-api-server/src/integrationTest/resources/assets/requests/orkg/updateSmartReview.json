@@ -1,0 +1,73 @@
+{
+    "title": "updated smart review title",
+    "research_fields": [
+        "R194"
+    ],
+    "authors": [
+        {
+            "name": "Author with id",
+            "id": "R123"
+        },
+        {
+            "name": "Author with orcid",
+            "identifiers": {
+                "orcid": ["0000-1111-2222-3333"]
+            }
+        },
+        {
+            "name": "Author with id and orcid",
+            "id": "R456",
+            "identifiers": {
+                "orcid": ["4444-3333-2222-1111"]
+            }
+        },
+        {
+            "name": "Author with homepage",
+            "homepage": "https://example.org/author"
+        },
+        {
+            "name": "Another author that just has a name"
+        }
+    ],
+    "sdgs": ["SDG_3", "SDG_4"],
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "extraction_method": "UNKNOWN",
+    "sections": [
+        {
+            "heading": "updated comparison section heading",
+            "comparison": "R26416"
+        },
+        {
+            "heading": "updated visualization section heading",
+            "visualization": "R2215648"
+        },
+        {
+            "heading": "updated resource section heading",
+            "resource": "R214565"
+        },
+        {
+            "heading": "updated predicate section heading",
+            "predicate": "R215696541"
+        },
+        {
+            "heading": "updated ontology section heading",
+            "entities": ["R21", "P1"],
+            "predicates": ["P21"]
+        },
+        {
+            "heading": "updated text section heading",
+            "class": "Introduction",
+            "text": "Introduction text section contents"
+        }
+    ],
+    "references": [
+        "@misc{R615465, title = {updated reference 1}}",
+        "@misc{R154146, title = {updated reference 2}}"
+    ],
+    "visibility": "DELETED"
+}

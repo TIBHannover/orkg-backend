@@ -1,0 +1,16 @@
+{
+    "entries": [
+        {
+            "id": "R3003",
+            "description": null
+        },
+        {
+            "id": "R3004",
+            "description": "new description"
+        },
+        {
+            "id": "R3005",
+            "description": "updated example description"
+        }
+    ]
+}

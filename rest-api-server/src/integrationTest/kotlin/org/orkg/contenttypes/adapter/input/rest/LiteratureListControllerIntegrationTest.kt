@@ -13,6 +13,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -284,7 +285,7 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
         }
 
         put("/api/literature-lists/{id}", id)
-            .content(updateLiteratureListJson)
+            .content(requestJson("orkg/updateLiteratureList"))
             .accept(LITERATURE_LIST_JSON_V1)
             .contentType(LITERATURE_LIST_JSON_V1)
             .perform()
@@ -381,7 +382,7 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
         val id = createLiteratureList()
 
         post("/api/literature-lists/$id/sections")
-            .content(createTextSectionJson)
+            .content(requestJson("orkg/createLiteratureListTextSection"))
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
             .perform()
@@ -401,7 +402,7 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
         val literatureListSectionId = literatureList.sections.last().id
 
         put("/api/literature-lists/{id}/sections/{literatureListSectionId}", id, literatureListSectionId)
-            .content(updateTextSectionJson)
+            .content(requestJson("orkg/updateLiteratureListTextSection"))
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
             .perform()
@@ -424,7 +425,7 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
         val id = createLiteratureList()
 
         post("/api/literature-lists/$id/sections")
-            .content(createListSectionJson)
+            .content(requestJson("orkg/createLiteratureListListSection"))
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
             .perform()
@@ -455,7 +456,7 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
         val literatureListSectionId = literatureList.sections.last().id
 
         put("/api/literature-lists/{id}/sections/{literatureListSectionId}", id, literatureListSectionId)
-            .content(updateListSectionJson)
+            .content(requestJson("orkg/updateLiteratureListListSection"))
             .accept(LITERATURE_LIST_SECTION_JSON_V1)
             .contentType(LITERATURE_LIST_SECTION_JSON_V1)
             .perform()
@@ -484,7 +485,7 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
     }
 
     private fun createLiteratureList() = post("/api/literature-lists")
-        .content(createLiteratureListJson)
+        .content(requestJson("orkg/createLiteratureList"))
         .accept(LITERATURE_LIST_JSON_V1)
         .contentType(LITERATURE_LIST_JSON_V1)
         .perform()
@@ -496,174 +497,3 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
         .substringAfterLast("/")
         .let(::ThingId)
 }
-
-private const val createLiteratureListJson = """{
-  "title": "example literature list",
-  "research_fields": [
-    "R12"
-  ],
-  "authors": [
-    {
-      "name": "Author with id",
-      "id": "R123"
-    },
-    {
-      "name": "Author with orcid",
-      "identifiers": {
-        "orcid": ["0000-1111-2222-3333"]
-      }
-    },
-    {
-      "name": "Author with id and orcid",
-      "id": "R456",
-      "identifiers": {
-        "orcid": ["1111-2222-3333-4444"]
-      }
-    },
-    {
-      "name": "Author with homepage",
-      "homepage": "https://example.org/author"
-    },
-    {
-      "name": "Author that just has a name"
-    }
-  ],
-  "sdgs": ["SDG_1", "SDG_2"],
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "extraction_method": "MANUAL",
-  "sections": [
-    {
-      "heading": "this is a heading",
-      "heading_size": 2,
-      "text": "text contents of this section"
-    },
-    {
-      "entries": [
-        {
-          "id": "R3003",
-          "description": "example description"
-        },
-        {
-          "id": "R3004",
-          "description": null
-        }
-      ]
-    }
-  ]
-}"""
-
-private const val updateLiteratureListJson = """{
-  "title": "updated literature list title",
-  "research_fields": [
-    "R194"
-  ],
-  "authors": [
-    {
-      "name": "Author with id",
-      "id": "R123"
-    },
-    {
-      "name": "Author with orcid",
-      "identifiers": {
-        "orcid": ["0000-1111-2222-3333"]
-      }
-    },
-    {
-      "name": "Author with id and orcid",
-      "id": "R456",
-      "identifiers": {
-        "orcid": ["4444-3333-2222-1111"]
-      }
-    },
-    {
-      "name": "Author with homepage",
-      "homepage": "https://example.org/author"
-    },
-    {
-      "name": "Another author that just has a name"
-    }
-  ],
-  "sdgs": ["SDG_3", "SDG_4"],
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "extraction_method": "UNKNOWN",
-  "sections": [
-    {
-      "heading": "updated heading",
-      "heading_size": 3,
-      "text": "updated text contents"
-    },
-    {
-      "entries": [
-        {
-          "id": "R3004",
-          "description": "new description"
-        },
-        {
-          "id": "R3003",
-          "description": null
-        },
-        {
-          "id": "R3005",
-          "description": "updated example description"
-        }
-      ]
-    }
-  ],
-  "visibility": "DELETED"
-}"""
-
-private const val createTextSectionJson = """{
-  "heading": "text section heading",
-  "heading_size": 2,
-  "text": "text section contents"
-}"""
-
-private const val updateTextSectionJson = """{
-  "heading": "updated text section heading",
-  "heading_size": 3,
-  "text": "updated text section contents"
-}"""
-
-private const val createListSectionJson = """{
-  "entries": [
-    {
-      "id": "R3005",
-      "description": "example description"
-    },
-    {
-      "id": "R3004",
-      "description": null
-    },
-    {
-      "id": "R3003",
-      "description": null
-    }
-  ]
-}"""
-
-private const val updateListSectionJson = """{
-  "entries": [
-    {
-      "id": "R3003",
-      "description": null
-    },
-    {
-      "id": "R3004",
-      "description": "new description"
-    },
-    {
-      "id": "R3005",
-      "description": "updated example description"
-    }
-  ]
-}"""

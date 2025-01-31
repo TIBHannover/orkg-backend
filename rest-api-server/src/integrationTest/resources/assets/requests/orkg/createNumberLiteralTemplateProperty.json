@@ -1,0 +1,11 @@
+{
+    "label": "number literal property label",
+    "placeholder": "number literal property placeholder",
+    "description": "number literal property description",
+    "min_count": 1,
+    "max_count": 2,
+    "min_inclusive": -1,
+    "max_inclusive": 10,
+    "path": "P24",
+    "datatype": "Integer"
+}

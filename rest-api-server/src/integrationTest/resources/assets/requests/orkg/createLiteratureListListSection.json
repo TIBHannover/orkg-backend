@@ -1,0 +1,16 @@
+{
+    "entries": [
+        {
+            "id": "R3005",
+            "description": "example description"
+        },
+        {
+            "id": "R3004",
+            "description": null
+        },
+        {
+            "id": "R3003",
+            "description": null
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "label": "string literal property label",
+    "placeholder": "string literal property placeholder",
+    "description": "string literal property description",
+    "min_count": 1,
+    "max_count": 2,
+    "pattern": "\\d+",
+    "path": "P24",
+    "datatype": "String"
+}

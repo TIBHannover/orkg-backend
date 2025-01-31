@@ -1,0 +1,72 @@
+{
+    "title": "example smart review",
+    "research_fields": [
+        "R12"
+    ],
+    "authors": [
+        {
+            "name": "Author with id",
+            "id": "R123"
+        },
+        {
+            "name": "Author with orcid",
+            "identifiers": {
+                "orcid": ["0000-1111-2222-3333"]
+            }
+        },
+        {
+            "name": "Author with id and orcid",
+            "id": "R456",
+            "identifiers": {
+                "orcid": ["1111-2222-3333-4444"]
+            }
+        },
+        {
+            "name": "Author with homepage",
+            "homepage": "https://example.org/author"
+        },
+        {
+            "name": "Author that just has a name"
+        }
+    ],
+    "sdgs": ["SDG_1", "SDG_2"],
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "extraction_method": "MANUAL",
+    "sections": [
+        {
+            "heading": "comparison section heading",
+            "comparison": "R6416"
+        },
+        {
+            "heading": "visualization section heading",
+            "visualization": "R215648"
+        },
+        {
+            "heading": "resource section heading",
+            "resource": "R14565"
+        },
+        {
+            "heading": "predicate section heading",
+            "predicate": "R15696541"
+        },
+        {
+            "heading": "ontology section heading",
+            "entities": ["R1", "P1"],
+            "predicates": ["P1"]
+        },
+        {
+            "heading": "Heading",
+            "class": "Introduction",
+            "text": "text section contents"
+        }
+    ],
+    "references": [
+        "@misc{R615465, title = {reference 1}}",
+        "@misc{R154146, title = {reference 2}}"
+    ]
+}

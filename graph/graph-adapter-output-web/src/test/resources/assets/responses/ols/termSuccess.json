@@ -1,0 +1,163 @@
+{
+    "page": 0,
+    "numElements": 1,
+    "totalPages": 1,
+    "totalElements": 1,
+    "elements": [
+        {
+            "appearsIn": [
+                "cf",
+                "meth",
+                "afo",
+                "skos",
+                "stw",
+                "linsearch",
+                "modsci",
+                "skosxl"
+            ],
+            "curie": "Collection",
+            "definedBy": [
+                "stw",
+                "skos"
+            ],
+            "definition": [
+                "A meaningful collection of concepts."
+            ],
+            "definitionProperty": "http://www.w3.org/2004/02/skos/core#definition",
+            "hasDirectChildren": true,
+            "hasDirectParents": false,
+            "hasHierarchicalChildren": true,
+            "hasHierarchicalParents": false,
+            "imported": false,
+            "iri": "http://www.w3.org/2004/02/skos/core#Collection",
+            "isDefiningOntology": true,
+            "isObsolete": false,
+            "isPreferredRoot": false,
+            "label": [
+                "Collection"
+            ],
+            "linkedEntities": {
+                "http://www.w3.org/2004/02/skos/core#definition": {
+                    "definedBy": [
+                        "stw",
+                        "skos"
+                    ],
+                    "numAppearsIn": 31,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "definition"
+                    ],
+                    "curie": "definition",
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ]
+                },
+                "http://www.w3.org/2004/02/skos/core#Concept": {
+                    "definedBy": [
+                        "stw",
+                        "skos"
+                    ],
+                    "numAppearsIn": 14,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "Concept"
+                    ],
+                    "curie": "Concept",
+                    "type": [
+                        "class",
+                        "entity"
+                    ]
+                },
+                "http://www.w3.org/2004/02/skos/core#scopeNote": {
+                    "definedBy": [
+                        "stw",
+                        "skos"
+                    ],
+                    "numAppearsIn": 18,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "scope note"
+                    ],
+                    "curie": "scopeNote",
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ]
+                },
+                "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": {
+                    "numAppearsIn": 25,
+                    "hasLocalDefinition": false,
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ],
+                    "label": [
+                        "isDefinedBy"
+                    ],
+                    "curie": "isDefinedBy"
+                },
+                "http://www.w3.org/2004/02/skos/core#ConceptScheme": {
+                    "definedBy": [
+                        "stw",
+                        "skos"
+                    ],
+                    "numAppearsIn": 11,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "Concept Scheme"
+                    ],
+                    "curie": "ConceptScheme",
+                    "type": [
+                        "class",
+                        "entity"
+                    ]
+                },
+                "http://www.w3.org/2000/01/rdf-schema#label": {
+                    "definedBy": [
+                        "prov"
+                    ],
+                    "numAppearsIn": 53,
+                    "hasLocalDefinition": false,
+                    "label": [
+                        "label"
+                    ],
+                    "curie": "label",
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ]
+                }
+            },
+            "numDescendants": 1,
+            "numHierarchicalDescendants": 1,
+            "ontologyId": "skos",
+            "ontologyIri": "http://www.w3.org/2004/02/skos/core",
+            "ontologyPreferredPrefix": "SKOS",
+            "searchableAnnotationValues": [
+                "A meaningful collection of concepts.",
+                "Labelled collections can be used where you would like a set of concepts to be displayed under a 'node label' in the hierarchy.",
+                false
+            ],
+            "shortForm": "Collection",
+            "type": [
+                "class",
+                "entity"
+            ],
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://www.w3.org/2002/07/owl#Class",
+            "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": "http://www.w3.org/2004/02/skos/core",
+            "http://www.w3.org/2000/01/rdf-schema#label": "Collection",
+            "http://www.w3.org/2002/07/owl#disjointWith": [
+                "http://www.w3.org/2004/02/skos/core#Concept",
+                "http://www.w3.org/2004/02/skos/core#ConceptScheme"
+            ],
+            "http://www.w3.org/2004/02/skos/core#definition": "A meaningful collection of concepts.",
+            "http://www.w3.org/2004/02/skos/core#scopeNote": "Labelled collections can be used where you would like a set of concepts to be displayed under a 'node label' in the hierarchy."
+        }
+    ],
+    "facetFieldsToCounts": {}
+}

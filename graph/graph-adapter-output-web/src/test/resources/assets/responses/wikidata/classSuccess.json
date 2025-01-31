@@ -1,0 +1,44 @@
+{
+    "entities": {
+        "Q42": {
+            "type": "item",
+            "id": "Q42",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "Douglas Adams"
+                }
+            },
+            "descriptions": {
+                "en": {
+                    "language": "en",
+                    "value": "English author and humourist (1952-2001)"
+                }
+            },
+            "claims": {
+                "P279": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P279",
+                            "hash": "99cd05056004024645944a094b0f764f9aab586f",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 4120621,
+                                    "id": "Q4120621"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "Q427626${'$'}49253a61-476c-63c4-a873-4e141dc33260",
+                        "rank": "normal"
+                    }
+                ]
+            }
+        }
+    },
+    "success": 1
+}

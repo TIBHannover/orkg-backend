@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.testing.fixtures.Assets.responseJson
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
@@ -155,7 +156,7 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
                 "2950159",
                 "2950159",
                 GeoNamesServiceAdapter::findResourceByShortForm,
-                geonamesSuccessResponseJson,
+                responseJson("geonames/citySuccess"),
                 ExternalThing(
                     uri = ParsedIRI("https://sws.geonames.org/2950159"),
                     label = "Berlin",
@@ -166,7 +167,7 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
                 "2950159",
                 ParsedIRI("https://sws.geonames.org/2950159"),
                 GeoNamesServiceAdapter::findResourceByURI,
-                geonamesSuccessResponseJson,
+                responseJson("geonames/citySuccess"),
                 ExternalThing(
                     uri = ParsedIRI("https://sws.geonames.org/2950159"),
                     label = "Berlin",
@@ -184,63 +185,3 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
         )
     }
 }
-
-private const val geonamesSuccessResponseJson = """{
-  "timezone": {
-    "gmtOffset": 1,
-    "timeZoneId": "Europe/Berlin",
-    "dstOffset": 2
-  },
-  "bbox": {
-    "east": 13.7604692835498,
-    "south": 52.3382418348765,
-    "north": 52.6749171487584,
-    "west": 13.0883332178678,
-    "accuracyLevel": 0
-  },
-  "asciiName": "Berlin",
-  "astergdem": 52,
-  "countryId": "2921044",
-  "fcl": "P",
-  "srtm3": 43,
-  "adminId3": "6547383",
-  "countryCode": "DE",
-  "adminId4": "6547539",
-  "adminCodes1": {
-    "ISO3166_2": "BE"
-  },
-  "adminId1": "2950157",
-  "lat": "52.52437",
-  "fcode": "PPLC",
-  "continentCode": "EU",
-  "elevation": 74,
-  "adminCode2": "00",
-  "adminCode3": "11000",
-  "adminCode1": "16",
-  "lng": "13.41053",
-  "geonameId": 2950159,
-  "toponymName": "Berlin",
-  "adminCode4": "11000000",
-  "population": 3426354,
-  "wikipediaURL": "en.wikipedia.org/wiki/Berlin",
-  "adminName5": "",
-  "adminName4": "Berlin",
-  "adminName3": "Berlin, Stadt",
-  "alternateNames": [
-    {
-      "isPreferredName": true,
-      "name": "Berlin",
-      "lang": "de"
-    },
-    {
-      "name": "Berlin",
-      "lang": "en"
-    }
-  ],
-  "adminName2": "",
-  "name": "Berlin",
-  "fclName": "city, village,...",
-  "countryName": "Germany",
-  "fcodeName": "capital of a political entity",
-  "adminName1": "Berlin"
-}"""

@@ -1,0 +1,22 @@
+{
+    "entities": {
+        "Q42": {
+            "type": "item",
+            "id": "Q42",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "Douglas Adams"
+                }
+            },
+            "descriptions": {
+                "en": {
+                    "language": "en",
+                    "value": "English author and humourist (1952-2001)"
+                }
+            },
+            "claims": {}
+        }
+    },
+    "success": 1
+}

@@ -1,0 +1,20 @@
+{
+    "error": {
+        "code": "no-such-entity",
+        "info": "Could not find an entity with the ID \"Q42\".",
+        "id": "Q42",
+        "messages": [
+            {
+                "name": "wikibase-api-no-such-entity",
+                "parameters": [
+                    "Q42"
+                ],
+                "html": {
+                    "*":"Could not find an entity with the ID \"Q42\"."
+                }
+            }
+        ],
+        "*": "See https://www.wikidata.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes."
+    },
+    "servedby": "mw-api-ext.eqiad.main-5dff684f6-jrlxv"
+}

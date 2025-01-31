@@ -9,6 +9,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -198,23 +199,10 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
         ).single().id
 
         put("/api/templates/{id}/instances/{instanceId}", id, "R6458")
-            .content(updateTemplateInstanceJson)
+            .content(requestJson("orkg/updateTemplateInstance"))
             .accept(TEMPLATE_INSTANCE_JSON_V1)
             .contentType(TEMPLATE_INSTANCE_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
     }
 }
-
-private const val updateTemplateInstanceJson = """{
-  "resources": null,
-  "literals": {
-    "#temp1": "https://orkg.org/"
-  },
-  "predicates": null,
-  "lists": null,
-  "classes": null,
-  "statements": {
-    "url": ["#temp1"]
-  }
-}"""

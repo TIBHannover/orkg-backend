@@ -1,0 +1,91 @@
+{
+    "timestamp": "2024-01-26T09:26:34.297967",
+    "uuid": "b8e897af-e9c9-46e0-884b-90e2407b2341",
+    "payload": {
+        "thing": {
+            "id": "116eddfd-d6f3-4a31-a96b-24574b3d62cc",
+            "created_at": "2022-02-22T06:02:14.292384Z",
+            "updated_at": "2022-02-22T06:02:14.292395Z",
+            "thing_type": "LIST",
+            "thing_key": "R166718",
+            "config": {},
+            "data": {
+                "rootResource": "R465",
+                "statements": [
+                    {
+                        "id": "S663825",
+                        "subject": {
+                            "id": "R166714",
+                            "label": "Entry",
+                            "created_at": "2022-02-22T08:01:13.261082+01:00",
+                            "classes": [],
+                            "shared": 1,
+                            "created_by": "d5416c16-1a45-4aee-8069-be1b6097478b",
+                            "_class": "resource",
+                            "observatory_id": "00000000-0000-0000-0000-000000000000",
+                            "extraction_method": "UNKNOWN",
+                            "organization_id": "00000000-0000-0000-0000-000000000000",
+                            "featured": false,
+                            "unlisted": false
+                        },
+                        "predicate": {
+                            "id": "HasPaper",
+                            "label": "has paper",
+                            "created_at": "2021-04-26T16:57:34.745465+02:00",
+                            "created_by": "00000000-0000-0000-0000-000000000000",
+                            "_class": "predicate",
+                            "description": null
+                        },
+                        "object": {
+                            "id": "C12457",
+                            "label": "Some class",
+                            "uri": "https://orkg.org/class/C12457",
+                            "description": "class description",
+                            "created_at": "2022-02-22T08:01:13.261082+01:00",
+                            "created_by": "d5416c16-1a45-4aee-8069-be1b6097478b",
+                            "_class": "class"
+                        },
+                        "created_at": "2022-02-22T08:01:15.253502+01:00",
+                        "created_by": "d5416c16-1a45-4aee-8069-be1b6097478b"
+                    },
+                    {
+                        "id": "S5436",
+                        "subject": {
+                            "id": "R56984",
+                            "label": "Other resource",
+                            "created_at": "2022-02-22T08:01:12.709843+01:00",
+                            "classes": [
+                                "Entry"
+                            ],
+                            "shared": 1,
+                            "created_by": "d5416c16-1a45-4aee-8069-be1b6097478b",
+                            "_class": "resource",
+                            "observatory_id": "00000000-0000-0000-0000-000000000000",
+                            "extraction_method": "MANUAL",
+                            "organization_id": "00000000-0000-0000-0000-000000000000",
+                            "visibility": "FEATURED"
+                        },
+                        "predicate": {
+                            "id": "HasPaper",
+                            "label": "has paper",
+                            "created_at": "2021-04-26T16:57:34.745465+02:00",
+                            "created_by": "00000000-0000-0000-0000-000000000000",
+                            "_class": "predicate",
+                            "description": null
+                        },
+                        "object": {
+                            "id": "L354354",
+                            "label": "Some literal",
+                            "created_at": "2022-02-22T08:01:12.709843+01:00",
+                            "created_by": "d5416c16-1a45-4aee-8069-be1b6097478b",
+                            "_class": "literal",
+                            "datatype": "xsd:string"
+                        },
+                        "created_at": "2023-02-22T08:01:15.253502+01:00",
+                        "created_by": "d5416c16-1a45-4aee-8069-be1b6097478b"
+                    }
+                ]
+            }
+        }
+    }
+}

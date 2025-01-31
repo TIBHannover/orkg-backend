@@ -1,0 +1,22 @@
+{
+    "entities": {
+        "P30": {
+            "type": "property",
+            "datatype": "wikibase-item",
+            "id": "P30",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "continent"
+                }
+            },
+            "descriptions": {
+                "en": {
+                    "language": "en",
+                    "value": "continent of which the subject is a part"
+                }
+            }
+        }
+    },
+    "success": 1
+}

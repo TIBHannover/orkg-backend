@@ -1,0 +1,210 @@
+{
+    "page": 0,
+    "numElements": 1,
+    "totalPages": 1,
+    "totalElements": 1,
+    "elements": [
+        {
+            "appearsIn": [
+                "abcd"
+            ],
+            "curie": "hasCountry",
+            "definedBy": [
+                "abcd"
+            ],
+            "definition": [
+                "Property to connect an instance of a class to a Country.",
+                "Property to connect an instance of a class to a Country."
+            ],
+            "definitionProperty": [
+                "http://www.w3.org/2000/01/rdf-schema#comment",
+                "http://www.w3.org/2004/02/skos/core#definition"
+            ],
+            "hasDirectChildren": false,
+            "hasDirectParents": false,
+            "hasHierarchicalChildren": false,
+            "hasHierarchicalParents": false,
+            "imported": false,
+            "iri": "http://rs.tdwg.org/abcd/terms/hasCountry",
+            "isDefiningOntology": true,
+            "isObsolete": false,
+            "isPreferredRoot": false,
+            "label": [
+                "has Country"
+            ],
+            "linkedEntities": {
+                "http://www.w3.org/2004/02/skos/core#definition": {
+                    "definedBy": [
+                        "stw",
+                        "skos"
+                    ],
+                    "numAppearsIn": 31,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "definition"
+                    ],
+                    "curie": "definition",
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ]
+                },
+                "http://rs.tdwg.org/dwc/terms/attributes/status": {
+                    "numAppearsIn": 2,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "status"
+                    ],
+                    "curie": "status",
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ]
+                },
+                "http://www.w3.org/2000/01/rdf-schema#range": {
+                    "numAppearsIn": 1,
+                    "hasLocalDefinition": false,
+                    "type": [
+                        "property",
+                        "entity"
+                    ],
+                    "label": [
+                        "range"
+                    ],
+                    "curie": "range"
+                },
+                "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": {
+                    "numAppearsIn": 25,
+                    "hasLocalDefinition": false,
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ],
+                    "label": [
+                        "isDefinedBy"
+                    ],
+                    "curie": "isDefinedBy"
+                },
+                "http://rs.tdwg.org/abcd/terms/Country": {
+                    "definedBy": [
+                        "abcd"
+                    ],
+                    "numAppearsIn": 1,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "Country"
+                    ],
+                    "curie": "Country",
+                    "type": [
+                        "class",
+                        "entity"
+                    ]
+                },
+                "http://www.w3.org/2000/01/rdf-schema#comment": {
+                    "definedBy": [
+                        "prov"
+                    ],
+                    "numAppearsIn": 53,
+                    "hasLocalDefinition": false,
+                    "label": [
+                        "comment"
+                    ],
+                    "curie": "comment",
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ]
+                },
+                "http://purl.org/dc/terms/modified": {
+                    "definedBy": [
+                        "dcterms"
+                    ],
+                    "numAppearsIn": 43,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "Date Modified"
+                    ],
+                    "curie": "dcterms:/modified",
+                    "type": [
+                        "dataProperty",
+                        "property",
+                        "entity"
+                    ]
+                },
+                "http://www.w3.org/2000/01/rdf-schema#domain": {
+                    "numAppearsIn": 1,
+                    "hasLocalDefinition": false,
+                    "type": [
+                        "property",
+                        "entity"
+                    ],
+                    "label": [
+                        "domain"
+                    ],
+                    "curie": "domain"
+                },
+                "http://purl.org/dc/terms/issued": {
+                    "definedBy": [
+                        "dcterms"
+                    ],
+                    "numAppearsIn": 35,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "Date Issued"
+                    ],
+                    "curie": "dcterms:/issued",
+                    "type": [
+                        "dataProperty",
+                        "property",
+                        "entity"
+                    ]
+                },
+                "http://www.w3.org/2000/01/rdf-schema#label": {
+                    "definedBy": [
+                        "prov"
+                    ],
+                    "numAppearsIn": 53,
+                    "hasLocalDefinition": false,
+                    "label": [
+                        "label"
+                    ],
+                    "curie": "label",
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ]
+                }
+            },
+            "numDescendants": 0,
+            "numHierarchicalDescendants": 0,
+            "ontologyId": "abcd",
+            "ontologyIri": "http://rs.tdwg.org/abcd/terms/",
+            "ontologyPreferredPrefix": "abcd",
+            "searchableAnnotationValues": [
+                false
+            ],
+            "shortForm": "hasCountry",
+            "type": [
+                "property",
+                "objectProperty",
+                "entity"
+            ],
+            "http://purl.org/dc/terms/issued": "2019-01-31",
+            "http://purl.org/dc/terms/modified": "2019-01-31",
+            "http://rs.tdwg.org/dwc/terms/attributes/status": "recommended",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "http://www.w3.org/2000/01/rdf-schema#comment": "Property to connect an instance of a class to a Country.",
+            "http://www.w3.org/2000/01/rdf-schema#domain": "http://www.w3.org/2002/07/owl#Thing",
+            "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": "http://rs.tdwg.org/abcd/terms/",
+            "http://www.w3.org/2000/01/rdf-schema#label": "has Country",
+            "http://www.w3.org/2000/01/rdf-schema#range": "http://rs.tdwg.org/abcd/terms/Country",
+            "http://www.w3.org/2004/02/skos/core#definition": "Property to connect an instance of a class to a Country."
+        }
+    ],
+    "facetFieldsToCounts": {}
+}

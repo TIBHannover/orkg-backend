@@ -1,0 +1,53 @@
+{
+    "title": "updated paper title",
+    "research_fields": [
+        "R194"
+    ],
+    "identifiers": {
+        "doi": ["10.48550/arXiv.2304.05328"],
+        "isbn": ["978-123456789-0"],
+        "issn": ["1234-5678"]
+    },
+    "publication_info": {
+        "published_month": 6,
+        "published_year": 2016,
+        "published_in": "other conference",
+        "url": "https://www.conference.org"
+    },
+    "authors": [
+        {
+            "name": "Author with id",
+            "id": "R123"
+        },
+        {
+            "name": "Author with orcid",
+            "identifiers": {
+                "orcid": ["0000-1111-2222-3333"]
+            }
+        },
+        {
+            "name": "Author with id and orcid",
+            "id": "R456",
+            "identifiers": {
+                "orcid": ["4444-3333-2222-1111"]
+            }
+        },
+        {
+            "name": "Author with homepage",
+            "homepage": "https://example.org/author"
+        },
+        {
+            "name": "Another author that just has a name"
+        }
+    ],
+    "sdgs": ["SDG_3", "SDG_4"],
+    "mentionings": ["R3004", "R3005"],
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "visibility": "DELETED",
+    "verified": false
+}

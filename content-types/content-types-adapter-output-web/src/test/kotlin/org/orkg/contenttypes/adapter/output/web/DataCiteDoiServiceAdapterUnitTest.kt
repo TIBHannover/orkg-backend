@@ -17,6 +17,8 @@ import java.net.http.HttpResponse
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.orkg.common.exceptions.ServiceUnavailable
+import org.orkg.common.testing.fixtures.Assets.requestJson
+import org.orkg.common.testing.fixtures.Assets.responseJson
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.common.testing.fixtures.fixedClock
@@ -41,7 +43,7 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
         val dataCitePrefix = "10.7484"
         val encodedCredentials = Base64.getEncoder().encodeToString("username:password".toByteArray())
         // Deserialize and serialize json to remove formatting
-        val json = objectMapper.writeValueAsString(objectMapper.readTree(dataCiteRequestJson))
+        val json = objectMapper.writeValueAsString(objectMapper.readTree(requestJson("datacite/registerDoi")))
 
         every { dataciteConfiguration.publish } returns "draft"
         every { dataciteConfiguration.url } returns dataCiteUri
@@ -95,7 +97,7 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
         every { dataciteConfiguration.encodedCredentials } returns encodedCredentials
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
         every { response.statusCode() } returns 500
-        every { response.body() } returns dataCiteErrorResponseJson
+        every { response.body() } returns responseJson("datacite/internalServerError")
 
         shouldThrow<ServiceUnavailable> {
             adapter.register(command)
@@ -113,80 +115,3 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
         verify(exactly = 1) { response.body() }
     }
 }
-
-private const val dataCiteRequestJson = """
-{
-  "data": {
-    "attributes": {
-      "doi": "10.7484/182",
-      "event": "draft",
-      "creators": [
-        {
-          "name": "Josiah Stinkney Carberry",
-          "nameIdentifiers": [
-            {
-              "schemeUri": "https://orcid.org",
-              "nameIdentifier": "https://orcid.org/0000-0002-1825-0097",
-              "nameIdentifierScheme": "ORCID"
-            }
-          ],
-          "nameType":"Personal"
-        },
-        {
-          "name": "Author 2",
-          "nameIdentifiers": [],
-          "nameType": "Personal"
-        }
-      ],
-      "titles": [
-        {
-          "title": "Paper title",
-          "lang": "en"
-        }
-      ],
-      "publicationYear": 2023,
-      "subjects": [
-        {
-          "subject": "Paper subject",
-          "lang": "en"
-        }
-      ],
-      "types": {
-        "resourceType": "Paper",
-        "resourceTypeGeneral": "Dataset"
-      },
-      "relatedIdentifiers": [
-        {
-          "relatedIdentifier": "https://doi.org/10.48366/r609337",
-          "relatedIdentifierType": "DOI",
-          "relationType": "IsVariantFormOf"
-        }
-      ],
-      "rightsList": [
-        {
-          "rights": "Creative Commons Attribution-ShareAlike 4.0 International License.",
-          "rightsUri": "https://creativecommons.org/licenses/by-sa/4.0/"
-        }
-      ],
-      "descriptions": [
-        {
-          "description": "Description of the paper",
-          "descriptionType": "Abstract"
-        }
-      ],
-      "url": "https://example.org",
-      "language": "en",
-      "publisher": "Open Research Knowledge Graph"
-    },
-    "type": "dois"
-  }
-}"""
-
-private const val dataCiteErrorResponseJson = """{
-  "errors": [
-    {
-      "status": "500",
-      "title": "Internal error"
-    }
-  ]
-}"""

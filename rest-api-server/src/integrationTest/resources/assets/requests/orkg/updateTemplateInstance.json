@@ -1,0 +1,12 @@
+{
+    "resources": null,
+    "literals": {
+        "#temp1": "https://orkg.org/"
+    },
+    "predicates": null,
+    "lists": null,
+    "classes": null,
+    "statements": {
+        "url": ["#temp1"]
+    }
+}

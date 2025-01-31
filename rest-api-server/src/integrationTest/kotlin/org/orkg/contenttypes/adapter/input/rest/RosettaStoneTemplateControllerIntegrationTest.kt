@@ -14,6 +14,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -282,7 +283,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
         }
 
         put("/api/rosetta-stone/templates/{id}", id)
-            .content(updateRosettaStoneTemplateJson)
+            .content(requestJson("orkg/updateRosettaStoneTemplate"))
             .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .contentType(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .perform()
@@ -391,7 +392,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
 
     private fun createRosettaStoneTemplate(): ThingId =
         post("/api/rosetta-stone/templates")
-            .content(createRosettaStoneTemplateJson)
+            .content(requestJson("orkg/createRosettaStoneTemplate"))
             .accept(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .contentType(ROSETTA_STONE_TEMPLATE_JSON_V1)
             .perform()
@@ -403,145 +404,3 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
             .substringAfterLast("/")
             .let(::ThingId)
 }
-
-private const val createRosettaStoneTemplateJson = """{
-  "label": "rosetta stone template",
-  "description": "rosetta stone template description",
-  "formatted_label": "{0} {1} {2} {3} {4} {5}",
-  "example_usage": "example statement usage",
-  "properties": [
-    {
-      "label": "subject position",
-      "placeholder": "subject",
-      "description": "subject",
-      "min_count": 1,
-      "max_count": 4,
-      "path": "hasSubjectPosition",
-      "class": "C28"
-    },
-    {
-      "label": "property label",
-      "placeholder": "property placeholder",
-      "description": "property description",
-      "min_count": 1,
-      "max_count": 2,
-      "path": "hasObjectPosition"
-    },
-    {
-      "label": "string literal property label",
-      "placeholder": "string literal property placeholder",
-      "description": "string literal property description",
-      "min_count": 1,
-      "max_count": 2,
-      "pattern": "\\d+",
-      "path": "hasObjectPosition",
-      "datatype": "String"
-    },
-    {
-      "label": "number literal property label",
-      "placeholder": "number literal property placeholder",
-      "description": "number literal property description",
-      "min_count": 1,
-      "max_count": 2,
-      "min_inclusive": -1,
-      "max_inclusive": 10,
-      "path": "hasObjectPosition",
-      "datatype": "Integer"
-    },
-    {
-      "label": "literal property label",
-      "placeholder": "literal property placeholder",
-      "description": "literal property description",
-      "min_count": 1,
-      "max_count": 2,
-      "path": "hasObjectPosition",
-      "datatype": "C25"
-    },
-    {
-      "label": "resource property label",
-      "placeholder": "resource property placeholder",
-      "description": "resource property description",
-      "min_count": 3,
-      "max_count": 4,
-      "path": "hasObjectPosition",
-      "class": "C28"
-    }
-  ],
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ]
-}"""
-
-private const val updateRosettaStoneTemplateJson = """{
-  "label": "updated rosetta stone template",
-  "description": "updated rosetta stone template description",
-  "formatted_label": "updated {0} {1} {2} {3} {4} {5}",
-  "example_usage": "updated example statement usage",
-  "properties": [
-    {
-      "label": "updated subject position",
-      "placeholder": "updated subject",
-      "description": "updated subject",
-      "min_count": 2,
-      "max_count": 5,
-      "path": "hasSubjectPosition",
-      "class": "C28"
-    },
-    {
-      "label": "updated property label",
-      "placeholder": "updated property placeholder",
-      "description": "updated property description",
-      "min_count": 2,
-      "max_count": 3,
-      "path": "hasObjectPosition"
-    },
-    {
-      "label": "updated string literal property label",
-      "placeholder": "updated string literal property placeholder",
-      "description": "updated string literal property description",
-      "min_count": 2,
-      "max_count": 3,
-      "pattern": "\\w+",
-      "path": "hasObjectPosition",
-      "datatype": "String"
-    },
-    {
-      "label": "updated number literal property label",
-      "placeholder": "updated number literal property placeholder",
-      "description": "updated number literal property description",
-      "min_count": 2,
-      "max_count": 3,
-      "min_inclusive": 0,
-      "max_inclusive": 11,
-      "path": "hasObjectPosition",
-      "datatype": "Integer"
-    },
-    {
-      "label": "updated literal property label",
-      "placeholder": "updated literal property placeholder",
-      "description": "updated literal property description",
-      "min_count": 2,
-      "max_count": 3,
-      "path": "hasObjectPosition",
-      "datatype": "C25"
-    },
-    {
-      "label": "updated resource property label",
-      "placeholder": "updated resource property placeholder",
-      "description": "updated resource property description",
-      "min_count": 4,
-      "max_count": 5,
-      "path": "hasObjectPosition",
-      "class": "C28"
-    }
-  ],
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ]
-}"""

@@ -1,0 +1,64 @@
+{
+    "title": "updated literature list title",
+    "research_fields": [
+        "R194"
+    ],
+    "authors": [
+        {
+            "name": "Author with id",
+            "id": "R123"
+        },
+        {
+            "name": "Author with orcid",
+            "identifiers": {
+                "orcid": ["0000-1111-2222-3333"]
+            }
+        },
+        {
+            "name": "Author with id and orcid",
+            "id": "R456",
+            "identifiers": {
+                "orcid": ["4444-3333-2222-1111"]
+            }
+        },
+        {
+            "name": "Author with homepage",
+            "homepage": "https://example.org/author"
+        },
+        {
+            "name": "Another author that just has a name"
+        }
+    ],
+    "sdgs": ["SDG_3", "SDG_4"],
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "extraction_method": "UNKNOWN",
+    "sections": [
+        {
+            "heading": "updated heading",
+            "heading_size": 3,
+            "text": "updated text contents"
+        },
+        {
+            "entries": [
+                {
+                    "id": "R3004",
+                    "description": "new description"
+                },
+                {
+                    "id": "R3003",
+                    "description": null
+                },
+                {
+                    "id": "R3005",
+                    "description": "updated example description"
+                }
+            ]
+        }
+    ],
+    "visibility": "DELETED"
+}

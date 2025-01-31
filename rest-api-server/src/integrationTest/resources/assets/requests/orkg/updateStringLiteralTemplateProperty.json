@@ -1,0 +1,10 @@
+{
+    "label": "updated string literal property label",
+    "placeholder": "updated string literal property placeholder",
+    "description": "updated string literal property description",
+    "min_count": 1,
+    "max_count": 2,
+    "pattern": "\\w+",
+    "path": "P24",
+    "datatype": "String"
+}

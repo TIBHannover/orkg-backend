@@ -1,0 +1,69 @@
+{
+    "label": "updated example template",
+    "description": "updated template description",
+    "formatted_label": "{P34}",
+    "target_class": "C456",
+    "relations": {
+        "research_fields": ["R13"],
+        "research_problems": ["R16"],
+        "predicate": "P31"
+    },
+    "properties": [
+        {
+            "label": "updated property label",
+            "placeholder": null,
+            "description": null,
+            "min_count": 4,
+            "max_count": 7,
+            "path": "P24"
+        },
+        {
+            "label": "updated resource property label",
+            "placeholder": "updated resource property placeholder",
+            "description": "updated resource property description",
+            "min_count": 3,
+            "max_count": 4,
+            "path": "P27",
+            "class": "C28"
+        },
+        {
+            "label": "updated string literal property label",
+            "placeholder": "updated string literal property placeholder",
+            "description": "updated string literal property description",
+            "min_count": 1,
+            "max_count": 2,
+            "pattern": "\\w+",
+            "path": "P24",
+            "datatype": "String"
+        },
+        {
+            "label": "updated literal property label",
+            "placeholder": "updated literal property placeholder",
+            "description": "updated literal property description",
+            "min_count": 1,
+            "max_count": 2,
+            "path": "P24",
+            "datatype": "C25"
+        },
+        {
+            "label": "updated number literal property label",
+            "placeholder": "updated number literal property placeholder",
+            "description": "updated number literal property description",
+            "min_count": 1,
+            "max_count": 2,
+            "min_inclusive": -5,
+            "max_inclusive": 15.5,
+            "path": "P24",
+            "datatype": "Decimal"
+        }
+    ],
+    "is_closed": false,
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "extraction_method": "MANUAL",
+    "visibility": "DELETED"
+}

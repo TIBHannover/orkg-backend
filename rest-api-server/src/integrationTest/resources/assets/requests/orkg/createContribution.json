@@ -1,0 +1,57 @@
+{
+    "resources": {
+        "#temp1": {
+            "label": "MOTO",
+            "classes": ["Result"]
+        }
+    },
+    "literals": {
+        "#temp2": {
+            "label": "0.1",
+            "data_type": "xsd:decimal"
+        }
+    },
+    "predicates": {
+        "#temp3": {
+            "label": "hasResult",
+            "description": "has result"
+        }
+    },
+    "lists": {
+        "#temp4": {
+            "label": "list",
+            "elements": ["#temp1", "C123"]
+        }
+    },
+    "contribution": {
+        "label": "Contribution 1",
+        "statements": {
+            "HAS_EVALUATION": [
+                {
+                    "id": "#temp1"
+                },
+                {
+                    "id": "R3004",
+                    "statements": {
+                        "#temp3": [
+                            {
+                                "id": "R3003"
+                            },
+                            {
+                                "id": "#temp2"
+                            },
+                            {
+                                "id": "#temp4"
+                            }
+                        ],
+                        "P32": [
+                            {
+                                "id": "#temp2"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

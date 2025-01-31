@@ -1,0 +1,174 @@
+{
+    "page": 0,
+    "numElements": 1,
+    "totalPages": 1,
+    "totalElements": 1,
+    "elements": [
+        {
+            "appearsIn": [
+                "abcd"
+            ],
+            "curie": "AbsenceObservation",
+            "definedBy": [
+                "abcd"
+            ],
+            "definition": [
+                "A record describing an output of an observation process with indication of the absence of an observation",
+                "A record describing an output of an observation process with indication of the absence of an observation"
+            ],
+            "definitionProperty": [
+                "http://www.w3.org/2000/01/rdf-schema#comment",
+                "http://www.w3.org/2004/02/skos/core#definition"
+            ],
+            "directAncestor": [
+                "http://rs.tdwg.org/abcd/terms/RecordBasis"
+            ],
+            "directParent": [
+                "http://rs.tdwg.org/abcd/terms/RecordBasis"
+            ],
+            "hasDirectChildren": false,
+            "hasDirectParents": true,
+            "hasHierarchicalChildren": false,
+            "hasHierarchicalParents": false,
+            "imported": false,
+            "iri": "http://rs.tdwg.org/abcd/terms/AbsenceObservation",
+            "isDefiningOntology": true,
+            "isObsolete": false,
+            "label": [
+                "AbsenceObservation"
+            ],
+            "linkedEntities": {
+                "http://www.w3.org/2004/02/skos/core#definition": {
+                    "definedBy": [
+                        "stw",
+                        "skos"
+                    ],
+                    "numAppearsIn": 31,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "definition"
+                    ],
+                    "curie": "definition",
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ]
+                },
+                "http://www.w3.org/2000/01/rdf-schema#comment": {
+                    "definedBy": [
+                        "prov"
+                    ],
+                    "numAppearsIn": 53,
+                    "hasLocalDefinition": false,
+                    "label": [
+                        "comment"
+                    ],
+                    "curie": "comment",
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ]
+                },
+                "http://purl.org/dc/terms/modified": {
+                    "definedBy": [
+                        "dcterms"
+                    ],
+                    "numAppearsIn": 43,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "Date Modified"
+                    ],
+                    "curie": "dcterms:/modified",
+                    "type": [
+                        "dataProperty",
+                        "property",
+                        "entity"
+                    ]
+                },
+                "http://rs.tdwg.org/dwc/terms/attributes/status": {
+                    "numAppearsIn": 2,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "status"
+                    ],
+                    "curie": "status",
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ]
+                },
+                "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": {
+                    "numAppearsIn": 25,
+                    "hasLocalDefinition": false,
+                    "type": [
+                        "property",
+                        "annotationProperty",
+                        "entity"
+                    ],
+                    "label": [
+                        "isDefinedBy"
+                    ],
+                    "curie": "isDefinedBy"
+                },
+                "http://purl.org/dc/terms/issued": {
+                    "definedBy": [
+                        "dcterms"
+                    ],
+                    "numAppearsIn": 35,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "Date Issued"
+                    ],
+                    "curie": "dcterms:/issued",
+                    "type": [
+                        "dataProperty",
+                        "property",
+                        "entity"
+                    ]
+                },
+                "http://rs.tdwg.org/abcd/terms/RecordBasis": {
+                    "definedBy": [
+                        "abcd"
+                    ],
+                    "numAppearsIn": 1,
+                    "hasLocalDefinition": true,
+                    "label": [
+                        "Record Basis"
+                    ],
+                    "curie": "RecordBasis",
+                    "type": [
+                        "class",
+                        "entity"
+                    ]
+                }
+            },
+            "numDescendants": 0,
+            "numHierarchicalDescendants": 0,
+            "ontologyId": "abcd",
+            "ontologyIri": "http://rs.tdwg.org/abcd/terms/",
+            "ontologyPreferredPrefix": "abcd",
+            "searchableAnnotationValues": [
+                false
+            ],
+            "shortForm": "AbsenceObservation",
+            "type": [
+                "individual",
+                "entity"
+            ],
+            "http://purl.org/dc/terms/issued": "2019-01-31",
+            "http://purl.org/dc/terms/modified": "2019-01-31",
+            "http://rs.tdwg.org/dwc/terms/attributes/status": "recommended",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+                "http://www.w3.org/2002/07/owl#NamedIndividual",
+                "http://rs.tdwg.org/abcd/terms/RecordBasis"
+            ],
+            "http://www.w3.org/2000/01/rdf-schema#comment": "A record describing an output of an observation process with indication of the absence of an observation",
+            "http://www.w3.org/2000/01/rdf-schema#isDefinedBy": "http://rs.tdwg.org/abcd/terms/",
+            "http://www.w3.org/2004/02/skos/core#definition": "A record describing an output of an observation process with indication of the absence of an observation"
+        }
+    ],
+    "facetFieldsToCounts": {}
+}

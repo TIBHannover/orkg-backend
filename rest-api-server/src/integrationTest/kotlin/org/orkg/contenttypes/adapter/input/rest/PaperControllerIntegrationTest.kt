@@ -13,6 +13,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
@@ -193,7 +194,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
     @TestWithMockUser
     fun createAndFetchAndUpdate() {
         val id = post("/api/papers")
-            .content(createPaperJson)
+            .content(requestJson("orkg/createPaper"))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -292,7 +293,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
         }
 
         put("/api/papers/{id}", id)
-            .content(updatePaperJson)
+            .content(requestJson("orkg/updatePaper"))
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -389,7 +390,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
         )
 
         val id = post("/api/papers/$paperId/contributions")
-            .content(createContributionJson)
+            .content(requestJson("orkg/createContribution"))
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
@@ -429,231 +430,3 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
         }
     }
 }
-
-private const val createPaperJson = """{
-  "title": "example paper",
-  "research_fields": [
-    "R12"
-  ],
-  "identifiers": {
-    "doi": ["10.48550/arXiv.2304.05327"]
-  },
-  "publication_info": {
-    "published_month": 5,
-    "published_year": 2015,
-    "published_in": "conference",
-    "url": "https://www.example.org"
-  },
-  "authors": [
-    {
-      "name": "Author with id",
-      "id": "R123"
-    },
-    {
-      "name": "Author with orcid",
-      "identifiers": {
-        "orcid": ["0000-1111-2222-3333"]
-      }
-    },
-    {
-      "name": "Author with id and orcid",
-      "id": "R456",
-      "identifiers": {
-        "orcid": ["1111-2222-3333-4444"]
-      }
-    },
-    {
-      "name": "Author with homepage",
-      "homepage": "https://example.org/author"
-    },
-    {
-      "name": "Author that just has a name"
-    }
-  ],
-  "sdgs": ["SDG_1", "SDG_2"],
-  "mentionings": ["R3003", "R3004"],
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "contents": {
-    "resources": {
-      "#temp1": {
-        "label": "MOTO",
-        "classes": ["Result"]
-      }
-    },
-    "literals": {
-      "#temp2": {
-        "label": "0.1",
-        "data_type": "xsd:decimal"
-      }
-    },
-    "predicates": {
-      "#temp3": {
-        "label": "hasResult",
-        "description": "has result"
-      }
-    },
-    "lists": {
-      "#temp4": {
-        "label": "list",
-        "elements": ["#temp1", "C123"]
-      }
-    },
-    "contributions": [
-      {
-        "label": "Contribution 1",
-        "classes": ["C123"],
-        "statements": {
-          "P32": [
-            {
-              "id": "R3003"
-            }
-          ],
-          "HAS_EVALUATION": [
-            {
-              "id": "#temp1"
-            },
-            {
-              "id": "R3004",
-              "statements": {
-                "#temp3": [
-                  {
-                    "id": "R3003"
-                  },
-                  {
-                    "id": "#temp2"
-                  },
-                  {
-                    "id": "#temp4"
-                  }
-                ],
-                "P32": [
-                  {
-                    "id": "#temp2"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      }
-    ]
-  },
-  "extraction_method": "MANUAL"
-}"""
-
-private const val updatePaperJson = """{
-  "title": "updated paper title",
-  "research_fields": [
-    "R194"
-  ],
-  "identifiers": {
-    "doi": ["10.48550/arXiv.2304.05328"],
-    "isbn": ["978-123456789-0"],
-    "issn": ["1234-5678"]
-  },
-  "publication_info": {
-    "published_month": 6,
-    "published_year": 2016,
-    "published_in": "other conference",
-    "url": "https://www.conference.org"
-  },
-  "authors": [
-    {
-      "name": "Author with id",
-      "id": "R123"
-    },
-    {
-      "name": "Author with orcid",
-      "identifiers": {
-        "orcid": ["0000-1111-2222-3333"]
-      }
-    },
-    {
-      "name": "Author with id and orcid",
-      "id": "R456",
-      "identifiers": {
-        "orcid": ["4444-3333-2222-1111"]
-      }
-    },
-    {
-      "name": "Author with homepage",
-      "homepage": "https://example.org/author"
-    },
-    {
-      "name": "Another author that just has a name"
-    }
-  ],
-  "sdgs": ["SDG_3", "SDG_4"],
-  "mentionings": ["R3004", "R3005"],
-  "observatories": [
-    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
-  ],
-  "organizations": [
-    "edc18168-c4ee-4cb8-a98a-136f748e912e"
-  ],
-  "visibility": "DELETED",
-  "verified": false
-}"""
-
-private const val createContributionJson = """{
-  "resources": {
-    "#temp1": {
-      "label": "MOTO",
-      "classes": ["Result"]
-    }
-  },
-  "literals": {
-    "#temp2": {
-      "label": "0.1",
-      "data_type": "xsd:decimal"
-    }
-  },
-  "predicates": {
-    "#temp3": {
-      "label": "hasResult",
-      "description": "has result"
-    }
-  },
-  "lists": {
-    "#temp4": {
-      "label": "list",
-      "elements": ["#temp1", "C123"]
-    }
-  },
-  "contribution": {
-    "label": "Contribution 1",
-    "statements": {
-      "HAS_EVALUATION": [
-        {
-          "id": "#temp1"
-        },
-        {
-          "id": "R3004",
-          "statements": {
-            "#temp3": [
-              {
-                "id": "R3003"
-              },
-              {
-                "id": "#temp2"
-              },
-              {
-                "id": "#temp4"
-              }
-            ],
-            "P32": [
-              {
-                "id": "#temp2"
-              }
-            ]
-          }
-        }
-      ]
-    }
-  }
-}"""

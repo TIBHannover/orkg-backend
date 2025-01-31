@@ -1,0 +1,57 @@
+{
+    "subjects": ["R369", "R258", "#temp1"],
+    "objects": [
+        ["#temp2", "R174", "#temp3"],
+        ["#temp4", "L123"],
+        ["#temp5", "L456"],
+        ["#temp6", "L789"],
+        ["R369", "R258", "#temp7"]
+    ],
+    "certainty": "MODERATE",
+    "negated": false,
+    "resources": {
+        "#temp1": {
+            "label": "Updated Subject Resource",
+            "classes": ["C28"]
+        }
+    },
+    "predicates": {
+        "#temp2": {
+            "label": "hasResult",
+            "description": "has result too"
+        }
+    },
+    "classes": {
+        "#temp3": {
+            "label": "updated new class",
+            "uri": null
+        }
+    },
+    "literals": {
+        "#temp4": {
+            "label": "9876543210",
+            "data_type": "xsd:string"
+        },
+        "#temp5": {
+            "label": "4",
+            "data_type": "xsd:integer"
+        },
+        "#temp6": {
+            "label": "some updated literal value",
+            "data_type": "http://orkg.org/orkg/class/C25"
+        }
+    },
+    "lists": {
+        "#temp7": {
+            "label": "list",
+            "elements": ["C123", "#temp1"]
+        }
+    },
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "extraction_method": "AUTOMATIC"
+}

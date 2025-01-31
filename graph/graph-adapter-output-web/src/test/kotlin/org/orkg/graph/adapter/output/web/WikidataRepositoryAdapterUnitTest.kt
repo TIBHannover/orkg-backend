@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.common.testing.fixtures.Assets.responseJson
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.ExternalThing
@@ -159,8 +160,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 "Q42",
                 "Q42",
                 WikidataServiceAdapter::findResourceByShortForm,
-                wikidataItemSuccessResponseJson,
-                wikidataNotFoundResponseJson,
+                responseJson("wikidata/itemSuccess"),
+                responseJson("wikidata/entityNotFound"),
                 ExternalThing(
                     uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
@@ -171,8 +172,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 "Q42",
                 "Q42",
                 WikidataServiceAdapter::findClassByShortForm,
-                wikidataItemSuccessResponseJson,
-                wikidataNotFoundResponseJson,
+                responseJson("wikidata/itemSuccess"),
+                responseJson("wikidata/entityNotFound"),
                 ExternalThing(
                     uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
@@ -183,8 +184,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 "P30",
                 "P30",
                 WikidataServiceAdapter::findPredicateByShortForm,
-                wikidataPropertySuccessResponseJson,
-                wikidataNotFoundResponseJson,
+                responseJson("wikidata/propertySuccess"),
+                responseJson("wikidata/entityNotFound"),
                 ExternalThing(
                     uri = ParsedIRI("https://www.wikidata.org/entity/P30"),
                     label = "continent",
@@ -195,8 +196,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 "Q42",
                 ParsedIRI("https://www.wikidata.org/entity/Q42"),
                 WikidataServiceAdapter::findResourceByURI,
-                wikidataItemSuccessResponseJson,
-                wikidataNotFoundResponseJson,
+                responseJson("wikidata/itemSuccess"),
+                responseJson("wikidata/entityNotFound"),
                 ExternalThing(
                     uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
@@ -207,8 +208,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 "Q42",
                 ParsedIRI("https://www.wikidata.org/entity/Q42"),
                 WikidataServiceAdapter::findClassByURI,
-                wikidataItemSuccessResponseJson,
-                wikidataNotFoundResponseJson,
+                responseJson("wikidata/itemSuccess"),
+                responseJson("wikidata/entityNotFound"),
                 ExternalThing(
                     uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
@@ -219,8 +220,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 "P30",
                 ParsedIRI("https://www.wikidata.org/entity/P30"),
                 WikidataServiceAdapter::findPredicateByURI,
-                wikidataPropertySuccessResponseJson,
-                wikidataNotFoundResponseJson,
+                responseJson("wikidata/propertySuccess"),
+                responseJson("wikidata/entityNotFound"),
                 ExternalThing(
                     uri = ParsedIRI("https://www.wikidata.org/entity/P30"),
                     label = "continent",
@@ -231,8 +232,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 "Q42",
                 "Q42",
                 WikidataServiceAdapter::findResourceByShortForm,
-                wikidataResourceSuccessResponseJson,
-                wikidataClassSuccessResponseJson, // should fail, because response contains a class and not a resource
+                responseJson("wikidata/resourceSuccess"),
+                responseJson("wikidata/classSuccess"), // should fail, because response contains a class and not a resource
                 ExternalThing(
                     uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
@@ -243,8 +244,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 "Q42",
                 "Q42",
                 WikidataServiceAdapter::findClassByShortForm,
-                wikidataClassSuccessResponseJson,
-                wikidataResourceSuccessResponseJson, // should fail, because response contains a resource and not a class
+                responseJson("wikidata/classSuccess"),
+                responseJson("wikidata/resourceSuccess"), // should fail, because response contains a resource and not a class
                 ExternalThing(
                     uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
@@ -255,8 +256,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 "Q42",
                 ParsedIRI("https://www.wikidata.org/entity/Q42"),
                 WikidataServiceAdapter::findResourceByURI,
-                wikidataResourceSuccessResponseJson,
-                wikidataClassSuccessResponseJson, // should fail, because response contains a class and not a resource
+                responseJson("wikidata/resourceSuccess"),
+                responseJson("wikidata/classSuccess"), // should fail, because response contains a class and not a resource
                 ExternalThing(
                     uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
@@ -267,8 +268,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 "Q42",
                 ParsedIRI("https://www.wikidata.org/entity/Q42"),
                 WikidataServiceAdapter::findClassByURI,
-                wikidataClassSuccessResponseJson,
-                wikidataResourceSuccessResponseJson, // should fail, because response contains a resource and not a class
+                responseJson("wikidata/classSuccess"),
+                responseJson("wikidata/resourceSuccess"), // should fail, because response contains a resource and not a class
                 ExternalThing(
                     uri = ParsedIRI("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
@@ -291,160 +292,3 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
         )
     }
 }
-
-private const val wikidataItemSuccessResponseJson = """{
-  "entities": {
-    "Q42": {
-      "type": "item",
-      "id": "Q42",
-      "labels": {
-        "en": {
-          "language": "en",
-          "value": "Douglas Adams"
-        }
-      },
-      "descriptions": {
-        "en": {
-          "language": "en",
-          "value": "English author and humourist (1952-2001)"
-        }
-      },
-      "claims": {}
-    }
-  },
-  "success": 1
-}"""
-
-private const val wikidataResourceSuccessResponseJson = """{
-  "entities": {
-    "Q42": {
-      "type": "item",
-      "id": "Q42",
-      "labels": {
-        "en": {
-          "language": "en",
-          "value": "Douglas Adams"
-        }
-      },
-      "descriptions": {
-        "en": {
-          "language": "en",
-          "value": "English author and humourist (1952-2001)"
-        }
-      },
-      "claims": {
-        "P31": [
-          {
-            "mainsnak": {
-              "snaktype": "value",
-              "property": "P31",
-              "hash": "ad7d38a03cdd40cdc373de0dc4e7b7fcbccb31d9",
-              "datavalue": {
-                "value": {
-                  "entity-type": "item",
-                  "numeric-id": 5,
-                  "id": "Q5"
-                },
-                "type": "wikibase-entityid"
-              },
-              "datatype": "wikibase-item"
-            },
-            "type": "statement",
-            "id": "Q42${'$'}F47D50E2-5300-43F3-9243-561D03116FD6",
-            "rank": "normal"
-          }
-        ]
-      }
-    }
-  },
-  "success": 1
-}"""
-
-private const val wikidataClassSuccessResponseJson = """{
-  "entities": {
-    "Q42": {
-      "type": "item",
-      "id": "Q42",
-      "labels": {
-        "en": {
-          "language": "en",
-          "value": "Douglas Adams"
-        }
-      },
-      "descriptions": {
-        "en": {
-          "language": "en",
-          "value": "English author and humourist (1952-2001)"
-        }
-      },
-      "claims": {
-        "P279": [
-          {
-            "mainsnak": {
-              "snaktype": "value",
-              "property": "P279",
-              "hash": "99cd05056004024645944a094b0f764f9aab586f",
-              "datavalue": {
-                "value": {
-                  "entity-type": "item",
-                  "numeric-id": 4120621,
-                  "id": "Q4120621"
-                },
-                "type": "wikibase-entityid"
-              },
-              "datatype": "wikibase-item"
-            },
-            "type": "statement",
-            "id": "Q427626${'$'}49253a61-476c-63c4-a873-4e141dc33260",
-            "rank": "normal"
-          }
-        ]
-      }
-    }
-  },
-  "success": 1
-}"""
-
-private const val wikidataPropertySuccessResponseJson = """{
-  "entities": {
-    "P30": {
-      "type": "property",
-      "datatype": "wikibase-item",
-      "id": "P30",
-      "labels": {
-        "en": {
-          "language": "en",
-          "value": "continent"
-        }
-      },
-      "descriptions": {
-        "en": {
-          "language": "en",
-          "value": "continent of which the subject is a part"
-        }
-      }
-    }
-  },
-  "success": 1
-}"""
-
-private const val wikidataNotFoundResponseJson = """{
-  "error": {
-    "code": "no-such-entity",
-    "info": "Could not find an entity with the ID \"Q42\".",
-    "id": "Q42",
-    "messages": [
-      {
-        "name": "wikibase-api-no-such-entity",
-        "parameters": [
-          "Q42"
-        ],
-        "html": {
-          "*":"Could not find an entity with the ID \"Q42\"."
-        }
-      }
-    ],
-    "*": "See https://www.wikidata.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/&gt; for notice of API deprecations and breaking changes."
-  },
-  "servedby": "mw-api-ext.eqiad.main-5dff684f6-jrlxv"
-}"""

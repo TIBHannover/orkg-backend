@@ -1,0 +1,9 @@
+{
+    "label": "updated resource property label",
+    "placeholder": "updated resource property placeholder",
+    "description": "updated resource property description",
+    "min_count": 2,
+    "max_count": 5,
+    "path": "P27",
+    "class": "C28"
+}

@@ -1,0 +1,59 @@
+{
+    "template_id": "$templateId",
+    "context": "R789",
+    "subjects": ["R258", "R369", "#temp1"],
+    "objects": [
+        ["R174", "#temp2", "#temp3"],
+        ["L123", "#temp4"],
+        ["L456", "#temp5"],
+        ["L789", "#temp6"],
+        ["R258", "R369", "#temp7"]
+    ],
+    "certainty": "HIGH",
+    "negated": false,
+    "resources": {
+        "#temp1": {
+            "label": "Subject Resource",
+            "classes": ["C28"]
+        }
+    },
+    "predicates": {
+        "#temp2": {
+            "label": "hasResult",
+            "description": "has result"
+        }
+    },
+    "classes": {
+        "#temp3": {
+            "label": "new class",
+            "uri": null
+        }
+    },
+    "literals": {
+        "#temp4": {
+            "label": "0123456789",
+            "data_type": "xsd:string"
+        },
+        "#temp5": {
+            "label": "1",
+            "data_type": "xsd:integer"
+        },
+        "#temp6": {
+            "label": "some literal value",
+            "data_type": "http://orkg.org/orkg/class/C25"
+        }
+    },
+    "lists": {
+        "#temp7": {
+            "label": "list",
+            "elements": ["#temp1", "C123"]
+        }
+    },
+    "observatories": [
+        "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+    ],
+    "organizations": [
+        "edc18168-c4ee-4cb8-a98a-136f748e912e"
+    ],
+    "extraction_method": "MANUAL"
+}

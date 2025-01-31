@@ -24,7 +24,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.common.testing.fixtures.Assets
+import org.orkg.common.testing.fixtures.Assets.responseJson
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.TestBodyPublisher
 import org.orkg.contenttypes.adapter.output.simcomp.internal.SimCompThingRepositoryAdapter
@@ -64,7 +64,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
         every { response.statusCode() } returns 200
-        every { response.body() } returns Assets.responseJson("simcomp/thingResponse")
+        every { response.body() } returns responseJson("simcomp/thingResponse")
 
         val result = adapter.findById(id, ThingType.LIST)
         result.isPresent shouldBe true

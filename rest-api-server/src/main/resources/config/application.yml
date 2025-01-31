@@ -16,6 +16,8 @@ spring:
     type: caffeine
     caffeine:
       spec: maximumSize=5000,expireAfterAccess=10m,recordStats
+      overrides:
+        metrics-name-and-parameters-to-number-cache: maximumSize=200,expireAfterAccess=5m,expireAfterWrite=5m
 orkg:
   export:
     rdf:

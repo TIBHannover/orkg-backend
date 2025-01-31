@@ -9,9 +9,10 @@ import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.contenttypes.output.VisualizationRepository
+import org.orkg.statistics.domain.CachedMetric
 import org.orkg.statistics.domain.Metric
 import org.orkg.statistics.domain.ParameterSpec
-import org.orkg.statistics.domain.SimpleMetric
+import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -45,7 +46,11 @@ private val sharedContentTypeParameters = mapOf(
 @Configuration
 class ContentTypeMetrics {
     @Bean
-    fun paperCountMetric(paperRepository: PaperRepository): Metric = SimpleMetric(
+    fun paperCountMetric(
+        paperRepository: PaperRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "paper-count",
         description = "Number of papers in the graph.",
         group = "content-types",
@@ -61,7 +66,11 @@ class ContentTypeMetrics {
     )
 
     @Bean
-    fun comparisonCountMetric(comparisonRepository: ComparisonRepository): Metric = SimpleMetric(
+    fun comparisonCountMetric(
+        comparisonRepository: ComparisonRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "comparison-count",
         description = "Number of comparisons in the graph.",
         group = "content-types",
@@ -78,7 +87,11 @@ class ContentTypeMetrics {
     )
 
     @Bean
-    fun visualizationCountMetric(visualizationRepository: VisualizationRepository): Metric = SimpleMetric(
+    fun visualizationCountMetric(
+        visualizationRepository: VisualizationRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "visualization-count",
         description = "Number of visualizations in the graph.",
         group = "content-types",
@@ -94,7 +107,11 @@ class ContentTypeMetrics {
     )
 
     @Bean
-    fun literatureListCountMetric(literatureListRepository: LiteratureListRepository): Metric = SimpleMetric(
+    fun literatureListCountMetric(
+        literatureListRepository: LiteratureListRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "literature-list-count",
         description = "Number of literature lists in the graph.",
         group = "content-types",
@@ -111,7 +128,11 @@ class ContentTypeMetrics {
     )
 
     @Bean
-    fun smartReviewCountMetric(smartReviewRepository: SmartReviewRepository): Metric = SimpleMetric(
+    fun smartReviewCountMetric(
+        smartReviewRepository: SmartReviewRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "smart-review-count",
         description = "Number of smart reviews in the graph.",
         group = "content-types",
@@ -128,7 +149,11 @@ class ContentTypeMetrics {
     )
 
     @Bean
-    fun templateCountMetric(templateRepository: TemplateRepository): Metric = SimpleMetric(
+    fun templateCountMetric(
+        templateRepository: TemplateRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "template-count",
         description = "Number of templates in the graph.",
         group = "content-types",

@@ -29,7 +29,8 @@ private val cacheNames = setOf(
     RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE,
     THING_ID_TO_THING_CACHE,
     THING_ID_TO_PUBLISHED_LITERATURE_LIST_CACHE,
-    THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE
+    THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE,
+    "metrics-name-and-parameters-to-number-cache"
 )
 
 @Profile("!profileRepositories")

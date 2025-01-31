@@ -4,6 +4,7 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.statistics.output.StatisticsRepository
+import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -14,7 +15,11 @@ class Metrics {
     //
 
     @Bean
-    fun resourceCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun resourceCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "resource-count",
         description = "Number of resources in the graph.",
         group = "things",
@@ -22,7 +27,11 @@ class Metrics {
     )
 
     @Bean
-    fun predicateCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun predicateCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "predicate-count",
         description = "Number of predicates in the graph.",
         group = "things",
@@ -30,7 +39,11 @@ class Metrics {
     )
 
     @Bean
-    fun literalCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun literalCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "literal-count",
         description = "Number of literals in the graph.",
         group = "things",
@@ -38,7 +51,11 @@ class Metrics {
     )
 
     @Bean
-    fun classCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun classCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "class-count",
         description = "Number of classes in the graph.",
         group = "things",
@@ -46,7 +63,11 @@ class Metrics {
     )
 
     @Bean
-    fun statementCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun statementCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "statement-count",
         description = "Number of statements in the graph.",
         group = "things",
@@ -54,7 +75,11 @@ class Metrics {
     )
 
     @Bean
-    fun orphansCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun orphansCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "orphan-count",
         description = "Number of orphaned nodes in the graph.",
         group = "things",
@@ -62,7 +87,11 @@ class Metrics {
     )
 
     @Bean
-    fun orphanResourceCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun orphanResourceCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "orphan-resource-count",
         description = "Number of orphan resources in the graph.",
         group = "things",
@@ -70,7 +99,11 @@ class Metrics {
     )
 
     @Bean
-    fun orphanPredicateCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun orphanPredicateCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "orphan-predicate-count",
         description = "Number of orphan predicates in the graph.",
         group = "things",
@@ -78,7 +111,11 @@ class Metrics {
     )
 
     @Bean
-    fun orphanLiteralCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun orphanLiteralCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "orphan-literal-count",
         description = "Number of orphan literals in the graph.",
         group = "things",
@@ -86,7 +123,11 @@ class Metrics {
     )
 
     @Bean
-    fun orphanClassCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun orphanClassCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "orphan-class-count",
         description = "Number of orphan classes in the graph.",
         group = "things",
@@ -94,7 +135,11 @@ class Metrics {
     )
 
     @Bean
-    fun unusedResourceCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun unusedResourceCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "unused-resource-count",
         description = "Number of unused resources in the graph.",
         group = "things",
@@ -102,7 +147,11 @@ class Metrics {
     )
 
     @Bean
-    fun unusedPredicateCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun unusedPredicateCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "unused-predicate-count",
         description = "Number of unused predicates in the graph.",
         group = "things",
@@ -110,7 +159,11 @@ class Metrics {
     )
 
     @Bean
-    fun unusedLiteralCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun unusedLiteralCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "unused-literal-count",
         description = "Number of unused literals in the graph.",
         group = "things",
@@ -118,7 +171,11 @@ class Metrics {
     )
 
     @Bean
-    fun unusedClassCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun unusedClassCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "unused-class-count",
         description = "Number of unused classes in the graph.",
         group = "things",
@@ -130,7 +187,11 @@ class Metrics {
     //
 
     @Bean
-    fun contributionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun contributionCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "contribution-count",
         description = "Number of contributions in the graph.",
         group = "content-types",
@@ -138,7 +199,11 @@ class Metrics {
     )
 
     @Bean
-    fun publishedComparisonVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun publishedComparisonVersionCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "published-comparison-version-count",
         description = "Number of individual published comparison versions in the graph.",
         group = "content-types",
@@ -146,7 +211,11 @@ class Metrics {
     )
 
     @Bean
-    fun publishedLiteratureListVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun publishedLiteratureListVersionCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "published-literature-list-version-count",
         description = "Number of individual published literature list versions in the graph.",
         group = "content-types",
@@ -154,7 +223,11 @@ class Metrics {
     )
 
     @Bean
-    fun publishedSmartReviewVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun publishedSmartReviewVersionCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "published-smart-review-version-count",
         description = "Number of individual published smart review versions in the graph.",
         group = "content-types",
@@ -162,7 +235,11 @@ class Metrics {
     )
 
     @Bean
-    fun researchFieldCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun researchFieldCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "research-field-count",
         description = "Number of research fields in the graph.",
         group = "content-types",
@@ -170,7 +247,11 @@ class Metrics {
     )
 
     @Bean
-    fun problemCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun problemCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "problem-count",
         description = "Number of problems in the graph.",
         group = "content-types",
@@ -178,7 +259,11 @@ class Metrics {
     )
 
     @Bean
-    fun benchmarkCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun benchmarkCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "benchmark-count",
         description = "Number of benchmarks in the graph.",
         group = "content-types",
@@ -186,7 +271,11 @@ class Metrics {
     )
 
     @Bean
-    fun rosettaStoneTemplateVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun rosettaStoneTemplateVersionCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "rosetta-stone-template-count",
         description = "Number of rosetta stone templates in the graph.",
         group = "content-types",
@@ -194,7 +283,11 @@ class Metrics {
     )
 
     @Bean
-    fun rosettaStoneStatementVersionCountMetric(statisticsRepository: StatisticsRepository): Metric = CachedMetric(
+    fun rosettaStoneStatementVersionCountMetric(
+        statisticsRepository: StatisticsRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "rosetta-stone-statement-version-count",
         description = "Number of individual rosetta stone statement versions in the graph.",
         group = "content-types",
@@ -206,7 +299,11 @@ class Metrics {
     //
 
     @Bean
-    fun contributorsCountMetric(contributorRepository: ContributorRepository): Metric = CachedMetric(
+    fun contributorsCountMetric(
+        contributorRepository: ContributorRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "contributors-count",
         description = "Number of contributors.",
         group = "community",
@@ -214,7 +311,11 @@ class Metrics {
     )
 
     @Bean
-    fun organizationCountMetric(organizationRepository: OrganizationRepository): Metric = CachedMetric(
+    fun organizationCountMetric(
+        organizationRepository: OrganizationRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "organization-count",
         description = "Number of organizations.",
         group = "community",
@@ -222,7 +323,11 @@ class Metrics {
     )
 
     @Bean
-    fun observatoryCountMetric(observatoryRepository: ObservatoryRepository): Metric = CachedMetric(
+    fun observatoryCountMetric(
+        observatoryRepository: ObservatoryRepository,
+        cacheManager: CacheManager?
+    ): Metric = CachedMetric.create(
+        cacheManager = cacheManager,
         name = "observatory-count",
         description = "Number of observatories.",
         group = "community",

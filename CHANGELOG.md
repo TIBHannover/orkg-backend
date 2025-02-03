@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Upgraded all dependencies and tools to the latest version.
+  (See: [!1195](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1195))
+- Content-type metrics are again cached.
+  (See: [!1190](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1190))
+### Fixed
+- Fixed endpoint `/api/stats/top/changelog` returning status 500.
 
 ## [0.77.0] - 2025-01-28
 ### Added

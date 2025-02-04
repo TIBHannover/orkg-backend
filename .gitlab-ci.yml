@@ -151,6 +151,8 @@ container_scanning:
     - job: docker_build_master
       optional: true
       artifacts: false
+  rules:
+    - when: always
 
 # Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See above.
 .dependency_scanning:
@@ -161,6 +163,8 @@ secret_detection:
   stage: verify
   cache: []
   needs: []
+  rules:
+    - when: always
   variables:
     SECRET_DETECTION_EXCLUDED_PATHS: '.gradle'
 

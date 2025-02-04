@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.77.2] - 2025-02-04
+### Fixed
+- The release pipeline was broken and was fixed.
+  This patch release contains no code changes, just the changes to the CI/CD configuration.
+  (See: [!1205](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1205))
+
 ## [0.77.1] - 2025-02-03
 ### Changed
 - Upgraded all dependencies and tools to the latest version.
@@ -1371,7 +1377,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.77.1...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.77.2...master
+[0.77.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.77.2
 [0.77.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.77.1
 [0.77.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.77.0
 [0.76.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.76.0

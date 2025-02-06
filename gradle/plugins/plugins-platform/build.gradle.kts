@@ -21,12 +21,14 @@ dependencies.constraints {
 
     api("dev.jacomet.gradle.plugins:logging-capabilities:0.11.1")
     api("org.gradlex:jvm-dependency-conflict-resolution:2.1.2")
-    api("com.autonomousapps:dependency-analysis-gradle-plugin:2.8.0")
+    api("com.autonomousapps:dependency-analysis-gradle-plugin:2.5.0")
     api("com.osacky.doctor:doctor-plugin:0.10.0")
     api("com.github.ben-manes:gradle-versions-plugin:0.51.0")
     api("dev.iurysouza:modulegraph:0.10.1")
 
     api("com.google.cloud.tools:jib-gradle-plugin:3.4.0")
-    api("com.diffplug.spotless:spotless-plugin-gradle:7.0.2")
-    api("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle:3.1.2")
+    api("com.diffplug.spotless:spotless-plugin-gradle:6.2.1")
+    //api("com.diffplug.spotless:spotless-plugin-gradle:6.23.3")
+    api("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle:2.4.0")
+    //api("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle:3.0.2")
 }

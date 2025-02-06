@@ -13,14 +13,14 @@ plugins {
 
 val javaLanguageVersion = JavaLanguageVersion.of(21)
 
-// Support downloading Javadoc and sources artifacts by enabling it via Gradle properties
+// Support downloading JavaDoc and sources artifacts by enabling it via Gradle properties
 val downloadJavadoc: String? by project
 val downloadSources: String? by project
 
 idea {
     module {
-        isDownloadJavadoc = downloadJavadoc?.let(String::toBoolean) == true
-        isDownloadSources = downloadSources?.let(String::toBoolean) == true
+        isDownloadJavadoc = downloadJavadoc?.let(String::toBoolean) ?: false
+        isDownloadSources = downloadSources?.let(String::toBoolean) ?: false
     }
 }
 
@@ -90,7 +90,15 @@ tasks.register("compileAll") {
 extensions.configure<SpotlessExtension> {
     ratchetFrom("origin/master")
     kotlin {
-        ktlint()
+        ktlint().userData(
+            // TODO: This should be moved to .editorconfig once the Gradle plug-in supports that.
+            mapOf(
+                "ij_kotlin_code_style_defaults" to "KOTLIN_OFFICIAL",
+                // Disable some rules to keep the changes minimal
+                "disabled_rules" to "no-wildcard-imports,filename,import-ordering,indent",
+                "ij_kotlin_imports_layout" to "*,^",
+            ),
+        )
     }
     kotlinGradle {
         ktlint()

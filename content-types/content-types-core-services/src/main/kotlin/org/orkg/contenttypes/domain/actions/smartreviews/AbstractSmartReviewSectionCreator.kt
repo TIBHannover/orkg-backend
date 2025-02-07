@@ -14,6 +14,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -50,10 +51,12 @@ class AbstractSmartReviewSectionCreator(
         )
         section.comparison?.let { comparisonId ->
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = comparisonId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = comparisonId
+                )
             )
         }
         return sectionId
@@ -72,10 +75,12 @@ class AbstractSmartReviewSectionCreator(
         )
         section.visualization?.let { visualizationId ->
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = visualizationId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = visualizationId
+                )
             )
         }
         return sectionId
@@ -94,10 +99,12 @@ class AbstractSmartReviewSectionCreator(
         )
         section.resource?.let { resourceId ->
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = resourceId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = resourceId
+                )
             )
         }
         return sectionId
@@ -116,10 +123,12 @@ class AbstractSmartReviewSectionCreator(
         )
         section.predicate?.let { predicateId ->
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = predicateId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = predicateId
+                )
             )
         }
         return sectionId
@@ -169,10 +178,12 @@ class AbstractSmartReviewSectionCreator(
             )
         )
         statementService.add(
-            userId = contributorId,
-            subject = sectionId,
-            predicate = Predicates.hasContent,
-            `object` = textId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = sectionId,
+                predicateId = Predicates.hasContent,
+                objectId = textId
+            )
         )
         return sectionId
     }

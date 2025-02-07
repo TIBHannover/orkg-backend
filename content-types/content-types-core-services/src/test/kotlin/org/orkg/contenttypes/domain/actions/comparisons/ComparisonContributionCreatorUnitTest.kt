@@ -3,9 +3,7 @@ package org.orkg.contenttypes.domain.actions.comparisons
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -13,6 +11,8 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.input.testing.fixtures.createComparisonCommand
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 
 internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
@@ -28,14 +28,7 @@ internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
             comparisonId = comparisonId
         )
 
-        every {
-            statementService.add(
-                userId = command.contributorId,
-                subject = comparisonId,
-                predicate = Predicates.comparesContribution,
-                `object` = any()
-            )
-        } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         val result = contributionCreator(command, state)
 
@@ -47,10 +40,12 @@ internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
         command.contributions.forEach {
             verify(exactly = 1) {
                 statementService.add(
-                    userId = command.contributorId,
-                    subject = comparisonId,
-                    predicate = Predicates.comparesContribution,
-                    `object` = it
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = command.contributorId,
+                        subjectId = comparisonId,
+                        predicateId = Predicates.comparesContribution,
+                        objectId = it
+                    )
                 )
             }
         }

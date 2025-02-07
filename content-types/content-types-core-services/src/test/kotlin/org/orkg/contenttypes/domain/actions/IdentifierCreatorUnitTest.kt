@@ -11,7 +11,8 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.Identifiers
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -28,28 +29,34 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
         val doi = "10.1234/56789"
         val identifiers = mapOf("doi" to listOf(doi))
         val doiLiteralId = ThingId("L1")
+        val command = CreateStatementUseCase.CreateCommand(
+            contributorId = contributorId,
+            subjectId = paperId,
+            predicateId = Predicates.hasDOI,
+            objectId = doiLiteralId
+        )
 
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = doi
                 )
             )
         } returns doiLiteralId
-        every { statementService.create(contributorId, paperId, Predicates.hasDOI, doiLiteralId) } returns StatementId("S435")
+        every { statementService.create(command) } returns StatementId("S435")
 
         identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId)
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = doi
                 )
             )
         }
-        verify(exactly = 1) { statementService.create(contributorId, paperId, Predicates.hasDOI, doiLiteralId) }
+        verify(exactly = 1) { statementService.create(command) }
     }
 
     @Test
@@ -61,6 +68,6 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
         identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId)
 
         verify(exactly = 0) { literalService.create(any()) }
-        verify(exactly = 0) { statementService.create(any(), paperId, any(), any()) }
+        verify(exactly = 0) { statementService.create(any()) }
     }
 }

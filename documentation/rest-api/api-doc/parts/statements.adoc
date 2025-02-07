@@ -43,7 +43,15 @@ A `POST` request creates a new statement.
 The response will be `201 Created` when successful.
 The statement can be retrieved by following the URI in the `Location` header field.
 
-NOTE: The response body contains the created statement for convenience. This might be subject to change.
+[NOTE]
+====
+1. If the subject, predicate or object cannot be found, the return status will be `400 BAD REQUEST`.
+2. If the subject is a rosetta stone statement, the return status will be `400 BAD REQUEST`.
+3. If the statement represents a list element statement, the return status will be `400 BAD REQUEST`.
+4. If the subject is a literal, the return status will be `400 BAD REQUEST`.
+5. If a statement id is provided and a statement with that id already exists, the return status will be `400 BAD REQUEST`.
+6. If a statement with the specified subject, predicate and object already exists, the id of the existing statement will be returned and the status will be `201 CREATED`.
+====
 
 operation::statements-create[snippets='request-fields,curl-request,response-body,http-response']
 

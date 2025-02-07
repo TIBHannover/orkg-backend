@@ -4,6 +4,7 @@ import org.orkg.contenttypes.domain.actions.PublishPaperCommand
 import org.orkg.contenttypes.domain.actions.papers.PublishPaperAction.State
 import org.orkg.contenttypes.domain.wherePredicate
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 
 /**
@@ -18,17 +19,21 @@ class PaperVersionHistoryUpdater(
         if (hasPreviousVersionStatements.isNotEmpty()) {
             statementService.delete(hasPreviousVersionStatements.map { it.id }.toSet())
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperVersionId!!,
-                predicate = Predicates.hasPreviousVersion,
-                `object` = hasPreviousVersionStatements.first().`object`.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperVersionId!!,
+                    predicateId = Predicates.hasPreviousVersion,
+                    objectId = hasPreviousVersionStatements.first().`object`.id
+                )
             )
         }
         statementService.add(
-            userId = command.contributorId,
-            subject = command.id,
-            predicate = Predicates.hasPreviousVersion,
-            `object` = state.paperVersionId!!
+            CreateStatementUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                subjectId = command.id,
+                predicateId = Predicates.hasPreviousVersion,
+                objectId = state.paperVersionId!!
+            )
         )
         return state
     }

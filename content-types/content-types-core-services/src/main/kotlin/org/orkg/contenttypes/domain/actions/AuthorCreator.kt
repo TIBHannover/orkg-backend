@@ -9,8 +9,9 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateListUseCase
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -46,16 +47,18 @@ abstract class AuthorCreator(
             )
         )
         statementService.add(
-            userId = contributorId,
-            subject = subjectId,
-            predicate = Predicates.hasAuthors,
-            `object` = authorList
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = subjectId,
+                predicateId = Predicates.hasAuthors,
+                objectId = authorList
+            )
         )
     }
 
     private fun createLiteralAuthor(author: Author, contributorId: ContributorId): ThingId =
         literalService.create(
-            CreateCommand(
+            CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = author.name
             )
@@ -76,17 +79,19 @@ abstract class AuthorCreator(
 
         if (author.homepage != null) {
             val homepage = literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.homepage.toString(),
                     datatype = Literals.XSD.URI.prefixedUri
                 )
             )
             statementService.add(
-                userId = contributorId,
-                subject = authorId,
-                predicate = Predicates.hasWebsite,
-                `object` = homepage
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = authorId,
+                    predicateId = Predicates.hasWebsite,
+                    objectId = homepage
+                )
             )
         }
 
@@ -102,16 +107,18 @@ abstract class AuthorCreator(
         identifiers.forEach { (identifier, values) ->
             values.forEach { value ->
                 val literalId = literalService.create(
-                    CreateCommand(
+                    CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = value
                     )
                 )
                 statementService.add(
-                    userId = contributorId,
-                    subject = authorId,
-                    predicate = identifier.predicateId,
-                    `object` = literalId
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = authorId,
+                        predicateId = identifier.predicateId,
+                        objectId = literalId
+                    )
                 )
             }
         }

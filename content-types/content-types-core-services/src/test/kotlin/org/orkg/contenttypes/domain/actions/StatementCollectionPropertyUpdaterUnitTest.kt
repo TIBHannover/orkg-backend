@@ -19,6 +19,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -48,7 +49,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             )
         } returns pageOf(oldObjectStatements)
         every { statementService.delete(any<Set<StatementId>>()) } just runs
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects.toSet())
 
@@ -62,18 +63,22 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) { statementService.delete(oldObjectStatements.map { it.id }.toSet()) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = objects[0]
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = objects[0]
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = objects[1]
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = objects[1]
+                )
             )
         }
     }
@@ -93,7 +98,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             )
         } returns pageOf(oldObjectStatements)
         every { statementService.delete(any<Set<StatementId>>()) } just runs
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects.toSet())
 
@@ -107,10 +112,12 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) { statementService.delete(setOf(oldObjectStatements[0].id)) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = objects[1]
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = objects[1]
+                )
             )
         }
     }
@@ -182,7 +189,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf()
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects.toSet())
 
@@ -195,18 +202,22 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = objects[0]
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = objects[0]
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = objects[1]
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = objects[1]
+                )
             )
         }
     }
@@ -227,7 +238,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             )
         } returns pageOf(oldLiteralStatements)
         every { statementService.delete(any<Set<StatementId>>()) } just runs
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
         every { literalService.create(any()) } returns ThingId("L1") andThen ThingId("L2")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
@@ -250,18 +261,22 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = ThingId("L1")
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = ThingId("L1")
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = ThingId("L2")
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = ThingId("L2")
+                )
             )
         }
     }
@@ -282,7 +297,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             )
         } returns pageOf(oldLiteralStatements)
         every { statementService.delete(any<Set<StatementId>>()) } just runs
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
         every { literalService.create(any()) } returns ThingId("L1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
@@ -303,10 +318,12 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = ThingId("L1")
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = ThingId("L1")
+                )
             )
         }
     }
@@ -383,7 +400,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf()
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
         every { literalService.create(any()) } returns ThingId("L1") andThen ThingId("L2")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, literals.toSet())
@@ -405,18 +422,22 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = ThingId("L1")
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = ThingId("L1")
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = ThingId("L2")
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = ThingId("L2")
+                )
             )
         }
     }
@@ -436,7 +457,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             )
         } returns pageOf(oldObjectStatements)
         every { statementService.delete(any<Set<StatementId>>()) } just runs
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
 
@@ -450,18 +471,22 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) { statementService.delete(oldObjectStatements.map { it.id }.toSet()) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = objects[0]
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = objects[0]
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = objects[1]
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = objects[1]
+                )
             )
         }
     }
@@ -481,7 +506,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             )
         } returns pageOf(oldObjectStatements)
         every { statementService.delete(any<Set<StatementId>>()) } just runs
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
 
@@ -495,10 +520,12 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) { statementService.delete(setOf(oldObjectStatements[0].id)) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = objects[1]
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = objects[1]
+                )
             )
         }
     }
@@ -570,7 +597,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                 pageable = PageRequests.ALL
             )
         } returns pageOf()
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         statementCollectionPropertyUpdater.update(contributorId, subjectId, Predicates.reference, objects)
 
@@ -583,18 +610,22 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = objects[0]
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = objects[0]
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = objects[1]
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = objects[1]
+                )
             )
         }
     }
@@ -648,7 +679,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         )
 
         every { statementService.delete(any<Set<StatementId>>()) } just runs
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
         every { literalService.create(literalCreateCommand1) } returns literalId1
         every { literalService.create(literalCreateCommand2) } returns literalId2
 
@@ -659,18 +690,22 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) { literalService.create(literalCreateCommand2) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = literalId1
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = literalId1
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = literalId2
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = literalId2
+                )
             )
         }
     }
@@ -689,7 +724,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         )
 
         every { statementService.delete(any<Set<StatementId>>()) } just runs
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
         every { literalService.create(literalCreateCommand2) } returns literalId2
 
         statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
@@ -698,10 +733,12 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) { literalService.create(literalCreateCommand2) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = literalId2
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = literalId2
+                )
             )
         }
     }
@@ -748,7 +785,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             datatype = Literals.XSD.STRING.prefixedUri
         )
 
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
         every { literalService.create(literalCreateCommand1) } returns literalId1
         every { literalService.create(literalCreateCommand2) } returns literalId2
 
@@ -758,18 +795,22 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) { literalService.create(literalCreateCommand2) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = literalId1
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = literalId1
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.reference,
-                `object` = literalId2
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.reference,
+                    objectId = literalId2
+                )
             )
         }
     }

@@ -11,9 +11,10 @@ import org.orkg.graph.domain.Thing
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateListUseCase
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -106,7 +107,7 @@ class SubgraphCreator(
         thingDefinitions.literals.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
                 lookup[it.key] = literalService.create(
-                    CreateCommand(
+                    CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = it.value.label,
                         datatype = it.value.dataType
@@ -133,16 +134,18 @@ class SubgraphCreator(
                 lookup[it.key] = predicate
                 it.value.description?.let { description ->
                     val literal = literalService.create(
-                        CreateCommand(
+                        CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = description
                         )
                     )
                     statementService.add(
-                        userId = contributorId,
-                        subject = predicate,
-                        predicate = Predicates.description,
-                        `object` = literal
+                        CreateStatementUseCase.CreateCommand(
+                            contributorId = contributorId,
+                            subjectId = predicate,
+                            predicateId = Predicates.description,
+                            objectId = literal
+                        )
                     )
                 }
             }
@@ -188,7 +191,14 @@ class SubgraphCreator(
             val `object` = resolve(objectId, lookup)
             val hasTempId = subjectId.isTempId || predicateId.isTempId || objectId.isTempId
             if (hasTempId || statementRepository.findAll(subjectId = subject, predicateId = predicate, objectId = `object`, pageable = PageRequests.SINGLE).isEmpty) {
-                statementService.add(contributorId, subject, predicate, `object`)
+                statementService.add(
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = subject,
+                        predicateId = predicate,
+                        objectId = `object`
+                    )
+                )
             }
         }
     }

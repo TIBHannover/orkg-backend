@@ -5,9 +5,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEqualIgnoringCase
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
@@ -21,8 +19,10 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -84,7 +84,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
 
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = month.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -93,12 +93,14 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         } returns monthLiteralId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
-                predicate = Predicates.monthPublished,
-                `object` = monthLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperId!!,
+                    predicateId = Predicates.monthPublished,
+                    objectId = monthLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoCreator(command, state)
 
@@ -112,7 +114,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = month.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -121,10 +123,12 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
-                predicate = Predicates.monthPublished,
-                `object` = monthLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperId!!,
+                    predicateId = Predicates.monthPublished,
+                    objectId = monthLiteralId
+                )
             )
         }
     }
@@ -148,7 +152,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
 
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = year.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -157,12 +161,14 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         } returns yearLiteralId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
-                predicate = Predicates.yearPublished,
-                `object` = yearLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperId!!,
+                    predicateId = Predicates.yearPublished,
+                    objectId = yearLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoCreator(command, state)
 
@@ -176,7 +182,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = year.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -185,10 +191,12 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
-                predicate = Predicates.yearPublished,
-                `object` = yearLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperId!!,
+                    predicateId = Predicates.yearPublished,
+                    objectId = yearLiteralId
+                )
             )
         }
     }
@@ -219,12 +227,14 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         } returns pageOf(venueResource)
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
-                predicate = Predicates.hasVenue,
-                `object` = venueResource.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperId!!,
+                    predicateId = Predicates.hasVenue,
+                    objectId = venueResource.id
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoCreator(command, state)
 
@@ -248,10 +258,12 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
-                predicate = Predicates.hasVenue,
-                `object` = venueResource.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperId!!,
+                    predicateId = Predicates.hasVenue,
+                    objectId = venueResource.id
+                )
             )
         }
     }
@@ -288,12 +300,14 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns venueId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
-                predicate = Predicates.hasVenue,
-                `object` = venueId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperId!!,
+                    predicateId = Predicates.hasVenue,
+                    objectId = venueId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoCreator(command, state)
 
@@ -318,10 +332,12 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
-                predicate = Predicates.hasVenue,
-                `object` = venueId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperId!!,
+                    predicateId = Predicates.hasVenue,
+                    objectId = venueId
+                )
             )
         }
     }
@@ -345,7 +361,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
 
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = url.toString(),
                     datatype = Literals.XSD.URI.prefixedUri
@@ -354,12 +370,14 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         } returns urlLiteralId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
-                predicate = Predicates.hasURL,
-                `object` = urlLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperId!!,
+                    predicateId = Predicates.hasURL,
+                    objectId = urlLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoCreator(command, state)
 
@@ -373,7 +391,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = url.toString(),
                     datatype = Literals.XSD.URI.prefixedUri
@@ -382,10 +400,12 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
-                predicate = Predicates.hasURL,
-                `object` = urlLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperId!!,
+                    predicateId = Predicates.hasURL,
+                    objectId = urlLiteralId
+                )
             )
         }
     }

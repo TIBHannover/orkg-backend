@@ -6,6 +6,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -26,10 +27,12 @@ class RosettaStoneTemplateTargetClassCreator(
                 )
             )
             statementUseCases.add(
-                userId = command.contributorId,
-                subject = rosettaStoneTemplateId!!,
-                predicate = Predicates.shTargetClass,
-                `object` = classId
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = rosettaStoneTemplateId!!,
+                    predicateId = Predicates.shTargetClass,
+                    objectId = classId
+                )
             )
             val exampleUsageId = literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -38,10 +41,12 @@ class RosettaStoneTemplateTargetClassCreator(
                 )
             )
             statementUseCases.add(
-                userId = command.contributorId,
-                subject = classId,
-                predicate = Predicates.exampleOfUsage,
-                `object` = exampleUsageId
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = classId,
+                    predicateId = Predicates.exampleOfUsage,
+                    objectId = exampleUsageId
+                )
             )
             val descriptionId = literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -50,10 +55,12 @@ class RosettaStoneTemplateTargetClassCreator(
                 )
             )
             statementUseCases.add(
-                userId = command.contributorId,
-                subject = classId,
-                predicate = Predicates.description,
-                `object` = descriptionId
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = classId,
+                    predicateId = Predicates.description,
+                    objectId = descriptionId
+                )
             )
         }
 }

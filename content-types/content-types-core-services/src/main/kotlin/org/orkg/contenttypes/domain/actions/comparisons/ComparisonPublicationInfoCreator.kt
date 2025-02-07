@@ -7,6 +7,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction.S
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -26,10 +27,12 @@ class ComparisonPublicationInfoCreator(
             )
         )
         statementService.add(
-            userId = command.contributorId,
-            subject = comparisonId,
-            predicate = Predicates.yearPublished,
-            `object` = publicationYearLiteralId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                subjectId = comparisonId,
+                predicateId = Predicates.yearPublished,
+                objectId = publicationYearLiteralId
+            )
         )
         val publicationMonthLiteralId = literalService.create(
             CreateLiteralUseCase.CreateCommand(
@@ -39,10 +42,12 @@ class ComparisonPublicationInfoCreator(
             )
         )
         statementService.add(
-            userId = command.contributorId,
-            subject = comparisonId,
-            predicate = Predicates.yearPublished,
-            `object` = publicationMonthLiteralId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                subjectId = comparisonId,
+                predicateId = Predicates.yearPublished,
+                objectId = publicationMonthLiteralId
+            )
         )
         return state
     }

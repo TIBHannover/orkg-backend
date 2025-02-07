@@ -9,8 +9,9 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -43,17 +44,19 @@ abstract class PublicationInfoCreator(
         publishedMonth: Int
     ) {
         val monthLiteralId = literalService.create(
-            CreateCommand(
+            CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = publishedMonth.toString(),
                 datatype = Literals.XSD.INT.prefixedUri
             )
         )
         statementService.add(
-            userId = contributorId,
-            subject = subjectId,
-            predicate = Predicates.monthPublished,
-            `object` = monthLiteralId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = subjectId,
+                predicateId = Predicates.monthPublished,
+                objectId = monthLiteralId
+            )
         )
     }
 
@@ -63,17 +66,19 @@ abstract class PublicationInfoCreator(
         publishedYear: Long
     ) {
         val yearLiteralId = literalService.create(
-            CreateCommand(
+            CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = publishedYear.toString(),
                 datatype = Literals.XSD.INT.prefixedUri
             )
         )
         statementService.add(
-            userId = contributorId,
-            subject = subjectId,
-            predicate = Predicates.yearPublished,
-            `object` = yearLiteralId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = subjectId,
+                predicateId = Predicates.yearPublished,
+                objectId = yearLiteralId
+            )
         )
     }
 
@@ -94,10 +99,12 @@ abstract class PublicationInfoCreator(
             )
         )
         statementService.add(
-            userId = contributorId,
-            subject = subjectId,
-            predicate = Predicates.hasVenue,
-            `object` = venueId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = subjectId,
+                predicateId = Predicates.hasVenue,
+                objectId = venueId
+            )
         )
     }
 
@@ -107,17 +114,19 @@ abstract class PublicationInfoCreator(
         url: ParsedIRI
     ) {
         val urlLiteralId = literalService.create(
-            CreateCommand(
+            CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = url.toString(),
                 datatype = Literals.XSD.URI.prefixedUri
             )
         )
         statementService.add(
-            userId = contributorId,
-            subject = subjectId,
-            predicate = Predicates.hasURL,
-            `object` = urlLiteralId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = subjectId,
+                predicateId = Predicates.hasURL,
+                objectId = urlLiteralId
+            )
         )
     }
 }

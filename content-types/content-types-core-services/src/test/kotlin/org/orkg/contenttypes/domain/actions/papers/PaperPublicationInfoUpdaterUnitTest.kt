@@ -27,6 +27,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -166,12 +167,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         } returns monthLiteralId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.monthPublished,
-                `object` = monthLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.monthPublished,
+                    objectId = monthLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -191,10 +194,12 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.monthPublished,
-                `object` = monthLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.monthPublished,
+                    objectId = monthLiteralId
+                )
             )
         }
     }
@@ -245,12 +250,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         } returns newMonthLiteralId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.monthPublished,
-                `object` = newMonthLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.monthPublished,
+                    objectId = newMonthLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -271,10 +278,12 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.monthPublished,
-                `object` = newMonthLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.monthPublished,
+                    objectId = newMonthLiteralId
+                )
             )
         }
     }
@@ -378,12 +387,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         } returns yearLiteralId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.yearPublished,
-                `object` = yearLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.yearPublished,
+                    objectId = yearLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -403,10 +414,12 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.yearPublished,
-                `object` = yearLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.yearPublished,
+                    objectId = yearLiteralId
+                )
             )
         }
     }
@@ -457,12 +470,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         } returns newYearLiteralId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.yearPublished,
-                `object` = newYearLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.yearPublished,
+                    objectId = newYearLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -483,10 +498,12 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.yearPublished,
-                `object` = newYearLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.yearPublished,
+                    objectId = newYearLiteralId
+                )
             )
         }
     }
@@ -597,12 +614,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns venueId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.hasVenue,
-                `object` = venueId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.hasVenue,
+                    objectId = venueId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -624,10 +643,12 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.hasVenue,
-                `object` = venueId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.hasVenue,
+                    objectId = venueId
+                )
             )
         }
     }
@@ -666,20 +687,24 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         } returns pageOf(venueResource)
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.hasVenue,
-                `object` = venueResource.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.hasVenue,
+                    objectId = venueResource.id
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.hasVenue,
-                `object` = venueResource.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.hasVenue,
+                    objectId = venueResource.id
+                )
             )
-        } just runs
+        } returns StatementId("S2")
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -700,10 +725,12 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.hasVenue,
-                `object` = venueResource.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.hasVenue,
+                    objectId = venueResource.id
+                )
             )
         }
     }
@@ -807,12 +834,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         } returns urlLiteralId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.hasURL,
-                `object` = urlLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.hasURL,
+                    objectId = urlLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -832,10 +861,12 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.hasURL,
-                `object` = urlLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.hasURL,
+                    objectId = urlLiteralId
+                )
             )
         }
     }
@@ -886,12 +917,14 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         } returns newUrlLiteralId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.hasURL,
-                `object` = newUrlLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.hasURL,
+                    objectId = newUrlLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = paperPublicationInfoUpdater(command, state)
 
@@ -912,10 +945,12 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.paperId,
-                predicate = Predicates.hasURL,
-                `object` = newUrlLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.paperId,
+                    predicateId = Predicates.hasURL,
+                    objectId = newUrlLiteralId
+                )
             )
         }
     }

@@ -22,6 +22,8 @@ import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListTextSectionCommand
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -50,12 +52,14 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         } returns sectionId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.literatureListId,
-                predicate = Predicates.hasSection,
-                `object` = sectionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.literatureListId,
+                    predicateId = Predicates.hasSection,
+                    objectId = sectionId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = literatureListSectionCreator(command, state)
 
@@ -71,10 +75,12 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.literatureListId,
-                predicate = Predicates.hasSection,
-                `object` = sectionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.literatureListId,
+                    predicateId = Predicates.hasSection,
+                    objectId = sectionId
+                )
             )
         }
     }

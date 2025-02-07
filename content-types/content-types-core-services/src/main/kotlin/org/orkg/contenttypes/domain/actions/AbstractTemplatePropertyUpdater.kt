@@ -17,6 +17,7 @@ import org.orkg.contenttypes.input.UntypedPropertyDefinition
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -149,10 +150,12 @@ class AbstractTemplatePropertyUpdater(
                     statementService.delete(toRemove.map { it.id }.toSet())
                 }
                 statementService.add(
-                    userId = contributorId,
-                    subject = oldProperty.id,
-                    predicate = Predicates.shDatatype,
-                    `object` = newProperty.datatype
+                    CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = oldProperty.id,
+                        predicateId = Predicates.shDatatype,
+                        objectId = newProperty.datatype
+                    )
                 )
             }
         } else if (newProperty is ResourceTemplatePropertyDefinition) {
@@ -162,10 +165,12 @@ class AbstractTemplatePropertyUpdater(
                     statementService.delete(toRemove.map { it.id }.toSet())
                 }
                 statementService.add(
-                    userId = contributorId,
-                    subject = oldProperty.id,
-                    predicate = Predicates.shClass,
-                    `object` = newProperty.`class`
+                    CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = oldProperty.id,
+                        predicateId = Predicates.shClass,
+                        objectId = newProperty.`class`
+                    )
                 )
             }
         } else if (newProperty is UntypedPropertyDefinition && oldProperty !is UntypedTemplateProperty) {

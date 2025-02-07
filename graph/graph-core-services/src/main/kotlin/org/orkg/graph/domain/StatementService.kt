@@ -6,6 +6,7 @@ import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateStatementUseCase
 import org.orkg.graph.output.LiteralRepository
@@ -61,98 +62,64 @@ class StatementService(
             objectLabel = objectLabel
         )
 
-    override fun create(subject: ThingId, predicate: ThingId, `object`: ThingId): StatementId =
-        create(ContributorId.UNKNOWN, subject, predicate, `object`)
-
-    override fun create(
-        userId: ContributorId,
-        subject: ThingId,
-        predicate: ThingId,
-        `object`: ThingId,
-        modifiable: Boolean
-    ): StatementId {
-        val foundSubject = thingRepository.findByThingId(subject)
-            .orElseThrow { StatementSubjectNotFound(subject) }
-
-        if (foundSubject is Resource) {
-            if (Classes.rosettaStoneStatement in foundSubject.classes) {
-                throw InvalidStatement.includesRosettaStoneStatementResource()
-            } else if (predicate == Predicates.hasListElement && Classes.list in foundSubject.classes) {
-                throw InvalidStatement.isListElementStatement()
-            }
-        } else if (foundSubject is Literal) {
-            throw InvalidStatement.subjectMustNotBeLiteral()
-        }
-
-        val foundPredicate = predicateService.findById(predicate)
-            .orElseThrow { StatementPredicateNotFound(predicate) }
-
-        val foundObject = thingRepository.findByThingId(`object`)
-            .orElseThrow { StatementObjectNotFound(`object`) }
-
-        val statement = statementRepository.findAll(
-            subjectId = subject,
-            predicateId = predicate,
-            objectId = `object`,
+    override fun create(command: CreateStatementUseCase.CreateCommand): StatementId {
+        val subject = thingRepository.findByThingId(command.subjectId)
+            .orElseThrow { StatementSubjectNotFound(command.subjectId) }
+        validateSubject(subject, command.predicateId)
+        val predicate = predicateService.findById(command.predicateId)
+            .orElseThrow { StatementPredicateNotFound(command.predicateId) }
+        val `object` = thingRepository.findByThingId(command.objectId)
+            .orElseThrow { StatementObjectNotFound(command.objectId) }
+        val existing = statementRepository.findAll(
+            subjectId = command.subjectId,
+            predicateId = command.predicateId,
+            objectId = command.objectId,
             pageable = PageRequests.SINGLE
-        )
-        if (!statement.isEmpty) {
-            return statement.single().id
+        ).singleOrNull()
+        if (existing != null) {
+            if (command.id != null && command.id != existing.id) {
+                throw StatementAlreadyExists(existing.id)
+            }
+            return existing.id
         }
-        val id = statementRepository.nextIdentity()
-        val newStatement = GeneralStatement(
+        val id = command.id
+            ?.also { id -> statementRepository.findByStatementId(id).ifPresent { throw StatementAlreadyExists(id) } }
+            ?: statementRepository.nextIdentity()
+        val statement = GeneralStatement(
             id = id,
-            subject = foundSubject,
-            predicate = foundPredicate,
-            `object` = foundObject,
-            createdBy = userId,
+            subject = subject,
+            predicate = predicate,
+            `object` = `object`,
+            createdBy = command.contributorId,
             createdAt = OffsetDateTime.now(clock),
-            modifiable = modifiable
+            modifiable = command.modifiable
         )
-        statementRepository.save(newStatement)
+        statementRepository.save(statement)
         return id
     }
 
-    override fun add(
-        userId: ContributorId,
-        subject: ThingId,
-        predicate: ThingId,
-        `object`: ThingId,
-        modifiable: Boolean
-    ) {
-        // This method mostly exists for performance reasons. We just create the statement but do not return anything.
-        // That saves the extra calls to the database to retrieve the statement again, even if it may not be needed.
-
-        val foundSubject = thingRepository.findByThingId(subject)
-            .orElseThrow { StatementSubjectNotFound(subject) }
-
-        if (foundSubject is Resource) {
-            if (Classes.rosettaStoneStatement in foundSubject.classes) {
-                throw InvalidStatement.includesRosettaStoneStatementResource()
-            } else if (predicate == Predicates.hasListElement && Classes.list in foundSubject.classes) {
-                throw InvalidStatement.isListElementStatement()
-            }
-        } else if (foundSubject is Literal) {
-            throw InvalidStatement.subjectMustNotBeLiteral()
-        }
-
-        val foundPredicate = predicateService.findById(predicate)
-            .orElseThrow { StatementPredicateNotFound(predicate) }
-
-        val foundObject = thingRepository.findByThingId(`object`)
-            .orElseThrow { StatementObjectNotFound(`object`) }
-
-        val id = statementRepository.nextIdentity()
+    override fun add(command: CreateStatementUseCase.CreateCommand): StatementId {
+        val subject = thingRepository.findByThingId(command.subjectId)
+            .orElseThrow { StatementSubjectNotFound(command.subjectId) }
+        validateSubject(subject, command.predicateId)
+        val predicate = predicateService.findById(command.predicateId)
+            .orElseThrow { StatementPredicateNotFound(command.predicateId) }
+        val `object` = thingRepository.findByThingId(command.objectId)
+            .orElseThrow { StatementObjectNotFound(command.objectId) }
+        val id = command.id
+            ?.also { id -> statementRepository.findByStatementId(id).ifPresent { throw StatementAlreadyExists(id) } }
+            ?: statementRepository.nextIdentity()
         val statement = GeneralStatement(
             id = id,
-            predicate = foundPredicate,
-            subject = foundSubject,
-            `object` = foundObject,
-            createdBy = userId,
+            subject = subject,
+            predicate = predicate,
+            `object` = `object`,
+            createdBy = command.contributorId,
             createdAt = OffsetDateTime.now(clock),
-            modifiable = modifiable
+            modifiable = command.modifiable
         )
         statementRepository.save(statement)
+        return id
     }
 
     override fun totalNumberOfStatements(): Long = statementRepository.count()
@@ -300,4 +267,16 @@ class StatementService(
         )
 
     override fun removeAll() = statementRepository.deleteAll()
+
+    private fun validateSubject(subject: Thing, predicateId: ThingId) {
+        if (subject is Resource) {
+            if (Classes.rosettaStoneStatement in subject.classes) {
+                throw InvalidStatement.includesRosettaStoneStatementResource()
+            } else if (predicateId == Predicates.hasListElement && Classes.list in subject.classes) {
+                throw InvalidStatement.isListElementStatement()
+            }
+        } else if (subject is Literal) {
+            throw InvalidStatement.subjectMustNotBeLiteral()
+        }
+    }
 }

@@ -3,9 +3,7 @@ package org.orkg.contenttypes.domain.actions.smartreviews
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -14,7 +12,9 @@ import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
 import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 
@@ -44,12 +44,14 @@ internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns contributionId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.smartReviewId!!,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.smartReviewId!!,
+                    predicateId = Predicates.hasContribution,
+                    objectId = contributionId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = smartReviewContributionCreator(command, state)
 
@@ -62,10 +64,12 @@ internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.smartReviewId!!,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.smartReviewId!!,
+                    predicateId = Predicates.hasContribution,
+                    objectId = contributionId
+                )
             )
         }
     }

@@ -1,9 +1,7 @@
 package org.orkg.contenttypes.domain.actions
 
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.Test
@@ -11,7 +9,9 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -40,7 +40,7 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
 
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description
                 )
@@ -48,18 +48,20 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
         } returns literal
         every {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.description,
-                `object` = literal
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.description,
+                    objectId = literal
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         statementCollectionPropertyCreator.create(contributorId, subjectId, Predicates.description, listOf(description))
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description
                 )
@@ -67,10 +69,12 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.description,
-                `object` = literal
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.description,
+                    objectId = literal
+                )
             )
         }
     }
@@ -81,31 +85,28 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val subjectId = ThingId("R123")
 
-        every {
-            statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasLink,
-                `object` = any()
-            )
-        } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         statementCollectionPropertyCreator.create(contributorId, subjectId, Predicates.hasLink, ids)
 
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasLink,
-                `object` = ids.first()
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasLink,
+                    objectId = ids.first()
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasLink,
-                `object` = ids.last()
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasLink,
+                    objectId = ids.last()
+                )
             )
         }
     }

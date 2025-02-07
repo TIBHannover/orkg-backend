@@ -24,12 +24,14 @@ import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneStatementC
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateListUseCase
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -221,7 +223,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
 
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = literalDefinition.label,
                     datatype = literalDefinition.dataType
@@ -239,7 +241,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = literalDefinition.label,
                     datatype = literalDefinition.dataType
@@ -337,7 +339,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         } returns predicateId
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateDefinition.description!!
                 )
@@ -345,12 +347,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         } returns literal
         every {
             statementService.add(
-                userId = contributorId,
-                subject = predicateId,
-                predicate = Predicates.description,
-                `object` = literal
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = predicateId,
+                    predicateId = Predicates.description,
+                    objectId = literal
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
@@ -370,7 +374,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateDefinition.description!!
                 )
@@ -378,10 +382,12 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = predicateId,
-                predicate = Predicates.description,
-                `object` = literal
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = predicateId,
+                    predicateId = Predicates.description,
+                    objectId = literal
+                )
             )
         }
     }
@@ -535,7 +541,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         } returns predicateId
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = literalDefinition.label,
                     datatype = literalDefinition.dataType
@@ -544,12 +550,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         } returns literal
         every {
             statementService.add(
-                userId = contributorId,
-                subject = resourceId,
-                predicate = predicateId,
-                `object` = literal
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = resourceId,
+                    predicateId = predicateId,
+                    objectId = literal
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
@@ -583,7 +591,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = literalDefinition.label,
                     datatype = literalDefinition.dataType
@@ -592,10 +600,12 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = resourceId,
-                predicate = predicateId,
-                `object` = literal
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = resourceId,
+                    predicateId = predicateId,
+                    objectId = literal
+                )
             )
         }
     }
@@ -617,12 +627,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         } returns pageOf()
         every {
             statementService.add(
-                userId = contributorId,
-                subject = ThingId("R1000"),
-                predicate = ThingId("R2000"),
-                `object` = ThingId("R3000")
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = ThingId("R1000"),
+                    predicateId = ThingId("R2000"),
+                    objectId = ThingId("R3000")
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
@@ -642,10 +654,12 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = ThingId("R1000"),
-                predicate = ThingId("R2000"),
-                `object` = ThingId("R3000")
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = ThingId("R1000"),
+                    predicateId = ThingId("R2000"),
+                    objectId = ThingId("R3000")
+                )
             )
         }
     }

@@ -3,9 +3,7 @@ package org.orkg.contenttypes.domain.actions.rosettastone.templates
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -13,9 +11,11 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneTemplateCommand
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -38,14 +38,7 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
 
         every { classService.create(any()) } returns classId
         every { literalService.create(any()) } returns exampleUsageId andThen descriptionId
-        every {
-            statementService.add(
-                userId = command.contributorId,
-                subject = any(),
-                predicate = any(),
-                `object` = any()
-            )
-        } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         val result = rosettaStoneTemplateTargetClassCreator(command, state)
 
@@ -63,10 +56,12 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.rosettaStoneTemplateId!!,
-                predicate = Predicates.shTargetClass,
-                `object` = classId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.rosettaStoneTemplateId!!,
+                    predicateId = Predicates.shTargetClass,
+                    objectId = classId
+                )
             )
         }
         verify(exactly = 1) {
@@ -79,10 +74,12 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = classId,
-                predicate = Predicates.exampleOfUsage,
-                `object` = exampleUsageId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = classId,
+                    predicateId = Predicates.exampleOfUsage,
+                    objectId = exampleUsageId
+                )
             )
         }
         verify(exactly = 1) {
@@ -95,10 +92,12 @@ internal class RosettaStoneTemplateTargetClassCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = classId,
-                predicate = Predicates.description,
-                `object` = descriptionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = classId,
+                    predicateId = Predicates.description,
+                    objectId = descriptionId
+                )
             )
         }
     }

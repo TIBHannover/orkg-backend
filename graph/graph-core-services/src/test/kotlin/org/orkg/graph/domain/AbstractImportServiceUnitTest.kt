@@ -1,15 +1,14 @@
 package org.orkg.graph.domain
 
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
@@ -51,6 +50,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
     ) {
         externalThing.description?.let { description ->
             val descriptionId = ThingId("newDescriptionId")
+            val statementId = StatementId("SnewDescription")
             every {
                 literalService.create(
                     CreateLiteralUseCase.CreateCommand(
@@ -61,12 +61,14 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
             } returns descriptionId
             every {
                 statementService.add(
-                    userId = contributorId,
-                    subject = subjectId,
-                    predicate = Predicates.description,
-                    `object` = descriptionId
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = subjectId,
+                        predicateId = Predicates.description,
+                        objectId = descriptionId
+                    )
                 )
-            } just runs
+            } returns statementId
         }
     }
 
@@ -86,10 +88,12 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
             }
             verify(exactly = 1) {
                 statementService.add(
-                    userId = contributorId,
-                    subject = subjectId,
-                    predicate = Predicates.description,
-                    `object` = ThingId("newDescriptionId")
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = subjectId,
+                        predicateId = Predicates.description,
+                        objectId = ThingId("newDescriptionId")
+                    )
                 )
             }
         }
@@ -101,6 +105,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
         subjectId: ThingId
     ) {
         val sameAsLiteralId = ThingId("newSameAsLiteralId")
+        val statementId = StatementId("SsameAsLiteralId")
         every {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -112,12 +117,14 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
         } returns sameAsLiteralId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.sameAs,
-                `object` = sameAsLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.sameAs,
+                    objectId = sameAsLiteralId
+                )
             )
-        } just runs
+        } returns statementId
     }
 
     protected fun verifySameAsLiteralCreation(
@@ -136,10 +143,12 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.sameAs,
-                `object` = ThingId("newSameAsLiteralId")
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.sameAs,
+                    objectId = ThingId("newSameAsLiteralId")
+                )
             )
         }
     }

@@ -79,8 +79,9 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
@@ -233,46 +234,54 @@ class ComparisonService(
             )
         )
         statementService.add(
-            userId = command.contributorId,
-            subject = command.comparisonId,
-            predicate = Predicates.hasRelatedResource,
-            `object` = resourceId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                subjectId = command.comparisonId,
+                predicateId = Predicates.hasRelatedResource,
+                objectId = resourceId
+            )
         )
         if (command.image != null) {
             statementService.add(
-                userId = command.contributorId,
-                subject = resourceId,
-                predicate = Predicates.hasImage,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = command.contributorId,
-                        label = command.image!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = resourceId,
+                    predicateId = Predicates.hasImage,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = command.contributorId,
+                            label = command.image!!
+                        )
                     )
                 )
             )
         }
         if (command.url != null) {
             statementService.add(
-                userId = command.contributorId,
-                subject = resourceId,
-                predicate = Predicates.hasURL,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = command.contributorId,
-                        label = command.url!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = resourceId,
+                    predicateId = Predicates.hasURL,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = command.contributorId,
+                            label = command.url!!
+                        )
                     )
                 )
             )
         }
         if (command.description != null) {
             statementService.add(
-                userId = command.contributorId,
-                subject = resourceId,
-                predicate = Predicates.description,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = command.contributorId,
-                        label = command.description!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = resourceId,
+                    predicateId = Predicates.description,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = command.contributorId,
+                            label = command.description!!
+                        )
                     )
                 )
             )
@@ -293,33 +302,39 @@ class ComparisonService(
             )
         )
         statementService.add(
-            userId = command.contributorId,
-            subject = command.comparisonId,
-            predicate = Predicates.hasRelatedFigure,
-            `object` = figureId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                subjectId = command.comparisonId,
+                predicateId = Predicates.hasRelatedFigure,
+                objectId = figureId
+            )
         )
         if (command.image != null) {
             statementService.add(
-                userId = command.contributorId,
-                subject = figureId,
-                predicate = Predicates.hasImage,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = command.contributorId,
-                        label = command.image!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = figureId,
+                    predicateId = Predicates.hasImage,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = command.contributorId,
+                            label = command.image!!
+                        )
                     )
                 )
             )
         }
         if (command.description != null) {
             statementService.add(
-                userId = command.contributorId,
-                subject = figureId,
-                predicate = Predicates.description,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = command.contributorId,
-                        label = command.description!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = figureId,
+                    predicateId = Predicates.description,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = command.contributorId,
+                            label = command.description!!
+                        )
                     )
                 )
             )

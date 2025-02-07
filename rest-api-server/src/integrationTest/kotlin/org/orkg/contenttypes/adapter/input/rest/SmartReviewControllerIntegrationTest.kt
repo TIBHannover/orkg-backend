@@ -31,6 +31,7 @@ import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
 import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.input.SmartReviewUseCases
+import org.orkg.createStatement
 import org.orkg.createClasses
 import org.orkg.createContributor
 import org.orkg.createLiteral
@@ -166,7 +167,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         resourceService.createResource(id = "SDG_3", label = "Good health and well-being", classes = setOf(Classes.sustainableDevelopmentGoal.value))
         resourceService.createResource(id = "SDG_4", label = "Quality education", classes = setOf(Classes.sustainableDevelopmentGoal.value))
 
-        statementService.create(
+        statementService.createStatement(
             subject = resourceService.createResource(
                 id = "R456",
                 label = "Author with id and orcid",
@@ -176,7 +177,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
         )
 
-        statementService.create(
+        statementService.createStatement(
             subject = resourceService.createResource(
                 id = "R4567",
                 label = "Author with orcid",

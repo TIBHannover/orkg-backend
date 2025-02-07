@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.smartreviews
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.smartreviews.CreateSmartReviewAction.State
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -20,10 +21,12 @@ class SmartReviewSectionsCreator(
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
         command.sections.forEach { section ->
             statementService.add(
-                userId = command.contributorId,
-                subject = state.contributionId!!,
-                predicate = Predicates.hasSection,
-                `object` = abstractSmartReviewSectionCreator.create(command.contributorId, section)
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.contributionId!!,
+                    predicateId = Predicates.hasSection,
+                    objectId = abstractSmartReviewSectionCreator.create(command.contributorId, section)
+                )
             )
         }
         return state

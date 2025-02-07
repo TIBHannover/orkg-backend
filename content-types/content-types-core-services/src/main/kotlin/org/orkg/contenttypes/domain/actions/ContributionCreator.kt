@@ -11,6 +11,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -66,10 +67,12 @@ class ContributionCreator(
             )
             contributionLookup["^$index"] = contributionId
             statementService.add(
-                userId = contributorId,
-                subject = paperId,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = paperId,
+                    predicateId = Predicates.hasContribution,
+                    objectId = contributionId
+                )
             )
             contributionId
         }

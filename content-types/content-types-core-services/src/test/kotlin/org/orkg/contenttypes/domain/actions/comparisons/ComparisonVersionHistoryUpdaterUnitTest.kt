@@ -15,6 +15,8 @@ import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.input.testing.fixtures.publishComparisonCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -34,12 +36,14 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = comparison.id,
-                predicate = Predicates.hasPublishedVersion,
-                `object` = comparisonVersionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = comparison.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = comparisonVersionId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every { unsafeResourceUseCases.update(any()) } just runs
 
         comparisonVersionHistoryUpdater(command, state).asClue {
@@ -49,10 +53,12 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = comparison.id,
-                predicate = Predicates.hasPublishedVersion,
-                `object` = comparisonVersionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = comparison.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = comparisonVersionId
+                )
             )
         }
         verify(exactly = 1) {
@@ -77,12 +83,14 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = comparison.id,
-                predicate = Predicates.hasPublishedVersion,
-                `object` = comparisonVersionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = comparison.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = comparisonVersionId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         comparisonVersionHistoryUpdater(command, state).asClue {
             it.comparison shouldBe comparison
@@ -91,10 +99,12 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = comparison.id,
-                predicate = Predicates.hasPublishedVersion,
-                `object` = comparisonVersionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = comparison.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = comparisonVersionId
+                )
             )
         }
     }

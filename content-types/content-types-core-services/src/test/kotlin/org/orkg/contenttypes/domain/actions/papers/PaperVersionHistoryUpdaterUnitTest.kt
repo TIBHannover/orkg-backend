@@ -16,6 +16,7 @@ import org.orkg.contenttypes.input.testing.fixtures.publishPaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -40,12 +41,14 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.id,
-                predicate = Predicates.hasPreviousVersion,
-                `object` = state.paperVersionId!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.id,
+                    predicateId = Predicates.hasPreviousVersion,
+                    objectId = state.paperVersionId!!
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         paperVersionHistoryUpdater(command, state).asClue {
             it.paper shouldBe paper
@@ -55,10 +58,12 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.id,
-                predicate = Predicates.hasPreviousVersion,
-                `object` = state.paperVersionId!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.id,
+                    predicateId = Predicates.hasPreviousVersion,
+                    objectId = state.paperVersionId!!
+                )
             )
         }
     }
@@ -99,20 +104,24 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
         every { statementService.delete(setOf(statementId)) } just runs
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperVersionId!!,
-                predicate = Predicates.hasPreviousVersion,
-                `object` = previousVersionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperVersionId!!,
+                    predicateId = Predicates.hasPreviousVersion,
+                    objectId = previousVersionId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.id,
-                predicate = Predicates.hasPreviousVersion,
-                `object` = state.paperVersionId!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.id,
+                    predicateId = Predicates.hasPreviousVersion,
+                    objectId = state.paperVersionId!!
+                )
             )
-        } just runs
+        } returns StatementId("S2")
 
         paperVersionHistoryUpdater(command, state).asClue {
             it.paper shouldBe paper
@@ -123,18 +132,22 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) { statementService.delete(setOf(statementId)) }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperVersionId!!,
-                predicate = Predicates.hasPreviousVersion,
-                `object` = previousVersionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.paperVersionId!!,
+                    predicateId = Predicates.hasPreviousVersion,
+                    objectId = previousVersionId
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.id,
-                predicate = Predicates.hasPreviousVersion,
-                `object` = state.paperVersionId!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.id,
+                    predicateId = Predicates.hasPreviousVersion,
+                    objectId = state.paperVersionId!!
+                )
             )
         }
     }

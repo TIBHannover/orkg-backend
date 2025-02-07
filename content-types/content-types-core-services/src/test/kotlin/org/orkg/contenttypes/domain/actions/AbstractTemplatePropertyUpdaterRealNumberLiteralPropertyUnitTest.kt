@@ -18,6 +18,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -295,12 +296,14 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
 
         every {
             statementService.add(
-                userId = contributorId,
-                subject = oldProperty.id,
-                predicate = Predicates.shDatatype,
-                `object` = newProperty.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = oldProperty.id,
+                    predicateId = Predicates.shDatatype,
+                    objectId = newProperty.datatype
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
@@ -326,10 +329,12 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
 
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = oldProperty.id,
-                predicate = Predicates.shDatatype,
-                `object` = newProperty.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = oldProperty.id,
+                    predicateId = Predicates.shDatatype,
+                    objectId = newProperty.datatype
+                )
             )
         }
         verify(exactly = 1) {

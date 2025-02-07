@@ -19,8 +19,10 @@ import org.orkg.contenttypes.input.testing.fixtures.smartReviewTextSectionDefini
 import org.orkg.contenttypes.input.testing.fixtures.smartReviewVisualizationSectionDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -50,22 +52,26 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = section.comparison!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = section.comparison!!
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         abstractSmartReviewSectionCreator.create(contributorId, section)
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = section.comparison!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = section.comparison!!
+                )
             )
         }
     }
@@ -104,22 +110,26 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = section.visualization!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = section.visualization!!
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         abstractSmartReviewSectionCreator.create(contributorId, section)
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = section.visualization!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = section.visualization!!
+                )
             )
         }
     }
@@ -158,22 +168,26 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = section.resource!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = section.resource!!
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         abstractSmartReviewSectionCreator.create(contributorId, section)
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = section.resource!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = section.resource!!
+                )
             )
         }
     }
@@ -212,22 +226,26 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = section.predicate!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = section.predicate!!
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         abstractSmartReviewSectionCreator.create(contributorId, section)
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasLink,
-                `object` = section.predicate!!
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasLink,
+                    objectId = section.predicate!!
+                )
             )
         }
     }
@@ -323,12 +341,14 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         every { literalService.create(literalCreateCommand) } returns textId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasContent,
-                `object` = textId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasContent,
+                    objectId = textId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         abstractSmartReviewSectionCreator.create(contributorId, section)
 
@@ -336,10 +356,12 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) { literalService.create(literalCreateCommand) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasContent,
-                `object` = textId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasContent,
+                    objectId = textId
+                )
             )
         }
     }

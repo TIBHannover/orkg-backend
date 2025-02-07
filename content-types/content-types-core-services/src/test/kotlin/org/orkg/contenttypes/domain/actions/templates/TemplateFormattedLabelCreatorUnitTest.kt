@@ -3,9 +3,7 @@ package org.orkg.contenttypes.domain.actions.templates
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -13,7 +11,9 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -34,7 +34,7 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
 
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.formattedLabel!!.value
                 )
@@ -42,12 +42,14 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
         } returns formattedLabelLiteralId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.templateLabelFormat,
-                `object` = formattedLabelLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.templateId!!,
+                    predicateId = Predicates.templateLabelFormat,
+                    objectId = formattedLabelLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = templateFormattedLabelCreator(command, state)
 
@@ -57,7 +59,7 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.formattedLabel!!.value
                 )
@@ -65,10 +67,12 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.templateLabelFormat,
-                `object` = formattedLabelLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.templateId!!,
+                    predicateId = Predicates.templateLabelFormat,
+                    objectId = formattedLabelLiteralId
+                )
             )
         }
     }

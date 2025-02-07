@@ -9,13 +9,14 @@ import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.graph.input.ClassUseCases
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateObjectUseCase
 import org.orkg.graph.input.CreateObjectUseCase.CreateObjectRequest
 import org.orkg.graph.input.CreateObjectUseCase.ObjectStatement
 import org.orkg.graph.input.CreateObjectUseCase.TempResource
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -157,7 +158,14 @@ class ObjectService(
                 when {
                     jsonObject.isExisting() -> { // Add an existing resource or literal
                         if (!jsonObject.isTempResource())
-                            statementService.add(userId, subject, predicateId!!, ThingId(jsonObject.`@id`!!))
+                            statementService.add(
+                                CreateStatementUseCase.CreateCommand(
+                                    contributorId = userId,
+                                    subjectId = subject,
+                                    predicateId = predicateId!!,
+                                    objectId = ThingId(jsonObject.`@id`!!)
+                                )
+                            )
                         else {
                             if (!tempResources.containsKey(jsonObject.`@id`)) resourceQueue.add(
                                 TempResource(
@@ -168,13 +176,21 @@ class ObjectService(
                             )
                             else {
                                 val tempId = tempResources[jsonObject.`@id`]
-                                statementService.add(userId, subject, predicateId!!, tempId!!)
+                                statementService.add(
+                                    CreateStatementUseCase.CreateCommand(
+                                        contributorId = userId,
+                                        subjectId = subject,
+                                        predicateId = predicateId!!,
+                                        objectId = tempId!!
+                                    )
+                                )
                             }
                         }
                     }
+
                     jsonObject.isNewLiteral() -> { // create new literal
                         val newLiteral = literalService.create(
-                            CreateCommand(
+                            CreateLiteralUseCase.CreateCommand(
                                 contributorId = userId,
                                 label = jsonObject.text!!,
                                 datatype = jsonObject.datatype ?: "xsd:string"
@@ -183,8 +199,16 @@ class ObjectService(
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`!!] = newLiteral
                         }
-                        statementService.add(userId, subject, predicateId!!, newLiteral)
+                        statementService.add(
+                            CreateStatementUseCase.CreateCommand(
+                                contributorId = userId,
+                                subjectId = subject,
+                                predicateId = predicateId!!,
+                                objectId = newLiteral
+                            )
+                        )
                     }
+
                     jsonObject.isNewResource() -> { // create new resource
                         // Check for classes of resource
                         val classes = mutableListOf<ThingId>()
@@ -210,7 +234,14 @@ class ObjectService(
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`!!] = newResource
                         }
-                        statementService.add(userId, subject, predicateId, newResource)
+                        statementService.add(
+                            CreateStatementUseCase.CreateCommand(
+                                contributorId = userId,
+                                subjectId = subject,
+                                predicateId = predicateId,
+                                objectId = newResource
+                            )
+                        )
                         if (jsonObject.hasSubsequentStatements()) {
                             goThroughStatementsRecursively(
                                 newResource,
@@ -250,7 +281,14 @@ class ObjectService(
             limit--
             if (tempResources.containsKey(temp.`object`)) {
                 val tempId = tempResources[temp.`object`]
-                statementService.add(userId, temp.subject, temp.predicate, tempId!!)
+                statementService.add(
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = userId,
+                        subjectId = temp.subject,
+                        predicateId = temp.predicate,
+                        objectId = tempId!!
+                    )
+                )
             } else {
                 queue.add(temp)
             }

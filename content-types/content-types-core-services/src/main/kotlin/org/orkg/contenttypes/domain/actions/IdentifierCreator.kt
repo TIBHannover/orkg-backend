@@ -5,6 +5,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.identifiers.Identifier
 import org.orkg.contenttypes.domain.identifiers.parse
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -22,13 +23,15 @@ abstract class IdentifierCreator(
         parsedIdentifiers.forEach { (identifier, values) ->
             values.forEach { value ->
                 statementService.create(
-                    contributorId,
-                    subjectId,
-                    identifier.predicateId,
-                    literalService.create(
-                        CreateCommand(
-                            contributorId = contributorId,
-                            label = value
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = subjectId,
+                        predicateId = identifier.predicateId,
+                        objectId = literalService.create(
+                            CreateCommand(
+                                contributorId = contributorId,
+                                label = value
+                            )
                         )
                     )
                 )

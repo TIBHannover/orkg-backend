@@ -1,9 +1,7 @@
 package org.orkg.contenttypes.domain.actions.smartreviews
 
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -11,6 +9,8 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
 import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewCommand
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.StatementUseCases
 
 internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
@@ -43,12 +43,14 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
             every { abstractSmartReviewSectionCreator.create(command.contributorId, section) } returns sectionId
             every {
                 statementService.add(
-                    userId = command.contributorId,
-                    subject = contributionId,
-                    predicate = Predicates.hasSection,
-                    `object` = sectionId
+                    CreateCommand(
+                        contributorId = command.contributorId,
+                        subjectId = contributionId,
+                        predicateId = Predicates.hasSection,
+                        objectId = sectionId
+                    )
                 )
-            } just runs
+            } returns StatementId("S1")
         }
 
         smartReviewSectionsCreator(command, state)
@@ -59,10 +61,12 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
             }
             verify(exactly = 1) {
                 statementService.add(
-                    userId = command.contributorId,
-                    subject = contributionId,
-                    predicate = Predicates.hasSection,
-                    `object` = ThingId("Section$index")
+                    CreateCommand(
+                        contributorId = command.contributorId,
+                        subjectId = contributionId,
+                        predicateId = Predicates.hasSection,
+                        objectId = ThingId("Section$index")
+                    )
                 )
             }
         }

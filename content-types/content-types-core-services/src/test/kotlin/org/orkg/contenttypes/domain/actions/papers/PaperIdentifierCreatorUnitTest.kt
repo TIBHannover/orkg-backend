@@ -12,7 +12,8 @@ import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.testing.fixtures.createPaperCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -33,13 +34,19 @@ internal class PaperIdentifierCreatorUnitTest : MockkBaseTest {
 
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = doi
                 )
             )
         } returns doiLiteralId
-        every { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteralId) } returns StatementId("S435")
+        val statementCommand = CreateStatementUseCase.CreateCommand(
+            contributorId = command.contributorId,
+            subjectId = paperId,
+            predicateId = Predicates.hasDOI,
+            objectId = doiLiteralId
+        )
+        every { statementService.create(statementCommand) } returns StatementId("S435")
 
         val result = paperIdentifierCreator(command, state)
 
@@ -53,13 +60,13 @@ internal class PaperIdentifierCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = doi
                 )
             )
         }
-        verify(exactly = 1) { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteralId) }
+        verify(exactly = 1) { statementService.create(statementCommand) }
     }
 
     @Test
@@ -81,6 +88,6 @@ internal class PaperIdentifierCreatorUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 0) { literalService.create(any()) }
-        verify(exactly = 0) { statementService.create(any(), paperId, any(), any()) }
+        verify(exactly = 0) { statementService.create(any()) }
     }
 }

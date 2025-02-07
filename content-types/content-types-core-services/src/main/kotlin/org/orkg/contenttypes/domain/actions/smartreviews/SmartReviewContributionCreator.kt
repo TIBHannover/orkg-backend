@@ -5,6 +5,7 @@ import org.orkg.contenttypes.domain.actions.smartreviews.CreateSmartReviewAction
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 
@@ -24,10 +25,12 @@ class SmartReviewContributionCreator(
             )
         )
         statementService.add(
-            userId = command.contributorId,
-            subject = state.smartReviewId!!,
-            predicate = Predicates.hasContribution,
-            `object` = contributionId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                subjectId = state.smartReviewId!!,
+                predicateId = Predicates.hasContribution,
+                objectId = contributionId
+            )
         )
         return state.copy(contributionId = contributionId)
     }

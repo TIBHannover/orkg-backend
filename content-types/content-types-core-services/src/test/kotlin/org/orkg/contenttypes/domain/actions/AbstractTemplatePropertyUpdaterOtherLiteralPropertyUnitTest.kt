@@ -14,6 +14,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -238,22 +239,26 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
         every { statementService.delete(setOf(statementToRemove)) } just runs
         every {
             statementService.add(
-                userId = contributorId,
-                subject = oldProperty.id,
-                predicate = Predicates.shDatatype,
-                `object` = newProperty.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = oldProperty.id,
+                    predicateId = Predicates.shDatatype,
+                    objectId = newProperty.datatype
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.delete(setOf(statementToRemove)) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = oldProperty.id,
-                predicate = Predicates.shDatatype,
-                `object` = newProperty.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = oldProperty.id,
+                    predicateId = Predicates.shDatatype,
+                    objectId = newProperty.datatype
+                )
             )
         }
     }
@@ -284,22 +289,26 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
         every { statementService.delete(setOf(statementToRemove)) } just runs
         every {
             statementService.add(
-                userId = contributorId,
-                subject = oldProperty.id,
-                predicate = Predicates.shClass,
-                `object` = newProperty.`class`
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = oldProperty.id,
+                    predicateId = Predicates.shClass,
+                    objectId = newProperty.`class`
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty)
 
         verify(exactly = 1) { statementService.delete(setOf(statementToRemove)) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = oldProperty.id,
-                predicate = Predicates.shClass,
-                `object` = newProperty.`class`
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = oldProperty.id,
+                    predicateId = Predicates.shClass,
+                    objectId = newProperty.`class`
+                )
             )
         }
     }

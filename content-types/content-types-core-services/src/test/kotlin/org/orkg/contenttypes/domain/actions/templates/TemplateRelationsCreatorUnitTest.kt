@@ -3,9 +3,7 @@ package org.orkg.contenttypes.domain.actions.templates
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -14,6 +12,8 @@ import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.input.TemplateRelationsDefinition
 import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 
 internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
@@ -37,12 +37,14 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
 
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.templateOfResearchField,
-                `object` = researchFieldId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.templateId!!,
+                    predicateId = Predicates.templateOfResearchField,
+                    objectId = researchFieldId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = templateRelationsCreator(command, state)
 
@@ -52,10 +54,12 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.templateOfResearchField,
-                `object` = researchFieldId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.templateId!!,
+                    predicateId = Predicates.templateOfResearchField,
+                    objectId = researchFieldId
+                )
             )
         }
     }
@@ -76,12 +80,14 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
 
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.templateOfResearchProblem,
-                `object` = researchProblemId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.templateId!!,
+                    predicateId = Predicates.templateOfResearchProblem,
+                    objectId = researchProblemId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = templateRelationsCreator(command, state)
 
@@ -91,10 +97,12 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.templateOfResearchProblem,
-                `object` = researchProblemId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.templateId!!,
+                    predicateId = Predicates.templateOfResearchProblem,
+                    objectId = researchProblemId
+                )
             )
         }
     }
@@ -115,12 +123,14 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
 
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.templateOfPredicate,
-                `object` = predicateId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.templateId!!,
+                    predicateId = Predicates.templateOfPredicate,
+                    objectId = predicateId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = templateRelationsCreator(command, state)
 
@@ -130,10 +140,12 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.templateOfPredicate,
-                `object` = predicateId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.templateId!!,
+                    predicateId = Predicates.templateOfPredicate,
+                    objectId = predicateId
+                )
             )
         }
     }

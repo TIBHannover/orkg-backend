@@ -1,9 +1,7 @@
 package org.orkg.contenttypes.domain.actions
 
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
@@ -15,9 +13,11 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateListUseCase
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -54,7 +54,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
 
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid
                 )
@@ -62,12 +62,14 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         } returns orcidLiteral.id
         every {
             statementService.add(
-                userId = contributorId,
-                subject = authorId,
-                predicate = Predicates.hasORCID,
-                `object` = orcidLiteral.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = authorId,
+                    predicateId = Predicates.hasORCID,
+                    objectId = orcidLiteral.id
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             listService.create(
                 CreateListUseCase.CreateCommand(
@@ -79,18 +81,20 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         } returns authorListId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasAuthors,
-                `object` = authorListId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasAuthors,
+                    objectId = authorListId
+                )
             )
-        } just runs
+        } returns StatementId("S2")
 
         authorCreator.create(contributorId, listOf(author), subjectId)
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid
                 )
@@ -98,10 +102,12 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = authorId,
-                predicate = Predicates.hasORCID,
-                `object` = orcidLiteral.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = authorId,
+                    predicateId = Predicates.hasORCID,
+                    objectId = orcidLiteral.id
+                )
             )
         }
         verify(exactly = 1) {
@@ -115,10 +121,12 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasAuthors,
-                `object` = authorListId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasAuthors,
+                    objectId = authorListId
+                )
             )
         }
     }
@@ -136,7 +144,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
 
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.name
                 )
@@ -153,18 +161,20 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         } returns authorListId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasAuthors,
-                `object` = authorListId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasAuthors,
+                    objectId = authorListId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         authorCreator.create(contributorId, listOf(author), subjectId)
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.name
                 )
@@ -181,10 +191,12 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasAuthors,
-                `object` = authorListId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasAuthors,
+                    objectId = authorListId
+                )
             )
         }
     }
@@ -214,7 +226,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns authorId
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid
                 )
@@ -222,15 +234,17 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         } returns orcidLiteralId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = authorId,
-                predicate = Predicates.hasORCID,
-                `object` = orcidLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = authorId,
+                    predicateId = Predicates.hasORCID,
+                    objectId = orcidLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.homepage.toString(),
                     datatype = Literals.XSD.URI.prefixedUri
@@ -239,12 +253,14 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         } returns homepageLiteralId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = authorId,
-                predicate = Predicates.hasWebsite,
-                `object` = homepageLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = authorId,
+                    predicateId = Predicates.hasWebsite,
+                    objectId = homepageLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S2")
         every {
             listService.create(
                 CreateListUseCase.CreateCommand(
@@ -256,19 +272,21 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         } returns authorListId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasAuthors,
-                `object` = authorListId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasAuthors,
+                    objectId = authorListId
+                )
             )
-        } just runs
+        } returns StatementId("S3")
 
         authorCreator.create(contributorId, listOf(author), subjectId)
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid
                 )
@@ -276,15 +294,17 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = authorId,
-                predicate = Predicates.hasORCID,
-                `object` = orcidLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = authorId,
+                    predicateId = Predicates.hasORCID,
+                    objectId = orcidLiteralId
+                )
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.homepage.toString(),
                     datatype = Literals.XSD.URI.prefixedUri
@@ -293,10 +313,12 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = authorId,
-                predicate = Predicates.hasWebsite,
-                `object` = homepageLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = authorId,
+                    predicateId = Predicates.hasWebsite,
+                    objectId = homepageLiteralId
+                )
             )
         }
         verify(exactly = 1) {
@@ -310,10 +332,12 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasAuthors,
-                `object` = authorListId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasAuthors,
+                    objectId = authorListId
+                )
             )
         }
     }

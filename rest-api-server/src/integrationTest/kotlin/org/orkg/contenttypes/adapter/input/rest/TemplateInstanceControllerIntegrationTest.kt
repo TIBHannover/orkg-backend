@@ -17,6 +17,7 @@ import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.StringLiteralPropertyDefinition
 import org.orkg.contenttypes.input.TemplateRelationsDefinition
 import org.orkg.contenttypes.input.TemplateUseCases
+import org.orkg.createStatement
 import org.orkg.createClasses
 import org.orkg.createContributor
 import org.orkg.createLiteral
@@ -170,7 +171,7 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
                 extractionMethod = ExtractionMethod.UNKNOWN
             )
         )
-        statementService.create(
+        statementService.createStatement(
             subject = resourceService.createResource(
                 id = "R6458",
                 classes = setOf(targetClass.value)

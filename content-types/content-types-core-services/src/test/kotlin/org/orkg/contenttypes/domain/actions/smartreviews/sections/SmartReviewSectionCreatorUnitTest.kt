@@ -26,6 +26,8 @@ import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewResourceSec
 import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewVisualizationSectionCommand
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -55,12 +57,14 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         } returns sectionId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = contributionId,
-                predicate = Predicates.hasSection,
-                `object` = sectionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = contributionId,
+                    predicateId = Predicates.hasSection,
+                    objectId = sectionId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         val result = smartReviewSectionCreator(command, state)
 
@@ -76,10 +80,12 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = contributionId,
-                predicate = Predicates.hasSection,
-                `object` = sectionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = contributionId,
+                    predicateId = Predicates.hasSection,
+                    objectId = sectionId
+                )
             )
         }
     }

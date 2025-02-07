@@ -16,7 +16,9 @@ import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 
@@ -56,12 +58,14 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
         } returns contributionId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = paperId,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = paperId,
+                    predicateId = Predicates.hasContribution,
+                    objectId = contributionId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             subgraphCreator.createThingsAndStatements(
                 contributorId = contributorId,
@@ -97,10 +101,12 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = paperId,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = paperId,
+                    predicateId = Predicates.hasContribution,
+                    objectId = contributionId
+                )
             )
         }
         verify(exactly = 1) {

@@ -3,9 +3,7 @@ package org.orkg.contenttypes.domain.actions.smartreviews
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -14,6 +12,8 @@ import org.orkg.contenttypes.domain.actions.PublishSmartReviewState
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.publishSmartReviewCommand
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 
 internal class SmartReviewVersionHistoryUpdaterUnitTest : MockkBaseTest {
@@ -30,12 +30,14 @@ internal class SmartReviewVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = smartReview.id,
-                predicate = Predicates.hasPublishedVersion,
-                `object` = smartReviewVersionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = smartReview.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = smartReviewVersionId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         smartReviewVersionHistoryUpdater(command, state).asClue {
             it.smartReview shouldBe smartReview
@@ -44,10 +46,12 @@ internal class SmartReviewVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = smartReview.id,
-                predicate = Predicates.hasPublishedVersion,
-                `object` = smartReviewVersionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = smartReview.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = smartReviewVersionId
+                )
             )
         }
     }

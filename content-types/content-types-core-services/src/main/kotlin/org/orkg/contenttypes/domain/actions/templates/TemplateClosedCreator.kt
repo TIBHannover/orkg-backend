@@ -4,7 +4,8 @@ import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -15,14 +16,16 @@ class TemplateClosedCreator(
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         if (command.isClosed) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.templateId!!,
-                predicate = Predicates.shClosed,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = command.contributorId,
-                        label = "true",
-                        datatype = Literals.XSD.BOOLEAN.prefixedUri
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.templateId!!,
+                    predicateId = Predicates.shClosed,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = command.contributorId,
+                            label = "true",
+                            datatype = Literals.XSD.BOOLEAN.prefixedUri
+                        )
                     )
                 )
             )

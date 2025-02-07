@@ -104,6 +104,9 @@ class LiteralAlreadyExists(id: ThingId) :
 class ThingAlreadyExists(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """A thing with id "$id" already exists.""")
 
+class StatementAlreadyExists(id: StatementId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Statement already exists with id "$id".""")
+
 class ResourceNotModifiable(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Resource "$id" is not modifiable.""")
 

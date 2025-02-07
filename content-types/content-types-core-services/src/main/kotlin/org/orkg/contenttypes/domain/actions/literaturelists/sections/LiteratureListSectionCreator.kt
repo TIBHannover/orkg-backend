@@ -6,6 +6,7 @@ import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureListSectionCreator
 import org.orkg.contenttypes.input.LiteratureListSectionDefinition
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -45,10 +46,12 @@ class LiteratureListSectionCreator(
             )
         } else {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.literatureListId,
-                predicate = Predicates.hasSection,
-                `object` = sectionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.literatureListId,
+                    predicateId = Predicates.hasSection,
+                    objectId = sectionId
+                )
             )
         }
         return state.copy(literatureListSectionId = sectionId)

@@ -1,9 +1,7 @@
 package org.orkg.contenttypes.domain.actions
 
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.Test
@@ -12,7 +10,9 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -31,7 +31,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
 
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description
                 )
@@ -39,18 +39,20 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
         } returns literal
         every {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.description,
-                `object` = literal
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.description,
+                    objectId = literal
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         singleStatementPropertyCreator.create(contributorId, subjectId, Predicates.description, description)
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description
                 )
@@ -58,10 +60,12 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.description,
-                `object` = literal
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.description,
+                    objectId = literal
+                )
             )
         }
     }
@@ -72,7 +76,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "true"
         val literal = ThingId("L1")
-        val literalCreateCommand = CreateCommand(
+        val literalCreateCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = description,
             datatype = Literals.XSD.BOOLEAN.prefixedUri
@@ -81,12 +85,14 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
         every { literalService.create(literalCreateCommand) } returns literal
         every {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.isAnonymized,
-                `object` = literal
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.isAnonymized,
+                    objectId = literal
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         singleStatementPropertyCreator.create(
             contributorId = contributorId,
@@ -99,10 +105,12 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) { literalService.create(literalCreateCommand) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.isAnonymized,
-                `object` = literal
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.isAnonymized,
+                    objectId = literal
+                )
             )
         }
     }

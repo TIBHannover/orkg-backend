@@ -1,9 +1,7 @@
 package org.orkg.contenttypes.domain.actions.literaturelists
 
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.Test
@@ -16,8 +14,10 @@ import org.orkg.contenttypes.input.testing.fixtures.literatureListTextSectionDef
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -62,29 +62,35 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         } returns entryId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasEntry,
-                `object` = entryId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasEntry,
+                    objectId = entryId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             statementService.add(
-                userId = contributorId,
-                subject = entryId,
-                predicate = Predicates.hasLink,
-                `object` = entry
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = entryId,
+                    predicateId = Predicates.hasLink,
+                    objectId = entry
+                )
             )
-        } just runs
+        } returns StatementId("S2")
         every { literalService.create(any()) } returns descriptionId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = entryId,
-                predicate = Predicates.description,
-                `object` = descriptionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = entryId,
+                    predicateId = Predicates.description,
+                    objectId = descriptionId
+                )
             )
-        } just runs
+        } returns StatementId("S3")
 
         abstractLiteratureListSectionCreator.create(contributorId, section)
 
@@ -108,18 +114,22 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasEntry,
-                `object` = entryId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasEntry,
+                    objectId = entryId
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = entryId,
-                predicate = Predicates.hasLink,
-                `object` = entry
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = entryId,
+                    predicateId = Predicates.hasLink,
+                    objectId = entry
+                )
             )
         }
         verify(exactly = 1) {
@@ -132,10 +142,12 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = entryId,
-                predicate = Predicates.description,
-                `object` = descriptionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = entryId,
+                    predicateId = Predicates.description,
+                    objectId = descriptionId
+                )
             )
         }
     }
@@ -170,20 +182,24 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         } returns entryId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasEntry,
-                `object` = entryId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasEntry,
+                    objectId = entryId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             statementService.add(
-                userId = contributorId,
-                subject = entryId,
-                predicate = Predicates.hasLink,
-                `object` = entry
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = entryId,
+                    predicateId = Predicates.hasLink,
+                    objectId = entry
+                )
             )
-        } just runs
+        } returns StatementId("S2")
 
         abstractLiteratureListSectionCreator.create(contributorId, section)
 
@@ -207,18 +223,22 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasEntry,
-                `object` = entryId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasEntry,
+                    objectId = entryId
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = entryId,
-                predicate = Predicates.hasLink,
-                `object` = entry
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = entryId,
+                    predicateId = Predicates.hasLink,
+                    objectId = entry
+                )
             )
         }
     }
@@ -251,12 +271,14 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         } returns headingSizeId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasHeadingLevel,
-                `object` = headingSizeId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasHeadingLevel,
+                    objectId = headingSizeId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             literalService.create(
                 CreateLiteralUseCase.CreateCommand(
@@ -267,12 +289,14 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         } returns textId
         every {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasContent,
-                `object` = textId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasContent,
+                    objectId = textId
+                )
             )
-        } just runs
+        } returns StatementId("S2")
 
         abstractLiteratureListSectionCreator.create(contributorId, section)
 
@@ -296,10 +320,12 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasHeadingLevel,
-                `object` = headingSizeId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasHeadingLevel,
+                    objectId = headingSizeId
+                )
             )
         }
         verify(exactly = 1) {
@@ -312,10 +338,12 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasContent,
-                `object` = textId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasContent,
+                    objectId = textId
+                )
             )
         }
     }

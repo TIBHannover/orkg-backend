@@ -6,6 +6,7 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.createStatement
 import org.orkg.createClasses
 import org.orkg.createList
 import org.orkg.createLiteral
@@ -99,23 +100,23 @@ internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comp
         val paper3AuthorsList = listService.createList("Authors", listOf(authorResource))
         val paper4AuthorsList = listService.createList("Authors", listOf(authorNotNeeded))
 
-        statementService.create(paper1, Predicates.hasAuthors, paper1AuthorsList)
-        statementService.create(paper2, Predicates.hasAuthors, paper2AuthorsList)
-        statementService.create(paper3, Predicates.hasAuthors, paper3AuthorsList)
-        statementService.create(paper4, Predicates.hasAuthors, paper4AuthorsList)
+        statementService.createStatement(paper1, Predicates.hasAuthors, paper1AuthorsList)
+        statementService.createStatement(paper2, Predicates.hasAuthors, paper2AuthorsList)
+        statementService.createStatement(paper3, Predicates.hasAuthors, paper3AuthorsList)
+        statementService.createStatement(paper4, Predicates.hasAuthors, paper4AuthorsList)
 
         // Link paper 1 to year
-        statementService.create(paper1, Predicates.yearPublished, year)
+        statementService.createStatement(paper1, Predicates.yearPublished, year)
 
         // Link papers to contributions
-        statementService.create(paper1, Predicates.hasContribution, cont1)
-        statementService.create(paper2, Predicates.hasContribution, cont2)
-        statementService.create(paper3, Predicates.hasContribution, cont3)
+        statementService.createStatement(paper1, Predicates.hasContribution, cont1)
+        statementService.createStatement(paper2, Predicates.hasContribution, cont2)
+        statementService.createStatement(paper3, Predicates.hasContribution, cont3)
 
         // Link comparison to contributions
-        statementService.create(comparison, Predicates.comparesContribution, cont1)
-        statementService.create(comparison, Predicates.comparesContribution, cont2)
-        statementService.create(comparison, Predicates.comparesContribution, cont3)
+        statementService.createStatement(comparison, Predicates.comparesContribution, cont1)
+        statementService.createStatement(comparison, Predicates.comparesContribution, cont2)
+        statementService.createStatement(comparison, Predicates.comparesContribution, cont3)
 
         documentedGetRequestTo("/api/comparisons/{id}/authors", comparison)
             .param("size", "2")

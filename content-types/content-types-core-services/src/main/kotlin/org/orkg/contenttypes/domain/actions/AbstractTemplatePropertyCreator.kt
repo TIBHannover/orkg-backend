@@ -10,8 +10,9 @@ import org.orkg.contenttypes.input.TemplatePropertyDefinition
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -36,54 +37,62 @@ class AbstractTemplatePropertyCreator(
         )
         property.placeholder?.let { placeholder ->
             statementService.add(
-                userId = contributorId,
-                subject = propertyId,
-                predicate = Predicates.placeholder,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = contributorId,
-                        label = placeholder
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.placeholder,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = contributorId,
+                            label = placeholder
+                        )
                     )
                 )
             )
         }
         property.description?.let { description ->
             statementService.add(
-                userId = contributorId,
-                subject = propertyId,
-                predicate = Predicates.description,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = contributorId,
-                        label = description
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.description,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = contributorId,
+                            label = description
+                        )
                     )
                 )
             )
         }
         property.minCount?.let { min ->
             statementService.add(
-                userId = contributorId,
-                subject = propertyId,
-                predicate = Predicates.shMinCount,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = contributorId,
-                        label = min.toString(),
-                        datatype = Literals.XSD.INT.prefixedUri
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shMinCount,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = contributorId,
+                            label = min.toString(),
+                            datatype = Literals.XSD.INT.prefixedUri
+                        )
                     )
                 )
             )
         }
         property.maxCount?.let { max ->
             statementService.add(
-                userId = contributorId,
-                subject = propertyId,
-                predicate = Predicates.shMaxCount,
-                `object` = literalService.create(
-                    CreateCommand(
-                        contributorId = contributorId,
-                        label = max.toString(),
-                        datatype = Literals.XSD.INT.prefixedUri
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shMaxCount,
+                    objectId = literalService.create(
+                        CreateLiteralUseCase.CreateCommand(
+                            contributorId = contributorId,
+                            label = max.toString(),
+                            datatype = Literals.XSD.INT.prefixedUri
+                        )
                     )
                 )
             )
@@ -91,13 +100,15 @@ class AbstractTemplatePropertyCreator(
         if (property is StringLiteralTemplatePropertyDefinition) {
             property.pattern?.let { pattern ->
                 statementService.add(
-                    userId = contributorId,
-                    subject = propertyId,
-                    predicate = Predicates.shPattern,
-                    `object` = literalService.create(
-                        CreateCommand(
-                            contributorId = contributorId,
-                            label = pattern
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = propertyId,
+                        predicateId = Predicates.shPattern,
+                        objectId = literalService.create(
+                            CreateLiteralUseCase.CreateCommand(
+                                contributorId = contributorId,
+                                label = pattern
+                            )
                         )
                     )
                 )
@@ -105,30 +116,34 @@ class AbstractTemplatePropertyCreator(
         } else if (property is NumberLiteralTemplatePropertyDefinition) {
             property.minInclusive?.let { minInclusive ->
                 statementService.add(
-                    userId = contributorId,
-                    subject = propertyId,
-                    predicate = Predicates.shMinInclusive,
-                    `object` = literalService.create(
-                        CreateCommand(
-                            contributorId = contributorId,
-                            label = minInclusive.toString(),
-                            datatype = Literals.XSD.fromClass(property.datatype)?.prefixedUri
-                                ?: Literals.XSD.DECIMAL.prefixedUri
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = propertyId,
+                        predicateId = Predicates.shMinInclusive,
+                        objectId = literalService.create(
+                            CreateLiteralUseCase.CreateCommand(
+                                contributorId = contributorId,
+                                label = minInclusive.toString(),
+                                datatype = Literals.XSD.fromClass(property.datatype)?.prefixedUri
+                                    ?: Literals.XSD.DECIMAL.prefixedUri
+                            )
                         )
                     )
                 )
             }
             property.maxInclusive?.let { maxInclusive ->
                 statementService.add(
-                    userId = contributorId,
-                    subject = propertyId,
-                    predicate = Predicates.shMaxInclusive,
-                    `object` = literalService.create(
-                        CreateCommand(
-                            contributorId = contributorId,
-                            label = maxInclusive.toString(),
-                            datatype = Literals.XSD.fromClass(property.datatype)?.prefixedUri
-                                ?: Literals.XSD.DECIMAL.prefixedUri
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = propertyId,
+                        predicateId = Predicates.shMaxInclusive,
+                        objectId = literalService.create(
+                            CreateLiteralUseCase.CreateCommand(
+                                contributorId = contributorId,
+                                label = maxInclusive.toString(),
+                                datatype = Literals.XSD.fromClass(property.datatype)?.prefixedUri
+                                    ?: Literals.XSD.DECIMAL.prefixedUri
+                            )
                         )
                     )
                 )
@@ -136,42 +151,52 @@ class AbstractTemplatePropertyCreator(
         }
         if (property is LiteralTemplatePropertyDefinition) {
             statementService.add(
-                userId = contributorId,
-                subject = propertyId,
-                predicate = Predicates.shDatatype,
-                `object` = property.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shDatatype,
+                    objectId = property.datatype
+                )
             )
         } else if (property is ResourceTemplatePropertyDefinition) {
             statementService.add(
-                userId = contributorId,
-                subject = propertyId,
-                predicate = Predicates.shClass,
-                `object` = property.`class`
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shClass,
+                    objectId = property.`class`
+                )
             )
         }
         statementService.add(
-            userId = contributorId,
-            subject = propertyId,
-            predicate = Predicates.shPath,
-            `object` = property.path
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = propertyId,
+                predicateId = Predicates.shPath,
+                objectId = property.path
+            )
         )
         statementService.add(
-            userId = contributorId,
-            subject = propertyId,
-            predicate = Predicates.shOrder,
-            `object` = literalService.create(
-                CreateCommand(
-                    contributorId = contributorId,
-                    label = order.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = propertyId,
+                predicateId = Predicates.shOrder,
+                objectId = literalService.create(
+                    CreateLiteralUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        label = order.toString(),
+                        datatype = Literals.XSD.INT.prefixedUri
+                    )
                 )
             )
         )
         statementService.add(
-            userId = contributorId,
-            subject = templateId,
-            predicate = Predicates.shProperty,
-            `object` = propertyId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = templateId,
+                predicateId = Predicates.shProperty,
+                objectId = propertyId
+            )
         )
         return propertyId
     }

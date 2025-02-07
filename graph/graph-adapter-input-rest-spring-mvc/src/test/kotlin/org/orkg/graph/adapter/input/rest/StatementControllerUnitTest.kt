@@ -21,16 +21,17 @@ import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.graph.adapter.input.rest.StatementController.CreateStatementRequest
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.adapter.input.rest.testing.fixtures.statementResponseFields
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.CreateStatement
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementObjectNotFound
 import org.orkg.graph.domain.StatementPredicateNotFound
 import org.orkg.graph.domain.StatementSubjectNotFound
 import org.orkg.graph.domain.ThingNotFound
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createClass
@@ -216,14 +217,20 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
     fun create() {
         val id = StatementId("S123")
         val statement = createStatement().copy(id = id, subject = createResource(), `object` = createLiteral())
-        val request = CreateStatement(
+        val request = CreateStatementRequest(
             id = id,
             subjectId = statement.subject.id,
             predicateId = statement.predicate.id,
             objectId = statement.`object`.id
         )
+        val command = CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            subjectId = request.subjectId,
+            predicateId = request.predicateId,
+            objectId = request.objectId
+        )
 
-        every { statementService.create(any(), any(), any(), any()) } returns id
+        every { statementService.create(command) } returns id
         every { statementService.findById(id) } returns Optional.of(statement)
         every { statementService.countIncomingStatements(any<Set<ThingId>>()) } returns emptyMap()
         every { statementService.findAllDescriptions(any()) } returns emptyMap()
@@ -250,14 +257,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) {
-            statementService.create(
-                userId = ContributorId(MockUserId.USER),
-                subject = request.subjectId,
-                predicate = request.predicateId,
-                `object` = request.objectId
-            )
-        }
+        verify(exactly = 1) { statementService.create(command) }
         verify(exactly = 1) { statementService.findById(id) }
         verify(exactly = 1) { statementService.countIncomingStatements(any<Set<ThingId>>()) }
         verify(exactly = 1) { statementService.findAllDescriptions(any()) }
@@ -269,14 +269,19 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         val subject = "one"
         val predicate = "less_than"
         val `object` = "two"
-
         val body = mapOf(
             "subject_id" to subject,
             "predicate_id" to predicate,
             "object_id" to `object`
         )
+        val command = CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            subjectId = ThingId(subject),
+            predicateId = ThingId(predicate),
+            objectId = ThingId(`object`)
+        )
 
-        every { statementService.create(any(), any(), any(), any()) } throws StatementSubjectNotFound(ThingId(subject))
+        every { statementService.create(command) } throws StatementSubjectNotFound(ThingId(subject))
 
         post("/api/statements")
             .content(body)
@@ -288,14 +293,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/statements"))
 
-        verify(exactly = 1) {
-            statementService.create(
-                ContributorId(MockUserId.USER),
-                ThingId(subject),
-                ThingId(predicate),
-                ThingId(`object`),
-            )
-        }
+        verify(exactly = 1) { statementService.create(command) }
     }
 
     @Test
@@ -304,18 +302,19 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         val subject = "one"
         val predicate = "less_than"
         val `object` = "two"
-
         val body = mapOf(
             "subject_id" to subject,
             "predicate_id" to predicate,
             "object_id" to `object`
         )
-
-        every { statementService.create(any(), any(), any(), any()) } throws StatementPredicateNotFound(
-            ThingId(
-                predicate
-            )
+        val command = CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            subjectId = ThingId(subject),
+            predicateId = ThingId(predicate),
+            objectId = ThingId(`object`)
         )
+
+        every { statementService.create(command) } throws StatementPredicateNotFound(ThingId(predicate))
 
         post("/api/statements")
             .content(body)
@@ -327,14 +326,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/statements"))
 
-        verify(exactly = 1) {
-            statementService.create(
-                ContributorId(MockUserId.USER),
-                ThingId(subject),
-                ThingId(predicate),
-                ThingId(`object`),
-            )
-        }
+        verify(exactly = 1) { statementService.create(command) }
     }
 
     @Test
@@ -343,14 +335,19 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         val subject = "one"
         val predicate = "less_than"
         val `object` = "two"
-
         val body = mapOf(
             "subject_id" to subject,
             "predicate_id" to predicate,
             "object_id" to `object`
         )
+        val command = CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            subjectId = ThingId(subject),
+            predicateId = ThingId(predicate),
+            objectId = ThingId(`object`)
+        )
 
-        every { statementService.create(any(), any(), any(), any()) } throws StatementObjectNotFound(ThingId(`object`))
+        every { statementService.create(command) } throws StatementObjectNotFound(ThingId(`object`))
 
         post("/api/statements")
             .content(body)
@@ -362,14 +359,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/statements"))
 
-        verify(exactly = 1) {
-            statementService.create(
-                ContributorId(MockUserId.USER),
-                ThingId(subject),
-                ThingId(predicate),
-                ThingId(`object`),
-            )
-        }
+        verify(exactly = 1) { statementService.create(command) }
     }
 
     @Test

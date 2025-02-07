@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.LabelAndClassService
+import org.orkg.createStatement
 import org.orkg.createClass
 import org.orkg.createClasses
 import org.orkg.createLiteral
@@ -124,16 +125,16 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         val bench1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
         val bench2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 2")
 
-        statementService.create(benchPaper1, Predicates.hasResearchField, fieldWithBenchmark)
-        statementService.create(benchPaper2, Predicates.hasResearchField, fieldWithBenchmark)
-        statementService.create(normalPaper, Predicates.hasResearchField, fieldWithoutBenchmark)
+        statementService.createStatement(benchPaper1, Predicates.hasResearchField, fieldWithBenchmark)
+        statementService.createStatement(benchPaper2, Predicates.hasResearchField, fieldWithBenchmark)
+        statementService.createStatement(normalPaper, Predicates.hasResearchField, fieldWithoutBenchmark)
 
-        statementService.create(benchPaper1, Predicates.hasContribution, benchCont1)
-        statementService.create(benchPaper2, Predicates.hasContribution, benchCont2)
-        statementService.create(normalPaper, Predicates.hasContribution, normalCont1)
+        statementService.createStatement(benchPaper1, Predicates.hasContribution, benchCont1)
+        statementService.createStatement(benchPaper2, Predicates.hasContribution, benchCont2)
+        statementService.createStatement(normalPaper, Predicates.hasContribution, normalCont1)
 
-        statementService.create(benchCont1, ThingId(labelsAndClasses.benchmarkPredicate), bench1)
-        statementService.create(benchCont2, ThingId(labelsAndClasses.benchmarkPredicate), bench2)
+        statementService.createStatement(benchCont1, ThingId(labelsAndClasses.benchmarkPredicate), bench1)
+        statementService.createStatement(benchCont2, ThingId(labelsAndClasses.benchmarkPredicate), bench2)
 
         documentedGetRequestTo("/api/research-fields/benchmarks")
             .perform()
@@ -185,19 +186,19 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
         val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
 
-        statementService.create(benchPaper, Predicates.hasResearchField, fieldWithDataset)
-        statementService.create(benchPaper, Predicates.hasContribution, benchCont)
+        statementService.createStatement(benchPaper, Predicates.hasResearchField, fieldWithDataset)
+        statementService.createStatement(benchPaper, Predicates.hasContribution, benchCont)
 
-        statementService.create(benchCont, Predicates.hasResearchProblem, problem1)
-        statementService.create(benchCont, Predicates.hasResearchProblem, problem2)
-        statementService.create(benchCont, ThingId(labelsAndClasses.benchmarkPredicate), benchmark)
+        statementService.createStatement(benchCont, Predicates.hasResearchProblem, problem1)
+        statementService.createStatement(benchCont, Predicates.hasResearchProblem, problem2)
+        statementService.createStatement(benchCont, ThingId(labelsAndClasses.benchmarkPredicate), benchmark)
 
         codes.forEach {
-            statementService.create(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it)
+            statementService.createStatement(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
-        statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
-        statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
+        statementService.createStatement(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
+        statementService.createStatement(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         documentedGetRequestTo("/api/benchmarks/summary/research-field/{id}", fieldWithDataset)
             .param("sort", "problem.id", "ASC")
@@ -247,19 +248,19 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
         val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
 
-        statementService.create(benchPaper, Predicates.hasResearchField, field1)
-        statementService.create(benchPaper, Predicates.hasContribution, benchCont)
+        statementService.createStatement(benchPaper, Predicates.hasResearchField, field1)
+        statementService.createStatement(benchPaper, Predicates.hasContribution, benchCont)
 
-        statementService.create(benchCont, Predicates.hasResearchProblem, problem1)
-        statementService.create(benchCont, Predicates.hasResearchProblem, problem2)
-        statementService.create(benchCont, ThingId(labelsAndClasses.benchmarkPredicate), benchmark)
+        statementService.createStatement(benchCont, Predicates.hasResearchProblem, problem1)
+        statementService.createStatement(benchCont, Predicates.hasResearchProblem, problem2)
+        statementService.createStatement(benchCont, ThingId(labelsAndClasses.benchmarkPredicate), benchmark)
 
         codes.forEach {
-            statementService.create(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it)
+            statementService.createStatement(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
-        statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
-        statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
+        statementService.createStatement(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
+        statementService.createStatement(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         documentedGetRequestTo("/api/benchmarks/summary")
             .perform()
@@ -306,29 +307,29 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
         val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
 
-        statementService.create(benchPaper, Predicates.hasResearchField, field1)
-        statementService.create(dummyPaper, Predicates.hasResearchField, field2)
+        statementService.createStatement(benchPaper, Predicates.hasResearchField, field1)
+        statementService.createStatement(dummyPaper, Predicates.hasResearchField, field2)
 
-        statementService.create(benchPaper, Predicates.hasContribution, benchCont)
-        statementService.create(dummyPaper, Predicates.hasContribution, dummyCont)
+        statementService.createStatement(benchPaper, Predicates.hasContribution, benchCont)
+        statementService.createStatement(dummyPaper, Predicates.hasContribution, dummyCont)
 
-        statementService.create(benchCont, Predicates.hasResearchProblem, problem1)
-        statementService.create(benchCont, Predicates.hasResearchProblem, problem2)
-        statementService.create(benchCont, ThingId(labelsAndClasses.benchmarkPredicate), benchmark)
+        statementService.createStatement(benchCont, Predicates.hasResearchProblem, problem1)
+        statementService.createStatement(benchCont, Predicates.hasResearchProblem, problem2)
+        statementService.createStatement(benchCont, ThingId(labelsAndClasses.benchmarkPredicate), benchmark)
 
-        statementService.create(dummyCont, Predicates.hasResearchProblem, problem1)
-        statementService.create(dummyCont, ThingId(labelsAndClasses.benchmarkPredicate), dummyBenchmark)
+        statementService.createStatement(dummyCont, Predicates.hasResearchProblem, problem1)
+        statementService.createStatement(dummyCont, ThingId(labelsAndClasses.benchmarkPredicate), dummyBenchmark)
 
-        statementService.create(field1, Predicates.hasSubfield, field2)
+        statementService.createStatement(field1, Predicates.hasSubfield, field2)
 
         codes.forEach {
-            statementService.create(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it)
+            statementService.createStatement(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
-        statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
-        statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
+        statementService.createStatement(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
+        statementService.createStatement(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
-        statementService.create(dummyBenchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
+        statementService.createStatement(dummyBenchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         documentedGetRequestTo("/api/benchmarks/summary")
             .perform()
@@ -374,18 +375,18 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
         val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
 
-        statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
-        statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
+        statementService.createStatement(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
+        statementService.createStatement(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
-        statementService.create(cont1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
-        statementService.create(cont2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
+        statementService.createStatement(cont1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
+        statementService.createStatement(cont2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
 
-        statementService.create(cont1, Predicates.hasResearchProblem, problem1)
-        statementService.create(cont1, Predicates.hasResearchProblem, problem2)
-        statementService.create(cont2, Predicates.hasResearchProblem, problem2)
+        statementService.createStatement(cont1, Predicates.hasResearchProblem, problem1)
+        statementService.createStatement(cont1, Predicates.hasResearchProblem, problem2)
+        statementService.createStatement(cont2, Predicates.hasResearchProblem, problem2)
 
-        statementService.create(paper, Predicates.hasContribution, cont1)
-        statementService.create(paper, Predicates.hasContribution, cont2)
+        statementService.createStatement(paper, Predicates.hasContribution, cont1)
+        statementService.createStatement(paper, Predicates.hasContribution, cont2)
 
         documentedGetRequestTo("/api/datasets/{id}/problems", dataset)
             .perform()
@@ -431,24 +432,24 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         val dataset1 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 1")
         val dataset2 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 2")
 
-        statementService.create(paper1, Predicates.hasContribution, contributionOfPaper1)
-        statementService.create(paper2, Predicates.hasContribution, contributionOfPaper2)
+        statementService.createStatement(paper1, Predicates.hasContribution, contributionOfPaper1)
+        statementService.createStatement(paper2, Predicates.hasContribution, contributionOfPaper2)
 
-        statementService.create(contributionOfPaper1, Predicates.hasResearchProblem, problem)
-        statementService.create(contributionOfPaper2, Predicates.hasResearchProblem, problem)
+        statementService.createStatement(contributionOfPaper1, Predicates.hasResearchProblem, problem)
+        statementService.createStatement(contributionOfPaper2, Predicates.hasResearchProblem, problem)
 
-        statementService.create(contributionOfPaper1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
-        statementService.create(contributionOfPaper2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
+        statementService.createStatement(contributionOfPaper1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
+        statementService.createStatement(contributionOfPaper2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
 
         models.forEach {
-            statementService.create(contributionOfPaper1, ThingId(labelsAndClasses.modelPredicate), it)
+            statementService.createStatement(contributionOfPaper1, ThingId(labelsAndClasses.modelPredicate), it)
         }
         codes.forEach {
-            statementService.create(contributionOfPaper2, ThingId(labelsAndClasses.sourceCodePredicate), it)
+            statementService.createStatement(contributionOfPaper2, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
-        statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset1)
-        statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset2)
+        statementService.createStatement(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset1)
+        statementService.createStatement(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         documentedGetRequestTo("/api/datasets/research-problem/{id}", problem)
             .param("sort", "totalModels,DESC")
@@ -522,43 +523,43 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             label = "Quantity Value 3"
         )
 
-        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
-        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E2)
-        statementService.create(benchmark2, ThingId(labelsAndClasses.quantityPredicate), quantityB2E1)
+        statementService.createStatement(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
+        statementService.createStatement(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E2)
+        statementService.createStatement(benchmark2, ThingId(labelsAndClasses.quantityPredicate), quantityB2E1)
 
-        statementService.create(quantityB1E1, ThingId(labelsAndClasses.metricPredicate), metric1)
-        statementService.create(quantityB1E2, ThingId(labelsAndClasses.metricPredicate), metric2)
-        statementService.create(quantityB2E1, ThingId(labelsAndClasses.metricPredicate), metric1)
+        statementService.createStatement(quantityB1E1, ThingId(labelsAndClasses.metricPredicate), metric1)
+        statementService.createStatement(quantityB1E2, ThingId(labelsAndClasses.metricPredicate), metric2)
+        statementService.createStatement(quantityB2E1, ThingId(labelsAndClasses.metricPredicate), metric1)
 
-        statementService.create(quantityB1E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E1)
-        statementService.create(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
-        statementService.create(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
+        statementService.createStatement(quantityB1E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E1)
+        statementService.createStatement(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
+        statementService.createStatement(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
 
-        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1)
-        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
-        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
+        statementService.createStatement(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1)
+        statementService.createStatement(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
+        statementService.createStatement(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
 
-        statementService.create(paper, Predicates.hasContribution, contribution1)
-        statementService.create(paper, Predicates.hasContribution, contribution2)
+        statementService.createStatement(paper, Predicates.hasContribution, contribution1)
+        statementService.createStatement(paper, Predicates.hasContribution, contribution2)
 
-        statementService.create(contribution1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
-        statementService.create(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
+        statementService.createStatement(contribution1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
+        statementService.createStatement(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
 
         codes1.forEach {
-            statementService.create(contribution1, ThingId(labelsAndClasses.sourceCodePredicate), it)
+            statementService.createStatement(contribution1, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
         codes2.forEach {
-            statementService.create(contribution2, ThingId(labelsAndClasses.sourceCodePredicate), it)
+            statementService.createStatement(contribution2, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
-        statementService.create(contribution1, Predicates.hasResearchProblem, problem1)
-        statementService.create(contribution2, Predicates.hasResearchProblem, problem2)
+        statementService.createStatement(contribution1, Predicates.hasResearchProblem, problem1)
+        statementService.createStatement(contribution2, Predicates.hasResearchProblem, problem2)
 
-        statementService.create(contribution1, ThingId(labelsAndClasses.modelPredicate), model1)
-        statementService.create(contribution2, ThingId(labelsAndClasses.modelPredicate), model2)
+        statementService.createStatement(contribution1, ThingId(labelsAndClasses.modelPredicate), model1)
+        statementService.createStatement(contribution2, ThingId(labelsAndClasses.modelPredicate), model2)
 
-        statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
-        statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
+        statementService.createStatement(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
+        statementService.createStatement(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
         documentedGetRequestTo("/api/datasets/{id}/problem/{researchProblemId}/summary", dataset, problem1)
             .perform()
@@ -620,40 +621,40 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             classes = setOf(labelsAndClasses.quantityValueClass), label = "Quantity Value 3"
         )
 
-        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
-        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E2)
-        statementService.create(benchmark2, ThingId(labelsAndClasses.quantityPredicate), quantityB2E1)
+        statementService.createStatement(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
+        statementService.createStatement(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E2)
+        statementService.createStatement(benchmark2, ThingId(labelsAndClasses.quantityPredicate), quantityB2E1)
 
-        statementService.create(quantityB1E1, ThingId(labelsAndClasses.metricPredicate), metric1)
-        statementService.create(quantityB1E2, ThingId(labelsAndClasses.metricPredicate), metric2)
-        statementService.create(quantityB2E1, ThingId(labelsAndClasses.metricPredicate), metric1)
+        statementService.createStatement(quantityB1E1, ThingId(labelsAndClasses.metricPredicate), metric1)
+        statementService.createStatement(quantityB1E2, ThingId(labelsAndClasses.metricPredicate), metric2)
+        statementService.createStatement(quantityB2E1, ThingId(labelsAndClasses.metricPredicate), metric1)
 
-        statementService.create(quantityB1E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E1)
-        statementService.create(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
-        statementService.create(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
+        statementService.createStatement(quantityB1E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E1)
+        statementService.createStatement(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
+        statementService.createStatement(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
 
-        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1)
-        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
-        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
+        statementService.createStatement(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1)
+        statementService.createStatement(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
+        statementService.createStatement(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
 
-        statementService.create(paper, Predicates.hasContribution, contribution1)
-        statementService.create(paper, Predicates.hasContribution, contribution2)
+        statementService.createStatement(paper, Predicates.hasContribution, contribution1)
+        statementService.createStatement(paper, Predicates.hasContribution, contribution2)
 
-        statementService.create(contribution1, Predicates.hasResearchProblem, problem1)
-        statementService.create(contribution2, Predicates.hasResearchProblem, problem2)
+        statementService.createStatement(contribution1, Predicates.hasResearchProblem, problem1)
+        statementService.createStatement(contribution2, Predicates.hasResearchProblem, problem2)
 
-        statementService.create(contribution1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
-        statementService.create(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
+        statementService.createStatement(contribution1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
+        statementService.createStatement(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
 
         codes1.forEach {
-            statementService.create(contribution1, ThingId(labelsAndClasses.sourceCodePredicate), it)
+            statementService.createStatement(contribution1, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
         codes2.forEach {
-            statementService.create(contribution2, ThingId(labelsAndClasses.sourceCodePredicate), it)
+            statementService.createStatement(contribution2, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
-        statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
-        statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
+        statementService.createStatement(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
+        statementService.createStatement(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
         get("/api/datasets/{id}/problem/{researchProblemId}/summary", dataset, problem1)
             .perform()
@@ -706,36 +707,36 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
             label = "Quantity Value 3"
         )
 
-        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
-        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E2)
-        statementService.create(benchmark2, ThingId(labelsAndClasses.quantityPredicate), quantityB2E1)
+        statementService.createStatement(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
+        statementService.createStatement(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E2)
+        statementService.createStatement(benchmark2, ThingId(labelsAndClasses.quantityPredicate), quantityB2E1)
 
-        statementService.create(quantityB1E1, ThingId(labelsAndClasses.metricPredicate), metric1)
-        statementService.create(quantityB1E2, ThingId(labelsAndClasses.metricPredicate), metric2)
-        statementService.create(quantityB2E1, ThingId(labelsAndClasses.metricPredicate), metric1)
+        statementService.createStatement(quantityB1E1, ThingId(labelsAndClasses.metricPredicate), metric1)
+        statementService.createStatement(quantityB1E2, ThingId(labelsAndClasses.metricPredicate), metric2)
+        statementService.createStatement(quantityB2E1, ThingId(labelsAndClasses.metricPredicate), metric1)
 
-        statementService.create(quantityB1E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E1)
-        statementService.create(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
-        statementService.create(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
+        statementService.createStatement(quantityB1E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E1)
+        statementService.createStatement(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
+        statementService.createStatement(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
 
-        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1)
-        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
-        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
+        statementService.createStatement(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1)
+        statementService.createStatement(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
+        statementService.createStatement(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
 
-        statementService.create(paper, Predicates.hasContribution, contribution1)
-        statementService.create(paper, Predicates.hasContribution, contribution2)
+        statementService.createStatement(paper, Predicates.hasContribution, contribution1)
+        statementService.createStatement(paper, Predicates.hasContribution, contribution2)
 
-        statementService.create(contribution1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
-        statementService.create(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
+        statementService.createStatement(contribution1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
+        statementService.createStatement(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
 
-        statementService.create(contribution1, Predicates.hasResearchProblem, problem1)
-        statementService.create(contribution2, Predicates.hasResearchProblem, problem2)
+        statementService.createStatement(contribution1, Predicates.hasResearchProblem, problem1)
+        statementService.createStatement(contribution2, Predicates.hasResearchProblem, problem2)
 
-        statementService.create(contribution1, ThingId(labelsAndClasses.modelPredicate), model1)
-        statementService.create(contribution2, ThingId(labelsAndClasses.modelPredicate), model2)
+        statementService.createStatement(contribution1, ThingId(labelsAndClasses.modelPredicate), model1)
+        statementService.createStatement(contribution2, ThingId(labelsAndClasses.modelPredicate), model2)
 
-        statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
-        statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
+        statementService.createStatement(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
+        statementService.createStatement(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
 
         get("/api/datasets/{id}/problem/{researchProblemId}/summary", dataset, problem1)
             .perform()

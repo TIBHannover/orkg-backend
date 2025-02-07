@@ -9,6 +9,7 @@ import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ImportUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -231,10 +232,12 @@ class ImportService(
             )
         )
         statementService.add(
-            userId = contributorId,
-            subject = subjectId,
-            predicate = Predicates.sameAs,
-            `object` = sameAsLiteralId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = subjectId,
+                predicateId = Predicates.sameAs,
+                objectId = sameAsLiteralId
+            )
         )
     }
 
@@ -251,10 +254,12 @@ class ImportService(
                 )
             )
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.description,
-                `object` = descriptionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.description,
+                    objectId = descriptionId
+                )
             )
         }
     }

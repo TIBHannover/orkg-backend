@@ -19,11 +19,12 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreateListUseCase
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateObjectUseCase
 import org.orkg.graph.input.CreateObjectUseCase.CreateObjectRequest
 import org.orkg.graph.input.CreateObjectUseCase.NamedObject
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -67,7 +68,12 @@ class LegacyPaperService(
                 val contributionId = addCompleteContribution(it, request, userUUID)
                 // Create statement between paper and contribution
                 statementService.add(
-                    userId, paperId, Predicates.hasContribution, contributionId
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = userId,
+                        subjectId = paperId,
+                        predicateId = Predicates.hasContribution,
+                        objectId = contributionId
+                    )
                 )
             }
         }
@@ -151,23 +157,37 @@ class LegacyPaperService(
         // paper doi
         if (request.paper.hasDOI()) {
             val paperDoi = literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = userId,
                     label = request.paper.doi!!
                 )
             )
-            statementService.add(userId, paperId, Predicates.hasDOI, paperDoi)
+            statementService.add(
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = userId,
+                    subjectId = paperId,
+                    predicateId = Predicates.hasDOI,
+                    objectId = paperDoi
+                )
+            )
         }
 
         // paper URL
         if (request.paper.hasUrl()) {
             val paperUrl = literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = userId,
                     label = request.paper.url!!
                 )
             )
-            statementService.add(userId, paperId, Predicates.hasURL, paperUrl)
+            statementService.add(
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = userId,
+                    subjectId = paperId,
+                    predicateId = Predicates.hasURL,
+                    objectId = paperUrl
+                )
+            )
         }
 
         // paper authors
@@ -175,26 +195,30 @@ class LegacyPaperService(
 
         // paper publication date
         if (request.paper.hasPublicationMonth()) statementService.add(
-            userId,
-            paperId,
-            Predicates.monthPublished,
-            literalService.create(
-                CreateCommand(
-                    contributorId = userId,
-                    label = request.paper.publicationMonth.toString(),
-                    datatype = "xsd:integer"
+            CreateStatementUseCase.CreateCommand(
+                contributorId = userId,
+                subjectId = paperId,
+                predicateId = Predicates.monthPublished,
+                objectId = literalService.create(
+                    CreateLiteralUseCase.CreateCommand(
+                        contributorId = userId,
+                        label = request.paper.publicationMonth.toString(),
+                        datatype = "xsd:integer"
+                    )
                 )
             )
         )
         if (request.paper.hasPublicationYear()) statementService.add(
-            userId,
-            paperId,
-            Predicates.yearPublished,
-            literalService.create(
-                CreateCommand(
-                    contributorId = userId,
-                    label = request.paper.publicationYear.toString(),
-                    datatype = "xsd:integer"
+            CreateStatementUseCase.CreateCommand(
+                contributorId = userId,
+                subjectId = paperId,
+                predicateId = Predicates.yearPublished,
+                objectId = literalService.create(
+                    CreateLiteralUseCase.CreateCommand(
+                        contributorId = userId,
+                        label = request.paper.publicationYear.toString(),
+                        datatype = "xsd:integer"
+                    )
                 )
             )
         )
@@ -206,10 +230,12 @@ class LegacyPaperService(
 
         // paper research field
         statementService.add(
-            userId,
-            paperId,
-            Predicates.hasResearchField,
-            request.paper.researchField
+            CreateStatementUseCase.CreateCommand(
+                contributorId = userId,
+                subjectId = paperId,
+                predicateId = Predicates.hasResearchField,
+                objectId = request.paper.researchField
+            )
         )
         return paperId
     }
@@ -247,7 +273,12 @@ class LegacyPaperService(
         }
         // create a statement with the venue resource
         statementService.add(
-            userId, paperId, venuePredicate, venueResource.id
+            CreateStatementUseCase.CreateCommand(
+                contributorId = userId,
+                subjectId = paperId,
+                predicateId = venuePredicate,
+                objectId = venueResource.id
+            )
         )
     }
 
@@ -296,21 +327,26 @@ class LegacyPaperService(
                             )
                             // Create orcid literal
                             val orcidLiteralId = literalService.create(
-                                CreateCommand(
+                                CreateLiteralUseCase.CreateCommand(
                                     contributorId = userId,
                                     label = orcidValue
                                 )
                             )
                             // Add ORCID id to the new resource
                             statementService.add(
-                                userId, authorId, Predicates.hasORCID, orcidLiteralId
+                                CreateStatementUseCase.CreateCommand(
+                                    contributorId = userId,
+                                    subjectId = authorId,
+                                    predicateId = Predicates.hasORCID,
+                                    objectId = orcidLiteralId
+                                )
                             )
                             authorId
                         }
                     } else {
                         // create literal
                         literalService.create(
-                            CreateCommand(
+                            CreateLiteralUseCase.CreateCommand(
                                 contributorId = userId,
                                 label = it.label!!
                             )
@@ -328,10 +364,12 @@ class LegacyPaperService(
                 )
             )
             statementService.create(
-                userId = userId,
-                subject = paperId,
-                predicate = Predicates.hasAuthors,
-                `object` = listId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = userId,
+                    subjectId = paperId,
+                    predicateId = Predicates.hasAuthors,
+                    objectId = listId
+                )
             )
         }
     }

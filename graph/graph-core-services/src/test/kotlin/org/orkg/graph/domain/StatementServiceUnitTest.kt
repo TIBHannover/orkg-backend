@@ -15,9 +15,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkDescribeSpec
 import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.UpdateStatementUseCase
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.OwnershipInfo
@@ -28,6 +30,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.pageOf
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Sort
 
@@ -47,6 +50,280 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
     )
 
     describe("creating a statement") {
+        val contributorId = randomContributorId()
+        val expectedId = StatementId("S123")
+        val subject = createResource()
+        val predicate = createPredicate()
+        val `object` = createLiteral()
+        val command = CreateCommand(
+            id = expectedId,
+            contributorId = contributorId,
+            subjectId = subject.id,
+            predicateId = predicate.id,
+            objectId = `object`.id,
+            modifiable = true
+        )
+        val expected = GeneralStatement(
+            id = expectedId,
+            subject = subject,
+            predicate = predicate,
+            `object` = `object`,
+            createdAt = OffsetDateTime.now(fixedClock),
+            createdBy = contributorId,
+            modifiable = true,
+            index = null
+        )
+        context("when an id is given") {
+            it("then it does not get a new id") {
+                every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
+                every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                every {
+                    statementRepository.findAll(
+                        subjectId = subject.id,
+                        predicateId = predicate.id,
+                        objectId = `object`.id,
+                        pageable = PageRequests.SINGLE
+                    )
+                } returns pageOf()
+                every { statementRepository.findByStatementId(expectedId) } returns Optional.empty()
+                every { statementRepository.save(any()) } just runs
+
+                withContext(Dispatchers.IO) {
+                    service.create(command) shouldBe expectedId
+                }
+
+                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                verify(exactly = 1) { predicateRepository.findById(predicate.id) }
+                verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                verify(exactly = 1) {
+                    statementRepository.findAll(
+                        subjectId = subject.id,
+                        predicateId = predicate.id,
+                        objectId = `object`.id,
+                        pageable = PageRequests.SINGLE
+                    )
+                }
+                verify(exactly = 1) { statementRepository.findByStatementId(expectedId) }
+                verify(exactly = 1) { statementRepository.save(expected) }
+            }
+        }
+        context("when no id is given") {
+            it("it gets an id from the repository") {
+                every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
+                every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                every {
+                    statementRepository.findAll(
+                        subjectId = subject.id,
+                        predicateId = predicate.id,
+                        objectId = `object`.id,
+                        pageable = PageRequests.SINGLE
+                    )
+                } returns pageOf()
+                every { statementRepository.nextIdentity() } returns expectedId
+                every { statementRepository.save(any()) } just runs
+
+                withContext(Dispatchers.IO) {
+                    service.create(command.copy(id = null)) shouldBe expectedId
+                }
+
+                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                verify(exactly = 1) { predicateRepository.findById(predicate.id) }
+                verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                verify(exactly = 1) {
+                    statementRepository.findAll(
+                        subjectId = subject.id,
+                        predicateId = predicate.id,
+                        objectId = `object`.id,
+                        pageable = PageRequests.SINGLE
+                    )
+                }
+                verify(exactly = 1) { statementRepository.nextIdentity() }
+                verify(exactly = 1) { statementRepository.save(expected) }
+            }
+        }
+        context("when an already existing id is given") {
+            it("then an exception is thrown") {
+                every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
+                every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                every {
+                    statementRepository.findAll(
+                        subjectId = subject.id,
+                        predicateId = predicate.id,
+                        objectId = `object`.id,
+                        pageable = PageRequests.SINGLE
+                    )
+                } returns pageOf()
+                every { statementRepository.findByStatementId(expectedId) } returns Optional.of(createStatement(expectedId))
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<StatementAlreadyExists> {
+                        service.create(command)
+                    }
+                }
+
+                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                verify(exactly = 1) { predicateRepository.findById(predicate.id) }
+                verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                verify(exactly = 1) {
+                    statementRepository.findAll(
+                        subjectId = subject.id,
+                        predicateId = predicate.id,
+                        objectId = `object`.id,
+                        pageable = PageRequests.SINGLE
+                    )
+                }
+                verify(exactly = 1) { statementRepository.findByStatementId(expectedId) }
+            }
+        }
+        context("when the subject cannot be found") {
+            it("throws an exception") {
+                every { thingRepository.findByThingId(subject.id) } returns Optional.empty()
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<StatementSubjectNotFound> {
+                        service.create(command)
+                    }
+                }
+
+                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+            }
+        }
+        context("when the predicate cannot be found") {
+            it("throws an exception") {
+                every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                every { predicateRepository.findById(predicate.id) } returns Optional.empty()
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<StatementPredicateNotFound> {
+                        service.create(command)
+                    }
+                }
+
+                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                verify(exactly = 1) { predicateRepository.findById(predicate.id) }
+            }
+        }
+        context("when the object cannot be found") {
+            it("throws an exception") {
+                every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
+                every { thingRepository.findByThingId(`object`.id) } returns Optional.empty()
+
+                withContext(Dispatchers.IO) {
+                    shouldThrow<StatementObjectNotFound> {
+                        service.create(command)
+                    }
+                }
+
+                verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                verify(exactly = 1) { predicateRepository.findById(predicate.id) }
+                verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+            }
+        }
+        context("when a statement with the same subject, predicate and object already exists") {
+            val existingStatementId = StatementId("S321")
+
+            context("and no id was provided") {
+                it("returns the id of the existing statement") {
+                    every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                    every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
+                    every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                    every {
+                        statementRepository.findAll(
+                            subjectId = subject.id,
+                            predicateId = predicate.id,
+                            objectId = `object`.id,
+                            pageable = PageRequests.SINGLE
+                        )
+                    } returns pageOf(createStatement(existingStatementId))
+
+                    withContext(Dispatchers.IO) {
+                        service.create(command.copy(id = null)) shouldBe existingStatementId
+                    }
+
+                    verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                    verify(exactly = 1) { predicateRepository.findById(predicate.id) }
+                    verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                    verify(exactly = 1) {
+                        statementRepository.findAll(
+                            subjectId = subject.id,
+                            predicateId = predicate.id,
+                            objectId = `object`.id,
+                            pageable = PageRequests.SINGLE
+                        )
+                    }
+                }
+            }
+            context("and an id was provided") {
+                context("that matches") {
+                    it("returns the id of the existing statement") {
+                        every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                        every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
+                        every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                        every {
+                            statementRepository.findAll(
+                                subjectId = subject.id,
+                                predicateId = predicate.id,
+                                objectId = `object`.id,
+                                pageable = PageRequests.SINGLE
+                            )
+                        } returns pageOf(createStatement(expectedId))
+
+                        withContext(Dispatchers.IO) {
+                            service.create(command)
+                        }
+
+                        verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                        verify(exactly = 1) { predicateRepository.findById(predicate.id) }
+                        verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                        verify(exactly = 1) {
+                            statementRepository.findAll(
+                                subjectId = subject.id,
+                                predicateId = predicate.id,
+                                objectId = `object`.id,
+                                pageable = PageRequests.SINGLE
+                            )
+                        }
+                    }
+                }
+                context("that does not match") {
+                    it("throws an exception") {
+                        every { thingRepository.findByThingId(subject.id) } returns Optional.of(subject)
+                        every { predicateRepository.findById(predicate.id) } returns Optional.of(predicate)
+                        every { thingRepository.findByThingId(`object`.id) } returns Optional.of(`object`)
+                        every {
+                            statementRepository.findAll(
+                                subjectId = subject.id,
+                                predicateId = predicate.id,
+                                objectId = `object`.id,
+                                pageable = PageRequests.SINGLE
+                            )
+                        } returns pageOf(createStatement(existingStatementId))
+
+                        withContext(Dispatchers.IO) {
+                            shouldThrow<StatementAlreadyExists> {
+                                service.create(command)
+                            }
+                        }
+
+                        verify(exactly = 1) { thingRepository.findByThingId(subject.id) }
+                        verify(exactly = 1) { predicateRepository.findById(predicate.id) }
+                        verify(exactly = 1) { thingRepository.findByThingId(`object`.id) }
+                        verify(exactly = 1) {
+                            statementRepository.findAll(
+                                subjectId = subject.id,
+                                predicateId = predicate.id,
+                                objectId = `object`.id,
+                                pageable = PageRequests.SINGLE
+                            )
+                        }
+                    }
+                }
+            }
+        }
         context("with a list as a subject and hasListElement as a predicate") {
             it("throws an error") {
                 val listId = ThingId("L1")
@@ -62,10 +339,12 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 withContext(Dispatchers.IO) {
                     shouldThrow<InvalidStatement> {
                         service.create(
-                            ContributorId(UUID.randomUUID()),
-                            subject = listId,
-                            predicate = Predicates.hasListElement,
-                            `object` = ThingId("R1")
+                            CreateCommand(
+                                contributorId = ContributorId(UUID.randomUUID()),
+                                subjectId = listId,
+                                predicateId = Predicates.hasListElement,
+                                objectId = ThingId("R1")
+                            )
                         )
                     }
                 }
@@ -87,10 +366,12 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 withContext(Dispatchers.IO) {
                     shouldThrow<InvalidStatement> {
                         service.create(
-                            ContributorId(UUID.randomUUID()),
-                            subject = subjectId,
-                            predicate = Predicates.description,
-                            `object` = ThingId("R1")
+                            CreateCommand(
+                                contributorId = ContributorId(UUID.randomUUID()),
+                                subjectId = subjectId,
+                                predicateId = Predicates.description,
+                                objectId = ThingId("R1")
+                            )
                         )
                     }
                 }
@@ -109,10 +390,12 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 withContext(Dispatchers.IO) {
                     shouldThrow<InvalidStatement> {
                         service.create(
-                            ContributorId(UUID.randomUUID()),
-                            subject = subjectId,
-                            predicate = Predicates.description,
-                            `object` = ThingId("R1")
+                            CreateCommand(
+                                contributorId = ContributorId(UUID.randomUUID()),
+                                subjectId = subjectId,
+                                predicateId = Predicates.description,
+                                objectId = ThingId("R1")
+                            )
                         )
                     }
                 }
@@ -138,10 +421,12 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 withContext(Dispatchers.IO) {
                     shouldThrow<InvalidStatement> {
                         service.add(
-                            ContributorId(UUID.randomUUID()),
-                            subject = listId,
-                            predicate = Predicates.hasListElement,
-                            `object` = ThingId("R1")
+                            CreateCommand(
+                                contributorId = ContributorId(UUID.randomUUID()),
+                                subjectId = listId,
+                                predicateId = Predicates.hasListElement,
+                                objectId = ThingId("R1")
+                            )
                         )
                     }
                 }
@@ -160,10 +445,12 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 withContext(Dispatchers.IO) {
                     shouldThrow<InvalidStatement> {
                         service.add(
-                            ContributorId(UUID.randomUUID()),
-                            subject = subjectId,
-                            predicate = Predicates.description,
-                            `object` = ThingId("R1")
+                            CreateCommand(
+                                contributorId = ContributorId(UUID.randomUUID()),
+                                subjectId = subjectId,
+                                predicateId = Predicates.description,
+                                objectId = ThingId("R1")
+                            )
                         )
                     }
                 }
@@ -182,10 +469,12 @@ internal class StatementServiceUnitTest : MockkDescribeSpec({
                 withContext(Dispatchers.IO) {
                     shouldThrow<InvalidStatement> {
                         service.add(
-                            ContributorId(UUID.randomUUID()),
-                            subject = subjectId,
-                            predicate = Predicates.description,
-                            `object` = ThingId("R1")
+                            CreateCommand(
+                                contributorId = ContributorId(UUID.randomUUID()),
+                                subjectId = subjectId,
+                                predicateId = Predicates.description,
+                                objectId = ThingId("R1")
+                            )
                         )
                     }
                 }

@@ -10,9 +10,9 @@ import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.BundleRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.BundleConfiguration
-import org.orkg.graph.domain.CreateStatement
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementNotFound
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateStatementUseCase
@@ -84,17 +84,19 @@ class StatementController(
 
     @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun add(
-        @RequestBody statement: CreateStatement,
+    fun create(
+        @RequestBody request: CreateStatementRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
         capabilities: MediaTypeCapabilities
     ): ResponseEntity<StatementRepresentation> {
         val id = statementService.create(
-            currentUser.contributorId(),
-            statement.subjectId,
-            statement.predicateId,
-            statement.objectId
+            CreateCommand(
+                contributorId = currentUser.contributorId(),
+                subjectId = request.subjectId,
+                predicateId = request.predicateId,
+                objectId = request.objectId
+            )
         )
         val location = uriComponentsBuilder
             .path("/api/statements/{id}")
@@ -156,6 +158,16 @@ class StatementController(
             includeFirst,
             sort
         ).toBundleRepresentation(capabilities)
+
+    data class CreateStatementRequest(
+        val id: StatementId? = null,
+        @JsonProperty("subject_id")
+        val subjectId: ThingId,
+        @JsonProperty("predicate_id")
+        val predicateId: ThingId,
+        @JsonProperty("object_id")
+        val objectId: ThingId
+    )
 
     data class UpdateStatementRequest(
         @JsonProperty("subject_id")

@@ -5,6 +5,7 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.createStatement
 import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.graph.input.PredicateUseCases
@@ -162,7 +163,7 @@ internal class PredicateControllerIntegrationTest : MockMvcBaseTest("predicates"
         val subject = resourceService.createResource(label = "subject")
         val `object` = resourceService.createResource(label = "child")
         val predicate = service.createPredicate(label = "related")
-        statementService.create(subject, predicate, `object`)
+        statementService.createStatement(subject, predicate, `object`)
 
         delete("/api/predicates/{id}", predicate)
             .perform()

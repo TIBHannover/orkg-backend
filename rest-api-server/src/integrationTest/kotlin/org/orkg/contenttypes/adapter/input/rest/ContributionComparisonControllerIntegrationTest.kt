@@ -5,6 +5,7 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.createStatement
 import org.orkg.createClasses
 import org.orkg.createLiteral
 import org.orkg.createPredicate
@@ -76,11 +77,11 @@ internal class ContributionComparisonControllerIntegrationTest : MockMvcBaseTest
         val year1 = literalService.createLiteral(label = "2022")
         val year2 = literalService.createLiteral(label = "2023")
 
-        statementService.create(paper1, Predicates.hasContribution, cont1)
-        statementService.create(paper2, Predicates.hasContribution, cont2)
+        statementService.createStatement(paper1, Predicates.hasContribution, cont1)
+        statementService.createStatement(paper2, Predicates.hasContribution, cont2)
 
-        statementService.create(paper1, Predicates.yearPublished, year1)
-        statementService.create(paper2, Predicates.yearPublished, year2)
+        statementService.createStatement(paper1, Predicates.yearPublished, year1)
+        statementService.createStatement(paper2, Predicates.yearPublished, year2)
 
         val ids = listOf(cont1, cont2)
 
@@ -106,9 +107,9 @@ internal class ContributionComparisonControllerIntegrationTest : MockMvcBaseTest
 
         val year1 = literalService.createLiteral(label = "2022")
 
-        statementService.create(paper1, Predicates.hasContribution, cont1)
+        statementService.createStatement(paper1, Predicates.hasContribution, cont1)
 
-        statementService.create(paper1, Predicates.yearPublished, year1)
+        statementService.createStatement(paper1, Predicates.yearPublished, year1)
 
         val ids = listOf(cont1)
 

@@ -6,6 +6,7 @@ import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSect
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.CreateSmartReviewSectionAction.State
 import org.orkg.contenttypes.input.SmartReviewSectionDefinition
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -42,10 +43,12 @@ class SmartReviewSectionCreator(
             )
         } else {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.contributionId!!,
-                predicate = Predicates.hasSection,
-                `object` = sectionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.contributionId!!,
+                    predicateId = Predicates.hasSection,
+                    objectId = sectionId
+                )
             )
         }
         return state.copy(smartReviewSectionId = sectionId)

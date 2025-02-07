@@ -8,6 +8,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -119,10 +120,12 @@ class SingleStatementPropertyUpdater(
             statementService.delete(toRemove.map { it.id }.toSet())
         }
         statementService.add(
-            userId = contributorId,
-            subject = subjectId,
-            predicate = predicateId,
-            `object` = objectId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = subjectId,
+                predicateId = predicateId,
+                objectId = objectId
+            )
         )
     }
 
@@ -139,10 +142,12 @@ class SingleStatementPropertyUpdater(
         }
         if (objectId != null) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = predicateId,
-                `object` = objectId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = predicateId,
+                    objectId = objectId
+                )
             )
         }
     }

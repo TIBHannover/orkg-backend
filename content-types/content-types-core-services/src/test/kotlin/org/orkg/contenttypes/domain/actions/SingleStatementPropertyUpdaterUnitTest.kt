@@ -16,6 +16,7 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -406,21 +407,25 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
 
         every {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasContribution,
+                    objectId = contributionId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.hasContribution, contributionId)
 
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasContribution,
+                    objectId = contributionId
+                )
             )
         }
     }
@@ -438,22 +443,26 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         every { statementService.delete(setOf(StatementId("S357"))) } just runs
         every {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasContribution,
+                    objectId = contributionId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.hasContribution, contributionId)
 
         verify(exactly = 1) { statementService.delete(setOf(StatementId("S357"))) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasContribution,
+                    objectId = contributionId
+                )
             )
         }
     }
@@ -467,21 +476,25 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
 
         every {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasContribution,
-                `object` = objectId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasContribution,
+                    objectId = objectId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.hasContribution, objectId)
 
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasContribution,
-                `object` = objectId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasContribution,
+                    objectId = objectId
+                )
             )
         }
     }
@@ -499,22 +512,26 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         every { statementService.delete(setOf(StatementId("S357"))) } just runs
         every {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasContribution,
-                `object` = objectId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasContribution,
+                    objectId = objectId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.hasContribution, objectId)
 
         verify(exactly = 1) { statementService.delete(setOf(StatementId("S357"))) }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.hasContribution,
-                `object` = objectId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.hasContribution,
+                    objectId = objectId
+                )
             )
         }
     }

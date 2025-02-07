@@ -5,21 +5,16 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.StatementId
 
 interface CreateStatementUseCase {
-    // legacy methods:
-    fun create(subject: ThingId, predicate: ThingId, `object`: ThingId): StatementId
-    fun create(
-        userId: ContributorId,
-        subject: ThingId,
-        predicate: ThingId,
-        `object`: ThingId,
-        modifiable: Boolean = true
-    ): StatementId
-    fun add(
-        userId: ContributorId,
-        subject: ThingId,
-        predicate: ThingId,
-        `object`: ThingId,
-        modifiable: Boolean = true
+    fun create(command: CreateCommand): StatementId
+    fun add(command: CreateCommand): StatementId
+
+    data class CreateCommand(
+        val id: StatementId? = null,
+        val contributorId: ContributorId,
+        val subjectId: ThingId,
+        val predicateId: ThingId,
+        val objectId: ThingId,
+        val modifiable: Boolean = true
     )
 }
 

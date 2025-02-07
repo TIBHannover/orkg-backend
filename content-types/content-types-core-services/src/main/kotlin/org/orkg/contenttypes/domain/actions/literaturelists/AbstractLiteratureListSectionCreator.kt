@@ -10,6 +10,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -40,10 +41,12 @@ class AbstractLiteratureListSectionCreator(
             )
         )
         statementService.add(
-            userId = contributorId,
-            subject = entryId,
-            predicate = Predicates.hasLink,
-            `object` = entry.id
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = entryId,
+                predicateId = Predicates.hasLink,
+                objectId = entry.id
+            )
         )
         entry.description?.let { description ->
             val descriptionLiteral = literalService.create(
@@ -53,10 +56,12 @@ class AbstractLiteratureListSectionCreator(
                 )
             )
             statementService.add(
-                userId = contributorId,
-                subject = entryId,
-                predicate = Predicates.description,
-                `object` = descriptionLiteral
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = entryId,
+                    predicateId = Predicates.description,
+                    objectId = descriptionLiteral
+                )
             )
         }
         return entryId
@@ -76,10 +81,12 @@ class AbstractLiteratureListSectionCreator(
         section.entries.forEach {
             val entryId = createListSectionEntry(contributorId, it)
             statementService.add(
-                userId = contributorId,
-                subject = sectionId,
-                predicate = Predicates.hasEntry,
-                `object` = entryId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = sectionId,
+                    predicateId = Predicates.hasEntry,
+                    objectId = entryId
+                )
             )
         }
         return sectionId
@@ -104,10 +111,12 @@ class AbstractLiteratureListSectionCreator(
             )
         )
         statementService.add(
-            userId = contributorId,
-            subject = sectionId,
-            predicate = Predicates.hasHeadingLevel,
-            `object` = headingSizeId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = sectionId,
+                predicateId = Predicates.hasHeadingLevel,
+                objectId = headingSizeId
+            )
         )
         val textId = literalService.create(
             CreateLiteralUseCase.CreateCommand(
@@ -116,10 +125,12 @@ class AbstractLiteratureListSectionCreator(
             )
         )
         statementService.add(
-            userId = contributorId,
-            subject = sectionId,
-            predicate = Predicates.hasContent,
-            `object` = textId
+            CreateStatementUseCase.CreateCommand(
+                contributorId = contributorId,
+                subjectId = sectionId,
+                predicateId = Predicates.hasContent,
+                objectId = textId
+            )
         )
         return sectionId
     }

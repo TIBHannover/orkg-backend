@@ -5,6 +5,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.StatementUseCases
 
 class TemplateRelationsCreator(
@@ -26,10 +27,12 @@ class TemplateRelationsCreator(
     ) {
         researchFields.forEach { researchFieldId ->
             statementUseCases.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.templateOfResearchField,
-                `object` = researchFieldId
+                CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.templateOfResearchField,
+                    objectId = researchFieldId
+                )
             )
         }
     }
@@ -41,10 +44,12 @@ class TemplateRelationsCreator(
     ) {
         researchProblems.forEach { researchProblemId ->
             statementUseCases.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = Predicates.templateOfResearchProblem,
-                `object` = researchProblemId
+                CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = Predicates.templateOfResearchProblem,
+                    objectId = researchProblemId
+                )
             )
         }
     }
@@ -55,10 +60,12 @@ class TemplateRelationsCreator(
         predicateId: ThingId
     ) {
         statementUseCases.add(
-            userId = contributorId,
-            subject = subjectId,
-            predicate = Predicates.templateOfPredicate,
-            `object` = predicateId
+            CreateCommand(
+                contributorId = contributorId,
+                subjectId = subjectId,
+                predicateId = Predicates.templateOfPredicate,
+                objectId = predicateId
+            )
         )
     }
 }

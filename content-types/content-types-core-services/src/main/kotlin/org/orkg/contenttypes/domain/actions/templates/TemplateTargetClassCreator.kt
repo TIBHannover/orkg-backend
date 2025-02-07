@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.templates
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.StatementUseCases
 
 class TemplateTargetClassCreator(
@@ -11,10 +12,12 @@ class TemplateTargetClassCreator(
     override fun invoke(command: CreateTemplateCommand, state: State): State =
         state.apply {
             statementUseCases.add(
-                userId = command.contributorId,
-                subject = templateId!!,
-                predicate = Predicates.shTargetClass,
-                `object` = command.targetClass
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = templateId!!,
+                    predicateId = Predicates.shTargetClass,
+                    objectId = command.targetClass
+                )
             )
         }
 }

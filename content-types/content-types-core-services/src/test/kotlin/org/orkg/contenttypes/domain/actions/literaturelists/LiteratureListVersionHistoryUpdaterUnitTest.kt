@@ -3,9 +3,7 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -14,6 +12,8 @@ import org.orkg.contenttypes.domain.actions.PublishLiteratureListState
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureList
 import org.orkg.contenttypes.input.testing.fixtures.publishLiteratureListCommand
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 
 internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
@@ -30,12 +30,14 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = literatureList.id,
-                predicate = Predicates.hasPublishedVersion,
-                `object` = literatureListVersionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = literatureList.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = literatureListVersionId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         literatureListVersionHistoryUpdater(command, state).asClue {
             it.literatureList shouldBe literatureList
@@ -44,10 +46,12 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = literatureList.id,
-                predicate = Predicates.hasPublishedVersion,
-                `object` = literatureListVersionId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = literatureList.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = literatureListVersionId
+                )
             )
         }
     }

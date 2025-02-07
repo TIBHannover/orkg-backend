@@ -11,6 +11,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase.LegacyCreatePaperRequest
 import org.orkg.contenttypes.input.LegacyCreatePaperUseCase.PaperDefinition
 import org.orkg.contenttypes.input.LegacyPaperUseCases
+import org.orkg.createStatement
 import org.orkg.createClasses
 import org.orkg.createPredicate
 import org.orkg.createResource
@@ -356,10 +357,10 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
         val unrelatedResource = resourceService.createResource(label = "Some resource")
         val id = resourceService.createResource(label = "Our resource")
 
-        statementService.create(relatedPaper1, predicate1, id)
-        statementService.create(relatedPaper2, predicate2, intermediateResource)
-        statementService.create(intermediateResource, predicate1, id)
-        statementService.create(unrelatedPaper, predicate1, unrelatedResource)
+        statementService.createStatement(relatedPaper1, predicate1, id)
+        statementService.createStatement(relatedPaper2, predicate2, intermediateResource)
+        statementService.createStatement(intermediateResource, predicate1, id)
+        statementService.createStatement(unrelatedPaper, predicate1, unrelatedResource)
 
         documentedGetRequestTo("/api/papers")
             .param("linkedTo", "$id")

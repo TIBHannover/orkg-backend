@@ -24,6 +24,7 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -97,7 +98,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val entryId = ThingId("R1564")
 
         every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
         every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
         every { statementService.delete(any<Set<StatementId>>()) } just runs
 
@@ -105,10 +106,12 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = ThingId("R0"),
-                predicate = Predicates.hasLink,
-                `object` = ThingId("R789")
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = ThingId("R0"),
+                    predicateId = Predicates.hasLink,
+                    objectId = ThingId("R789")
+                )
             )
         }
         verify(exactly = 1) {
@@ -122,10 +125,12 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = ThingId("R1"),
-                predicate = Predicates.hasLink,
-                `object` = ThingId("R154686")
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = ThingId("R1"),
+                    predicateId = Predicates.hasLink,
+                    objectId = ThingId("R154686")
+                )
             )
         }
         verify(exactly = 1) {
@@ -146,10 +151,12 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = oldSection.id,
-                predicate = Predicates.hasEntry,
-                `object` = entryId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = oldSection.id,
+                    predicateId = Predicates.hasEntry,
+                    objectId = entryId
+                )
             )
         }
     }
@@ -166,7 +173,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val entryId = ThingId("R1564")
 
         every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
@@ -175,10 +182,12 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = oldSection.id,
-                predicate = Predicates.hasEntry,
-                `object` = entryId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = oldSection.id,
+                    predicateId = Predicates.hasEntry,
+                    objectId = entryId
+                )
             )
         }
     }
@@ -199,7 +208,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val entryId = ThingId("R1564")
 
         every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
         every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
         every { statementService.delete(any<Set<StatementId>>()) } just runs
 
@@ -207,10 +216,12 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
 
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = ThingId("R1"),
-                predicate = Predicates.hasLink,
-                `object` = ThingId("new")
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = ThingId("R1"),
+                    predicateId = Predicates.hasLink,
+                    objectId = ThingId("new")
+                )
             )
         }
         verify(exactly = 1) { statementService.delete(setOf(StatementId("S1_2"))) }
@@ -219,10 +230,12 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = contributorId,
-                subject = oldSection.id,
-                predicate = Predicates.hasEntry,
-                `object` = entryId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = oldSection.id,
+                    predicateId = Predicates.hasEntry,
+                    objectId = entryId
+                )
             )
         }
         verify(exactly = 1) {

@@ -27,6 +27,7 @@ import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.NotACurator
 import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.ResourceNotModifiable
+import org.orkg.graph.domain.StatementAlreadyExists
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementNotModifiable
 import org.orkg.graph.domain.ThingAlreadyExists
@@ -475,6 +476,21 @@ internal class ExceptionControllerUnitTest : MockMvcBaseTest("exceptions") {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun statementAlreadyExists() {
+        val id = StatementId("S4565")
+
+        get("/statement-already-exists")
+            .param("id", id.value)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/statement-already-exists"))
+            .andExpect(jsonPath("$.message").value("""Statement already exists with id "$id"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
     internal class FakeExceptionController {
@@ -616,6 +632,11 @@ internal class ExceptionControllerUnitTest : MockMvcBaseTest("exceptions") {
         @GetMapping("/invalid-literal-label-constraint-violation")
         fun invalidLiteralLabelConstraintViolation(@RequestParam label: String, @RequestParam datatype: String) {
             throw InvalidLiteralLabel(label, datatype)
+        }
+
+        @GetMapping("/statement-already-exists")
+        fun statementAlreadyExists(@RequestParam id: StatementId) {
+            throw StatementAlreadyExists(id)
         }
     }
 }

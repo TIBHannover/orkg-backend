@@ -13,6 +13,7 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -90,10 +91,12 @@ class AbstractLiteratureListSectionUpdater(
                             if (newEntry.id != connection.hasLinkStatement.`object`.id) {
                                 statementsToRemove += connection.hasLinkStatement.id
                                 statementService.add(
-                                    userId = contributorId,
-                                    subject = connection.hasEntryStatement.`object`.id,
-                                    predicate = Predicates.hasLink,
-                                    `object` = newEntry.id
+                                    CreateCommand(
+                                        contributorId = contributorId,
+                                        subjectId = connection.hasEntryStatement.`object`.id,
+                                        predicateId = Predicates.hasLink,
+                                        objectId = newEntry.id
+                                    )
                                 )
                             }
                             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -120,10 +123,12 @@ class AbstractLiteratureListSectionUpdater(
             while (newEntriesIterator.hasNext()) {
                 val entryId = abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, newEntriesIterator.next())
                 statementService.add(
-                    userId = contributorId,
-                    subject = oldSection.id,
-                    predicate = Predicates.hasEntry,
-                    `object` = entryId
+                    CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = oldSection.id,
+                        predicateId = Predicates.hasEntry,
+                        objectId = entryId
+                    )
                 )
             }
         }

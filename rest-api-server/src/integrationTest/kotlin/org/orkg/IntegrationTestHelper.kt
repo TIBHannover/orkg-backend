@@ -16,12 +16,15 @@ import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.mediastorage.domain.ImageId
 import org.orkg.testing.MockUserId
 
@@ -157,6 +160,21 @@ fun ListUseCases.createList(
         label = label,
         elements = elements,
         id = id
+    )
+)
+
+// Statements
+
+fun StatementUseCases.createStatement(
+    subject: ThingId,
+    predicate: ThingId,
+    `object`: ThingId
+): StatementId = create(
+    CreateCommand(
+        contributorId = ContributorId.UNKNOWN,
+        subjectId = subject,
+        predicateId = predicate,
+        objectId = `object`
     )
 )
 

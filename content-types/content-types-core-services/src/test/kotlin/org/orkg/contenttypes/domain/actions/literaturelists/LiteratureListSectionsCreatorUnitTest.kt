@@ -1,9 +1,7 @@
 package org.orkg.contenttypes.domain.actions.literaturelists
 
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -11,6 +9,8 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListCommand
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 
 internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
@@ -45,14 +45,7 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
         val sectionId2 = ThingId("R789")
 
         every { abstractLiteratureListSectionCreator.create(command.contributorId, any()) } returns sectionId1 andThen sectionId2
-        every {
-            statementService.add(
-                userId = command.contributorId,
-                subject = state.literatureListId!!,
-                predicate = Predicates.hasSection,
-                `object` = any()
-            )
-        } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         literatureListSectionsCreator(command, state)
 
@@ -61,10 +54,12 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.literatureListId!!,
-                predicate = Predicates.hasSection,
-                `object` = sectionId1
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.literatureListId!!,
+                    predicateId = Predicates.hasSection,
+                    objectId = sectionId1
+                )
             )
         }
         verify(exactly = 1) {
@@ -72,10 +67,12 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.literatureListId!!,
-                predicate = Predicates.hasSection,
-                `object` = sectionId2
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = state.literatureListId!!,
+                    predicateId = Predicates.hasSection,
+                    objectId = sectionId2
+                )
             )
         }
     }

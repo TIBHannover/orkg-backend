@@ -4,6 +4,7 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.community.input.ContributorUseCases
+import org.orkg.createStatement
 import org.orkg.createClasses
 import org.orkg.createContributor
 import org.orkg.createList
@@ -14,6 +15,7 @@ import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -86,7 +88,14 @@ internal class ProblemControllerIntegrationTest : MockMvcBaseTest("research-prob
             extractionMethod = ExtractionMethod.MANUAL
         )
 
-        statementService.create(contributorId, contribution, predicate, problem)
+        statementService.create(
+            CreateCommand(
+                contributorId = contributorId,
+                subjectId = contribution,
+                predicateId = predicate,
+                objectId = problem
+            )
+        )
 
         documentedGetRequestTo("/api/problems/{id}/users", problem)
             .param("size", "4")
@@ -133,24 +142,24 @@ internal class ProblemControllerIntegrationTest : MockMvcBaseTest("research-prob
         val paper3AuthorsList = listService.createList("Authors", listOf(author1))
         val paper4AuthorsList = listService.createList("Authors", listOf(author2))
 
-        statementService.create(paper1, Predicates.hasAuthors, paper1AuthorsList)
-        statementService.create(paper2, Predicates.hasAuthors, paper2AuthorsList)
-        statementService.create(paper3, Predicates.hasAuthors, paper3AuthorsList)
-        statementService.create(paper4, Predicates.hasAuthors, paper4AuthorsList)
+        statementService.createStatement(paper1, Predicates.hasAuthors, paper1AuthorsList)
+        statementService.createStatement(paper2, Predicates.hasAuthors, paper2AuthorsList)
+        statementService.createStatement(paper3, Predicates.hasAuthors, paper3AuthorsList)
+        statementService.createStatement(paper4, Predicates.hasAuthors, paper4AuthorsList)
 
         // Link papers to contributions
-        statementService.create(paper1, Predicates.hasContribution, cont1)
-        statementService.create(paper1, Predicates.hasContribution, cont2)
-        statementService.create(paper2, Predicates.hasContribution, cont3)
-        statementService.create(paper3, Predicates.hasContribution, cont4)
-        statementService.create(paper4, Predicates.hasContribution, cont5)
+        statementService.createStatement(paper1, Predicates.hasContribution, cont1)
+        statementService.createStatement(paper1, Predicates.hasContribution, cont2)
+        statementService.createStatement(paper2, Predicates.hasContribution, cont3)
+        statementService.createStatement(paper3, Predicates.hasContribution, cont4)
+        statementService.createStatement(paper4, Predicates.hasContribution, cont5)
 
         // Link problems to contributions
-        statementService.create(cont1, Predicates.hasResearchProblem, problem1)
-        statementService.create(cont2, Predicates.hasResearchProblem, problem2)
-        statementService.create(cont3, Predicates.hasResearchProblem, problem2)
-        statementService.create(cont4, Predicates.hasResearchProblem, problem1)
-        statementService.create(cont5, Predicates.hasResearchProblem, problem2)
+        statementService.createStatement(cont1, Predicates.hasResearchProblem, problem1)
+        statementService.createStatement(cont2, Predicates.hasResearchProblem, problem2)
+        statementService.createStatement(cont3, Predicates.hasResearchProblem, problem2)
+        statementService.createStatement(cont4, Predicates.hasResearchProblem, problem1)
+        statementService.createStatement(cont5, Predicates.hasResearchProblem, problem2)
 
         documentedGetRequestTo("/api/problems/{id}/authors", problem1)
             .param("page", "0")

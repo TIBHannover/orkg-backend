@@ -1,9 +1,7 @@
 package org.orkg.contenttypes.domain.actions
 
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
@@ -16,8 +14,10 @@ import org.orkg.contenttypes.input.testing.fixtures.createUntypedTemplatePropert
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -90,15 +90,17 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shDatatype,
-                `object` = property.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shDatatype,
+                    objectId = property.datatype
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.pattern.toString()
                 )
@@ -106,12 +108,14 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         } returns patternLiteralId
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shPattern,
-                `object` = patternLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shPattern,
+                    objectId = patternLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S2")
 
         abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
 
@@ -127,15 +131,17 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shDatatype,
-                `object` = property.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shDatatype,
+                    objectId = property.datatype
+                )
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.pattern.toString()
                 )
@@ -143,10 +149,12 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shPattern,
-                `object` = patternLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shPattern,
+                    objectId = patternLiteralId
+                )
             )
         }
     }
@@ -174,12 +182,14 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shDatatype,
-                `object` = property.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shDatatype,
+                    objectId = property.datatype
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
 
@@ -195,10 +205,12 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shDatatype,
-                `object` = property.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shDatatype,
+                    objectId = property.datatype
+                )
             )
         }
     }
@@ -226,12 +238,14 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shDatatype,
-                `object` = property.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shDatatype,
+                    objectId = property.datatype
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
 
@@ -247,10 +261,12 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shDatatype,
-                `object` = property.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shDatatype,
+                    objectId = property.datatype
+                )
             )
         }
     }
@@ -280,15 +296,17 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shDatatype,
-                `object` = property.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shDatatype,
+                    objectId = property.datatype
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minInclusive.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -297,15 +315,17 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         } returns minInclusiveLiteralId
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shMinInclusive,
-                `object` = minInclusiveLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shMinInclusive,
+                    objectId = minInclusiveLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S2")
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxInclusive.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -314,12 +334,14 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         } returns maxInclusiveLiteralId
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shMaxInclusive,
-                `object` = maxInclusiveLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shMaxInclusive,
+                    objectId = maxInclusiveLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S3")
 
         abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
 
@@ -335,15 +357,17 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shDatatype,
-                `object` = property.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shDatatype,
+                    objectId = property.datatype
+                )
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minInclusive.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -352,15 +376,17 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shMinInclusive,
-                `object` = minInclusiveLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shMinInclusive,
+                    objectId = minInclusiveLiteralId
+                )
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxInclusive.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -369,10 +395,12 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shMaxInclusive,
-                `object` = maxInclusiveLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shMaxInclusive,
+                    objectId = maxInclusiveLiteralId
+                )
             )
         }
     }
@@ -403,12 +431,14 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shDatatype,
-                `object` = property.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shDatatype,
+                    objectId = property.datatype
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
 
@@ -424,10 +454,12 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shDatatype,
-                `object` = property.datatype
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shDatatype,
+                    objectId = property.datatype
+                )
             )
         }
     }
@@ -455,12 +487,14 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shClass,
-                `object` = property.`class`
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shClass,
+                    objectId = property.`class`
+                )
             )
-        } just runs
+        } returns StatementId("S1")
 
         abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
 
@@ -476,10 +510,12 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         )
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shClass,
-                `object` = property.`class`
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shClass,
+                    objectId = property.`class`
+                )
             )
         }
     }
@@ -506,7 +542,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         property.placeholder?.let { placeholder ->
             every {
                 literalService.create(
-                    CreateCommand(
+                    CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = placeholder
                     )
@@ -514,17 +550,19 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             } returns placeholderLiteralId
             every {
                 statementService.add(
-                    userId = property.contributorId,
-                    subject = propertyId,
-                    predicate = Predicates.placeholder,
-                    `object` = placeholderLiteralId
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = property.contributorId,
+                        subjectId = propertyId,
+                        predicateId = Predicates.placeholder,
+                        objectId = placeholderLiteralId
+                    )
                 )
-            } just runs
+            } returns StatementId("Splaceholder")
         }
         property.description?.let { description ->
             every {
                 literalService.create(
-                    CreateCommand(
+                    CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = description
                     )
@@ -532,16 +570,18 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             } returns descriptionLiteralId
             every {
                 statementService.add(
-                    userId = property.contributorId,
-                    subject = propertyId,
-                    predicate = Predicates.description,
-                    `object` = descriptionLiteralId
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = property.contributorId,
+                        subjectId = propertyId,
+                        predicateId = Predicates.description,
+                        objectId = descriptionLiteralId
+                    )
                 )
-            } just runs
+            } returns StatementId("Sdescription")
         }
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minCount.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -550,15 +590,17 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         } returns minLiteralId
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shMinCount,
-                `object` = minLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shMinCount,
+                    objectId = minLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("SminCount")
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxCount.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -567,23 +609,27 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         } returns maxLiteralId
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shMaxCount,
-                `object` = maxLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shMaxCount,
+                    objectId = maxLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("SmaxCount")
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shPath,
-                `object` = property.path
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shPath,
+                    objectId = property.path
+                )
             )
-        } just runs
+        } returns StatementId("Spath")
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = order.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -592,20 +638,24 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         } returns orderLiteralId
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shOrder,
-                `object` = orderLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shOrder,
+                    objectId = orderLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("Sorder")
         every {
             statementService.add(
-                userId = property.contributorId,
-                subject = property.templateId,
-                predicate = Predicates.shProperty,
-                `object` = propertyId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = property.templateId,
+                    predicateId = Predicates.shProperty,
+                    objectId = propertyId
+                )
             )
-        } just runs
+        } returns StatementId("Sproperty")
     }
 
     private fun verifyMockCommonProperties(
@@ -630,7 +680,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         property.placeholder?.let { placeholder ->
             verify(exactly = 1) {
                 literalService.create(
-                    CreateCommand(
+                    CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = placeholder
                     )
@@ -638,17 +688,19 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             }
             verify(exactly = 1) {
                 statementService.add(
-                    userId = property.contributorId,
-                    subject = propertyId,
-                    predicate = Predicates.placeholder,
-                    `object` = placeholderLiteralId
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = property.contributorId,
+                        subjectId = propertyId,
+                        predicateId = Predicates.placeholder,
+                        objectId = placeholderLiteralId
+                    )
                 )
             }
         }
         property.description?.let { description ->
             verify(exactly = 1) {
                 literalService.create(
-                    CreateCommand(
+                    CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = description
                     )
@@ -656,17 +708,19 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             }
             verify(exactly = 1) {
                 statementService.add(
-                    userId = property.contributorId,
-                    subject = propertyId,
-                    predicate = Predicates.description,
-                    `object` = descriptionLiteralId
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = property.contributorId,
+                        subjectId = propertyId,
+                        predicateId = Predicates.description,
+                        objectId = descriptionLiteralId
+                    )
                 )
             }
         }
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minCount.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -675,16 +729,18 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shMinCount,
-                `object` = minLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shMinCount,
+                    objectId = minLiteralId
+                )
             )
         }
 
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxCount.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -693,24 +749,28 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shMaxCount,
-                `object` = maxLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shMaxCount,
+                    objectId = maxLiteralId
+                )
             )
         }
 
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shPath,
-                `object` = property.path
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shPath,
+                    objectId = property.path
+                )
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = order.toString(),
                     datatype = Literals.XSD.INT.prefixedUri
@@ -719,18 +779,22 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = propertyId,
-                predicate = Predicates.shOrder,
-                `object` = orderLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = propertyId,
+                    predicateId = Predicates.shOrder,
+                    objectId = orderLiteralId
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = property.contributorId,
-                subject = property.templateId,
-                predicate = Predicates.shProperty,
-                `object` = propertyId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = property.contributorId,
+                    subjectId = property.templateId,
+                    predicateId = Predicates.shProperty,
+                    objectId = propertyId
+                )
             )
         }
     }

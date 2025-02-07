@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 import org.orkg.contenttypes.domain.actions.PublishLiteratureListCommand
 import org.orkg.contenttypes.domain.actions.literaturelists.PublishLiteratureListAction.State
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 
 class LiteratureListVersionHistoryUpdater(
@@ -10,10 +11,12 @@ class LiteratureListVersionHistoryUpdater(
 ) : PublishLiteratureListAction {
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
         statementService.add(
-            userId = command.contributorId,
-            subject = state.literatureList!!.id,
-            predicate = Predicates.hasPublishedVersion,
-            `object` = state.literatureListVersionId!!
+            CreateStatementUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                subjectId = state.literatureList!!.id,
+                predicateId = Predicates.hasPublishedVersion,
+                objectId = state.literatureListVersionId!!
+            )
         )
         return state
     }

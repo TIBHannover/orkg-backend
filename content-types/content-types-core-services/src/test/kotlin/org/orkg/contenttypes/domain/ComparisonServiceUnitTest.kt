@@ -5,9 +5,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import java.time.OffsetDateTime
 import java.util.*
@@ -35,9 +33,11 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
@@ -637,15 +637,17 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         } returns resourceId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.comparisonId,
-                predicate = Predicates.hasRelatedResource,
-                `object` = resourceId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.comparisonId,
+                    predicateId = Predicates.hasRelatedResource,
+                    objectId = resourceId
+                )
             )
-        } just runs
+        } returns StatementId("S123")
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.image!!
                 )
@@ -653,7 +655,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         } returns imageLiteralId
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.url!!
                 )
@@ -661,7 +663,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         } returns urlLiteralId
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.description!!
                 )
@@ -669,28 +671,34 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         } returns descriptionLiteralId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = resourceId,
-                predicate = Predicates.hasImage,
-                `object` = imageLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = resourceId,
+                    predicateId = Predicates.hasImage,
+                    objectId = imageLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = resourceId,
-                predicate = Predicates.hasURL,
-                `object` = urlLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = resourceId,
+                    predicateId = Predicates.hasURL,
+                    objectId = urlLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S2")
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = resourceId,
-                predicate = Predicates.description,
-                `object` = descriptionLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = resourceId,
+                    predicateId = Predicates.description,
+                    objectId = descriptionLiteralId
+                )
             )
-        } just runs
+        } returns StatementId("S3")
 
         service.createComparisonRelatedResource(command) shouldBe resourceId
 
@@ -706,15 +714,17 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.comparisonId,
-                predicate = Predicates.hasRelatedResource,
-                `object` = resourceId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.comparisonId,
+                    predicateId = Predicates.hasRelatedResource,
+                    objectId = resourceId
+                )
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.image!!
                 )
@@ -722,7 +732,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.url!!
                 )
@@ -730,7 +740,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.description!!
                 )
@@ -738,26 +748,32 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = resourceId,
-                predicate = Predicates.hasImage,
-                `object` = imageLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = resourceId,
+                    predicateId = Predicates.hasImage,
+                    objectId = imageLiteralId
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = resourceId,
-                predicate = Predicates.hasURL,
-                `object` = urlLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = resourceId,
+                    predicateId = Predicates.hasURL,
+                    objectId = urlLiteralId
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = resourceId,
-                predicate = Predicates.description,
-                `object` = descriptionLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = resourceId,
+                    predicateId = Predicates.description,
+                    objectId = descriptionLiteralId
+                )
             )
         }
     }
@@ -819,15 +835,17 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         } returns figureId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.comparisonId,
-                predicate = Predicates.hasRelatedFigure,
-                `object` = figureId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.comparisonId,
+                    predicateId = Predicates.hasRelatedFigure,
+                    objectId = figureId
+                )
             )
-        } just runs
+        } returns StatementId("S1")
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.image!!
                 )
@@ -835,7 +853,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         } returns image.id
         every {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.description!!
                 )
@@ -843,20 +861,24 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         } returns description.id
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = figureId,
-                predicate = Predicates.hasImage,
-                `object` = image.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = figureId,
+                    predicateId = Predicates.hasImage,
+                    objectId = image.id
+                )
             )
-        } just runs
+        } returns StatementId("S2")
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = figureId,
-                predicate = Predicates.description,
-                `object` = description.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = figureId,
+                    predicateId = Predicates.description,
+                    objectId = description.id
+                )
             )
-        } just runs
+        } returns StatementId("S3")
 
         service.createComparisonRelatedFigure(command) shouldBe figureId
 
@@ -872,15 +894,17 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = command.comparisonId,
-                predicate = Predicates.hasRelatedFigure,
-                `object` = figureId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = command.comparisonId,
+                    predicateId = Predicates.hasRelatedFigure,
+                    objectId = figureId
+                )
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.image!!
                 )
@@ -888,7 +912,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.description!!
                 )
@@ -896,18 +920,22 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = figureId,
-                predicate = Predicates.hasImage,
-                `object` = image.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = figureId,
+                    predicateId = Predicates.hasImage,
+                    objectId = image.id
+                )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = figureId,
-                predicate = Predicates.description,
-                `object` = description.id
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = figureId,
+                    predicateId = Predicates.description,
+                    objectId = description.id
+                )
             )
         }
     }

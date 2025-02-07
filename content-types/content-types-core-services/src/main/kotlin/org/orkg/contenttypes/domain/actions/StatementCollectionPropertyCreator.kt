@@ -3,7 +3,8 @@ package org.orkg.contenttypes.domain.actions
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Literals
-import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
+import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -20,17 +21,19 @@ class StatementCollectionPropertyCreator(
     ) {
         labels.forEach { label ->
             val literal = literalService.create(
-                CreateCommand(
+                CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = label,
                     datatype = datatype
                 )
             )
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = predicateId,
-                `object` = literal
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = predicateId,
+                    objectId = literal
+                )
             )
         }
     }
@@ -43,10 +46,12 @@ class StatementCollectionPropertyCreator(
     ) {
         objects.distinct().forEach { objectId ->
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = predicateId,
-                `object` = objectId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = predicateId,
+                    objectId = objectId
+                )
             )
         }
     }

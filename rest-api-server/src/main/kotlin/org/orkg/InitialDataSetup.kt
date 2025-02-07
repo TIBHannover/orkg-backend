@@ -6,6 +6,7 @@ import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
@@ -13,6 +14,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
@@ -110,7 +112,14 @@ class InitialDataSetup(
                 createResearchFields(researchField.subfields)
             }
             researchField.subfields.forEach { subField ->
-                statementService.create(researchField.id, Predicates.hasSubfield, subField.id)
+                statementService.create(
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = ContributorId.UNKNOWN,
+                        subjectId = researchField.id,
+                        predicateId = Predicates.hasSubfield,
+                        objectId = subField.id
+                    )
+                )
             }
         }
     }

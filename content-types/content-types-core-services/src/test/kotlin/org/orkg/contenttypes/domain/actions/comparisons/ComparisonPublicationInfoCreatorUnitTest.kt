@@ -3,9 +3,7 @@ package org.orkg.contenttypes.domain.actions.comparisons
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Test
@@ -16,7 +14,9 @@ import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.input.testing.fixtures.createComparisonCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -37,7 +37,7 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
         val publicationMonthLiteralId = ThingId("L456")
 
         every { literalService.create(any()) } returns publicationYearLiteralId andThen publicationMonthLiteralId
-        every { statementService.add(any(), any(), any(), any()) } just runs
+        every { statementService.add(any()) } returns StatementId("S1")
 
         comparisonPublicationInfoCreator(command, state).asClue {
             it.comparisonId shouldBe comparisonId
@@ -55,10 +55,12 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = comparisonId,
-                predicate = Predicates.yearPublished,
-                `object` = publicationYearLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = comparisonId,
+                    predicateId = Predicates.yearPublished,
+                    objectId = publicationYearLiteralId
+                )
             )
         }
         verify(exactly = 1) {
@@ -72,10 +74,12 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = comparisonId,
-                predicate = Predicates.yearPublished,
-                `object` = publicationMonthLiteralId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    subjectId = comparisonId,
+                    predicateId = Predicates.yearPublished,
+                    objectId = publicationMonthLiteralId
+                )
             )
         }
     }

@@ -11,6 +11,7 @@ import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
+import org.orkg.createStatement
 import org.orkg.createClasses
 import org.orkg.createContributor
 import org.orkg.createLiteral
@@ -96,7 +97,7 @@ internal class VisualizationControllerIntegrationTest : MockMvcBaseTest("visuali
 
         resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
 
-        statementService.create(
+        statementService.createStatement(
             subject = resourceService.createResource(
                 id = "R456",
                 label = "Author with id and orcid",
@@ -106,7 +107,7 @@ internal class VisualizationControllerIntegrationTest : MockMvcBaseTest("visuali
             `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
         )
 
-        statementService.create(
+        statementService.createStatement(
             subject = resourceService.createResource(
                 id = "R4567",
                 label = "Author with orcid",

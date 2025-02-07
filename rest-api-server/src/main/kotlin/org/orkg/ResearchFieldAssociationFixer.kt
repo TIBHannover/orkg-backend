@@ -3,6 +3,7 @@ package org.orkg
 import org.orkg.graph.adapter.output.neo4j.toResource
 import org.orkg.graph.adapter.output.neo4j.toThingId
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.mappedBy
@@ -38,10 +39,12 @@ class ResearchFieldAssociationFixer(
             .all()
             .forEach { (node, researchFieldId) ->
                 statementUseCases.create(
-                    userId = node.createdBy,
-                    subject = node.id,
-                    predicate = Predicates.hasResearchField,
-                    `object` = researchFieldId
+                    CreateCommand(
+                        contributorId = node.createdBy,
+                        subjectId = node.id,
+                        predicateId = Predicates.hasResearchField,
+                        objectId = researchFieldId
+                    )
                 )
             }
     }

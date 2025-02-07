@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.createStatement
 import org.orkg.createClass
 import org.orkg.createLiteral
 import org.orkg.createPredicate
@@ -243,7 +244,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
         val subject = service.createResource(label = "parent")
         val `object` = service.createResource(label = "son")
         val predicate = predicateService.createPredicate(label = "related")
-        statementService.create(subject, predicate, `object`)
+        statementService.createStatement(subject, predicate, `object`)
 
         delete("/api/resources/{id}", `object`)
             .perform()
@@ -270,8 +271,8 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
         val con1 = service.createResource(label = "Connection 1")
         val con2 = service.createResource(label = "Connection 2")
         val predicate = predicateService.createPredicate(label = "Test predicate")
-        statementService.create(con1, predicate, resId)
-        statementService.create(con2, predicate, resId)
+        statementService.createStatement(con1, predicate, resId)
+        statementService.createStatement(con2, predicate, resId)
         val id2 = classService.createClass(label = "Class 2")
         service.createResource(classes = setOf(id2.value), label = "Another Resource")
 
@@ -331,21 +332,21 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
             label = "Throw-way template"
         )
         val labelFormat = literalService.createLiteral(label = "xx{$throwAwayProperty}xx")
-        statementService.create(template, templateLabelPredicate, labelFormat)
-        statementService.create(template, targetClassPredicate, throwAwayClass)
+        statementService.createStatement(template, templateLabelPredicate, labelFormat)
+        statementService.createStatement(template, targetClassPredicate, throwAwayClass)
         val templateComponent = service.createResource(
             classes = setOf(propertyShapeClass.value),
             label = "component 1"
         )
-        statementService.create(template, propertyPredicate, templateComponent)
-        statementService.create(templateComponent, pathPredicate, throwAwayProperty)
+        statementService.createStatement(template, propertyPredicate, templateComponent)
+        statementService.createStatement(templateComponent, pathPredicate, throwAwayProperty)
         // Create resource and type it
         val templatedResource = service.createResource(
             classes = setOf(throwAwayClass.value),
             label = "Fancy resource"
         )
         val someValue = literalService.createLiteral(label = value)
-        statementService.create(templatedResource, throwAwayProperty, someValue)
+        statementService.createStatement(templatedResource, throwAwayProperty, someValue)
         return templatedResource
     }
 

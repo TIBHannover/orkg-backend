@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.createStatement
 import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
@@ -68,10 +69,10 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
         val p2 = predicateService.createPredicate(label = "blub")
         val pl = predicateService.createPredicate(label = "to literal")
 
-        val statement = statementService.create(r1, p1, r2)
-        statementService.create(r1, p1, r3)
-        statementService.create(r1, p2, r3)
-        statementService.create(r2, pl, l1)
+        val statement = statementService.createStatement(r1, p1, r2)
+        statementService.createStatement(r1, p1, r3)
+        statementService.createStatement(r1, p2, r3)
+        statementService.createStatement(r2, pl, l1)
 
         get("/api/statements/{id}", statement)
             .perform()
@@ -88,10 +89,10 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
         val p2 = predicateService.createPredicate(label = "blub")
         val pl = predicateService.createPredicate(label = "to literal")
 
-        statementService.create(r1, p1, r2)
-        statementService.create(r1, p1, r3)
-        statementService.create(r1, p2, r3)
-        val statement = statementService.create(r2, pl, l1)
+        statementService.createStatement(r1, p1, r2)
+        statementService.createStatement(r1, p1, r3)
+        statementService.createStatement(r1, p2, r3)
+        val statement = statementService.createStatement(r2, pl, l1)
 
         get("/api/statements/{id}", statement)
             .perform()
@@ -142,7 +143,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
         val s = resourceService.createResource(label = "ORKG")
         val p = predicateService.createPredicate(label = "created by")
         val o = resourceService.createResource(label = "Awesome Team")
-        val st = statementService.create(s, p, o)
+        val st = statementService.createStatement(s, p, o)
 
         val p2 = predicateService.createPredicate(label = "with love from")
         val o2 = resourceService.createResource(label = "Hannover")
@@ -166,7 +167,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
         val s = resourceService.createResource(label = "ORKG")
         val p = predicateService.createPredicate(label = "based in")
         val o = literalService.createLiteral(label = "Germany")
-        val st = statementService.create(s, p, o)
+        val st = statementService.createStatement(s, p, o)
 
         val p2 = predicateService.createPredicate(label = "made with love from")
 
@@ -189,9 +190,9 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
         val p1 = predicateService.createPredicate(label = "blah")
         val p2 = predicateService.createPredicate(label = "blub")
 
-        statementService.create(r1, p1, r2)
-        statementService.create(r1, p2, r3)
-        statementService.create(r2, p1, r4)
+        statementService.createStatement(r1, p1, r2)
+        statementService.createStatement(r1, p2, r3)
+        statementService.createStatement(r2, p1, r4)
 
         documentedGetRequestTo("/api/statements/{id}/bundle", r1)
             .perform()
@@ -230,18 +231,18 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
 
         val p = predicateService.createPredicate(label = "relation")
 
-        statementService.create(a, p, b)
-        statementService.create(b, p, c)
-        statementService.create(c, p, d)
-        statementService.create(c, p, cc)
-        statementService.create(cc, p, c)
-        statementService.create(cc, p, bb)
-        statementService.create(cc, p, dd)
-        statementService.create(bb, p, b)
-        statementService.create(dd, p, d)
+        statementService.createStatement(a, p, b)
+        statementService.createStatement(b, p, c)
+        statementService.createStatement(c, p, d)
+        statementService.createStatement(c, p, cc)
+        statementService.createStatement(cc, p, c)
+        statementService.createStatement(cc, p, bb)
+        statementService.createStatement(cc, p, dd)
+        statementService.createStatement(bb, p, b)
+        statementService.createStatement(dd, p, d)
         // Inbound, should be excluded
-        statementService.create(e, p, f)
-        statementService.create(f, p, d)
+        statementService.createStatement(e, p, f)
+        statementService.createStatement(f, p, d)
 
         get("/api/statements/{id}/bundle", a)
             .perform()

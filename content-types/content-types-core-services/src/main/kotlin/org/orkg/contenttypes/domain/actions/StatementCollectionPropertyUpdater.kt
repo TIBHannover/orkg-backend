@@ -9,6 +9,7 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
+import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -54,10 +55,12 @@ class StatementCollectionPropertyUpdater(
         // Create new object statements
         toAdd.forEach { objectId ->
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = predicateId,
-                `object` = objectId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = predicateId,
+                    objectId = objectId
+                )
             )
         }
     }
@@ -105,10 +108,12 @@ class StatementCollectionPropertyUpdater(
             }
             if (matchingStatement == null) {
                 statementService.add(
-                    userId = contributorId,
-                    subject = subjectId,
-                    predicate = predicateId,
-                    `object` = objectId
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = subjectId,
+                        predicateId = predicateId,
+                        objectId = objectId
+                    )
                 )
             }
         }
@@ -171,10 +176,12 @@ class StatementCollectionPropertyUpdater(
                 )
             )
             statementService.add(
-                userId = contributorId,
-                subject = subjectId,
-                predicate = predicateId,
-                `object` = literalId
+                CreateStatementUseCase.CreateCommand(
+                    contributorId = contributorId,
+                    subjectId = subjectId,
+                    predicateId = predicateId,
+                    objectId = literalId
+                )
             )
         }
     }
@@ -213,10 +220,12 @@ class StatementCollectionPropertyUpdater(
                     )
                 )
                 statementService.add(
-                    userId = contributorId,
-                    subject = subjectId,
-                    predicate = predicateId,
-                    `object` = literalId
+                    CreateStatementUseCase.CreateCommand(
+                        contributorId = contributorId,
+                        subjectId = subjectId,
+                        predicateId = predicateId,
+                        objectId = literalId
+                    )
                 )
             }
         }

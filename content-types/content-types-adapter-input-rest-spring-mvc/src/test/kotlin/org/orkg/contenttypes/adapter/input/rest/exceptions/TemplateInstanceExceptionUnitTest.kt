@@ -1,31 +1,17 @@
-package org.orkg.contenttypes.adapter.input.rest
+package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.contenttypes.adapter.input.rest.ExceptionControllerUnitTest.FakeExceptionController
-import org.orkg.contenttypes.domain.ComparisonNotModifiable
-import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotModifiable
-import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
-import org.orkg.contenttypes.domain.InvalidBibTeXReference
+import org.orkg.contenttypes.adapter.input.rest.exceptions.TemplateInstanceExceptionUnitTest.TestController
 import org.orkg.contenttypes.domain.InvalidBounds
 import org.orkg.contenttypes.domain.InvalidDatatype
-import org.orkg.contenttypes.domain.InvalidHeadingSize
-import org.orkg.contenttypes.domain.InvalidListSectionEntry
 import org.orkg.contenttypes.domain.InvalidLiteral
-import org.orkg.contenttypes.domain.InvalidMonth
-import org.orkg.contenttypes.domain.InvalidSubjectPositionCardinality
-import org.orkg.contenttypes.domain.InvalidSubjectPositionType
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
-import org.orkg.contenttypes.domain.LiteratureListNotFound
-import org.orkg.contenttypes.domain.LiteratureListNotModifiable
-import org.orkg.contenttypes.domain.LiteratureListSectionTypeMismatch
 import org.orkg.contenttypes.domain.MismatchedDataType
-import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
 import org.orkg.contenttypes.domain.MissingPropertyValues
-import org.orkg.contenttypes.domain.MissingSubjectPosition
 import org.orkg.contenttypes.domain.NumberTooHigh
 import org.orkg.contenttypes.domain.NumberTooLow
 import org.orkg.contenttypes.domain.ObjectIsNotAClass
@@ -33,16 +19,11 @@ import org.orkg.contenttypes.domain.ObjectIsNotAList
 import org.orkg.contenttypes.domain.ObjectIsNotALiteral
 import org.orkg.contenttypes.domain.ObjectIsNotAPredicate
 import org.orkg.contenttypes.domain.ObjectMustNotBeALiteral
-import org.orkg.contenttypes.domain.PaperNotModifiable
 import org.orkg.contenttypes.domain.ResourceIsNotAnInstanceOfTargetClass
-import org.orkg.contenttypes.domain.SmartReviewNotModifiable
-import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.TemplateNotApplicable
 import org.orkg.contenttypes.domain.TooManyPropertyValues
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
-import org.orkg.contenttypes.domain.UnrelatedLiteratureListSection
 import org.orkg.contenttypes.domain.UnrelatedTemplateProperty
-import org.orkg.graph.domain.Predicates
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -56,49 +37,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [FakeExceptionController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class ExceptionControllerUnitTest : MockMvcBaseTest("exceptions") {
-
-    @Test
-    fun invalidMonth() {
-        get("/invalid-month")
-            .param("month", "0")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/invalid-month"))
-            .andExpect(jsonPath("$.message").value("""Invalid month "0". Must be in range [1..12]."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun sustainableDevelopmentGoalNotFound() {
-        get("/sustainable-development-goal-not-found")
-            .param("sdgId", "SDG1")
-            .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.error", `is`("Not Found")))
-            .andExpect(jsonPath("$.path").value("/sustainable-development-goal-not-found"))
-            .andExpect(jsonPath("$.message").value("""Sustainable Development Goal "SDG1" not found."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun literatureListNotFound() {
-        val id = ThingId("R123")
-
-        get("/errors/literature-list-not-found")
-            .param("id", id.value)
-            .perform()
-            .andExpect(status().isNotFound)
-            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.error").value("Not Found"))
-            .andExpect(jsonPath("$.path").value("/errors/literature-list-not-found"))
-            .andExpect(jsonPath("$.message").value("""Literature list "$id" not found."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
+@ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
+internal class TemplateInstanceExceptionUnitTest : MockMvcBaseTest("tables") {
 
     @Test
     fun templateNotApplicable() {
@@ -478,253 +418,9 @@ internal class ExceptionControllerUnitTest : MockMvcBaseTest("exceptions") {
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
-    @Test
-    fun paperNotModifiable() {
-        val id = "R123"
-
-        get("/paper-not-modifiable")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/paper-not-modifiable"))
-            .andExpect(jsonPath("$.message").value("""Paper "$id" is not modifiable."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun comparisonNotModifiable() {
-        val id = "R123"
-
-        get("/comparison-not-modifiable")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/comparison-not-modifiable"))
-            .andExpect(jsonPath("$.message").value("""Comparison "$id" is not modifiable."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun comparisonRelatedResourceNotModifiable() {
-        val id = "R123"
-
-        get("/comparison-related-resource-not-modifiable")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/comparison-related-resource-not-modifiable"))
-            .andExpect(jsonPath("$.message").value("""Comparison related resource "$id" is not modifiable."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun comparisonRelatedFigureNotModifiable() {
-        val id = "R123"
-
-        get("/comparison-related-figure-not-modifiable")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/comparison-related-figure-not-modifiable"))
-            .andExpect(jsonPath("$.message").value("""Comparison related figure "$id" is not modifiable."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun literatureListNotModifiable() {
-        val id = "R123"
-
-        get("/literature-list-not-modifiable")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/literature-list-not-modifiable"))
-            .andExpect(jsonPath("$.message").value("""Literature list "$id" is not modifiable."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun smartReviewNotModifiable() {
-        val id = "R123"
-
-        get("/smart-review-not-modifiable")
-            .param("id", id)
-            .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
-            .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/smart-review-not-modifiable"))
-            .andExpect(jsonPath("$.message").value("""Smart review "$id" is not modifiable."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun invalidListSectionEntry() {
-        val id = "R123"
-        val expectedAnyInstanceOf = arrayOf("C1", "C2")
-
-        get("/invalid-list-section-entry")
-            .param("id", id)
-            .param("expectedAnyInstanceOf", *expectedAnyInstanceOf)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/invalid-list-section-entry"))
-            .andExpect(jsonPath("$.message").value("""Invalid list section entry "$id". Must be an instance of either "C1", "C2"."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun invalidHeadingSize() {
-        val headingSize = "5"
-
-        get("/invalid-heading-size")
-            .param("headingSize", headingSize)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/invalid-heading-size"))
-            .andExpect(jsonPath("$.message").value("""Invalid heading size "$headingSize". Must be at least 1."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun unrelatedLiteratureListSection() {
-        val literatureListId = "R123"
-        val literatureListSectionId = "R456"
-
-        get("/unrelated-literature-list-section")
-            .param("literatureListId", literatureListId)
-            .param("literatureListSectionId", literatureListSectionId)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/unrelated-literature-list-section"))
-            .andExpect(jsonPath("$.message").value("""Literature list section "$literatureListSectionId" does not belong to literature list "$literatureListId"."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun literatureListSectionTypeMismatchMustBeTextSection() {
-        get("/literature-list-section-type-mismatch-must-be-text-section")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/literature-list-section-type-mismatch-must-be-text-section"))
-            .andExpect(jsonPath("$.message").value("""Invalid literature list section type. Must be a text section."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun literatureListSectionTypeMismatchMustBeListSection() {
-        get("/literature-list-section-type-mismatch-must-be-list-section")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/literature-list-section-type-mismatch-must-be-list-section"))
-            .andExpect(jsonPath("$.message").value("""Invalid literature list section type. Must be a list section."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun invalidSubjectPositionCardinality() {
-        get("/invalid-subject-position-cardinality")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/invalid-subject-position-cardinality"))
-            .andExpect(jsonPath("$.message").value("""Invalid subject position cardinality. Minimum cardinality must be at least one."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun invalidSubjectPositionType() {
-        get("/invalid-subject-position-type")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/invalid-subject-position-type"))
-            .andExpect(jsonPath("$.message").value("""Invalid subject position type. Subject position must not be a literal property."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun missingSubjectPosition() {
-        get("/missing-subject-position")
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/missing-subject-position"))
-            .andExpect(jsonPath("$.message").value("""Missing subject position. There must be at least one property with path "${Predicates.hasSubjectPosition}" that has a minimum cardinality of at least one."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun missingPropertyPlaceholder() {
-        val index = "4"
-
-        get("/missing-property-placeholder")
-            .param("index", index)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/missing-property-placeholder"))
-            .andExpect(jsonPath("$.message").value("""Missing placeholder for property at index "$index"."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun invalidBibTeXReference() {
-        val reference = "not bibtex"
-
-        get("/invalid-bibtex-reference")
-            .param("reference", reference)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.path").value("/invalid-bibtex-reference"))
-            .andExpect(jsonPath("$.message").value("""Invalid BibTeX reference "$reference"."""))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
     @TestComponent
     @RestController
-    internal class FakeExceptionController {
-        @GetMapping("/invalid-month")
-        fun invalidMonth(@RequestParam month: Int) {
-            throw InvalidMonth(month)
-        }
-
-        @GetMapping("/sustainable-development-goal-not-found")
-        fun sustainableDevelopmentGoalNotFound(@RequestParam sdgId: ThingId) {
-            throw SustainableDevelopmentGoalNotFound(sdgId)
-        }
-
-        @GetMapping("/errors/literature-list-not-found")
-        fun literatureListNotFound(@RequestParam id: ThingId) {
-            throw LiteratureListNotFound(id)
-        }
-
+    internal class TestController {
         @GetMapping("/template-not-applicable")
         fun templateNotApplicable(@RequestParam templateId: ThingId, @RequestParam id: ThingId) {
             throw TemplateNotApplicable(templateId, id)
@@ -898,89 +594,6 @@ internal class ExceptionControllerUnitTest : MockMvcBaseTest("exceptions") {
             @RequestParam maxInclusive: Number
         ) {
             throw NumberTooHigh(templatePropertyId, objectId, predicateId, label, maxInclusive)
-        }
-
-        @GetMapping("/paper-not-modifiable")
-        fun paperNotModifiable(@RequestParam id: ThingId) {
-            throw PaperNotModifiable(id)
-        }
-
-        @GetMapping("/comparison-not-modifiable")
-        fun comparisonNotModifiable(@RequestParam id: ThingId) {
-            throw ComparisonNotModifiable(id)
-        }
-
-        @GetMapping("/comparison-related-resource-not-modifiable")
-        fun comparisonRelatedResourceNotModifiable(@RequestParam id: ThingId) {
-            throw ComparisonRelatedResourceNotModifiable(id)
-        }
-
-        @GetMapping("/comparison-related-figure-not-modifiable")
-        fun comparisonRelatedFigureNotModifiable(@RequestParam id: ThingId) {
-            throw ComparisonRelatedFigureNotModifiable(id)
-        }
-
-        @GetMapping("/literature-list-not-modifiable")
-        fun literatureListNotModifiable(@RequestParam id: ThingId) {
-            throw LiteratureListNotModifiable(id)
-        }
-
-        @GetMapping("/smart-review-not-modifiable")
-        fun smartReviewNotModifiable(@RequestParam id: ThingId) {
-            throw SmartReviewNotModifiable(id)
-        }
-
-        @GetMapping("/invalid-list-section-entry")
-        fun invalidListSectionEntry(@RequestParam id: ThingId, @RequestParam expectedAnyInstanceOf: Set<ThingId>) {
-            throw InvalidListSectionEntry(id, expectedAnyInstanceOf)
-        }
-
-        @GetMapping("/invalid-heading-size")
-        fun invalidHeadingSize(@RequestParam headingSize: Int) {
-            throw InvalidHeadingSize(headingSize)
-        }
-
-        @GetMapping("/unrelated-literature-list-section")
-        fun unrelatedLiteratureListSection(
-            @RequestParam literatureListId: ThingId,
-            @RequestParam literatureListSectionId: ThingId
-        ) {
-            throw UnrelatedLiteratureListSection(literatureListId, literatureListSectionId)
-        }
-
-        @GetMapping("/literature-list-section-type-mismatch-must-be-text-section")
-        fun literatureListSectionTypeMismatchMustBeTextSection() {
-            throw LiteratureListSectionTypeMismatch.mustBeTextSection()
-        }
-
-        @GetMapping("/literature-list-section-type-mismatch-must-be-list-section")
-        fun literatureListSectionTypeMismatchMustBeListSection() {
-            throw LiteratureListSectionTypeMismatch.mustBeListSection()
-        }
-
-        @GetMapping("/invalid-subject-position-cardinality")
-        fun invalidSubjectPositionCardinality() {
-            throw InvalidSubjectPositionCardinality()
-        }
-
-        @GetMapping("/invalid-subject-position-type")
-        fun invalidSubjectPositionType() {
-            throw InvalidSubjectPositionType()
-        }
-
-        @GetMapping("/missing-subject-position")
-        fun missingSubjectPosition() {
-            throw MissingSubjectPosition()
-        }
-
-        @GetMapping("/missing-property-placeholder")
-        fun missingPropertyPlaceholder(@RequestParam index: Int) {
-            throw MissingPropertyPlaceholder(index)
-        }
-
-        @GetMapping("/invalid-bibtex-reference")
-        fun invalidBibTeXReference(@RequestParam reference: String) {
-            throw InvalidBibTeXReference(reference)
         }
     }
 }

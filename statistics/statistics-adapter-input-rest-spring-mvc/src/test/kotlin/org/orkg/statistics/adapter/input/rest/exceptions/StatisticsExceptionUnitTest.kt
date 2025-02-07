@@ -1,18 +1,16 @@
-package org.orkg.statistics.adapter.input.rest
+package org.orkg.statistics.adapter.input.rest.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.statistics.adapter.input.rest.StatisticsControllerExceptionUnitTest.FakeExceptionController
+import org.orkg.statistics.adapter.input.rest.exceptions.StatisticsExceptionUnitTest.TestController
 import org.orkg.statistics.domain.GroupNotFound
 import org.orkg.statistics.domain.MetricNotFound
 import org.orkg.testing.configuration.FixedClockConfig
-import org.orkg.testing.configuration.SecurityTestConfiguration
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestComponent
-import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -21,10 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-@Import(SecurityTestConfiguration::class)
 @WebMvcTest
-@ContextConfiguration(classes = [FakeExceptionController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class StatisticsControllerExceptionUnitTest : MockMvcBaseTest("statistics") {
+@ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
+internal class StatisticsExceptionUnitTest : MockMvcBaseTest("statistics") {
 
     @Test
     fun groupNotFound() {
@@ -60,7 +57,7 @@ internal class StatisticsControllerExceptionUnitTest : MockMvcBaseTest("statisti
 
     @TestComponent
     @RestController
-    internal class FakeExceptionController {
+    internal class TestController {
         @GetMapping("/group-not-found")
         fun groupNotFound(@RequestParam id: String) {
             throw GroupNotFound(id)

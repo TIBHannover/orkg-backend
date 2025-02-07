@@ -1,11 +1,11 @@
-package org.orkg.contenttypes.adapter.input.rest
+package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.contenttypes.adapter.input.rest.RosettaStoneStatementControllerExceptionUnitTest.FakeExceptionController
+import org.orkg.contenttypes.adapter.input.rest.exceptions.RosettaStoneStatementExceptionUnitTest.TestController
 import org.orkg.contenttypes.domain.CannotDeleteIndividualRosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.MissingInputPositions
 import org.orkg.contenttypes.domain.MissingObjectPositionValue
@@ -32,8 +32,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [FakeExceptionController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class RosettaStoneStatementControllerExceptionUnitTest : MockMvcBaseTest("rosetta-stone-statements") {
+@ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
+internal class RosettaStoneStatementExceptionUnitTest : MockMvcBaseTest("rosetta-stone-statements") {
 
     @Test
     fun tooManyInputPositions() {
@@ -257,7 +257,7 @@ internal class RosettaStoneStatementControllerExceptionUnitTest : MockMvcBaseTes
 
     @TestComponent
     @RestController
-    internal class FakeExceptionController {
+    internal class TestController {
         @GetMapping("/too-many-input-positions")
         fun tooManyInputPositions(@RequestParam exceptedCount: Int, @RequestParam templateId: ThingId) {
             throw TooManyInputPositions(exceptedCount, templateId)

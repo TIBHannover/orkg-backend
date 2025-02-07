@@ -1,14 +1,18 @@
-package org.orkg.contenttypes.adapter.input.rest
+package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.contenttypes.adapter.input.rest.RosettaStoneTemplateControllerExceptionUnitTest.FakeExceptionController
+import org.orkg.contenttypes.adapter.input.rest.exceptions.RosettaStoneTemplateExceptionUnitTest.TestController
 import org.orkg.contenttypes.domain.InvalidObjectPositionPath
+import org.orkg.contenttypes.domain.InvalidSubjectPositionCardinality
 import org.orkg.contenttypes.domain.InvalidSubjectPositionPath
+import org.orkg.contenttypes.domain.InvalidSubjectPositionType
 import org.orkg.contenttypes.domain.MissingFormattedLabelPlaceholder
+import org.orkg.contenttypes.domain.MissingPropertyPlaceholder
+import org.orkg.contenttypes.domain.MissingSubjectPosition
 import org.orkg.contenttypes.domain.NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage
 import org.orkg.contenttypes.domain.NewRosettaStoneTemplateLabelSectionsMustBeOptional
 import org.orkg.contenttypes.domain.NewRosettaStoneTemplatePropertyMustBeOptional
@@ -33,8 +37,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [FakeExceptionController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class RosettaStoneTemplateControllerExceptionUnitTest : MockMvcBaseTest("rosetta-stone-templates") {
+@ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
+internal class RosettaStoneTemplateExceptionUnitTest : MockMvcBaseTest("rosetta-stone-templates") {
 
     @Test
     fun invalidSubjectPositionPath() {
@@ -242,9 +246,60 @@ internal class RosettaStoneTemplateControllerExceptionUnitTest : MockMvcBaseTest
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun invalidSubjectPositionCardinality() {
+        get("/invalid-subject-position-cardinality")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-subject-position-cardinality"))
+            .andExpect(jsonPath("$.message").value("""Invalid subject position cardinality. Minimum cardinality must be at least one."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun invalidSubjectPositionType() {
+        get("/invalid-subject-position-type")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/invalid-subject-position-type"))
+            .andExpect(jsonPath("$.message").value("""Invalid subject position type. Subject position must not be a literal property."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun missingSubjectPosition() {
+        get("/missing-subject-position")
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-subject-position"))
+            .andExpect(jsonPath("$.message").value("""Missing subject position. There must be at least one property with path "${Predicates.hasSubjectPosition}" that has a minimum cardinality of at least one."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun missingPropertyPlaceholder() {
+        val index = "4"
+
+        get("/missing-property-placeholder")
+            .param("index", index)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.path").value("/missing-property-placeholder"))
+            .andExpect(jsonPath("$.message").value("""Missing placeholder for property at index "$index"."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
-    internal class FakeExceptionController {
+    internal class TestController {
         @GetMapping("/invalid-subject-position-path")
         fun invalidSubjectPositionPath() {
             throw InvalidSubjectPositionPath()
@@ -318,6 +373,26 @@ internal class RosettaStoneTemplateControllerExceptionUnitTest : MockMvcBaseTest
         @GetMapping("/new-rosetta-stone-template-property-must-be-optional")
         fun newRosettaStoneTemplatePropertyMustBeOptional(@RequestParam placeholder: String) {
             throw NewRosettaStoneTemplatePropertyMustBeOptional(placeholder)
+        }
+
+        @GetMapping("/invalid-subject-position-cardinality")
+        fun invalidSubjectPositionCardinality() {
+            throw InvalidSubjectPositionCardinality()
+        }
+
+        @GetMapping("/invalid-subject-position-type")
+        fun invalidSubjectPositionType() {
+            throw InvalidSubjectPositionType()
+        }
+
+        @GetMapping("/missing-subject-position")
+        fun missingSubjectPosition() {
+            throw MissingSubjectPosition()
+        }
+
+        @GetMapping("/missing-property-placeholder")
+        fun missingPropertyPlaceholder(@RequestParam index: Int) {
+            throw MissingPropertyPlaceholder(index)
         }
     }
 }

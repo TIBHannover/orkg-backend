@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.TestComponent
 import org.springframework.data.mapping.PropertyReferenceException
 import org.springframework.data.util.TypeInformation
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.context.ContextConfiguration
@@ -25,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [ExceptionHandler::class, ExceptionHandlerUnitTest.TestController::class, CommonSpringConfig::class, FixedClockConfig::class])
-internal class ExceptionHandlerUnitTest : MockMvcBaseTest("errors") {
+@ContextConfiguration(classes = [ExceptionHandler::class, ExceptionUnitTest.TestController::class, CommonSpringConfig::class, FixedClockConfig::class])
+internal class ExceptionUnitTest : MockMvcBaseTest("errors") {
     @Test
     fun simpleMessageException() {
         documentedGetRequestTo("/errors/simple")
@@ -48,104 +47,6 @@ internal class ExceptionHandlerUnitTest : MockMvcBaseTest("errors") {
                     )
                 )
             )
-    }
-
-    @Test
-    fun jsonMissingFieldException() {
-        post("/errors/json")
-            .content("""{"field": "abc", "nested": {}}""")
-            .contentType(MediaType.APPLICATION_JSON)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status", `is`(400)))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Field "$.nested.field" is either missing, "null", of invalid type, or contains "null" values.""")))
-            .andExpect(jsonPath("$.path", `is`("/errors/json")))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun jsonUnknownFieldException() {
-        post("/errors/json")
-            .content("""{"field": "abc", "nested": {"unknown": 1, "field": "def", "list": []}}""")
-            .contentType(MediaType.APPLICATION_JSON)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status", `is`(400)))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Unknown field "$.nested.unknown".""")))
-            .andExpect(jsonPath("$.path", `is`("/errors/json")))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun jsonTypeMismatchException() {
-        post("/errors/json")
-            .content("""{"field": "abc", "nested": {"field": [], "list": []}}""")
-            .contentType(MediaType.APPLICATION_JSON)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status", `is`(400)))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Field "$.nested.field" is either missing, "null", of invalid type, or contains "null" values.""")))
-            .andExpect(jsonPath("$.path", `is`("/errors/json")))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun jsonTypeMismatchArrayException() {
-        post("/errors/json")
-            .content("""{"field": "abc", "array": [{"unknown": 1}] "nested": {"field": "def", "list": []}}""")
-            .contentType(MediaType.APPLICATION_JSON)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status", `is`(400)))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Field "$.array[0].field" is either missing, "null", of invalid type, or contains "null" values.""")))
-            .andExpect(jsonPath("$.path", `is`("/errors/json")))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun jsonNullValueInCollectionException() {
-        post("/errors/json")
-            .content("""{"field": "abc", "nested": {"field": "def", "list": [null]}}""")
-            .contentType(MediaType.APPLICATION_JSON)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status", `is`(400)))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Field "$.nested.list" is either missing, "null", of invalid type, or contains "null" values.""")))
-            .andExpect(jsonPath("$.path", `is`("/errors/json")))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun jsonNullValueException() {
-        post("/errors/json")
-            .content("""{"field": null, "nested": {"field": "def", "list": []}}""")
-            .contentType(MediaType.APPLICATION_JSON)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status", `is`(400)))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Field "$.field" is either missing, "null", of invalid type, or contains "null" values.""")))
-            .andExpect(jsonPath("$.path", `is`("/errors/json")))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
-    }
-
-    @Test
-    fun jsonMalformedException() {
-        post("/errors/json")
-            .content("""{"field": "abc" "nested": {"field": "def", "list": []}}""")
-            .contentType(MediaType.APPLICATION_JSON)
-            .perform()
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.status", `is`(400)))
-            .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Unexpected character ('"' (code 34)): was expecting comma to separate Object entries""")))
-            .andExpect(jsonPath("$.path", `is`("/errors/json")))
-            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
     @Test
@@ -242,9 +143,6 @@ internal class ExceptionHandlerUnitTest : MockMvcBaseTest("errors") {
         @GetMapping("/errors/simple")
         fun simpleMessageWithCause(): Nothing = throw FakeSimpleExceptionWithoutCause()
 
-        @PostMapping("/errors/json")
-        fun json(@RequestBody request: JsonRequest): Nothing = throw NotImplementedError()
-
         @GetMapping("/errors/service-unavailable")
         fun serviceUnavailable(): Nothing = throw ServiceUnavailable.create("TEST", 500, "irrelevant")
 
@@ -265,18 +163,6 @@ internal class ExceptionHandlerUnitTest : MockMvcBaseTest("errors") {
         @GetMapping("/errors/unknown-parameter")
         fun unknownParameter(@RequestParam parameter: String): Nothing =
             throw UnknownParameter(parameter)
-
-        @Suppress("ArrayInDataClass")
-        data class JsonRequest(
-            val field: String,
-            val nested: Nested,
-            val array: Array<Nested>
-        ) {
-            data class Nested(
-                val field: String,
-                val list: List<String>
-            )
-        }
     }
 
     internal class FakeSimpleExceptionWithoutCause : SimpleMessageException(

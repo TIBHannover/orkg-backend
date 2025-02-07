@@ -1,15 +1,16 @@
-package org.orkg.contenttypes.adapter.input.rest
+package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.contenttypes.adapter.input.rest.SmartReviewControllerExceptionUnitTest.FakeExceptionController
+import org.orkg.contenttypes.adapter.input.rest.exceptions.SmartReviewExceptionUnitTest.TestController
 import org.orkg.contenttypes.domain.InvalidSmartReviewTextSectionType
 import org.orkg.contenttypes.domain.OntologyEntityNotFound
 import org.orkg.contenttypes.domain.PublishedSmartReviewContentNotFound
 import org.orkg.contenttypes.domain.SmartReviewAlreadyPublished
+import org.orkg.contenttypes.domain.SmartReviewNotModifiable
 import org.orkg.contenttypes.domain.SmartReviewSectionTypeMismatch
 import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
 import org.orkg.testing.configuration.FixedClockConfig
@@ -25,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [FakeExceptionController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class SmartReviewControllerExceptionUnitTest : MockMvcBaseTest("smart-reviews") {
+@ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
+internal class SmartReviewExceptionUnitTest : MockMvcBaseTest("smart-reviews") {
 
     @Test
     fun publishedSmartReviewContentNotFound() {
@@ -179,9 +180,24 @@ internal class SmartReviewControllerExceptionUnitTest : MockMvcBaseTest("smart-r
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
+    @Test
+    fun smartReviewNotModifiable() {
+        val id = "R123"
+
+        get("/smart-review-not-modifiable")
+            .param("id", id)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.error", `is`("Forbidden")))
+            .andExpect(jsonPath("$.path").value("/smart-review-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Smart review "$id" is not modifiable."""))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
     @TestComponent
     @RestController
-    internal class FakeExceptionController {
+    internal class TestController {
         @GetMapping("/published-smart-review-content-not-found")
         fun publishedSmartReviewContentNotFound(@RequestParam smartReviewId: ThingId, @RequestParam contentId: ThingId) {
             throw PublishedSmartReviewContentNotFound(smartReviewId, contentId)
@@ -238,6 +254,11 @@ internal class SmartReviewControllerExceptionUnitTest : MockMvcBaseTest("smart-r
         @GetMapping("/smart-review-already-published")
         fun smartReviewAlreadyPublished(@RequestParam id: ThingId) {
             throw SmartReviewAlreadyPublished(id)
+        }
+
+        @GetMapping("/smart-review-not-modifiable")
+        fun smartReviewNotModifiable(@RequestParam id: ThingId) {
+            throw SmartReviewNotModifiable(id)
         }
     }
 }

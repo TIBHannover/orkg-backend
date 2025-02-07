@@ -1,12 +1,12 @@
-package org.orkg.contenttypes.adapter.input.rest
+package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
-import org.orkg.contenttypes.adapter.input.rest.ComparisonControllerExceptionUnitTest.FakeExceptionController
-import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
+import org.orkg.contenttypes.adapter.input.rest.exceptions.PaperExceptionUnitTest.TestController
+import org.orkg.contenttypes.domain.PaperNotModifiable
 import org.orkg.testing.configuration.FixedClockConfig
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -20,30 +20,30 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @WebMvcTest
-@ContextConfiguration(classes = [FakeExceptionController::class, ExceptionHandler::class, FixedClockConfig::class])
-internal class ComparisonControllerExceptionUnitTest : MockMvcBaseTest("comparisons") {
+@ContextConfiguration(classes = [TestController::class, ExceptionHandler::class, FixedClockConfig::class])
+internal class PaperExceptionUnitTest : MockMvcBaseTest("literature-lists") {
 
     @Test
-    fun comparisonAlreadyPublished() {
+    fun paperNotModifiable() {
         val id = "R123"
 
-        get("/comparison-already-published")
+        get("/paper-not-modifiable")
             .param("id", id)
             .perform()
             .andExpect(status().isForbidden)
             .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
             .andExpect(jsonPath("$.error", `is`("Forbidden")))
-            .andExpect(jsonPath("$.path").value("/comparison-already-published"))
-            .andExpect(jsonPath("$.message").value("""Comparison "$id" is already published."""))
+            .andExpect(jsonPath("$.path").value("/paper-not-modifiable"))
+            .andExpect(jsonPath("$.message").value("""Paper "$id" is not modifiable."""))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
 
     @TestComponent
     @RestController
-    internal class FakeExceptionController {
-        @GetMapping("/comparison-already-published")
-        fun comparisonAlreadyPublished(@RequestParam id: ThingId) {
-            throw ComparisonAlreadyPublished(id)
+    internal class TestController {
+        @GetMapping("/paper-not-modifiable")
+        fun paperNotModifiable(@RequestParam id: ThingId) {
+            throw PaperNotModifiable(id)
         }
     }
 }
